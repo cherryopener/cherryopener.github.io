@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>21 변분법 · 수리물리학</title>
+<meta name="description" content="범함수의 변분에서 오일러-라그랑주 방정식을 유도하고, 최속 강하선, 측지선, 현수선, 해밀턴 원리, 줄의 파동 방정식까지 변분 원리로 얻는다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys" data-field="phys" data-chapter="ch21">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">21</span></div>
+    <h1 data-fill="chapter-title">변분법</h1>
+    <p class="lead">구슬이 가장 빨리 미끄러져 내려가는 철사의 모양은 무엇일까? 매달린 사슬은 왜 \(\cosh\) 곡선이 되고, 빛은 왜 물에 들어가며 꺾일까? 세 질문은 모두 곡선 하나에 숫자 하나를 주는 적분을 가장 작게, 더 정확히는 정지하게 만드는 문제다. 3장에서는 변수가 유한 개인 함수의 극값을 찾았다. 이 장에서는 함수 전체를 변수로 삼는 극값 문제를 세우고, 그 답이 오일러-라그랑주 방정식이라는 미분방정식으로 나온다는 것을 보인다. 끝에서는 같은 틀로 뉴턴 법칙과 줄의 파동 방정식을 다시 얻으며, 대학원 고전역학과 양자장론으로 가는 다리를 놓는다.</p>
+    <ul class="objectives">
+      <li>범함수의 변분을 계산하고, 부분 적분으로 오일러-라그랑주 방정식을 유도할 수 있다.</li>
+      <li>피적분 함수에 독립 변수나 종속 변수가 없을 때 벨트라미 항등식과 순환 좌표로 첫 적분을 얻을 수 있다.</li>
+      <li>최단 경로, 최속 강하선, 페르마 원리 같은 고전 문제를 범함수로 세우고 끝까지 풀 수 있다.</li>
+      <li>길이나 넓이가 고정된 변분 문제를 라그랑주 승수로 풀고, 승수의 물리적 뜻을 해석할 수 있다.</li>
+      <li>라그랑지안에서 해밀턴 원리로 운동 방정식과 보존량을 얻고, 줄의 라그랑지안 밀도에서 파동 방정식을 유도할 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b>3장의 다변수 테일러 전개, <a href="ch03.html#thm-lagrange-multiplier">라그랑주 승수법(정리 3.4)</a>, <a href="ch03.html#def-legendre-transform">르장드르 변환(정의 3.4)</a>. 2장의 쌍곡선 함수와 <a href="ch02.html#ex-chain-cosh">매달린 사슬(예제 2.10)</a>. 부분 적분과 2계 상미분방정식(10장). 구면 좌표와 극좌표의 선 요소(6장)는 필요한 곳에서 다시 적는다.</p>
+  </header>
+
+  <!-- ============================================================ 21.1 -->
+  <section id="s1">
+    <h2>범함수와 변분</h2>
+    <p>연직 평면 위의 두 점 A와 B를 매끄러운 철사로 잇고, A에 구슬을 가만히 놓는다. 마찰이 없으면 구슬은 철사를 따라 B까지 미끄러진다. 걸리는 시간은 철사의 모양에 따라 다르다. 그런데 이 시간은 숫자 몇 개의 함수가 아니다. 곡선 \(y(x)\) 전체가 정해져야 비로소 정해진다. 3장의 극값 문제에서는 \(f(x_1, \ldots, x_n)\)의 변수가 유한 개였다. 여기서는 "변수"가 함수 하나이고, 함수는 점마다 값을 하나씩 가지므로 변수가 무한히 많은 셈이다. 이 절에서는 이런 대상에 이름을 붙이고, 극값을 찾는 첫걸음인 변분을 정의한다.</p>
+
+    <h3 id="s1-functional">함수에 숫자를 주는 규칙</h3>
+    <div class="box def" id="def-functional"><div class="box-h">범함수</div>
+      <p>구간 \([a, b]\)에서 정의된 매끄러운 함수 \(y(x)\)마다 실수 하나를 대응시키는 규칙 \(J\)를 <span class="term">범함수</span> <span class="en">(functional)</span>라 하고 \(J[y]\)로 쓴다. 대괄호는 \(J\)가 한 점의 값 \(y(x)\)가 아니라 함수 전체에 기댄다는 표시다. 이 장의 범함수는 대부분 다음 꼴이다.</p>
+      <div class="formula" id="eq-functional-integral">\[ J[y] = \int_a^b F\big(x, y(x), y'(x)\big)\,dx \]<div class="where">\(F(x, y, y')\)는 세 변수의 보통 함수이고, 피적분 함수 또는 (역학에서는) 라그랑지안이라 부른다. \(y' = dy/dx\)이다.</div></div>
+    </div>
+    <p>물리에서 만나는 범함수 몇 가지를 적어 보자. 곡선의 길이는 선 요소 \(ds = \sqrt{dx^2 + dy^2} = \sqrt{1 + y'^2}\,dx\)를 더한 것이다.</p>
+    <div class="formula" id="eq-arc-length-functional">\[ \ell[y] = \int_a^b \sqrt{1 + y'^2}\,dx \]</div>
+    <p>구슬의 강하 시간도 같은 꼴이다. 출발점을 원점으로 하고 \(y\)를 <b>아래쪽으로</b> 잰다. 마찰이 없으면 역학적 에너지가 보존되므로 깊이 \(y\)에서 속력은 \(v = \sqrt{2gy}\)이고, 길이 \(ds\)를 지나는 데 \(ds/v\)가 걸린다.</p>
+    <div class="formula" id="eq-descent-time">\[ T[y] = \int_0^b \frac{\sqrt{1 + y'^2}}{\sqrt{2gy}}\,dx \]</div>
+    <p>21.5절에서 다룰 매달린 사슬의 퍼텐셜 에너지는 \(\mu g\int y\sqrt{1 + y'^2}\,dx\)이고(\(\mu\)는 선밀도), 21.6절의 작용은 운동 에너지와 퍼텐셜 에너지의 차를 시간에 대해 적분한 것이다. 모두 식 <a class="ref" href="#eq-functional-integral"></a>의 꼴이고, 피적분 함수 \(F\)만 다르다.</p>
+    <div class="callout warn"><strong>\(y\)와 \(y'\)은 따로 미분한다</strong><p>이 장에서는 \(\partial F/\partial y\)와 \(\partial F/\partial y'\)이 계속 나온다. 이때 \(F\)는 세 개의 독립 변수 \(x, y, y'\)의 함수로 보고, 다른 두 변수를 고정한 채 편미분한다. 예를 들어 \(F = y\sqrt{1 + y'^2}\)이면 \(\partial F/\partial y = \sqrt{1 + y'^2}\), \(\partial F/\partial y' = yy'/\sqrt{1 + y'^2}\)이다. "\(y'\)은 \(y\)의 도함수인데 어떻게 따로 미분하나"라는 걱정은 필요 없다. 곡선을 하나 정하기 전에는 한 점에서 높이와 기울기를 서로 상관없이 고를 수 있기 때문이다. \(x\)에 대한 <b>전체</b> 도함수 \(d/dx\)를 쓸 때만 \(y\)와 \(y'\)이 \(x\)의 함수로 묶인다.</p></div>
+
+    <div class="box ex" id="ex-descent-time-paths"><div class="box-h">두 경로 위의 강하 시간</div>
+      <p>구슬이 원점 A에서 정지 상태로 출발해, 수평으로 \(b = 2.00\ \text{m}\), 아래로 \(h = 1.00\ \text{m}\) 떨어진 점 B까지 마찰 없이 미끄러진다. (가) A와 B를 잇는 직선 철사, (나) A에서 B의 깊이까지 연직으로 떨어진 뒤 수평으로 가는 꺾인 철사에서 걸리는 시간을 비교하라. 꺾이는 모서리는 아주 작게 둥글려서 속력을 잃지 않는다고 하자.</p>
+      <p><b>풀이.</b> (가) 직선의 길이는 \(L = \sqrt{b^2 + h^2}\)이고, 비탈을 따라 가속도 \(g\sin\alpha = gh/L\)로 등가속 운동을 한다. \(L = \tfrac12(gh/L)T^2\)에서</p>
+      <div class="formula">\[ T_{\text{직선}} = L\sqrt{\frac{2}{gh}} = \sqrt{\frac{2(b^2 + h^2)}{gh}} \]</div>
+      <p>이다. (나) 연직 낙하에 \(\sqrt{2h/g}\)가 걸리고, 그 뒤 속력 \(\sqrt{2gh}\)로 \(b\)를 간다.</p>
+      <div class="formula">\[ T_{\text{꺾임}} = \sqrt{\frac{2h}{g}} + \frac{b}{\sqrt{2gh}} \]</div>
+      <p><b>숫자로 보기.</b> \(\sqrt{2h/g} = \sqrt{2/9.81}\ \text{s} = 0.452\ \text{s}\)이다. 따라서 \(T_{\text{직선}} = \sqrt5 \times 0.452\ \text{s} = 1.010\ \text{s}\)이고, \(T_{\text{꺾임}} = 0.452\ \text{s} + 2.00\ \text{m}/(4.43\ \text{m/s}) = 0.903\ \text{s}\)이다. 길이가 \(2.24\ \text{m}\)인 직선보다 길이가 \(3.00\ \text{m}\)인 꺾인 길이 10% 빠르다. 처음에 빨리 떨어져 속력을 얻으면 나머지 길을 빠르게 지나기 때문이다. 단위는 \(\sqrt{\text{m}^2/(\text{m/s}^2\cdot\text{m})} = \text{s}\)로 맞는다.</p>
+      <p>식 <a class="ref" href="#eq-descent-time"></a>은 이렇게 곡선 전체에 기대는 값이다. 그렇다면 모든 곡선 가운데 가장 빠른 것, 곧 <span class="term">최속 강하선</span> <span class="en">(brachistochrone)</span>은 무엇인가? 21.4절에서 그 답을 구하고, 0.806 s가 나온다.</p>
+    </div>
+
+    <h3 id="s1-variation">변분: 곡선을 조금 흔들기</h3>
+    <p>3장에서는 점 \(\mathbf a\)가 \(f\)의 극값인지 보려고 직선 \(\mathbf a + t\mathbf h\) 위의 일변수 함수 \(f(\mathbf a + t\mathbf h)\)를 만들고, 모든 방향 \(\mathbf h\)에 대해 \(t = 0\)에서의 도함수가 0인지 물었다. 함수 공간에서도 똑같이 한다. 후보 곡선 \(y(x)\)에 작은 수 \(\varepsilon\)과 정해진 모양 \(\eta(x)\)를 곱해 더한 곡선 \(y + \varepsilon\eta\)를 만든다(그림 21-1). 그러면 \(J[y + \varepsilon\eta]\)는 \(\varepsilon\) 하나의 보통 함수가 된다. 두 끝점은 고정하므로 \(\eta(a) = \eta(b) = 0\)이다.</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 260" role="img" aria-label="두 끝점을 잇는 곡선 y(x)와, 끝점을 고정한 채 εη(x)만큼 바꾼 곡선"><defs><marker id="f2101-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc2"/></marker></defs><line x1="40" y1="230" x2="460" y2="230" class="s-line"/><line x1="40" y1="20" x2="40" y2="230" class="s-line"/><line x1="60" y1="191" x2="60" y2="230" class="s-grid" stroke-dasharray="4 4"/><line x1="420" y1="119" x2="420" y2="230" class="s-grid" stroke-dasharray="4 4"/><path d="M60,191l6,-6.8 6,-6.7 6,-6.6 6,-6.5 6,-6.3 6,-6.2 6,-6 6,-5.8 6,-5.7 6,-5.4 6,-5.2 6,-5 6,-4.8 6,-4.6 6,-4.3 6,-4 6,-3.9 6,-3.5 6,-3.3 6,-3.1 6,-2.8 6,-2.5 6,-2.2 6,-2.1 6,-1.7 6,-1.5 6,-1.2 6,-1 6,-0.8 6,-0.5 6,-0.3 6,0 6,0.1 6,0.4 6,0.5 6,0.8 6,0.9 6,1.1 6,1.3 6,1.4 6,1.5 6,1.7 6,1.8 6,1.9 6,2 6,2.1 6,2.1 6,2.2 6,2.2 6,2.3 6,2.3 6,2.3 6,2.3 6,2.3 6,2.2 6,2.3 6,2.1 6,2.2 6,2 6,2" class="s-acc2" style="stroke-width:2.4" stroke-dasharray="7 5" fill="none"/><path d="M60,191l6,-3.7 6,-3.7 6,-3.7 6,-3.7 6,-3.6 6,-3.6 6,-3.6 6,-3.5 6,-3.5 6,-3.4 6,-3.3 6,-3.3 6,-3.2 6,-3.1 6,-3 6,-3 6,-2.8 6,-2.7 6,-2.7 6,-2.5 6,-2.4 6,-2.3 6,-2.1 6,-2.1 6,-1.9 6,-1.8 6,-1.6 6,-1.5 6,-1.4 6,-1.3 6,-1.1 6,-1 6,-0.9 6,-0.8 6,-0.6 6,-0.5 6,-0.3 6,-0.3 6,-0.1 6,0 6,0.1 6,0.3 6,0.3 6,0.4 6,0.6 6,0.6 6,0.7 6,0.8 6,0.9 6,0.9 6,1 6,1.1 6,1.1 6,1.2 6,1.2 6,1.2 6,1.3 6,1.3 6,1.3 6,1.3" class="s-line" style="stroke:var(--text);stroke-width:2.6" fill="none"/><line x1="196.8" y1="119" x2="196.8" y2="83.2" class="s-acc2" style="stroke-width:1.8" marker-end="url(#f2101-arr)"/><text x="204.8" y="105.6" class="t-math acc2" style="font-size:16px" text-anchor="start">εη(<tspan font-style="italic">x</tspan>)</text><circle cx="60" cy="191" r="5" class="f-acc"/><circle cx="420" cy="119" r="5" class="f-acc"/><text x="70" y="213" class="t-math" style="font-size:16px" text-anchor="start">(<tspan font-style="italic">a</tspan>, <tspan font-style="italic">y<tspan baseline-shift="sub" font-size="72%">a</tspan></tspan>)</text><text x="410" y="145" class="t-math" style="font-size:16px" text-anchor="end">(<tspan font-style="italic">b</tspan>, <tspan font-style="italic">y<tspan baseline-shift="sub" font-size="72%">b</tspan></tspan>)</text><text x="319.2" y="126.2" class="t-math" style="font-size:16px" text-anchor="start"><tspan font-style="italic">y</tspan>(<tspan font-style="italic">x</tspan>)</text><text x="258" y="58.8" class="t-math acc2" style="font-size:16px" text-anchor="start"><tspan font-style="italic">y</tspan>(<tspan font-style="italic">x</tspan>) + εη(<tspan font-style="italic">x</tspan>)</text><text x="60" y="250" class="t-dim" style="font-size:16px" text-anchor="middle"><tspan font-style="italic">a</tspan></text><text x="420" y="250" class="t-dim" style="font-size:16px" text-anchor="middle"><tspan font-style="italic">b</tspan></text><text x="456" y="250" class="t-dim" style="font-size:16px" text-anchor="end"><tspan font-style="italic">x</tspan></text><text x="48" y="32" class="t-dim" style="font-size:16px" text-anchor="start"><tspan font-style="italic">y</tspan></text></svg>
+      <figcaption><b>그림 21-1.</b> 변분. 끝점 \((a, y_a)\)와 \((b, y_b)\)를 고정한 채 곡선 \(y(x)\)(굵은 선)에 \(\varepsilon\eta(x)\)를 더해 이웃 곡선 \(y + \varepsilon\eta\)(점선)를 만든다. \(\eta\)는 끝점에서 0인 임의의 매끄러운 함수이고, \(\varepsilon\)이 그 크기를 조절한다.</figcaption>
+    </figure>
+    <div class="box def" id="def-variation"><div class="box-h">변분과 정지 함수</div>
+      <p>\(\eta(a) = \eta(b) = 0\)인 매끄러운 함수 \(\eta\)와 수 \(\varepsilon\)에 대해 \(\delta y = \varepsilon\eta\)를 \(y\)의 <span class="term">변분</span> <span class="en">(variation)</span>이라 하고, 그에 따른 \(J\)의 1차 변화</p>
+      <div class="formula" id="eq-first-variation">\[ \delta J = \varepsilon\,\frac{d}{d\varepsilon}J[y + \varepsilon\eta]\Big|_{\varepsilon = 0} \]</div>
+      <p>를 \(J\)의 <span class="term">첫 변분</span> <span class="en">(first variation)</span>이라 한다. 끝점에서 0인 모든 \(\eta\)에 대해 \(\delta J = 0\)이면 \(J\)가 \(y\)에서 <span class="term">정지한다</span> <span class="en">(is stationary)</span>고 하고, \(y\)를 정지 함수라 한다.</p>
+    </div>
+    <p>\(J\)가 \(y\)에서 극소이면 \(J[y + \varepsilon\eta]\)는 \(\varepsilon = 0\)에서 극소이므로 \(\varepsilon\)에 대한 도함수가 0이다. 그래서 극소와 극대는 모두 정지 함수다. 거꾸로 정지 함수가 극소라는 보장은 없다. 3장의 임계점이 안장점일 수 있는 것과 같다.</p>
+    <p>손으로 계산해 보자. 두 점 \((0, 0)\)과 \((1, 0)\)을 잇는 곡선의 길이 \(\ell[y]\)에서 후보 \(y = 0\)(선분)을 \(\eta = \sin\pi x\)로 흔든다. \(y' = \varepsilon\pi\cos\pi x\)이므로 <a href="ch01.html#eq-sqrt-expansions">식 (1.22)</a>의 \(\sqrt{1 + u} \approx 1 + u/2\)를 쓰면</p>
+    <div class="formula" id="eq-variation-segment">\[ \begin{aligned} \ell(\varepsilon) &= \int_0^1 \sqrt{1 + \varepsilon^2\pi^2\cos^2\pi x}\,dx \\ &= 1 + \frac{\pi^2}{4}\varepsilon^2 + O(\varepsilon^4) \end{aligned} \]</div>
+    <p>이다(\(\int_0^1\cos^2\pi x\,dx = \tfrac12\)). \(\varepsilon\)의 1차 항이 없으므로 \(\delta\ell = 0\)이고, 2차 항이 양수이므로 선분은 이 방향으로 극소다. 어떤 \(\eta\)를 골라도 1차 항이 사라진다는 것을 보이려면 일반적인 계산이 필요하다. 그것이 다음 절이다.</p>
+  </section>
+
+  <!-- ============================================================ 21.2 -->
+  <section id="s2">
+    <h2>오일러-라그랑주 방정식</h2>
+    <p>모든 \(\eta\)에 대해 \(\delta J = 0\)이라는 조건은 무한히 많은 조건이다. 3장에서 \(\nabla f = 0\)이라는 \(n\)개의 방정식이 모든 방향의 방향 도함수가 0이라는 조건을 대신했듯이, 이 무한히 많은 조건도 \(y\)에 대한 방정식 하나로 줄일 수 있다. 열쇠는 부분 적분이다.</p>
+
+    <h3 id="s2-derivation">유도</h3>
+    <p>\(F\)가 \(x, y, y'\)에 대해 두 번 연속 미분 가능하고 \(y\)도 두 번 연속 미분 가능하다고 하자. 적분 구간이 \(\varepsilon\)에 기대지 않으므로 <a href="ch03.html#thm-leibniz-integral">라이프니츠 규칙(정리 3.6)</a>에 따라 적분 기호 안에서 미분할 수 있다. 연쇄 법칙으로 \(\partial F(x, y + \varepsilon\eta, y' + \varepsilon\eta')/\partial\varepsilon = F_y\,\eta + F_{y'}\,\eta'\)이므로</p>
+    <div class="formula" id="eq-el-derivation">\[ \frac{d}{d\varepsilon}J[y + \varepsilon\eta]\Big|_{\varepsilon = 0} = \int_a^b \Big( \frac{\partial F}{\partial y}\,\eta + \frac{\partial F}{\partial y'}\,\eta' \Big)\,dx \]</div>
+    <p>이다. 둘째 항에는 \(\eta\)가 아니라 \(\eta'\)이 있다. 부분 적분으로 미분을 \(\eta\)에서 떼어 낸다.</p>
+    <div class="formula">\[ \int_a^b \frac{\partial F}{\partial y'}\,\eta'\,dx = \Big[\frac{\partial F}{\partial y'}\,\eta\Big]_a^b - \int_a^b \frac{d}{dx}\Big(\frac{\partial F}{\partial y'}\Big)\eta\,dx \]</div>
+    <p>끝점에서 \(\eta = 0\)이므로 대괄호 항은 사라진다. 따라서</p>
+    <div class="formula" id="eq-first-variation-integral">\[ \delta J = \varepsilon\int_a^b \Big[ \frac{\partial F}{\partial y} - \frac{d}{dx}\frac{\partial F}{\partial y'} \Big]\eta(x)\,dx \]</div>
+    <p>이다. 이 적분이 끝점에서 0인 <b>모든</b> \(\eta\)에 대해 0이다. \(\eta\)를 마음대로 고를 수 있으므로 대괄호 자체가 0이어야 할 것 같다. 이 직관을 정확히 한 것이 다음 보조정리다.</p>
+    <div class="box thm" id="thm-fundamental-lemma-cv"><div class="box-h">변분법의 기본 보조정리</div>
+      <p>\(g(x)\)가 \([a, b]\)에서 연속이고, \(\eta(a) = \eta(b) = 0\)인 모든 매끄러운 함수 \(\eta\)에 대해 \(\int_a^b g(x)\eta(x)\,dx = 0\)이면, \([a, b]\)에서 \(g(x) = 0\)이다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>어떤 \(x_0 \in (a, b)\)에서 \(g(x_0) > 0\)이라 하자. \(g\)가 연속이므로 어떤 \(\delta > 0\)에 대해 구간 \(I = (x_0 - \delta, x_0 + \delta) \subset (a, b)\)에서 \(g > 0\)이다. \(\eta(x) = (x - x_0 + \delta)^2(x_0 + \delta - x)^2\)을 \(I\) 안에서, \(\eta = 0\)을 \(I\) 밖에서 쓰면 \(\eta\)는 연속 미분 가능하고 끝점에서 0이며, \(I\) 안에서 양수다. 그러면 \(\int g\eta\,dx = \int_I g\eta\,dx > 0\)이 되어 가정에 어긋난다. \(g(x_0) &lt; 0\)이어도 같다. 따라서 \((a, b)\)에서 \(g = 0\)이고, 연속성에 따라 끝점에서도 0이다. (더 매끄러운 \(\eta\)가 필요하면 \(I\) 안에서 \(\exp[-1/(\delta^2 - (x - x_0)^2)]\)을 쓴다.)</p>
+      </details>
+    </div>
+    <p>\(g = F_y - (F_{y'})'\)에 보조정리를 쓰면 이 장의 중심 결과가 나온다.</p>
+    <div class="box thm" id="thm-euler-lagrange"><div class="box-h">오일러-라그랑주 방정식</div>
+      <p>\(F(x, y, y')\)가 두 번 연속 미분 가능하다고 하자. 끝점 조건 \(y(a) = y_a\), \(y(b) = y_b\)를 만족하고 두 번 연속 미분 가능한 함수 가운데 \(y\)가 식 <a class="ref" href="#eq-functional-integral"></a>의 \(J\)를 정지시키면, \(y\)는 다음 방정식을 만족한다.</p>
+      <div class="formula" id="eq-euler-lagrange">\[ \frac{\partial F}{\partial y} - \frac{d}{dx}\frac{\partial F}{\partial y'} = 0 \]</div>
+      <p>이 방정식을 <span class="term">오일러-라그랑주 방정식</span> <span class="en">(Euler–Lagrange equation)</span>이라 한다. 증명은 위의 유도와 같다.</p>
+    </div>
+    <p>여기서 \(d/dx\)는 전체 도함수다. \(\partial F/\partial y'\)은 \(x\), \(y(x)\), \(y'(x)\)를 통해 \(x\)에 기대므로 연쇄 법칙으로 풀어 쓰면</p>
+    <div class="formula" id="eq-el-expanded">\[ \frac{d}{dx}\frac{\partial F}{\partial y'} = F_{y'x} + F_{y'y}\,y' + F_{y'y'}\,y'' \]</div>
+    <p>이다. 그래서 \(F_{y'y'} \ne 0\)이면 오일러-라그랑주 방정식은 \(y\)에 대한 2계 상미분방정식이다. 일반해에는 적분 상수가 둘 있고, 두 끝점 조건이 그것을 정한다. 방정식은 대개 비선형이지만, \(F\)가 \(y\)와 \(y'\)의 2차식이면 선형이 되어 10장의 방법으로 풀린다.</p>
+    <p>곡선의 길이로 확인하자. \(F = \sqrt{1 + y'^2}\)이면 \(F_y = 0\), \(F_{y'} = y'/\sqrt{1 + y'^2}\)이다. 식 <a class="ref" href="#eq-euler-lagrange"></a>은 \(\dfrac{d}{dx}\dfrac{y'}{\sqrt{1 + y'^2}} = 0\)이 되고, \(y'/\sqrt{1 + y'^2}\)이 상수이면 \(y'\)도 상수이다. 평면의 두 점을 잇는 정지 곡선은 직선이다. 21.1절의 계산은 이 결과의 한 사례였다.</p>
+
+    <div class="box ex" id="ex-taut-string-sag"><div class="box-h">팽팽한 줄이 무게로 처지는 모양</div>
+      <p>선밀도 \(\mu\)인 줄을 장력 \(T\)로 팽팽하게 당겨 거리 \(L\)만큼 떨어진 같은 높이의 두 점에 맨다. 줄이 조금만 처진다고 보고 처진 모양 \(y(x)\)를 퍼텐셜 에너지 최소 조건으로 구하라(\(y\)는 위쪽이 양수). \(L = 10.0\ \text{m}\), \(\mu = 0.100\ \text{kg/m}\), \(T = 50.0\ \text{N}\)일 때 가운데가 처진 깊이는 얼마인가?</p>
+      <p><b>풀이.</b> 에너지는 두 가지다. 줄을 늘이는 데 장력이 한 일 \(T \times (\text{늘어난 길이})\)와 중력 퍼텐셜 에너지다. 기울기가 작으면 \(\sqrt{1 + y'^2} - 1 \approx \tfrac12 y'^2\)이고 장력도 거의 일정하므로</p>
+      <div class="formula" id="eq-taut-string-energy">\[ U[y] = \int_0^L \Big( \frac12 T\,y'^2 + \mu g\,y \Big)\,dx \]</div>
+      <p>이다. \(F = \tfrac12 Ty'^2 + \mu gy\)에서 \(F_y = \mu g\), \(F_{y'} = Ty'\)이므로 오일러-라그랑주 방정식은 \(\mu g - Ty'' = 0\), 곧 \(y'' = \mu g/T\)이다. \(y(0) = y(L) = 0\)을 만족하는 해는</p>
+      <div class="formula">\[ y(x) = -\frac{\mu g}{2T}\,x(L - x) \]</div>
+      <p>로 포물선이다. 가운데(\(x = L/2\))에서 처진 깊이는 \(\mu gL^2/8T\)이다.</p>
+      <p><b>숫자로 보기.</b> \(\mu gL^2/8T = (0.100)(9.81)(10.0)^2/(8 \times 50.0)\ \text{m} = 0.245\ \text{m}\)이다. 단위는 \((\text{kg/m})(\text{m/s}^2)(\text{m}^2)/\text{N} = \text{m}\)이다. 끝의 기울기는 \(\mu gL/2T = 0.098\)이라 \(y'^2 \approx 0.01\)이고, 버린 항이 1% 정도다.</p>
+      <p><b>다음 항은 몇 차인가.</b> \(\sqrt{1 + y'^2}\)를 근사하지 않으면 21.5절의 현수선 \(y = a\cosh(x/a) + \text{상수}\), \(a = T_0/\mu g\)가 나온다. 여기서 \(a = 50.97\ \text{m}\)이고 정확한 처진 깊이는 \(a[\cosh(L/2a) - 1] = 0.2454\ \text{m}\)이다. 포물선과의 차이 \(0.0002\ \text{m}\)는 처진 깊이의 \((L/2a)^2/12 \approx 0.08\%\)로, 2장의 <a href="ch02.html#ex-chain-cosh">예제 2.10</a>에서 본 \(\cosh\)의 다음 항이다.</p>
+    </div>
+
+    <h3 id="s2-functional-derivative">범함수 미분</h3>
+    <p>식 <a class="ref" href="#eq-first-variation-integral"></a>의 구조를 3장의 전미분 \(df = \sum_i (\partial f/\partial x_i)\,dx_i\)와 나란히 놓아 보자. 합 \(\sum_i\)가 적분 \(\int dx\)로, 변수의 증분 \(dx_i\)가 점마다의 증분 \(\delta y(x)\)로 바뀌었다. 그렇다면 대괄호는 "점 \(x\)에서의 편미분"이다.</p>
+    <div class="box def" id="def-functional-derivative"><div class="box-h">범함수 미분</div>
+      <p>끝점에서 0인 모든 \(\delta y\)에 대해</p>
+      <div class="formula" id="eq-functional-derivative">\[ \delta J = \int_a^b \frac{\delta J}{\delta y(x)}\,\delta y(x)\,dx \]</div>
+      <p>를 만족하는 함수 \(\delta J/\delta y(x)\)를 \(J\)의 <span class="term">범함수 미분</span> <span class="en">(functional derivative)</span>이라 한다. \(J\)가 식 <a class="ref" href="#eq-functional-integral"></a>의 꼴이면 식 <a class="ref" href="#eq-first-variation-integral"></a>에 따라 \(\delta J/\delta y(x) = F_y - (F_{y'})'\)이다. 오일러-라그랑주 방정식은 \(\delta J/\delta y(x) = 0\), 곧 "모든 점에서의 기울기가 0"이라는 조건이다.</p>
+    </div>
+    <p>이 비유는 계산으로도 확인된다. 구간을 폭 \(h\)인 \(N\)칸으로 나누고 \(y_i = y(x_i)\)로 두면, 적분은 합 \(J_N = \sum_{i} F\big(x_i, y_i, (y_{i+1} - y_i)/h\big)\,h\)가 되어 \(N - 1\)개 변수 \(y_1, \ldots, y_{N-1}\)의 보통 함수다. \(y_i\)는 \(i\)번째 항(\(y\) 자리와 기울기 자리)과 \(i - 1\)번째 항(기울기 자리)에만 들어 있으므로</p>
+    <div class="formula" id="eq-discrete-functional-derivative">\[ \begin{aligned} \frac{1}{h}\frac{\partial J_N}{\partial y_i} &= F_y\big|_i - \frac{F_{y'}\big|_i - F_{y'}\big|_{i-1}}{h} \\ &\;\longrightarrow\; F_y - \frac{d}{dx}F_{y'} \quad (h \to 0) \end{aligned} \]</div>
+    <p>이다. 범함수 미분은 칸 하나의 편미분을 칸의 폭으로 나눈 것의 극한이다. 그래서 변분 문제를 수치로 풀 때는 이 이산화된 함수를 3장처럼 최소화하면 된다(21.4절의 코드).</p>
+
+    <h3 id="s2-multi">종속 변수가 여럿일 때</h3>
+    <p>공간 곡선 \((y(x), z(x))\)처럼 함수가 여러 개이면 \(J = \int F(x, y_1, \ldots, y_n, y_1', \ldots, y_n')\,dx\)이다. 각 \(y_k\)를 따로 흔들 수 있으므로(다른 \(\eta\)는 0으로 두고), 위의 유도를 \(k\)마다 되풀이하면 방정식이 \(n\)개 나온다.</p>
+    <div class="formula" id="eq-euler-lagrange-multi">\[ \frac{\partial F}{\partial y_k} - \frac{d}{dx}\frac{\partial F}{\partial y_k'} = 0, \qquad k = 1, \ldots, n \]</div>
+    <p>예를 들어 공간 곡선의 길이 \(F = \sqrt{1 + y'^2 + z'^2}\)에서는 \(y'/\sqrt{1 + y'^2 + z'^2}\)과 \(z'/\sqrt{1 + y'^2 + z'^2}\)이 모두 상수이므로 \(y'\)과 \(z'\)이 상수, 곧 직선이다. 21.6절에서 독립 변수를 시간 \(t\)로, 종속 변수를 입자의 좌표 \(q_k(t)\)로 바꾸면 이 식이 라그랑주 방정식이 된다.</p>
+
+    <h3 id="s2-natural">끝점이 자유로울 때</h3>
+    <p>끝점 \(b\)에서 \(y(b)\)가 정해져 있지 않으면 \(\eta(b)\)도 마음대로다. 그러면 부분 적분의 경계 항 \(F_{y'}\eta\big|_{x=b}\)가 남는다. 먼저 \(\eta(b) = 0\)인 변분만 써서 오일러-라그랑주 방정식을 얻고, 그다음 \(\eta(b) \ne 0\)인 변분을 쓰면 경계 항도 0이어야 한다.</p>
+    <div class="formula" id="eq-natural-boundary">\[ \frac{\partial F}{\partial y'}\Big|_{x = b} = 0 \]</div>
+    <p>이것을 <span class="term">자연 경계 조건</span> <span class="en">(natural boundary condition)</span>이라 한다. 점에서 연직선 \(x = b\)까지의 최단 경로이면 \(F_{y'} = y'/\sqrt{1 + y'^2} = 0\)에서 \(y'(b) = 0\)이므로, 경로는 연직선에 수직으로 닿는다. <a class="ref" href="#prob-brachistochrone-line"></a>에서 최속 강하선에 이 조건을 쓴다.</p>
+    <div class="callout warn"><strong>오일러-라그랑주 방정식은 필요조건이다</strong><p><a class="ref" href="#thm-euler-lagrange"></a>는 "정지 함수라면 이 방정식을 만족한다"고 말할 뿐이다. 방정식의 해가 극소인지, 극대인지, 안장점인지는 따로 따져야 한다(21.6절 끝의 심화 상자). 또 정리는 매끄러운 함수 가운데 극값이 <b>있을 때</b>의 이야기다. 21.3절의 비누막처럼, 조건에 따라서는 매끄러운 해가 아예 없고 실제 물리가 그 틀 밖에서 답을 찾기도 한다.</p></div>
+  </section>
+
+  <!-- ============================================================ 21.3 -->
+  <section id="s3">
+    <h2>첫 적분: 벨트라미 항등식과 순환 좌표</h2>
+    <p>오일러-라그랑주 방정식은 2계 미분방정식이고, 최속 강하선이나 비누막처럼 대개 비선형이다. 역학에서는 이럴 때 보존 법칙이 도움이 된다. 에너지 보존을 쓰면 \(\ddot x\)가 들어 있는 운동 방정식 대신 \(\dot x\)만 들어 있는 식을 풀면 된다. 변분 문제에서도 피적분 함수에 어떤 변수가 빠져 있으면 방정식을 한 번 적분한 식, 곧 <span class="term">첫 적분</span> <span class="en">(first integral)</span>이 바로 나온다. 빠질 수 있는 변수는 종속 변수 \(y\)와 독립 변수 \(x\)의 두 가지다.</p>
+
+    <h3 id="s3-cyclic">\(y\)가 없을 때: 순환 좌표</h3>
+    <p>\(F\)가 \(y_k\)에 기대지 않고 그 도함수 \(y_k'\)에만 기대면 식 <a class="ref" href="#eq-euler-lagrange-multi"></a>의 첫 항이 사라져 \((\partial F/\partial y_k')' = 0\)이 된다. 따라서</p>
+    <div class="formula" id="eq-conserved-momentum">\[ \frac{\partial F}{\partial y_k} = 0 \quad\Longrightarrow\quad p_k \equiv \frac{\partial F}{\partial y_k'} = \text{상수} \]</div>
+    <p>이다. 이런 \(y_k\)를 <span class="term">순환 좌표</span> <span class="en">(cyclic coordinate)</span>라 하고, \(p_k\)를 그 좌표에 켤레인 운동량이라 한다. "운동량"이라는 이름은 21.6절에서 이 양이 실제로 운동량이나 각운동량이 되기 때문이다. 21.2절에서 직선을 얻은 계산이 바로 이 경우였다(\(F = \sqrt{1 + y'^2}\)에는 \(y\)가 없다).</p>
+
+    <h3 id="s3-beltrami">\(x\)가 없을 때: 벨트라미 항등식</h3>
+    <p>\(F\)가 \(x\)에 직접 기대지 않는 경우는 더 흔하다. 강하 시간, 비누막의 넓이, 사슬의 퍼텐셜 에너지가 모두 그렇다. 이때는 다음 조합이 보존된다.</p>
+    <div class="box thm" id="thm-beltrami-identity"><div class="box-h">벨트라미 항등식</div>
+      <p>\(F = F(y, y')\)가 \(x\)를 직접 포함하지 않으면(\(\partial F/\partial x = 0\)), 오일러-라그랑주 방정식의 모든 해는 다음을 만족한다.</p>
+      <div class="formula" id="eq-beltrami">\[ F - y'\,\frac{\partial F}{\partial y'} = C \quad (\text{상수}) \]</div>
+      <p>종속 변수가 여럿이면 \(F - \sum_k y_k'\,\partial F/\partial y_k' = C\)이다.</p>
+    </div>
+    <p>증명은 왼쪽을 \(x\)로 미분하는 것이다. 연쇄 법칙으로 \(dF/dx = F_x + F_y\,y' + F_{y'}\,y''\)이고, 곱의 미분으로 \((y'F_{y'})' = y''F_{y'} + y'(F_{y'})'\)이므로</p>
+    <div class="formula" id="eq-beltrami-derivative">\[ \frac{d}{dx}\Big(F - y'\frac{\partial F}{\partial y'}\Big) = \frac{\partial F}{\partial x} + y'\Big[\frac{\partial F}{\partial y} - \frac{d}{dx}\frac{\partial F}{\partial y'}\Big] \]</div>
+    <p>이다. \(F_{y'}y''\) 항이 지워졌다. 해 위에서는 대괄호가 0이고 가정에서 \(F_x = 0\)이므로 오른쪽이 0이다. 21.6절에서 독립 변수가 시간이 되면, 이 항등식이 에너지 보존이 된다.</p>
+    <div class="callout warn"><strong>벨트라미 식에는 가짜 해가 섞일 수 있다</strong><p>식 <a class="ref" href="#eq-beltrami-derivative"></a>을 거꾸로 읽으면, 벨트라미 식을 만족하는 함수는 오일러-라그랑주 방정식을 만족하거나 \(y' = 0\)인 상수 함수다. 상수 함수는 따로 확인해야 한다. 예를 들어 아래 예제의 \(F = y\sqrt{1 + y'^2}\)에서 \(y = R\)(원기둥)은 \(F - y'F_{y'} = R\)로 벨트라미 식을 만족하지만, \(F_y - (F_{y'})' = 1 \ne 0\)이라 정지 곡면이 아니다. 실제로 두 고리 사이의 비누막은 원기둥이 아니라 가운데가 잘록하다.</p></div>
+
+    <div class="box ex" id="ex-soap-film"><div class="box-h">두 고리 사이의 비누막</div>
+      <p>반지름 \(R\)인 철사 고리 두 개를 같은 축 위에 거리 \(2d\)만큼 떨어뜨려 놓고 그 사이에 비누막을 만든다. 막의 에너지는 표면 장력 \(\sigma\)와 넓이의 곱(앞뒤 두 면이므로 \(2\sigma A\))이므로 막은 넓이를 최소로 하는 모양을 찾는다. (가) 막의 모양을 구하라. (나) \(R = 5.0\ \text{cm}\), \(2d = 5.0\ \text{cm}\)일 때 막의 가장 잘록한 곳의 반지름과 넓이를 구하라. (다) 고리를 얼마나 멀리 떼면 막이 터지는가?</p>
+      <p><b>풀이.</b> (가) 축을 \(x\)축으로, 고리를 \(x = \pm d\)에 두고 막의 단면을 \(y(x)\)라 하자. 곡선을 축 둘레로 돌린 면의 넓이는 띠의 둘레 \(2\pi y\)와 폭 \(ds\)의 곱을 더한 것이다.</p>
+      <div class="formula" id="eq-soap-film-area">\[ A[y] = 2\pi\int_{-d}^{d} y\sqrt{1 + y'^2}\,dx \]</div>
+      <p>\(F = y\sqrt{1 + y'^2}\)에는 \(x\)가 없으므로 식 <a class="ref" href="#eq-beltrami"></a>을 쓴다.</p>
+      <div class="formula">\[ y\sqrt{1 + y'^2} - y'\,\frac{yy'}{\sqrt{1 + y'^2}} = \frac{y}{\sqrt{1 + y'^2}} = c \]</div>
+      <p>\(y'^2 = y^2/c^2 - 1\)이므로 \(dy/\sqrt{y^2 - c^2} = dx/c\)이고, 적분하면 \(\operatorname{arcosh}(y/c) = (x - x_0)/c\)이다. 막은 \(x = 0\)에 대해 대칭이므로 \(x_0 = 0\)이다.</p>
+      <div class="formula" id="eq-catenoid">\[ y(x) = c\cosh\frac{x}{c} \]</div>
+      <p>현수선을 돌린 이 곡면을 <span class="term">현수면</span> <span class="en">(catenoid)</span>이라 한다. \(c\)는 가장 잘록한 곳의 반지름이다. \(c\)는 경계 조건 \(y(\pm d) = R\)에서 정해진다. \(u = d/c\)로 두면</p>
+      <div class="formula" id="eq-soap-film-condition">\[ \frac{R}{d} = \frac{\cosh u}{u} \]</div>
+      <p>이다. 오른쪽 함수는 \(u \to 0\)과 \(u \to \infty\)에서 모두 무한대이고, 도함수가 0인 \(u\tanh u = 1\), 곧 \(u_* = 1.200\)에서 최솟값 \(1.509\)를 갖는다(그림 21-2 (가)). 따라서 \(R/d > 1.509\)이면 해가 둘, \(R/d &lt; 1.509\)이면 해가 없다.</p>
+      <p>(나) \(R/d = 2\)이면 \(\cosh u/u = 2\)의 두 근은 \(u_1 = 0.589\), \(u_2 = 2.127\)이고, \(c_1 = d/u_1 = 4.24\ \text{cm}\), \(c_2 = 1.18\ \text{cm}\)이다(그림 21-2 (나)). 넓이는 \(\int_{-d}^{d}\cosh^2(x/c)\,dx = d + \tfrac{c}{2}\sinh(2d/c)\)에서</p>
+      <div class="formula">\[ A = \pi c\Big(2d + c\sinh\frac{2d}{c}\Big) \]</div>
+      <p>이다. <b>숫자로 보기.</b> \(A_1 = 149.8\ \text{cm}^2\), \(A_2 = 171.1\ \text{cm}^2\)이다. 막이 각 고리를 원판으로 따로 막는 경우의 넓이 \(2\pi R^2 = 157.1\ \text{cm}^2\)과 비교하면, 얕게 잘록한 현수면 \(c_1\)이 셋 가운데 가장 작고 이것이 실제로 보이는 막이다. 깊게 잘록한 \(c_2\)는 정지 곡면이지만 극소가 아니다(21.6절 끝의 심화 상자에서 계산한다).</p>
+      <p>(다) 해가 있으려면 \(R/d \ge 1.509\), 곧 \(2d \le 2R/1.509 = 1.325R\)이어야 한다. \(R = 5.0\ \text{cm}\)이면 고리 간격이 \(6.6\ \text{cm}\)를 넘는 순간 매끄러운 정지 곡면이 사라지고, 막은 터져 두 고리에 원판 두 장으로 남는다. 21.2절 끝의 경고처럼, 이때의 답(원판 두 장)은 매끄러운 곡선 \(y(x)\)의 틀 밖에 있다. 답 \(c\)는 길이의 차원을 갖고, 넓이는 \(c\)와 \(d\)의 곱이므로 차원이 맞는다.</p>
+    </div>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 250" role="img" aria-label="함수 cosh u / u의 그래프. 최솟값 1.509는 u = 1.20에서이고, 높이 2인 수평선과 두 점에서 만난다"><defs><clipPath id="f2102-clip"><rect x="46" y="30" width="320" height="170"/></clipPath></defs><line x1="46" y1="143.3" x2="366" y2="143.3" class="s-grid"/><text x="40" y="148.3" class="t-dim" text-anchor="end">2</text><line x1="46" y1="86.7" x2="366" y2="86.7" class="s-grid"/><text x="40" y="91.7" class="t-dim" text-anchor="end">4</text><line x1="46" y1="30" x2="366" y2="30" class="s-grid"/><text x="40" y="35" class="t-dim" text-anchor="end">6</text><line x1="146" y1="30" x2="146" y2="200" class="s-grid"/><text x="146" y="218" class="t-dim" text-anchor="middle">1</text><line x1="246" y1="30" x2="246" y2="200" class="s-grid"/><text x="246" y="218" class="t-dim" text-anchor="middle">2</text><line x1="346" y1="30" x2="346" y2="200" class="s-grid"/><text x="346" y="218" class="t-dim" text-anchor="middle">3</text><line x1="46" y1="200" x2="366" y2="200" class="s-line"/><line x1="46" y1="30" x2="46" y2="200" class="s-line"/><text x="40" y="205" class="t-dim" text-anchor="end">0</text><line x1="46" y1="157.2" x2="366" y2="157.2" class="s-acc" stroke-dasharray="5 4" style="stroke-width:1.4"/><line x1="46" y1="143.3" x2="366" y2="143.3" class="s-acc2" style="stroke-width:1.8"/><path d="M71,83.1l2.5,9.8 2.4,8.1 2.5,6.9 2.4,5.8 2.5,5 2.5,4.3 2.4,3.8 2.5,3.3 2.4,3 2.5,2.6 2.4,2.3 2.5,2.1 2.5,1.9 2.4,1.6 2.5,1.6 2.4,1.3 2.5,1.3 2.4,1.1 2.5,1 2.5,0.9 2.4,0.8 2.5,0.8 2.4,0.6 2.5,0.7 2.5,0.5 2.4,0.5 2.5,0.4 2.4,0.4 2.5,0.3 2.5,0.3 2.4,0.3 2.5,0.2 2.4,0.2 2.5,0.2 2.4,0.1 2.5,0.1 2.5,0 2.4,0 2.5,0 2.4,0 2.5,0 2.4,-0.1 2.5,-0.1 2.5,-0.1 2.4,-0.1 2.5,-0.2 2.4,-0.2 2.5,-0.2 2.5,-0.2 2.4,-0.2 2.5,-0.3 2.4,-0.2 2.5,-0.3 2.5,-0.3 2.4,-0.4 2.5,-0.3 2.4,-0.4 2.5,-0.4 2.4,-0.3 2.5,-0.5 2.5,-0.4 2.4,-0.4 2.5,-0.5 2.4,-0.5 2.5,-0.5 2.4,-0.5 2.5,-0.5 2.5,-0.5 2.4,-0.6 2.5,-0.6 2.4,-0.6 2.5,-0.6 2.5,-0.6 2.4,-0.7 2.5,-0.6 2.4,-0.7 2.5,-0.7 2.5,-0.7 2.4,-0.8 2.5,-0.7 2.4,-0.8 2.5,-0.8 2.4,-0.8 2.5,-0.9 2.5,-0.8 2.4,-0.9 2.5,-0.9 2.4,-0.9 2.5,-0.9 2.4,-1 2.5,-1 2.5,-1 2.4,-1 2.5,-1 2.4,-1.1 2.5,-1.1 2.5,-1.1 2.4,-1.2 2.5,-1.1 2.4,-1.2 2.5,-1.3 2.5,-1.2 2.4,-1.3 2.5,-1.3 2.4,-1.3 2.5,-1.3 2.4,-1.4 2.5,-1.4 2.5,-1.5 2.4,-1.5 2.5,-1.5 2.4,-1.5 2.5,-1.6 2.4,-1.6 2.5,-1.6 2.5,-1.7 2.4,-1.7 2.5,-1.7 2.4,-1.8 2.5,-1.8" class="s-line" style="stroke:var(--text);stroke-width:2.4" fill="none" clip-path="url(#f2102-clip)"/><circle cx="104.9" cy="143.3" r="4.5" class="f-acc2"/><circle cx="258.7" cy="143.3" r="4.5" class="f-acc2"/><circle cx="166" cy="157.2" r="4.5" class="f-acc"/><text x="166" y="179.2" class="t-math acc" text-anchor="middle">1.509</text><text x="362" y="136.3" class="t-math acc2" text-anchor="end">R/d = 2</text><text x="110.9" y="135.3" class="t-math acc2" text-anchor="start">u<tspan baseline-shift="sub" font-size="72%">1</tspan></text><text x="252.7" y="135.3" class="t-math acc2" text-anchor="end">u<tspan baseline-shift="sub" font-size="72%">2</tspan></text><text x="108" y="47" class="t-math" text-anchor="start">cosh u / u</text><text x="12" y="18" class="t" text-anchor="start">(가) 경계 조건 R/d = cosh u / u</text><text x="366" y="238" class="t-dim" text-anchor="end">u = d/c</text></svg><svg viewBox="0 0 380 250" role="img" aria-label="거리 5 cm, 반지름 5 cm인 두 고리 사이 비누막의 두 단면. 얕은 곡선은 목 반지름 4.24 cm, 깊은 곡선은 1.18 cm"><line x1="20" y1="130" x2="360" y2="130" class="s-grid" stroke-dasharray="6 4"/><path d="M80,45l2.8,0.7 2.7,0.6 2.7,0.6 2.8,0.6 2.8,0.6 2.7,0.6 2.7,0.5 2.8,0.5 2.8,0.5 2.7,0.5 2.7,0.5 2.8,0.5 2.8,0.4 2.7,0.4 2.7,0.4 2.8,0.4 2.8,0.4 2.7,0.4 2.7,0.3 2.8,0.3 2.8,0.3 2.7,0.3 2.7,0.3 2.8,0.3 2.8,0.2 2.7,0.3 2.7,0.2 2.8,0.2 2.8,0.1 2.7,0.2 2.7,0.2 2.8,0.1 2.8,0.1 2.7,0.1 2.7,0.1 2.8,0.1 2.8,0 2.7,0.1 2.7,0 2.8,0 2.8,0 2.7,0 2.7,-0.1 2.8,0 2.8,-0.1 2.7,-0.1 2.7,-0.1 2.8,-0.1 2.8,-0.1 2.7,-0.2 2.7,-0.2 2.8,-0.1 2.8,-0.2 2.7,-0.2 2.7,-0.3 2.8,-0.2 2.8,-0.3 2.7,-0.3 2.7,-0.3 2.8,-0.3 2.8,-0.3 2.7,-0.3 2.7,-0.4 2.8,-0.4 2.8,-0.4 2.7,-0.4 2.7,-0.4 2.8,-0.4 2.8,-0.5 2.7,-0.5 2.7,-0.5 2.8,-0.5 2.8,-0.5 2.7,-0.5 2.7,-0.6 2.8,-0.6 2.8,-0.6 2.7,-0.6 2.7,-0.6 2.8,-0.7" class="s-acc" style="stroke-width:2.6" fill="none"/><path d="M80,215l2.8,-0.7 2.7,-0.6 2.7,-0.6 2.8,-0.6 2.8,-0.6 2.7,-0.6 2.7,-0.5 2.8,-0.5 2.8,-0.5 2.7,-0.5 2.7,-0.5 2.8,-0.5 2.8,-0.4 2.7,-0.4 2.7,-0.4 2.8,-0.4 2.8,-0.4 2.7,-0.4 2.7,-0.3 2.8,-0.3 2.8,-0.3 2.7,-0.3 2.7,-0.3 2.8,-0.3 2.8,-0.2 2.7,-0.3 2.7,-0.2 2.8,-0.2 2.8,-0.1 2.7,-0.2 2.7,-0.2 2.8,-0.1 2.8,-0.1 2.7,-0.1 2.7,-0.1 2.8,-0.1 2.8,0 2.7,-0.1 2.7,0 2.8,0 2.8,0 2.7,0 2.7,0.1 2.8,0 2.8,0.1 2.7,0.1 2.7,0.1 2.8,0.1 2.8,0.1 2.7,0.2 2.7,0.2 2.8,0.1 2.8,0.2 2.7,0.2 2.7,0.3 2.8,0.2 2.8,0.3 2.7,0.3 2.7,0.3 2.8,0.3 2.8,0.3 2.7,0.3 2.7,0.4 2.8,0.4 2.8,0.4 2.7,0.4 2.7,0.4 2.8,0.4 2.8,0.5 2.7,0.5 2.7,0.5 2.8,0.5 2.8,0.5 2.7,0.5 2.7,0.6 2.8,0.6 2.8,0.6 2.7,0.6 2.7,0.6 2.8,0.7" class="s-acc" style="stroke-width:2.6" fill="none"/><text x="190" y="77.9" class="t-math acc" text-anchor="middle">c<tspan baseline-shift="sub" font-size="72%">1</tspan> = 4.24</text><path d="M80,45l2.8,4.3 2.7,4 2.7,3.9 2.8,3.6 2.8,3.4 2.7,3.2 2.7,3.1 2.8,2.9 2.8,2.7 2.7,2.6 2.7,2.5 2.8,2.3 2.8,2.1 2.7,2.1 2.7,1.9 2.8,1.8 2.8,1.7 2.7,1.6 2.7,1.5 2.8,1.4 2.8,1.3 2.7,1.2 2.7,1.2 2.8,1 2.8,1 2.7,0.9 2.7,0.9 2.8,0.7 2.8,0.7 2.7,0.6 2.7,0.6 2.8,0.5 2.8,0.4 2.7,0.4 2.7,0.3 2.8,0.3 2.8,0.2 2.7,0.1 2.7,0.1 2.8,0 2.8,0 2.7,-0.1 2.7,-0.1 2.8,-0.2 2.8,-0.3 2.7,-0.3 2.7,-0.4 2.8,-0.4 2.8,-0.5 2.7,-0.6 2.7,-0.6 2.8,-0.7 2.8,-0.7 2.7,-0.9 2.7,-0.9 2.8,-1 2.8,-1 2.7,-1.2 2.7,-1.2 2.8,-1.3 2.8,-1.4 2.7,-1.5 2.7,-1.6 2.8,-1.7 2.8,-1.8 2.7,-1.9 2.7,-2.1 2.8,-2.1 2.8,-2.3 2.7,-2.5 2.7,-2.6 2.8,-2.7 2.8,-2.9 2.7,-3.1 2.7,-3.2 2.8,-3.4 2.8,-3.6 2.7,-3.9 2.7,-4 2.8,-4.3" class="s-acc2" style="stroke-width:2.2" fill="none" stroke-dasharray="6 4"/><path d="M80,215l2.8,-4.3 2.7,-4 2.7,-3.9 2.8,-3.6 2.8,-3.4 2.7,-3.2 2.7,-3.1 2.8,-2.9 2.8,-2.7 2.7,-2.6 2.7,-2.5 2.8,-2.3 2.8,-2.1 2.7,-2.1 2.7,-1.9 2.8,-1.8 2.8,-1.7 2.7,-1.6 2.7,-1.5 2.8,-1.4 2.8,-1.3 2.7,-1.2 2.7,-1.2 2.8,-1 2.8,-1 2.7,-0.9 2.7,-0.9 2.8,-0.7 2.8,-0.7 2.7,-0.6 2.7,-0.6 2.8,-0.5 2.8,-0.4 2.7,-0.4 2.7,-0.3 2.8,-0.3 2.8,-0.2 2.7,-0.1 2.7,-0.1 2.8,0 2.8,0 2.7,0.1 2.7,0.1 2.8,0.2 2.8,0.3 2.7,0.3 2.7,0.4 2.8,0.4 2.8,0.5 2.7,0.6 2.7,0.6 2.8,0.7 2.8,0.7 2.7,0.9 2.7,0.9 2.8,1 2.8,1 2.7,1.2 2.7,1.2 2.8,1.3 2.8,1.4 2.7,1.5 2.7,1.6 2.8,1.7 2.8,1.8 2.7,1.9 2.7,2.1 2.8,2.1 2.8,2.3 2.7,2.5 2.7,2.6 2.8,2.7 2.8,2.9 2.7,3.1 2.7,3.2 2.8,3.4 2.8,3.6 2.7,3.9 2.7,4 2.8,4.3" class="s-acc2" style="stroke-width:2.2" fill="none" stroke-dasharray="6 4"/><text x="190" y="102" class="t-math acc2" text-anchor="middle">c<tspan baseline-shift="sub" font-size="72%">2</tspan> = 1.18</text><line x1="80" y1="45" x2="80" y2="215" class="s-line" style="stroke:var(--text);stroke-width:4"/><line x1="300" y1="45" x2="300" y2="215" class="s-line" style="stroke:var(--text);stroke-width:4"/><text x="72" y="49" class="t-dim" text-anchor="end">R = 5</text><text x="190" y="245" class="t-dim" text-anchor="middle">고리 간격 2d = 5 cm</text><text x="12" y="18" class="t" text-anchor="start">(나) 두 해의 단면 (cm)</text><text x="356" y="124" class="t-dim" text-anchor="end">축</text></svg></div>
+      <figcaption><b>그림 21-2.</b> 두 고리 사이의 비누막. (가) 경계 조건 식 <a class="ref" href="#eq-soap-film-condition"></a>의 오른쪽 \(\cosh u/u\). 최솟값 1.509(점선) 아래로는 해가 없고, 그 위의 수평선 \(R/d = 2\)는 두 점 \(u_1\), \(u_2\)에서 곡선과 만난다. (나) 두 해의 단면. 실선은 얕은 해(\(c_1 = 4.24\ \text{cm}\), 넓이 149.8 cm²), 점선은 깊은 해(\(c_2 = 1.18\ \text{cm}\), 넓이 171.1 cm²)이다. 굵은 세로 막대가 고리, 가운데 수평선이 회전축이다. 곡선은 식 <a class="ref" href="#eq-catenoid"></a>로 계산했다. (나)는 가로를 세로의 약 2.6배로 늘려 그렸다.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================================================ 21.4 -->
+  <section id="s4">
+    <h2>고전 문제: 최단 경로, 최속 강하선, 페르마 원리</h2>
+    <p>변분법은 세 가지 오래된 질문에서 자랐다. 굽은 면 위에서 두 점을 잇는 가장 짧은 길은 무엇인가, 구슬이 가장 빨리 내려가는 길은 무엇인가, 빛은 어떤 길을 고르는가. 세 문제 모두 21.2–21.3절의 도구만으로 끝까지 풀린다. 그리고 세 문제 모두 피적분 함수에서 변수 하나가 빠져 있어 첫 적분이 바로 나온다.</p>
+
+    <h3 id="s4-geodesic">구 위의 최단 경로</h3>
+    <p>반지름 \(R\)인 구면 위의 점을 구면 좌표 \((\theta, \phi)\)로 나타내면, 두 이웃한 점 사이의 거리는 \(ds^2 = R^2(d\theta^2 + \sin^2\theta\,d\phi^2)\)이다(6장의 <a href="ch06.html#eq-line-element">선 요소</a>에서 \(dr = 0\)으로 둔 것). 곡면 위에서 두 점 사이의 거리를 정지시키는 곡선을 <span class="term">측지선</span> <span class="en">(geodesic)</span>이라 한다.</p>
+    <div class="box ex" id="ex-sphere-geodesic"><div class="box-h">구 위의 측지선과 비행 항로</div>
+      <p>(가) 구면 위의 측지선이 대원(구의 중심을 지나는 평면과 구면이 만나는 원)임을 보여라. (나) 지구(\(R_\oplus = 6371\ \text{km}\)) 위에서 위도 \(37.6^\circ\text{N}\)에 있고 경도가 \(110.6^\circ\) 다른 두 도시(서울과 샌프란시스코에 가까운 값)를 생각하자. 대원 항로의 길이를 위도선을 따라가는 길이와 비교하고, 대원 항로가 올라가는 가장 높은 위도를 구하라.</p>
+      <p><b>풀이.</b> (가) 곡선을 \(\phi(\theta)\)로 쓰면 길이는</p>
+      <div class="formula" id="eq-sphere-arc-length">\[ s[\phi] = R\int_{\theta_1}^{\theta_2}\sqrt{1 + \sin^2\theta\,\phi'^2}\,d\theta \]</div>
+      <p>이다. 피적분 함수에 \(\phi\)가 없으므로 \(\phi\)는 순환 좌표이고, 식 <a class="ref" href="#eq-conserved-momentum"></a>에 따라</p>
+      <div class="formula">\[ \frac{\sin^2\theta\,\phi'}{\sqrt{1 + \sin^2\theta\,\phi'^2}} = c \]</div>
+      <p>이다. \(\phi'\)에 대해 풀면 \(\phi' = c/\big(\sin\theta\sqrt{\sin^2\theta - c^2}\big)\)이다. \(u = \cot\theta\)로 바꾸면 \(du = -d\theta/\sin^2\theta\), \(1/\sin^2\theta = 1 + u^2\)이므로</p>
+      <div class="formula">\[ d\phi = \frac{-c\,du}{\sqrt{(1 - c^2) - c^2u^2}} \]</div>
+      <p>이고, 적분하면 \(\phi - \phi_1 = \arccos\big(cu/\sqrt{1 - c^2}\big)\)이다. 정리하면</p>
+      <div class="formula" id="eq-great-circle">\[ \cot\theta = k\cos(\phi - \phi_1), \qquad k = \frac{\sqrt{1 - c^2}}{c} \]</div>
+      <p>이다. 양변에 \(R\sin\theta\)를 곱하면 \(R\cos\theta = k(R\sin\theta\cos\phi\cos\phi_1 + R\sin\theta\sin\phi\sin\phi_1)\), 곧 \(z = k(x\cos\phi_1 + y\sin\phi_1)\)이다. 이것은 원점을 지나는 평면의 방정식이므로 곡선은 대원이다. (\(c = 0\)이면 \(\phi' = 0\), 곧 경도선인데, 이것도 대원이다.)</p>
+      <p>(나) 위도 \(\lambda\)는 \(\theta = 90^\circ - \lambda\)이므로 \(\cot\theta = \tan\lambda\)이다. 두 점이 같은 위도에 있으므로 대칭에 따라 \(\phi_1\)은 두 경도의 한가운데이고, 두 점에서 \(\phi - \phi_1 = \pm\Delta\phi/2\)이다. 따라서 \(k = \tan\lambda/\cos(\Delta\phi/2)\)이고, 가장 높은 위도는 \(\cos(\phi - \phi_1) = 1\)인 곳의 \(\tan\lambda_{\max} = k\)이다. 두 점 사이의 중심각 \(\sigma\)는 두 위치 벡터의 내적에서 \(\cos\sigma = \sin^2\lambda + \cos^2\lambda\cos\Delta\phi\)이다.</p>
+      <p><b>숫자로 보기.</b> \(\lambda = 37.6^\circ\), \(\Delta\phi = 110.6^\circ\)이면 \(\cos\sigma = 0.3722 + 0.6278 \times (-0.3518) = 0.1514\), \(\sigma = 81.29^\circ = 1.419\ \text{rad}\)이다. 대원 항로는 \(R_\oplus\sigma = 9039\ \text{km}\)이고, 위도선을 따라가면 \(R_\oplus\cos\lambda\,\Delta\phi = 9744\ \text{km}\)로 \(705\ \text{km}\)(7.8%) 더 길다. 가장 높은 위도는 \(\lambda_{\max} = \arctan(0.7701/0.5693) = 53.5^\circ\text{N}\)이다. 지도에서 직선으로 보이는 위도선이 아니라 북쪽으로 크게 휘어 오르는 길이 더 짧다. 북태평양 항로가 알래스카 쪽으로 올라가는 이유다.</p>
+    </div>
+    <p>같은 대원 위에서 두 점을 잇는 길은 둘이다. 짧은 호와, 반대 방향으로 돌아가는 긴 호다. 긴 호도 식 <a class="ref" href="#eq-great-circle"></a>를 만족하는 정지 곡선이지만 최단 경로는 아니다. 오일러-라그랑주 방정식이 필요조건일 뿐이라는 것을 보여 주는 예다(21.6절 끝의 심화 상자).</p>
+    <div class="callout deep" data-later="relativity"><strong>굽은 공간의 측지선</strong><p>일반적인 곡면이나 곡선 좌표에서는 선 요소가 \(ds^2 = \sum_{i,j} g_{ij}\,du^i du^j\)의 꼴이고, 계수 \(g_{ij}\)를 <a href="ch22.html#def-metric-tensor">계량 텐서</a>라 한다(22장. 여기서는 22장처럼 좌표의 지수를 위에 쓴다). 곡선을 매개변수 \(\tau\)로 쓰고 \(F = \sum g_{ij}\dot u^i\dot u^j\)(길이 대신 이 2차식을 쓰면 정지 곡선은 같고, 매개변수 \(\tau\)가 길이에 비례하게 된다)에 식 <a class="ref" href="#eq-euler-lagrange-multi"></a>을 쓰면 측지선 방정식 \(\ddot u^i + \sum_{j,k}\Gamma^i_{jk}\dot u^j\dot u^k = 0\)이 나오고, 여기에 22장의 <a href="ch22.html#def-christoffel">크리스토펠 기호</a> \(\Gamma^i_{jk}\)가 등장한다. 일반 상대성이론에서는 중력만 받는 입자가 시공간의 측지선을 따라 움직인다. 측지선 방정식의 일반론과 곡률은 상대성이론 책에서 다룬다.</p></div>
+
+    <h3 id="s4-brachistochrone">최속 강하선</h3>
+    <p>21.1절의 질문으로 돌아가자. 요한 베르누이가 1696년에 다른 수학자들에게 공개 문제로 낸 질문이다(Joh. Bernoulli, <i>Acta Eruditorum</i> 1696, 269쪽, 6월호).</p>
+    <div class="box ex" id="ex-brachistochrone"><div class="box-h">최속 강하선은 사이클로이드다</div>
+      <p>원점 A에서 정지 상태로 출발한 구슬이 마찰 없이 미끄러져 점 B \((b, h)\)에 가장 빨리 닿는 곡선을 구하라(\(y\)는 아래쪽이 양수). \(b = 2.00\ \text{m}\), \(h = 1.00\ \text{m}\)일 때 걸리는 시간을 <a class="ref" href="#ex-descent-time-paths"></a>의 두 경로와 비교하라.</p>
+      <p><b>풀이.</b> 식 <a class="ref" href="#eq-descent-time"></a>에서 상수 \(1/\sqrt{2g}\)를 빼면 \(F = \sqrt{1 + y'^2}/\sqrt y\)이다. \(x\)가 없으므로 식 <a class="ref" href="#eq-beltrami"></a>을 쓴다. \(F_{y'} = y'/\big(\sqrt y\sqrt{1 + y'^2}\big)\)이므로</p>
+      <div class="formula">\[ \begin{aligned} F - y'F_{y'} &= \frac{(1 + y'^2) - y'^2}{\sqrt y\,\sqrt{1 + y'^2}} \\ &= \frac{1}{\sqrt{y(1 + y'^2)}} = \text{상수} \end{aligned} \]</div>
+      <p>이다. 상수를 \(1/\sqrt{2R}\)로 쓰면</p>
+      <div class="formula" id="eq-brachistochrone-integral">\[ y\,(1 + y'^2) = 2R \]</div>
+      <p>이다. 이 1계 방정식은 매개변수로 풀린다. \(y = 2R\sin^2(\theta/2) = R(1 - \cos\theta)\)로 두면 \(1 + y'^2 = 2R/y = 1/\sin^2(\theta/2)\)이므로 \(y' = \cot(\theta/2)\)이다. 그러면</p>
+      <div class="formula">\[ \begin{aligned} dx = \frac{dy}{y'} &= R\sin\theta\,\tan\frac{\theta}{2}\,d\theta \\ &= 2R\sin^2\frac{\theta}{2}\,d\theta = R(1 - \cos\theta)\,d\theta \end{aligned} \]</div>
+      <p>이고, \(\theta = 0\)에서 \(x = 0\)이 되도록 적분하면</p>
+      <div class="formula" id="eq-cycloid">\[ x = R(\theta - \sin\theta), \qquad y = R(1 - \cos\theta) \]</div>
+      <p>이다. 반지름 \(R\)인 바퀴가 \(x\)축 아래쪽을 따라 굴러갈 때 테두리의 한 점이 그리는 곡선, 곧 <span class="term">사이클로이드</span> <span class="en">(cycloid)</span>다. \(\theta\)는 바퀴가 돈 각이다.</p>
+      <p>걸리는 시간도 \(\theta\)로 쓰면 간단하다. \(ds = \sqrt{dx^2 + dy^2} = R\sqrt{2(1 - \cos\theta)}\,d\theta = 2R\sin(\theta/2)\,d\theta\)이고 \(v = \sqrt{2gy} = 2\sqrt{gR}\sin(\theta/2)\)이므로 \(dt = ds/v = \sqrt{R/g}\,d\theta\)이다.</p>
+      <div class="formula" id="eq-cycloid-time">\[ T = \theta_B\sqrt{\frac{R}{g}} \]</div>
+      <p>여기서 \(\theta_B\)는 B에서의 매개변수다. \(R\)과 \(\theta_B\)는 B를 지나는 조건 \(R(\theta_B - \sin\theta_B) = b\), \(R(1 - \cos\theta_B) = h\)에서 정해진다. 두 식을 나누면 \(R\)이 빠진다.</p>
+      <p><b>숫자로 보기.</b> \((\theta_B - \sin\theta_B)/(1 - \cos\theta_B) = b/h = 2\)를 수치로 풀면 \(\theta_B = 3.508\ \text{rad}\) \((201.0^\circ)\)이다. 그러면 \(R = h/(1 - \cos\theta_B) = 0.517\ \text{m}\)이고</p>
+      <div class="formula">\[ T = 3.508 \times \sqrt{\frac{0.517\ \text{m}}{9.81\ \text{m/s}^2}} = 0.806\ \text{s} \]</div>
+      <p>이다. 직선(1.010 s)보다 20%, 꺾인 경로(0.903 s)보다 11% 빠르다(그림 21-3). \(\theta_B > \pi\)이므로 곡선은 \(\theta = \pi\)에서 가장 깊은 \(y = 2R = 1.034\ \text{m}\)까지 내려간 뒤, B로 3.4 cm 올라온다. 끝점보다 더 내려가 속력을 얻는 것이 이득이다. \(b/h &lt; \pi/2\)이면 \(\theta_B &lt; \pi\)라서 이런 일이 없다. \(\theta = \pi\)를 지나면 \(y' = \cot(\theta/2)\)가 음수가 되는데, 위의 매개변수 표현은 이 부분까지 그대로 맞는다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 290" role="img" aria-label="출발점 (0, 0)에서 (2 m, 1 m 아래)까지 가는 세 경로: 직선 1.010 s, 수직으로 떨어졌다 수평으로 가는 꺾인 경로 0.903 s, 사이클로이드 0.806 s"><defs><clipPath id="f2103-clip"><rect x="30" y="30" width="440" height="230"/></clipPath></defs><line x1="50" y1="40" x2="50" y2="249" class="s-grid"/><text x="50" y="28" class="t-dim" style="font-size:15px" text-anchor="middle">0</text><line x1="145" y1="40" x2="145" y2="249" class="s-grid"/><text x="145" y="28" class="t-dim" style="font-size:15px" text-anchor="middle">0.5</text><line x1="240" y1="40" x2="240" y2="249" class="s-grid"/><text x="240" y="28" class="t-dim" style="font-size:15px" text-anchor="middle">1</text><line x1="335" y1="40" x2="335" y2="249" class="s-grid"/><text x="335" y="28" class="t-dim" style="font-size:15px" text-anchor="middle">1.5</text><line x1="430" y1="40" x2="430" y2="249" class="s-grid"/><text x="430" y="28" class="t-dim" style="font-size:15px" text-anchor="middle">2</text><line x1="50" y1="40" x2="468" y2="40" class="s-grid"/><text x="42" y="45" class="t-dim" style="font-size:15px" text-anchor="end">0</text><line x1="50" y1="135" x2="468" y2="135" class="s-grid"/><text x="42" y="140" class="t-dim" style="font-size:15px" text-anchor="end">0.5</text><line x1="50" y1="230" x2="468" y2="230" class="s-grid"/><text x="42" y="235" class="t-dim" style="font-size:15px" text-anchor="end">1</text><line x1="50" y1="40" x2="430" y2="230" class="s-grid" style="stroke:var(--text-dim);stroke-width:2.2"/><path d="M50,40L50,230L430,230" class="s-acc2" style="stroke-width:2.2" stroke-dasharray="7 5" fill="none"/><path d="M50,40l0,0.1 0,0.1 0,0.3 0,0.5 0.1,0.5 0.1,0.7 0,0.7 0.2,0.9 0.1,1.1 0.2,1.1 0.2,1.2 0.3,1.4 0.3,1.4 0.4,1.6 0.5,1.7 0.5,1.8 0.5,1.9 0.6,2 0.7,2 0.8,2.2 0.9,2.3 0.9,2.3 1,2.5 1.1,2.5 1.2,2.6 1.3,2.7 1.4,2.8 1.5,2.8 1.6,2.9 1.7,3 1.8,3 1.9,3.1 2,3.1 2.1,3.2 2.2,3.2 2.4,3.3 2.4,3.3 2.6,3.3 2.7,3.4 2.8,3.4 2.9,3.4 3.1,3.4 3.2,3.5 3.3,3.4 3.4,3.5 3.5,3.4 3.7,3.4 3.7,3.5 3.9,3.4 4.1,3.4 4.1,3.4 4.2,3.3 4.4,3.3 4.5,3.3 4.6,3.3 4.7,3.2 4.8,3.1 5,3.2 5,3 5.2,3 5.2,2.9 5.4,2.9 5.4,2.8 5.6,2.7 5.6,2.7 5.8,2.6 5.8,2.5 5.9,2.4 6,2.3 6.1,2.2 6.2,2.2 6.2,2 6.3,1.9 6.3,1.9 6.5,1.7 6.5,1.6 6.5,1.6 6.6,1.4 6.6,1.3 6.7,1.2 6.7,1.1 6.8,0.9 6.8,0.9 6.8,0.7 6.8,0.6 6.9,0.5 6.9,0.3 6.9,0.3 6.9,0.1 6.9,0 6.8,-0.1 6.9,-0.2 6.9,-0.4 6.9,-0.5 6.8,-0.6 6.8,-0.7 6.8,-0.8 6.8,-1 6.7,-1 6.7,-1.2" class="s-acc" style="stroke-width:2.8" fill="none"/><circle cx="50" cy="40" r="5" class="f-acc"/><circle cx="430" cy="230" r="5" class="f-acc"/><text x="440" y="222" class="t-math" style="font-size:16px" text-anchor="start">B</text><text x="62" y="74" class="t-math" style="font-size:16px" text-anchor="start">A</text><text x="287.5" y="131.2" class="t-math dim" style="font-size:15px" text-anchor="start">직선 1.010 s</text><text x="61.4" y="220" class="t-math acc2" style="font-size:15px" text-anchor="start">꺾인 경로 0.903 s</text><text x="357.8" y="260.5" class="t-math acc" style="font-size:15px" text-anchor="middle">사이클로이드 0.806 s</text><text x="470" y="45" class="t-dim" style="font-size:15px" text-anchor="end">x (m)</text><text x="12" y="276" class="t-dim" style="font-size:15px" text-anchor="start">y (m) ↓</text></svg>
+      <figcaption><b>그림 21-3.</b> A \((0, 0)\)에서 B \((2\ \text{m}, 1\ \text{m})\)까지 가는 세 경로(\(y\)는 아래쪽이 양수). 가는 선은 직선(1.010 s), 점선은 연직으로 떨어진 뒤 수평으로 가는 꺾인 경로(0.903 s), 굵은 곡선은 사이클로이드(0.806 s)다. 사이클로이드는 B보다 3.4 cm 더 내려갔다가 올라온다. 곡선은 식 <a class="ref" href="#eq-cycloid"></a>로 계산했다.</figcaption>
+    </figure>
+    <!-- sim: brachistochrone -->
+    <p>21.2절의 이산화로 이 결과를 확인할 수 있다. 곡선을 꺾은선 80개로 나누면, 한 토막 위에서는 등가속 운동이라 걸리는 시간이 \(2\Delta s/(v_1 + v_2)\)로 정확히 계산된다. 꼭짓점의 높이 79개를 하나씩 조금씩 움직여 시간이 줄어드는 쪽으로 옮기기를 되풀이하면 된다.</p>
+<pre><code>import math
+g, b, h, N = 9.81, 2.0, 1.0, 80
+xs = [b * i / N for i in range(N + 1)]
+ys = [h * i / N for i in range(N + 1)]          # 처음 곡선: 직선
+def T(ys):                                       # 꺾은선 위의 강하 시간
+    t = 0.0
+    for i in range(N):
+        ds = math.hypot(xs[i+1] - xs[i], ys[i+1] - ys[i])
+        v = math.sqrt(2*g*ys[i]) + math.sqrt(2*g*ys[i+1])
+        t += 2 * ds / v if v > 0 else 1e9
+    return t
+best, step = T(ys), 0.05
+while step > 1e-7:                               # 좌표 하나씩 내리막 찾기
+    moved = False
+    for i in range(1, N):
+        for d in (step, -step):
+            if ys[i] + d &lt;= 0:                   # 출발점보다 높이 올리지 않는다
+                continue
+            ys[i] += d
+            t = T(ys)
+            if t &lt; best:
+                best, moved = t, True
+                break
+            ys[i] -= d
+    if not moved:
+        step = step / 2
+print(f"이산화 최소 {best:.4f} s,  사이클로이드 0.8056 s")</code></pre>
+    <p>결과는 \(0.8065\ \text{s}\)로, 꺾은선의 오차 안에서 사이클로이드의 값과 맞는다. \(x = 1\ \text{m}\)에서 꼭짓점의 깊이도 \(0.939\ \text{m}\)로 사이클로이드의 \(0.937\ \text{m}\)과 거의 같다.</p>
+    <div class="callout tip"><strong>사이클로이드의 등시성</strong><p>사이클로이드에는 또 하나의 성질이 있다. 곡선의 가장 낮은 점(\(\theta = \pi\))으로 내려가는 데 걸리는 시간이, 곡선 위의 어디에서 출발하든 \(\pi\sqrt{R/g}\)로 같다. 이것을 <span class="term">등시성</span> <span class="en">(tautochrone property)</span>이라 한다. 높이 놓을수록 길이 길지만 그만큼 빨라지기 때문이다. 하위헌스가 이 성질을 이용해 진폭과 상관없이 주기가 일정한 진자시계를 설계했다(C. Huygens, <i>Horologium Oscillatorium</i>, Paris: F. Muguet, 1673). <a class="ref" href="#prob-cycloid-isochrone"></a>에서 이것을 증명한다. 보통의 원호 진자는 1장의 <a href="ch01.html#ex-pendulum-period-series">예제 1.14</a>에서 보았듯 진폭이 커지면 주기가 길어진다.</p></div>
+
+    <h3 id="s4-fermat">페르마 원리</h3>
+    <p>굴절률 \(n\)인 매질에서 빛의 속력은 \(c/n\)이므로, 길이 \(ds\)를 지나는 시간은 \(n\,ds/c\)이다. <span class="term">페르마 원리</span> <span class="en">(Fermat’s principle)</span>는 빛이 두 점 사이에서 <span class="term">광학적 거리</span> <span class="en">(optical path length)</span></p>
+    <div class="formula" id="eq-optical-path">\[ \mathcal S[\text{경로}] = \int n\,ds \]</div>
+    <p>를 정지시키는 경로로 간다는 원리다. 식 <a class="ref" href="#eq-descent-time"></a>과 견주면, 최속 강하선은 굴절률이 \(n \propto 1/\sqrt y\)인 매질 속의 빛의 경로와 같은 문제다. 굴절률이 고른 곳에서는 \(n\)이 상수이므로 경로는 21.2절의 직선이다.</p>
+    <div class="box ex" id="ex-fermat-snell"><div class="box-h">페르마 원리에서 스넬 법칙으로</div>
+      <p>(가) 굴절률 \(n_1\)인 매질의 점 A에서 \(n_2\)인 매질의 점 B로 가는 빛이 평평한 경계에서 꺾이는 법칙을 페르마 원리로 구하라. (나) 굴절률이 높이 \(y\)에 따라서만 바뀌는 매질 \(n(y)\)로 넓혀라. (다) 공기(\(n_1 = 1.000\))에서 물(\(n_2 = 1.333\))로 \(45^\circ\)로 들어가는 빛의 굴절각과, 물속에서 나오는 빛의 임계각을 구하라.</p>
+      <p><b>풀이.</b> (가) 각 매질 안에서는 경로가 직선이므로, 남은 자유도는 경계를 지나는 점 P의 위치 \(x\) 하나다(그림 21-4). A가 경계에서 높이 \(a_1\), B가 깊이 \(a_2\)에 있고 둘의 수평 거리가 \(D\)이면 광학적 거리는 \(\mathcal S(x) = n_1\sqrt{x^2 + a_1^2} + n_2\sqrt{(D - x)^2 + a_2^2}\)이다. \(d\mathcal S/dx = 0\)에서 \(n_1x/\sqrt{x^2 + a_1^2} = n_2(D - x)/\sqrt{(D - x)^2 + a_2^2}\)이고, 두 분수는 법선에서 잰 입사각과 굴절각의 사인이다.</p>
+      <div class="formula" id="eq-snell-law">\[ n_1\sin\theta_1 = n_2\sin\theta_2 \]</div>
+      <p>(나) 경로를 \(x(y)\)로 쓰면 \(\mathcal S = \int n(y)\sqrt{1 + x'^2}\,dy\)이다. 피적분 함수에 \(x\)가 없으므로 \(x\)는 순환 좌표이고, 식 <a class="ref" href="#eq-conserved-momentum"></a>에 따라 \(n\,x'/\sqrt{1 + x'^2}\)이 일정하다. \(x'/\sqrt{1 + x'^2}\)은 경로가 \(y\)축(층의 법선)과 이루는 각 \(\theta\)의 사인이므로</p>
+      <div class="formula" id="eq-snell-stratified">\[ n(y)\sin\theta(y) = \text{상수} \]</div>
+      <p>이다. 얇은 층마다 식 <a class="ref" href="#eq-snell-law"></a>을 쓴 것과 같다. 굴절률이 낮아지는 쪽으로 가는 빛은 \(\sin\theta\)가 커지다가 \(n(y) = n_0\sin\theta_0\)인 높이에서 수평이 되어 되돌아온다. 뜨거운 도로 위의 신기루가 이렇게 생긴다(<a class="ref" href="#prob-mirage"></a>).</p>
+      <p><b>숫자로 보기.</b> (다) \(\sin\theta_2 = \sin 45^\circ/1.333 = 0.530\)이므로 \(\theta_2 = 32.0^\circ\)이다. 빛이 법선 쪽으로 꺾인다. 거꾸로 물에서 공기로 나가는 빛은 \(\sin\theta_1 = 1.333\sin\theta_2\)가 1을 넘을 수 없으므로 \(\theta_2 > \arcsin(1/1.333) = 48.6^\circ\)이면 나가지 못하고 모두 반사된다(<span class="term">전반사</span> <span class="en">(total internal reflection)</span>). 굴절률은 차원이 없으므로 각도만으로 답이 정해진다.</p>
+    </div>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 300" role="img" aria-label="공기와 물의 경계에서 꺾이는 빛의 경로. 입사각 θ1, 굴절각 θ2"><rect x="10" y="150" width="400" height="140" class="f-acc2-soft" style="stroke-width:0"/><line x1="10" y1="150" x2="410" y2="150" class="s-line"/><line x1="236.1" y1="30" x2="236.1" y2="280" class="s-grid" stroke-dasharray="5 4"/><path d="M90,30L236.1,150L330,282" class="s-acc" style="stroke-width:2.6" fill="none"/><circle cx="90" cy="30" r="5" class="f-acc"/><circle cx="330" cy="282" r="5" class="f-acc"/><circle cx="236.1" cy="150" r="4" class="f-acc"/><path d="M236.1,102A48,48 0 0 0 199,119.5" class="s-line" fill="none"/><path d="M236.1,198A48,48 0 0 0 263.9,189.1" class="s-line" fill="none"/><text x="211.6" y="98.6" class="t-math" style="font-size:16px" text-anchor="end">θ<tspan baseline-shift="sub" font-size="72%">1</tspan></text><text x="256.7" y="213.7" class="t-math" style="font-size:16px" text-anchor="start">θ<tspan baseline-shift="sub" font-size="72%">2</tspan></text><text x="80" y="22" class="t-math" style="font-size:16px" text-anchor="end">A</text><text x="340" y="288" class="t-math" style="font-size:16px" text-anchor="start">B</text><text x="244.1" y="142" class="t-math" style="font-size:16px" text-anchor="start">P</text><text x="22" y="140" class="t-dim" style="font-size:16px" text-anchor="start">n<tspan baseline-shift="sub" font-size="72%">1</tspan> (공기)</text><text x="22" y="278" class="t-dim" style="font-size:16px" text-anchor="start">n<tspan baseline-shift="sub" font-size="72%">2</tspan> (물)</text></svg></div>
+      <figcaption><b>그림 21-4.</b> 공기의 점 A에서 물속의 점 B로 가는 빛. 경계 위의 점 P를 옮겨 가며 광학적 거리 \(n_1\overline{\text{AP}} + n_2\overline{\text{PB}}\)가 가장 작은 곳을 찾으면 \(n_1\sin\theta_1 = n_2\sin\theta_2\)가 된다. 그림의 경로는 \(n_2 = 1.333\)으로 실제 최소점을 계산해 그렸다(\(\theta_1 = 50.6^\circ\), \(\theta_2 = 35.4^\circ\)). 점선은 법선이다.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================================================ 21.5 -->
+  <section id="s5">
+    <h2>제약이 있는 변분: 등주 문제와 현수선</h2>
+    <p>매달린 사슬은 퍼텐셜 에너지를 가장 작게 하는 모양을 찾지만, 아무 곡선이나 고를 수는 없다. 사슬의 길이가 정해져 있기 때문이다. 제약이 없다면 사슬은 한없이 아래로 늘어지는 편이 에너지가 낮다. 길이라는 제약은 그 자체가 \(\int\sqrt{1 + y'^2}\,dx = \ell\)이라는 범함수의 값이다. 3장에서 제약식 \(g(\mathbf x) = c\) 아래의 극값을 라그랑주 승수로 찾았듯이, 범함수에 대한 제약도 승수로 다룬다.</p>
+
+    <h3 id="s5-multiplier">범함수 제약과 승수</h3>
+    <p>\(K[y] = \int_a^b G(x, y, y')\,dx = \ell\)을 지키면서 \(J[y] = \int_a^b F\,dx\)를 정지시키려 한다. 변분 \(y + \varepsilon\eta\) 하나로는 대개 \(K\)가 바뀌어 제약이 깨진다. 그래서 두 개의 변분을 함께 쓴다. \(y + \varepsilon_1\eta_1 + \varepsilon_2\eta_2\)에서 \(J(\varepsilon_1, \varepsilon_2)\)와 \(K(\varepsilon_1, \varepsilon_2)\)는 두 변수의 보통 함수이고, \(\eta_2\)는 \(\varepsilon_1\)이 바꾼 \(K\)를 되돌리는 역할을 한다. 이제 이것은 3장의 문제 그대로다. \(K = \ell\) 위에서 \(J\)가 \((0, 0)\)에서 정지하고 \(\nabla K \ne 0\)이면 <a href="ch03.html#eq-lagrange-condition">식 (3.25)</a>에 따라 \(\nabla J = \lambda\nabla K\)인 수 \(\lambda\)가 있다. 첫 성분을 식 <a class="ref" href="#eq-first-variation-integral"></a>처럼 부분 적분하면</p>
+    <div class="formula">\[ \int_a^b \Big[\frac{\delta J}{\delta y} - \lambda\frac{\delta K}{\delta y}\Big]\eta_1\,dx = 0 \]</div>
+    <p>이다. \(\lambda = (\partial J/\partial\varepsilon_2)/(\partial K/\partial\varepsilon_2)\)는 \(\eta_2\)로만 정해지므로 \(\eta_1\)을 바꿔도 같은 값이다. 따라서 <a class="ref" href="#thm-fundamental-lemma-cv"></a>을 쓸 수 있다.</p>
+    <div class="box thm" id="thm-constrained-variation"><div class="box-h">제약이 있는 오일러-라그랑주 방정식</div>
+      <p>끝점 조건과 제약 \(K[y] = \ell\)을 지키는 함수 가운데 \(y\)가 \(J[y]\)를 정지시키고, \(y\)가 \(K\) 자신의 정지 함수가 아니라고(\(\delta K/\delta y \not\equiv 0\)) 하자. 그러면 상수 \(\lambda\)가 있어서, \(y\)는 \(F - \lambda G\)에 대한 오일러-라그랑주 방정식을 만족한다.</p>
+      <div class="formula" id="eq-constrained-el">\[ \frac{\partial (F - \lambda G)}{\partial y} - \frac{d}{dx}\frac{\partial (F - \lambda G)}{\partial y'} = 0 \]</div>
+      <p>\(\lambda\)는 \(x\)에 따라 바뀌지 않는 하나의 수다. 일반해의 두 적분 상수와 \(\lambda\)를 두 끝점 조건과 제약 \(K = \ell\)이 정한다. 정지값 \(J^*\)가 \(\ell\)에 따라 바뀌는 비율은 승수와 같다: \(dJ^*/d\ell = \lambda\).</p>
+    </div>
+    <p>마지막 성질은 <a href="ch03.html#eq-multiplier-sensitivity">식 (3.26)</a>과 같은 논리로 나온다. 승수의 부호 관례도 3장의 \(\Lambda = f - \lambda(g - c)\)와 같다.</p>
+
+    <h3 id="s5-isoperimetric">등주 문제</h3>
+    <p>길이가 정해진 끈으로 가장 넓은 땅을 둘러싸는 문제를 <span class="term">등주 문제</span> <span class="en">(isoperimetric problem)</span>라 한다. 가장 단순한 판을 풀어 보자.</p>
+    <div class="box ex" id="ex-isoperimetric-arc"><div class="box-h">직선 위에 세운 곡선이 둘러싸는 가장 넓은 땅</div>
+      <p>\(x\)축 위의 두 점 \((\pm b, 0)\)을 길이 \(\ell\)(\(2b &lt; \ell \le \pi b\))인 곡선 \(y(x) \ge 0\)으로 이어, 곡선과 \(x\)축 사이의 넓이를 가장 크게 하라. 승수의 뜻은 무엇인가?</p>
+      <p><b>풀이.</b> \(F = y\), \(G = \sqrt{1 + y'^2}\)이다. \(F - \lambda G = y - \lambda\sqrt{1 + y'^2}\)에는 \(x\)가 없으므로 벨트라미 항등식(식 <a class="ref" href="#eq-beltrami"></a>)을 쓴다.</p>
+      <div class="formula">\[ \begin{aligned} &y - \lambda\sqrt{1 + y'^2} + \frac{\lambda y'^2}{\sqrt{1 + y'^2}} \\ &\quad = y - \frac{\lambda}{\sqrt{1 + y'^2}} = C \end{aligned} \]</div>
+      <p>따라서 \((y - C)^2(1 + y'^2) = \lambda^2\)이다. 이 미분방정식의 해는</p>
+      <div class="formula" id="eq-isoperimetric-circle">\[ (x - x_0)^2 + (y - C)^2 = \lambda^2 \]</div>
+      <p>이다. 확인해 보자. 미분하면 \((x - x_0) + (y - C)y' = 0\)이므로 \(1 + y'^2 = \big[(y - C)^2 + (x - x_0)^2\big]/(y - C)^2 = \lambda^2/(y - C)^2\)이다. 곡선은 반지름 \(\lvert\lambda\rvert\)인 원호이고, 대칭에서 \(x_0 = 0\)이다. 반지름과 \(C\)는 끝점과 길이 조건이 정한다.</p>
+      <p>승수의 뜻은 \(dA^*/d\ell = \lambda\)가 알려 준다. 반지름 \(\rho\), 반각 \(\alpha\)인 원호이면 \(b = \rho\sin\alpha\), \(\ell = 2\rho\alpha\), \(A = \rho^2(\alpha - \sin\alpha\cos\alpha)\)이다. \(b\)를 고정하고 \(\alpha\)로 미분하면</p>
+      <div class="formula">\[ \begin{aligned} \frac{dA}{d\alpha} &= \frac{2b^2(\sin\alpha - \alpha\cos\alpha)}{\sin^3\alpha} \\ \frac{d\ell}{d\alpha} &= \frac{2b(\sin\alpha - \alpha\cos\alpha)}{\sin^2\alpha} \end{aligned} \]</div>
+      <p>이고, 둘의 비는 \(b/\sin\alpha = \rho\)이다. 끈을 조금 늘이면 넓이는 (반지름) × (늘인 길이)만큼 는다. 반지름이 클수록 끈 한 뼘이 더 많은 땅을 얻는다.</p>
+      <p><b>숫자로 보기.</b> \(b = 10.0\ \text{m}\), \(\ell = \pi b = 31.4\ \text{m}\)이면 \(\alpha = \pi/2\)로 반원이다. \(\rho = 10.0\ \text{m}\), \(A = \pi\rho^2/2 = 157\ \text{m}^2\)이고, 끈을 \(0.10\ \text{m}\) 줄이면 넓이가 약 \(1.0\ \text{m}^2\) 준다. \(\lambda\)의 단위는 \(\text{m}^2/\text{m} = \text{m}\)로 반지름과 같다.</p>
+    </div>
+
+    <h3 id="s5-catenary">현수선</h3>
+    <p>2장의 <a href="ch02.html#ex-chain-cosh">예제 2.10</a>에서는 사슬 조각에 작용하는 힘의 평형으로 현수선을 얻었다. 같은 곡선을 에너지 최소와 길이 제약으로 다시 얻고, 이번에는 승수가 장력이라는 것을 보자.</p>
+    <div class="box ex" id="ex-catenary"><div class="box-h">현수선과 승수의 뜻</div>
+      <p>길이 \(\ell\), 선밀도 \(\mu\)인 사슬의 두 끝을 높이 0인 두 점 \((\pm b, 0)\)에 건다(2장에서는 선밀도를 \(\lambda\)로 썼지만, 여기서는 승수와 겹치지 않게 \(\mu\)로 쓴다). (가) 퍼텐셜 에너지가 최소인 모양을 구하라. (나) 승수 \(\lambda\)의 물리적 뜻을 밝혀라. (다) \(b = 50.0\ \text{m}\), \(\ell = 104.22\ \text{m}\), \(\mu = 1.00\ \text{kg/m}\)일 때 처진 깊이, 장력, 승수를 구하라.</p>
+      <p><b>풀이.</b> (가) 에너지는 \(U[y] = \mu g\int y\sqrt{1 + y'^2}\,dx\), 제약은 \(\int\sqrt{1 + y'^2}\,dx = \ell\)이므로 \(F - \lambda G = (\mu gy - \lambda)\sqrt{1 + y'^2}\)이다. \(x\)가 없으므로 비누막과 똑같이 벨트라미 항등식을 쓰면</p>
+      <div class="formula">\[ \frac{\mu gy - \lambda}{\sqrt{1 + y'^2}} = C \]</div>
+      <p>이다. \(Y = y - \lambda/\mu g\), \(a = C/\mu g\)로 두면 \(Y/\sqrt{1 + y'^2} = a\)로 <a class="ref" href="#ex-soap-film"></a>과 같은 방정식이 되고, 대칭인 해는</p>
+      <div class="formula" id="eq-catenary-multiplier">\[ y(x) = \frac{\lambda}{\mu g} + a\cosh\frac{x}{a} \]</div>
+      <p>이다. <a href="ch02.html#eq-catenary-shape">식 (2.52)</a>와 높이의 기준만 다르다. 끝점 조건 \(y(\pm b) = 0\)과 길이 조건이 두 상수를 정한다.</p>
+      <div class="formula" id="eq-catenary-conditions">\[ \frac{\lambda}{\mu g} = -a\cosh\frac{b}{a}, \qquad \ell = 2a\sinh\frac{b}{a} \]</div>
+      <p>(나) 높이 \(y_d = \lambda/\mu g\)인 수평선을 <span class="term">준선</span> <span class="en">(directrix)</span>이라 하자(그림 21-5). 2장의 식 <a href="ch02.html#eq-chain-length-tension">(2.53)</a>에서 장력은 \(T = T_0\cosh(x/a)\)이고 \(a = T_0/\mu g\)였으므로 \(T = \mu g\,a\cosh(x/a) = \mu gY\)이다. 곧 <b>장력은 준선 위로 잰 높이에 비례한다.</b> (2장에서 본 \(T = \lambda g(y + a)\)와 같은 말이다. 2장의 \(y + a\)가 여기의 \(Y\)다.) 지지점(\(y = 0\))에서는 \(T_s = \mu g(0 - y_d) = -\lambda\)이다.</p>
+      <div class="formula" id="eq-catenary-lambda">\[ \lambda = \mu g\,y_d = -T_s, \qquad \frac{dU^*}{d\ell} = -T_s \]</div>
+      <p>지지점에서 사슬을 \(d\ell\)만큼 천천히 더 풀어 주면, 사슬의 무게가 지지점의 장력 \(T_s\)로 그 고리를 끌어당기며 일 \(T_s\,d\ell\)을 하므로 에너지가 그만큼 준다. 승수는 "제약을 한 단위 풀 때 에너지가 바뀌는 비율"이라는 3장의 해석이 여기서는 장력이 된다. 높이의 기준을 지지점에 두었기 때문에 \(\lambda\)가 \(-T_s\) 그대로다. 기준을 \(y_s\)만큼 옮기면 \(\lambda = \mu g y_s - T_s\)가 된다.</p>
+      <p><b>숫자로 보기.</b> (다) \(2a\sinh(50/a) = 104.22\)를 뉴턴 방법으로 풀면(\(a = 90\)에서 출발해 98.52, 99.956, 99.989) \(a = 99.99\ \text{m} \approx 100.0\ \text{m}\)이다. 처진 깊이는 \(a(\cosh 0.5 - 1) = 12.76\ \text{m}\), 가장 낮은 곳의 장력은 \(T_0 = \mu ga = 981\ \text{N}\), 지지점의 장력은 \(T_s = T_0\cosh 0.5 = 1106\ \text{N}\)으로 2장의 결과와 같다. 승수는 \(\lambda = -1106\ \text{J/m}\)이다. 식 <a class="ref" href="#eq-catenary-conditions"></a>로 \(\ell = 104.21\)과 \(104.23\ \text{m}\)의 최소 에너지를 직접 계산해 차분하면 \(dU^*/d\ell = -1106\ \text{J/m}\)로 맞는다. 단위 \(\text{J/m} = \text{N}\)은 승수가 힘이라는 해석과 맞는다.</p>
+    </div>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 260" role="img" aria-label="현수선과 그 아래의 준선. 사슬의 장력은 준선 위로 잰 높이에 비례한다"><line x1="20" y1="188.1" x2="400" y2="188.1" class="s-acc2" style="stroke-width:1.8" stroke-dasharray="7 5"/><text x="22" y="180.1" class="t-math acc2" style="font-size:15px" text-anchor="start">준선 y = λ/μg</text><path d="M30,40l3.6,4.5 3.6,4.4 3.6,4.2 3.6,4 3.6,3.9 3.6,3.8 3.6,3.6 3.6,3.5 3.6,3.4 3.6,3.2 3.6,3.1 3.6,3 3.6,2.9 3.6,2.8 3.6,2.6 3.6,2.6 3.6,2.5 3.6,2.3 3.6,2.3 3.6,2.1 3.6,2.1 3.6,2 3.6,1.9 3.6,1.8 3.6,1.7 3.6,1.6 3.6,1.6 3.6,1.5 3.6,1.4 3.6,1.3 3.6,1.3 3.6,1.1 3.6,1.1 3.6,1.1 3.6,1 3.6,0.9 3.6,0.8 3.6,0.8 3.6,0.7 3.6,0.6 3.6,0.6 3.6,0.5 3.6,0.5 3.6,0.4 3.6,0.3 3.6,0.3 3.6,0.2 3.6,0.1 3.6,0.1 3.6,0.1 3.6,-0.1 3.6,-0.1 3.6,-0.1 3.6,-0.2 3.6,-0.3 3.6,-0.3 3.6,-0.4 3.6,-0.5 3.6,-0.5 3.6,-0.6 3.6,-0.6 3.6,-0.7 3.6,-0.8 3.6,-0.8 3.6,-0.9 3.6,-1 3.6,-1.1 3.6,-1.1 3.6,-1.1 3.6,-1.3 3.6,-1.3 3.6,-1.4 3.6,-1.5 3.6,-1.6 3.6,-1.6 3.6,-1.7 3.6,-1.8 3.6,-1.9 3.6,-2 3.6,-2.1 3.6,-2.1 3.6,-2.3 3.6,-2.3 3.6,-2.5 3.6,-2.6 3.6,-2.6 3.6,-2.8 3.6,-2.9 3.6,-3 3.6,-3.1 3.6,-3.2 3.6,-3.4 3.6,-3.5 3.6,-3.6 3.6,-3.8 3.6,-3.9 3.6,-4 3.6,-4.2 3.6,-4.4 3.6,-4.5" class="s-acc" style="stroke-width:2.8" fill="none"/><line x1="16" y1="40" x2="44" y2="40" class="s-line" style="stroke:var(--text);stroke-width:3"/><line x1="376" y1="40" x2="404" y2="40" class="s-line" style="stroke:var(--text);stroke-width:3"/><line x1="210" y1="188.1" x2="210" y2="134.1" class="s-line" stroke-dasharray="3 3"/><text x="216" y="166.1" class="t-math" style="font-size:15px" text-anchor="start">Y<tspan baseline-shift="sub" font-size="72%">0</tspan> = a</text><line x1="336" y1="188.1" x2="336" y2="92.9" class="s-line" stroke-dasharray="3 3"/><text x="342" y="145.5" class="t-math" style="font-size:15px" text-anchor="start">Y(x)</text><text x="210" y="214.1" class="t-dim" style="font-size:15px" text-anchor="middle">장력 T = μgY (Y는 준선 위 높이)</text></svg></div>
+      <figcaption><b>그림 21-5.</b> 현수선(굵은 곡선)과 준선(점선). 준선은 높이 \(y_d = \lambda/\mu g\)인 수평선이고, 곡선은 준선 위로 \(Y = a\cosh(x/a)\)이다. 사슬 어느 점에서나 장력은 \(T = \mu gY\)이므로, 가장 낮은 점의 장력 \(T_0 = \mu ga\)가 가장 작다. 그림은 모양이 잘 보이도록 \(b = 50\), \(a = 30\)(임의 단위)으로 실제 식을 계산해 그렸고, 세로 축척은 가로의 절반이다.</figcaption>
+    </figure>
+    <div class="callout tip"><strong>비누막과 사슬이 같은 곡선인 이유</strong><p>비누막의 넓이와 사슬의 퍼텐셜 에너지는 모두 \(\int y\,ds\)의 꼴이다. 비누막에서는 \(y\)가 띠의 반지름이라 둘레 \(2\pi y\)로 넓이에 무게를 주고, 사슬에서는 \(y\)가 높이라 중력 퍼텐셜로 무게를 준다. 피적분 함수가 같으니 답도 같은 \(\cosh\)이다. 사슬의 승수 \(\lambda\)는 높이의 기준을 준선으로 옮기는 일만 한다.</p></div>
+
+    <h3 id="s5-eigen">고유값 문제도 제약 변분이다</h3>
+    <p>제약 변분은 16장의 스투름-리우빌 문제와도 이어진다. \(y(a) = y(b) = 0\)이고 \(\int_a^b w\,y^2\,dx = 1\)인 함수 가운데 \(J[y] = \int_a^b (p\,y'^2 + q\,y^2)\,dx\)를 정지시키는 \(y\)를 찾자(\(p > 0\), \(w > 0\)). \(F - \lambda G = py'^2 + qy^2 - \lambda wy^2\)에 식 <a class="ref" href="#eq-constrained-el"></a>를 쓰면 \(2qy - 2\lambda wy - (2py')' = 0\), 곧</p>
+    <div class="formula" id="eq-eigen-variational">\[ (p\,y')' - q\,y + \lambda\,w\,y = 0 \]</div>
+    <p>으로, 16장의 <a href="ch16.html#eq-sl-form">스투름-리우빌 형태</a>다. 승수가 고유값이 된 것이다. 식에 \(y\)를 곱해 적분하고 \(\int y\,(py')'\,dx\)를 부분 적분하면 \(J[y] = \lambda\int wy^2\,dx = \lambda\)이므로, \(J\)의 최솟값이 가장 낮은 고유값이다. 이것이 16장의 <a href="ch16.html#eq-rayleigh-quotient">레일리 몫</a>과 <a href="ch16.html#thm-rayleigh-min">바닥 고유값의 최소 성질</a>이다. 예를 들어 \(p = w = 1\), \(q = 0\), 구간 \([0, L]\)이면 해는 \(\sin(n\pi x/L)\)이고 바닥 고유값은 \(\lambda_1 = (\pi/L)^2\)이다.</p>
+  </section>
+
+  <!-- ============================================================ 21.6 -->
+  <section id="s6">
+    <h2>해밀턴 원리</h2>
+    <p>지금까지는 공간 속의 곡선을 골랐다. 이제 독립 변수를 시간 \(t\)로, 종속 변수를 입자의 위치 \(x(t)\)로 바꾸자. 퍼텐셜 \(V(x)\) 속에서 움직이는 입자는 뉴턴 법칙 \(m\ddot x = -dV/dx\)를 따른다. 이 미분방정식을 오일러-라그랑주 방정식으로 갖는 범함수가 있을까? 식 <a class="ref" href="#eq-euler-lagrange"></a>의 첫 항이 \(-V'\), 둘째 항이 \(-m\ddot x\)를 주려면 피적분 함수가 \(-V\)와 \(\tfrac12 m\dot x^2\)을 포함하면 된다.</p>
+    <div class="formula" id="eq-action-1d">\[ S[x] = \int_{t_1}^{t_2}\Big(\frac12 m\dot x^2 - V(x)\Big)\,dt \]</div>
+    <p>실제로 \(\partial L/\partial x - \frac{d}{dt}\partial L/\partial\dot x = -V'(x) - m\ddot x = 0\)이다. 운동 에너지에서 퍼텐셜 에너지를 <b>뺀</b> 양을 시간에 대해 적분한 것이 정지하는 경로가 실제 운동이다.</p>
+    <div class="box def" id="def-lagrangian-action"><div class="box-h">라그랑지안과 작용</div>
+      <p>계의 배치를 \(n\)개의 수 \(q_1, \ldots, q_n\)으로 나타낼 때, 이것을 <span class="term">일반화 좌표</span> <span class="en">(generalized coordinates)</span>라 한다. 직교 좌표, 극좌표, 진자의 각도 등 무엇이든 된다. 운동 에너지 \(T\)와 퍼텐셜 에너지 \(V\)로</p>
+      <div class="formula" id="eq-lagrangian">\[ L(q, \dot q, t) = T - V, \qquad S[q] = \int_{t_1}^{t_2} L\,dt \]</div>
+      <p>를 계의 <span class="term">라그랑지안</span> <span class="en">(Lagrangian)</span>과 <span class="term">작용</span> <span class="en">(action)</span>이라 한다. 작용의 단위는 에너지 × 시간(\(\text{J}\cdot\text{s}\))이다.</p>
+    </div>
+    <div class="box thm" id="thm-hamilton-principle"><div class="box-h">해밀턴 원리와 라그랑주 방정식</div>
+      <p>퍼텐셜에서 나오는 힘과, 좌표 사이의 관계식으로 쓸 수 있고 그 순간 구속을 지키는 변위(가상 변위)에 대해 일을 하지 않는 구속만 받는 계가 시각 \(t_1\)에 배치 \(q(t_1)\), \(t_2\)에 \(q(t_2)\)에 있다면, 실제 운동 \(q(t)\)는 두 끝을 고정한 모든 경로 가운데 작용을 정지시킨다. 실제 운동을 고르는 이 원리를 <span class="term">해밀턴 원리</span> <span class="en">(Hamilton’s principle)</span>라 한다.</p>
+      <div class="formula" id="eq-hamilton-principle">\[ \delta S = \delta\int_{t_1}^{t_2} L(q, \dot q, t)\,dt = 0 \]</div>
+      <p>따라서 식 <a class="ref" href="#eq-euler-lagrange-multi"></a>에 따라 각 좌표는 다음 <span class="term">라그랑주 방정식</span> <span class="en">(Lagrange’s equations)</span>을 만족한다.</p>
+      <div class="formula" id="eq-lagrange-equations">\[ \frac{d}{dt}\frac{\partial L}{\partial\dot q_k} - \frac{\partial L}{\partial q_k} = 0, \qquad k = 1, \ldots, n \]</div>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>입자들의 직교 좌표에서는 위의 1차원 계산처럼 라그랑주 방정식이 곧 뉴턴 법칙 \(m_i\ddot{\mathbf r}_i = -\nabla_i V\)이다. 작용은 각 시각의 \(T - V\)를 더한 숫자이므로 좌표를 어떻게 고르든 같은 값이다. 따라서 "작용이 정지한다"는 명제도 좌표와 상관없이 참이고, 새 좌표로 쓴 \(L\)에 21.2절의 유도를 그대로 하면 같은 꼴의 방정식이 나온다. 가상 변위에 대해 일을 하지 않는 구속(예: 길이가 고정된 진자 줄)은 그 구속을 만족하는 좌표만 골라 쓰면 구속력이 방정식에서 사라진다. 구속이 시간에 따라 움직여도 된다. 돌아가는 고리(<a class="ref" href="#prob-bead-hoop"></a>)의 항력은 실제 운동에서는 일을 하지만, 한 시각에서 고리를 따라가는 변위에는 수직이므로 결론이 같다. 자세한 논의는 대학원 고전역학 교재(예: H. Goldstein, C. Poole, J. Safko, <i>Classical Mechanics</i>, 3rd ed., Addison-Wesley 2002, 1–2장)에 있다.</p>
+      </details>
+    </div>
+    <p>라그랑주 방정식의 힘은 좌표를 마음대로 고를 수 있다는 데 있다. 예를 들어 길이 \(l\)인 진자는 각 \(\theta\) 하나로 정해지고, \(T = \tfrac12 ml^2\dot\theta^2\), \(V = -mgl\cos\theta\)이다. \(L = \tfrac12 ml^2\dot\theta^2 + mgl\cos\theta\)에 식 <a class="ref" href="#eq-lagrange-equations"></a>을 쓰면 \(ml^2\ddot\theta + mgl\sin\theta = 0\)이 바로 나온다. 줄의 장력은 계산에 들어오지도 않는다. 극좌표에서 가속도를 단위 벡터의 도함수로 구하는 6장의 계산(<a href="ch06.html#ex-polar-acceleration">극좌표의 가속도</a>)도, 아래 예제처럼 라그랑지안에서는 저절로 나온다.</p>
+    <div class="callout warn"><strong>\(T + V\)가 아니라 \(T - V\), 초기 조건이 아니라 두 끝</strong><p>라그랑지안은 에너지가 아니다. \(L = T + V\)로 쓰면 \(m\ddot x = +V'\)이 되어 힘의 부호가 뒤집힌다. 또 해밀턴 원리에서 고정하는 것은 출발 시각과 도착 시각의 <b>위치 둘</b>이다. 운동 방정식을 풀 때 주는 처음 위치와 처음 속도와는 다른 조건이다. 둘 다 2계 방정식의 상수 두 개를 정하는 방법일 뿐이고, 변분을 할 때는 끝점 고정이 부분 적분의 경계 항을 없애 준다.</p></div>
+
+    <h3 id="s6-conservation">보존량</h3>
+    <p>21.3절의 첫 적분은 역학에서 보존 법칙이 된다. 좌표 \(q_k\)에 켤레인 <span class="term">일반화 운동량</span> <span class="en">(generalized momentum)</span>을</p>
+    <div class="formula" id="eq-generalized-momentum">\[ p_k = \frac{\partial L}{\partial\dot q_k} \]</div>
+    <p>로 정의한다. 직교 좌표에서는 \(p_x = m\dot x\)로 보통의 운동량이고, 각 좌표에서는 각운동량이 된다. \(L\)에 \(q_k\)가 없으면 \(q_k\)는 순환 좌표이고 식 <a class="ref" href="#eq-conserved-momentum"></a>에 따라 \(p_k\)가 보존된다. 퍼텐셜이 어떤 방향으로 평행 이동해도 같으면 그 방향의 운동량이, 어떤 축 둘레로 돌려도 같으면 그 축의 각운동량이 보존된다.</p>
+    <p>\(L\)에 \(t\)가 직접 없으면 벨트라미 항등식(식 <a class="ref" href="#eq-beltrami"></a>의 여러 변수 판)에서 다음 양이 보존된다. 부호를 바꾸어 쓰면</p>
+    <div class="formula" id="eq-energy-function">\[ E = \sum_k \dot q_k\,\frac{\partial L}{\partial\dot q_k} - L = \text{상수} \]</div>
+    <p>이다. 운동 에너지가 속도의 2차식 \(T = \tfrac12\sum_{j,k} M_{jk}(q)\,\dot q_j\dot q_k\)이면 \(\sum_k \dot q_k\,\partial T/\partial\dot q_k = 2T\)이므로 \(E = 2T - (T - V) = T + V\), 곧 역학적 에너지다. 구속이 시간에 따라 움직이면(<a class="ref" href="#prob-bead-hoop"></a>의 돌아가는 고리) \(E\)는 보존되어도 \(T + V\)와 다를 수 있다.</p>
+
+    <div class="box ex" id="ex-central-force-lagrangian"><div class="box-h">중심력 문제와 각운동량 보존</div>
+      <p>질량 \(m\)인 입자가 중심력 퍼텐셜 \(V(r)\) 속에서 한 평면 위를 움직인다. (가) 평면 극좌표 \((r, \phi)\)로 라그랑지안을 쓰고 운동 방정식과 보존량을 구하라. (나) 근지점 고도 300 km, 원지점 고도 3000 km인 인공위성의 두 점에서의 속력과 궤도 주기를 구하라. \(GM_\oplus = 3.986 \times 10^{14}\ \text{m}^3/\text{s}^2\), \(R_\oplus = 6371\ \text{km}\)이다.</p>
+      <p><b>풀이.</b> (가) 극좌표의 선 요소 \(ds^2 = dr^2 + r^2d\phi^2\)에서 속력의 제곱은 \(\dot r^2 + r^2\dot\phi^2\)이다.</p>
+      <div class="formula" id="eq-central-force-lagrangian">\[ L = \frac12 m\big(\dot r^2 + r^2\dot\phi^2\big) - V(r) \]</div>
+      <p>\(L\)에 \(\phi\)가 없으므로 \(\phi\)는 순환 좌표이고, 켤레 운동량이 보존된다.</p>
+      <div class="formula" id="eq-angular-momentum-conserved">\[ p_\phi = \frac{\partial L}{\partial\dot\phi} = mr^2\dot\phi = \ell_z = \text{상수} \]</div>
+      <p>이것은 각운동량이다. 반지름이 단위 시간에 쓸고 지나가는 넓이는 \(\tfrac12 r^2\dot\phi = \ell_z/2m\)로 일정하다. 케플러의 둘째 법칙이 퍼텐셜의 모양과 상관없이 나온다. \(r\)에 대한 라그랑주 방정식은 \(m\ddot r - mr\dot\phi^2 + V'(r) = 0\)이고, \(\dot\phi = \ell_z/mr^2\)를 넣으면</p>
+      <div class="formula" id="eq-effective-potential">\[ m\ddot r = -\frac{d}{dr}\Big[V(r) + \frac{\ell_z^2}{2mr^2}\Big] \]</div>
+      <p>이다. 지름 방향 운동은 원심 퍼텐셜 \(\ell_z^2/2mr^2\)이 더해진 1차원 운동이다. \(L\)에 \(t\)가 없으므로 식 <a class="ref" href="#eq-energy-function"></a>에서 \(E = \tfrac12 m\dot r^2 + \ell_z^2/2mr^2 + V(r)\)도 보존된다. 6장의 가속도 성분 \(\ddot r - r\dot\phi^2\)과 \(r\ddot\phi + 2\dot r\dot\phi\)(뒤의 것은 \(\tfrac{1}{r}\tfrac{d}{dt}(r^2\dot\phi)\))가 단위 벡터를 미분하지 않고 나왔다.</p>
+      <p>(나) \(V = -GM_\oplus m/r\)이다. 근지점 \(r_p\)와 원지점 \(r_a\)에서는 \(\dot r = 0\)이므로 두 점에서 \(E = \ell_z^2/2mr^2 - GM_\oplus m/r\)가 같다. 두 식을 빼서 정리하면</p>
+      <div class="formula">\[ \Big(\frac{\ell_z}{m}\Big)^2 = \frac{2GM_\oplus\,r_pr_a}{r_p + r_a}, \qquad \frac{E}{m} = -\frac{GM_\oplus}{r_p + r_a} \]</div>
+      <p>이다. <b>숫자로 보기.</b> \(r_p = 6671\ \text{km}\), \(r_a = 9371\ \text{km}\)이면 \(\ell_z/m = 5.574 \times 10^{10}\ \text{m}^2/\text{s}\)이다. 따라서 근지점 속력은 \(v_p = \ell_z/mr_p = 8.36\ \text{km/s}\), 원지점 속력은 \(v_a = \ell_z/mr_a = 5.95\ \text{km/s}\)이고, 비 \(v_p/v_a = r_a/r_p = 1.405\)는 각운동량 보존 그대로다. 근지점 속력은 같은 고도의 원 궤도 속력 \(\sqrt{GM_\oplus/r_p} = 7.73\ \text{km/s}\)보다 크다. 에너지는 \(E/m = -2.485 \times 10^7\ \text{J/kg}\)이고, 긴반지름 \(a = (r_p + r_a)/2 = 8021\ \text{km}\)에 대한 케플러의 셋째 법칙 \(2\pi\sqrt{a^3/GM_\oplus}\)로 주기는 \(119\ \text{min}\)이다. \(\ell_z/m\)의 단위 \(\sqrt{(\text{m}^3/\text{s}^2)\,\text{m}} = \text{m}^2/\text{s}\)도 맞는다.</p>
+    </div>
+    <div class="callout deep" data-later="cm-grad"><strong>뇌터 정리와 해밀턴 역학</strong><p>순환 좌표와 운동량 보존, 시간에 기대지 않는 \(L\)과 에너지 보존은 더 일반적인 <span class="term">뇌터 정리</span> <span class="en">(Noether’s theorem)</span>의 특별한 경우다. 작용이 연속적인 대칭 변환 아래에서 변하지 않으면 보존량이 하나씩 있다. 또 식 <a class="ref" href="#eq-energy-function"></a>의 \(E\)를 속도 대신 운동량 \(p_k\)의 함수로 쓴 것이 <span class="term">해밀토니안</span> <span class="en">(Hamiltonian)</span> \(H(q, p) = \sum_k p_k\dot q_k - L\)이고, 이것은 3장의 <a href="ch03.html#def-legendre-transform">르장드르 변환(정의 3.4)</a>을 \(\dot q\)에 대해서만 한 것이다. 해밀턴 방정식 \(\dot q_k = \partial H/\partial p_k\), \(\dot p_k = -\partial H/\partial q_k\), 정준 변환, 푸아송 괄호, 뇌터 정리의 일반형은 대학원 고전역학 책에서 다룬다.</p></div>
+    <div class="callout deep" data-later="cm-grad"><strong>정지는 최소가 아니다: 2차 변분</strong><p>"최소 작용의 원리" <span class="en">(principle of least action)</span>라는 이름과 달리 작용은 정지할 뿐 늘 최소인 것은 아니다. 조화 진동자 \(L = \tfrac12 m\dot x^2 - \tfrac12 m\omega^2x^2\)에서 실제 경로 \(x(t)\)를 \(\varepsilon\eta\), \(\eta = \sin(\pi t/\tau)\)로 흔들면 1차 항은 사라지고, 퍼텐셜이 2차식이라 2차 항이 정확히</p>
+      <div class="formula">\[ \begin{aligned} \Delta S &= \frac{m\varepsilon^2}{2}\int_0^\tau\big(\dot\eta^2 - \omega^2\eta^2\big)\,dt \\ &= \frac{m\varepsilon^2\tau}{4}\Big[\Big(\frac{\pi}{\tau}\Big)^2 - \omega^2\Big] \end{aligned} \]</div>
+      <p>이다. 이 \(\eta\)는 끝에서 0인 함수 가운데 \(\int\dot\eta^2\,dt\big/\int\eta^2\,dt\)를 가장 작게 하므로(16장의 <a href="ch16.html#thm-rayleigh-min">레일리 몫의 최소 성질</a>), 시간 간격 \(\tau\)가 반주기 \(\pi/\omega\)보다 짧으면 모든 방향에서 양수라 극소지만, 길면 음수가 되어 작용은 안장점이다. 구 위에서 반원보다 긴 대원 호가 최단이 아닌 것과 같은 현상이다(반원의 끝인 대척점을 <span class="term">공액점</span> <span class="en">(conjugate point)</span>이라 한다). 21.3절의 비누막도 그렇다. 끝에서 0인 \(\eta = \cos(\pi x/2d)\)를 \(\varepsilon = \pm 0.1\ \text{cm}\)만큼 더해 넓이를 수치로 계산하면, 깊은 해(\(c_2 = 1.18\ \text{cm}\))는 \(171.14\ \text{cm}^2\)에서 \(171.10\ \text{cm}^2\)로 줄고, 얕은 해(\(c_1 = 4.24\ \text{cm}\))는 \(149.79\ \text{cm}^2\)에서 \(149.88\ \text{cm}^2\) 이상으로 는다. 깊은 해에는 넓이가 줄어드는 방향이 있으므로 안장점이고, 실제 막은 이 모양으로 머물지 못한다. 공액점으로도 볼 수 있다. 현수면의 족 \(c\cosh(x/c)\)에서 \(c\)를 바꾼 차이 \(\partial y/\partial c = \cosh t - t\sinh t\)(\(t = x/c\))는 \(t\tanh t = 1\), 곧 \(\lvert x\rvert = 1.200c\)에서 0이 된다. 깊은 해에서는 이 점(\(\lvert x\rvert = 1.41\ \text{cm}\))이 두 고리 사이에 들어오고, 얕은 해에서는 고리 밖(\(5.09\ \text{cm}\))에 있다. 막이 터지는 조건의 \(u_* = 1.200\)은 이 점이 고리에 닿는 순간이다. 일반적인 판정에는 르장드르 조건 \(F_{y'y'} > 0\)과 야코비의 공액점 이론이 쓰이며, 대학원 고전역학 책에서 다룬다.</p></div>
+  </section>
+
+  <!-- ============================================================ 21.7 -->
+  <section id="s7">
+    <h2>여러 변수와 장의 변분</h2>
+    <p>북의 막이 처진 모양 \(u(x, y)\), 기타 줄의 변위 \(u(x, t)\), 공간의 전기 퍼텐셜 \(V(\mathbf r)\)처럼 물리량이 여러 변수의 함수인 경우가 많다. 이런 함수를 <span class="term">장</span> <span class="en">(field)</span>이라 한다. 장의 모양을 정하는 범함수는 적분이 여러 겹이고, 오일러-라그랑주 방정식은 상미분방정식 대신 편미분방정식이 된다. 유도는 21.2절과 같고, 부분 적분 대신 발산 정리를 쓴다는 점만 다르다.</p>
+
+    <h3 id="s7-several">독립 변수가 여럿일 때</h3>
+    <p>평면 영역 \(D\)에서 \(J[u] = \iint_D F(x, y, u, u_x, u_y)\,dx\,dy\)를 생각하자. \(u\)는 경계 \(\partial D\)에서 정해져 있으므로 변분 \(\eta\)는 경계에서 0이다. 21.2절처럼 \(\varepsilon\)으로 미분하면</p>
+    <div class="formula">\[ \frac{dJ}{d\varepsilon}\Big|_0 = \iint_D\big(F_u\,\eta + F_{u_x}\,\eta_x + F_{u_y}\,\eta_y\big)\,dx\,dy \]</div>
+    <p>이다. 벡터장 \(\mathbf P = (F_{u_x}, F_{u_y})\)를 두면 곱의 미분으로 \(F_{u_x}\eta_x + F_{u_y}\eta_y = \nabla\cdot(\eta\mathbf P) - \eta\,\nabla\cdot\mathbf P\)이다. 첫 항은 5장의 <a href="ch05.html#thm-divergence">발산 정리</a>(평면에서는 <a href="ch05.html#thm-green-plane">그린 정리</a>)에 따라 경계 위의 적분 \(\oint \eta\,\mathbf P\cdot\hat{\mathbf n}\,dl\)이 되고, 경계에서 \(\eta = 0\)이므로 사라진다. 남은 것에 <a class="ref" href="#thm-fundamental-lemma-cv"></a>의 2차원 판을 쓰면, 변수가 \(x_1, \ldots, x_n\)인 일반적인 경우의 방정식을 얻는다.</p>
+    <div class="formula" id="eq-field-euler-lagrange">\[ \frac{\partial F}{\partial u} - \sum_{i=1}^{n}\frac{\partial}{\partial x_i}\frac{\partial F}{\partial(\partial_i u)} = 0 \]</div>
+    <p>여기서 \(\partial/\partial x_i\)는 \(u\)와 그 도함수를 모두 \(x_i\)의 함수로 보고 미분한, 식 <a class="ref" href="#eq-el-expanded"></a>의 \(d/dx\)에 해당하는 미분이다. 이것이 <span class="term">장의 오일러-라그랑주 방정식</span> <span class="en">(field Euler–Lagrange equation)</span>이다.</p>
+    <p>가장 간단한 예는 \(F = \tfrac12\lvert\nabla u\rvert^2 = \tfrac12(u_x^2 + u_y^2)\)이다. \(F_u = 0\), \(\partial F/\partial u_x = u_x\)이므로 식 <a class="ref" href="#eq-field-euler-lagrange"></a>는 \(-(u_{xx} + u_{yy}) = 0\), 곧 라플라스 방정식 \(\nabla^2u = 0\)이다. 거의 평평한 비누막을 생각하면 이 결과에 뜻이 생긴다. 넓이는 \(\iint\sqrt{1 + u_x^2 + u_y^2}\,dx\,dy \approx \iint(1 + \tfrac12\lvert\nabla u\rvert^2)\,dx\,dy\)이므로, 테두리가 조금 휜 철사 틀에 걸린 막의 높이는 라플라스 방정식을 따른다(17장의 <a href="ch17.html#eq-laplace-equation">라플라스 방정식</a>). 전기 퍼텐셜도 같다. 범함수 \(I[V] = \int\big(\tfrac{\varepsilon_0}{2}\lvert\nabla V\rvert^2 - \rho V\big)\,d^3r\)에 식 <a class="ref" href="#eq-field-euler-lagrange"></a>를 쓰면 \(-\rho - \varepsilon_0\nabla^2V = 0\)이 되어 <a href="ch04.html#eq-poisson-electrostatic">식 (4.42)</a>의 푸아송 방정식이 나온다. 도체 위의 퍼텐셜이 주어진 정전기 문제의 답은 이 범함수를 정지시키는 퍼텐셜이다. (경계에서 \(V = 0\)이면 정지값은 \(-\tfrac{\varepsilon_0}{2}\int\lvert\nabla V\rvert^2\,d^3r\), 곧 정전 에너지의 음수다.)</p>
+
+    <h3 id="s7-string">줄의 라그랑지안 밀도</h3>
+    <p>시간도 독립 변수 가운데 하나로 넣으면 해밀턴 원리를 장으로 넓힐 수 있다. 장력 \(T\), 선밀도 \(\mu\)인 줄의 가로 변위를 \(u(x, t)\)라 하자. 길이 \(dx\)인 조각의 운동 에너지는 \(\tfrac12\mu u_t^2\,dx\)이고, 퍼텐셜 에너지는 조각이 늘어난 길이에 장력을 곱한 \(T(\sqrt{1 + u_x^2} - 1)\,dx \approx \tfrac12 Tu_x^2\,dx\)이다(<a class="ref" href="#ex-taut-string-sag"></a>와 같은 근사). 라그랑지안은 이것을 줄을 따라 적분한 \(L = \int\mathcal L\,dx\)이고, 피적분 함수</p>
+    <div class="formula" id="eq-string-lagrangian-density">\[ \mathcal L(u_t, u_x) = \frac12\mu\,u_t^2 - \frac12 T\,u_x^2 \]</div>
+    <p>를 <span class="term">라그랑지안 밀도</span> <span class="en">(Lagrangian density)</span>라 한다. 작용은 시간과 공간에 대한 이중 적분 \(S = \int dt\int dx\,\mathcal L\)이고, 해밀턴 원리는 처음과 끝 시각의 모양과 줄 양 끝의 변위를 고정할 때 \(\delta S = 0\)이라는 것이다.</p>
+    <div class="box ex" id="ex-string-field"><div class="box-h">줄의 라그랑지안 밀도에서 파동 방정식으로</div>
+      <p>(가) 식 <a class="ref" href="#eq-string-lagrangian-density"></a>에 장의 오일러-라그랑주 방정식을 써서 줄의 운동 방정식을 구하라. (나) 길이 \(L_s = 0.650\ \text{m}\), 선밀도 \(\mu = 6.0 \times 10^{-4}\ \text{kg/m}\)인 기타 줄의 기본 진동수가 \(196\ \text{Hz}\)(G3)가 되려면 장력이 얼마여야 하는가? (다) 이 줄이 기본 모드로 진폭 \(2.0\ \text{mm}\)로 진동할 때 에너지는 얼마인가?</p>
+      <p><b>풀이.</b> (가) 독립 변수는 \(x_1 = t\), \(x_2 = x\)이다. \(\partial\mathcal L/\partial u = 0\), \(\partial\mathcal L/\partial u_t = \mu u_t\), \(\partial\mathcal L/\partial u_x = -Tu_x\)이므로 식 <a class="ref" href="#eq-field-euler-lagrange"></a>는 \(0 - \partial_t(\mu u_t) - \partial_x(-Tu_x) = 0\)이다.</p>
+      <div class="formula" id="eq-string-wave-equation">\[ \frac{\partial^2 u}{\partial t^2} = v^2\,\frac{\partial^2 u}{\partial x^2}, \qquad v = \sqrt{\frac{T}{\mu}} \]</div>
+      <p>파동 방정식이다. 뉴턴 법칙으로 줄 조각의 힘을 따지는 대신, 에너지 두 개를 적어 넣기만 하면 나왔다. 끝을 고정한 줄에 정상 모드 \(u = A\sin(n\pi x/L_s)\cos\omega_nt\)를 넣으면 \(\omega_n = n\pi v/L_s\)이다(17장의 <a href="ch17.html#eq-string-modes">현의 정상 모드</a>).</p>
+      <p>(나) 기본 모드는 \(f_1 = v/2L_s\)이므로 \(v = 2L_sf_1 = 2(0.650)(196)\ \text{m/s} = 254.8\ \text{m/s}\)이고, \(T = \mu v^2 = (6.0 \times 10^{-4})(254.8)^2\ \text{N} = 39.0\ \text{N}\)이다. 약 4 kg의 무게에 해당하는 장력이다.</p>
+      <p>(다) 에너지는 운동 에너지 밀도와 퍼텐셜 에너지 밀도의 합 \(\tfrac12\mu u_t^2 + \tfrac12 Tu_x^2\)을 적분한 것이다(\(\mathcal L\)과 부호 하나가 다르다. 식 <a class="ref" href="#eq-energy-function"></a>과 같은 관계다). \(t = 0\)에서 \(u_t = 0\)이고 \(u_x = Ak\cos kx\) (\(k = \pi/L_s\))이므로</p>
+      <div class="formula">\[ E = \frac12 TA^2k^2\int_0^{L_s}\cos^2kx\,dx = \frac14 TA^2k^2L_s \]</div>
+      <p><b>숫자로 보기.</b> \(k = \pi/0.650\ \text{m} = 4.83\ \text{m}^{-1}\)이므로 \(E = \tfrac14(39.0\ \text{N})(2.0 \times 10^{-3}\ \text{m})^2(4.83\ \text{m}^{-1})^2(0.650\ \text{m}) = 5.9 \times 10^{-4}\ \text{J}\)이다. 단위는 \(\text{N}\cdot\text{m}^2\cdot\text{m}^{-2}\cdot\text{m} = \text{J}\)이다. 운동 에너지가 최대인 순간(\(u = 0\))에 계산해도 \(\tfrac14\mu\omega_1^2A^2L_s\)로 같은 값이 나오는데, \(\omega_1 = vk\)이고 \(\mu v^2 = T\)이기 때문이다.</p>
+    </div>
+    <p>3차원 공간의 파동도 같다. 라그랑지안 밀도를 \(\tfrac12\mu u_t^2 - \tfrac12 T\lvert\nabla u\rvert^2\)으로 바꾸면 \(u_{tt} = v^2\nabla^2u\)가 되고, 이것은 4장에서 맥스웰 방정식으로 얻은 <a href="ch04.html#eq-em-wave-equation">식 (4.52)</a>의 꼴이다. 17장의 <a href="ch17.html#eq-wave-equation">파동 방정식</a>은 모두 이런 라그랑지안 밀도에서 나온다.</p>
+    <div class="callout deep" data-later="qft"><strong>장의 라그랑지안과 장론</strong><p>현대 물리의 기본 법칙은 대부분 라그랑지안 밀도로 적는다. 예를 들어 \(\mathcal L = \tfrac{1}{2c^2}\phi_t^2 - \tfrac12\lvert\nabla\phi\rvert^2 - \tfrac12\kappa^2\phi^2\)에 식 <a class="ref" href="#eq-field-euler-lagrange"></a>를 쓰면 클라인-고든 방정식 \(\tfrac{1}{c^2}\phi_{tt} - \nabla^2\phi + \kappa^2\phi = 0\)이 나오고, 전자기장의 라그랑지안 밀도에서는 맥스웰 방정식이 나온다. 장에 대한 뇌터 정리는 에너지와 운동량의 보존을 에너지-운동량 텐서로 묶어 주고, 장을 양자화하면 입자가 나온다. 4-벡터로 쓴 상대론적 형식(22장의 <a href="ch22.html#def-four-vector">4-벡터</a>)과 장의 양자화는 양자장론 책에서 다룬다.</p></div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>범함수 \(J[y] = \int_a^b F(x, y, y')\,dx\)는 함수 하나에 숫자 하나를 준다. 끝점에서 0인 모든 변분 \(\varepsilon\eta\)에 대해 \(\tfrac{d}{d\varepsilon}J[y + \varepsilon\eta]\big|_0 = 0\)이면 \(y\)는 정지 함수다. 극소와 극대는 정지 함수지만 거꾸로는 아니다.</li>
+      <li>부분 적분과 변분법의 기본 보조정리에서 오일러-라그랑주 방정식 \(\partial F/\partial y - \tfrac{d}{dx}\,\partial F/\partial y' = 0\)이 나온다. 범함수 미분 \(\delta J/\delta y(x) = F_y - (F_{y'})'\)은 점마다의 편미분이고, 끝점이 자유로우면 자연 경계 조건 \(F_{y'} = 0\)이 더해진다.</li>
+      <li>첫 적분: \(F\)에 \(y_k\)가 없으면 \(p_k = \partial F/\partial y_k'\)이 상수(순환 좌표), \(F\)에 \(x\)가 없으면 \(F - y'\,\partial F/\partial y' = C\)(벨트라미 항등식). 벨트라미 식의 상수 해는 따로 확인한다.</li>
+      <li>고전 문제: 구 위의 측지선은 대원 \(\cot\theta = k\cos(\phi - \phi_1)\), 최속 강하선은 사이클로이드 \(x = R(\theta - \sin\theta)\), \(y = R(1 - \cos\theta)\)이고 걸리는 시간은 \(\theta_B\sqrt{R/g}\), 페르마 원리 \(\delta\int n\,ds = 0\)에서 \(n\sin\theta = \)상수(스넬 법칙)가 나온다.</li>
+      <li>제약 \(\int G\,dx = \ell\) 아래의 변분은 \(F - \lambda G\)의 오일러-라그랑주 방정식으로 풀고, \(dJ^*/d\ell = \lambda\)이다. 등주 문제의 답은 원호(\(\lambda\) = 반지름), 현수선은 \(y = \lambda/\mu g + a\cosh(x/a)\)(\(\lambda\) = 지지점 장력의 음수), 스투름-리우빌 문제에서는 \(\lambda\)가 고유값이다.</li>
+      <li>해밀턴 원리: 실제 운동은 작용 \(S = \int(T - V)\,dt\)를 정지시키고, 어느 좌표에서나 라그랑주 방정식 \(\tfrac{d}{dt}\,\partial L/\partial\dot q_k - \partial L/\partial q_k = 0\)을 만족한다. 순환 좌표의 \(p_k = \partial L/\partial\dot q_k\)가 보존되고, \(L\)에 \(t\)가 없으면 \(E = \sum\dot q_k p_k - L\)이 보존된다.</li>
+      <li>장의 오일러-라그랑주 방정식 \(\partial F/\partial u - \sum_i\partial_i\big(\partial F/\partial(\partial_i u)\big) = 0\)에서 \(\tfrac12\lvert\nabla u\rvert^2\)은 라플라스 방정식을, 줄의 라그랑지안 밀도 \(\tfrac12\mu u_t^2 - \tfrac12 Tu_x^2\)은 파동 방정식 \(u_{tt} = (T/\mu)\,u_{xx}\)를 준다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. 범함수 \(J[y] = \int_0^1\big(y'^2 + 2xy\big)\,dx\)의 오일러-라그랑주 방정식은?</p><div class="opts">
+        <button class="opt">\(y'' = 2x\)</button>
+        <button class="opt" data-correct>\(y'' = x\)</button>
+        <button class="opt">\(y'' = -x\)</button>
+        <button class="opt">\(y' = x^2\)</button>
+      </div><div class="quiz-exp">\(F_y = 2x\), \(F_{y'} = 2y'\)이므로 \(2x - 2y'' = 0\), 곧 \(y'' = x\)이다. \(\partial F/\partial y\)를 계산할 때 \(y'\)은 상수로 보고, \(d/dx\)는 마지막에 전체 도함수로 쓴다.</div></div>
+      <div class="quiz-q"><p>2. 피적분 함수 \(F(y, y')\)에 독립 변수 \(x\)가 직접 들어 있지 않다. 오일러-라그랑주 방정식의 해에서 언제나 일정한 양은?</p><div class="opts">
+        <button class="opt">\(\partial F/\partial y'\)</button>
+        <button class="opt">\(F\)</button>
+        <button class="opt" data-correct>\(F - y'\,\partial F/\partial y'\)</button>
+        <button class="opt">\(F + y'\,\partial F/\partial y\)</button>
+      </div><div class="quiz-exp">벨트라미 항등식이다. \(\partial F/\partial y'\)이 일정한 것은 \(F\)에 \(y\)가 없을 때(순환 좌표)다. 역학에서 \(x\)를 시간으로 읽으면 이 양(의 음수)이 에너지다.</div></div>
+      <div class="quiz-q"><p>3. 그림 21-3의 세 경로 가운데 사이클로이드가 가장 빠르다. 다음 중 옳은 설명은?</p><div class="opts">
+        <button class="opt">사이클로이드가 셋 가운데 가장 짧기 때문이다.</button>
+        <button class="opt" data-correct>처음에 가파르게 떨어져 속력을 일찍 얻고, 그 이득이 늘어난 길이의 손해보다 크기 때문이다.</button>
+        <button class="opt">사이클로이드 위에서는 가속도가 일정하기 때문이다.</button>
+        <button class="opt">끝점 B보다 아래로 내려가지 않기 때문이다.</button>
+      </div><div class="quiz-exp">가장 짧은 것은 직선(2.24 m)이지만 가장 느리다(1.010 s). 사이클로이드는 출발점에서 연직으로 출발해 속력을 빨리 얻는다. 이 예에서는 \(b/h = 2 > \pi/2\)라서 B보다 3.4 cm 더 내려갔다 올라온다.</div></div>
+      <div class="quiz-q"><p>4. 길이가 \(\ell\)인 끈으로 직선 위에 세운 곡선이 둘러싸는 넓이를 최대로 하는 문제에서, 라그랑주 승수 \(\lambda\)의 뜻은?</p><div class="opts">
+        <button class="opt">곡선이 둘러싼 넓이</button>
+        <button class="opt">끈의 길이</button>
+        <button class="opt" data-correct>원호의 반지름이며, 끈을 \(d\ell\) 늘일 때 늘어나는 넓이가 \(\lambda\,d\ell\)이다.</button>
+        <button class="opt">원호의 중심각</button>
+      </div><div class="quiz-exp">해는 반지름 \(\lvert\lambda\rvert\)인 원호이고, 승수의 일반적인 성질 \(dA^*/d\ell = \lambda\)에 따라 넓이는 반지름 × 늘인 길이만큼 는다. 단위도 \(\text{m}^2/\text{m} = \text{m}\)으로 맞는다.</div></div>
+      <div class="quiz-q"><p>5. 평면 극좌표의 라그랑지안 \(L = \tfrac12 m(\dot r^2 + r^2\dot\phi^2) - V(r)\)에서 보존되는 양이 <b>아닌</b> 것은?</p><div class="opts">
+        <button class="opt">\(mr^2\dot\phi\)</button>
+        <button class="opt">\(\tfrac12 m(\dot r^2 + r^2\dot\phi^2) + V(r)\)</button>
+        <button class="opt" data-correct>\(m\dot r\)</button>
+        <button class="opt">반지름이 단위 시간에 쓸고 지나가는 넓이</button>
+      </div><div class="quiz-exp">\(\phi\)는 순환 좌표라 \(p_\phi = mr^2\dot\phi\)가 보존되고(넓이 속도 \(p_\phi/2m\)도), \(L\)에 \(t\)가 없으므로 에너지가 보존된다. \(L\)에는 \(r\)이 있으므로 \(p_r = m\dot r\)은 보존되지 않는다. 실제로 \(m\ddot r = -dV_{\text{eff}}/dr\)이다.</div></div>
+      <div class="quiz-q"><p>6. 선밀도 \(\mu\), 장력 \(T\)인 줄의 라그랑지안 밀도를 \(\mathcal L = \tfrac12\mu u_t^2 - \tfrac12 Tu_x^2\) 대신 실수로 \(\tfrac12\mu u_t^2 + \tfrac12 Tu_x^2\)으로 썼다. 장의 오일러-라그랑주 방정식은 어떻게 되는가?</p><div class="opts">
+        <button class="opt">같은 파동 방정식 \(\mu u_{tt} = Tu_{xx}\)</button>
+        <button class="opt" data-correct>\(\mu u_{tt} = -Tu_{xx}\)로, 파동이 아니라 지수적으로 자라는 해를 갖는 방정식</button>
+        <button class="opt">확산 방정식 \(\mu u_t = Tu_{xx}\)</button>
+        <button class="opt">라플라스 방정식 \(u_{xx} = 0\)</button>
+      </div><div class="quiz-exp">\(-\partial_t(\mu u_t) - \partial_x(Tu_x) = 0\)이 되어 \(\mu u_{tt} + Tu_{xx} = 0\)이다. \(u = e^{ikx}f(t)\)를 넣으면 \(f'' = (Tk^2/\mu)f\)로 지수적으로 자란다. 라그랑지안은 에너지의 합이 아니라 운동 에너지에서 퍼텐셜 에너지를 뺀 것이다.</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+    <div class="prob" id="prob-el-practice" data-level="1"><p>(가) \(y(0) = 0\), \(y(1) = 1\)일 때 \(J[y] = \int_0^1(y'^2 + y^2)\,dx\)를 정지시키는 함수와 그때의 \(J\) 값을 구하고, 직선 \(y = x\)의 \(J\)와 비교하라. (나) \(y(1) = 0\), \(y(2) = 3\)일 때 \(J[y] = \int_1^2 y'^2/x\,dx\)를 정지시키는 함수를 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(F_y = 2y\), \(F_{y'} = 2y'\)이므로 \(y'' = y\)이고 일반해는 \(A\cosh x + B\sinh x\)이다. \(y(0) = 0\)에서 \(A = 0\), \(y(1) = 1\)에서 \(B = 1/\sinh 1\)이므로 \(y = \sinh x/\sinh 1\)이다. \(J\)는 부분 적분으로 구한다. \(\int y'^2\,dx = [yy']_0^1 - \int yy''\,dx = [yy']_0^1 - \int y^2\,dx\)이므로 \(J = [yy']_0^1 = y'(1) = \coth 1 = 1.3130\)이다. 직선 \(y = x\)이면 \(J = 1 + \tfrac13 = 1.3333\)으로 더 크다. 이산화한 수치 최소화로도 \(y(0.5) = 0.4434\)가 \(\sinh 0.5/\sinh 1 = 0.4434\)와 맞는다.</p>
+        <p>(나) \(F\)에 \(y\)가 없으므로 \(F_{y'} = 2y'/x\)가 상수다. \(y' = Cx\)에서 \(y = \tfrac{C}{2}x^2 + D\)이고, 끝점 조건 \(\tfrac{C}{2} + D = 0\), \(2C + D = 3\)에서 \(C = 2\), \(D = -1\)이다. 따라서 \(y = x^2 - 1\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-beltrami-oscillator" data-level="1"><p>\(F = \tfrac12 my'^2 - \tfrac12 ky^2\)(독립 변수 \(x\)를 시간으로 읽으면 용수철에 달린 질량의 라그랑지안)에 대해 (가) 오일러-라그랑주 방정식을 쓰고, (나) 벨트라미 항등식이 주는 첫 적분을 구한 뒤 그 물리적 뜻을 말하라. (다) 첫 적분이 일반해 \(y = A\sin(\omega x + \phi_0)\), \(\omega = \sqrt{k/m}\)에서 실제로 일정함을 확인하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(F_y = -ky\), \(F_{y'} = my'\)이므로 \(-ky - my'' = 0\), 곧 \(my'' = -ky\)로 훅 법칙의 운동 방정식이다.</p>
+        <p>(나) \(F - y'F_{y'} = \tfrac12 my'^2 - \tfrac12 ky^2 - my'^2 = -\big(\tfrac12 my'^2 + \tfrac12 ky^2\big)\)이 상수다. 곧 운동 에너지와 탄성 퍼텐셜 에너지의 합이 보존된다. 벨트라미 상수는 에너지의 음수이고, 식 <a class="ref" href="#eq-energy-function"></a>은 부호를 바꿔 쓴 것이다.</p>
+        <p>(다) \(y' = A\omega\cos(\omega x + \phi_0)\)이므로 \(\tfrac12 mA^2\omega^2\cos^2 + \tfrac12 kA^2\sin^2 = \tfrac12 kA^2\)(\(m\omega^2 = k\))로 일정하다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-cylinder-geodesic" data-level="2"><p>반지름 \(R\)인 원기둥 면 위의 점을 \((\phi, z)\)로 나타내면 \(ds^2 = R^2d\phi^2 + dz^2\)이다. (가) 측지선이 나선 \(z = c_1\phi + c_2\)(또는 \(\phi\) = 상수인 직선, \(z\) = 상수인 원)임을 보여라. (나) 반지름 3.3 cm, 높이 12 cm인 음료수 캔의 바닥 가장자리 한 점에서 윗면 가장자리의 정반대 쪽 점까지 옆면만 따라 기어가는 개미의 최단 경로 길이를 구하고, 옆면을 똑바로 올라간 뒤 윗면 가장자리를 반 바퀴 도는 길과 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 곡선을 \(z(\phi)\)로 쓰면 \(s = \int\sqrt{R^2 + z'^2}\,d\phi\)이다. \(z\)는 순환 좌표이므로 \(z'/\sqrt{R^2 + z'^2}\)이 상수이고, 따라서 \(z'\)이 상수다. \(z = c_1\phi + c_2\)는 나선이다. \(c_1 = 0\)이면 원, \(\phi\)가 고정된 경우(이때는 \(\phi(z)\)로 쓰면 \(\phi' = 0\))는 모선이다. 원기둥을 잘라 펴면 평면이 되고 나선은 직선이 되므로, 펼친 그림에서 선분을 긋는 것과 같다.</p>
+        <p>(나) 펼친 직사각형에서 가로는 반 바퀴 \(\pi R = 10.37\ \text{cm}\), 세로는 \(12\ \text{cm}\)이므로 최단 거리는 \(\sqrt{10.37^2 + 12^2}\ \text{cm} = 15.86\ \text{cm}\)이다. 똑바로 올라간 뒤 가장자리를 도는 길은 \(12 + 10.37 = 22.37\ \text{cm}\)이다. (윗면을 가로지르는 지름 \(6.6\ \text{cm}\)를 쓰면 \(18.6\ \text{cm}\)지만, 그것은 옆면 밖의 길이다.)</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-mirage" data-level="2"><p>햇볕에 달궈진 도로 위의 공기는 아래쪽이 뜨거워 굴절률이 낮다. 지면에서 \(n - 1 = 2.40 \times 10^{-4}\), 눈높이 \(h = 1.50\ \text{m}\)에서 \(n - 1 = 2.70 \times 10^{-4}\)이고 그 사이에서 높이에 비례해 바뀐다고 하자. (가) 식 <a class="ref" href="#eq-snell-stratified"></a>을 써서, 눈에서 수평 아래로 각 \(\alpha\)로 나간 빛(거꾸로 따라가면 눈으로 들어오는 빛)이 지면에 닿지 않고 휘어 올라오는 조건을 구하라. (나) 그런 빛 가운데 지면을 스치는 빛의 \(\alpha\)와, 스치는 지점까지의 수평 거리를 구하라. 운전자에게 길 위의 "물웅덩이"는 대략 얼마나 멀리 보이는가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 수평에서 잰 각 \(\alpha\)는 법선에서 잰 각과 \(\theta = 90^\circ - \alpha\)의 관계이므로 식 <a class="ref" href="#eq-snell-stratified"></a>은 \(n(y)\cos\alpha(y) = n_e\cos\alpha_0\)이다(\(n_e\)는 눈높이의 굴절률). 빛이 수평(\(\alpha = 0\))이 되는 높이에서 \(n(y) = n_e\cos\alpha_0\)이다. 그런 높이가 지면 위에 있으려면 \(n_e\cos\alpha_0 \ge n_g\), 곧 \(\cos\alpha_0 \ge n_g/n_e\)이어야 한다.</p>
+        <p>(나) 경계값은 \(\cos\alpha_0 = n_g/n_e = 1.000\,240/1.000\,270\)이다. 작은 각이면 \(1 - \alpha_0^2/2 \approx 1 - \Delta n\)(\(\Delta n = 3.0 \times 10^{-5}\))이므로 \(\alpha_0 = \sqrt{2\Delta n} = 7.7 \times 10^{-3}\ \text{rad} = 0.44^\circ\)이다. 경로는 작은 각에서 \(\alpha^2 \approx 2[n(y) - n_g]\)이고 \(n(y) - n_g = \Delta n\,y/h\)이므로, 지면을 스치는 점에서 잰 수평 거리 \(x\)에 대해 \(dy/dx = \sqrt{2\Delta n\,y/h}\)이다. 적분하면 \(y = (\Delta n/2h)\,x^2\)인 포물선이고, \(y = h\)가 되는 거리는</p>
+        <div class="formula">\[ x = h\sqrt{\frac{2}{\Delta n}} = 1.50\ \text{m} \times 258 = 387\ \text{m} \]</div>
+        <p>이다. 이보다 가까운 지면에서 오는 빛은 곧장 눈에 오고, 이보다 먼 곳에서는 하늘의 빛이 휘어 올라와 지면처럼 보이는 곳에 하늘이 비친다. 그래서 약 400 m 앞에 물웅덩이 같은 반사가 보인다. 굴절률의 차이가 \(10^{-5}\) 정도인데도 각이 작아 효과가 수백 미터에 걸쳐 쌓인다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-cycloid-isochrone" data-level="2"><p>식 <a class="ref" href="#eq-cycloid"></a>의 사이클로이드(\(y\)는 아래쪽이 양수) 위의 점 \(\theta_0\)(\(0 &lt; \theta_0 &lt; \pi\))에 구슬을 가만히 놓는다. 가장 낮은 점 \(\theta = \pi\)까지 걸리는 시간이 \(\theta_0\)와 상관없이 \(\pi\sqrt{R/g}\)임을 보여라. <a class="ref" href="#ex-brachistochrone"></a>의 곡선(\(R = 0.517\ \text{m}\))에서 이 시간은 얼마인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>속력은 \(v = \sqrt{2g(y - y_0)} = \sqrt{2gR(\cos\theta_0 - \cos\theta)}\), 길이 요소는 \(ds = 2R\sin(\theta/2)\,d\theta\)이다. \(c = \cos(\theta/2)\)로 두면 \(\cos\theta_0 - \cos\theta = 2(c_0^2 - c^2)\), \(dc = -\tfrac12\sin(\theta/2)\,d\theta\)이므로</p>
+        <div class="formula">\[ \begin{aligned} t &= \int_{\theta_0}^{\pi}\frac{2R\sin(\theta/2)\,d\theta}{\sqrt{4gR(c_0^2 - c^2)}} \\ &= 2\sqrt{\frac Rg}\int_0^{c_0}\frac{dc}{\sqrt{c_0^2 - c^2}} = \pi\sqrt{\frac Rg} \end{aligned} \]</div>
+        <p>이다. 마지막 적분은 \(\arcsin(c/c_0)\big|_0^{c_0} = \pi/2\)로 \(c_0\)에 기대지 않는다. \(R = 0.517\ \text{m}\)이면 \(\pi\sqrt{0.517/9.81}\ \text{s} = 0.721\ \text{s}\)이다. \(\theta_0 = 0.5\)와 \(2.0\)에서 수치 적분해도 0.7213 s가 나온다. 이 사이클로이드에서 A에서 B까지가 0.806 s인 것은 B가 가장 낮은 점을 지나 \(\theta_B = 3.508\)에 있기 때문이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-brachistochrone-line" data-level="2"><p>원점에서 정지 상태로 출발한 구슬이 연직선 \(x = b\) 위의 <b>아무 점에나</b> 가장 빨리 닿는 곡선을 구하라. 자연 경계 조건 식 <a class="ref" href="#eq-natural-boundary"></a>를 쓰라. \(b = 2.00\ \text{m}\)일 때 걸리는 시간과 도착 깊이를 구하고, <a class="ref" href="#ex-brachistochrone"></a>의 0.806 s와 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>곡선은 여전히 사이클로이드 식 <a class="ref" href="#eq-cycloid"></a>이다. 끝점 \(y(b)\)가 자유이므로 \(F_{y'} = y'/\big(\sqrt y\sqrt{1 + y'^2}\big) = 0\), 곧 \(y'(b) = 0\)이다. 사이클로이드에서 \(y' = \cot(\theta/2) = 0\)인 곳은 \(\theta = \pi\)(가장 낮은 점)이므로 \(b = R\pi\), \(R = b/\pi\)이다. 시간은 식 <a class="ref" href="#eq-cycloid-time"></a>에서 \(T = \pi\sqrt{R/g} = \sqrt{\pi b/g}\)이다. \(b = 2.00\ \text{m}\)이면 \(R = 0.637\ \text{m}\), 도착 깊이 \(2R = 1.27\ \text{m}\), \(T = \sqrt{2\pi/9.81}\ \text{s} = 0.800\ \text{s}\)이다. 깊이 1 m라는 조건이 없으니 0.806 s보다 조금 빠르다. 구슬은 연직선에 수평으로 닿는다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-fence-semicircle" data-level="2"><p>곧은 담에 기대어 길이 100 m인 울타리를 쳐서 땅을 둘러싸려 한다. 울타리의 두 끝은 담 위의 어디에 놓아도 된다. (가) <a class="ref" href="#ex-isoperimetric-arc"></a>의 결과를 쓰되, 반각 \(\alpha\)도 바꿀 수 있다고 보고 넓이를 최대로 하는 모양이 반원임을 보여라. (나) 그 넓이를 담에 기댄 가장 좋은 직사각형과 비교하라. (다) 울타리를 1 m 늘이면 넓이가 얼마나 느는가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 길이 \(\ell\)을 고정하면 \(\rho = \ell/2\alpha\)이고 \(A = \rho^2(\alpha - \sin\alpha\cos\alpha) = \dfrac{\ell^2}{4}\,\dfrac{\alpha - \sin\alpha\cos\alpha}{\alpha^2}\)이다. \(\alpha\)로 미분하면 \(\dfrac{d}{d\alpha}\dfrac{\alpha - \tfrac12\sin 2\alpha}{\alpha^2} = \dfrac{2\cos\alpha\,(\sin\alpha - \alpha\cos\alpha)}{\alpha^3}\)이다. \(0 &lt; \alpha &lt; \pi\)에서 \(\sin\alpha - \alpha\cos\alpha > 0\)이므로 도함수는 \(\cos\alpha = 0\), 곧 \(\alpha = \pi/2\)에서만 0이 되고 거기서 부호가 양에서 음으로 바뀐다. 반원이다. 울타리는 담에 수직으로 닿는다(자연 경계 조건과 같은 결과).</p>
+        <p>(나) 반원의 반지름은 \(\rho = 100/\pi = 31.8\ \text{m}\), 넓이는 \(\pi\rho^2/2 = 1592\ \text{m}^2\)이다. 직사각형은 담과 나란한 변 \(y\), 수직인 변 \(x\)로 \(2x + y = 100\)이면 \(xy\)가 \(x = 25\ \text{m}\)에서 최대 \(1250\ \text{m}^2\)이다. 반원이 27% 넓다.</p>
+        <p>(다) \(dA/d\ell = \lambda = \rho = 31.8\ \text{m}\)이므로 약 \(32\ \text{m}^2\) 는다. 확인: \(A = \ell^2/2\pi\)에서 \(dA/d\ell = \ell/\pi = 31.8\ \text{m}\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-bead-hoop" data-level="2"><p>반지름 \(R\)인 원형 철사 고리가 연직인 지름을 축으로 일정한 각속도 \(\omega\)로 돈다. 고리에 꿴 구슬(질량 \(m\))은 마찰 없이 움직이고, 위치는 가장 낮은 점에서 잰 각 \(\theta\)로 나타낸다. (가) 라그랑지안과 운동 방정식을 구하라. (나) 평형 위치를 모두 구하고, \(\theta = 0\) 말고 다른 평형이 생기는 \(\omega\)의 문턱값을 구하라. (다) \(R = 0.10\ \text{m}\), 초당 3바퀴일 때 평형각은? (라) 보존되는 양은 \(T + V\)인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 구슬의 속도는 고리를 따라가는 \(R\dot\theta\)와 회전에 따른 \(\omega R\sin\theta\)가 서로 수직이므로 \(T = \tfrac12 mR^2(\dot\theta^2 + \omega^2\sin^2\theta)\), \(V = -mgR\cos\theta\)이다.</p>
+        <div class="formula">\[ \begin{aligned} L &= \tfrac12 mR^2\big(\dot\theta^2 + \omega^2\sin^2\theta\big) + mgR\cos\theta \\ R\ddot\theta &= \big(R\omega^2\cos\theta - g\big)\sin\theta \end{aligned} \]</div>
+        <p>(나) \(\ddot\theta = 0\)인 곳은 \(\sin\theta = 0\)(\(\theta = 0, \pi\))이거나 \(\cos\theta = g/R\omega^2\)이다. 뒤의 것은 \(\omega > \omega_c = \sqrt{g/R}\)일 때만 있다.</p>
+        <p>(다) \(\omega = 2\pi \times 3 = 18.85\ \text{s}^{-1}\)이면 \(\cos\theta = 9.81/(0.10 \times 18.85^2) = 0.276\), \(\theta = 74.0^\circ\)이다. 문턱은 \(\omega_c = \sqrt{98.1}\ \text{s}^{-1} = 9.90\ \text{s}^{-1}\)(초당 1.58바퀴)이다.</p>
+        <p>(라) \(L\)에 \(t\)가 없으므로 식 <a class="ref" href="#eq-energy-function"></a>의 \(E = \dot\theta\,\partial L/\partial\dot\theta - L = \tfrac12 mR^2\dot\theta^2 - \tfrac12 mR^2\omega^2\sin^2\theta - mgR\cos\theta\)가 보존된다. 이것은 \(T + V\)가 아니다. 고리를 일정하게 돌리는 모터가 구슬에 일을 하므로 \(T + V\)는 바뀐다. \(T\)가 \(\dot\theta\)의 2차식만이 아니라 \(\dot\theta\)가 들어 있지 않은 항 \(\tfrac12 mR^2\omega^2\sin^2\theta\)를 포함하기 때문에 \(E = T + V\)라는 결론이 성립하지 않는다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-charge-magnetic" data-level="3"><p>균일한 자기장 \(\mathbf B = B\hat{\mathbf z}\) 속의 전하 \(q\), 질량 \(m\)인 입자의 라그랑지안은 \(L = \tfrac12 m(\dot x^2 + \dot y^2 + \dot z^2) + qBx\dot y\)로 쓸 수 있다(벡터 퍼텐셜 \(\mathbf A = Bx\hat{\mathbf y}\)를 쓴 \(L = \tfrac12 mv^2 + q\mathbf v\cdot\mathbf A\)). (가) 순환 좌표를 찾고 보존되는 켤레 운동량을 구하라. 그것은 \(m\dot y\)와 같은가? (나) 운동 방정식이 로런츠 힘 \(m\dot{\mathbf v} = q\mathbf v\times\mathbf B\)와 같음을 보이고, 회전 각진동수를 구하라. (다) \(B = 0.10\ \text{T}\)인 자기장 속 전자의 회전 진동수 \(f\)를 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(L\)에 \(y\)와 \(z\)가 없다. \(p_z = m\dot z\)는 보통의 운동량이고, \(y\)의 켤레 운동량은 \(p_y = \partial L/\partial\dot y = m\dot y + qBx\)이다. 보존되는 것은 \(m\dot y\)가 아니라 이 조합이다. 일반화 운동량은 운동학적 운동량과 다를 수 있다.</p>
+        <p>(나) \(y\)의 방정식은 \(\tfrac{d}{dt}(m\dot y + qBx) = 0\), 곧 \(m\ddot y = -qB\dot x\)이다. \(x\)의 방정식은 \(\partial L/\partial x = qB\dot y\)이므로 \(m\ddot x = qB\dot y\)이다. 한편 \(\mathbf v\times\mathbf B = (\dot yB, -\dot xB, 0)\)이므로 둘은 로런츠 힘의 성분과 같다. \(w = \dot x + i\dot y\)로 두면 \(m\dot w = qB(\dot y - i\dot x) = -iqBw\)이므로 \(w \propto e^{-i\omega_ct}\), \(\omega_c = qB/m\)이다(2장의 <a href="ch02.html#ex-cyclotron-complex">예제 2.3</a>과 같은 풀이다).</p>
+        <p>(다) 전자는 \(\lvert q\rvert = 1.602 \times 10^{-19}\ \text{C}\), \(m_e = 9.109 \times 10^{-31}\ \text{kg}\)이므로 \(f = \lvert q\rvert B/2\pi m_e = 2.80 \times 10^9\ \text{Hz}\), 곧 2.80 GHz이다. 단위 \(\text{C}\cdot\text{T}/\text{kg} = \text{s}^{-1}\)이다.</p>
+        <p>(로런츠 힘은 퍼텐셜 \(V(q)\)에서 나오지 않는다. 그런데도 이 속도에 기대는 라그랑지안이 맞는 운동 방정식을 준다는 것을 (나)에서 확인했다.)</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-beam-deflection" data-level="3"><p>(가) 피적분 함수가 2계 도함수까지 포함하는 \(J[y] = \int_a^b F(x, y, y', y'')\,dx\)에서, 끝점의 \(y\)와 \(y'\)을 모두 고정하면 오일러-라그랑주 방정식이 \(F_y - (F_{y'})' + (F_{y''})'' = 0\)임을 보여라. (나) 굽힘 강성 \(EI\)인 들보에 단위 길이당 하중 \(w_0\)이 걸리면 처짐 \(y\)(아래가 양수)의 에너지는 \(U = \int_0^L\big(\tfrac12 EI\,y''^2 - w_0y\big)\,dx\)이다. 두 끝을 받침대에 올려놓은(\(y = 0\), 끝의 \(y'\)은 자유) 들보의 처짐을 구하라. (다) \(L = 2.0\ \text{m}\), \(w_0 = 200\ \text{N/m}\), \(EI = 1.0 \times 10^4\ \text{N}\cdot\text{m}^2\)일 때 가운데의 처짐은?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\tfrac{d}{d\varepsilon}J = \int(F_y\eta + F_{y'}\eta' + F_{y''}\eta'')\,dx\)이다. 둘째 항은 한 번, 셋째 항은 두 번 부분 적분한다. \(\int F_{y''}\eta''\,dx = [F_{y''}\eta']_a^b - [(F_{y''})'\eta]_a^b + \int(F_{y''})''\eta\,dx\)이고, 끝에서 \(\eta = \eta' = 0\)이면 경계 항이 모두 사라져 \(\int[F_y - (F_{y'})' + (F_{y''})'']\eta\,dx = 0\)이 된다. 기본 보조정리에서 결과가 나온다.</p>
+        <p>(나) \(F = \tfrac12 EIy''^2 - w_0y\)이면 \(-w_0 + (EIy'')'' = 0\), 곧 \(EI\,y'''' = w_0\)이다. 끝에서 \(y'\)이 자유이면 남은 경계 항 \(F_{y''}\eta' = EIy''\eta'\)에서 자연 경계 조건 \(y'' = 0\)이 나온다(굽힘 모멘트가 0). 네 조건 \(y(0) = y(L) = y''(0) = y''(L) = 0\)으로 \(y'''' = w_0/EI\)를 적분하면</p>
+        <div class="formula">\[ y(x) = \frac{w_0}{24EI}\,x\big(L^3 - 2Lx^2 + x^3\big) \]</div>
+        <p>이다. 가운데의 처짐은 \(y(L/2) = 5w_0L^4/384EI\)이다.</p>
+        <p>(다) \(5 \times 200 \times 2.0^4/(384 \times 1.0 \times 10^4)\ \text{m} = 4.2 \times 10^{-3}\ \text{m} = 4.2\ \text{mm}\)이다. 단위: \((\text{N/m})\,\text{m}^4/(\text{N}\cdot\text{m}^2) = \text{m}\).</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-soap-film-area" data-level="3"><p><a class="ref" href="#ex-soap-film"></a>에서 고리 사이를 조금씩 벌린다. (가) 얕은 현수면의 넓이가 두 원판의 넓이 \(2\pi R^2\)과 같아지는 고리 간격 \(2d\)를 \(R\)의 배수로 구하라(수치 계산). (나) 이 간격과 막이 터지는 간격 \(1.325R\) 사이에서 막은 어떤 상태인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(R = 1\)로 두고 \(d\)마다 \(\cosh u/u = 1/d\)의 작은 근 \(u\)(\(u &lt; 1.200\))를 구해 \(c = d/u\)와 넓이 \(A = \pi c(2d + c\sinh(2d/c))\)를 계산한다. \(A = 2\pi\)가 되는 \(d\)를 이분법으로 찾으면 \(d = 0.528\), 곧 \(2d = 1.055R\)이다. 예를 들어 \(2d = R\)(본문의 예)에서는 \(A = 149.8/25 = 5.99 &lt; 2\pi = 6.28\)이다.</p>
+        <p>(나) \(1.055R &lt; 2d &lt; 1.325R\)에서는 현수면이 여전히 정지 곡면이고 작은 흔들림에는 넓이가 늘어나므로 막이 유지되지만, 원판 두 장보다 넓이가 크다. 곧 극소이지만 최소는 아닌 준안정 상태다. 막은 큰 흔들림이 있으면 더 낮은 상태(원판 두 장)로 갈 수 있고, \(1.325R\)에서는 정지 곡면이 아예 사라져 반드시 터진다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>
