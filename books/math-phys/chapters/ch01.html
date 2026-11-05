@@ -92,7 +92,7 @@
     <p>가장 유명한 반례는 <span class="term">조화급수</span> <span class="en">(harmonic series)</span> \(\sum_{n=1}^\infty 1/n\)이다. 일반항 \(1/n\)은 0으로 가지만 부분합 \(H_N = \sum_{n=1}^N 1/n\)은 한없이 커진다. 항을 2의 거듭제곱마다 묶어 보면 알 수 있다.</p>
     <div class="formula" id="eq-harmonic-bound">\[ \begin{aligned} H_{2^m} &= 1 + \frac12 + \Big(\frac13 + \frac14\Big) + \Big(\frac15 + \cdots + \frac18\Big) + \cdots \\ &\ge 1 + \frac12 + \Big(\frac14 + \frac14\Big) + \Big(\frac18 + \cdots + \frac18\Big) + \cdots \\ &= 1 + \underbrace{\frac12 + \frac12 + \cdots + \frac12}_{m\text{개}} = 1 + \frac{m}{2} \end{aligned} \]</div>
     <p>괄호 하나에는 \(2^{k-1}\)개의 항이 있고 각 항은 \(1/2^k\) 이상이므로 괄호마다 \(\tfrac12\) 이상이다. \(m\)을 키우면 \(1 + m/2\)는 한없이 커지므로 조화급수는 발산한다. 다만 아주 느리게 발산한다. \(H_N\)이 10을 넘으려면 \(N = 12\,367\)개의 항이 필요하다. 1.2절의 적분 판정법으로 보면 \(H_N\)은 \(\ln N\)처럼 자란다.</p>
-    <div class="callout warn"><strong>"항이 0으로 가니 수렴한다"는 틀린 추론이다</strong><p>정리 <a class="ref" href="#thm-term-test"></a>은 발산을 판정하는 데만 쓸 수 있다. \(a_n \to 0\)은 수렴의 필요조건일 뿐 충분조건이 아니다. 수렴하려면 항이 "충분히 빨리" 0으로 가야 하고, 얼마나 빨라야 하는지는 1.2절의 판정법이 답한다. 예를 들어 \(\sum 1/n\)은 발산하고 \(\sum 1/n^2\)은 수렴한다.</p></div>
+    <div class="callout warn"><strong>"항이 0으로 가니 수렴한다"는 틀린 추론이다</strong><p><a class="ref" href="#thm-term-test"></a>은 발산을 판정하는 데만 쓸 수 있다. \(a_n \to 0\)은 수렴의 필요조건일 뿐 충분조건이 아니다. 수렴하려면 항이 "충분히 빨리" 0으로 가야 하고, 얼마나 빨라야 하는지는 1.2절의 판정법이 답한다. 예를 들어 \(\sum 1/n\)은 발산하고 \(\sum 1/n^2\)은 수렴한다.</p></div>
 
   </section>
 
@@ -132,7 +132,7 @@
     </div>
     <p>\(f(x) = 1/x^p\) (\(p > 0\))에 적용하자. \(p \ne 1\)이면 \(\int_1^\infty x^{-p}\,dx = \big[x^{1-p}/(1-p)\big]_1^\infty\)이고, 이것은 \(p > 1\)일 때 \(1/(p-1)\)로 유한하고 \(p &lt; 1\)일 때 무한대다. \(p = 1\)이면 \(\int_1^\infty dx/x = \lim \ln X = \infty\)이다. 따라서</p>
     <div class="formula" id="eq-p-series">\[ \sum_{n=1}^{\infty} \frac{1}{n^p} \;\text{ 은 }\; p > 1 \text{이면 수렴하고, } p \le 1 \text{이면 발산한다.} \]</div>
-    <p>이 결과를 <span class="term">p급수</span> <span class="en">(p-series)</span> 판정이라 한다. \(p \le 0\)이면 항이 0으로 가지 않으므로 정리 <a class="ref" href="#thm-term-test"></a>로 바로 발산이다. 그림 1-2의 부등식은 조화급수의 크기도 알려 준다. \(\ln(N+1) \le H_N \le 1 + \ln N\)이다. 실제로 \(H_N - \ln N\)은 \(N \to \infty\)에서 <span class="term">오일러-마스케로니 상수</span> <span class="en">(Euler–Mascheroni constant)</span> \(\gamma = 0.5772\ldots\)로 수렴한다.</p>
+    <p>이 결과를 <span class="term">p급수</span> <span class="en">(p-series)</span> 판정이라 한다. \(p \le 0\)이면 항이 0으로 가지 않으므로 <a class="ref" href="#thm-term-test"></a>로 바로 발산이다. 그림 1-2의 부등식은 조화급수의 크기도 알려 준다. \(\ln(N+1) \le H_N \le 1 + \ln N\)이다. 실제로 \(H_N - \ln N\)은 \(N \to \infty\)에서 <span class="term">오일러-마스케로니 상수</span> <span class="en">(Euler–Mascheroni constant)</span> \(\gamma = 0.5772\ldots\)로 수렴한다.</p>
 
     <div class="box ex" id="ex-basel-estimate"><div class="box-h">\(\sum 1/n^2\)을 열 항으로 유효숫자 네 자리까지 구하기</div>
       <p>\(\sum_{n=1}^\infty 1/n^2\)의 값을 첫 10항과 식 <a class="ref" href="#eq-integral-tail-bound"></a>으로 어림하라.</p>
@@ -145,7 +145,7 @@
     <p>항의 부호가 섞여 있으면 양항급수의 판정법을 바로 쓸 수 없다. 이때는 절댓값을 씌운 급수를 먼저 본다.</p>
     <div class="box def" id="def-absolute-convergence"><div class="box-h">절대 수렴과 조건 수렴</div>
       <p>\(\sum \lvert a_n\rvert\)이 수렴하면 \(\sum a_n\)이 <span class="term">절대 수렴한다</span> <span class="en">(converge absolutely)</span>고 한다. \(\sum a_n\)은 수렴하지만 \(\sum \lvert a_n\rvert\)은 발산하면 \(\sum a_n\)이 <span class="term">조건 수렴한다</span> <span class="en">(converge conditionally)</span>고 한다.</p>
-      <p><b>절대 수렴하는 급수는 수렴한다.</b> \(0 \le a_n + \lvert a_n\rvert \le 2\lvert a_n\rvert\)이므로 정리 <a class="ref" href="#thm-comparison-test"></a>에 따라 \(\sum (a_n + \lvert a_n\rvert)\)이 수렴하고, 수렴하는 두 급수의 차인 \(\sum a_n = \sum (a_n + \lvert a_n\rvert) - \sum \lvert a_n\rvert\)도 수렴한다.</p>
+      <p><b>절대 수렴하는 급수는 수렴한다.</b> \(0 \le a_n + \lvert a_n\rvert \le 2\lvert a_n\rvert\)이므로 <a class="ref" href="#thm-comparison-test"></a>에 따라 \(\sum (a_n + \lvert a_n\rvert)\)이 수렴하고, 수렴하는 두 급수의 차인 \(\sum a_n = \sum (a_n + \lvert a_n\rvert) - \sum \lvert a_n\rvert\)도 수렴한다.</p>
     </div>
     <p>절대 수렴하는 급수는 항의 순서를 바꾸거나 두 급수를 곱해 항을 아무 순서로 모아도 합이 같다. 조건 수렴하는 급수에서는 그렇지 않다(이 절의 끝).</p>
     <p>절대 수렴을 판정하는 가장 실용적인 방법은 이웃한 항의 비를 보는 것이다. 비가 결국 1보다 작은 어떤 수 \(r\) 아래에 머물면 급수는 공비 \(r\)인 기하급수보다 빨리 줄어든다.</p>
@@ -154,7 +154,7 @@
       <div class="formula" id="eq-ratio-limit">\[ \rho = \lim_{n\to\infty} \left\lvert \frac{a_{n+1}}{a_n} \right\rvert \]</div>
       <p>\(\rho &lt; 1\)이면 \(\sum a_n\)은 절대 수렴하고, \(\rho > 1\)이면(\(\rho = \infty\) 포함) 발산한다. \(\rho = 1\)이면 이 판정법으로는 알 수 없다.</p>
       <details class="proof"><summary>증명</summary>
-        <p>\(\rho &lt; 1\)이면 \(\rho &lt; r &lt; 1\)인 \(r\)을 고른다. 극한의 정의에 따라 어떤 \(M\) 이후로 \(\lvert a_{n+1}\rvert \le r\lvert a_n\rvert\)이므로 \(\lvert a_{M+k}\rvert \le \lvert a_M\rvert\,r^k\)이다. 오른쪽은 공비 \(r &lt; 1\)인 기하급수의 항이므로 비교 판정법에 따라 \(\sum \lvert a_n\rvert\)이 수렴한다. \(\rho > 1\)이면 어떤 번호 이후로 \(\lvert a_{n+1}\rvert > \lvert a_n\rvert\)이라 \(\lvert a_n\rvert\)이 0으로 가지 않으므로 정리 <a class="ref" href="#thm-term-test"></a>에 따라 발산한다. \(\rho = 1\)인 예로 발산하는 \(\sum 1/n\)과 수렴하는 \(\sum 1/n^2\)이 모두 있으므로 이 경우는 판정할 수 없다.</p>
+        <p>\(\rho &lt; 1\)이면 \(\rho &lt; r &lt; 1\)인 \(r\)을 고른다. 극한의 정의에 따라 어떤 \(M\) 이후로 \(\lvert a_{n+1}\rvert \le r\lvert a_n\rvert\)이므로 \(\lvert a_{M+k}\rvert \le \lvert a_M\rvert\,r^k\)이다. 오른쪽은 공비 \(r &lt; 1\)인 기하급수의 항이므로 비교 판정법에 따라 \(\sum \lvert a_n\rvert\)이 수렴한다. \(\rho > 1\)이면 어떤 번호 이후로 \(\lvert a_{n+1}\rvert > \lvert a_n\rvert\)이라 \(\lvert a_n\rvert\)이 0으로 가지 않으므로 <a class="ref" href="#thm-term-test"></a>에 따라 발산한다. \(\rho = 1\)인 예로 발산하는 \(\sum 1/n\)과 수렴하는 \(\sum 1/n^2\)이 모두 있으므로 이 경우는 판정할 수 없다.</p>
       </details>
     </div>
     <p>비 판정법은 \(n!\)이나 \(r^n\)이 들어 있는 급수에 잘 맞는다. 예를 들어 \(\sum 10^n/n!\)은 \(\lvert a_{n+1}/a_n\rvert = 10/(n+1) \to 0\)이므로 수렴한다. 반대로 \(\sum 1/n^p\)처럼 \(n\)의 거듭제곱만 있는 급수에는 언제나 \(\rho = 1\)이 나오므로, 비교 판정법이나 적분 판정법을 쓴다.</p>
@@ -174,7 +174,7 @@
       <p>전하 \(+e\)와 \(-e\)인 이온이 간격 \(a\)로 번갈아 놓인 무한히 긴 사슬이 있다. 이온 하나가 나머지 모든 이온과 갖는 정전 에너지를 구하고, NaCl의 이웃 이온 간격 \(a = 0.282\ \text{nm}\)을 넣어 크기를 어림하라.</p>
       <p><b>풀이.</b> 양이온 하나를 원점에 두자. 거리 \(na\)에는 양쪽에 하나씩 두 개의 이온이 있고, 전하는 \(n\)이 홀수이면 \(-e\), 짝수이면 \(+e\)이다. 따라서</p>
       <div class="formula" id="eq-madelung-1d">\[ \begin{aligned} U &= \frac{e}{4\pi\varepsilon_0}\sum_{n=1}^{\infty} \frac{2\,(-1)^n e}{na} = -\frac{e^2}{4\pi\varepsilon_0 a}\,\alpha, \\ \alpha &= 2\Big(1 - \frac12 + \frac13 - \frac14 + \cdots\Big) = 2\ln 2 \end{aligned} \]</div>
-      <p>이다. 무차원 수 \(\alpha\)를 <span class="term">마델룽 상수</span> <span class="en">(Madelung constant)</span>라 한다. 괄호 안은 교대 조화급수로, 정리 <a class="ref" href="#thm-alternating-series"></a>에 따라 수렴하고 그 값은 \(\ln 2\)이다(식 <a class="ref" href="#eq-log-series"></a>에서 \(x = 1\)). 따라서 \(\alpha = 1.386\)이다. \(e^2/(4\pi\varepsilon_0) = 1.440\ \text{eV·nm}\)을 쓰면</p>
+      <p>이다. 무차원 수 \(\alpha\)를 <span class="term">마델룽 상수</span> <span class="en">(Madelung constant)</span>라 한다. 괄호 안은 교대 조화급수로, <a class="ref" href="#thm-alternating-series"></a>에 따라 수렴하고 그 값은 \(\ln 2\)이다(식 <a class="ref" href="#eq-log-series"></a>에서 \(x = 1\)). 따라서 \(\alpha = 1.386\)이다. \(e^2/(4\pi\varepsilon_0) = 1.440\ \text{eV·nm}\)을 쓰면</p>
       <div class="formula">\[ U = -\frac{1.440\ \text{eV·nm}}{0.282\ \text{nm}} \times 1.386 = -7.08\ \text{eV} \]</div>
       <p>이다. 이웃 두 이온과의 에너지만 세면 \(-2 \times 5.11 = -10.2\ \text{eV}\)이므로, 먼 이온들이 이 값을 약 30% 줄인다. 수렴이 느리다는 것도 눈여겨보자. 식 <a class="ref" href="#eq-alternating-error"></a>에 따라 \(\alpha\)를 소수 셋째 자리까지 맞히려면 \(2/(N+1) &lt; 0.0005\), 곧 4000개 정도의 항이 필요하다.</p>
     </div>
@@ -186,7 +186,7 @@
   <!-- ============================================================ 1.3 -->
   <section id="s3">
     <h2>멱급수와 수렴 반경</h2>
-    <p>각진동수 \(\omega\)인 양자 진동자의 분배 함수는 \(Z = 1 + q + q^2 + \cdots\), \(q = e^{-\hbar\omega/k_BT}\)이다(이 절 끝의 예제 <a class="ref" href="#ex-planck-mean-energy"></a>). 온도가 바뀌면 \(q\)가 바뀌므로 \(Z\)는 숫자 하나가 아니라 변수 \(q\)의 함수이고, 평균 에너지를 얻으려면 이 무한급수를 \(q\)로 미분해야 한다. 무한급수를 항마다 미분해도 되는가? 이 질문에 답하려면 항이 변수의 거듭제곱인 급수를 따로 다뤄야 한다. 기하급수 식 <a class="ref" href="#eq-geometric-series"></a>에서 \(a = 1\), \(r = x\)로 두면</p>
+    <p>각진동수 \(\omega\)인 양자 진동자의 분배 함수는 \(Z = 1 + q + q^2 + \cdots\), \(q = e^{-\hbar\omega/k_BT}\)이다(이 절 끝의 <a class="ref" href="#ex-planck-mean-energy"></a>). 온도가 바뀌면 \(q\)가 바뀌므로 \(Z\)는 숫자 하나가 아니라 변수 \(q\)의 함수이고, 평균 에너지를 얻으려면 이 무한급수를 \(q\)로 미분해야 한다. 무한급수를 항마다 미분해도 되는가? 이 질문에 답하려면 항이 변수의 거듭제곱인 급수를 따로 다뤄야 한다. 기하급수 식 <a class="ref" href="#eq-geometric-series"></a>에서 \(a = 1\), \(r = x\)로 두면</p>
     <div class="formula">\[ \frac{1}{1 - x} = 1 + x + x^2 + x^3 + \cdots \qquad (\lvert x\rvert &lt; 1) \]</div>
     <p>이다. 왼쪽은 함수이고 오른쪽은 끝없는 다항식이다. 다항식은 더하고 곱하고 미분하고 적분하기 쉬우므로, 함수를 이런 꼴로 쓸 수 있으면 계산이 단순해진다. 동시에 등식이 \(\lvert x\rvert &lt; 1\)에서만 성립한다는 점도 보인다. 왼쪽 함수는 \(x = 2\)에서 \(-1\)이지만 오른쪽 급수는 발산한다. 이 절에서는 이런 급수가 어떤 \(x\)에서 의미가 있는지를 정한다.</p>
     <div class="box def" id="def-power-series"><div class="box-h">멱급수</div>
@@ -242,12 +242,12 @@
       <p>각진동수 \(\omega\)인 진동자의 에너지가 \(E_n = n\hbar\omega\) (\(n = 0, 1, 2, \ldots\))만 가능하다고 하자(플랑크의 가설). 온도 \(T\)에서 에너지가 \(E_n\)일 확률은 볼츠만 인자에 비례한다: \(P_n = e^{-E_n/k_BT}/Z\). 규격화 상수 \(Z = \sum_n e^{-E_n/k_BT}\)를 <span class="term">분배 함수</span> <span class="en">(partition function)</span>라 한다. 평균 에너지 \(\langle E\rangle = \sum_n E_n P_n\)을 구하라.</p>
       <p><b>풀이.</b> \(q = e^{-\hbar\omega/k_BT}\)로 두면 \(e^{-E_n/k_BT} = q^n\)이고, \(T > 0\)이면 \(0 &lt; q &lt; 1\)이다. 분배 함수는 공비 \(q\)인 기하급수다.</p>
       <div class="formula" id="eq-planck-partition">\[ Z = \sum_{n=0}^{\infty} q^n = \frac{1}{1 - q} \]</div>
-      <p>평균 에너지에는 \(\sum n q^n\)이 필요하다. 기하급수 \(\sum q^n = 1/(1-q)\)는 수렴 반경이 1인 멱급수이고 \(q\)는 그 안에 있으므로, 정리 <a class="ref" href="#thm-power-series-calculus"></a>에 따라 양변을 \(q\)로 항별 미분할 수 있다. 미분하고 \(q\)를 곱하면</p>
+      <p>평균 에너지에는 \(\sum n q^n\)이 필요하다. 기하급수 \(\sum q^n = 1/(1-q)\)는 수렴 반경이 1인 멱급수이고 \(q\)는 그 안에 있으므로, <a class="ref" href="#thm-power-series-calculus"></a>에 따라 양변을 \(q\)로 항별 미분할 수 있다. 미분하고 \(q\)를 곱하면</p>
       <div class="formula" id="eq-planck-sum-n">\[ \sum_{n=0}^{\infty} n q^n = q\,\frac{d}{dq}\sum_{n=0}^{\infty} q^n = q\,\frac{d}{dq}\frac{1}{1-q} = \frac{q}{(1-q)^2} \]</div>
       <p>이다. 따라서</p>
       <div class="formula" id="eq-planck-mean-energy">\[ \begin{aligned} \langle E\rangle &= \frac{\hbar\omega}{Z}\sum_{n=0}^\infty n q^n = \hbar\omega\,(1 - q)\,\frac{q}{(1-q)^2} \\ &= \frac{\hbar\omega\, q}{1 - q} = \frac{\hbar\omega}{e^{\hbar\omega/k_BT} - 1} \end{aligned} \]</div>
       <p>이다. 마지막 등호에서 분자와 분모에 \(1/q = e^{\hbar\omega/k_BT}\)를 곱했다. 이것이 흑체 복사의 플랑크 공식과 아인슈타인 고체 모형의 핵심 식이다.</p>
-      <p><b>숫자로 보기.</b> 300 K에서 \(k_BT = 25.85\ \text{meV}\)이다. 일산화탄소 분자의 신축 진동(파수 \(2143\ \text{cm}^{-1}\), \(\hbar\omega = 0.2657\ \text{eV}\))은 \(\hbar\omega/k_BT = 10.28\)이라 \(\langle E\rangle = 0.2657\ \text{eV}/(e^{10.28} - 1) = 9.1 \times 10^{-6}\ \text{eV}\)이다. 고전 물리가 예측하는 \(k_BT\)의 \(3.5 \times 10^{-4}\)배밖에 되지 않는다. 진동이 사실상 "얼어붙어" 있는 것이다. 반대로 \(\hbar\omega = 1\ \text{meV}\)인 느린 진동은 \(\langle E\rangle = 25.36\ \text{meV}\)로 \(k_BT\)에 가깝다. \(\hbar\omega \ll k_BT\)일 때 식 <a class="ref" href="#eq-planck-mean-energy"></a>이 어떻게 \(k_BT\)로 가는지는 1.6절의 예제 <a class="ref" href="#ex-planck-classical-limit"></a>에서 급수로 구한다.</p>
+      <p><b>숫자로 보기.</b> 300 K에서 \(k_BT = 25.85\ \text{meV}\)이다. 일산화탄소 분자의 신축 진동(파수 \(2143\ \text{cm}^{-1}\), \(\hbar\omega = 0.2657\ \text{eV}\))은 \(\hbar\omega/k_BT = 10.28\)이라 \(\langle E\rangle = 0.2657\ \text{eV}/(e^{10.28} - 1) = 9.1 \times 10^{-6}\ \text{eV}\)이다. 고전 물리가 예측하는 \(k_BT\)의 \(3.5 \times 10^{-4}\)배밖에 되지 않는다. 진동이 사실상 "얼어붙어" 있는 것이다. 반대로 \(\hbar\omega = 1\ \text{meV}\)인 느린 진동은 \(\langle E\rangle = 25.36\ \text{meV}\)로 \(k_BT\)에 가깝다. \(\hbar\omega \ll k_BT\)일 때 식 <a class="ref" href="#eq-planck-mean-energy"></a>이 어떻게 \(k_BT\)로 가는지는 1.6절의 <a class="ref" href="#ex-planck-classical-limit"></a>에서 급수로 구한다.</p>
     </div>
   </section>
 
@@ -257,7 +257,7 @@
     <p>1.3절에서는 급수가 주어지고 그 합이 어떤 함수인지를 물었다. 물리에서는 반대 방향이 더 자주 필요하다. 함수 \(f(x)\)가 주어졌을 때 그것을 멱급수로 펼치고 싶다. 예를 들어 진자의 운동 방정식에 있는 \(\sin\theta\)를, 또는 상대론적 에너지에 있는 \((1 - v^2/c^2)^{-1/2}\)을 거듭제곱의 합으로 쓰고 첫 몇 항만 남기려는 것이다. 이때 묻게 되는 것은 두 가지다. 계수는 무엇인가? 몇 항에서 끊으면 오차가 얼마인가?</p>
 
     <h3 id="s4-coefficients">계수 정하기</h3>
-    <p>\(f\)가 \(a\)를 중심으로 하는 멱급수로 쓰인다고 가정하자: \(f(x) = c_0 + c_1(x - a) + c_2(x - a)^2 + \cdots\). \(x = a\)를 넣으면 \(c_0 = f(a)\)이다. 정리 <a class="ref" href="#thm-power-series-calculus"></a>에 따라 항별로 미분할 수 있으므로 한 번 미분하면 \(f'(x) = c_1 + 2c_2(x - a) + 3c_3(x-a)^2 + \cdots\)이고, \(x = a\)에서 \(c_1 = f'(a)\)이다. 한 번 더 미분하면 \(f''(a) = 2c_2\), 세 번 미분하면 \(f'''(a) = 3 \cdot 2\, c_3\)이다. \(k\)번 미분하면 \((x-a)^k\)의 항만 상수 \(k!\,c_k\)로 남고, 그보다 낮은 차수는 사라지며 높은 차수는 \(x = a\)에서 0이 된다. 따라서 \(c_k = f^{(k)}(a)/k!\)이다.</p>
+    <p>\(f\)가 \(a\)를 중심으로 하는 멱급수로 쓰인다고 가정하자: \(f(x) = c_0 + c_1(x - a) + c_2(x - a)^2 + \cdots\). \(x = a\)를 넣으면 \(c_0 = f(a)\)이다. <a class="ref" href="#thm-power-series-calculus"></a>에 따라 항별로 미분할 수 있으므로 한 번 미분하면 \(f'(x) = c_1 + 2c_2(x - a) + 3c_3(x-a)^2 + \cdots\)이고, \(x = a\)에서 \(c_1 = f'(a)\)이다. 한 번 더 미분하면 \(f''(a) = 2c_2\), 세 번 미분하면 \(f'''(a) = 3 \cdot 2\, c_3\)이다. \(k\)번 미분하면 \((x-a)^k\)의 항만 상수 \(k!\,c_k\)로 남고, 그보다 낮은 차수는 사라지며 높은 차수는 \(x = a\)에서 0이 된다. 따라서 \(c_k = f^{(k)}(a)/k!\)이다.</p>
     <div class="formula" id="eq-taylor-series">\[ \begin{aligned} f(x) &= \sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!}\,(x - a)^n \\ &= f(a) + f'(a)(x - a) + \frac{f''(a)}{2!}(x - a)^2 + \cdots \end{aligned} \]<div class="where">\(f^{(n)}\)은 \(n\)계 도함수, \(f^{(0)} = f\), \(0! = 1\)이다.</div></div>
     <p>이것을 \(a\)에서 \(f\)의 <span class="term">테일러 급수</span> <span class="en">(Taylor series)</span>라 하고, \(a = 0\)인 경우를 <span class="term">매클로린 급수</span> <span class="en">(Maclaurin series)</span>라 한다. 위 논증은 "\(f\)가 멱급수로 쓰인다면 그 계수는 이것뿐"이라는 것을 보였다. 멱급수 전개는 유일하다. 그래서 어떤 방법으로 구하든(미분하든, 기하급수를 적분하든, 아는 급수를 곱하든) 같은 계수가 나온다. \(N\)차까지만 남긴 다항식</p>
     <div class="formula">\[ P_N(x) = \sum_{n=0}^{N} \frac{f^{(n)}(a)}{n!}\,(x - a)^n \]</div>
@@ -268,7 +268,7 @@
     <div class="formula" id="eq-binomial-series">\[ \begin{aligned} (1 + x)^p &= \sum_{n=0}^{\infty} \binom{p}{n} x^n \\ &= 1 + px + \frac{p(p-1)}{2!}x^2 \\ &\quad + \frac{p(p-1)(p-2)}{3!}x^3 + \cdots \end{aligned} \]<div class="where">\(\lvert x\rvert &lt; 1\)에서 성립한다. \(\binom{p}{n} = \dfrac{p(p-1)\cdots(p-n+1)}{n!}\), \(\binom{p}{0} = 1\)이다. \(p\)는 아무 실수(복소수)여도 된다.</div></div>
     <p>이것을 <span class="term">이항급수</span> <span class="en">(binomial series)</span>라 한다. \(p\)가 0 이상의 정수이면 \(n > p\)에서 \(\binom{p}{n} = 0\)이 되어 급수가 끝나고 고등학교의 이항 정리가 된다. 그렇지 않으면 무한급수이고, 계수의 비 \(\lvert \binom{p}{n} / \binom{p}{n+1}\rvert = \lvert (n+1)/(p-n)\rvert \to 1\)이므로 수렴 반경은 1이다. 계수를 테일러 공식으로 구했다고 해서 급수의 합이 \((1+x)^p\)라는 것이 저절로 보장되지는 않는다(이 절 끝의 흔한 실수를 보라). 이항급수는 다음처럼 직접 확인할 수 있다.</p>
     <details class="proof"><summary>급수의 합이 \((1+x)^p\)임을 보이기</summary>
-      <p>\(\lvert x\rvert &lt; 1\)에서 \(g(x) = \sum_{n\ge0}\binom{p}{n}x^n\)이라 하자. 정의에서 \((n+1)\binom{p}{n+1} = (p - n)\binom{p}{n}\)이다. 정리 <a class="ref" href="#thm-power-series-calculus"></a>에 따라 항별 미분하면</p>
+      <p>\(\lvert x\rvert &lt; 1\)에서 \(g(x) = \sum_{n\ge0}\binom{p}{n}x^n\)이라 하자. 정의에서 \((n+1)\binom{p}{n+1} = (p - n)\binom{p}{n}\)이다. <a class="ref" href="#thm-power-series-calculus"></a>에 따라 항별 미분하면</p>
       <div class="formula">\[ \begin{aligned} g'(x) &= \sum_{n\ge0}(n+1)\binom{p}{n+1}x^n \\ &= \sum_{n\ge0}(p - n)\binom{p}{n}x^n \end{aligned} \]</div>
       <p>이고, \(xg'(x) = \sum_n n\binom{p}{n}x^n\)이므로 둘을 더하면 \((1 + x)g' = p\,g\)이다. 그러면</p>
       <div class="formula">\[ \frac{d}{dx}\Big[\frac{g(x)}{(1+x)^p}\Big] = \frac{(1+x)g' - p\,g}{(1+x)^{p+1}} = 0 \]</div>
@@ -331,7 +331,7 @@
       <p>길이 \(L\)인 단진자의 운동 방정식은 \(\ddot\theta = -(g/L)\sin\theta\)이다. \(\sin\theta \approx \theta\)로 바꾸면 단순 조화 운동이 된다. 복원력의 상대 오차가 1% 아래이려면 진폭이 얼마 이하여야 하는가?</p>
       <p><b>풀이.</b> \(\sin\theta\)의 2차 항은 0이므로 \(P_1 = P_2 = \theta\)이고, \(N = 2\)인 나머지 항은 \(R_2 = -\cos\xi\,\theta^3/6\)이다. \(\lvert\cos\xi\rvert \le 1\)이므로 \(\lvert\theta - \sin\theta\rvert \le \theta^3/6\)이다. 상대 오차는</p>
       <div class="formula" id="eq-small-angle-error">\[ \frac{\theta - \sin\theta}{\theta} \le \frac{\theta^2}{6} \]</div>
-      <p>이다. 이것이 0.01 이하이려면 \(\theta \le \sqrt{0.06} = 0.245\ \text{rad} = 14.0°\)이다. 정확한 식 \((\theta - \sin\theta)/\theta = 0.01\)을 풀어도 \(\theta = 0.245\ \text{rad}\)으로 같다. "15° 이하에서는 작은 각 근사를 써도 된다"는 경험칙이 여기서 나온다. 이것은 복원력의 오차이지 주기의 오차가 아니다. 주기의 보정은 1.6절의 예제 <a class="ref" href="#ex-pendulum-period-series"></a>에서 구한다.</p>
+      <p>이다. 이것이 0.01 이하이려면 \(\theta \le \sqrt{0.06} = 0.245\ \text{rad} = 14.0°\)이다. 정확한 식 \((\theta - \sin\theta)/\theta = 0.01\)을 풀어도 \(\theta = 0.245\ \text{rad}\)으로 같다. "15° 이하에서는 작은 각 근사를 써도 된다"는 경험칙이 여기서 나온다. 이것은 복원력의 오차이지 주기의 오차가 아니다. 주기의 보정은 1.6절의 <a class="ref" href="#ex-pendulum-period-series"></a>에서 구한다.</p>
     </div>
 
     <div class="callout warn"><strong>테일러 급수가 수렴해도 함수와 같지 않을 수 있다</strong><p>함수 \(f(x) = e^{-1/x^2}\) (\(x \ne 0\)), \(f(0) = 0\)은 원점에서 몇 번이든 미분할 수 있고, 모든 도함수가 \(f^{(n)}(0) = 0\)이다. \(e^{-1/x^2}\)이 \(x \to 0\)에서 어떤 거듭제곱 \(x^n\)보다도 빨리 0으로 가기 때문이다. 그래서 테일러 급수는 모든 계수가 0인 급수, 곧 모든 \(x\)에서 0으로 수렴하는 급수다. 그런데 \(x \ne 0\)에서 \(f(x) > 0\)이다. 급수는 수렴하지만 함수로 수렴하지 않는다. 나머지 항 \(R_N = f\)가 \(N\)을 키워도 줄지 않는 것이다. 이 장에서는 어떤 점의 근방에서 테일러 급수가 함수와 같으면 그 함수를 그 점에서 <span class="term">(실)해석적</span> <span class="en">(real analytic)</span>이라 한다. 18장은 해석 함수를 복소 미분으로 <a href="ch18.html#def-analytic">정의</a>하고, 19장의 <a href="ch19.html#eq-taylor-complex">복소 테일러 급수</a>가 두 뜻을 잇는다. 같은 성질의 양이 물리에도 있다. 양자역학의 터널링 확률 \(e^{-c/\hbar}\)는 \(\hbar\)의 멱급수로 전개해서는 결코 얻을 수 없다.</p></div>
@@ -395,7 +395,7 @@
     </div>
     <p>여기서 쓴 전개를 모든 차수까지 체계적으로 하면 \(1/\lvert\mathbf r - \mathbf r'\rvert\)을 르장드르 다항식으로 펼친 <a href="ch12.html#eq-multipole-expansion">다중극 전개</a>가 된다. 위에서 나온 \(1\), \(\cos\theta\), \((3\cos^2\theta - 1)/2\)가 첫 세 르장드르 다항식 \(P_0\), \(P_1\), \(P_2\)이다. 12장에서 <a href="ch12.html#eq-legendre-generating">생성 함수</a>로 이것을 세운다.</p>
 
-    <div class="callout warn"><strong>첫 항이 지워지면 한 차수 더 전개해야 한다</strong><p>쌍극자에서는 0차 항(\(1/r\))이 지워져서 1차 항이 답이 되었다. 1차 항마저 지워지는 배치도 있다. \(z = \pm d\)에 \(+q\)를 하나씩, 원점에 \(-2q\)를 두면 <span class="term">선형 사중극</span> <span class="en">(linear quadrupole)</span>이 된다. 전체 전하도 0이고 쌍극자 모멘트도 0이다. 이때 1차까지만 전개하면 \(V \approx 0\)이라는, 틀리지는 않았지만 쓸모없는 답을 얻는다. 2차까지 전개해야 한다. 필요한 전개는 예제 <a class="ref" href="#ex-dipole-far-field"></a>의 "다음 항"에서 \(d/2\)를 \(d\)로 바꾼 것이다. 두 \(+q\)까지의 거리를 \(\lvert\mathbf r \mp d\hat{\mathbf z}\rvert\)로 쓰면(그림 1-6의 \(r_\pm\)과는 다른 거리다)</p>
+    <div class="callout warn"><strong>첫 항이 지워지면 한 차수 더 전개해야 한다</strong><p>쌍극자에서는 0차 항(\(1/r\))이 지워져서 1차 항이 답이 되었다. 1차 항마저 지워지는 배치도 있다. \(z = \pm d\)에 \(+q\)를 하나씩, 원점에 \(-2q\)를 두면 <span class="term">선형 사중극</span> <span class="en">(linear quadrupole)</span>이 된다. 전체 전하도 0이고 쌍극자 모멘트도 0이다. 이때 1차까지만 전개하면 \(V \approx 0\)이라는, 틀리지는 않았지만 쓸모없는 답을 얻는다. 2차까지 전개해야 한다. 필요한 전개는 <a class="ref" href="#ex-dipole-far-field"></a>의 "다음 항"에서 \(d/2\)를 \(d\)로 바꾼 것이다. 두 \(+q\)까지의 거리를 \(\lvert\mathbf r \mp d\hat{\mathbf z}\rvert\)로 쓰면(그림 1-6의 \(r_\pm\)과는 다른 거리다)</p>
       <div class="formula">\[ \begin{aligned} \frac{1}{\lvert\mathbf r \mp d\hat{\mathbf z}\rvert} &= \frac1r\Big[1 \pm \frac{d}{r}\cos\theta \\ &\quad + \frac{d^2}{r^2}\,\frac{3\cos^2\theta - 1}{2} + O\Big(\frac{d^3}{r^3}\Big)\Big] \end{aligned} \]</div>
       <p>이고, 두 식을 더하면 1차 항이 지워진다.</p>
       <div class="formula" id="eq-quadrupole-potential">\[ \begin{aligned} V &= \frac{q}{4\pi\varepsilon_0}\Big(\frac{1}{\lvert\mathbf r - d\hat{\mathbf z}\rvert} + \frac{1}{\lvert\mathbf r + d\hat{\mathbf z}\rvert} - \frac{2}{r}\Big) \\ &\approx \frac{q\,d^2}{4\pi\varepsilon_0}\,\frac{3\cos^2\theta - 1}{r^3} \end{aligned} \]</div>
@@ -421,7 +421,7 @@
     <div class="formula" id="eq-bernoulli-expansion">\[ \frac{x}{e^x - 1} = 1 - \frac{x}{2} + \frac{x^2}{12} - \frac{x^4}{720} + O(x^6) \]<div class="where">이 책에서는 \(x/(e^x - 1) = \sum_{n\ge0} B_n x^n/n!\)의 계수 \(B_n\)을 <span class="term">베르누이 수</span> <span class="en">(Bernoulli numbers)</span>라 한다: \(B_0 = 1\), \(B_1 = -\tfrac12\), \(B_2 = \tfrac16\), \(B_3 = 0\), \(B_4 = -\tfrac{1}{30}\). \(B_1\)의 부호를 \(+\tfrac12\)로 잡는 교재도 있다. 3차 이상의 홀수 차수 계수가 0인 것은 \(x/(e^x - 1) + x/2 = \tfrac{x}{2}\,(e^x + 1)/(e^x - 1)\)이 짝함수이기 때문이다. 분모는 \(e^x = 1\)인 \(x = \pm 2\pi i\)에서도 0이 되므로(<a href="ch02.html#eq-euler-formula">오일러 공식</a>으로 \(e^{\pm 2\pi i} = 1\)), 수렴 반경은 \(2\pi\)이다.</div></div>
 
     <div class="box ex" id="ex-planck-classical-limit"><div class="box-h">플랑크 진동자의 고온 극한과 등분배</div>
-      <p>예제 <a class="ref" href="#ex-planck-mean-energy"></a>의 평균 에너지 \(\langle E\rangle = \hbar\omega/(e^{\hbar\omega/k_BT} - 1)\)이 \(k_BT \gg \hbar\omega\)에서 어떻게 되는지 \(\hbar\omega/k_BT\)의 2차까지 구하라.</p>
+      <p><a class="ref" href="#ex-planck-mean-energy"></a>의 평균 에너지 \(\langle E\rangle = \hbar\omega/(e^{\hbar\omega/k_BT} - 1)\)이 \(k_BT \gg \hbar\omega\)에서 어떻게 되는지 \(\hbar\omega/k_BT\)의 2차까지 구하라.</p>
       <p><b>풀이.</b> 작은 무차원 비는 \(x = \hbar\omega/k_BT\)이다. \(\langle E\rangle = k_BT \cdot x/(e^x - 1)\)로 쓰고 식 <a class="ref" href="#eq-bernoulli-expansion"></a>을 넣으면</p>
       <div class="formula" id="eq-planck-high-t">\[ \begin{aligned} \langle E\rangle &= k_BT\Big(1 - \frac{x}{2} + \frac{x^2}{12} - \cdots\Big) \\ &= k_BT - \frac{\hbar\omega}{2} + \frac{(\hbar\omega)^2}{12\,k_BT} - \cdots \end{aligned} \]</div>
       <p>이다. 첫 항 \(k_BT\)는 고전 통계역학의 <span class="term">등분배 정리</span> <span class="en">(equipartition theorem)</span>가 주는 값이다. 운동 에너지와 퍼텐셜 에너지가 각각 \(\tfrac12 k_BT\)씩 가진다. 둘째 항 \(-\hbar\omega/2\)는 \(T\)와 상관없는 상수다. 양자역학에서는 진동자의 에너지가 \((n + \tfrac12)\hbar\omega\)이므로 평균 에너지에 바닥 상태 에너지 \(\hbar\omega/2\)가 더해지는데, 그러면 이 항이 정확히 지워지고 \(\langle E\rangle = k_BT + (\hbar\omega)^2/12k_BT + \cdots\)가 되어 고전 값에 더 가까워진다. 각 항의 차원은 모두 에너지다.</p>
@@ -429,14 +429,14 @@
     </div>
 
     <h3 id="s6-integrals">항별 적분</h3>
-    <p>\(\int e^{-x^2}dx\)나 \(\int (\sin x/x)\,dx\)는 원시 함수를 기본 함수로 쓸 수 없다. 그러나 적분 구간이 피적분 함수의 멱급수의 수렴 구간 \((-R, R)\) 안에 들어 있으면, 정리 <a class="ref" href="#thm-power-series-calculus"></a>에 따라 항별로 적분할 수 있다. 적분 구간이 수렴 구간의 끝점에 닿으면 항별 적분이 허용되는지 따로 확인해야 한다(<a class="ref" href="#prob-dilog-integral"></a>).</p>
+    <p>\(\int e^{-x^2}dx\)나 \(\int (\sin x/x)\,dx\)는 원시 함수를 기본 함수로 쓸 수 없다. 그러나 적분 구간이 피적분 함수의 멱급수의 수렴 구간 \((-R, R)\) 안에 들어 있으면, <a class="ref" href="#thm-power-series-calculus"></a>에 따라 항별로 적분할 수 있다. 적분 구간이 수렴 구간의 끝점에 닿으면 항별 적분이 허용되는지 따로 확인해야 한다(<a class="ref" href="#prob-dilog-integral"></a>).</p>
     <div class="box ex" id="ex-gaussian-series-integral"><div class="box-h">1차원 맥스웰 분포에서 느린 분자의 비율</div>
       <p>온도 \(T\)인 기체에서 질량 \(m\)인 분자의 속도 \(x\)성분 \(v_x\)는 확률 밀도 \(f(v_x) = \sqrt{m/2\pi k_BT}\;e^{-mv_x^2/2k_BT}\)를 따른다(1차원 맥스웰-볼츠만 분포). \(\lvert v_x\rvert &lt; \sqrt{2k_BT/m}\)인 분자의 비율을 소수 넷째 자리까지 구하라.</p>
       <p><b>풀이.</b> \(u = v_x\sqrt{m/2k_BT}\)로 치환하면 \(f(v_x)\,dv_x = e^{-u^2}du/\sqrt\pi\)이고, 경계 \(v_x = \pm\sqrt{2k_BT/m}\)은 \(u = \pm 1\)이 된다. 피적분 함수가 짝함수이므로 구하는 비율은</p>
       <div class="formula">\[ P = \frac{1}{\sqrt\pi}\int_{-1}^{1} e^{-u^2}du = \frac{2}{\sqrt\pi}\int_0^1 e^{-u^2}du \]</div>
       <p>이다. 이 적분은 원시 함수를 기본 함수로 쓸 수 없다. \(e^w\)의 급수에 \(w = -u^2\)을 넣으면 \(e^{-u^2} = \sum_{n=0}^\infty (-1)^n u^{2n}/n!\)이고, 수렴 반경이 무한대이므로 0부터 1까지 항별로 적분해도 된다.</p>
       <div class="formula" id="eq-gauss-series-integral">\[ \begin{aligned} \int_0^1 e^{-u^2}du &= \sum_{n=0}^{\infty} \frac{(-1)^n}{n!\,(2n+1)} \\ &= 1 - \frac13 + \frac{1}{10} - \frac{1}{42} + \frac{1}{216} - \cdots \end{aligned} \]</div>
-      <p>교대급수이고 항이 줄어들므로 정리 <a class="ref" href="#thm-alternating-series"></a>로 오차를 잡을 수 있다. \(n = 0\)부터 5까지 여섯 항을 더하면 \(0.746\,729\)이고, 오차는 처음 버린 항 \(1/(6! \cdot 13) = 1.07 \times 10^{-4}\) 이하다(실제 오차는 \(0.95 \times 10^{-4}\)). 오차를 \(10^{-6}\) 아래로 내리려면 세 항을 더해 \(n = 8\)까지 더해야 한다(\(n = 7\)까지는 \(1.3 \times 10^{-6}\), \(n = 8\)까지는 \(1.3 \times 10^{-7}\)). 적분값 \(0.746\,824\)에 \(2/\sqrt\pi\)를 곱하면</p>
+      <p>교대급수이고 항이 줄어들므로 <a class="ref" href="#thm-alternating-series"></a>로 오차를 잡을 수 있다. \(n = 0\)부터 5까지 여섯 항을 더하면 \(0.746\,729\)이고, 오차는 처음 버린 항 \(1/(6! \cdot 13) = 1.07 \times 10^{-4}\) 이하다(실제 오차는 \(0.95 \times 10^{-4}\)). 오차를 \(10^{-6}\) 아래로 내리려면 세 항을 더해 \(n = 8\)까지 더해야 한다(\(n = 7\)까지는 \(1.3 \times 10^{-6}\), \(n = 8\)까지는 \(1.3 \times 10^{-7}\)). 적분값 \(0.746\,824\)에 \(2/\sqrt\pi\)를 곱하면</p>
       <div class="formula">\[ P = 0.8427 \]</div>
       <p>이다. 분자의 84%가 \(\lvert v_x\rvert &lt; \sqrt{2k_BT/m}\)에 있다. 경계 \(\sqrt{2k_BT/m}\)는 3차원 맥스웰 분포의 최빈 속력과 같은 크기다. 이 값 \(P\)는 11장에서 정의하는 <a href="ch11.html#def-erf">오차 함수</a>의 값 \(\operatorname{erf}1\)이다.</p>
     </div>
@@ -571,7 +571,7 @@ for deg in (10, 30, 60, 90):
 
     <div class="prob" id="prob-sum-n-squared" data-level="2"><p>\(\lvert x\rvert &lt; 1\)에서 \(\sum_{n=1}^\infty n^2 x^n\)의 닫힌 꼴을 구하고, 이것으로 \(\sum_{n=1}^\infty n^2/2^n\)의 값을 구하라.</p>
       <details class="sol"><summary>풀이</summary>
-        <p>식 <a class="ref" href="#eq-planck-sum-n"></a>에서 \(\sum n x^n = x/(1-x)^2\)이다. 정리 <a class="ref" href="#thm-power-series-calculus"></a>에 따라 한 번 더 항별로 미분하고 \(x\)를 곱하면</p>
+        <p>식 <a class="ref" href="#eq-planck-sum-n"></a>에서 \(\sum n x^n = x/(1-x)^2\)이다. <a class="ref" href="#thm-power-series-calculus"></a>에 따라 한 번 더 항별로 미분하고 \(x\)를 곱하면</p>
         <div class="formula">\[ \begin{aligned} \sum_{n=1}^\infty n^2 x^n &= x\frac{d}{dx}\frac{x}{(1-x)^2} \\ &= x\,\frac{(1-x)^2 + 2x(1-x)}{(1-x)^4} \\ &= \frac{x(1 + x)}{(1 - x)^3} \end{aligned} \]</div>
         <p>이다. \(x = 1/2\)을 넣으면 \(\dfrac{(1/2)(3/2)}{(1/2)^3} = 6\)이다. 이 결과는 플랑크 진동자의 에너지 요동 \(\langle E^2\rangle - \langle E\rangle^2\)을 구할 때 쓰인다.</p>
       </details>

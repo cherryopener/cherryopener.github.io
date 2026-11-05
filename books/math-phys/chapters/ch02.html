@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>02 복소수 · 수리물리학</title>
+<meta name="description" content="복소평면과 극형식, 오일러 공식, 거듭제곱근과 복소 로그를 세우고, 복소 지수로 진동과 파동, 교류 회로의 임피던스, 쌍곡선 함수를 다룬다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys" data-field="phys" data-chapter="ch02">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">02</span></div>
+    <h1 data-fill="chapter-title">복소수</h1>
+    <p class="lead">진동하는 양은 \(\cos\)와 \(\sin\)으로 적지만, 계산은 복소 지수 \(e^{-i\omega t}\)로 하는 편이 훨씬 쉽다. 미분은 곱셈이 되고, 위상이 다른 진동의 합은 평면 위 화살표의 합이 된다. 이 장에서는 고등학교에서 배운 복소수를 복소평면과 극형식으로 다시 세우고, 1장의 멱급수로 오일러 공식 \(e^{i\theta} = \cos\theta + i\sin\theta\)를 확인한다. 여기서 정하는 시간 의존성의 관례 \(e^{-i\omega t}\)는 이 책과 서재의 물리 책 전체가 따른다.</p>
+    <ul class="objectives">
+      <li>복소수를 직교 형식과 극형식으로 오가며 계산하고, 곱셈·나눗셈·켤레·절댓값을 복소평면에서 기하적으로 해석할 수 있다.</li>
+      <li>오일러 공식을 멱급수로 확인하고, 그것으로 삼각 항등식, \(n\)제곱근, 복소 로그와 복소 거듭제곱의 주값을 계산할 수 있다.</li>
+      <li>진동과 파동을 페이저로 나타내 같은 진동수의 진동을 더하고, 감쇠 진동과 회절격자의 세기를 구할 수 있다.</li>
+      <li>임피던스로 교류 회로의 전류 진폭, 위상, 평균 전력을 구하고, 전기공학의 \(e^{j\omega t}\) 관례로 쓴 식을 이 책의 관례로 바꿔 읽을 수 있다.</li>
+      <li>쌍곡선 함수를 복소 지수로 정의하고 그 항등식을 유도해, 매달린 사슬과 상대론적 속도 합성 문제에 쓸 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b>1장의 멱급수와 테일러 전개, 특히 표준 전개 <a href="ch01.html#eq-standard-series">식 (1.21)</a>과 기하급수의 부분합 <a href="ch01.html#eq-geometric-partial">식 (1.2)</a>. 고등학교의 복소수와 삼각 함수, 일반물리의 단진동, 교류 회로, 빛의 간섭.</p>
+  </header>
+
+  <!-- ============================================================ 2.1 -->
+  <section id="s1">
+    <h2>복소평면과 극형식</h2>
+    <p>질량 \(m\)인 물체가 용수철 상수 \(k\)인 용수철에 매달려 속도에 비례하는 저항 \(-b\dot x\)를 받으며 움직인다. 운동 방정식 \(m\ddot x + b\dot x + kx = 0\)에 \(x = e^{st}\)를 넣어 보면 \(s\)가 이차 방정식 \(s^2 + 2\gamma s + \omega_0^2 = 0\)을 만족해야 한다. 여기서 \(\gamma = b/2m\)은 <span class="term">감쇠율</span> <span class="en">(damping rate)</span>, \(\omega_0 = \sqrt{k/m}\)은 감쇠가 없을 때의 각진동수다. 근의 공식은 \(s = -\gamma \pm \sqrt{\gamma^2 - \omega_0^2}\)를 준다. 그런데 감쇠가 약해 \(\gamma &lt; \omega_0\)이면 제곱근 안이 음수다. 실험실의 용수철은 멀쩡히 진동하는데 식은 "음수의 제곱근"을 내놓는다. 이 근이 무엇을 뜻하는지 읽어 내려면 \(\sqrt{-1}\)을 하나의 수로 받아들이고, 그런 수의 계산 규칙과 기하적 의미를 세워야 한다. 이 절에서 규칙과 그림을 세우고, 2.4절에서 이 근이 감쇠 진동을 정확히 기술한다는 것을 본다.</p>
+
+    <h3 id="s1-arithmetic">복소수와 사칙연산</h3>
+    <div class="box def" id="def-complex-number"><div class="box-h">복소수와 복소평면</div>
+      <p>\(i^2 = -1\)인 수 \(i\)를 <span class="term">허수 단위</span> <span class="en">(imaginary unit)</span>라 한다. 실수 \(x\), \(y\)로 만든 \(z = x + iy\)를 <span class="term">복소수</span> <span class="en">(complex number)</span>라 하고, \(x = \operatorname{Re} z\)를 <span class="term">실수부</span> <span class="en">(real part)</span>, \(y = \operatorname{Im} z\)를 <span class="term">허수부</span> <span class="en">(imaginary part)</span>라 한다. 허수부는 \(i\)를 뺀 실수 \(y\)이다. 두 복소수는 실수부끼리, 허수부끼리 각각 같을 때 같다. 덧셈과 곱셈은 \(i\)를 문자처럼 다루고 \(i^2\)이 나오면 \(-1\)로 바꾸어 정한다.</p>
+      <div class="formula" id="eq-complex-product">\[ \begin{aligned} z_1 + z_2 &= (x_1 + x_2) + i(y_1 + y_2) \\ z_1 z_2 &= (x_1x_2 - y_1y_2) \\ &\quad + i(x_1y_2 + x_2y_1) \end{aligned} \]</div>
+      <p>복소수 \(z = x + iy\)를 평면의 점 \((x, y)\)로 나타낸 것을 <span class="term">복소평면</span> <span class="en">(complex plane)</span>이라 하고, 가로축을 실수축, 세로축을 허수축이라 한다.</p>
+    </div>
+    <p>덧셈은 2차원 벡터의 덧셈과 똑같다. 실수부끼리, 허수부끼리 더하므로 평행사변형 법칙을 따른다. 교환·결합·분배 법칙도 실수와 같이 성립한다. 새로운 것은 곱셈이다. 2차원 벡터에는 두 벡터를 곱해 같은 평면의 벡터를 내는 연산이 따로 없다. 복소수의 곱셈이 평면에서 무슨 일을 하는지는 이 절 끝의 극형식에서 드러난다.</p>
+
+    <h3 id="s1-conjugate">켤레와 절댓값</h3>
+    <div class="box def" id="def-complex-conjugate"><div class="box-h">켤레와 절댓값</div>
+      <p>\(z = x + iy\)에 대해 \(z^* = x - iy\)를 \(z\)의 <span class="term">켤레 복소수</span> <span class="en">(complex conjugate)</span>라 한다. 복소평면에서 실수축에 대해 대칭인 점이다. \(\lvert z\rvert = \sqrt{x^2 + y^2}\)을 \(z\)의 <span class="term">절댓값</span> <span class="en">(modulus, absolute value)</span>이라 한다. 원점에서 \(z\)까지의 거리다. 둘은 다음 관계로 묶인다.</p>
+      <div class="formula" id="eq-modulus-conjugate">\[ \lvert z\rvert^2 = z\,z^* = x^2 + y^2 \]</div>
+      <div class="formula" id="eq-re-im-conjugate">\[ \begin{aligned} \operatorname{Re} z &= \frac{z + z^*}{2} \\ \operatorname{Im} z &= \frac{z - z^*}{2i} \end{aligned} \]</div>
+    </div>
+    <p>식 <a class="ref" href="#eq-modulus-conjugate"></a>는 \((x + iy)(x - iy) = x^2 - (iy)^2 = x^2 + y^2\)에서 바로 나온다. 정의에서 다음 성질을 쉽게 확인할 수 있다.</p>
+    <ul>
+      <li>\((z_1 \pm z_2)^* = z_1^* \pm z_2^*\), \((z_1z_2)^* = z_1^*z_2^*\), \((z^*)^* = z\).</li>
+      <li>\(\lvert z_1z_2\rvert = \lvert z_1\rvert\,\lvert z_2\rvert\). 증명: \(\lvert z_1z_2\rvert^2 = z_1z_2(z_1z_2)^* = (z_1z_1^*)(z_2z_2^*)\).</li>
+      <li>삼각 부등식 \(\lvert z_1 + z_2\rvert \le \lvert z_1\rvert + \lvert z_2\rvert\). 평행사변형의 대각선이 두 변의 합보다 길 수 없다는 뜻이다.</li>
+    </ul>
+    <p>나눗셈은 분모의 켤레를 분자와 분모에 곱해 분모를 실수로 만들어서 한다.</p>
+    <div class="formula" id="eq-complex-division">\[ \frac{z_1}{z_2} = \frac{z_1 z_2^*}{z_2 z_2^*} = \frac{z_1 z_2^*}{\lvert z_2\rvert^2} \qquad (z_2 \ne 0) \]</div>
+    <p>예를 들어 \(\dfrac{3 + 4i}{1 + 2i} = \dfrac{(3 + 4i)(1 - 2i)}{5} = \dfrac{11 - 2i}{5}\)이다. 켤레는 물리에서 실수여야 하는 양을 복소수로 만들 때 계속 나온다. 양자역학의 확률 밀도 \(\lvert\psi\rvert^2 = \psi^*\psi\)와, 2.5절의 평균 전력 \(\tfrac12\operatorname{Re}(\tilde V\tilde I^*)\)가 그 예다.</p>
+    <p>켤레의 성질에서 쓸모 있는 결론이 하나 나온다. 다항식 \(p(z) = a_nz^n + \cdots + a_1z + a_0\)의 계수가 모두 실수이면 \(p(z)^* = a_n(z^*)^n + \cdots + a_0 = p(z^*)\)이다. 따라서 \(p(z) = 0\)이면 \(p(z^*) = 0\)이다. <b>실수 계수 방정식의 복소근은 켤레 쌍으로 나온다.</b> 물리의 운동 방정식은 대개 실수 계수이므로, 앞의 감쇠 진동자의 두 근도 서로 켤레다.</p>
+
+    <h3 id="s1-polar">극형식</h3>
+    <p>복소평면의 점을 극좌표 \((r, \theta)\)로 나타내면 \(x = r\cos\theta\), \(y = r\sin\theta\)이다. 이것을 \(z = x + iy\)에 넣으면 복소수의 두 번째 표현이 나온다.</p>
+    <div class="box def" id="def-polar-form"><div class="box-h">극형식과 편각</div>
+      <p>\(z \ne 0\)인 복소수는 다음 꼴로 쓸 수 있다.</p>
+      <div class="formula" id="eq-polar-form">\[ z = r(\cos\theta + i\sin\theta) \]<div class="where">\(r = \lvert z\rvert\)이고, \(\theta\)는 \(\cos\theta = x/r\), \(\sin\theta = y/r\)을 만족하는 각이다.</div></div>
+      <p>이것을 \(z\)의 <span class="term">극형식</span> <span class="en">(polar form)</span>이라 하고, \(\theta\)를 \(z\)의 <span class="term">편각</span> <span class="en">(argument)</span>이라 하여 \(\arg z\)로 쓴다. 편각은 \(2\pi\)의 정수배만큼 다른 값이 모두 같은 점을 가리키므로 하나로 정해지지 않는다. 그 가운데 \(-\pi &lt; \theta \le \pi\)인 값을 <span class="term">주값</span> <span class="en">(principal value)</span>이라 하고 \(\operatorname{Arg} z\)로 쓴다. \(z = 0\)의 편각은 정하지 않는다. 2.2절에서 괄호 안의 \(\cos\theta + i\sin\theta\)가 \(e^{i\theta}\)임을 보이고, 그 뒤로는 극형식을 \(z = re^{i\theta}\)로 쓴다.</p>
+    </div>
+    <p>편각을 \(\arctan(y/x)\)로 구할 때는 조심해야 한다. \(\arctan\)의 값은 \((-\pi/2, \pi/2)\) 안에만 있으므로 \(x &lt; 0\)인 점에서는 틀린 사분면을 준다. 예를 들어 \(z = -1 - i\)는 \(y/x = 1\)이라 \(\arctan 1 = \pi/4\)가 나오지만, 점은 제3사분면에 있으므로 \(\operatorname{Arg} z = -3\pi/4\)이다. 점이 어느 사분면에 있는지를 먼저 보고 \(\pi\)를 더하거나 빼야 한다. 프로그래밍 언어의 <code>atan2(y, x)</code>는 이 일을 대신해서 \((-\pi, \pi]\)의 값을 준다(Python의 <code>cmath.phase</code>도 같다).</p>
+    <p>극형식의 진짜 쓸모는 곱셈에 있다.</p>
+    <div class="box thm" id="thm-polar-product"><div class="box-h">곱셈은 회전과 확대</div>
+      <p>\(z_1 = r_1(\cos\theta_1 + i\sin\theta_1)\), \(z_2 = r_2(\cos\theta_2 + i\sin\theta_2)\)이면</p>
+      <div class="formula" id="eq-polar-product">\[ \begin{aligned} z_1 z_2 &= r_1 r_2\big[\cos(\theta_1 + \theta_2) \\ &\qquad + i\sin(\theta_1 + \theta_2)\big] \end{aligned} \]</div>
+      <p>이다. 곧 곱의 절댓값은 절댓값의 곱이고, 곱의 편각은 편각의 합이다(\(2\pi\)의 정수배 차이를 빼고). 나눗셈에서는 절댓값을 나누고 편각을 뺀다: \(z_1/z_2 = (r_1/r_2)[\cos(\theta_1 - \theta_2) + i\sin(\theta_1 - \theta_2)]\).</p>
+      <details class="proof"><summary>증명</summary>
+        <p>식 <a class="ref" href="#eq-complex-product"></a>로 곱을 전개하면 실수부는 \(r_1r_2(\cos\theta_1\cos\theta_2 - \sin\theta_1\sin\theta_2) = r_1r_2\cos(\theta_1 + \theta_2)\)이고, 허수부는 \(r_1r_2(\cos\theta_1\sin\theta_2 + \sin\theta_1\cos\theta_2) = r_1r_2\sin(\theta_1 + \theta_2)\)이다. 삼각 함수의 덧셈 정리를 썼다. 나눗셈은 \(w = (r_1/r_2)[\cos(\theta_1 - \theta_2) + i\sin(\theta_1 - \theta_2)]\)에 \(z_2\)를 곱하면 방금 보인 곱셈 규칙에 따라 \(z_1\)이 되므로 \(w = z_1/z_2\)이다.</p>
+      </details>
+    </div>
+    <p>복소수를 곱한다는 것은 평면을 원점 둘레로 돌리고 늘리는 일이다(그림 2-1 (나)). 특히 \(i = \cos(\pi/2) + i\sin(\pi/2)\)는 절댓값이 1이고 편각이 \(\pi/2\)이므로, <b>\(i\)를 곱하면 점이 원점 둘레로 반시계 방향으로 90° 돈다.</b> \(i^2 = -1\)은 "90°를 두 번 돌면 반대 방향을 가리킨다"는 뜻이다. 음수의 제곱근이 이상하게 느껴지는 것은 수를 직선 위에서만 보았기 때문이고, 평면으로 넓히면 \(-1\)의 제곱근은 "반 바퀴의 절반"이라는 자연스러운 대상이 된다.</p>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 300" role="img" aria-label="복소평면 위의 점 z = x + iy와 켤레 z*. 원점에서의 거리 r과 편각 θ, 실수축에 대한 대칭"><defs><marker id="f0201-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker></defs><line x1="30" y1="150" x2="365" y2="150" class="s-line" marker-end="url(#f0201-arr)"/><line x1="70" y1="285" x2="70" y2="30" class="s-line" marker-end="url(#f0201-arr)"/><text x="362" y="168" class="t-dim" text-anchor="end">Re</text><text x="62" y="40" class="t-dim" text-anchor="end">Im</text><line x1="235" y1="40" x2="235" y2="260" class="s-grid" stroke-dasharray="4 4"/><line x1="70" y1="150" x2="235" y2="40" class="s-acc" style="stroke-width:2.5"/><line x1="70" y1="150" x2="235" y2="260" class="s-acc2" stroke-dasharray="6 4"/><path d="M112,150 A42,42 0 0 0 104.9,126.7" class="s-line"/><path d="M112,150 A42,42 0 0 1 104.9,173.3" class="s-line" stroke-dasharray="3 3"/><text x="123.8" y="138.9" class="t-math" text-anchor="start"><tspan font-style="italic">θ</tspan></text><text x="123.8" y="177.1" class="t-math dim" text-anchor="start">−<tspan font-style="italic">θ</tspan></text><circle cx="235" cy="40" r="4.5" class="f-acc"/><circle cx="235" cy="260" r="4.5" class="f-acc2"/><text x="245" y="36" class="t-math acc" text-anchor="start"><tspan font-style="italic">z</tspan> = <tspan font-style="italic">x</tspan> + <tspan font-style="italic">iy</tspan></text><text x="245" y="266" class="t-math acc2" text-anchor="start"><tspan font-style="italic">z</tspan>* = <tspan font-style="italic">x</tspan> − <tspan font-style="italic">iy</tspan></text><text x="144.5" y="87" class="t-math acc" text-anchor="end"><tspan font-style="italic">r</tspan></text><text x="243" y="100" class="t-math dim" text-anchor="start"><tspan font-style="italic">y</tspan></text><text x="152.5" y="144" class="t-math dim" text-anchor="middle"><tspan font-style="italic">x</tspan></text><line x1="235" y1="146" x2="235" y2="154" class="s-line"/><text x="12" y="18" class="t" text-anchor="start">(가) 극형식과 켤레</text></svg><svg viewBox="0 0 380 300" role="img" aria-label="두 복소수의 곱. 절댓값은 곱해지고 편각은 더해진다"><defs><marker id="f0201-arr2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker></defs><line x1="30" y1="262" x2="365" y2="262" class="s-line" marker-end="url(#f0201-arr2)"/><line x1="60" y1="290" x2="60" y2="30" class="s-line" marker-end="url(#f0201-arr2)"/><text x="362" y="280" class="t-dim" text-anchor="end">Re</text><text x="52" y="40" class="t-dim" text-anchor="end">Im</text><line x1="60" y1="262" x2="202" y2="180" class="s-acc" style="stroke-width:2.5"/><circle cx="202" cy="180" r="4.5" class="f-acc"/><text x="212" y="184" class="t-math acc" text-anchor="start"><tspan font-style="italic">z</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan></text><line x1="60" y1="262" x2="132.5" y2="189.5" class="s-acc2" style="stroke-width:2.5"/><circle cx="132.5" cy="189.5" r="4.5" class="f-acc2"/><text x="140.5" y="183.5" class="t-math acc2" text-anchor="start"><tspan font-style="italic">z</tspan><tspan baseline-shift="sub" font-size="72%">2</tspan></text><line x1="60" y1="262" x2="113.1" y2="64" class="s-line" style="stroke:var(--text);stroke-width:2.5"/><circle cx="113.1" cy="64" r="4.5" class="f-dim"/><text x="123.1" y="64" class="t-math" text-anchor="start"><tspan font-style="italic">z</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan><tspan font-style="italic">z</tspan><tspan baseline-shift="sub" font-size="72%">2</tspan></text><path d="M108,262 A48,48 0 0 0 101.6,238" class="s-acc"/><text x="118" y="251.5" class="t-math acc" text-anchor="start"><tspan font-style="italic">θ</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan></text><path d="M122.4,226 A72,72 0 0 0 78.6,192.5" class="s-acc2"/><text x="92.5" y="188.9" class="t-math acc2" text-anchor="start"><tspan font-style="italic">θ</tspan><tspan baseline-shift="sub" font-size="72%">2</tspan></text><text x="12" y="18" class="t" text-anchor="start">(나) 곱: 길이는 곱하고 각은 더한다</text></svg></div>
+      <figcaption><b>그림 2-1.</b> (가) 복소평면 위의 점 \(z = x + iy\)(강조색)와 그 켤레 \(z^* = x - iy\)(보조색 점선). 원점에서의 거리가 절댓값 \(r = \lvert z\rvert\), 양의 실수축에서 잰 각이 편각 \(\theta\)이다. 켤레는 실수축에 대한 대칭이라 편각이 \(-\theta\)가 된다. 그림은 \(z = 3 + 2i\)이다. (나) \(z_1 = 2e^{i\pi/6}\)(강조색)과 \(z_2 = 1.25\,e^{i\pi/4}\)(보조색)의 곱 \(z_1z_2 = 2.5\,e^{i5\pi/12}\)(굵은 선). 길이는 \(2 \times 1.25 = 2.5\)로 곱해지고, 각은 \(\theta_1 = 30°\)에 \(\theta_2 = 45°\)가 더해져 \(75°\)가 된다.</figcaption>
+    </figure>
+
+    <div class="callout warn"><strong>켤레 기호와 편각의 범위는 교재마다 다르다</strong><p>이 책은 켤레를 \(z^*\)로 쓴다. 양자역학과 물리 교재 대부분의 관례이고, 7장의 행렬 켤레 \(A^*\)와 수반 \(A^\dagger\)도 이 기호를 잇는다. 수학 교재는 \(\bar z\)를 많이 쓴다. 주값의 범위도 이 책은 \(-\pi &lt; \operatorname{Arg} z \le \pi\)이지만, \(0 \le \operatorname{Arg} z &lt; 2\pi\)로 정하는 교재와 계산 도구도 있다. 두 관례는 제3·4사분면의 점에서 \(2\pi\)만큼 다른 값을 준다. 2.3절의 복소 로그와 복소 거듭제곱의 주값은 이 범위에 따라 달라지므로, 다른 자료의 값을 옮길 때는 범위를 먼저 확인한다.</p></div>
+
+    <div class="box ex" id="ex-damped-roots"><div class="box-h">감쇠 진동자의 특성 근</div>
+      <p>질량 \(m = 0.20\ \text{kg}\), 용수철 상수 \(k = 5.0\ \text{N/m}\), 저항 계수 \(b = 0.56\ \text{kg/s}\)인 감쇠 진동자가 있다. (가) 특성 방정식 \(s^2 + 2\gamma s + \omega_0^2 = 0\)의 두 근을 \(x + iy\) 꼴과 극형식으로 구하라. (나) 질량과 용수철은 그대로 두고 \(\gamma\)를 0부터 \(\omega_0\)까지 키우면 두 근은 복소평면에서 어떻게 움직이는가?</p>
+      <p><b>풀이.</b> (가) \(\gamma = b/2m = 0.56/0.40 = 1.4\ \text{s}^{-1}\), \(\omega_0 = \sqrt{k/m} = \sqrt{25}\ \text{s}^{-1} = 5.0\ \text{s}^{-1}\)이다. 근의 공식에서 \(\gamma^2 - \omega_0^2 = 1.96 - 25 = -23.04\)이고, \((4.8i)^2 = -23.04\)이므로</p>
+      <div class="formula" id="eq-damped-roots">\[ \begin{aligned} s_\pm &= -\gamma \pm i\sqrt{\omega_0^2 - \gamma^2} \\ &= (-1.4 \pm 4.8i)\ \text{s}^{-1} \end{aligned} \]</div>
+      <p>이다. 두 근은 서로 켤레다. 절댓값은 \(\lvert s_\pm\rvert = \sqrt{1.4^2 + 4.8^2} = 5.0\ \text{s}^{-1}\)이다. \(s_+\)는 제2사분면에 있으므로 편각은 \(\arctan(4.8/1.4) = 73.74°\)를 \(180°\)에서 뺀 \(106.26°\)이다. 따라서 \(s_\pm = 5.0\,(\cos 106.26° \pm i\sin 106.26°)\ \text{s}^{-1}\)이다.</p>
+      <p>(나) \(\gamma &lt; \omega_0\)이면 \(s_\pm = -\gamma \pm i\omega_d\), \(\omega_d = \sqrt{\omega_0^2 - \gamma^2}\)이고</p>
+      <div class="formula">\[ \lvert s_\pm\rvert^2 = \gamma^2 + (\omega_0^2 - \gamma^2) = \omega_0^2 \]</div>
+      <p>이다. \(\gamma\)와 상관없이 두 근은 반지름 \(\omega_0\)인 원 위에 있다. \(\gamma = 0\)에서 두 근은 허수축 위의 \(\pm i\omega_0\)에 있다가, 감쇠가 커지면 원을 따라 왼쪽으로 미끄러지고, \(\gamma = \omega_0\)(임계 감쇠)에서 \(-\omega_0\)에서 만난다. 그보다 감쇠가 크면 두 근은 실수축 위에서 갈라진다.</p>
+      <p><b>숫자로 보기.</b> 2.4절에서 보듯 실수부의 크기 \(\gamma\)는 진폭이 줄어드는 비율(감쇠율)이고, 허수부 \(\omega_d = 4.8\ \text{s}^{-1}\)은 진동의 각진동수다. 주기는 \(2\pi/\omega_d = 1.31\ \text{s}\)이고, 한 주기 동안 진폭은 \(e^{-\gamma \cdot 2\pi/\omega_d} = e^{-1.83} = 0.16\)배가 된다. 단위도 확인하자. \(b/m\)은 \((\text{kg/s})/\text{kg} = \text{s}^{-1}\)이고, \(\sqrt{k/m}\)은 \(\sqrt{(\text{kg/s}^2)/\text{kg}} = \text{s}^{-1}\)이다. 근의 실수부와 허수부가 모두 진동수의 차원을 갖는다. 이 특성 방정식의 일반론은 10장의 <a href="ch10.html#eq-ode-characteristic">특성 방정식</a>에서 다룬다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 2.2 -->
+  <section id="s2">
+    <h2>오일러 공식</h2>
+    <p>2.1절의 근 \(s_\pm = -\gamma \pm i\omega_d\)를 \(x = e^{st}\)에 넣으려면 먼저 \(e\)의 복소수 제곱이 무엇인지 정해야 한다. 실마리는 극형식의 곱셈 규칙에 있다. <a class="ref" href="#thm-polar-product"></a>을 \(r_1 = r_2 = 1\)인 경우로 다시 읽어 보자. \(E(\theta) = \cos\theta + i\sin\theta\)로 두면 \(E(\theta_1)E(\theta_2) = E(\theta_1 + \theta_2)\)이다. 곱하면 각이 더해진다. 이것은 지수 법칙 \(a^{\theta_1}a^{\theta_2} = a^{\theta_1 + \theta_2}\)과 같은 모양이다. 미분도 해 보자. \(dE/d\theta = -\sin\theta + i\cos\theta = i(\cos\theta + i\sin\theta) = iE\)이다. 도함수가 자기 자신의 상수배인 함수는 실수에서는 \(Ae^{c\theta}\) 꼴뿐이다. 그렇다면 \(E(\theta)\)는 \(e^{i\theta}\)여야 할 것 같다. 문제는 \(e\)의 허수 제곱이 무엇인지 아직 정하지 않았다는 것이다. 이 절에서는 1장의 멱급수로 그것을 정하고, 이 추측이 맞음을 확인한다.</p>
+
+    <h3 id="s2-exp">복소수의 지수 함수</h3>
+    <p>1장에서 \(e^x = \sum x^n/n!\)이 모든 실수 \(x\)에서 수렴함을 보았다(<a href="ch01.html#eq-standard-series">식 (1.21)</a>, 수렴 반경 \(\infty\)). 같은 급수에 복소수 \(z\)를 넣으면 \(\sum \lvert z^n/n!\rvert = \sum \lvert z\rvert^n/n! = e^{\lvert z\rvert}\)이 유한하므로 급수는 절대 수렴한다. 복소수 급수가 절대 수렴하면 실수부와 허수부의 급수가 각각 절대 수렴하므로(\(\lvert\operatorname{Re} a_n\rvert \le \lvert a_n\rvert\)) 급수는 수렴한다. 그래서 다음 정의는 모든 복소수 \(z\)에서 의미가 있다.</p>
+    <div class="formula" id="eq-exp-complex">\[ e^z = \sum_{n=0}^{\infty} \frac{z^n}{n!} = 1 + z + \frac{z^2}{2!} + \frac{z^3}{3!} + \cdots \]</div>
+    <p>이렇게 정한 함수가 지수 함수라는 이름에 걸맞으려면 지수 법칙과 미분 법칙을 지켜야 한다.</p>
+    <div class="box thm" id="thm-exp-addition"><div class="box-h">복소 지수의 지수 법칙과 미분</div>
+      <p>모든 복소수 \(z_1\), \(z_2\)에 대해 \(e^{z_1}e^{z_2} = e^{z_1 + z_2}\)이다. 또 복소 상수 \(c\)와 실수 변수 \(t\)에 대해 \(\dfrac{d}{dt}e^{ct} = c\,e^{ct}\)이다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>두 급수는 절대 수렴하므로 곱해서 항을 아무 순서로 모아도 된다(1장의 <a href="ch01.html#def-absolute-convergence">정의 1.2</a> 뒤의 설명). 차수 \(n\)인 항끼리 모으고 이항 정리를 쓰면</p>
+        <div class="formula">\[ \begin{aligned} e^{z_1}e^{z_2} &= \sum_{n=0}^\infty \sum_{k=0}^{n} \frac{z_1^k\,z_2^{n-k}}{k!\,(n-k)!} \\ &= \sum_{n=0}^\infty \frac{(z_1 + z_2)^n}{n!} \\ &= e^{z_1 + z_2} \end{aligned} \]</div>
+        <p>이다. 미분은 \(e^{ct} = \sum c^n t^n/n!\)을 \(t\)의 멱급수로 보고 1장의 <a href="ch01.html#thm-power-series-calculus">정리 1.6</a>에 따라 항별로 미분하면 된다. 계수가 복소수여도 실수부와 허수부에 따로 정리를 쓰면 된다. \(\sum c^n n t^{n-1}/n! = c\sum c^{n-1}t^{n-1}/(n-1)! = c\,e^{ct}\)이다.</p>
+      </details>
+    </div>
+    <p>특히 \(e^{x + iy} = e^x e^{iy}\)이므로, 복소 지수는 실수 지수 \(e^x\)와 순허수 지수 \(e^{iy}\)의 곱이다. 남은 일은 \(e^{iy}\)가 무엇인지 알아내는 것이다.</p>
+
+    <h3 id="s2-euler">오일러 공식</h3>
+    <p>식 <a class="ref" href="#eq-exp-complex"></a>에 \(z = i\theta\) (\(\theta\)는 실수)를 넣는다. \(i\)의 거듭제곱은 \(i, -1, -i, 1\)을 되풀이하므로 짝수 차수 항은 실수이고 부호가 번갈아 바뀌며, 홀수 차수 항은 \(i\)가 붙고 부호가 번갈아 바뀐다. 급수가 절대 수렴하므로 짝수 차수와 홀수 차수를 따로 모아도 된다.</p>
+    <div class="formula" id="eq-euler-series">\[ \begin{aligned} e^{i\theta} &= 1 + i\theta - \frac{\theta^2}{2!} - i\frac{\theta^3}{3!} + \frac{\theta^4}{4!} + \cdots \\ &= \Big(1 - \frac{\theta^2}{2!} + \frac{\theta^4}{4!} - \cdots\Big) \\ &\quad + i\Big(\theta - \frac{\theta^3}{3!} + \frac{\theta^5}{5!} - \cdots\Big) \end{aligned} \]</div>
+    <p>첫째 괄호는 <a href="ch01.html#eq-standard-series">식 (1.21)</a>의 \(\cos\theta\) 급수이고, 둘째 괄호는 \(\sin\theta\) 급수다. 1.4절에서 \(\sin\)과 \(\cos\)의 급수가 \(e^x\)의 급수와 닮았다고 했던 것의 정체가 이것이다.</p>
+    <div class="box thm" id="thm-euler"><div class="box-h">오일러 공식 <span class="en">(Euler’s formula)</span></div>
+      <p>모든 실수 \(\theta\)에 대해</p>
+      <div class="formula" id="eq-euler-formula">\[ e^{i\theta} = \cos\theta + i\sin\theta \]</div>
+      <p>이다. \(e^{i\theta}\)는 복소평면의 단위원 위, 편각 \(\theta\)인 점이다.</p>
+    </div>
+    <p>같은 결과를 급수 없이 확인하는 길도 있다. \(f(\theta) = e^{-i\theta}(\cos\theta + i\sin\theta)\)로 두고 <a class="ref" href="#thm-exp-addition"></a>의 미분 규칙을 쓰면</p>
+    <div class="formula">\[ \begin{aligned} f'(\theta) &= -ie^{-i\theta}(\cos\theta + i\sin\theta) \\ &\quad + e^{-i\theta}(-\sin\theta + i\cos\theta) = 0 \end{aligned} \]</div>
+    <p>이다(\(-i\cos\theta + \sin\theta - \sin\theta + i\cos\theta = 0\)). 따라서 \(f\)는 상수이고 \(f(0) = 1\)이므로 \(\cos\theta + i\sin\theta = e^{i\theta}\)이다. 절의 처음에 \(dE/d\theta = iE\)에서 짐작한 것이 정확히 맞았다.</p>
+    <p>오일러 공식이 주는 결과를 모으면 다음과 같다.</p>
+    <ul>
+      <li><b>극형식.</b> <a class="ref" href="#def-polar-form"></a>의 극형식은 짧게 다음처럼 쓴다. <a class="ref" href="#thm-polar-product"></a>은 지수 법칙 \(r_1e^{i\theta_1}\,r_2e^{i\theta_2} = r_1r_2\,e^{i(\theta_1 + \theta_2)}\)이 된다.
+        <div class="formula" id="eq-polar-exp">\[ z = x + iy = re^{i\theta} \]</div></li>
+      <li><b>특별한 값.</b> \(e^{i\theta}\)는 \(\theta\)가 \(2\pi\) 늘 때마다 같은 점으로 돌아온다.
+        <div class="formula" id="eq-euler-values">\[ \begin{aligned} e^{i\pi/2} &= i \\ e^{i\pi} &= -1 \\ e^{2\pi i} &= 1 \\ e^{i(\theta + 2\pi)} &= e^{i\theta} \end{aligned} \]</div></li>
+      <li><b>켤레와 삼각 함수.</b> \((e^{i\theta})^* = \cos\theta - i\sin\theta = e^{-i\theta}\)이다. 식 <a class="ref" href="#eq-re-im-conjugate"></a>에 넣으면 삼각 함수를 지수로 쓸 수 있다.
+        <div class="formula" id="eq-cos-sin-euler">\[ \begin{aligned} \cos\theta &= \frac{e^{i\theta} + e^{-i\theta}}{2} \\ \sin\theta &= \frac{e^{i\theta} - e^{-i\theta}}{2i} \end{aligned} \]</div></li>
+      <li><b>일반적인 복소 지수.</b> \(e^{x + iy} = e^x(\cos y + i\sin y)\)이므로 \(\lvert e^z\rvert = e^{\operatorname{Re} z}\), \(\arg e^z = \operatorname{Im} z\)이다. \(e^z\)는 어떤 \(z\)에서도 0이 아니고, \(z\)에 \(2\pi i\)를 더해도 값이 같다(주기 \(2\pi i\)).</li>
+    </ul>
+    <p>그림 2-2는 \(\theta = \pi\)일 때 급수 <a class="ref" href="#eq-euler-series"></a>의 부분합 \(S_N = \sum_{n=0}^{N}(i\pi)^n/n!\)을 차례로 이은 것이다. 부분합은 실수 방향과 허수 방향으로 번갈아 움직인다. 처음 몇 걸음은 \(\pi^n/n!\)이 커지므로 크게 벗어나지만, 계승이 거듭제곱을 이기는 \(n \approx 4\)부터 걸음이 빠르게 줄어 \(-1\)로 감긴다. \(S_{11} = -1.0018 - 0.0004i\)이다.</p>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 -14 420 414" role="img" aria-label="e^(iπ)의 급수의 부분합을 복소평면에 이은 꺾은선. 원점 둘레를 돌며 −1로 다가간다"><defs><marker id="f0202-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker></defs><line x1="20" y1="190" x2="410" y2="190" class="s-line" marker-end="url(#f0202-arr)"/><line x1="300" y1="395" x2="300" y2="10" class="s-line" marker-end="url(#f0202-arr)"/><text x="407" y="208" class="t-dim" text-anchor="end">Re</text><text x="292" y="22" class="t-dim" text-anchor="end">Im</text><line x1="126" y1="186" x2="126" y2="194" class="s-line"/><text x="126" y="208" class="t-dim" text-anchor="middle">−3</text><line x1="184" y1="186" x2="184" y2="194" class="s-line"/><text x="184" y="208" class="t-dim" text-anchor="middle">−2</text><line x1="358" y1="186" x2="358" y2="194" class="s-line"/><text x="358" y="208" class="t-dim" text-anchor="middle">1</text><line x1="296" y1="306" x2="304" y2="306" class="s-line"/><text x="308" y="310" class="t-dim" text-anchor="start">−2<tspan font-style="italic">i</tspan></text><line x1="296" y1="248" x2="304" y2="248" class="s-line"/><text x="308" y="252" class="t-dim" text-anchor="start">−<tspan font-style="italic">i</tspan></text><line x1="296" y1="132" x2="304" y2="132" class="s-line"/><text x="308" y="136" class="t-dim" text-anchor="start"><tspan font-style="italic">i</tspan></text><line x1="296" y1="74" x2="304" y2="74" class="s-line"/><text x="308" y="78" class="t-dim" text-anchor="start">2<tspan font-style="italic">i</tspan></text><circle cx="300" cy="190" r="58" class="s-line" stroke-dasharray="4 4"/><path d="M300,190 L358,190 L358,7.8 L71.8,7.8 L71.8,307.5 L307.2,307.5 L307.2,159.6 L229.7,159.6 L229.7,194.4 L243.4,194.4 L243.4,189.6 L241.9,189.6 L241.9,190 L242,190 L242,190" class="s-acc" style="stroke-width:2"/><circle cx="358" cy="190" r="3.5" class="f-acc"/><circle cx="358" cy="7.8" r="3.5" class="f-acc"/><circle cx="71.8" cy="7.8" r="3.5" class="f-acc"/><circle cx="71.8" cy="307.5" r="3.5" class="f-acc"/><circle cx="307.2" cy="307.5" r="3.5" class="f-acc"/><circle cx="307.2" cy="159.6" r="3.5" class="f-acc"/><circle cx="229.7" cy="159.6" r="3.5" class="f-acc"/><circle cx="229.7" cy="194.4" r="3.5" class="f-acc"/><circle cx="243.4" cy="194.4" r="3.5" class="f-acc"/><circle cx="243.4" cy="189.6" r="3.5" class="f-acc"/><circle cx="241.9" cy="189.6" r="3.5" class="f-acc"/><circle cx="241.9" cy="190" r="3.5" class="f-acc"/><text x="366" y="182" class="t-math acc" style="font-size:15px" text-anchor="start"><tspan font-style="italic">S</tspan><tspan baseline-shift="sub" font-size="72%">0</tspan></text><text x="366" y="3.8" class="t-math acc" style="font-size:15px" text-anchor="start"><tspan font-style="italic">S</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan></text><text x="63.8" y="1.8" class="t-math acc" style="font-size:15px" text-anchor="end"><tspan font-style="italic">S</tspan><tspan baseline-shift="sub" font-size="72%">2</tspan></text><text x="63.8" y="321.5" class="t-math acc" style="font-size:15px" text-anchor="end"><tspan font-style="italic">S</tspan><tspan baseline-shift="sub" font-size="72%">3</tspan></text><text x="315.2" y="323.5" class="t-math acc" style="font-size:15px" text-anchor="start"><tspan font-style="italic">S</tspan><tspan baseline-shift="sub" font-size="72%">4</tspan></text><text x="315.2" y="153.6" class="t-math acc" style="font-size:15px" text-anchor="start"><tspan font-style="italic">S</tspan><tspan baseline-shift="sub" font-size="72%">5</tspan></text><text x="221.7" y="151.6" class="t-math acc" style="font-size:15px" text-anchor="end"><tspan font-style="italic">S</tspan><tspan baseline-shift="sub" font-size="72%">6</tspan></text><path d="M235,183L249,197M235,197L249,183" class="s-acc2" style="stroke-width:3"/><text x="246" y="232" class="t-math acc2" text-anchor="end">−1 = <tspan font-style="italic">e</tspan><tspan baseline-shift="super" font-size="72%"><tspan font-style="italic">iπ</tspan></tspan></text><text x="341.8" y="243.4" class="t-dim" text-anchor="start">단위원</text></svg></div>
+      <figcaption><b>그림 2-2.</b> \(e^{i\pi}\)의 급수의 부분합 \(S_0 = 1\), \(S_1 = 1 + i\pi\), \(S_2 = 1 + i\pi - \pi^2/2\), … 를 이은 꺾은선(강조색). \(n\)번째 걸음의 길이는 \(\pi^n/n!\)이고, 방향은 걸음마다 90°씩 돈다(\(i\)를 곱할 때마다 90° 회전). 걸음은 \(n = 3\)(\(\pi^3/6 = 5.17\))에서 가장 길고 그 뒤로 빠르게 줄어, 부분합이 단위원(점선) 위의 점 \(-1\)(×)로 다가간다. \(S_{11}\)과 \(-1\)의 차이는 0.002다.</figcaption>
+    </figure>
+    <div class="callout tip"><strong>\(e^{i\theta}\)는 단위원 위를 도는 점이다</strong><p>\(\theta\)를 시간에 비례하게 \(\theta = \omega t\)로 두면 \(e^{i\omega t}\)는 단위원 위를 각속도 \(\omega\)로 반시계 방향으로 도는 점이다. 그 그림자인 실수부와 허수부가 각각 \(\cos\omega t\)와 \(\sin\omega t\)이다. 단진동을 "원운동의 그림자"로 보는 일반물리의 그림이 오일러 공식의 내용이다. \(e^{-i\omega t}\)는 같은 원을 시계 방향으로 돈다. 2.4절에서 이 책은 진동을 \(e^{-i\omega t}\)로 쓰기로 정한다. \(\theta = \pi\)를 넣은 \(e^{i\pi} + 1 = 0\)은 \(e\), \(i\), \(\pi\), 1, 0을 한 줄에 담고 있어 유명하지만, 내용은 "반 바퀴 돌면 반대쪽"이다.</p></div>
+
+    <h3 id="s2-identities">삼각 항등식 다시 얻기</h3>
+    <p>오일러 공식은 삼각 함수의 항등식을 외우지 않고 만들어 내는 장치다. 예를 들어 \(e^{i(a + b)} = e^{ia}e^{ib}\)의 왼쪽은 \(\cos(a+b) + i\sin(a+b)\)이고, 오른쪽을 전개하면 \((\cos a\cos b - \sin a\sin b) + i(\sin a\cos b + \cos a\sin b)\)이다. 실수부와 허수부를 비교하면 덧셈 정리가 나온다.</p>
+    <div class="formula" id="eq-addition-formulas">\[ \begin{aligned} \cos(a + b) &= \cos a\cos b - \sin a\sin b \\ \sin(a + b) &= \sin a\cos b + \cos a\sin b \end{aligned} \]</div>
+    <p><a class="ref" href="#thm-polar-product"></a>을 증명할 때는 덧셈 정리를 썼으므로, 이것은 같은 내용을 반대 방향으로 읽은 것이다. 새로운 쓸모는 거듭제곱이 있는 식에서 나온다. 식 <a class="ref" href="#eq-cos-sin-euler"></a>으로 \(\cos\)를 지수로 바꾸면 거듭제곱이 이항 전개가 되고, 각 항은 여러 배의 각을 가진 지수가 된다.</p>
+
+    <div class="box ex" id="ex-cubic-harmonic"><div class="box-h">세제곱 비선형성이 만드는 제3 고조파</div>
+      <p>센 빛이 지나가는 매질에서는 분극이 전기장에 비례하지 않는다. 분극을 \(P = \varepsilon_0(\chi_1 E + \chi_3 E^3)\)으로 두자(\(\chi_1\), \(\chi_3\)은 매질의 상수). 전기장이 \(E = E_0\cos\omega t\)로 진동할 때 \(P\)에 들어 있는 진동수 성분을 모두 구하라.</p>
+      <p><b>풀이.</b> \(E^3\)에 들어 있는 \(\cos^3\omega t\)를 지수로 바꾸어 세제곱한다. \(u = e^{i\omega t}\)로 두면 \(\cos\omega t = (u + u^{-1})/2\)이고, 이항 전개에서</p>
+      <div class="formula">\[ \begin{aligned} \cos^3\omega t &= \frac{u^3 + 3u + 3u^{-1} + u^{-3}}{8} \\ &= \frac{2\cos 3\omega t + 6\cos\omega t}{8} \end{aligned} \]</div>
+      <p>이다. 둘째 줄에서 \(u^n + u^{-n} = 2\cos n\omega t\)를 썼다. 따라서</p>
+      <div class="formula" id="eq-cos-cubed">\[ \cos^3\omega t = \frac34\cos\omega t + \frac14\cos 3\omega t \]</div>
+      <p>이고, 분극은 다음과 같다.</p>
+      <div class="formula" id="eq-cubic-polarization">\[ \begin{aligned} \frac{P}{\varepsilon_0} &= \Big(\chi_1 E_0 + \frac34\chi_3E_0^3\Big)\cos\omega t \\ &\quad + \frac14\chi_3E_0^3\cos 3\omega t \end{aligned} \]</div>
+      <p>세제곱 항은 두 가지 일을 한다. 하나는 진동수 \(\omega\)의 응답을 \(\tfrac34\chi_3E_0^2\)만큼 바꾸는 것이다. 이 변화는 빛의 세기 \(E_0^2\)에 비례하므로, 매질의 굴절률이 빛의 세기에 따라 달라지는 현상(<span class="term">광학 커 효과</span> <span class="en">(optical Kerr effect)</span>)의 원인이 된다. 다른 하나는 처음에 없던 진동수 \(3\omega\)의 분극을 만드는 것이다. 진동하는 분극은 같은 진동수의 빛을 내므로 매질에서 진동수가 세 배인 빛이 나온다. 이것을 <span class="term">제3 고조파 발생</span> <span class="en">(third-harmonic generation)</span>이라 한다.</p>
+      <p><b>숫자로 보기.</b> 파장 \(1064\ \text{nm}\)인 적외선 레이저 빛의 제3 고조파는 파장이 \(1064/3 = 355\ \text{nm}\)인 자외선이다. 비선형 분극 가운데 \(3\omega\) 성분의 진폭은 \(\omega\) 성분의 \(\tfrac{1/4}{3/4} = \tfrac13\)이다. 차원도 확인하자. \(\chi_1\)은 차원이 없고, \(\chi_3E^3\)이 \(\chi_1E\)와 같은 차원이려면 \(\chi_3\)은 \((\text{m/V})^2\)의 차원을 가져야 한다. 그러면 \(\chi_3E_0^2\)도 차원이 없어 첫 괄호의 두 항이 같은 차원이다.</p>
+    </div>
+
+    <h3 id="s2-cyclotron">복소수로 쓴 평면 운동</h3>
+    <p>평면 위의 운동은 위치 \((x, y)\)를 복소수 \(\xi = x + iy\) 하나로 묶어 쓰면 간단해질 때가 있다. 특히 속도를 90° 돌리는 힘이 있으면 그 회전은 \(i\)를 곱하는 것이므로, 연립 방정식 두 개가 복소 방정식 하나가 된다.</p>
+    <div class="box ex" id="ex-cyclotron-complex"><div class="box-h">자기장 속 대전 입자의 원운동</div>
+      <p>균일한 자기장 \(\mathbf B = B\hat{\mathbf z}\) 속에서 전하 \(q\), 질량 \(m\)인 입자가 \(xy\)평면에서 움직인다. 복소 속도 \(w = v_x + iv_y\)로 운동 방정식을 풀어 궤도를 구하라. \(B = 1.00\ \text{T}\) 속에서 속력 \(1.0 \times 10^6\ \text{m/s}\)로 움직이는 양성자의 각진동수, 진동수, 궤도 반지름을 구하라.</p>
+      <p><b>풀이.</b> 로런츠 힘 \(m\,d\mathbf v/dt = q\mathbf v \times \mathbf B\)에서 \(\mathbf v \times \mathbf B = (v_yB, -v_xB, 0)\)이므로, <span class="term">사이클로트론 각진동수</span> <span class="en">(cyclotron frequency)</span> \(\omega_c = qB/m\)으로 두면 \(\dot v_x = \omega_c v_y\), \(\dot v_y = -\omega_c v_x\)이다. 두 식을 \(w\)로 묶으면</p>
+      <div class="formula" id="eq-cyclotron-equation">\[ \frac{dw}{dt} = \omega_c v_y - i\omega_c v_x = -i\omega_c\,w \]</div>
+      <p>이다. <a class="ref" href="#thm-exp-addition"></a>에 따라 \(w(t) = w_0e^{-i\omega_c t}\)가 이 식을 만족한다. 해는 이것뿐이다. 어떤 해 \(w\)에 대해서도 \(\tfrac{d}{dt}\big(w\,e^{i\omega_c t}\big) = (\dot w + i\omega_c w)e^{i\omega_c t} = 0\)이므로 \(w\,e^{i\omega_c t}\)가 상수 \(w_0\)이기 때문이다. 위치 \(\xi = x + iy\)는 \(d\xi/dt = w\)를 적분해서 얻는다.</p>
+      <div class="formula" id="eq-cyclotron-orbit">\[ \xi(t) = \xi_c + \frac{i w_0}{\omega_c}\,e^{-i\omega_c t} \]</div>
+      <p>미분하면 \((iw_0/\omega_c)(-i\omega_c)e^{-i\omega_c t} = w_0e^{-i\omega_c t}\)이 되어 맞다. \(\xi_c\)는 적분 상수다. \(\lvert\xi - \xi_c\rvert = \lvert w_0\rvert/\lvert\omega_c\rvert\)가 일정하므로 입자는 \(\xi_c\)를 중심으로 반지름 \(r_c = mv/\lvert q\rvert B\)인 원을 그린다. 속력 \(\lvert w\rvert = \lvert w_0\rvert\)도 일정하다. 자기력은 속도에 수직이라 일을 하지 않기 때문이다. \(q > 0\)이면 편각이 시간에 따라 줄어드므로 \(+z\)축 쪽에서 볼 때 시계 방향으로 돌고, 전자처럼 \(q &lt; 0\)이면 \(\omega_c &lt; 0\)이라 반시계 방향으로 돈다.</p>
+      <p><b>숫자로 보기.</b> 양성자(\(q = 1.602 \times 10^{-19}\ \text{C}\), \(m = 1.673 \times 10^{-27}\ \text{kg}\))는</p>
+      <div class="formula">\[ \begin{aligned} \omega_c &= \frac{(1.602 \times 10^{-19})(1.00)}{1.673 \times 10^{-27}}\ \text{s}^{-1} \\ &= 9.58 \times 10^{7}\ \text{s}^{-1} \end{aligned} \]</div>
+      <p>이고, 진동수는 \(\omega_c/2\pi = 15.2\ \text{MHz}\), 반지름은 \(r_c = v/\omega_c = 1.0 \times 10^6/9.58 \times 10^7\ \text{m} = 1.04\ \text{cm}\)이다. 단위는 \(qB/m\)이 \(\text{C·T/kg} = \text{C}\cdot\text{kg}/(\text{C·s})/\text{kg} = \text{s}^{-1}\)으로 맞다. 각진동수가 속력에 기대지 않는다는 점이 중요하다. 빠른 입자는 큰 원을, 느린 입자는 작은 원을 그리지만 한 바퀴에 걸리는 시간은 같다(비상대론 영역에서). 사이클로트론 가속기는 이 성질 덕분에 고정된 진동수의 전기장으로 입자를 계속 가속할 수 있다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 2.3 -->
+  <section id="s3">
+    <h2>거듭제곱, 근, 로그</h2>
+    <p>발전기 안에 코일 세 개를 120°씩 돌려 감아 두면 위상이 120°씩 다른 세 교류 전압이 나온다. 이것을 <span class="term">삼상 교류</span> <span class="en">(three-phase AC)</span>라 하고, 세 전압을 세 부하에 하나씩 걸면 부하에서 돌아오는 세 전류를 전선 하나로 모아 돌려보낼 수 있다. 부하가 고르면 그 공통 귀선에는 전류가 흐르지 않는다. 위상이 120°씩 다른 세 코사인의 합이 언제나 0이기 때문이다. 삼각 공식으로 확인할 수도 있지만, 복소수로 보면 "1의 세제곱근의 합은 0"이라는 한 줄로 끝난다. 이 절에서는 오일러 공식으로 복소수의 거듭제곱과 거듭제곱근, 로그를 정하고 이 예를 푼다.</p>
+
+    <h3 id="s3-de-moivre">드무아브르 공식</h3>
+    <p>극형식 \(z = re^{i\theta}\)를 \(n\)제곱하면 지수 법칙에 따라 \(z^n = r^ne^{in\theta}\)이다. 정수 \(n\)이 음수여도 \(z^{-1} = r^{-1}e^{-i\theta}\)이므로 같다. 절댓값은 \(n\)제곱되고 편각은 \(n\)배가 된다. \(r = 1\)인 경우를 삼각 함수로 쓴 것이 <span class="term">드무아브르 공식</span> <span class="en">(de Moivre’s formula)</span>이다.</p>
+    <div class="formula" id="eq-de-moivre">\[ (\cos\theta + i\sin\theta)^n = \cos n\theta + i\sin n\theta \]<div class="where">\(n\)은 정수다. 정수가 아닌 지수에서는 왼쪽이 여러 값을 가질 수 있어(이 절 끝) 그대로 쓰지 않는다.</div></div>
+    <p>왼쪽을 이항 전개하고 실수부와 허수부를 비교하면 여러 배 각의 공식이 나온다. 예를 들어 \(n = 3\)이면 \((c + is)^3 = c^3 + 3ic^2s - 3cs^2 - is^3\) (\(c = \cos\theta\), \(s = \sin\theta\))이고, \(s^2 = 1 - c^2\)을 쓰면</p>
+    <div class="formula" id="eq-triple-angle">\[ \begin{aligned} \cos 3\theta &= 4\cos^3\theta - 3\cos\theta \\ \sin 3\theta &= 3\sin\theta - 4\sin^3\theta \end{aligned} \]</div>
+    <p>이다. 첫 식을 \(\cos^3\theta\)에 대해 풀면 2.2절의 식 <a class="ref" href="#eq-cos-cubed"></a>와 같다.</p>
+
+    <h3 id="s3-roots">\(n\)제곱근</h3>
+    <p>이번에는 거꾸로 \(z^n = w\)를 만족하는 \(z\)를 찾자. \(w = \rho e^{i\phi} \ne 0\)이고 \(z = re^{i\theta}\)라 하면 \(r^ne^{in\theta} = \rho e^{i\phi}\)이다. 두 복소수가 같으려면 절댓값이 같고 편각이 \(2\pi\)의 정수배만큼만 달라야 한다. 따라서 \(r = \rho^{1/n}\)(양의 실수 근)이고 \(n\theta = \phi + 2\pi k\)이다. \(k\)가 \(n\)만큼 바뀌면 \(\theta\)가 \(2\pi\) 바뀌어 같은 점이 되므로, 서로 다른 근은 \(n\)개다.</p>
+    <div class="formula" id="eq-nth-roots">\[ z_k = \rho^{1/n}\,e^{i(\phi + 2\pi k)/n} \]<div class="where">\(k = 0, 1, \ldots, n - 1\)이다.</div></div>
+    <p>\(n\)개의 근은 반지름 \(\rho^{1/n}\)인 원 위에 각 \(2\pi/n\)씩 떨어져 놓인 정\(n\)각형의 꼭짓점이다. \(w = 1\)인 경우의 근을 <span class="term">1의 \(n\)제곱근</span> <span class="en">(\(n\)th roots of unity)</span>이라 한다.</p>
+    <div class="formula" id="eq-roots-of-unity">\[ \begin{aligned} \omega_k &= e^{2\pi ik/n} = \omega^k \\ \omega &= e^{2\pi i/n} \end{aligned} \]</div>
+    <p>모든 1의 \(n\)제곱근은 \(\omega\)의 거듭제곱이다. 그 합은 공비가 \(\omega\)인 기하급수의 부분합이므로 <a href="ch01.html#eq-geometric-partial">식 (1.2)</a>를 쓸 수 있다. 1장에서 이 식을 얻은 과정은 \(rS_N\)을 \(S_N\)에서 빼는 대수 계산뿐이었으므로 공비가 복소수여도 그대로 성립한다. \(\omega^n = 1\)이고 \(n \ge 2\)이면 \(\omega \ne 1\)이므로</p>
+    <div class="formula" id="eq-roots-sum">\[ \sum_{k=0}^{n-1}\omega^k = \frac{1 - \omega^n}{1 - \omega} = 0 \qquad (n \ge 2) \]</div>
+    <p>이다. 정다각형의 꼭짓점을 가리키는 화살표를 모두 더하면 0이 된다는 것, 곧 정다각형의 무게중심이 원점이라는 뜻이다. 이 결과는 2.4절의 회절격자에서 다시 나온다.</p>
+
+    <div class="box ex" id="ex-three-phase"><div class="box-h">삼상 교류의 선간 전압</div>
+      <p>세 상의 전압이 진폭 \(V_0\)이 같고 위상이 차례로 \(120°\)씩 늦다: \(v_a = V_0\cos\omega t\), \(v_b = V_0\cos(\omega t - 2\pi/3)\), \(v_c = V_0\cos(\omega t - 4\pi/3)\). (가) 세 전압의 합이 늘 0임을 보여라. (나) 두 상 사이의 전압 \(v_a - v_b\)(<span class="term">선간 전압</span> <span class="en">(line voltage)</span>)의 진폭과 위상을 구하라. (다) 상전압의 실효값이 \(220\ \text{V}\)이면 선간 전압의 실효값은 얼마인가?</p>
+      <p><b>풀이.</b> \(\operatorname{Re}\big[e^{i\phi}e^{-i\omega t}\big] = \cos(\omega t - \phi)\)이므로, 위상이 \(\phi\)만큼 늦은 코사인은 복소수 \(e^{i\phi}\)에 \(e^{-i\omega t}\)를 곱한 것의 실수부다. 이 표현은 2.4절에서 페이저라는 이름으로 정식화한다. 세 상은 \(\phi = 0, 2\pi/3, 4\pi/3\)이므로 \(\alpha = e^{2\pi i/3}\)으로 두면 \(v_k = \operatorname{Re}\big[V_0\,\alpha^k\,e^{-i\omega t}\big]\) (\(k = 0, 1, 2\))이다.</p>
+      <p>(가) 실수부를 취하는 일은 덧셈과 순서를 바꿔도 되므로</p>
+      <div class="formula">\[ \begin{aligned} &v_a + v_b + v_c \\ &\quad = \operatorname{Re}\Big[V_0\,e^{-i\omega t}\sum_{k=0}^{2}\alpha^k\Big] = 0 \end{aligned} \]</div>
+      <p>이다. 식 <a class="ref" href="#eq-roots-sum"></a>에서 1의 세제곱근의 합이 0이기 때문이다. 각 상에 같은 부하를 걸면 전류도 같은 비율로 나오므로 세 전류의 합도 0이고, 공통 귀선(중성선)에는 전류가 흐르지 않는다.</p>
+      <p>(나) 선간 전압의 복소 진폭은 \(V_0(1 - \alpha)\)이다. \(\alpha = -\tfrac12 + \tfrac{\sqrt3}{2}i\)이므로</p>
+      <div class="formula" id="eq-three-phase-line">\[ 1 - \alpha = \frac32 - \frac{\sqrt3}{2}\,i = \sqrt3\,e^{-i\pi/6} \]</div>
+      <p>이다. 따라서 \(v_a - v_b = \sqrt3\,V_0\cos(\omega t + \pi/6)\)이다. 진폭은 상전압의 \(\sqrt3\)배이고, 위상은 \(v_a\)보다 \(30°\) 앞선다. 그림 2-3에서 \(V_a - V_b\)는 두 화살표의 끝을 잇는 화살표이고, 꼭지각이 \(120°\)인 이등변삼각형의 밑변이라 길이가 \(2\sin 60° = \sqrt3\)배다.</p>
+      <p>(다) 실효값은 진폭에 \(1/\sqrt2\)를 곱한 값이므로 진폭과 같은 비율을 따른다. 선간 전압의 실효값은 \(220\sqrt3 = 381\ \text{V}\)이다. 우리나라의 저압 표준전압이 220 V와 380 V인 것(전기사업법 시행규칙 제18조 별표 3)이 이 두 값이다. 상선과 중성선 사이에서 220 V를, 두 상선 사이에서 380 V를 얻으므로, 같은 네 가닥 전선(상선 셋과 중성선)에서 두 전압을 함께 쓸 수 있다.</p>
+    </div>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 300" role="img" aria-label="삼상 교류의 세 페이저. 크기가 같고 120°씩 벌어져 합이 0이다. 두 상의 차인 선간 전압은 √3배 길다"><defs><marker id="f0203-a1" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker><marker id="f0203-a2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc2"/></marker><marker id="f0203-ad" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker></defs><line x1="60" y1="152" x2="400" y2="152" class="s-grid"/><line x1="200" y1="290" x2="200" y2="12" class="s-grid"/><text x="398" y="170" class="t-dim" text-anchor="end">Re</text><text x="208" y="24" class="t-dim" text-anchor="start">Im</text><circle cx="200" cy="152" r="108" class="s-faint" stroke-dasharray="4 4"/><line x1="200" y1="152" x2="308" y2="152" class="s-acc" style="stroke-width:2.5" marker-end="url(#f0203-a1)"/><line x1="200" y1="152" x2="146" y2="58.5" class="s-acc" style="stroke-width:2.5" marker-end="url(#f0203-a1)"/><line x1="200" y1="152" x2="146" y2="245.5" class="s-acc" style="stroke-width:2.5" marker-end="url(#f0203-a1)"/><text x="318" y="144" class="t-math acc" text-anchor="start"><tspan font-style="italic">V</tspan><tspan baseline-shift="sub" font-size="72%">a</tspan></text><text x="136" y="54.5" class="t-math acc" text-anchor="end"><tspan font-style="italic">V</tspan><tspan baseline-shift="sub" font-size="72%">b</tspan></text><text x="136" y="261.5" class="t-math acc" text-anchor="end"><tspan font-style="italic">V</tspan><tspan baseline-shift="sub" font-size="72%">c</tspan></text><line x1="146" y1="58.5" x2="308" y2="152" class="s-acc2" style="stroke-width:2.5" stroke-dasharray="7 4" marker-end="url(#f0203-a2)"/><text x="239" y="97.2" class="t-math acc2" text-anchor="start"><tspan font-style="italic">V</tspan><tspan baseline-shift="sub" font-size="72%">a</tspan> − <tspan font-style="italic">V</tspan><tspan baseline-shift="sub" font-size="72%">b</tspan></text><path d="M230,152 A30,30 0 0 0 185,126" class="s-line"/><text x="200" y="113" class="t-dim" style="font-size:14px" text-anchor="middle">120°</text></svg></div>
+      <figcaption><b>그림 2-3.</b> 삼상 교류의 세 상전압을 복소수 \(V_a = V_0\), \(V_b = V_0e^{2\pi i/3}\), \(V_c = V_0e^{4\pi i/3}\)로 나타낸 것(강조색 화살표). 세 화살표는 1의 세제곱근에 \(V_0\)을 곱한 것이라 정삼각형의 꼭짓점을 가리키고, 합이 0이다. 점선 화살표 \(V_a - V_b\)는 선간 전압으로, 길이가 \(\sqrt3\,V_0\)이다. 이 책의 관례(2.4절)에서는 편각이 클수록 위상이 늦다.</figcaption>
+    </figure>
+
+    <h3 id="s3-log">복소 로그</h3>
+    <p>실수에서 \(\ln x\)는 \(e^y = x\)인 \(y\)이다. 복소수에서도 같은 질문을 던지자. \(e^w = z\)를 만족하는 \(w = u + iv\)는 무엇인가? \(z = re^{i\theta}\)로 쓰면 \(e^ue^{iv} = re^{i\theta}\)이므로 절댓값에서 \(e^u = r\), 곧 \(u = \ln r\)이고, 편각에서 \(v = \theta + 2\pi k\)이다. \(v\)는 하나로 정해지지 않는다. \(e^w\)의 주기가 \(2\pi i\)이므로 당연한 일이다.</p>
+    <div class="box def" id="def-complex-log"><div class="box-h">복소 로그와 주값</div>
+      <p>\(z \ne 0\)에 대해 \(e^w = z\)를 만족하는 \(w\)를 모두 모은 것을 \(z\)의 <span class="term">로그</span> <span class="en">(logarithm)</span>라 하고 \(\log z\)로 쓴다. 그 가운데 허수부가 \((-\pi, \pi]\)에 있는 하나를 <span class="term">주로그</span> <span class="en">(principal logarithm)</span>라 하고 \(\operatorname{Log} z\)로 쓴다.</p>
+      <div class="formula" id="eq-complex-log">\[ \begin{aligned} \log z &= \ln\lvert z\rvert + i(\operatorname{Arg} z + 2\pi k) \\ \operatorname{Log} z &= \ln\lvert z\rvert + i\operatorname{Arg} z \end{aligned} \]<div class="where">\(k\)는 모든 정수다. \(\ln\)은 양의 실수의 보통 자연로그다.</div></div>
+    </div>
+    <p>몇 가지 값을 보자. \(\operatorname{Log}(-3) = \ln 3 + i\pi = 1.0986 + 3.1416i\)이다. 실수에서 정의되지 않던 음수의 로그가 이제 정해진다. \(\operatorname{Log} i = i\pi/2\), \(\operatorname{Log}(1 + i) = \ln\sqrt2 + i\pi/4 = 0.3466 + 0.7854i\)이다. 양의 실수 \(x\)에서는 \(\operatorname{Log} x = \ln x\)로 보통 로그와 같다.</p>
+    <p>실수의 로그 법칙은 일부만 살아남는다. \(e^{\operatorname{Log} z} = z\)는 언제나 성립하지만, \(\operatorname{Log}(e^z) = z\)는 \(-\pi &lt; \operatorname{Im} z \le \pi\)일 때만 성립한다. \(\log(z_1z_2) = \log z_1 + \log z_2\)는 "가능한 값의 집합"으로는 성립하지만 주값끼리는 깨질 수 있다. 예를 들어 \(\operatorname{Log}\big((-1)(-1)\big) = \operatorname{Log} 1 = 0\)인데 \(\operatorname{Log}(-1) + \operatorname{Log}(-1) = 2\pi i\)이다. 편각의 합이 \((-\pi, \pi]\)를 벗어나면 주값이 \(2\pi\)만큼 어긋나는 것이다.</p>
+    <div class="callout deep"><strong>로그는 왜 여러 값을 갖는가</strong><p>점 \(z\)가 원점 둘레를 한 바퀴 돌아 제자리로 오면 편각은 연속적으로 \(2\pi\) 늘어난다. 편각에 \(2\pi\)를 더해도 같은 점이지만, \(\log z\)의 허수부는 \(2\pi\) 늘어난 채로 돌아온다. 그래서 원점을 감는 닫힌 경로 위에서는 \(\log z\)를 연속이면서 한 값인 함수로 고를 수 없다. 주로그 \(\operatorname{Log}\)은 음의 실수축을 넘지 못하게 막아서 한 값을 고른 것이고, 그 대가로 음의 실수축을 가로지를 때 허수부가 \(\pi\)에서 \(-\pi\)로 뛴다. 이렇게 막아 둔 선을 <a href="ch18.html#def-branch-cut">분지 절단</a>, 그 끝의 원점을 <a href="ch18.html#def-branch-point">분지점</a>이라 하며 18장에서 다룬다. 측정에서도 같은 일이 생긴다. 위상 지연이 \(70°\)인 필터 세 개를 이으면 실제 지연은 \(210°\)이지만 주값은 \(-150°\)로 나오므로, 실험에서는 연속이 되도록 \(2\pi\)를 더하는 위상 펼치기(phase unwrapping)를 한다.</p></div>
+
+    <h3 id="s3-power">복소 거듭제곱</h3>
+    <p>실수에서 \(a^b = e^{b\ln a}\)이다(\(a > 0\)). 복소수에서도 같은 식으로 거듭제곱을 정하되, 로그가 여러 값이므로 거듭제곱도 여러 값이 될 수 있다.</p>
+    <div class="box def" id="def-complex-power"><div class="box-h">복소 거듭제곱</div>
+      <p>\(z \ne 0\)과 복소수 \(a\)에 대해 \(z^a = e^{a\log z}\)로 정한다. \(\log z\)의 값마다 하나씩 값이 나오므로 일반적으로 여러 값이다. 주로그를 쓴 값을 <span class="term">주값</span>이라 하고, 특별한 말이 없으면 \(z^a\)는 주값을 뜻한다.</p>
+      <div class="formula" id="eq-complex-power">\[ z^a = e^{a\operatorname{Log} z} = e^{a(\ln\lvert z\rvert + i\operatorname{Arg} z)} \]</div>
+    </div>
+    <p>다른 값들은 주값에 \(e^{2\pi ika}\)를 곱한 것이다. \(a\)가 정수이면 \(e^{2\pi ika} = 1\)이라 값이 하나뿐이고 보통의 거듭제곱과 같다. \(a = 1/n\)이면 \(e^{2\pi ik/n}\)이 \(n\)개의 서로 다른 값을 주므로 \(n\)제곱근 \(n\)개가 다시 나온다. \(a\)가 무리수나 실수가 아닌 복소수이면 값이 무한히 많다.</p>
+
+    <div class="box ex" id="ex-complex-powers"><div class="box-h">\(i^i\), \((-8)^{1/3}\), \(2^i\)</div>
+      <p>(가) \(i^i\)의 모든 값과 주값 (나) \((-8)^{1/3}\)의 주값 (다) \(2^i\)를 구하라.</p>
+      <p><b>풀이.</b> (가) \(\log i = i(\pi/2 + 2\pi k)\)이므로 \(i^i = e^{i \cdot i(\pi/2 + 2\pi k)} = e^{-\pi/2 - 2\pi k}\)이다. 놀랍게도 모든 값이 양의 실수다. 주값(\(k = 0\))은 \(e^{-\pi/2} = 0.2079\)이다.</p>
+      <p>(나) \(\operatorname{Log}(-8) = \ln 8 + i\pi\)이므로 \((-8)^{1/3} = e^{(\ln 8)/3 + i\pi/3} = 2e^{i\pi/3} = 1 + i\sqrt3\)이다. 실수 \(-2\)는 \(k = 1\)인 값 \(2e^{i(\pi + 2\pi)/3} = 2e^{i\pi} = -2\)이고, 주값이 아니다.</p>
+      <p>(다) \(\operatorname{Log} 2 = \ln 2\)이므로 \(2^i = e^{i\ln 2} = \cos(\ln 2) + i\sin(\ln 2) = 0.7692 + 0.6390i\)이다. 절댓값이 1이다. 양의 실수의 순허수 거듭제곱 \(a^{ix} = e^{ix\ln a}\)는 절댓값이 1이고, \(x\)가 \(2\pi/\ln a\)만큼 늘 때마다 같은 값으로 돌아오는 진동 함수다.</p>
+    </div>
+    <div class="callout warn"><strong>실수에서 익숙한 지수 법칙이 깨진다</strong><p>주값끼리는 \(\sqrt{z_1z_2} = \sqrt{z_1}\sqrt{z_2}\)나 \((z^a)^b = z^{ab}\)가 일반적으로 성립하지 않는다. "\(1 = \sqrt{1} = \sqrt{(-1)(-1)} = \sqrt{-1}\sqrt{-1} = i \cdot i = -1\)"이라는 엉터리 증명은 셋째 등호에서 틀렸다. 두 편각의 합 \(2\pi\)가 주값의 범위를 벗어나기 때문이다. 계산 도구도 조심해야 한다. 세제곱근 함수를 실수용으로 만든 계산기는 \(\sqrt[3]{-8} = -2\)를 주지만, Python에서 <code>(-8)**(1/3)</code>은 복소수 주값 \(1 + 1.732i\)를 준다. 어느 값이 필요한지는 물리가 정한다.</p></div>
+  </section>
+
+  <!-- ============================================================ 2.4 -->
+  <section id="s4">
+    <h2>복소 지수로 진동 다루기</h2>
+    <p>두 스피커가 같은 진동수의 소리를 내는데 한 점에 도착하는 두 소리의 위상이 다르다. 그 점에서 공기의 압력 변화는 \(A_1\cos(\omega t - \phi_1) + A_2\cos(\omega t - \phi_2)\)이다. 이 합의 진폭은 얼마인가? 삼각 함수의 덧셈 정리로 전개해 \(\cos\omega t\)와 \(\sin\omega t\)의 계수를 모으면 답이 나오지만, 소리가 셋, 넷으로 늘면 계산이 금세 길어진다. 2.3절의 삼상 교류에서 이미 본 것처럼, 각 진동을 복소수 하나로 나타내면 진동의 합은 복소수의 합, 곧 평면 위 화살표의 합이 된다. 이 절에서는 그 방법을 정식으로 세우고 감쇠 진동과 회절격자에 쓴다.</p>
+
+    <h3 id="s4-phasor">페이저</h3>
+    <div class="box def" id="def-phasor"><div class="box-h">페이저</div>
+      <p>각진동수 \(\omega\)가 정해진 실수 진동 \(x(t) = A\cos(\omega t - \phi)\) (\(A \ge 0\))에 대해 복소수 \(\tilde x = Ae^{i\phi}\)를 \(x\)의 <span class="term">페이저</span> <span class="en">(phasor)</span> 또는 <span class="term">복소 진폭</span> <span class="en">(complex amplitude)</span>이라 한다. 실제 진동은 페이저에 \(e^{-i\omega t}\)를 곱한 것의 실수부다.</p>
+      <div class="formula" id="eq-phasor-real">\[ \begin{aligned} x(t) &= \operatorname{Re}\big[\tilde x\,e^{-i\omega t}\big] \\ &= A\cos(\omega t - \phi) \end{aligned} \]</div>
+      <p>페이저의 절댓값은 진폭이고, 편각은 위상이다. 이 관례에서는 <b>편각 \(\phi\)가 클수록 진동이 늦다.</b> 최댓값에 시간 \(\phi/\omega\)만큼 늦게 이른다.</p>
+    </div>
+    <p>페이저 계산이 통하는 이유는 실수부를 취하는 일이 선형 연산과 순서를 바꿀 수 있기 때문이다. 복소수 \(z_1\), \(z_2\)와 실수 \(c\)에 대해 \(\operatorname{Re} z_1 + \operatorname{Re} z_2 = \operatorname{Re}(z_1 + z_2)\), \(c\operatorname{Re} z = \operatorname{Re}(cz)\)이고, 시간 미분도 실수부와 바꿀 수 있다. <a class="ref" href="#thm-exp-addition"></a>에서 \(\tfrac{d}{dt}e^{-i\omega t} = -i\omega\,e^{-i\omega t}\)이므로, 진동을 시간으로 미분하는 것은 페이저에 \(-i\omega\)를 곱하는 것이다. 따라서 <b>실수 계수의 선형 방정식은 복소수로 풀고 마지막에 실수부를 취해도 된다.</b> 이 책 전체가 따르는 관례를 정리하면 다음과 같다.</p>
+    <div class="formula" id="eq-time-convention">\[ \begin{aligned} x(t) &= \operatorname{Re}\big[\tilde x\,e^{-i\omega t}\big] \\ \frac{d}{dt} &\;\longrightarrow\; -i\omega \\ \int dt &\;\longrightarrow\; \frac{1}{-i\omega} = \frac{i}{\omega} \end{aligned} \]<div class="where">진동은 \(e^{-i\omega t}\), 평면파는 \(e^{i(\mathbf k\cdot\mathbf r - \omega t)}\)로 쓴다. \(e^{i(kx - \omega t)}\)는 \(k > 0\)이면 \(+x\) 방향으로 진행한다. 전기공학의 \(e^{j\omega t}\) 관례와의 비교는 2.5절에 있다.</div></div>
+    <p>예를 들어 변위의 페이저가 \(\tilde x\)이면 속도의 페이저는 \(\tilde v = -i\omega\tilde x\)이다. \(-i = e^{-i\pi/2}\)이므로 속도는 진폭이 \(\omega\)배이고 편각이 \(\pi/2\) 작다. 곧 속도는 변위보다 90° 앞선다. 실제로 \(x = A\cos\omega t\)이면 \(v = -A\omega\sin\omega t = A\omega\cos(\omega t + \pi/2)\)이다.</p>
+
+    <h3 id="s4-superposition">같은 진동수의 진동 더하기</h3>
+    <p>처음의 두 스피커 문제로 돌아가자. 두 소리의 페이저는 \(A_1e^{i\phi_1}\)과 \(A_2e^{i\phi_2}\)이고, 합의 페이저는 그 합이다. 합의 진폭은 식 <a class="ref" href="#eq-modulus-conjugate"></a>로 구한다.</p>
+    <div class="formula" id="eq-two-wave-amplitude">\[ \begin{aligned} \lvert\tilde x\rvert^2 &= \big(A_1e^{i\phi_1} + A_2e^{i\phi_2}\big) \\ &\quad \times \big(A_1e^{-i\phi_1} + A_2e^{-i\phi_2}\big) \\ &= A_1^2 + A_2^2 + 2A_1A_2\cos(\phi_1 - \phi_2) \end{aligned} \]</div>
+    <p>둘째 줄에서 \(e^{i(\phi_1 - \phi_2)} + e^{-i(\phi_1 - \phi_2)} = 2\cos(\phi_1 - \phi_2)\)를 썼다. 위상차가 0이면 진폭이 \(A_1 + A_2\)로 보강되고, \(\pi\)이면 \(\lvert A_1 - A_2\rvert\)로 상쇄된다. 화살표 두 개의 합에 대한 코사인 법칙이다. 작은 예로 \(3\cos\omega t + 4\sin\omega t\)를 보자. \(4\sin\omega t = 4\cos(\omega t - \pi/2)\)의 페이저는 \(4e^{i\pi/2} = 4i\)이므로 합의 페이저는 \(3 + 4i = 5e^{0.927i}\)이고, 합은 \(5\cos(\omega t - 0.927)\)이다.</p>
+
+    <h3 id="s4-average">곱과 시간 평균</h3>
+    <p>에너지와 전력은 진동하는 두 양의 곱이다. 운동 에너지 \(\tfrac12 mv^2\), 전력 \(vI\), 빛의 세기 \(\propto E^2\)이 그렇다. 그런데 실수부를 취하는 일은 곱셈과 순서를 바꿀 수 없다. \(\operatorname{Re}(z_1)\operatorname{Re}(z_2) \ne \operatorname{Re}(z_1z_2)\)이다(\(z_1 = z_2 = i\)이면 왼쪽은 0, 오른쪽은 \(-1\)). 곱은 반드시 실수로 되돌린 뒤에 계산해야 한다. 다행히 물리에서 필요한 것은 대개 한 주기 동안의 평균이고, 평균은 페이저로 바로 구할 수 있다.</p>
+    <div class="box thm" id="thm-time-average"><div class="box-h">곱의 주기 평균</div>
+      <p>같은 각진동수의 두 진동 \(a(t) = \operatorname{Re}[\tilde a\,e^{-i\omega t}]\), \(b(t) = \operatorname{Re}[\tilde b\,e^{-i\omega t}]\)의 곱을 한 주기 \(T = 2\pi/\omega\) 동안 평균하면 다음과 같다.</p>
+      <div class="formula" id="eq-time-average">\[ \langle a(t)\,b(t)\rangle = \frac12\operatorname{Re}\big(\tilde a\,\tilde b^*\big) \]</div>
+      <p>특히 \(\langle a^2\rangle = \tfrac12\lvert\tilde a\rvert^2\)이다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>\(u = \tilde a e^{-i\omega t}\), \(v = \tilde b e^{-i\omega t}\)로 두면 식 <a class="ref" href="#eq-re-im-conjugate"></a>에서 \(ab = \tfrac14(u + u^*)(v + v^*) = \tfrac14(uv + u^*v^* + uv^* + u^*v)\)이다. \(uv = \tilde a\tilde b\,e^{-2i\omega t}\)와 그 켤레는 한 주기 동안 평균하면 0이다(\(\int_0^T e^{-2i\omega t}dt = 0\)). \(uv^* = \tilde a\tilde b^*\)와 \(u^*v = (\tilde a\tilde b^*)^*\)는 시간에 기대지 않으므로 평균은 \(\tfrac14(\tilde a\tilde b^* + \tilde a^*\tilde b) = \tfrac12\operatorname{Re}(\tilde a\tilde b^*)\)이다.</p>
+      </details>
+    </div>
+    <p>그래서 같은 진동수의 파동이 겹칠 때 평균 세기는 페이저 합의 절댓값 제곱에 비례한다. 식 <a class="ref" href="#eq-two-wave-amplitude"></a>의 \(2A_1A_2\cos(\phi_1 - \phi_2)\)가 간섭 항이다.</p>
+
+    <h3 id="s4-damped">감쇠 진동</h3>
+    <p>2.1절의 특성 근 \(s_\pm = -\gamma \pm i\omega_d\)가 무엇을 뜻하는지 이제 읽을 수 있다. \(e^{s_-t} = e^{-\gamma t}e^{-i\omega_d t}\)는 각진동수 \(\omega_d\)로 돌면서 반지름이 \(e^{-\gamma t}\)로 줄어드는 나선 위의 점이고, 그 실수부가 감쇠 진동이다.</p>
+    <div class="box ex" id="ex-damped-complex"><div class="box-h">복소 지수로 푸는 감쇠 진동</div>
+      <p><a class="ref" href="#ex-damped-roots"></a>의 진동자(\(\gamma = 1.4\ \text{s}^{-1}\), \(\omega_0 = 5.0\ \text{s}^{-1}\))를 \(x = x_0\)까지 당겼다가 가만히 놓는다. \(x(t) = \operatorname{Re}\big[A\,e^{-i\omega_d t - \gamma t}\big]\)의 꼴로 운동을 구하라.</p>
+      <p><b>풀이.</b> 복소 함수 \(z(t) = Ae^{s_-t}\), \(s_- = -\gamma - i\omega_d\)를 생각하자. <a class="ref" href="#thm-exp-addition"></a>에서 \(\dot z = s_-z\), \(\ddot z = s_-^2z\)이므로 \(\ddot z + 2\gamma\dot z + \omega_0^2z = (s_-^2 + 2\gamma s_- + \omega_0^2)z = 0\)이다. \(s_-\)가 특성 방정식의 근이기 때문이다. 방정식의 계수가 실수이므로 \(z\)의 실수부도 같은 방정식을 만족한다. 따라서</p>
+      <div class="formula" id="eq-damped-complex">\[ x(t) = \operatorname{Re}\big[A\,e^{-(\gamma + i\omega_d)t}\big] \]</div>
+      <p>는 복소 상수 \(A\)가 무엇이든 해다. 실수 두 개(\(A\)의 실수부와 허수부)를 초기 조건 두 개로 정한다. \(x(0) = \operatorname{Re}A = x_0\)이고, \(\dot x(0) = \operatorname{Re}\big[-(\gamma + i\omega_d)A\big] = -\gamma\operatorname{Re}A + \omega_d\operatorname{Im}A = 0\)이므로 \(\operatorname{Im}A = \gamma x_0/\omega_d\)이다.</p>
+      <div class="formula" id="eq-damped-amplitude">\[ A = x_0\Big(1 + i\frac{\gamma}{\omega_d}\Big) = \lvert A\rvert e^{i\phi} \]<div class="where">\(\tan\phi = \gamma/\omega_d\)이다.</div></div>
+      <p>\(\lvert A\rvert = x_0\sqrt{1 + \gamma^2/\omega_d^2} = x_0\,\omega_0/\omega_d\)이다. 실수부를 취하면</p>
+      <div class="formula" id="eq-damped-solution">\[ x(t) = \frac{\omega_0}{\omega_d}\,x_0\,e^{-\gamma t}\cos(\omega_d t - \phi) \]</div>
+      <p>이다. 진폭이 \(e^{-\gamma t}\)로 줄어드는 코사인이다. 위상 \(\phi\)는 놓는 순간 속도가 0이 되도록 맞춘 값이다. 감쇠가 없으면(\(\gamma = 0\)) \(\phi = 0\), \(\omega_d = \omega_0\)이 되어 \(x_0\cos\omega_0 t\)로 돌아간다.</p>
+      <p><b>숫자로 보기.</b> \(\omega_d = 4.8\ \text{s}^{-1}\)이므로 \(\gamma/\omega_d = 7/24\)이고 \(\lvert A\rvert = \tfrac{25}{24}x_0 = 1.042\,x_0\), \(\phi = \arctan(7/24) = 0.284\) (16.3°)이다. 따라서 \(x(t) = 1.042\,x_0\,e^{-1.4t}\cos(4.8t - 0.284)\)이다(\(t\)는 초 단위). \(t = 0\)에서 \(1.042\cos 0.284 = 1.042 \times 0.96 = 1.000\)이 되어 초기 조건과 맞는다(\(\cos\phi = 24/25\)). 그림 2-4에 이 운동을 그렸다. 지수 \(\gamma t\)와 \(\omega_d t\)는 차원이 없어야 하는데, \(\gamma\)와 \(\omega_d\)가 모두 \(\text{s}^{-1}\)이라 맞다. 진동자의 <span class="term">품질 인자</span> <span class="en">(quality factor)</span> \(Q = \omega_0/2\gamma = 1.8\)은 낮은 편이라 몇 번 흔들리지 않고 멈춘다. \(Q\)의 의미는 10장의 <a href="ch10.html#eq-quality-factor">품질 인자</a>에서 다룬다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 270" role="img" aria-label="감쇠 진동 x(t)와 포락선 ±|A|e^(−γt). 진동은 포락선 사이에서 줄어든다"><defs><clipPath id="f0204-clip"><rect x="48" y="16" width="418" height="218"/></clipPath></defs><g class="s-grid"><line x1="48" y1="16" x2="48" y2="234"/><line x1="152.5" y1="16" x2="152.5" y2="234"/><line x1="257" y1="16" x2="257" y2="234"/><line x1="361.5" y1="16" x2="361.5" y2="234"/><line x1="466" y1="16" x2="466" y2="234"/><line x1="48" y1="224.1" x2="466" y2="224.1"/><line x1="48" y1="174.5" x2="466" y2="174.5"/><line x1="48" y1="125" x2="466" y2="125"/><line x1="48" y1="75.5" x2="466" y2="75.5"/><line x1="48" y1="25.9" x2="466" y2="25.9"/></g><line x1="48" y1="234" x2="466" y2="234" class="s-line"/><line x1="48" y1="16" x2="48" y2="234" class="s-line"/><g class="t-dim" style="font-size:14px" text-anchor="middle"><text x="48" y="254">0</text><text x="152.5" y="254">1</text><text x="257" y="254">2</text><text x="361.5" y="254">3</text><text x="466" y="254">4</text></g><g class="t-dim" style="font-size:14px" text-anchor="end"><text x="40" y="229.1">−1</text><text x="40" y="179.5">−0.5</text><text x="40" y="130">0</text><text x="40" y="80.5">0.5</text><text x="40" y="30.9">1</text></g><text x="466" y="266" class="t-dim" style="font-size:14px" text-anchor="end">시간 t (s)</text><text x="54" y="28" class="t-dim" style="font-size:14px" text-anchor="start">x / x₀</text><path d="M48,21.8 L60.5,37.7 L74.1,52.3 L88.2,64.8 L103.4,75.9 L119.6,85.4 L137.3,93.8 L156.2,100.8 L177.1,106.7 L198.5,111.3 L222.5,115 L249.2,118 L279.5,120.4 L354.2,123.3 L466,124.6" class="s-acc2" stroke-dasharray="6 4" clip-path="url(#f0204-clip)"/><path d="M48,228.2 L60.5,212.3 L74.1,197.7 L88.2,185.2 L103.4,174.1 L119.6,164.6 L137.3,156.2 L156.2,149.2 L177.1,143.3 L198.5,138.7 L222.5,135 L249.2,132 L279.5,129.6 L354.2,126.7 L466,125.4" class="s-acc2" stroke-dasharray="6 4" clip-path="url(#f0204-clip)"/><path d="M48,25.9 L51.1,27 L54.8,30.8 L62.1,45.2 L68.9,64.2 L86.1,118.7 L96.1,143.8 L100.8,152.4 L105,158.2 L109.1,162.1 L113.8,164.3 L120.1,164 L126.9,160.2 L134.7,152.4 L153,129.3 L161.9,119.8 L171.8,112.5 L181.8,109.3 L188,109.3 L195.3,111 L230.4,127.1 L240.3,130 L249.7,131.3 L263.8,130.6 L298.3,124.2 L316.6,122.5 L332.2,122.8 L384.5,126 L466,124.6" class="s-acc" style="stroke-width:2.4" clip-path="url(#f0204-clip)"/><text x="112.8" y="70.5" class="t-math acc2" style="font-size:15px" text-anchor="start">+|<tspan font-style="italic">A</tspan>|<tspan font-style="italic">e</tspan><tspan baseline-shift="super" font-size="72%">−<tspan font-style="italic">γt</tspan></tspan></text><text x="112.8" y="186.4" class="t-math acc2" style="font-size:15px" text-anchor="start">−|<tspan font-style="italic">A</tspan>|<tspan font-style="italic">e</tspan><tspan baseline-shift="super" font-size="72%">−<tspan font-style="italic">γt</tspan></tspan></text><text x="277.9" y="43.7" class="t" style="font-size:15px" text-anchor="start">주기 2π/ω<tspan baseline-shift="sub" font-size="72%">d</tspan> = 1.31 s</text></svg>
+      <figcaption><b>그림 2-4.</b> <a class="ref" href="#ex-damped-complex"></a>의 감쇠 진동 \(x(t)/x_0 = \tfrac{25}{24}e^{-1.4t}\cos(4.8t - 0.284)\)(실선)와 포락선 \(\pm\lvert A\rvert e^{-\gamma t}/x_0\)(점선). 복소수 \(Ae^{-(\gamma + i\omega_d)t}\)는 반지름이 \(e^{-\gamma t}\)로 줄어드는 나선을 따라 시계 방향으로 돌고, 실선은 그 실수부다. 한 주기 \(1.31\ \text{s}\)마다 진폭이 0.16배가 된다.</figcaption>
+    </figure>
+
+    <h3 id="s4-grating">회절격자</h3>
+    <p>같은 진동수의 진동 \(N\)개를 더하는 대표적인 예가 회절격자다. 화살표가 많아져도 페이저로는 기하급수 하나로 정리된다.</p>
+    <div class="box ex" id="ex-grating-sum"><div class="box-h">\(N\)개 슬릿 회절격자의 세기</div>
+      <p>간격 \(d\)로 늘어선 좁은 슬릿 \(N\)개에 파장 \(\lambda\)인 평면파가 수직으로 들어온다. 멀리 떨어진 곳에서 각 \(\theta\) 방향으로 나가는 빛의 세기를 구하라. 슬릿 하나에서 오는 빛의 세기를 \(I_1\)이라 하고, 슬릿 하나의 폭에서 오는 회절 효과는 무시한다. 또 나트륨 D선(공기 중 파장 \(588.995\ \text{nm}\)과 \(589.592\ \text{nm}\), Sansonetti, J. Phys. Chem. Ref. Data 37, 1659 (2008))을 1차 무늬에서 가르려면 슬릿이 몇 개 필요한가?</p>
+      <p><b>풀이.</b> 이웃한 두 슬릿에서 \(\theta\) 방향으로 가는 빛은 경로가 \(d\sin\theta\)만큼 다르므로 위상이 \(\delta = 2\pi d\sin\theta/\lambda\)만큼 다르다. 첫 슬릿의 빛의 페이저를 \(E_1\)이라 하면 \(n\)번째 슬릿의 빛은 \(E_1e^{in\delta}\)이다. 전체 페이저는 공비가 \(e^{i\delta}\)인 기하급수이므로 <a href="ch01.html#eq-geometric-partial">식 (1.2)</a>로 합을 구한다.</p>
+      <div class="formula">\[ \begin{aligned} \tilde E &= E_1\sum_{n=0}^{N-1}e^{in\delta} \\ &= E_1\,\frac{1 - e^{iN\delta}}{1 - e^{i\delta}} \end{aligned} \]</div>
+      <p>분자와 분모에서 각의 절반을 묶어 낸다. \(1 - e^{iu} = e^{iu/2}(e^{-iu/2} - e^{iu/2}) = -2i\,e^{iu/2}\sin(u/2)\)이므로</p>
+      <div class="formula" id="eq-grating-amplitude">\[ \tilde E = E_1\,e^{i(N-1)\delta/2}\,\frac{\sin(N\delta/2)}{\sin(\delta/2)} \]</div>
+      <p>이다. 앞의 위상 인자는 절댓값이 1이다. 평균 세기는 <a class="ref" href="#thm-time-average"></a>에 따라 \(\lvert\tilde E\rvert^2\)에 비례하므로</p>
+      <div class="formula" id="eq-grating-intensity">\[ I(\delta) = I_1\,\frac{\sin^2(N\delta/2)}{\sin^2(\delta/2)} \]</div>
+      <p>이다. 이 식을 읽어 보자(그림 2-5).</p>
+      <ul>
+        <li><b>주극대.</b> \(\delta = 2\pi m\) (\(m\)은 정수), 곧 \(d\sin\theta = m\lambda\)이면 모든 화살표가 같은 방향이라 \(\lvert\tilde E\rvert = NE_1\), \(I = N^2I_1\)이다. 식에서는 \(0/0\)이지만 극한이 \(N^2\)이다. 슬릿들이 따로 비출 때의 합 \(NI_1\)보다 \(N\)배 밝다. 다른 방향에서 줄어든 에너지가 여기로 모인 것이다.</li>
+        <li><b>영점.</b> \(\delta = 2\pi j/N\) (\(j\)는 \(N\)의 배수가 아닌 정수)이면 \(N\)개의 화살표가 정\(N\)각형으로 닫혀 합이 0이다. 화살표들은 1의 \(N\)제곱근에 \(E_1\)을 곱한 것이므로 식 <a class="ref" href="#eq-roots-sum"></a>이 바로 이 사실이다. 이웃한 두 주극대 사이에 영점이 \(N - 1\)개, 작은 극대가 \(N - 2\)개 있다.</li>
+        <li><b>주극대의 폭.</b> 주극대에서 첫 영점까지는 \(\Delta\delta = 2\pi/N\)이다. 슬릿이 많을수록 주극대가 좁고 날카롭다.</li>
+      </ul>
+      <p>두 파장 \(\lambda\)와 \(\lambda + \Delta\lambda\)를 가를 수 있는 한계는 한 파장의 주극대가 다른 파장의 첫 영점에 올 때로 잡는다(<span class="term">레일리 기준</span> <span class="en">(Rayleigh criterion)</span>). \(m\)차 무늬에서 \(\lambda + \Delta\lambda\)의 주극대는 \(d\sin\theta = m(\lambda + \Delta\lambda)\)에 있고, \(\lambda\)의 주극대 옆 첫 영점은 \(\delta = 2\pi m + 2\pi/N\), 곧 \(d\sin\theta = m\lambda + \lambda/N\)에 있다. 둘을 같게 놓으면 \(m\Delta\lambda = \lambda/N\)이다. 이 비를 격자의 <span class="term">분해능</span> <span class="en">(resolving power)</span>이라 한다.</p>
+      <div class="formula" id="eq-grating-resolving">\[ \frac{\lambda}{\Delta\lambda} = mN \]</div>
+      <p><b>숫자로 보기.</b> D선은 평균 파장 \(589.29\ \text{nm}\), 간격 \(\Delta\lambda = 0.597\ \text{nm}\)이므로 \(\lambda/\Delta\lambda = 987\)이다. 1차 무늬(\(m = 1\))에서 가르려면 빛이 비추는 슬릿이 988개 이상, 대략 1000개는 있어야 한다. 1 mm에 600줄인 격자(\(d = 1.667\ \mu\text{m}\))라면 두 선의 1차 각은 \(20.70°\)와 \(20.72°\)로 \(0.022°\)밖에 차이 나지 않지만, 빛줄기의 폭이 \(988 \times 1.667\ \mu\text{m} = 1.65\ \text{mm}\) 이상이면 두 선이 갈라져 보인다. 확인으로, \(\delta\)는 길이의 비에 \(2\pi\)를 곱한 것이라 차원이 없다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 270" role="img" aria-label="회절격자의 세기. N = 6이면 주극대가 좁아지고 그 사이에 영점 5개와 작은 극대 4개가 있다. N = 2(이중 슬릿)는 넓은 코사인 제곱 무늬다"><defs><clipPath id="f0205-clip"><rect x="48" y="16" width="418" height="218"/></clipPath></defs><g class="s-grid"><line x1="89.8" y1="16" x2="89.8" y2="234"/><line x1="173.4" y1="16" x2="173.4" y2="234"/><line x1="257" y1="16" x2="257" y2="234"/><line x1="340.6" y1="16" x2="340.6" y2="234"/><line x1="424.2" y1="16" x2="424.2" y2="234"/><line x1="48" y1="234" x2="466" y2="234"/><line x1="48" y1="130.2" x2="466" y2="130.2"/><line x1="48" y1="26.4" x2="466" y2="26.4"/></g><line x1="48" y1="234" x2="466" y2="234" class="s-line"/><line x1="48" y1="16" x2="48" y2="234" class="s-line"/><g class="t-dim" style="font-size:14px" text-anchor="middle"><text x="89.8" y="254">−1</text><text x="173.4" y="254">−0.5</text><text x="257" y="254">0</text><text x="340.6" y="254">0.5</text><text x="424.2" y="254">1</text></g><g class="t-dim" style="font-size:14px" text-anchor="end"><text x="40" y="239">0</text><text x="40" y="135.2">0.5</text><text x="40" y="31.4">1</text></g><text x="466" y="266" class="t-dim" style="font-size:14px" text-anchor="end">δ / 2π</text><text x="54" y="28" class="t-dim" style="font-size:14px" text-anchor="start">I / N²I₁</text><path d="M48,130.2 L63,74.6 L68.9,56.8 L74.4,43.2 L79.8,33.7 L85.1,28 L90.3,26.4 L95.5,28.7 L99.8,33.7 L104.3,41.5 L113.7,65.5 L122.6,95.6 L143.3,174.4 L153.7,206.8 L158.9,218.9 L163.7,227.2 L168.6,232.3 L173.4,234 L177.9,232.5 L182.6,227.9 L187.3,220.2 L192.3,208.9 L203,176.2 L224.9,93.2 L234.4,61.5 L239.8,47.4 L244.8,37.1 L249.8,30.1 L254.7,26.8 L259.7,26.9 L264.9,30.9 L270,38.6 L275.6,50.6 L286.6,84.2 L308.3,166.6 L317.7,197.9 L322.9,211.8 L327.7,222.1 L332.6,229.3 L337.3,233.2 L339.9,234 L342.6,233.7 L348,230.1 L353.5,222.1 L359.2,209.8 L370.4,175.6 L391.6,95 L400.5,65 L409.8,41.2 L414.3,33.4 L418.7,28.6 L423.9,26.4 L429,28.1 L434.4,33.9 L439.7,43.6 L445.1,56.8 L451,74.6 L466,130.2" class="s-acc2" stroke-dasharray="6 4" clip-path="url(#f0205-clip)"/><path d="M48,222.5 L50.2,222.2 L52.3,223.3 L59.4,232.4 L61.9,234 L63.4,233.3 L64.7,231.3 L67.4,222.5 L70.1,206.3 L72.9,181.1 L84.1,52.6 L87,33.2 L88.5,27.9 L89.8,26.4 L91.1,27.9 L92.6,33.2 L95.8,55.6 L105.5,168.6 L109.4,205 L113,226 L114.9,231.3 L116.9,233.8 L119.6,233.1 L126.2,224.2 L129.9,222.1 L133.1,223.4 L141,231.9 L145,234 L148.2,233.4 L155.3,228.8 L159,227.8 L162.4,228.6 L172.4,233.9 L176.2,233.4 L184.1,228.8 L187.8,227.8 L191.5,228.8 L198.8,233.5 L202.2,233.9 L206,231.8 L213.5,223.5 L216.7,222.1 L220.4,224 L227.7,233.5 L229.6,233.9 L231.3,232.5 L234.6,222.5 L237.8,202.4 L251,55.6 L254.2,33.2 L255.7,27.9 L257,26.4 L258.3,27.9 L259.8,33.2 L263,55.6 L272.7,168.6 L276.4,203.7 L279.7,224 L281.6,230.2 L283.4,233.3 L284.9,234 L286.6,233.2 L293.6,224 L297.3,222.1 L301,224 L308.7,232.3 L312.2,234 L315.4,233.4 L322.5,228.8 L326.2,227.8 L329.6,228.6 L339.6,233.9 L343.4,233.4 L351.3,228.8 L355,227.8 L358.7,228.8 L366,233.5 L369.4,233.9 L373.2,231.8 L380.7,223.5 L383.9,222.1 L387.6,224 L394.9,233.5 L396.8,233.9 L398.5,232.5 L401.8,222.5 L405,202.4 L418.2,55.6 L421.4,33.2 L422.9,27.9 L424.2,26.4 L425.5,27.9 L427,33.2 L429.9,52.6 L441.1,181.1 L443.9,206.3 L446.6,222.5 L449.3,231.3 L450.6,233.3 L452.1,234 L454.6,232.4 L461.7,223.3 L463.8,222.2 L466,222.5" class="s-acc" style="stroke-width:2.2" clip-path="url(#f0205-clip)"/><line x1="300" y1="28" x2="330" y2="28" class="s-acc" style="stroke-width:2.2"/><text x="338" y="33" class="t" style="font-size:15px"><tspan font-style="italic">N</tspan> = 6</text><line x1="300" y1="50" x2="330" y2="50" class="s-acc2" stroke-dasharray="6 4"/><text x="338" y="55" class="t" style="font-size:15px"><tspan font-style="italic">N</tspan> = 2</text></svg>
+      <figcaption><b>그림 2-5.</b> 회절격자의 세기 식 <a class="ref" href="#eq-grating-intensity"></a>를 주극대의 세기 \(N^2I_1\)로 나눈 값. \(N = 6\)(실선)이면 주극대(\(\delta = 2\pi m\)) 사이에 영점 5개와 작은 극대 4개가 있고, 가장 큰 작은 극대도 주극대의 5.7%에 그친다. \(N = 2\)(점선, 이중 슬릿)는 \(\cos^2(\delta/2)\) 꼴의 넓은 무늬다. 슬릿이 많을수록 주극대가 \(\Delta\delta = 2\pi/N\) 폭으로 좁아진다.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================================================ 2.5 -->
+  <section id="s5">
+    <h2>교류 회로와 임피던스</h2>
+    <p>저항 \(R\), 인덕터 \(L\), 축전기 \(C\)를 직렬로 잇고 교류 전원 \(v(t) = V_0\cos\omega t\)를 걸었다. 키르히호프 전압 법칙은 각 소자에 걸린 전압의 합이 전원 전압과 같다는 것이므로, 축전기의 전하를 \(q\), 전류를 \(I = dq/dt\)라 하면</p>
+    <div class="formula" id="eq-rlc-ode">\[ L\frac{dI}{dt} + RI + \frac{q}{C} = v(t) \]</div>
+    <p>이다. 전원을 켜고 충분히 지나면 전류는 전원과 같은 진동수로 진동한다(10장의 정상 상태). 그 진폭과 위상을 삼각 함수로 구하려면 \(\cos\omega t\)와 \(\sin\omega t\)의 계수를 맞추는 연립 방정식을 풀어야 한다. 페이저로는 미분이 곱셈이 되므로 이 미분방정식이 대수 방정식 하나가 된다. 식 <a class="ref" href="#eq-time-convention"></a>에 따라 \(\tilde I = -i\omega\tilde q\), 곧 \(\tilde q = i\tilde I/\omega\)이고, \(dI/dt\)의 페이저는 \(-i\omega\tilde I\)이다. 이것을 넣으면</p>
+    <div class="formula">\[ \Big(-i\omega L + R + \frac{i}{\omega C}\Big)\tilde I = \tilde V \]</div>
+    <p>이다. 괄호 안은 전압과 전류의 비이고, 회로의 모든 정보가 이 복소수 하나에 들어 있다.</p>
+
+    <h3 id="s5-impedance">임피던스</h3>
+    <div class="box def" id="def-impedance"><div class="box-h">임피던스</div>
+      <p>각진동수 \(\omega\)로 정상 진동하는 선형 소자나 회로에서, 걸린 전압의 페이저 \(\tilde V\)와 흐르는 전류의 페이저 \(\tilde I\)의 비 \(Z = \tilde V/\tilde I\)를 <span class="term">임피던스</span> <span class="en">(impedance)</span>라 한다. 세 기본 소자의 임피던스는 다음과 같다.</p>
+      <div class="formula" id="eq-impedance">\[ \begin{aligned} Z_R &= R \\ Z_L &= -i\omega L \\ Z_C &= \frac{1}{-i\omega C} = \frac{i}{\omega C} \end{aligned} \]</div>
+      <p>\(\lvert Z\rvert\)는 전압 진폭과 전류 진폭의 비이고, \(\arg Z = \arg\tilde V - \arg\tilde I\)이다. 이 책의 관례(편각이 클수록 늦다)에서 전류는 전압보다 \(-\arg Z\)만큼 늦다. \(Z = R + iX\)로 쓸 때 \(X = \operatorname{Im}Z\)를 <span class="term">리액턴스</span> <span class="en">(reactance)</span>라 한다. 이 책의 관례에서 인덕터의 리액턴스는 \(-\omega L\), 축전기의 리액턴스는 \(1/\omega C\)로, 공학 교재와 부호가 반대다.</p>
+    </div>
+    <p>각 식은 소자의 전압-전류 관계에서 바로 나온다. 인덕터는 \(v = L\,dI/dt\)이므로 \(\tilde V = L(-i\omega)\tilde I\)이고, 축전기는 \(I = C\,dv/dt\)이므로 \(\tilde I = -i\omega C\tilde V\)이다. 인덕터의 임피던스는 허수부가 음수이고 진동수에 비례해 커진다. 전류는 전압보다 90° 늦다. 축전기의 임피던스는 허수부가 양수이고 진동수에 반비례하며, 전류가 전압보다 90° 앞선다. 직류(\(\omega \to 0\))에서 인덕터는 도선이 되고 축전기는 끊긴 회로가 된다는 익숙한 사실이 \(\lvert Z_L\rvert \to 0\), \(\lvert Z_C\rvert \to \infty\)에 들어 있다.</p>
+    <p>키르히호프의 두 법칙은 실수 계수의 선형 관계이므로 페이저에 대해서도 그대로 성립한다. 그래서 임피던스는 직류 회로의 저항과 같은 규칙으로 합친다.</p>
+    <div class="formula" id="eq-impedance-combination">\[ \begin{aligned} \text{직렬: } Z &= Z_1 + Z_2 \\ \text{병렬: } \frac1Z &= \frac{1}{Z_1} + \frac{1}{Z_2} \end{aligned} \]</div>
+    <p>직렬 RLC 회로의 임피던스는 세 임피던스의 합이다.</p>
+    <div class="formula" id="eq-series-rlc">\[ Z = R - i\Big(\omega L - \frac{1}{\omega C}\Big) \]</div>
+    <p>허수부는 \(\omega L = 1/\omega C\)일 때 0이 된다. 이 진동수</p>
+    <div class="formula" id="eq-rlc-resonance">\[ \omega_0 = \frac{1}{\sqrt{LC}} \]</div>
+    <p>에서 \(\lvert Z\rvert = R\)이 가장 작고, 전류가 가장 크며 전압과 위상이 같다. 이것이 <span class="term">공명</span> <span class="en">(resonance)</span>이다. 인덕터와 축전기의 전압이 크기는 같고 위상이 반대라 서로 지워지는 것이다.</p>
+
+    <h3 id="s5-power">평균 전력</h3>
+    <p>소자에 공급되는 순간 전력은 \(p(t) = v(t)I(t)\)이다. 진동하는 두 양의 곱이므로 <a class="ref" href="#thm-time-average"></a>로 평균을 구한다. \(\tilde V = Z\tilde I\)를 쓰면</p>
+    <div class="formula" id="eq-ac-power">\[ \bar P = \frac12\operatorname{Re}\big(\tilde V\tilde I^*\big) = \frac12\lvert\tilde I\rvert^2\operatorname{Re} Z \]</div>
+    <p>이다. 평균 전력은 임피던스의 실수부, 곧 저항에서만 소모된다. 인덕터와 축전기는 반 주기 동안 받은 에너지를 다음 반 주기에 돌려주므로 평균이 0이다. 진폭 대신 <span class="term">실효값</span> <span class="en">(rms value)</span> \(V_{\text{rms}} = \lvert\tilde V\rvert/\sqrt2\), \(I_{\text{rms}} = \lvert\tilde I\rvert/\sqrt2\)를 쓰면 \(\bar P = V_{\text{rms}}I_{\text{rms}}\cos\phi_Z\)이다. 여기서 \(\phi_Z = \arg Z\)이고, \(\cos\phi_Z = \operatorname{Re}Z/\lvert Z\rvert\)를 <span class="term">역률</span> <span class="en">(power factor)</span>이라 한다.</p>
+
+    <div class="box ex" id="ex-rlc-impedance"><div class="box-h">직렬 RLC 회로의 전류와 위상</div>
+      <p>\(R = 30\ \Omega\), \(L = 80\ \text{mH}\), \(C = 25\ \mu\text{F}\)를 직렬로 잇고 진폭 \(100\ \text{V}\), 각진동수 \(\omega = 1000\ \text{s}^{-1}\)인 전원을 걸었다. (가) 임피던스와 전류의 진폭, 위상을 구하라. (나) 평균 전력과 역률을 구하라. (다) 각 소자에 걸린 전압의 진폭을 구하고, 그 합이 전원 전압과 맞는지 확인하라. (라) 공명 진동수와 그때의 전류 진폭을 구하라.</p>
+      <p><b>풀이.</b> (가) \(\omega L = 1000 \times 0.080 = 80\ \Omega\), \(1/\omega C = 1/(1000 \times 25 \times 10^{-6}) = 40\ \Omega\)이다. 식 <a class="ref" href="#eq-series-rlc"></a>에서</p>
+      <div class="formula">\[ \begin{aligned} Z &= 30 - i(80 - 40) \\ &= (30 - 40i)\ \Omega \end{aligned} \]</div>
+      <p>이고 \(\lvert Z\rvert = \sqrt{30^2 + 40^2}\ \Omega = 50\ \Omega\)이다. 전원의 페이저를 \(\tilde V = 100\ \text{V}\)로 잡으면 식 <a class="ref" href="#eq-complex-division"></a>로 나누어</p>
+      <div class="formula" id="eq-rlc-current">\[ \begin{aligned} \tilde I &= \frac{100}{30 - 40i} = \frac{100(30 + 40i)}{2500} \\ &= (1.2 + 1.6i)\ \text{A} \end{aligned} \]</div>
+      <p>이다. 진폭은 \(\lvert\tilde I\rvert = 2.0\ \text{A}\)이고 편각은 \(\arctan(1.6/1.2) = 53.1°\)이다. 편각이 양수이므로 전류는 전압보다 \(53.1°\) 늦다: \(I(t) = 2.0\cos(\omega t - 0.927)\ \text{A}\). 이 진동수에서는 \(\omega L > 1/\omega C\)라 인덕터가 이기기 때문이다.</p>
+      <p>(나) \(\bar P = \tfrac12(2.0)^2(30) = 60\ \text{W}\)이다. 식 <a class="ref" href="#eq-ac-power"></a>의 왼쪽 꼴로도 \(\tfrac12\operatorname{Re}\big[100(1.2 - 1.6i)\big] = 60\ \text{W}\)이다. 역률은 \(30/50 = 0.6\)이다.</p>
+      <p>(다) 각 소자의 전압 페이저는 임피던스에 \(\tilde I\)를 곱해 얻는다.</p>
+      <div class="formula">\[ \begin{aligned} \tilde V_R &= 30\tilde I = 36 + 48i \\ \tilde V_L &= -80i\,\tilde I = 128 - 96i \\ \tilde V_C &= 40i\,\tilde I = -64 + 48i \end{aligned} \]</div>
+      <p>(단위 V). 진폭은 각각 \(60\ \text{V}\), \(160\ \text{V}\), \(80\ \text{V}\)이다. 세 페이저를 더하면 \(100 + 0i\)로 전원 전압과 맞는다. 그런데 진폭끼리 더한 \(300\ \text{V}\)는 전원의 세 배이고, 인덕터 하나에 걸린 전압도 전원보다 크다. 위상이 다른 전압은 화살표로 더해지므로 이것이 모순이 아니다.</p>
+      <p>(라) 식 <a class="ref" href="#eq-rlc-resonance"></a>에서 \(\omega_0 = 1/\sqrt{0.080 \times 25 \times 10^{-6}}\ \text{s}^{-1} = 707\ \text{s}^{-1}\), 곧 \(f_0 = 112.5\ \text{Hz}\)이다. 공명에서 \(Z = R\)이므로 전류 진폭은 \(100/30 = 3.33\ \text{A}\)로 커지고 평균 전력은 \(167\ \text{W}\)가 된다.</p>
+      <p>단위를 확인하자. \(\omega L\)은 \(\text{s}^{-1}\cdot\text{H} = \text{s}^{-1}\cdot\Omega\,\text{s} = \Omega\)이고, \(1/\omega C\)는 \(1/(\text{s}^{-1}\cdot\text{F}) = 1/(\text{s}^{-1}\cdot\text{s}/\Omega) = \Omega\)이다. 이 회로는 감쇠 진동자와 같은 꼴의 방정식을 따르며, 품질 인자는 \(Q = \omega_0L/R = 1.9\)이다. 두 계의 대응은 10장의 <a href="ch10.html#ex-rlc-analogy">RLC 회로와 진동자의 대응</a>에서 표로 정리한다.</p>
+    </div>
+
+    <div class="callout warn"><strong>전기공학의 \(j\)와 \(e^{j\omega t}\)</strong><p>전기공학 교재는 전류 기호 \(i\)와 겹치지 않게 허수 단위를 \(j\)로 쓰고, 시간 인자를 \(e^{j\omega t}\)로 쓴다. 곧 \(v(t) = \operatorname{Re}[\tilde V e^{j\omega t}]\)이다. 이 관례에서는 미분이 \(j\omega\)를 곱하는 것이 되어 임피던스의 허수부 부호가 이 책과 반대다.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th></th><th>이 책 (물리)</th><th>전기공학</th></tr></thead>
+        <tbody>
+          <tr><td>시간 인자</td><td>\(e^{-i\omega t}\)</td><td>\(e^{j\omega t}\)</td></tr>
+          <tr><td>\(d/dt\)</td><td>\(-i\omega\)</td><td>\(j\omega\)</td></tr>
+          <tr><td>인덕터</td><td>\(-i\omega L\)</td><td>\(j\omega L\)</td></tr>
+          <tr><td>축전기</td><td>\(i/\omega C\)</td><td>\(1/j\omega C = -j/\omega C\)</td></tr>
+          <tr><td>유도성 부하</td><td>\(\operatorname{Im}Z &lt; 0\)</td><td>\(\operatorname{Im}Z > 0\)</td></tr>
+          <tr><td>늦은 위상</td><td>편각이 큼</td><td>편각이 작음</td></tr>
+        </tbody>
+      </table></div>
+      <p>두 관례는 모든 복소수를 켤레로 바꾼 관계다. 공학 교재의 식을 옮길 때는 \(j\)를 \(-i\)로 바꾸면 된다. <a class="ref" href="#ex-rlc-impedance"></a>의 \(Z = 30 - 40i\ \Omega\)는 공학 교재에서 \(30 + 40j\ \Omega\)로 적힌다. \(\lvert Z\rvert\), 평균 전력, 실제 전압과 전류의 시간 변화처럼 측정되는 양은 두 관례에서 똑같다. 물리학이 \(e^{-i\omega t}\)를 쓰는 것은 평면파 \(e^{i(kx - \omega t)}\)에서 공간 부분을 \(e^{+ikx}\)로 쓰기 위해서이고, 양자역학의 \(e^{-iEt/\hbar}\)도 같은 관례다.</p></div>
+  </section>
+
+  <!-- ============================================================ 2.6 -->
+  <section id="s6">
+    <h2>쌍곡선 함수</h2>
+    <p>전봇대 사이의 전깃줄이나 양 끝을 잡은 사슬이 처지는 모양은 포물선처럼 보이지만 포물선이 아니다. 이 곡선을 나타내는 함수는 \(e^x\)과 \(e^{-x}\)의 평균 \((e^x + e^{-x})/2\)이다. 이 조합은 2.2절의 \(\cos\theta = (e^{i\theta} + e^{-i\theta})/2\)에서 \(i\)를 뺀 모양이다. 실제로 코사인에 순허수를 넣으면 이 함수가 나온다. 이 절에서는 삼각 함수를 복소수로 넓히고, 그 한 조각인 쌍곡선 함수를 정의해 매달린 사슬과 상대론의 속도 합성에 쓴다.</p>
+
+    <h3 id="s6-complex-trig">복소수의 삼각 함수</h3>
+    <p>식 <a class="ref" href="#eq-cos-sin-euler"></a>의 오른쪽은 \(\theta\)가 복소수여도 의미가 있다. 그래서 이것을 복소수의 삼각 함수의 정의로 삼는다.</p>
+    <div class="formula" id="eq-trig-complex">\[ \begin{aligned} \cos z &= \frac{e^{iz} + e^{-iz}}{2} \\ \sin z &= \frac{e^{iz} - e^{-iz}}{2i} \end{aligned} \]</div>
+    <p>\(z\)가 실수이면 오일러 공식에 따라 보통의 삼각 함수와 같다. 지수 법칙만으로 증명되는 성질, 곧 \(\cos^2z + \sin^2z = 1\)과 덧셈 정리 <a class="ref" href="#eq-addition-formulas"></a> 같은 관계는 복소수에서도 그대로 성립한다. <a href="ch01.html#eq-standard-series">식 (1.21)</a>의 \(\cos\)와 \(\sin\) 급수도 \(x\)를 \(z\)로 바꾸어 그대로 쓸 수 있다. 복소수 \(z\)에 대한 미분은 18장의 <a href="ch18.html#def-complex-derivative">복소 미분</a>에서 정의한다. 달라지는 것은 크기다. 실수에서는 \(\lvert\cos x\rvert \le 1\)이지만, \(z = iy\)를 넣으면 \(\cos(iy) = (e^{-y} + e^{y})/2\)로 \(y\)가 커질수록 지수적으로 커진다.</p>
+
+    <h3 id="s6-hyperbolic">쌍곡선 함수</h3>
+    <div class="box def" id="def-hyperbolic"><div class="box-h">쌍곡선 함수</div>
+      <p>다음 함수를 각각 <span class="term">쌍곡코사인</span> <span class="en">(hyperbolic cosine)</span>, <span class="term">쌍곡사인</span> <span class="en">(hyperbolic sine)</span>, <span class="term">쌍곡탄젠트</span> <span class="en">(hyperbolic tangent)</span>라 한다.</p>
+      <div class="formula" id="eq-hyperbolic-def">\[ \begin{aligned} \cosh x &= \frac{e^x + e^{-x}}{2} \\ \sinh x &= \frac{e^x - e^{-x}}{2} \\ \tanh x &= \frac{\sinh x}{\cosh x} = \frac{e^x - e^{-x}}{e^x + e^{-x}} \end{aligned} \]</div>
+      <p>\(x\)가 복소수여도 같은 식으로 정한다. 식 <a class="ref" href="#eq-trig-complex"></a>와 비교하면 삼각 함수와 다음처럼 이어진다.</p>
+      <div class="formula" id="eq-trig-hyperbolic-link">\[ \begin{aligned} \cos(ix) &= \cosh x \\ \sin(ix) &= i\sinh x \\ \cosh(ix) &= \cos x \\ \sinh(ix) &= i\sin x \end{aligned} \]</div>
+    </div>
+    <p>\(\cosh x\)는 짝함수이고 \(\cosh 0 = 1\)이 최솟값이며, \(\sinh x\)는 홀함수이고 원점을 지난다. \(x\)가 크면 둘 다 \(e^x/2\)에 다가가고, \(\tanh x\)는 \(\pm1\)에 다가간다(그림 2-6 (가)). 정의에서 직접, 또는 삼각 함수의 항등식에 \(z = ix\)를 넣어 다음 항등식을 얻는다.</p>
+    <div class="formula" id="eq-hyperbolic-identities">\[ \begin{aligned} \cosh^2x - \sinh^2x &= 1 \\ \frac{d}{dx}\cosh x &= \sinh x \\ \frac{d}{dx}\sinh x &= \cosh x \\ \cosh(a + b) &= \cosh a\cosh b \\ &\quad + \sinh a\sinh b \\ \sinh(a + b) &= \sinh a\cosh b \\ &\quad + \cosh a\sinh b \end{aligned} \]</div>
+    <p>첫 식은 \((e^x + e^{-x})^2 - (e^x - e^{-x})^2 = 4\)에서 나오고, \(\cos^2 + \sin^2 = 1\)에 \(z = ix\)를 넣어 \(\cosh^2x + (i\sinh x)^2 = 1\)로 얻어도 된다. 덧셈 정리를 나누면 \(\tanh\)의 덧셈 정리가 나온다.</p>
+    <div class="formula" id="eq-tanh-addition">\[ \tanh(a + b) = \frac{\tanh a + \tanh b}{1 + \tanh a\tanh b} \]</div>
+    <p>멱급수는 \(e^{\pm x}\)의 급수를 더하고 빼서 얻는다. \(\cosh x = 1 + x^2/2! + x^4/4! + \cdots\), \(\sinh x = x + x^3/3! + x^5/5! + \cdots\)로, \(\cos\)와 \(\sin\)의 급수에서 부호가 모두 양수가 된 꼴이다.</p>
+    <div class="callout tip"><strong>왜 "쌍곡선" 함수인가, 그리고 삼각 공식을 바꾸는 법</strong><p>\((\cos t, \sin t)\)가 원 \(x^2 + y^2 = 1\) 위를 움직이듯, \((\cosh t, \sinh t)\)는 \(\cosh^2t - \sinh^2t = 1\)에 따라 쌍곡선 \(x^2 - y^2 = 1\)의 오른쪽 가지 위를 움직인다. 이름은 여기서 왔다. 삼각 함수의 항등식을 쌍곡선 함수의 항등식으로 바꿀 때는 \(\cos \to \cosh\), \(\sin \to \sinh\)로 바꾸고, \(\sin\) 두 개의 곱이 있는 항마다 부호를 뒤집으면 된다. \(\sin(ix) = i\sinh x\)라 \(\sin\) 두 개의 곱에서 \(i^2 = -1\)이 나오기 때문이다(오즈번 규칙). 예: \(\cos 2x = 1 - 2\sin^2x\)는 \(\cosh 2x = 1 + 2\sinh^2x\)가 된다.</p></div>
+
+    <p>복소수 \(z = x + iy\)의 코사인과 사인은 덧셈 정리와 식 <a class="ref" href="#eq-trig-hyperbolic-link"></a>으로 실수부와 허수부를 나눌 수 있다.</p>
+    <div class="formula" id="eq-cos-complex-split">\[ \begin{aligned} \cos(x + iy) &= \cos x\cosh y \\ &\quad - i\sin x\sinh y \\ \sin(x + iy) &= \sin x\cosh y \\ &\quad + i\cos x\sinh y \end{aligned} \]</div>
+    <div class="box ex" id="ex-cos-equals-two"><div class="box-h">\(\cos z = 5/4\)의 해</div>
+      <p>실수에서는 \(\cos x = 5/4\)인 \(x\)가 없다. 복소수에서 \(\cos z = 5/4\)의 해를 모두 구하라.</p>
+      <p><b>풀이.</b> 식 <a class="ref" href="#eq-cos-complex-split"></a>에서 실수부와 허수부를 비교하면 \(\cos x\cosh y = 5/4\), \(\sin x\sinh y = 0\)이다. \(\sinh y = 0\)이면 \(y = 0\)이고 \(\cos x = 5/4\)가 되어 불가능하다. 따라서 \(\sin x = 0\), 곧 \(x = n\pi\)이고 \(\cos x = \pm1\)이다. \(\cosh y \ge 1 > 0\)이므로 \(\cos x = +1\), 곧 \(x = 2\pi n\)이어야 하고, \(\cosh y = 5/4\)이다. 지수로 풀면 \(e^y + e^{-y} = 5/2\)에서 \(e^y = 2\) 또는 \(1/2\), 곧 \(y = \pm\ln 2 = \pm0.693\)이다. 해는</p>
+      <div class="formula">\[ z = 2\pi n \pm i\ln 2 \]</div>
+      <p>이다(\(n\)은 모든 정수). 확인: \(\cos(i\ln 2) = \cosh(\ln 2) = (2 + 1/2)/2 = 5/4\)이다. 복소수의 코사인은 유계가 아니다. 실제로 \(\cos z = w\)는 \(u = e^{iz}\)에 대한 이차 방정식 \(u^2 - 2wu + 1 = 0\)이 되고, 두 근의 곱이 1이라 어느 근도 0이 아니므로 \(e^{iz} = u\)를 언제나 풀 수 있다. 그래서 \(\cos z\)는 모든 복소수 값을 가진다.</p>
+    </div>
+
+    <p>쌍곡선 함수의 역함수는 로그로 쓸 수 있다. \(y = \sinh u\)를 \(u\)에 대해 풀면 \(e^u - e^{-u} = 2y\), 곧 \(e^{2u} - 2ye^u - 1 = 0\)이다. \(e^u\)에 대한 이차 방정식의 양수 근을 고르면 \(e^u = y + \sqrt{y^2 + 1}\)이다. 같은 방법으로 나머지도 얻는다.</p>
+    <div class="formula" id="eq-inverse-hyperbolic">\[ \begin{aligned} \operatorname{arsinh} x &= \ln\big(x + \sqrt{x^2 + 1}\big) \\ \operatorname{arcosh} x &= \ln\big(x + \sqrt{x^2 - 1}\big) \\ \operatorname{artanh} x &= \frac12\ln\frac{1 + x}{1 - x} \end{aligned} \]<div class="where">\(\operatorname{arcosh}\)는 \(x \ge 1\)에서 0 이상의 값을 고른 것이고, \(\operatorname{artanh}\)는 \(\lvert x\rvert &lt; 1\)에서 정의된다. 첫 식을 미분하면 \(\dfrac{d}{dx}\operatorname{arsinh} x = \dfrac{1}{\sqrt{1 + x^2}}\)이다. \(\operatorname{artanh}\)는 \(\tanh u = (e^{2u} - 1)/(e^{2u} + 1) = x\)를 \(e^{2u} = (1 + x)/(1 - x)\)로 풀어 얻는다.</div></div>
+
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 260" role="img" aria-label="cosh x, sinh x와 e^x/2, e^(−x)/2의 그래프"><defs><clipPath id="f0206-clip"><rect x="42" y="28" width="328" height="198"/></clipPath></defs><g class="s-grid"><line x1="74.8" y1="28" x2="74.8" y2="226"/><line x1="140.4" y1="28" x2="140.4" y2="226"/><line x1="206" y1="28" x2="206" y2="226"/><line x1="271.6" y1="28" x2="271.6" y2="226"/><line x1="337.2" y1="28" x2="337.2" y2="226"/><line x1="42" y1="226" x2="370" y2="226"/><line x1="42" y1="179.4" x2="370" y2="179.4"/><line x1="42" y1="132.8" x2="370" y2="132.8"/><line x1="42" y1="86.2" x2="370" y2="86.2"/><line x1="42" y1="39.6" x2="370" y2="39.6"/></g><line x1="42" y1="226" x2="370" y2="226" class="s-line"/><line x1="42" y1="28" x2="42" y2="226" class="s-line"/><g class="t-dim" style="font-size:14px" text-anchor="middle"><text x="74.8" y="246">−2</text><text x="140.4" y="246">−1</text><text x="206" y="246">0</text><text x="271.6" y="246">1</text><text x="337.2" y="246">2</text></g><g class="t-dim" style="font-size:14px" text-anchor="end"><text x="34" y="231">−4</text><text x="34" y="184.4">−2</text><text x="34" y="137.8">0</text><text x="34" y="91.2">2</text><text x="34" y="44.6">4</text></g><text x="370" y="256" class="t-dim" style="font-size:14px" text-anchor="end">x</text><text x="48" y="40" class="t-dim" style="font-size:14px" text-anchor="start"></text><line x1="206" y1="28" x2="206" y2="226" class="s-line" style="stroke-width:1"/><line x1="42" y1="132.8" x2="370" y2="132.8" class="s-line" style="stroke-width:1"/><path d="M42,131.9 L124,129.5 L181.7,124.8 L205.3,121.3 L227,116.8 L246,111.4 L263.7,104.7 L280.8,96.4 L296.5,86.5 L311,75.1 L324.1,62.4 L336.5,47.6 L348.4,30.8 L359.5,11.9 L370,-9.1" class="s-faint" stroke-dasharray="4 4" style="stroke:var(--text-dim)" clip-path="url(#f0206-clip)"/><path d="M42,-9.1 L52.5,11.9 L63.6,30.8 L75.5,47.6 L87.9,62.4 L101,75.1 L115.5,86.5 L131.2,96.4 L148.3,104.7 L166,111.4 L185,116.8 L206.7,121.3 L230.3,124.8 L288,129.5 L370,131.9" class="s-faint" stroke-dasharray="4 4" style="stroke:var(--text-dim)" clip-path="url(#f0206-clip)"/><path d="M42,-10 L57.1,18.9 L72.8,42.6 L90.5,63.1 L109.6,79.5 L130.6,92.4 L154.2,101.9 L179.8,107.6 L206,109.5 L232.2,107.6 L257.8,101.9 L281.4,92.4 L302.4,79.5 L321.5,63.1 L339.2,42.6 L354.9,18.9 L370,-10" class="s-acc" style="stroke-width:2.4" clip-path="url(#f0206-clip)"/><path d="M42,273.8 L55.8,246.7 L70.9,222.7 L87.3,202.1 L105.6,184.1 L126.6,168.4 L150.2,155.1 L175.8,143.9 L251.3,115.4 L274.2,104 L293.9,91.4 L316.2,72.5 L335.9,50.1 L353.6,23.5 L370,-8.1" class="s-acc2" style="stroke-width:2.4" clip-path="url(#f0206-clip)"/><text x="78.1" y="39.6" class="t-math acc" style="font-size:15px" text-anchor="start">cosh <tspan font-style="italic">x</tspan></text><text x="281.4" y="118.8" class="t-math acc2" style="font-size:15px" text-anchor="start">sinh <tspan font-style="italic">x</tspan></text><text x="294.6" y="49" class="t-math dim" style="font-size:14px" text-anchor="end"><tspan font-style="italic">e</tspan><tspan baseline-shift="super" font-size="72%"><tspan font-style="italic">x</tspan></tspan>/2</text><text x="12" y="14" class="t" text-anchor="start">(가) 쌍곡선 함수</text></svg><svg viewBox="0 0 380 260" role="img" aria-label="현수선 y = a(cosh(x/a) − 1)과 포물선 x²/2a, a = 100 m. 가운데에서는 겹치고 멀어질수록 현수선이 더 가파르다"><defs><clipPath id="f0206-clip2"><rect x="46" y="28" width="320" height="198"/></clipPath></defs><g class="s-grid"><line x1="99.3" y1="28" x2="99.3" y2="226"/><line x1="152.7" y1="28" x2="152.7" y2="226"/><line x1="206" y1="28" x2="206" y2="226"/><line x1="259.3" y1="28" x2="259.3" y2="226"/><line x1="312.7" y1="28" x2="312.7" y2="226"/><line x1="46" y1="226" x2="366" y2="226"/><line x1="46" y1="169.4" x2="366" y2="169.4"/><line x1="46" y1="112.9" x2="366" y2="112.9"/><line x1="46" y1="56.3" x2="366" y2="56.3"/></g><line x1="46" y1="226" x2="366" y2="226" class="s-line"/><line x1="46" y1="28" x2="46" y2="226" class="s-line"/><g class="t-dim" style="font-size:14px" text-anchor="middle"><text x="99.3" y="246">−100</text><text x="152.7" y="246">−50</text><text x="206" y="246">0</text><text x="259.3" y="246">50</text><text x="312.7" y="246">100</text></g><g class="t-dim" style="font-size:14px" text-anchor="end"><text x="38" y="231">0</text><text x="38" y="174.4">40</text><text x="38" y="117.9">80</text><text x="38" y="61.3">120</text></g><text x="366" y="256" class="t-dim" style="font-size:14px" text-anchor="end">x (m)</text><text x="62" y="40" class="t-dim" style="font-size:14px" text-anchor="start">y (m)</text><path d="M46,66.9 L66.3,104.6 L86,136.5 L106.3,164.2 L126,186.2 L145.7,203.4 L166,216.1 L185.7,223.4 L195.9,225.4 L206,226 L216.1,225.4 L226.3,223.4 L246,216.1 L265.7,203.8 L286,186.2 L305.7,164.2 L326,136.5 L345.7,104.6 L366,66.9" class="s-acc2" stroke-dasharray="6 4" clip-path="url(#f0206-clip2)"/><path d="M46,34.7 L63.1,78.9 L81.2,117.6 L99.9,150 L119.6,177 L140.4,198.4 L151.1,206.8 L161.7,213.6 L172.4,218.9 L183.6,222.9 L194.8,225.2 L206,226 L217.2,225.2 L228.4,222.9 L239.6,218.9 L250.3,213.6 L260.9,206.8 L271.6,198.4 L292.4,177 L312.1,150 L330.8,117.6 L348.9,78.9 L366,34.7" class="s-acc" style="stroke-width:2.4" clip-path="url(#f0206-clip2)"/><line x1="152.7" y1="226" x2="152.7" y2="208" class="s-line" style="stroke-width:1" stroke-dasharray="2 3"/><line x1="259.3" y1="226" x2="259.3" y2="208" class="s-line" style="stroke-width:1" stroke-dasharray="2 3"/><text x="86.5" y="67.6" class="t acc" style="font-size:14px;fill:var(--accent)" text-anchor="start">현수선</text><text x="362" y="178" class="t" style="font-size:14px;fill:var(--accent-2)" text-anchor="end">포물선</text><text x="12" y="14" class="t" text-anchor="start">(나) 현수선과 포물선 (a = 100 m)</text></svg></div>
+      <figcaption><b>그림 2-6.</b> (가) \(\cosh x\)(강조색), \(\sinh x\)(보조색)와 \(e^{\pm x}/2\)(가는 점선). \(\cosh x\)는 두 점선의 합, \(\sinh x\)는 차이고, \(\lvert x\rvert\)가 크면 둘 다 \(e^{\lvert x\rvert}/2\)에 붙는다. (나) <a class="ref" href="#ex-chain-cosh"></a>의 현수선 \(y = a(\cosh(x/a) - 1)\)(실선)과 바닥에서 곡률을 맞춘 포물선 \(y = x^2/2a\)(점선), \(a = 100\ \text{m}\). 세로 점선은 예제의 지지점 \(x = \pm 50\ \text{m}\)이다. 가운데서는 거의 겹치지만 멀어질수록 현수선이 더 가파르다.</figcaption>
+    </figure>
+
+    <div class="box ex" id="ex-chain-cosh"><div class="box-h">매달린 사슬의 모양</div>
+      <p>선밀도 \(\lambda\)인 사슬의 양 끝을 같은 높이에 매달았다. 가장 낮은 점을 원점으로, 그 점에서의 장력(수평 방향)을 \(T_0\)이라 하자. (가) 사슬의 모양 \(y(x)\)와 장력 \(T(x)\)를 구하라. (나) \(\lambda = 1.0\ \text{kg/m}\)인 사슬을 \(100\ \text{m}\) 떨어진 두 지지점에 \(T_0 = 981\ \text{N}\)이 되도록 걸었을 때, 처진 깊이, 사슬의 길이, 지지점의 장력을 구하라.</p>
+      <p><b>풀이.</b> (가) 가장 낮은 점에서 점 \((x, y)\)까지의 사슬 조각을 보자. 이 조각의 길이를 \(s\)라 하면 조각에 작용하는 힘은 왼쪽 끝의 \(T_0\)(수평, 왼쪽), 오른쪽 끝의 장력 \(T\)(접선 방향, 수평과 각 \(\alpha\)), 무게 \(\lambda gs\)(아래)다. 조각이 정지해 있으므로 \(T\cos\alpha = T_0\), \(T\sin\alpha = \lambda gs\)이다. 둘을 나누면</p>
+      <div class="formula" id="eq-chain-slope">\[ \begin{aligned} \frac{dy}{dx} &= \tan\alpha = \frac{s}{a} \\ a &= \frac{T_0}{\lambda g} \end{aligned} \]</div>
+      <p>이다. \(a\)는 길이의 차원을 갖는다(\(\text{N}/(\text{kg/m}\cdot\text{m/s}^2) = \text{m}\)). 양변을 \(x\)로 미분하고 \(ds/dx = \sqrt{1 + y'^2}\)을 쓰면 \(y'' = \sqrt{1 + y'^2}/a\)이다. \(p = y'\)로 두면 \(dp/\sqrt{1 + p^2} = dx/a\)이고, 식 <a class="ref" href="#eq-inverse-hyperbolic"></a> 아래의 도함수로 적분하면 \(\operatorname{arsinh} p = x/a\)이다(\(x = 0\)에서 \(p = 0\)). 따라서 \(y' = \sinh(x/a)\)이고, \(y(0) = 0\)으로 한 번 더 적분하면</p>
+      <div class="formula" id="eq-catenary-shape">\[ y(x) = a\Big(\cosh\frac{x}{a} - 1\Big) \]</div>
+      <p>이다. 이 곡선을 <span class="term">현수선</span> <span class="en">(catenary)</span>이라 한다. 사슬의 길이와 장력은 식 <a class="ref" href="#eq-chain-slope"></a>과 \(\cosh^2 - \sinh^2 = 1\)에서 나온다.</p>
+      <div class="formula" id="eq-chain-length-tension">\[ \begin{aligned} s(x) &= a\sinh\frac{x}{a} \\ T(x) &= \frac{T_0}{\cos\alpha} = T_0\cosh\frac{x}{a} \end{aligned} \]</div>
+      <p>장력은 \(T_0\sqrt{1 + \tan^2\alpha} = T_0\sqrt{1 + \sinh^2(x/a)}\)이고, \(T = \lambda g(y + a)\)로 높이에 비례해 커진다.</p>
+      <p>(나) \(a = 981/(1.0 \times 9.81)\ \text{m} = 100\ \text{m}\)이고 지지점은 \(x = \pm 50\ \text{m}\), 곧 \(x/a = \pm0.5\)이다. \(\cosh 0.5 = 1.127\,63\), \(\sinh 0.5 = 0.521\,10\)이므로</p>
+      <div class="formula">\[ \begin{aligned} h &= a(\cosh 0.5 - 1) = 12.76\ \text{m} \\ \ell &= 2a\sinh 0.5 = 104.22\ \text{m} \\ T_{\max} &= T_0\cosh 0.5 = 1106\ \text{N} \end{aligned} \]</div>
+      <p>이다. 지지점의 장력은 사슬 전체 무게(\(1022\ \text{N}\))보다 조금 크다.</p>
+      <p><b>다음 항은 몇 차인가.</b> 가운데 근처에서 \(\cosh u = 1 + u^2/2 + u^4/24 + \cdots\)이므로 \(y \approx x^2/2a + x^4/24a^3\)이다. 첫 항만 남기면 포물선이고 처진 깊이는 \(50^2/200 = 12.50\ \text{m}\)이다. 다음 항 \(50^4/(24 \times 100^3) = 0.26\ \text{m}\)를 더하면 \(12.76\ \text{m}\)로 정확한 값과 맞는다. 포물선 근사의 상대 오차는 \((b/a)^2/12 = 2.1\%\) 정도(\(b\)는 지지점까지의 거리)로, 사슬이 많이 처질수록 커진다(그림 2-6 (나)). 21장에서는 같은 곡선을 퍼텐셜 에너지를 최소로 하는 변분 문제로 다시 얻는다(<a href="ch21.html#ex-catenary">21장의 현수선</a>).</p>
+    </div>
+
+    <h3 id="s6-rapidity">빠르기: 속도 합성을 덧셈으로</h3>
+    <p>특수 상대성 이론에서 \(x\)축 방향으로 속도 \(v\)인 좌표계로 옮기는 로런츠 변환은 \(ct' = \gamma(ct - \beta x)\), \(x' = \gamma(x - \beta\,ct)\)이다(\(\beta = v/c\), \(\gamma = 1/\sqrt{1 - \beta^2}\)). 이 소절에서 \(\gamma\)는 앞 절들의 감쇠율이 아니라 로런츠 인자다. \(\gamma^2 - (\gamma\beta)^2 = 1\)이므로 \(\gamma = \cosh\zeta\), \(\gamma\beta = \sinh\zeta\)인 실수 \(\zeta\)가 하나 있다. 그러면 \(\beta = \tanh\zeta\)이고</p>
+    <div class="formula" id="eq-lorentz-hyperbolic">\[ \begin{aligned} ct' &= ct\cosh\zeta - x\sinh\zeta \\ x' &= -ct\sinh\zeta + x\cosh\zeta \end{aligned} \]</div>
+    <p>이다. 평면의 회전 \(x' = x\cos\theta + y\sin\theta\), \(y' = -x\sin\theta + y\cos\theta\)에서 삼각 함수를 쌍곡선 함수로 바꾸고 부호 하나를 바꾼 꼴이다. 회전이 \(x^2 + y^2\)을 보존하듯, 이 변환은 \(\cosh^2 - \sinh^2 = 1\)에 따라 \((ct)^2 - x^2\)을 보존한다. \(\zeta\)를 <span class="term">빠르기</span> <span class="en">(rapidity)</span>라 한다. 4-벡터와 불변 간격은 22장의 <a href="ch22.html#eq-lorentz-boost-tensor">로런츠 부스트</a>와 <a href="ch22.html#eq-invariant-interval">불변 간격</a>에서 다룬다.</p>
+    <div class="box ex" id="ex-rapidity"><div class="box-h">빠르기의 덧셈과 속도 합성</div>
+      <p>실험실에서 볼 때 우주선이 \(0.6c\)로 날아가고, 우주선은 자기 앞쪽으로 탐사선을 우주선에 대해 \(0.8c\)로 쏜다. 상대론적 속도 합성 \(u = (v_1 + v_2)/(1 + v_1v_2/c^2)\)이 빠르기의 덧셈임을 보이고, 실험실에서 본 탐사선의 속력과 로런츠 인자를 구하라.</p>
+      <p><b>풀이.</b> \(\beta_1 = \tanh\zeta_1\), \(\beta_2 = \tanh\zeta_2\)로 두면 속도 합성 공식은 식 <a class="ref" href="#eq-tanh-addition"></a>의 오른쪽과 똑같다.</p>
+      <div class="formula" id="eq-rapidity-addition">\[ \frac{\beta_1 + \beta_2}{1 + \beta_1\beta_2} = \tanh(\zeta_1 + \zeta_2) \]</div>
+      <p>같은 방향의 속도를 합성하는 것은 빠르기를 더하는 것이다. 식 <a class="ref" href="#eq-inverse-hyperbolic"></a>에서 \(\zeta = \operatorname{artanh}\beta = \tfrac12\ln\frac{1+\beta}{1-\beta}\)이므로</p>
+      <div class="formula">\[ \begin{aligned} \zeta_1 &= \tfrac12\ln\frac{1.6}{0.4} = \tfrac12\ln 4 = \ln 2 \\ \zeta_2 &= \tfrac12\ln\frac{1.8}{0.2} = \tfrac12\ln 9 = \ln 3 \end{aligned} \]</div>
+      <p>이고 \(\zeta = \ln 2 + \ln 3 = \ln 6\)이다. 따라서</p>
+      <div class="formula">\[ \begin{aligned} \beta &= \tanh(\ln 6) = \frac{6 - 1/6}{6 + 1/6} \\ &= \frac{35}{37} = 0.9459 \end{aligned} \]</div>
+      <p>이다. 공식에 직접 넣은 \((0.6 + 0.8)/(1 + 0.48) = 1.4/1.48 = 0.9459\)와 같다. 로런츠 인자는 \(\gamma = \cosh(\ln 6) = (6 + 1/6)/2 = 37/12 = 3.083\)이고, \(1/\sqrt{1 - (35/37)^2} = 37/\sqrt{37^2 - 35^2} = 37/12\)로 확인된다.</p>
+      <p><b>다음 항은 몇 차인가.</b> \(\operatorname{artanh}\beta = \beta + \beta^3/3 + \cdots\)이므로 느린 속도에서는 \(\zeta \approx \beta\)이고, 빠르기의 덧셈은 갈릴레이의 속도 덧셈 \(u = v_1 + v_2\)가 된다. 상대론적 보정은 \(\beta^3\) 차수다. 빠르기는 아무리 더해도 유한하고 \(\tanh\zeta &lt; 1\)이므로, 광속보다 느린 속도를 몇 번 합성해도 광속에 이르지 못한다.</p>
+    </div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>복소수 \(z = x + iy\)는 복소평면의 점이다. 켤레 \(z^* = x - iy\)는 실수축에 대한 대칭이고, \(\lvert z\rvert^2 = zz^*\), 나눗셈은 \(z_1/z_2 = z_1z_2^*/\lvert z_2\rvert^2\)이다. 실수 계수 방정식의 복소근은 켤레 쌍으로 나온다.</li>
+      <li>극형식 \(z = re^{i\theta}\)에서 곱셈은 절댓값을 곱하고 편각을 더한다. \(i\)를 곱하면 90° 회전이다. 주값은 \(\operatorname{Arg} z \in (-\pi, \pi]\)이며, \(\arctan(y/x)\)는 사분면을 확인해야 한다.</li>
+      <li>오일러 공식 \(e^{i\theta} = \cos\theta + i\sin\theta\)는 \(e^z = \sum z^n/n!\)에 \(z = i\theta\)를 넣은 것이다. 따라서 \(\cos\theta = (e^{i\theta} + e^{-i\theta})/2\), \(\sin\theta = (e^{i\theta} - e^{-i\theta})/2i\)이고, 삼각 항등식은 지수 법칙에서 나온다.</li>
+      <li>\(z^n = \rho e^{i\phi}\)의 근은 \(\rho^{1/n}e^{i(\phi + 2\pi k)/n}\) (\(k = 0, \ldots, n - 1\))로 정\(n\)각형을 이루고, 1의 \(n\)제곱근의 합은 0이다. 로그 \(\log z = \ln\lvert z\rvert + i(\operatorname{Arg} z + 2\pi k)\)는 여러 값이고 주값은 \(\operatorname{Log} z\)이다. \(z^a = e^{a\operatorname{Log} z}\)이며, 주값끼리는 지수 법칙이 깨질 수 있다.</li>
+      <li>이 책의 관례: 진동은 \(x(t) = \operatorname{Re}[\tilde x e^{-i\omega t}]\), 평면파는 \(e^{i(\mathbf k\cdot\mathbf r - \omega t)}\), \(d/dt \to -i\omega\). 페이저의 편각이 클수록 위상이 늦다. 곱의 주기 평균은 \(\langle ab\rangle = \tfrac12\operatorname{Re}(\tilde a\tilde b^*)\)이다.</li>
+      <li>감쇠율이 \(\gamma\)인 감쇠 진동은 \(x = \operatorname{Re}[Ae^{-(\gamma + i\omega_d)t}]\), \(\omega_d = \sqrt{\omega_0^2 - \gamma^2}\)이다. \(N\)개 슬릿 회절격자의 세기는 기하급수의 합으로 \(I = I_1\sin^2(N\delta/2)/\sin^2(\delta/2)\)이고, 분해능은 \(\lambda/\Delta\lambda = mN\)이다.</li>
+      <li>임피던스는 \(Z_R = R\), \(Z_L = -i\omega L\), \(Z_C = i/\omega C\)이고 저항처럼 직렬·병렬로 합친다. 평균 전력은 \(\bar P = \tfrac12\lvert\tilde I\rvert^2\operatorname{Re}Z\)이다. 전기공학의 \(e^{j\omega t}\) 관례로 쓴 식은 \(j \to -i\)로 바꿔 읽는다.</li>
+      <li>쌍곡선 함수 \(\cosh x = (e^x + e^{-x})/2\), \(\sinh x = (e^x - e^{-x})/2\)는 \(\cos(ix) = \cosh x\), \(\sin(ix) = i\sinh x\)로 삼각 함수와 이어지고, \(\cosh^2 - \sinh^2 = 1\)을 만족한다. 매달린 사슬은 \(y = a(\cosh(x/a) - 1)\)이고, 상대론적 속도 합성은 빠르기 \(\zeta = \operatorname{artanh}\beta\)의 덧셈이다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. 복소수 \(z\)에 \(i\)를 곱하면 복소평면에서 점 \(z\)는 어떻게 움직이는가?</p><div class="opts">
+        <button class="opt">실수축에 대해 대칭인 점으로 간다.</button>
+        <button class="opt" data-correct>원점을 중심으로 반시계 방향으로 90° 돈다.</button>
+        <button class="opt">원점을 중심으로 시계 방향으로 90° 돈다.</button>
+        <button class="opt">원점에 대해 대칭인 점으로 간다.</button>
+      </div><div class="quiz-exp">\(i = e^{i\pi/2}\)는 절댓값이 1이고 편각이 \(\pi/2\)이다. 곱하면 절댓값은 그대로이고 편각에 \(\pi/2\)가 더해진다. 실수축 대칭은 켤레, 원점 대칭은 \(-1\)을 곱한 것(\(i\)를 두 번 곱한 것)이다.</div></div>
+      <div class="quiz-q"><p>2. \((-8)^{1/3}\)의 주값은?</p><div class="opts">
+        <button class="opt">\(-2\)</button>
+        <button class="opt" data-correct>\(1 + i\sqrt3\)</button>
+        <button class="opt">\(1 - i\sqrt3\)</button>
+        <button class="opt">\(2\)</button>
+      </div><div class="quiz-exp">\(\operatorname{Log}(-8) = \ln 8 + i\pi\)이므로 주값은 \(e^{(\ln 8 + i\pi)/3} = 2e^{i\pi/3} = 1 + i\sqrt3\)이다. \(-2\)와 \(1 - i\sqrt3\)도 세제곱하면 \(-8\)이지만 주값이 아니다.</div></div>
+      <div class="quiz-q"><p>3. 이 책의 관례 \(x(t) = \operatorname{Re}[\tilde x e^{-i\omega t}]\)에서 변위의 페이저가 \(\tilde x\)이면 속도의 페이저는?</p><div class="opts">
+        <button class="opt">\(i\omega\tilde x\)</button>
+        <button class="opt" data-correct>\(-i\omega\tilde x\)</button>
+        <button class="opt">\(i\tilde x/\omega\)</button>
+        <button class="opt">\(\omega\tilde x\)</button>
+      </div><div class="quiz-exp">\(\tfrac{d}{dt}e^{-i\omega t} = -i\omega e^{-i\omega t}\)이므로 미분은 \(-i\omega\)를 곱하는 것이다. \(-i = e^{-i\pi/2}\)라 편각이 \(\pi/2\) 작아지고, 이 관례에서 편각이 작을수록 앞서므로 속도는 변위보다 90° 앞선다. \(i\omega\tilde x\)는 \(e^{+i\omega t}\) 관례의 답이다.</div></div>
+      <div class="quiz-q"><p>4. 슬릿이 \(N = 5\)개인 회절격자에서, 이웃한 두 주극대 사이에 있는 세기 0인 점의 수와 주극대의 세기(슬릿 하나의 세기 \(I_1\) 단위)는?</p><div class="opts">
+        <button class="opt" data-correct>4개, \(25I_1\)</button>
+        <button class="opt">5개, \(25I_1\)</button>
+        <button class="opt">4개, \(5I_1\)</button>
+        <button class="opt">3개, \(25I_1\)</button>
+      </div><div class="quiz-exp">영점은 \(\delta = 2\pi j/5\) (\(j = 1, 2, 3, 4\))에서 다섯 화살표가 정오각형으로 닫힐 때다. 주극대에서는 다섯 화살표가 나란해 진폭이 \(5E_1\), 세기는 \(25I_1\)이다.</div></div>
+      <div class="quiz-q"><p>5. 전기공학 교재에 어떤 부하의 임피던스가 \(Z = 40 + 30j\ \Omega\)로 적혀 있다. 이 책의 관례로 쓰면?</p><div class="opts">
+        <button class="opt">\((40 + 30i)\ \Omega\)</button>
+        <button class="opt" data-correct>\((40 - 30i)\ \Omega\)</button>
+        <button class="opt">\((30 + 40i)\ \Omega\)</button>
+        <button class="opt">\((-40 + 30i)\ \Omega\)</button>
+      </div><div class="quiz-exp">\(e^{j\omega t}\) 관례와 \(e^{-i\omega t}\) 관례는 켤레 관계이므로 \(j \to -i\)로 바꾼다. 허수부가 음수이니 이 책의 관례에서 유도성(인덕터가 우세한) 부하다. 크기 \(\lvert Z\rvert = 50\ \Omega\)과 역률 0.8은 두 관례에서 같다.</div></div>
+      <div class="quiz-q"><p>6. \(\cos(i)\)의 값은?</p><div class="opts">
+        <button class="opt">\(0.540\)</button>
+        <button class="opt" data-correct>\(1.543\)</button>
+        <button class="opt">\(1.543\,i\)</button>
+        <button class="opt">\(0.841\,i\)</button>
+      </div><div class="quiz-exp">\(\cos(ix) = \cosh x\)이므로 \(\cos(i) = \cosh 1 = (e + e^{-1})/2 = 1.543\)이다. 실수이지만 1보다 크다. \(0.540\)은 \(\cos 1\)이다.</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-complex-arith" data-level="1"><p>\(z_1 = 2 - i\), \(z_2 = 1 + 3i\)일 때 (가) \(z_1z_2\)와 \(z_1/z_2\)를 \(x + iy\) 꼴로 구하라. (나) \(\lvert z_1/z_2\rvert\)와 \(\operatorname{Arg}(z_1/z_2)\)를 구하고, \(\lvert z_1\rvert/\lvert z_2\rvert\)와 비교하라. (다) \(-1 - i\sqrt3\)을 극형식 \(re^{i\theta}\)로 쓰라(\(\theta\)는 주값).</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(z_1z_2 = 2 + 6i - i - 3i^2 = 5 + 5i\)이다. 식 <a class="ref" href="#eq-complex-division"></a>에서 \(z_1/z_2 = (2 - i)(1 - 3i)/10 = (2 - 6i - i + 3i^2)/10 = (-1 - 7i)/10\)이다.</p>
+        <p>(나) \(\lvert z_1/z_2\rvert = \sqrt{1 + 49}/10 = \sqrt{50}/10 = 0.707\)이고, \(\lvert z_1\rvert/\lvert z_2\rvert = \sqrt5/\sqrt{10} = 0.707\)로 같다(<a class="ref" href="#thm-polar-product"></a>). \(-0.1 - 0.7i\)는 제3사분면에 있으므로 \(\operatorname{Arg} = -(180° - \arctan 7) = -(180° - 81.87°) = -98.13°\)이다. \(\arctan(y/x) = \arctan 7 = 81.87°\)를 그대로 쓰면 틀린다.</p>
+        <p>(다) \(r = \sqrt{1 + 3} = 2\)이고, 점이 제3사분면에 있으며 \(\tan\theta = \sqrt3\)이므로 \(\theta = -2\pi/3\)이다. 따라서 \(-1 - i\sqrt3 = 2e^{-2\pi i/3}\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-quartic-roots" data-level="2"><p>(가) \(z^4 = -16\)의 근을 모두 구해 복소평면에 나타내라. (나) 근을 켤레끼리 묶어 \(z^4 + 16\)을 실수 계수의 이차식 두 개의 곱으로 인수분해하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(-16 = 16e^{i\pi}\)이므로 식 <a class="ref" href="#eq-nth-roots"></a>에서 \(z_k = 2e^{i(\pi + 2\pi k)/4}\), 곧 편각 \(45°, 135°, 225°, 315°\)이다. \(z = \sqrt2(\pm1 \pm i)\)의 네 점으로, 반지름 2인 원 위의 정사각형을 이룬다.</p>
+        <p>(나) 켤레 쌍 \(\sqrt2(1 \pm i)\)으로 만든 이차식은 \((z - \sqrt2 - \sqrt2 i)(z - \sqrt2 + \sqrt2 i) = (z - \sqrt2)^2 + 2 = z^2 - 2\sqrt2\,z + 4\)이고, 쌍 \(\sqrt2(-1 \pm i)\)으로 만든 것은 \(z^2 + 2\sqrt2\,z + 4\)이다. 곱하면 \((z^2 + 4)^2 - 8z^2 = z^4 + 16\)으로 맞다. 실수 계수 다항식은 언제나 이렇게 실수 계수의 일차식과 이차식으로 인수분해된다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-cos-sum" data-level="2"><p>\(\displaystyle\sum_{n=0}^{N-1}e^{in\theta}\)의 실수부와 허수부를 비교해 다음을 보여라(\(\theta\)는 \(2\pi\)의 정수배가 아니다).</p>
+      <div class="formula">\[ \begin{aligned} \sum_{n=0}^{N-1}\cos n\theta &= \frac{\sin(N\theta/2)}{\sin(\theta/2)} \\ &\quad \times \cos\frac{(N-1)\theta}{2} \\ \sum_{n=0}^{N-1}\sin n\theta &= \frac{\sin(N\theta/2)}{\sin(\theta/2)} \\ &\quad \times \sin\frac{(N-1)\theta}{2} \end{aligned} \]</div>
+      <p>\(N = 3\), \(\theta = \pi/2\)로 확인하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p><a class="ref" href="#ex-grating-sum"></a>과 같은 계산으로 \(\sum_{n=0}^{N-1}e^{in\theta} = e^{i(N-1)\theta/2}\sin(N\theta/2)/\sin(\theta/2)\)이다(식 <a class="ref" href="#eq-grating-amplitude"></a>에서 \(E_1 = 1\), \(\delta = \theta\)). \(\sin(N\theta/2)/\sin(\theta/2)\)는 실수이므로, \(e^{i(N-1)\theta/2}\)의 실수부 \(\cos\)와 허수부 \(\sin\)이 각각 두 합을 준다. 왼쪽의 실수부와 허수부는 오일러 공식에 따라 \(\sum\cos n\theta\)와 \(\sum\sin n\theta\)이다.</p>
+        <p>확인: \(N = 3\), \(\theta = \pi/2\)이면 왼쪽은 \(\cos 0 + \cos\tfrac{\pi}{2} + \cos\pi = 0\)과 \(\sin 0 + \sin\tfrac{\pi}{2} + \sin\pi = 1\)이다. 오른쪽은 \(\sin(3\pi/4)/\sin(\pi/4) = 1\)에 \(\cos(\pi/2) = 0\), \(\sin(\pi/2) = 1\)을 곱한 것으로 같다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-log-values" data-level="2"><p>(가) \(\log(-i)\)의 모든 값과 주값을 구하라. (나) \(\sqrt{i}\)의 두 값과 \((-1)^i\)의 주값을 구하라. (다) \(z_1 = z_2 = e^{i3\pi/4}\)일 때 \(\operatorname{Log}(z_1z_2)\)와 \(\operatorname{Log}z_1 + \operatorname{Log}z_2\)를 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\lvert -i\rvert = 1\), \(\operatorname{Arg}(-i) = -\pi/2\)이므로 \(\log(-i) = i(-\pi/2 + 2\pi k)\), 주값은 \(\operatorname{Log}(-i) = -i\pi/2\)이다.</p>
+        <p>(나) \(\sqrt{i} = e^{\frac12\log i} = e^{i(\pi/4 + \pi k)}\)이므로 두 값은 \(\pm(1 + i)/\sqrt2\)이고, 주값은 \((1 + i)/\sqrt2\)이다. \((-1)^i = e^{i\operatorname{Log}(-1)} = e^{i \cdot i\pi} = e^{-\pi} = 0.0432\)이다.</p>
+        <p>(다) \(z_1z_2 = e^{i3\pi/2} = -i\)이므로 \(\operatorname{Log}(z_1z_2) = -i\pi/2\)이다. 한편 \(\operatorname{Log}z_1 + \operatorname{Log}z_2 = i3\pi/4 + i3\pi/4 = i3\pi/2\)이다. 두 값은 \(2\pi i\)만큼 다르다. 편각의 합 \(3\pi/2\)가 주값의 범위 \((-\pi, \pi]\)를 벗어났기 때문이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-q-oscillations" data-level="1"><p>품질 인자가 \(Q = \omega_0/2\gamma = 10\)인 진동자를 놓았다. 진폭이 처음의 \(1/e\)로 줄 때까지 몇 번 진동하는가? 식 <a class="ref" href="#eq-damped-solution"></a>을 써라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>포락선 \(e^{-\gamma t}\)이 \(1/e\)이 되는 시간은 \(t = 1/\gamma\)이다. 그동안의 진동 횟수는 \(\omega_d t/2\pi = \omega_d/(2\pi\gamma)\)이다. \(\gamma/\omega_0 = 1/2Q = 0.05\)이므로 \(\omega_d = \omega_0\sqrt{1 - 0.0025} = 0.9987\,\omega_0\)이고, 횟수는 \(0.9987 \times 2Q/2\pi = 0.9987 \times 10/\pi = 3.18\)번이다. 약한 감쇠에서는 대략 \(Q/\pi\)번이다. \(Q\)가 클수록 오래 울리는 진동자다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-beats" data-level="2"><p>진동수 \(440\ \text{Hz}\)와 \(442\ \text{Hz}\)인 두 소리굽쇠가 같은 진폭 \(A\)로 울린다. (가) 한 점에서의 압력 변화 \(A\cos\omega_1t + A\cos\omega_2t\)를 \(e^{-i\bar\omega t}\) (\(\bar\omega = (\omega_1 + \omega_2)/2\))를 묶어 내는 방법으로 \(\cos\)의 곱으로 쓰라. (나) 들리는 소리의 세기가 커졌다 작아지는 주기(<span class="term">맥놀이</span> <span class="en">(beats)</span> 주기)는 얼마인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\Delta\omega = \omega_2 - \omega_1\)로 두면 \(\omega_1 = \bar\omega - \Delta\omega/2\), \(\omega_2 = \bar\omega + \Delta\omega/2\)이다.</p>
+        <div class="formula">\[ \begin{aligned} &e^{-i\omega_1t} + e^{-i\omega_2t} \\ &\quad = e^{-i\bar\omega t}\big(e^{i\Delta\omega t/2} + e^{-i\Delta\omega t/2}\big) \\ &\quad = 2\cos\frac{\Delta\omega\,t}{2}\,e^{-i\bar\omega t} \end{aligned} \]</div>
+        <p>실수부를 취하면 \(A\cos\omega_1t + A\cos\omega_2t = 2A\cos(\Delta\omega\,t/2)\cos\bar\omega t\)이다. 진동수 \(441\ \text{Hz}\)로 빠르게 진동하면서 진폭이 \(2A\cos(\Delta\omega\,t/2)\)로 천천히 바뀐다.</p>
+        <p>(나) 세기는 진폭의 제곱 \(4A^2\cos^2(\Delta\omega\,t/2) = 2A^2(1 + \cos\Delta\omega\,t)\)에 비례하므로, 세기는 각진동수 \(\Delta\omega\), 곧 진동수 \(\Delta f = 2\ \text{Hz}\)로 변한다. 맥놀이 주기는 \(1/\Delta f = 0.5\ \text{s}\)이다. 포락선 \(\cos(\Delta\omega\,t/2)\)의 주기는 1 s이지만, 세기는 부호와 상관없이 그 절반마다 되풀이된다. 악기를 조율할 때 맥놀이가 느려질수록 두 음의 진동수가 가까워진 것이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-double-slit" data-level="1"><p>(가) 식 <a class="ref" href="#eq-grating-intensity"></a>에서 \(N = 2\)로 두면 이중 슬릿의 세기 \(I = 4I_1\cos^2(\delta/2)\)가 됨을 보여라. (나) 간격 \(d = 0.25\ \text{mm}\)인 이중 슬릿에 파장 \(632.8\ \text{nm}\)인 레이저를 비추고 \(1.5\ \text{m}\) 떨어진 화면에서 본다. 밝은 무늬 사이의 간격은 얼마인가? (작은 각에서 \(\sin\theta \approx y/L\)을 써라.)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 배각 공식 \(\sin\delta = 2\sin(\delta/2)\cos(\delta/2)\)에서 \(\sin^2\delta/\sin^2(\delta/2) = 4\cos^2(\delta/2)\)이다. 식 <a class="ref" href="#eq-two-wave-amplitude"></a>에 \(A_1 = A_2\)를 넣어도 \(2A^2(1 + \cos\delta) = 4A^2\cos^2(\delta/2)\)로 같다.</p>
+        <p>(나) 밝은 무늬는 \(\delta = 2\pi m\), 곧 \(d\sin\theta = m\lambda\)에 있다. \(\sin\theta \approx y/L\)이면 \(y_m = m\lambda L/d\)이고 간격은 \(\lambda L/d = (632.8 \times 10^{-9})(1.5)/(0.25 \times 10^{-3})\ \text{m} = 3.8\ \text{mm}\)이다. 그림 2-5의 점선처럼 밝은 무늬와 어두운 무늬의 폭이 같다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-rc-filter" data-level="2"><p>저항 \(R\)과 축전기 \(C\)를 직렬로 잇고 입력 전압 \(\tilde V_{\text{in}}\)을 걸어, 축전기 양 끝의 전압을 출력 \(\tilde V_{\text{out}}\)으로 꺼낸다. (가) <span class="term">전달 함수</span> <span class="en">(transfer function)</span> \(H = \tilde V_{\text{out}}/\tilde V_{\text{in}}\)을 구하고 \(\lvert H\rvert\)와 \(\arg H\)를 쓰라. (나) \(R = 1.0\ \text{k}\Omega\), \(C = 0.10\ \mu\text{F}\)일 때 \(\lvert H\rvert = 1/\sqrt2\)가 되는 진동수 \(f_c\)와, \(f = 10\ \text{kHz}\)에서의 \(\lvert H\rvert\)(데시벨로도)와 위상 지연을 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 같은 전류가 두 소자를 흐르므로 출력은 전압 분배로 얻는다.</p>
+        <div class="formula">\[ \begin{aligned} H &= \frac{Z_C}{R + Z_C} = \frac{i/\omega C}{R + i/\omega C} \\ &= \frac{1}{1 - i\omega RC} \end{aligned} \]</div>
+        <p>\(\lvert H\rvert = 1/\sqrt{1 + (\omega RC)^2}\)이고, \(\arg H = \arctan(\omega RC)\)이다(분모의 편각이 \(-\arctan\omega RC\)). 편각이 양수이므로 출력은 입력보다 \(\arctan(\omega RC)\)만큼 늦다. 낮은 진동수는 거의 그대로 지나가고 높은 진동수는 줄어드는 <span class="term">저역 통과 필터</span> <span class="en">(low-pass filter)</span>다.</p>
+        <p>(나) \(\lvert H\rvert = 1/\sqrt2\)이려면 \(\omega RC = 1\), 곧 \(f_c = 1/(2\pi RC) = 1/(2\pi \times 10^{-4}\ \text{s}) = 1.59\ \text{kHz}\)이다. 이때 위상 지연은 \(45°\)이다. \(f = 10\ \text{kHz}\)에서는 \(\omega RC = 2\pi \times 10^4 \times 10^{-4} = 6.28\)이므로 \(\lvert H\rvert = 1/\sqrt{1 + 39.5} = 0.157\), 곧 \(20\log_{10}0.157 = -16.1\ \text{dB}\)이고 위상 지연은 \(\arctan 6.28 = 81.0°\)이다. \(RC\)는 \(\Omega \cdot \text{F} = \text{s}\)이므로 \(\omega RC\)는 차원이 없다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-impedance-matching" data-level="3"><p>내부 임피던스가 \(Z_s = R_s + iX_s\)인 교류 전원(기전력의 진폭 \(V_s\))에 부하 \(Z_L = R_L + iX_L\)을 이었다. (가) 부하가 받는 평균 전력 \(\bar P\)를 \(R_s, X_s, R_L, X_L\)로 쓰라. (나) \(\bar P\)를 가장 크게 하는 부하가 \(Z_L = Z_s^*\)이고 그때 \(\bar P_{\max} = V_s^2/8R_s\)임을 보여라. 이 조건을 <span class="term">임피던스 정합</span> <span class="en">(impedance matching)</span>이라 한다. (다) \(V_s = 10\ \text{V}\), \(Z_s = (50 - 30i)\ \Omega\)일 때 최적 부하와 \(\bar P_{\max}\)를 구하고, 순수 저항 \(50\ \Omega\)을 이었을 때와 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 직렬이므로 \(\tilde I = V_s/(Z_s + Z_L)\)이고, 식 <a class="ref" href="#eq-ac-power"></a>에서</p>
+        <div class="formula">\[ \begin{aligned} \bar P &= \frac12\lvert\tilde I\rvert^2R_L = \frac{V_s^2}{2}\,\frac{R_L}{D} \\ D &= (R_s + R_L)^2 + (X_s + X_L)^2 \end{aligned} \]</div>
+        <p>이다. (나) \(X_L\)은 분모에만 있으므로 \(X_L = -X_s\)일 때 분모가 가장 작다. 그러면 \(\bar P = \tfrac{V_s^2}{2}R_L/(R_s + R_L)^2\)이고, \(R_L\)로 미분해 0으로 놓으면 \((R_s + R_L)^2 - 2R_L(R_s + R_L) = 0\), 곧 \(R_L = R_s\)이다. 따라서 \(Z_L = R_s - iX_s = Z_s^*\)이고 \(\bar P_{\max} = \tfrac{V_s^2}{2}\cdot\tfrac{R_s}{4R_s^2} = V_s^2/8R_s\)이다. 부하의 리액턴스가 전원의 리액턴스를 지워 회로를 공명 상태로 만든 것이다.</p>
+        <p>(다) 최적 부하는 \(Z_L = (50 + 30i)\ \Omega\)이다. 전원이 유도성(이 책의 관례에서 허수부가 음수)이므로 용량성 부하로 맞춘다. \(\bar P_{\max} = 100/400 = 0.25\ \text{W}\)이다. \(50\ \Omega\) 저항이면 \(\bar P = 50 \cdot 50/(100^2 + 30^2) = 0.229\ \text{W}\)로 8% 적다. 공학 교재라면 같은 조건을 \(Z_s = 50 + 30j\), 최적 부하 \(50 - 30j\)로 적는다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-cos-zeros" data-level="2"><p>(가) 식 <a class="ref" href="#eq-cos-complex-split"></a>를 써서 \(\lvert\cos(x + iy)\rvert^2 = \cos^2x + \sinh^2y\)임을 보여라. (나) 이것으로 \(\cos z = 0\)의 해가 실수 \(z = \pi/2 + n\pi\)뿐임을 보여라. (다) \(\sin z = 5/3\)의 해를 모두 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\lvert\cos z\rvert^2 = \cos^2x\cosh^2y + \sin^2x\sinh^2y\)이다. \(\cosh^2y = 1 + \sinh^2y\)를 넣으면 \(\cos^2x + (\cos^2x + \sin^2x)\sinh^2y = \cos^2x + \sinh^2y\)이다.</p>
+        <p>(나) 두 항이 모두 0 이상이므로 합이 0이려면 \(\cos x = 0\)이고 \(\sinh y = 0\), 곧 \(x = \pi/2 + n\pi\), \(y = 0\)이다. 복소수로 넓혀도 새 영점은 생기지 않는다.</p>
+        <p>(다) 식 <a class="ref" href="#eq-cos-complex-split"></a>에서 \(\sin x\cosh y = 5/3\), \(\cos x\sinh y = 0\)이다. \(\sinh y = 0\)이면 \(\sin x = 5/3\)이라 불가능하므로 \(\cos x = 0\)이고, \(\sin x\cosh y > 0\)에서 \(\sin x = 1\), 곧 \(x = \pi/2 + 2\pi n\)이다. 그러면 \(\cosh y = 5/3\), 곧 \(e^y + e^{-y} = 10/3\)이므로 \(e^y = 3\) 또는 \(1/3\), \(y = \pm\ln 3\)이다(식 <a class="ref" href="#eq-inverse-hyperbolic"></a>에서도 \(\ln(5/3 + 4/3) = \ln 3\)). 해는 \(z = \pi/2 + 2\pi n \pm i\ln 3\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-cooling-fin" data-level="2"><p>뿌리 온도가 주변보다 \(\Delta T_0\)만큼 높은 가는 금속 막대(냉각 핀)가 길이 \(L\)만큼 공기 중에 나와 있다. 주변과의 온도 차 \(\Delta T(x)\)는 \(\Delta T'' = m^2\Delta T\)를 따르고(\(m\)은 열전달과 막대의 굵기로 정해지는 상수), 끝(\(x = L\))에서는 열이 새지 않아 \(\Delta T'(L) = 0\)이다. (가) \(\Delta T(x) = \Delta T_0\cosh\big(m(L - x)\big)/\cosh(mL)\)이 방정식과 두 경계 조건을 만족함을 보여라. (나) \(m = 10\ \text{m}^{-1}\), \(L = 0.20\ \text{m}\)이면 끝의 온도 차는 뿌리의 몇 %인가? (다) 뿌리에서 막대로 들어가는 열류 \(\propto -\Delta T'(0)\)는 같은 굵기의 무한히 긴 막대의 몇 %인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 식 <a class="ref" href="#eq-hyperbolic-identities"></a>의 도함수를 연쇄 법칙과 함께 쓰면 \(\Delta T' = -m\Delta T_0\sinh(m(L - x))/\cosh(mL)\), \(\Delta T'' = m^2\Delta T_0\cosh(m(L - x))/\cosh(mL) = m^2\Delta T\)이다. \(x = 0\)에서 \(\Delta T = \Delta T_0\)이고, \(x = L\)에서 \(\sinh 0 = 0\)이라 \(\Delta T'(L) = 0\)이다.</p>
+        <p>(나) \(mL = 2\)이므로 \(\Delta T(L)/\Delta T_0 = 1/\cosh 2 = 0.266\), 곧 26.6%이다.</p>
+        <p>(다) \(-\Delta T'(0) = m\Delta T_0\tanh(mL)\)이다. 무한히 긴 막대는 \(\Delta T = \Delta T_0e^{-mx}\)이고 \(-\Delta T'(0) = m\Delta T_0\)이다. 비는 \(\tanh 2 = 0.964\)로 96.4%이다. 길이를 \(mL = 2\) 넘게 늘려도 열을 더 버리는 데는 거의 도움이 되지 않는다. \(m\)은 \(\text{m}^{-1}\)이라 \(mL\)은 차원이 없다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-rapidity-repeated" data-level="3"><p>우주선이 연료를 조금씩 태우며 가속한다. 매번 직전의 정지 좌표계에서 볼 때 속력 \(\beta_0c\)만큼 더해지도록 \(N\)번 가속하면, 처음 좌표계에서 본 최종 속도는 다음과 같음을 보여라.</p>
+      <div class="formula">\[ \beta_N = \frac{(1 + \beta_0)^N - (1 - \beta_0)^N}{(1 + \beta_0)^N + (1 - \beta_0)^N} \]</div>
+      <p>\(\beta_0 = 1/2\)일 때 \(N = 4\)와 \(N = 10\)의 값을 구하고, \(N \to \infty\)에서 어떻게 되는지 설명하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>식 <a class="ref" href="#eq-rapidity-addition"></a>에 따라 빠르기는 더해지므로 \(\zeta_N = N\zeta_0\), \(\zeta_0 = \operatorname{artanh}\beta_0\)이다. \(\tanh\zeta = (e^{2\zeta} - 1)/(e^{2\zeta} + 1)\)이고 식 <a class="ref" href="#eq-inverse-hyperbolic"></a>에서 \(e^{2\zeta_0} = (1 + \beta_0)/(1 - \beta_0)\)이므로 \(e^{2N\zeta_0} = \big[(1 + \beta_0)/(1 - \beta_0)\big]^N\)이다. 이것을 넣고 분자와 분모에 \((1 - \beta_0)^N\)을 곱하면 주어진 식이 된다.</p>
+        <p>\(\beta_0 = 1/2\)이면 \((3/2)^N\)과 \((1/2)^N\)의 비가 \(3^N\)이므로 \(\beta_N = (3^N - 1)/(3^N + 1)\)이다. \(N = 4\)이면 \(80/82 = 0.9756\), \(N = 10\)이면 \(59\,048/59\,050 = 0.999\,966\)이다. 빠르기 \(N\zeta_0\)은 한없이 커지지만 \(\tanh\)는 1에 다가갈 뿐 넘지 못하므로, 어떤 유한한 횟수의 가속으로도 광속에 이르지 못한다. 갈릴레이 덧셈이었다면 \(N = 2\)에서 이미 광속이다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+</body>
+</html>
