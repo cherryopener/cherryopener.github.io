@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10 상미분방정식 · 수리물리학</title>
+<meta name="description" content="1계 방정식, 특성 방정식과 론스키안, 감쇠·강제 진동과 품질 인자, 매개변수 변화법과 충격 응답, 위상 공간의 평형점, 라플라스 변환으로 진동과 회로, 붕괴 사슬의 상미분방정식을 푼다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys" data-field="phys" data-chapter="ch10">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">10</span></div>
+    <h1 data-fill="chapter-title">상미분방정식</h1>
+    <p class="lead">용수철에 매단 추, 교류 회로, 공기 속을 떨어지는 물방울, 방사성 붕괴 사슬은 서로 다른 현상이지만 모두 같은 종류의 식을 따른다. 미지 함수와 그 도함수가 일차식으로만 들어가고 계수가 상수인 상미분방정식이다. 이 장에서는 1계 방정식의 두 가지 풀이에서 출발해 특성 방정식과 론스키안, 공명과 품질 인자, 충격 응답과 합성곱, 위상 공간의 평형점, 라플라스 변환을 차례로 세운다. 2장에서 페이저로 정상 상태만 보았던 감쇠·강제 진동자를 이 장에서는 처음 조건부터 끝까지 푼다.</p>
+    <ul class="objectives">
+      <li>변수 분리형 방정식과 1계 선형 방정식을 적분 인자로 풀고, 종단 속도처럼 해가 다가가는 값과 그 시간 척도를 읽을 수 있다.</li>
+      <li>상수 계수 2계 선형 방정식을 특성 방정식으로 풀고, 론스키안으로 두 해가 선형 독립인지 판정할 수 있다.</li>
+      <li>감쇠·강제 진동자의 정상 상태 진폭과 위상, 공명 폭과 품질 인자 \(Q\)를 구하고, 같은 결과를 RLC 회로로 옮길 수 있다.</li>
+      <li>매개변수 변화법과 충격 응답의 합성곱으로 임의의 힘에 대한 응답을 구할 수 있다.</li>
+      <li>연립 1계 방정식을 행렬로 써서 평형점을 분류하고, 라플라스 변환으로 초기값 문제를 대수 문제로 바꿔 풀 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b>2장(오일러 공식, 페이저와 \(e^{-i\omega t}\) 관례, 임피던스), 3장(라이프니츠 적분 규칙), 7장(2×2 행렬식과 크라메르 공식). 8장의 고유값과 행렬 지수, 6장의 디랙 델타는 이 장에서 필요한 만큼 다시 적고 링크를 건다.</p>
+  </header>
+
+  <!-- ============================================================ 10.1 -->
+  <section id="s1">
+    <h2>1계 방정식</h2>
+    <p>안개를 이루는 물방울은 왜 떨어지지 않고 떠 있는 것처럼 보일까? 물방울에는 중력 \(mg\)와 공기의 저항이 작용하고, 아주 작은 물체의 저항은 속력에 비례한다. 아래쪽을 양의 방향으로 잡으면 뉴턴 법칙은 \(m\,dv/dt = mg - bv\)이다. 미지 함수 \(v(t)\)와 그 1계 도함수만 들어 있는 식이다. 이 식을 풀면 물방울이 얼마 만에 일정한 속력에 이르는지, 그 속력이 얼마인지 알 수 있다. 이 절에서는 이런 1계 방정식의 두 가지 기본 풀이, 곧 변수 분리와 적분 인자를 세운다.</p>
+
+    <h3 id="s1-classify">상미분방정식의 분류</h3>
+    <p>독립 변수 하나의 함수와 그 도함수 사이의 관계식을 <span class="term">상미분방정식</span> <span class="en">(ordinary differential equation, ODE)</span>이라 한다. 독립 변수가 여럿이고 편도함수가 들어가면 편미분방정식이며 <a href="ch17.html#def-pde-types">17장</a>에서 다룬다. 식에 들어 있는 가장 높은 도함수의 차수를 방정식의 <span class="term">계</span> <span class="en">(order)</span>라 한다. 물리에서 가장 중요한 부류는 다음과 같다.</p>
+    <div class="box def" id="def-linear-ode"><div class="box-h">선형 상미분방정식</div>
+      <p>미지 함수 \(y(x)\)와 그 도함수가 모두 일차로만 들어가는 다음 꼴의 방정식을 \(n\)계 <span class="term">선형 상미분방정식</span> <span class="en">(linear ODE)</span>이라 한다.</p>
+      <div class="formula" id="eq-linear-ode">\[ \begin{aligned} &\, a_n(x)\,y^{(n)} + \cdots + a_1(x)\,y' \\ &\quad + a_0(x)\,y = f(x) \end{aligned} \]</div>
+      <p>\(a_k(x)\)를 <span class="term">계수</span> <span class="en">(coefficient)</span>, \(f(x)\)를 <span class="term">비동차항</span> <span class="en">(inhomogeneous term)</span> 또는 원천이라 한다. \(f = 0\)이면 <span class="term">동차</span> <span class="en">(homogeneous)</span>, 그렇지 않으면 <span class="term">비동차</span> <span class="en">(inhomogeneous)</span> 방정식이다. 계수가 모두 상수이면 <span class="term">상수 계수</span> <span class="en">(constant coefficients)</span> 방정식이라 한다. 이 꼴이 아닌 방정식은 <span class="term">비선형</span> <span class="en">(nonlinear)</span>이다.</p>
+    </div>
+    <p>\(y'^2\), \(yy'\), \(\sin y\) 같은 항이 하나라도 있으면 비선형이다. 진자의 운동 방정식 \(\ddot\theta + (g/L)\sin\theta = 0\)은 비선형이고, 작은 각에서 \(\sin\theta \approx \theta\)로 바꾼 \(\ddot\theta + (g/L)\theta = 0\)은 선형이다. 선형이라는 말의 핵심은 좌변을 연산자 \(\mathcal L[y]\)로 보았을 때 \(\mathcal L[c_1y_1 + c_2y_2] = c_1\mathcal L[y_1] + c_2\mathcal L[y_2]\)가 성립한다는 데 있다. 10.2절의 중첩 원리가 여기서 나온다.</p>
+    <p>\(n\)계 방정식의 해를 하나로 정하려면 보통 \(n\)개의 조건이 필요하다. 시작점 \(x_0\)에서 \(y, y', \ldots, y^{(n-1)}\)의 값을 주는 문제를 <span class="term">초기값 문제</span> <span class="en">(initial value problem)</span>라 한다. 뉴턴 법칙은 2계이므로 처음 위치와 처음 속도가 필요하다.</p>
+
+    <h3 id="s1-separable">변수 분리형</h3>
+    <p>1계 방정식 \(dy/dx = F(x, y)\)에서 오른쪽이 \(x\)만의 함수와 \(y\)만의 함수의 곱 \(F = f(x)\,g(y)\)이면 <span class="term">변수 분리형</span> <span class="en">(separable)</span>이라 한다. 양변을 \(g(y)\)로 나누고 \(dx\)를 곱하면 왼쪽에는 \(y\)만, 오른쪽에는 \(x\)만 남는다. 각각 적분하면</p>
+    <div class="formula" id="eq-separable">\[ \frac{dy}{dx} = f(x)\,g(y) \;\Longrightarrow\; \int\frac{dy}{g(y)} = \int f(x)\,dx + C \]<div class="where">\(g(y_*) = 0\)인 \(y_*\)가 있으면 상수 함수 \(y = y_*\)도 해다. \(g\)로 나누는 순간 이 해를 잃으므로 따로 확인한다.</div></div>
+    <p>미분소를 분수처럼 다루는 것이 꺼림칙하면 연쇄 법칙으로 확인하면 된다. \(G(y) = \int dy/g\)라 하면 \(\tfrac{d}{dx}G(y(x)) = y'/g(y) = f(x)\)이므로, 양변을 \(x\)로 적분한 것이 식 <a class="ref" href="#eq-separable"></a>다.</p>
+
+    <div class="box ex" id="ex-quadratic-drag"><div class="box-h">속력의 제곱에 비례하는 저항을 받는 낙하</div>
+      <p>질량 \(m = 80\ \text{kg}\)인 스카이다이버가 낙하산을 펴지 않고 떨어진다. 이 크기와 속력에서 공기 저항은 \(cv^2\)이고, 충분히 오래 떨어지면 속력이 \(v_t = 55\ \text{m/s}\)에 머문다고 하자. 정지 상태에서 뛰어내린 뒤 \(v(t)\)를 구하고, 속력이 \(v_t\)의 90%에 이르는 시간과 그동안 떨어진 거리를 구하라.</p>
+      <p><b>풀이.</b> 아래쪽을 양으로 잡으면 \(m\dot v = mg - cv^2\)이다. 가속도가 0이 되는 속력이 종단 속도이므로 \(v_t = \sqrt{mg/c}\)이고, 식은 \(\dot v = g(1 - v^2/v_t^2)\)가 된다. 변수 분리형이다. 식 <a class="ref" href="#eq-separable"></a>에서</p>
+      <div class="formula">\[ \int_0^v\frac{dv'}{1 - v'^2/v_t^2} = v_t\operatorname{artanh}\frac{v}{v_t} = gt \]</div>
+      <p>이다. 왼쪽 적분은 \(\tfrac{d}{du}\operatorname{artanh}u = 1/(1 - u^2)\)에서 나온다(2장의 <a href="ch02.html#eq-inverse-hyperbolic">역쌍곡선 함수</a>). 따라서</p>
+      <div class="formula" id="eq-quadratic-drag-velocity">\[ v(t) = v_t\tanh\frac{gt}{v_t},\qquad x(t) = \frac{v_t^2}{g}\ln\cosh\frac{gt}{v_t} \]</div>
+      <p>이다. 두 번째 식은 첫 식을 적분한 것이다. 처음에는 \(\tanh u \approx u\)이므로 \(v \approx gt\)로 자유 낙하와 같고, \(t \to \infty\)이면 \(v \to v_t\)이다. 상수 해 \(v = v_t\)는 식 <a class="ref" href="#eq-separable"></a>의 \(g(y)\)에 해당하는 \(1 - v^2/v_t^2\)의 영점에서 나오는 해이며, 모든 해가 이 값으로 다가간다.</p>
+      <p><b>숫자로 보기.</b> 시간 척도는 \(v_t/g = 55/9.81\ \text{s} = 5.61\ \text{s}\)이다. \(\tanh u = 0.9\)이면 \(u = \operatorname{artanh}0.9 = 1.472\)이므로 \(t = 1.472 \times 5.61\ \text{s} = 8.25\ \text{s}\)이고, 그동안 떨어진 거리는 \((55^2/9.81)\ln\cosh 1.472\ \text{m} = 308.4 \times 0.830\ \text{m} = 256\ \text{m}\)이다. 저항 계수는 \(c = mg/v_t^2 = 0.259\ \text{kg/m}\)이고, \(cv^2\)의 단위 \(\text{kg/m}\cdot\text{m}^2/\text{s}^2 = \text{N}\)으로 맞다.</p>
+    </div>
+
+    <h3 id="s1-integrating">1계 선형 방정식과 적분 인자</h3>
+    <p>1계 선형 방정식은 \(y'\)의 계수로 나누어 다음 꼴로 쓸 수 있다.</p>
+    <div class="formula" id="eq-first-order-linear">\[ y' + p(x)\,y = q(x) \]</div>
+    <p>\(q \ne 0\)이고 \(p\)가 상수가 아니면 대개 변수 분리가 되지 않는다. 대신 양변에 적당한 함수 \(\mu(x)\)를 곱해 왼쪽을 한 함수의 도함수로 만든다. 곱의 미분 \((\mu y)' = \mu y' + \mu' y\)와 \(\mu y' + \mu p y\)를 비교하면 \(\mu' = \mu p\)이면 되고, 이것은 변수 분리형이므로 \(\mu = \exp\!\int p\,dx\)이다. 그러면 식 <a class="ref" href="#eq-first-order-linear"></a>는 \((\mu y)' = \mu q\)가 되어 바로 적분된다.</p>
+    <div class="formula" id="eq-integrating-factor">\[ \begin{aligned} \mu(x) &= \exp\!\Big(\int p(x)\,dx\Big) \\ y(x) &= \frac{1}{\mu(x)}\Big[\int \mu(x)\,q(x)\,dx + C\Big] \end{aligned} \]</div>
+    <p>이 \(\mu\)를 <span class="term">적분 인자</span> <span class="en">(integrating factor)</span>라 한다. 3장에서 열 \(\delta Q\)에 \(1/T\)를 곱해 완전 미분 \(dS\)를 만든 것(<a href="ch03.html#def-exact-differential">정의 3.3</a>의 완전 미분)과 같은 생각이다. 처음 조건 \(y(x_0) = y_0\)을 넣어 적분 상수를 없애면 해가 더 잘 읽힌다.</p>
+    <div class="formula" id="eq-first-order-memory">\[ \begin{aligned} y(x) &= y_0\,e^{-\int_{x_0}^{x}p\,dx''} \\ &\quad + \int_{x_0}^{x} e^{-\int_{x'}^{x}p\,dx''}\,q(x')\,dx' \end{aligned} \]</div>
+    <p>첫 항은 처음 값이 잊혀 가는 모습이고, 둘째 항은 각 순간 \(x'\)의 원천 \(q(x')\)이 지금 \(x\)까지 남긴 효과를 모두 더한 것이다. \(p = 1/\tau\)가 상수이면 무게가 \(e^{-(x - x')/\tau}\)가 되어, 계는 대략 시간 \(\tau\) 동안의 과거만 기억한다. 10.4절의 충격 응답과 합성곱은 이 생각을 2계 방정식으로 넓힌 것이다.</p>
+
+    <div class="box ex" id="ex-stokes-droplet"><div class="box-h">안개 물방울의 종단 속도</div>
+      <p>반지름 \(r\)인 작은 구가 점성 계수 \(\eta\)인 유체 속을 느리게 움직이면 저항력은 \(bv\), \(b = 6\pi\eta r\)이다(스토크스 법칙). 반지름 \(10\ \mu\text{m}\)인 물방울이 처음 속도 \(v_0\)로 공기 속을 떨어진다. \(v(t)\)를 구하고, 시간 척도와 종단 속도를 계산하라. 공기의 점성 계수는 \(\eta = 1.81 \times 10^{-5}\ \text{Pa}\cdot\text{s}\)로 하고(20 °C. F. M. White, <i>Viscous Fluid Flow</i>, 3rd ed., McGraw-Hill 2006의 공기 서덜랜드 공식으로 계산한 값) 부력은 무시한다.</p>
+      <p><b>풀이.</b> \(m\dot v = mg - bv\)를 \(m\)으로 나누고 \(\tau = m/b\)라 하면 \(\dot v + v/\tau = g\)이다. \(p = 1/\tau\)이므로 적분 인자는 \(\mu = e^{t/\tau}\)이고, \((ve^{t/\tau})' = ge^{t/\tau}\)를 적분하면 \(ve^{t/\tau} = g\tau e^{t/\tau} + C\)이다. 처음 조건으로 \(C\)를 정하면</p>
+      <div class="formula" id="eq-stokes-velocity">\[ v(t) = v_t + (v_0 - v_t)\,e^{-t/\tau},\qquad v_t = g\tau = \frac{mg}{b} \]</div>
+      <p>이다. 처음 속도가 무엇이든 해는 지수적으로 \(v_t\)에 다가간다(그림 10-1). 처음 속도가 \(v_t\)보다 크면 물방울이 감속한다. 이 방정식은 \(g\)가 상수라서 변수 분리로도 풀리지만, 적분 인자는 원천이 시간에 따라 바뀌어도 그대로 쓸 수 있다(<a class="ref" href="#prob-thermometer-lag"></a>).</p>
+      <p><b>숫자로 보기.</b> \(m = \rho\cdot\tfrac43\pi r^3\)이므로 \(\tau = m/b = 2\rho r^2/9\eta\)이다. \(\rho = 1000\ \text{kg/m}^3\), \(r = 1.0 \times 10^{-5}\ \text{m}\)을 넣으면</p>
+      <div class="formula">\[ \begin{aligned} \tau &= \frac{2(1000)(1.0\times10^{-10})}{9(1.81\times10^{-5})}\ \text{s} = 1.23\ \text{ms} \\ v_t &= g\tau = 1.20\ \text{cm/s} \end{aligned} \]</div>
+      <p>이다. 물방울은 수 밀리초 만에(\(4.6\tau = 5.7\ \text{ms}\)에 99%) 종단 속도에 이르고, 1초에 1.2 cm밖에 떨어지지 않는다. \(v_t \propto r^2\)이므로 반지름이 \(1\ \mu\text{m}\)이면 \(0.12\ \text{mm/s}\)로, 약한 상승 기류에도 떠 있게 된다. 단위를 확인하자. \(\rho r^2/\eta\)는 \((\text{kg/m}^3)(\text{m}^2)/(\text{kg/(m}\cdot\text{s)}) = \text{s}\)이다. 선형 저항을 쓴 근거도 확인한다. 공기 밀도 \(1.20\ \text{kg/m}^3\)로 계산한 레이놀즈 수 \(\rho_{\text{air}}v_t(2r)/\eta = 0.016\)이 1보다 훨씬 작으므로 스토크스 법칙의 영역이다. 무시한 부력은 \(\rho_{\text{air}}/\rho = 0.12\%\)의 보정이다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 270" role="img" aria-label="선형 저항을 받는 낙하의 기울기 장과 해 곡선. 처음 속도와 상관없이 모든 해가 종단 속도로 다가간다"><defs><clipPath id="f1001-clip"><rect x="50" y="16" width="410" height="200"/></clipPath></defs><line x1="50.0" y1="16" x2="50.0" y2="216" class="s-grid"/><line x1="132.0" y1="16" x2="132.0" y2="216" class="s-grid"/><line x1="214.0" y1="16" x2="214.0" y2="216" class="s-grid"/><line x1="296.0" y1="16" x2="296.0" y2="216" class="s-grid"/><line x1="378.0" y1="16" x2="378.0" y2="216" class="s-grid"/><line x1="460.0" y1="16" x2="460.0" y2="216" class="s-grid"/><line x1="50" y1="216.0" x2="460" y2="216.0" class="s-grid"/><line x1="50" y1="166.0" x2="460" y2="166.0" class="s-grid"/><line x1="50" y1="116.0" x2="460" y2="116.0" class="s-grid"/><line x1="50" y1="66.0" x2="460" y2="66.0" class="s-grid"/><line x1="50" y1="16.0" x2="460" y2="16.0" class="s-grid"/><text x="50.0" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="132.0" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">1</text><text x="214.0" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">2</text><text x="296.0" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">3</text><text x="378.0" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">4</text><text x="460.0" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">5</text><text x="42" y="221.0" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="42" y="171.0" class="t-dim" style="font-size:14px" text-anchor="end">0.5</text><text x="42" y="121.0" class="t-dim" style="font-size:14px" text-anchor="end">1</text><text x="42" y="71.0" class="t-dim" style="font-size:14px" text-anchor="end">1.5</text><text x="42" y="21.0" class="t-dim" style="font-size:14px" text-anchor="end">2</text><line x1="50" y1="216.0" x2="460" y2="216.0" class="s-line"/><line x1="50" y1="16" x2="50" y2="216" class="s-line"/><path d="M69.8,207.1l9.7,-10.1M68.9,177.0l11.5,-8.0M68.0,146.3l13.2,-4.5M67.6,114.9l14.0,0.2M68.0,83.6l13.1,4.8M68.9,52.9l11.4,8.2M69.8,22.9l9.5,10.2M114.9,207.1l9.7,-10.1M114.0,177.0l11.5,-8.0M113.1,146.3l13.2,-4.5M112.7,114.9l14.0,0.2M113.1,83.6l13.1,4.8M114.0,52.9l11.4,8.2M114.9,22.9l9.5,10.2M160.0,207.1l9.7,-10.1M159.1,177.0l11.5,-8.0M158.2,146.3l13.2,-4.5M157.8,114.9l14.0,0.2M158.2,83.6l13.1,4.8M159.1,52.9l11.4,8.2M160.0,22.9l9.5,10.2M205.1,207.1l9.7,-10.1M204.2,177.0l11.5,-8.0M203.3,146.3l13.2,-4.5M202.9,114.9l14.0,0.2M203.3,83.6l13.1,4.8M204.2,52.9l11.4,8.2M205.1,22.9l9.5,10.2M250.2,207.1l9.7,-10.1M249.3,177.0l11.5,-8.0M248.4,146.3l13.2,-4.5M248.0,114.9l14.0,0.2M248.4,83.6l13.1,4.8M249.3,52.9l11.4,8.2M250.2,22.9l9.5,10.2M295.3,207.1l9.7,-10.1M294.4,177.0l11.5,-8.0M293.5,146.3l13.2,-4.5M293.1,114.9l14.0,0.2M293.5,83.6l13.1,4.8M294.4,52.9l11.4,8.2M295.3,22.9l9.5,10.2M340.4,207.1l9.7,-10.1M339.5,177.0l11.5,-8.0M338.6,146.3l13.2,-4.5M338.2,114.9l14.0,0.2M338.6,83.6l13.1,4.8M339.5,52.9l11.4,8.2M340.4,22.9l9.5,10.2M385.5,207.1l9.7,-10.1M384.6,177.0l11.5,-8.0M383.7,146.3l13.2,-4.5M383.3,114.9l14.0,0.2M383.7,83.6l13.1,4.8M384.6,52.9l11.4,8.2M385.5,22.9l9.5,10.2M430.6,207.1l9.7,-10.1M429.7,177.0l11.5,-8.0M428.8,146.3l13.2,-4.5M428.4,114.9l14.0,0.2M428.8,83.6l13.1,4.8M429.7,52.9l11.4,8.2M430.6,22.9l9.5,10.2" class="s-line" style="stroke-width:1.2"/><path d="M50,216l12.3,-13.9 16.4,-15.6 12.3,-9.8 16.4,-11 16.4,-9 16.4,-7.4 20.5,-7.4 20.5,-5.7 45.1,-8.6 57.4,-5.8 73.8,-3.4 102.5,-1.7" class="s-acc"  clip-path="url(#f1001-clip)"/><path d="M50,176l12.3,-8.4 16.4,-9.3 28.7,-12.5 32.8,-9.8 41,-7.9 45.1,-5.1 57.4,-3.5 73.8,-2.1 102.5,-1" class="s-acc"  clip-path="url(#f1001-clip)"/><path d="M50,116l410,0" class="s-line" style="stroke:var(--text);stroke-width:2.4" clip-path="url(#f1001-clip)"/><path d="M50,56l12.3,8.4 16.4,9.3 28.7,12.5 32.8,9.8 41,7.9 45.1,5.1 57.4,3.5 73.8,2.1 102.5,1" class="s-acc2"  clip-path="url(#f1001-clip)"/><path d="M50,16l12.3,13.9 16.4,15.6 12.3,9.8 16.4,11 16.4,9 16.4,7.4 20.5,7.4 20.5,5.7 45.1,8.6 57.4,5.8 73.8,3.4 102.5,1.7" class="s-acc2"  clip-path="url(#f1001-clip)"/><text x="451.8" y="108.0" class="t" style="font-size:15px" text-anchor="end">종단 속도 <tspan font-style="italic">v</tspan> = <tspan font-style="italic">v</tspan><tspan baseline-shift="sub" font-size="72%">t</tspan></text><text x="111.5" y="38.0" class="t-math acc2" text-anchor="start"><tspan font-style="italic">v</tspan><tspan baseline-shift="sub" font-size="72%">0</tspan> = 2<tspan font-style="italic">v</tspan><tspan baseline-shift="sub" font-size="72%">t</tspan></text><text x="107.4" y="204.0" class="t-math acc" text-anchor="start"><tspan font-style="italic">v</tspan><tspan baseline-shift="sub" font-size="72%">0</tspan> = 0</text><text x="460" y="262" class="t-dim" style="font-size:14px" text-anchor="end">t / τ</text><text x="56" y="30" class="t-dim" style="font-size:14px" text-anchor="start">v / v<tspan baseline-shift="sub" font-size="72%">t</tspan></text></svg>
+      <figcaption><b>그림 10-1.</b> 선형 저항을 받는 낙하 \(\dot v = (v_t - v)/\tau\)의 기울기 장. 짧은 선분은 각 점 \((t, v)\)에서 해 곡선의 기울기다. 처음 속도 \(v_0 = 0,\ 0.4v_t,\ 1.6v_t,\ 2v_t\)에서 출발한 해(식 <a class="ref" href="#eq-stokes-velocity"></a>)는 모두 굵은 수평선 \(v = v_t\)로 다가가며, 시간 \(\tau\)마다 남은 차이가 \(1/e\)로 준다.</figcaption>
+    </figure>
+
+    <div class="callout warn"><strong>해가 하나뿐이라는 보장은 조건이 있다</strong><p>\(y' = F(x, y)\), \(y(x_0) = y_0\)에서 \(F\)와 \(\partial F/\partial y\)가 \((x_0, y_0)\) 근처에서 연속이면 그 근처에서 해가 존재하고 오직 하나뿐이다(피카르-린델뢰프 정리). 계수와 원천이 연속인 선형 방정식은 그 구간 전체에서 해가 하나뿐이다. 조건이 깨지는 물리 예가 바닥에 구멍 난 물통이다. 토리첼리 법칙에 따라 물 높이는 \(\dot h = -k\sqrt h\)를 따르는데, \(\partial F/\partial h = -k/2\sqrt h\)가 \(h = 0\)에서 무한대다. 빈 통(\(h = 0\))을 보고는 언제 비었는지 알 수 없다. 늘 비어 있던 해 \(h \equiv 0\)과, 한 시간 전에 다 빠진 해가 모두 같은 "지금"을 지난다. 시간을 거꾸로 돌린 초기값 문제의 해가 하나가 아닌 것이다(<a class="ref" href="#prob-torricelli-drain"></a>).</p></div>
+  </section>
+
+  <!-- ============================================================ 10.2 -->
+  <section id="s2">
+    <h2>상수 계수 2계 선형 방정식</h2>
+    <p>용수철에 매단 추, 인덕터와 축전기를 이은 회로, 평형점 근처에서 조금 밀린 거의 모든 계는 \(a\ddot y + b\dot y + cy = 0\) 꼴의 방정식을 따른다. 뉴턴 법칙이 2계이고, 평형점 근처의 힘을 테일러 전개하면 첫 항이 변위와 속도에 비례하기 때문이다. 이 절에서는 이 방정식의 해를 모두 구하는 방법과, 구한 해가 정말 "모든" 해인지 판정하는 도구를 세운다. 이 절부터 독립 변수는 시간 \(t\)로 쓰고, 시간 미분은 점으로 나타낸다.</p>
+
+    <h3 id="s2-superposition">중첩 원리</h3>
+    <div class="box thm" id="thm-ode-superposition"><div class="box-h">중첩 원리</div>
+      <p>\(\mathcal L\)이 선형 미분 연산자일 때 다음이 성립한다.</p>
+      <ol>
+        <li>\(y_1, y_2\)가 동차 방정식 \(\mathcal L[y] = 0\)의 해이면, 임의의 상수 \(c_1, c_2\)에 대해 \(c_1y_1 + c_2y_2\)도 해다.</li>
+        <li>\(y_a, y_b\)가 같은 비동차 방정식 \(\mathcal L[y] = f\)의 해이면, 그 차 \(y_a - y_b\)는 동차 방정식의 해다.</li>
+        <li>\(\mathcal L[y_1] = f_1\), \(\mathcal L[y_2] = f_2\)이면 \(\mathcal L[y_1 + y_2] = f_1 + f_2\)이다.</li>
+      </ol>
+    </div>
+    <p>세 주장은 모두 \(\mathcal L[c_1y_1 + c_2y_2] = c_1\mathcal L[y_1] + c_2\mathcal L[y_2]\)에서 바로 나온다. 셋째 주장은 원천이 여럿이면 각 원천의 응답을 따로 구해 더하면 된다는 뜻이고, 10.4절의 합성곱이 이것을 끝까지 밀고 나간 것이다. 비선형 방정식에서는 어느 것도 성립하지 않는다. 진폭이 큰 진자 두 운동을 더한 것은 진자의 운동이 아니다.</p>
+
+    <h3 id="s2-characteristic">특성 방정식</h3>
+    <p>상수 계수 방정식은 지수 함수로 푼다. 지수 함수는 미분해도 모양이 바뀌지 않기 때문이다. \(y = e^{st}\)를 \(a\ddot y + b\dot y + cy = 0\)에 넣으면 \((as^2 + bs + c)e^{st} = 0\)이고, \(e^{st} \ne 0\)이므로 \(s\)가 다음 이차방정식의 근이면 된다.</p>
+    <div class="formula" id="eq-ode-characteristic">\[ \begin{aligned} as^2 + bs + c &= 0 \\ s_\pm &= \frac{-b \pm\sqrt{b^2 - 4ac}}{2a} \end{aligned} \]</div>
+    <p>이것을 미분방정식의 <span class="term">특성 방정식</span> <span class="en">(characteristic equation)</span>이라 한다. 미분 \(d/dt\)를 수 \(s\)로 바꾼 것이다. 10.3절의 진동자 꼴 \(\ddot y + 2\gamma\dot y + \omega_0^2y = 0\)에서는 \(s^2 + 2\gamma s + \omega_0^2 = 0\)이고 근은 \(s_\pm = -\gamma \pm \sqrt{\gamma^2 - \omega_0^2}\)이다. 2장의 <a href="ch02.html#ex-damped-roots">예제 2.1</a>에서 이 근이 복소평면에서 움직이는 모습을 보았다. 판별식에 따라 세 경우로 나뉜다.</p>
+    <div class="formula" id="eq-ode-general-solution">\[ \begin{aligned} &\text{서로 다른 실근: } y = c_1e^{s_+t} + c_2e^{s_-t} \\ &\text{켤레 복소근 } s = \alpha \pm i\beta\text{: } \\ &\qquad y = e^{\alpha t}\big(c_1\cos\beta t + c_2\sin\beta t\big) \\ &\text{중근 } s_0\text{: } y = (c_1 + c_2t)\,e^{s_0t} \end{aligned} \]</div>
+    <p>복소근일 때 \(e^{(\alpha \pm i\beta)t}\)도 해이지만, 계수 \(a, b, c\)가 실수이므로 복소 해의 실수부와 허수부가 따로따로 해다. 오일러 공식 <a href="ch02.html#eq-euler-formula">식 (2.10)</a>에서 \(e^{(\alpha + i\beta)t}\)의 실수부와 허수부가 \(e^{\alpha t}\cos\beta t\)와 \(e^{\alpha t}\sin\beta t\)이다. 중근이면 지수 함수가 하나밖에 없다. 두 번째 해 \(te^{s_0t}\)가 어디서 오는지는 아래의 론스키안으로 유도한다. 남은 질문은 두 가지다. 위의 꼴이 정말 모든 해인가? 두 해를 어떻게 골라야 처음 조건을 언제나 맞출 수 있는가?</p>
+
+    <h3 id="s2-wronskian">론스키안과 선형 독립</h3>
+    <p>\(y = c_1y_1 + c_2y_2\)를 처음 조건 \(y(t_0) = y_0\), \(\dot y(t_0) = v_0\)에 맞추려면 연립 방정식</p>
+    <div class="formula" id="eq-ic-system">\[ \begin{pmatrix} y_1(t_0) & y_2(t_0) \\ \dot y_1(t_0) & \dot y_2(t_0) \end{pmatrix}\begin{pmatrix} c_1 \\ c_2 \end{pmatrix} = \begin{pmatrix} y_0 \\ v_0 \end{pmatrix} \]</div>
+    <p>을 풀어야 한다. 아무 \((y_0, v_0)\)에 대해서나 풀리려면 계수 행렬의 행렬식이 0이 아니어야 한다(7장의 <a href="ch07.html#eq-cramer">크라메르 공식, 식 (7.14)</a>). 이 행렬식에 이름을 붙인다.</p>
+    <div class="box def" id="def-wronskian"><div class="box-h">론스키안</div>
+      <p>미분 가능한 두 함수 \(y_1, y_2\)의 <span class="term">론스키안</span> <span class="en">(Wronskian)</span>은 다음 행렬식이다.</p>
+      <div class="formula" id="eq-wronskian">\[ W[y_1, y_2](t) = \begin{vmatrix} y_1 & y_2 \\ \dot y_1 & \dot y_2 \end{vmatrix} = y_1\dot y_2 - \dot y_1y_2 \]</div>
+      <p>함수 \(n\)개의 론스키안은 \(k\)번째 행에 \((k-1)\)계 도함수를 놓은 \(n \times n\) 행렬식이다.</p>
+    </div>
+    <p>두 해의 론스키안은 시간에 따라 아무렇게나 바뀌지 않는다. 방정식을 \(\ddot y + p(t)\dot y + q(t)y = 0\)으로 나누어 쓰고 \(W\)를 미분하면, \(\dot y_1\dot y_2\) 항이 지워지고</p>
+    <div class="formula">\[ \begin{aligned} \dot W &= y_1\ddot y_2 - \ddot y_1y_2 \\ &= y_1(-p\dot y_2 - qy_2) - (-p\dot y_1 - qy_1)y_2 = -pW \end{aligned} \]</div>
+    <p>이다. \(q\) 항이 지워진 것에 주의하자. \(\dot W = -pW\)는 변수 분리형이므로</p>
+    <div class="formula" id="eq-abel-formula">\[ W(t) = W(t_0)\exp\!\Big(-\int_{t_0}^{t}p(t')\,dt'\Big) \]</div>
+    <p>이다. 이것을 <span class="term">아벨 공식</span> <span class="en">(Abel's formula)</span>이라 한다. 지수 함수는 0이 되지 않으므로, \(W\)는 한 점에서 0이면 모든 곳에서 0이고, 한 점에서 0이 아니면 어디서도 0이 아니다.</p>
+    <div class="box thm" id="thm-wronskian-independence"><div class="box-h">론스키안과 선형 독립</div>
+      <p>구간 \(I\)에서 \(p(t), q(t)\)가 연속이고 \(y_1, y_2\)가 \(\ddot y + p\dot y + qy = 0\)의 해라 하자.</p>
+      <ol>
+        <li>\(W[y_1, y_2]\)는 \(I\) 전체에서 0이거나, \(I\)의 어느 점에서도 0이 아니다.</li>
+        <li>\(y_1, y_2\)가 선형 독립일 필요충분조건은 \(W \ne 0\)이다.</li>
+        <li>\(W \ne 0\)이면 이 방정식의 모든 해는 \(c_1y_1 + c_2y_2\) 꼴로 오직 한 가지로 쓰인다.</li>
+      </ol>
+      <details class="proof"><summary>증명</summary>
+        <p>1은 식 <a class="ref" href="#eq-abel-formula"></a>에서 나온다. 3부터 보이자. \(W(t_0) \ne 0\)이면 아무 해 \(y\)에 대해 식 <a class="ref" href="#eq-ic-system"></a>을 \(y_0 = y(t_0)\), \(v_0 = \dot y(t_0)\)로 풀어 \(c_1, c_2\)를 정할 수 있다. 그러면 \(u = y - c_1y_1 - c_2y_2\)는 같은 방정식의 해이고(<a class="ref" href="#thm-ode-superposition"></a>) \(u(t_0) = \dot u(t_0) = 0\)이다. 초기값 문제의 해는 하나뿐이고 \(u \equiv 0\)도 그 조건을 만족하므로 \(u \equiv 0\)이다. 계수가 오직 한 가지인 것은 행렬식이 0이 아닌 연립 방정식의 해가 하나뿐이기 때문이다.</p>
+        <p>2: 두 해가 선형 종속이면, 예를 들어 \(y_2 = ky_1\)이면 \(W = y_1(k\dot y_1) - \dot y_1(ky_1) = 0\)이다. 거꾸로 \(W \equiv 0\)이면 식 <a class="ref" href="#eq-ic-system"></a>의 동차 방정식(오른쪽이 0)이 0이 아닌 해 \((c_1, c_2)\)를 갖는다(7장의 <a href="ch07.html#thm-homogeneous-solution">정리 7.6</a>). 이때 \(c_1y_1 + c_2y_2\)는 처음 값과 처음 도함수가 0인 해이므로 위와 같은 이유로 어디서나 0이고, 두 해는 선형 종속이다.</p>
+      </details>
+    </div>
+
+    <p>세 경우의 론스키안을 확인하자. 서로 다른 실근이면 \(W[e^{s_+t}, e^{s_-t}] = (s_- - s_+)e^{(s_+ + s_-)t} \ne 0\)이고, 복소근이면 \(W[e^{\alpha t}\cos\beta t, e^{\alpha t}\sin\beta t] = \beta e^{2\alpha t} \ne 0\)이다(\(\beta \ne 0\)). 중근의 두 번째 해는 아벨 공식으로 만든다. 일반적으로 해 하나 \(y_1\)을 알면 \(W = y_1^2\,\tfrac{d}{dt}(y_2/y_1)\)이므로</p>
+    <div class="formula" id="eq-reduction-of-order">\[ y_2(t) = y_1(t)\int\frac{W(t)}{y_1(t)^2}\,dt \]</div>
+    <p>이고, \(W\)는 식 <a class="ref" href="#eq-abel-formula"></a>로 알고 있다. 이 방법을 <span class="term">차수 낮추기</span> <span class="en">(reduction of order)</span>라 한다. 중근 \(s_0\)이면 방정식은 \(\ddot y - 2s_0\dot y + s_0^2y = 0\)이고 \(p = -2s_0\)이므로 \(W = W_0e^{2s_0t}\)이다. \(y_1 = e^{s_0t}\)를 넣으면 \(W/y_1^2 = W_0\)이 상수이므로 \(y_2 = W_0\,te^{s_0t}\)이다. 식 <a class="ref" href="#eq-ode-general-solution"></a>의 \(te^{s_0t}\)는 이렇게 나온다. 10.5절에서는 같은 \(t\)가 행렬 지수에서 다시 나타나는 것을 본다.</p>
+
+    <div class="box ex" id="ex-inverted-pendulum"><div class="box-h">거꾸로 선 진자가 쓰러지는 시간</div>
+      <p>길이 \(L = 0.20\ \text{m}\)인 가벼운 막대 끝에 추를 단 진자를 거꾸로 세웠다. 수직에서 각 \(\phi_0\)만큼 기운 채 가만히 놓았을 때, 기운 각이 \(0.1\ \text{rad}\)에 이르는 시간을 \(\phi_0 = 1.0 \times 10^{-3}\ \text{rad}\)과 \(1.0 \times 10^{-6}\ \text{rad}\)에 대해 구하라.</p>
+      <p><b>풀이.</b> 아래 평형점에서 잰 각 \(\theta\)는 \(\ddot\theta = -(g/L)\sin\theta\)를 따른다. 위 평형점에서 잰 각 \(\phi = \theta - \pi\)로 바꾸면 \(\sin(\pi + \phi) = -\sin\phi\)이므로 \(\ddot\phi = (g/L)\sin\phi \approx (g/L)\phi\)이다. 특성 방정식은 \(s^2 - \lambda^2 = 0\), \(\lambda = \sqrt{g/L}\)이고 근은 \(\pm\lambda\)인 두 실근이다. 처음 조건 \(\phi(0) = \phi_0\), \(\dot\phi(0) = 0\)에 맞추면</p>
+      <div class="formula" id="eq-inverted-pendulum">\[ \phi(t) = \frac{\phi_0}{2}\big(e^{\lambda t} + e^{-\lambda t}\big) = \phi_0\cosh\lambda t \]</div>
+      <p>이다. 두 해 \(e^{\pm\lambda t}\)의 론스키안은 \(-2\lambda\)로 상수다. \(p = 0\)이므로 아벨 공식과 맞다. \(\lambda t \gg 1\)이면 \(\phi \approx \tfrac12\phi_0e^{\lambda t}\)이므로, \(\phi\)가 정해진 값 \(\phi_1\)에 이르는 시간은 \(t \approx \lambda^{-1}\ln(2\phi_1/\phi_0)\)로 처음 기울기의 <b>로그</b>에만 기댄다.</p>
+      <p><b>숫자로 보기.</b> \(\lambda = \sqrt{9.81/0.20}\ \text{s}^{-1} = 7.00\ \text{s}^{-1}\)이다. \(\phi_0 = 10^{-3}\)이면 \(\cosh\lambda t = 100\)에서 \(\lambda t = 5.30\), 곧 \(t = 0.757\ \text{s}\)이다. \(\phi_0 = 10^{-6}\)이면 \(\cosh\lambda t = 10^5\)에서 \(t = 1.74\ \text{s}\)이다. 처음 기울기를 1000배 줄여도 버티는 시간은 \(\ln 1000/\lambda = 0.99\ \text{s}\)만 늘어난다. 연필을 손끝에 세워 두기 어려운 이유다. 처음 조건이 정확히 \(\dot\phi_0 = -\lambda\phi_0\)이면 \(e^{\lambda t}\)의 계수가 0이 되어 진자가 \(\phi_0e^{-\lambda t}\)로 꼭대기에 다가가지만, 이 조건에서 조금만 벗어나도 \(e^{\lambda t}\) 항이 결국 이긴다. 10.5절에서 이 평형점을 안장점이라 부른다.</p>
+      <p><b>다음 항은 몇 차인가.</b> \(\sin\phi = \phi - \phi^3/6 + \cdots\)이므로 선형화의 상대 오차는 \(\phi^2/6\)이다. \(\phi = 0.1\)에서 0.17%이므로 위의 시간은 세 자리까지 믿을 수 있다. 더 큰 각까지 따라가려면 비선형 방정식이 필요하다. 단위 확인: \(\sqrt{g/L}\)은 \(\sqrt{(\text{m/s}^2)/\text{m}} = \text{s}^{-1}\)이고 \(\lambda t\)는 무차원이다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 10.3 -->
+  <section id="s3">
+    <h2>감쇠 진동과 강제 진동</h2>
+    <p>질량 \(m\)인 추가 용수철(상수 \(k\))과 감쇠기(저항 계수 \(b\))에 이어져 있고 바깥 힘 \(F(t)\)를 받는다. 뉴턴 법칙은 \(m\ddot x = -kx - b\dot x + F(t)\)이다. 이 한 줄의 방정식이 진동의 물리 대부분을 담는다. 진동이 얼마나 빨리 잦아드는지, 주기적으로 밀면 얼마나 크게 흔들리는지, 공명 봉우리가 얼마나 날카로운지가 모두 이 식의 해에서 나온다. 2장에서는 복소 지수로 자유 감쇠 진동과 회로의 정상 상태를 보았다. 이 절에서는 두 가지를 하나의 방정식으로 묶는다.</p>
+    <div class="formula" id="eq-damped-oscillator">\[ \ddot x + 2\gamma\dot x + \omega_0^2x = \frac{F(t)}{m} \]<div class="where">\(\gamma = b/2m\)는 <span class="term">감쇠율</span> <span class="en">(damping rate)</span>, \(\omega_0 = \sqrt{k/m}\)은 감쇠가 없을 때의 고유 각진동수다. 둘 다 단위가 \(\text{s}^{-1}\)이다. 무차원 비 \(\zeta = \gamma/\omega_0\)을 <span class="term">감쇠비</span> <span class="en">(damping ratio)</span>라 한다. 이 책은 20장까지 진동자를 이 꼴로 쓴다.</div></div>
+
+    <h3 id="s3-free">자유 감쇠 진동의 세 갈래</h3>
+    <p>\(F = 0\)이면 특성 방정식 \(s^2 + 2\gamma s + \omega_0^2 = 0\)의 근은 \(s_\pm = -\gamma \pm \sqrt{\gamma^2 - \omega_0^2}\)이다. 식 <a class="ref" href="#eq-ode-general-solution"></a>의 세 경우가 그대로 세 가지 운동이 된다. 추를 \(x_0\)까지 당겼다가 가만히 놓는 경우(\(\dot x(0) = 0\))로 계수를 정하면 다음과 같다.</p>
+    <div class="formula" id="eq-damping-regimes">\[ \begin{aligned} &\zeta &lt; 1\text{ (과소 감쇠): } \\ &\quad x = x_0e^{-\gamma t}\Big(\cos\omega_dt + \frac{\gamma}{\omega_d}\sin\omega_dt\Big) \\ &\zeta = 1\text{ (임계 감쇠): } \\ &\quad x = x_0(1 + \omega_0t)\,e^{-\omega_0t} \\ &\zeta > 1\text{ (과대 감쇠): } \\ &\quad x = \frac{x_0}{s_+ - s_-}\big(-s_-e^{s_+t} + s_+e^{s_-t}\big) \end{aligned} \]<div class="where">\(\omega_d = \sqrt{\omega_0^2 - \gamma^2} = \omega_0\sqrt{1 - \zeta^2}\)은 감쇠 진동의 각진동수다. 과소 감쇠의 해는 2장 <a href="ch02.html#eq-damped-solution">식 (2.33)</a>과 같은 것을 코사인과 사인으로 펼친 것이다.</div></div>
+    <p>그림 10-2에 세 운동을 비교했다. 과소 감쇠는 진동하면서 포락선 \(e^{-\gamma t}\)를 따라 줄고, 임계 감쇠는 넘치지 않고 돌아오는 운동 가운데 가장 빠르다. 과대 감쇠가 오히려 느린 것이 처음에는 이상해 보인다. 감쇠가 크면 느린 근이 \(s_+ = -\omega_0(\zeta - \sqrt{\zeta^2 - 1}) \approx -\omega_0/2\zeta = -\omega_0^2/2\gamma\)가 되어, \(\gamma\)를 키울수록 0에 가까워진다. 꿀 속의 추를 생각하면 된다. 가속도를 무시하면 \(b\dot x \approx -kx\)이므로 \(x \propto e^{-kt/b} = e^{-\omega_0^2t/2\gamma}\)로, 저항이 클수록 천천히 돌아온다.</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 270" role="img" aria-label="감쇠비 0.2, 1, 3일 때 놓은 진동자의 변위. 과소 감쇠는 진동하며 줄고, 임계 감쇠는 가장 빨리 넘치지 않고 돌아오며, 과대 감쇠는 천천히 돌아온다"><defs><clipPath id="f1002-clip"><rect x="50" y="14" width="410" height="206"/></clipPath></defs><line x1="50.0" y1="14" x2="50.0" y2="220" class="s-grid"/><line x1="118.3" y1="14" x2="118.3" y2="220" class="s-grid"/><line x1="186.7" y1="14" x2="186.7" y2="220" class="s-grid"/><line x1="255.0" y1="14" x2="255.0" y2="220" class="s-grid"/><line x1="323.3" y1="14" x2="323.3" y2="220" class="s-grid"/><line x1="391.7" y1="14" x2="391.7" y2="220" class="s-grid"/><line x1="460.0" y1="14" x2="460.0" y2="220" class="s-grid"/><line x1="50" y1="207.1" x2="460" y2="207.1" class="s-grid"/><line x1="50" y1="142.8" x2="460" y2="142.8" class="s-grid"/><line x1="50" y1="78.4" x2="460" y2="78.4" class="s-grid"/><line x1="50" y1="14.0" x2="460" y2="14.0" class="s-grid"/><text x="50.0" y="242" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="118.3" y="242" class="t-dim" style="font-size:14px" text-anchor="middle">2</text><text x="186.7" y="242" class="t-dim" style="font-size:14px" text-anchor="middle">4</text><text x="255.0" y="242" class="t-dim" style="font-size:14px" text-anchor="middle">6</text><text x="323.3" y="242" class="t-dim" style="font-size:14px" text-anchor="middle">8</text><text x="391.7" y="242" class="t-dim" style="font-size:14px" text-anchor="middle">10</text><text x="460.0" y="242" class="t-dim" style="font-size:14px" text-anchor="middle">12</text><text x="42" y="212.1" class="t-dim" style="font-size:14px" text-anchor="end">−0.5</text><text x="42" y="147.8" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="42" y="83.4" class="t-dim" style="font-size:14px" text-anchor="end">0.5</text><text x="42" y="19.0" class="t-dim" style="font-size:14px" text-anchor="end">1</text><line x1="50" y1="142.8" x2="460" y2="142.8" class="s-line"/><line x1="50" y1="14" x2="50" y2="220" class="s-line"/><path d="M50,14l5.1,1.4 6.2,5.3 6.1,8.6 6.2,11.6 12.3,29.8 28.7,79.2 14.3,31.9 7.2,11.9 6.1,7.7 6.2,5.4 6.2,3 6.1,.7 6.1,-1.4 6.2,-3.5 6.2,-5.1 13.3,-15.7 27.7,-40.4 13.3,-16.9 14.3,-13.2 7.2,-4.1 6.1,-2.2 6.2,-.9 7.2,.4 13.3,4.4 13.3,8.1 28.7,22 12.3,8.3 14.4,7.1 13.3,3.5 13.3,.5 15.4,-2.7 14.3,-4.8 31.8,-12.7 15.4,-4.8" class="s-acc"  clip-path="url(#f1002-clip)"/><path d="M50,14l9.2,2.9 44.1,24.3 38.9,18.1 41,15.5 44.1,13.5 50.3,12.1 55.3,10.3 60.5,8.4 66.6,6.7" class="s-acc2" stroke-dasharray="7 5" clip-path="url(#f1002-clip)"/><path d="M50,14l7.2,2.5 8.2,7.2 39.9,52.3 11.3,12.7 11.3,10.9 12.3,9.7 12.3,7.8 13.3,6.6 15.4,5.7 16.4,4.2 18.5,3.3 45,3.9 64.6,1.6 134.3,.3" class="s-line" style="stroke:var(--text);stroke-width:2.6" clip-path="url(#f1002-clip)"/><line x1="300" y1="34" x2="330" y2="34" class="s-acc"/><text x="338" y="39" class="t" style="font-size:15px">ζ = 0.2 과소</text><line x1="300" y1="56" x2="330" y2="56" class="s-line" style="stroke:var(--text);stroke-width:2.6"/><text x="338" y="61" class="t" style="font-size:15px">ζ = 1 임계</text><line x1="300" y1="78" x2="330" y2="78" class="s-acc2" stroke-dasharray="7 5"/><text x="338" y="83" class="t" style="font-size:15px">ζ = 3 과대</text><text x="460" y="262" class="t-dim" style="font-size:14px" text-anchor="end">ω₀t</text><text x="56" y="28" class="t-dim" style="font-size:14px">x / x₀</text></svg>
+      <figcaption><b>그림 10-2.</b> 가만히 놓은 진동자의 변위(식 <a class="ref" href="#eq-damping-regimes"></a>). 가로축은 \(\omega_0t\)이다. \(\zeta = 0.2\)(과소 감쇠, 실선)는 진동하며 줄고, \(\zeta = 1\)(임계 감쇠, 굵은 선)은 넘치지 않고 가장 빨리 돌아오며, \(\zeta = 3\)(과대 감쇠, 점선)은 느린 근 \(s_+ = -0.17\omega_0\)에 묶여 오래 머문다.</figcaption>
+    </figure>
+    <div data-sim="damped-spring" data-title="감쇠의 세 갈래 — 특성 근이 정하는 운동" data-note="해볼 것: 감쇠비 ζ를 0에서 1까지 키우면 특성 근 −γ ± iω_d가 복소수에서 중근(ζ = 1)으로 바뀌고, 진동이 사라지는 순간이 임계 감쇠입니다. ζ = 2(‘과대’ 예시)처럼 크게 하면 느린 근 −ω₀(ζ − √(ζ² − 1))이 0에 가까워져 오히려 늦게 돌아오는 것을 확인하세요. 에너지 그래프의 기울기는 −2mγv²입니다."></div>
+
+    <h3 id="s3-energy">에너지와 품질 인자</h3>
+    <p>감쇠가 에너지를 얼마나 빨리 빼앗는지 보자. 역학적 에너지 \(E = \tfrac12 m\dot x^2 + \tfrac12 kx^2\)을 미분하고 운동 방정식(\(F = 0\))을 쓰면</p>
+    <div class="formula" id="eq-oscillator-energy-loss">\[ \frac{dE}{dt} = \dot x\,(m\ddot x + kx) = -b\dot x^2 = -2m\gamma\dot x^2 \]</div>
+    <p>이다. 감쇠가 약하면(\(\gamma \ll \omega_0\)) 한 주기 동안의 운동은 거의 단진동이고, 단진동에서는 운동 에너지와 퍼텐셜 에너지의 주기 평균이 같아 \(\langle\tfrac12 m\dot x^2\rangle = \tfrac12 E\)이다. 그러면 주기 평균한 에너지는 \(d\langle E\rangle/dt \approx -2\gamma\langle E\rangle\)를 따라 \(E \approx E_0e^{-2\gamma t}\)로 준다. 진폭이 \(e^{-\gamma t}\)이므로 에너지가 그 제곱인 것은 당연하다. 한 주기 \(2\pi/\omega_0\) 동안 잃는 에너지의 비율은 \(2\gamma\cdot 2\pi/\omega_0\)이다. 이 비를 뒤집은 양으로 진동자의 "질"을 잰다.</p>
+    <div class="formula" id="eq-quality-factor">\[ \begin{aligned} Q &= \frac{\omega_0}{2\gamma} = \frac{1}{2\zeta} \\ &\approx 2\pi\times\frac{\text{저장된 에너지}}{\text{한 주기에 잃는 에너지}} \end{aligned} \]</div>
+    <p>\(Q\)를 <span class="term">품질 인자</span> <span class="en">(quality factor)</span>라 한다. 첫 줄이 정의이고, 둘째 줄은 감쇠가 약할 때의 해석이다. 진폭이 \(1/e\)로 줄 때까지 \(1/\gamma\)의 시간, 곧 \(Q/\pi\)번 진동한다. 2장의 <a href="ch02.html#ex-damped-complex">예제 2.6</a>의 진동자는 \(Q = 1.8\)이라 두어 번 흔들리고 멈추었다. 소리굽쇠는 \(Q\)가 수천이고(<a class="ref" href="#prob-tuning-fork-q"></a>), 원자 시계의 공진기는 그보다 훨씬 크다.</p>
+
+    <h3 id="s3-driven">강제 진동과 정상 상태</h3>
+    <p>이제 주기적인 힘 \(F(t) = F_0\cos\omega t\)를 가한다. 이 책의 관례(2장 <a href="ch02.html#eq-time-convention">식 (2.28)</a>)에 따라 \(F = \operatorname{Re}[F_0e^{-i\omega t}]\)로 쓰고, 같은 진동수로 흔들리는 해 \(x = \operatorname{Re}[\tilde x\,e^{-i\omega t}]\)를 찾는다. \(d/dt\)가 \(-i\omega\)를 곱하는 것이 되므로 식 <a class="ref" href="#eq-damped-oscillator"></a>는 대수 방정식 \((-\omega^2 - 2i\gamma\omega + \omega_0^2)\tilde x = F_0/m\)이 된다.</p>
+    <div class="formula" id="eq-driven-response">\[ \begin{aligned} \tilde x &= \frac{F_0/m}{\omega_0^2 - \omega^2 - 2i\gamma\omega} = A(\omega)\,e^{i\phi(\omega)} \\ A(\omega) &= \frac{F_0/m}{\sqrt{(\omega_0^2 - \omega^2)^2 + 4\gamma^2\omega^2}} \\ \tan\phi &= \frac{2\gamma\omega}{\omega_0^2 - \omega^2},\quad 0 \le \phi \le \pi \end{aligned} \]</div>
+    <p>실수부를 취하면 \(x(t) = A\cos(\omega t - \phi)\)이다. 2장의 <a href="ch02.html#def-phasor">정의 2.6</a>에서 정한 대로 이 책에서는 <b>페이저의 편각이 클수록 진동이 늦다.</b> 따라서 \(\phi\)는 변위가 힘보다 늦는 위상이다. \(1/(\omega_0^2 - \omega^2 - 2i\gamma\omega)\)의 허수부는 \(2\gamma\omega/\lvert\cdot\rvert^2 > 0\)이므로 \(\phi\)는 언제나 0과 \(\pi\) 사이에 있다. 응답은 힘보다 앞서지 않는다. 세 영역을 읽어 보자.</p>
+    <ul>
+      <li><b>\(\omega \ll \omega_0\)</b>: \(A \to F_0/m\omega_0^2 = F_0/k\), \(\phi \to 0\). 용수철이 힘을 정적으로 따라간다.</li>
+      <li><b>\(\omega = \omega_0\)</b>: \(A = F_0/2m\gamma\omega_0 = Q\,F_0/k\), \(\phi = \pi/2\). 정적 변위의 \(Q\)배로 흔들리고, 변위가 힘보다 90° 늦으므로 속도는 힘과 위상이 같다.</li>
+      <li><b>\(\omega \gg \omega_0\)</b>: \(A \approx F_0/m\omega^2\), \(\phi \to \pi\). 관성이 지배하고 추는 힘과 반대로 움직인다.</li>
+    </ul>
+    <p>정상 상태는 해의 일부일 뿐이다. 10.4절의 <a class="ref" href="#thm-nonhomogeneous-general"></a>에 따라 일반해는 정상 상태 해에 동차 해(식 <a class="ref" href="#eq-damping-regimes"></a>의 꼴)를 더한 것이다. 동차 해는 \(e^{-\gamma t}\)로 사라지는 <span class="term">과도 응답</span> <span class="en">(transient)</span>이고, 처음 조건은 이 부분이 맞춘다. 과도 응답이 사라지는 데는 \(1/\gamma = 2Q/\omega_0\) 정도의 시간이 걸린다.</p>
+
+    <h3 id="s3-resonance">공명과 공명 폭</h3>
+    <p>진폭이 가장 큰 진동수는 \(A\)의 분모 \(D(u) = (\omega_0^2 - u)^2 + 4\gamma^2u\) (\(u = \omega^2\))를 가장 작게 하는 곳이다. \(dD/du = -2(\omega_0^2 - u) + 4\gamma^2 = 0\)에서 \(u = \omega_0^2 - 2\gamma^2\)이고, 그때 \(D = 4\gamma^2(\omega_0^2 - \gamma^2) = 4\gamma^2\omega_d^2\)이다.</p>
+    <div class="formula" id="eq-amplitude-resonance">\[ \begin{aligned} \omega_r &= \sqrt{\omega_0^2 - 2\gamma^2} \qquad (\zeta &lt; 1/\sqrt2) \\ A_{\max} &= \frac{F_0}{2m\gamma\omega_d} = \frac{F_0}{k}\,\frac{Q}{\sqrt{1 - 1/4Q^2}} \end{aligned} \]</div>
+    <p>\(\zeta \ge 1/\sqrt2\)이면 진폭은 \(\omega = 0\)에서 가장 크고 봉우리가 없다. 진폭보다 물리적으로 깔끔한 양은 흡수 전력이다. 힘이 한 주기 동안 평균적으로 하는 일률 \(\langle F\dot x\rangle\)는 2장의 <a href="ch02.html#thm-time-average">정리 2.4</a>로 계산한다. 속도의 페이저 \(-i\omega\tilde x\)를 쓰면 \(\bar P = \tfrac12\operatorname{Re}\big[F_0(-i\omega\tilde x)^*\big] = \tfrac12F_0\omega A\sin\phi\)이고, 식 <a class="ref" href="#eq-driven-response"></a>에서 \(A\sin\phi = \operatorname{Im}\tilde x = (F_0/m)\,2\gamma\omega/D\)이므로</p>
+    <div class="formula" id="eq-power-absorbed">\[ \bar P(\omega) = \frac{F_0^2}{m}\,\frac{\gamma\,\omega^2}{(\omega_0^2 - \omega^2)^2 + 4\gamma^2\omega^2} = m\gamma\,\omega^2A^2 \]</div>
+    <p>이다. 마지막 꼴은 감쇠력이 빼앗는 일률의 평균 \(\langle b\dot x^2\rangle = \tfrac12 b\omega^2A^2\)과 같다. 정상 상태에서는 힘이 넣는 에너지를 감쇠가 그대로 열로 내보낸다. 분자와 분모를 \(\omega^2\)으로 나누면 분모가 \((\omega_0^2/\omega - \omega)^2 + 4\gamma^2\)이므로, \(\bar P\)는 정확히 \(\omega = \omega_0\)에서 가장 크고 최댓값은 \(\bar P_{\max} = F_0^2/4m\gamma\)이다. 절반이 되는 곳은 \((\omega_0^2/\omega - \omega)^2 = 4\gamma^2\), 곧 \(\omega_0^2 - \omega^2 = \pm 2\gamma\omega\)이고, 양의 근은 \(\omega_\pm = \sqrt{\omega_0^2 + \gamma^2} \pm \gamma\)이다. 따라서</p>
+    <div class="formula" id="eq-resonance-width">\[ \Delta\omega = \omega_+ - \omega_- = 2\gamma,\qquad Q = \frac{\omega_0}{\Delta\omega} \]</div>
+    <p>이다. 근사 없이 성립하는 결과다. 품질 인자는 공명 봉우리의 날카로움이다. 자유 진동이 오래 울리는 계(\(Q\) 큼)일수록 좁은 진동수 띠에만 반응한다. 그림 10-3에 \(Q = 1, 2, 5\)의 공명 곡선과 위상을 그렸다.</p>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 260" role="img" aria-label="Q가 1, 2, 5일 때 정상 상태 진폭을 구동 진동수에 대해 그린 공명 곡선"><defs><clipPath id="f1003-clip"><rect x="46" y="16" width="316" height="190"/></clipPath></defs><line x1="46.0" y1="16" x2="46.0" y2="206" class="s-grid"/><line x1="125.0" y1="16" x2="125.0" y2="206" class="s-grid"/><line x1="204.0" y1="16" x2="204.0" y2="206" class="s-grid"/><line x1="283.0" y1="16" x2="283.0" y2="206" class="s-grid"/><line x1="362.0" y1="16" x2="362.0" y2="206" class="s-grid"/><line x1="46" y1="206.0" x2="362" y2="206.0" class="s-grid"/><line x1="46" y1="171.5" x2="362" y2="171.5" class="s-grid"/><line x1="46" y1="136.9" x2="362" y2="136.9" class="s-grid"/><line x1="46" y1="102.4" x2="362" y2="102.4" class="s-grid"/><line x1="46" y1="67.8" x2="362" y2="67.8" class="s-grid"/><line x1="46" y1="33.3" x2="362" y2="33.3" class="s-grid"/><text x="46.0" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="125.0" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">0.5</text><text x="204.0" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">1</text><text x="283.0" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">1.5</text><text x="362.0" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">2</text><text x="38" y="211.0" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="38" y="176.5" class="t-dim" style="font-size:14px" text-anchor="end">1</text><text x="38" y="141.9" class="t-dim" style="font-size:14px" text-anchor="end">2</text><text x="38" y="107.4" class="t-dim" style="font-size:14px" text-anchor="end">3</text><text x="38" y="72.8" class="t-dim" style="font-size:14px" text-anchor="end">4</text><text x="38" y="38.3" class="t-dim" style="font-size:14px" text-anchor="end">5</text><line x1="46" y1="206.0" x2="362" y2="206.0" class="s-line"/><line x1="46" y1="16" x2="46" y2="206" class="s-line"/><path d="M46,171.5l37.9,-1 64,-4.2 26.1,.4 23.7,3.4 52.1,12.1 30.8,5.7 37.2,4.8 44.2,3.7" class="s-acc2" stroke-dasharray="7 5" clip-path="url(#f1003-clip)"/><path d="M46,171.5l39.5,-2 34,-5.8 26.8,-8.8 36.4,-17.9 6.3,-1.9 6.3,-.4 6.3,1.3 6.3,2.9 36.4,26.5 13.4,7.4 14.2,5.9 17.4,5.3 20.6,4.5 23.7,3.6 28.4,3" class="s-acc"  clip-path="url(#f1003-clip)"/><path d="M46,171.5l35.6,-1.8 30,-5.2 11.8,-3.6 11.1,-4.6 9.5,-5.3 8.7,-6.6 12.6,-14.2 10.3,-18.5 8.6,-23.8 12.7,-46.2 3.1,-7.4 2.4,-1.9 2.4,1.9 3.1,8.1 12.7,53.1 8.7,27.5 10.3,21 11.8,15.1 7.9,7 9.5,6.3 10.3,5.1 12.6,4.7 30,7.1 40.3,5.3" class="s-line" style="stroke:var(--text);stroke-width:2.4" clip-path="url(#f1003-clip)"/><text x="213.5" y="38.5" class="t-math" text-anchor="start">Q = 5</text><text x="219.8" y="133.5" class="t-math acc" text-anchor="start">Q = 2</text><text x="93.4" y="159.4" class="t-math acc2" text-anchor="middle">Q = 1</text><text x="362" y="250" class="t-dim" style="font-size:14px" text-anchor="end">ω / ω₀</text><text x="52" y="30" class="t-dim" style="font-size:14px">A / (F₀/k)</text></svg><svg viewBox="0 0 380 260" role="img" aria-label="Q가 1, 2, 5일 때 응답이 힘보다 늦는 위상 φ. 공명에서 90도이고, Q가 클수록 0도에서 180도로 급하게 바뀐다"><line x1="46.0" y1="16" x2="46.0" y2="206" class="s-grid"/><line x1="125.0" y1="16" x2="125.0" y2="206" class="s-grid"/><line x1="204.0" y1="16" x2="204.0" y2="206" class="s-grid"/><line x1="283.0" y1="16" x2="283.0" y2="206" class="s-grid"/><line x1="362.0" y1="16" x2="362.0" y2="206" class="s-grid"/><line x1="46" y1="206.0" x2="362" y2="206.0" class="s-grid"/><line x1="46" y1="158.5" x2="362" y2="158.5" class="s-grid"/><line x1="46" y1="111.0" x2="362" y2="111.0" class="s-grid"/><line x1="46" y1="63.5" x2="362" y2="63.5" class="s-grid"/><line x1="46" y1="16.0" x2="362" y2="16.0" class="s-grid"/><text x="46.0" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="125.0" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">0.5</text><text x="204.0" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">1</text><text x="283.0" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">1.5</text><text x="362.0" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">2</text><text x="38" y="211.0" class="t-dim" style="font-size:14px" text-anchor="end">0°</text><text x="38" y="163.5" class="t-dim" style="font-size:14px" text-anchor="end">45°</text><text x="38" y="116.0" class="t-dim" style="font-size:14px" text-anchor="end">90°</text><text x="38" y="68.5" class="t-dim" style="font-size:14px" text-anchor="end">135°</text><text x="38" y="21.0" class="t-dim" style="font-size:14px" text-anchor="end">180°</text><line x1="46" y1="206.0" x2="362" y2="206.0" class="s-line"/><line x1="46" y1="16" x2="46" y2="206" class="s-line"/><path d="M46,206l48.2,-19.6 34,-17.8 27.6,-18.9 58.5,-46.3 17.4,-11.3 17.3,-9.5 22.9,-9.8 26.1,-8.3 30,-7.1 34,-5.8" class="s-acc2" stroke-dasharray="7 5"/><path d="M46,206l40.3,-8.2 27.6,-7.4 22.2,-8.6 18.1,-10.5 13.5,-11.1 11.8,-13.2 31.6,-46.5 12.7,-16.2 14.2,-13.5 15.8,-10.4 18.9,-8.4 23.7,-6.8 29.3,-5.4 36.3,-4.3" class="s-acc" /><path d="M46,206l54.5,-4.7 33.2,-4.9 22.9,-6.6 8.7,-4.2 7.9,-5.5 10.3,-11.7 7.9,-15.3 6.3,-18.7 12.6,-46 7.9,-20.5 4.8,-8.2 5.5,-7.1 5.5,-5.2 7.1,-4.8 17.4,-7.2 23.7,-5 33.2,-3.7 46.6,-2.7" class="s-line" style="stroke:var(--text);stroke-width:2.4"/><text x="229.3" y="37.1" class="t-math" text-anchor="start">Q = 5</text><text x="112.4" y="151.1" class="t-math acc2" text-anchor="middle">Q = 1</text><text x="362" y="250" class="t-dim" style="font-size:14px" text-anchor="end">ω / ω₀</text><text x="52" y="30" class="t-dim" style="font-size:14px">위상 지연 φ</text><text x="270.4" y="68.0" class="t-math acc" text-anchor="start">Q = 2</text></svg></div>
+      <figcaption><b>그림 10-3.</b> 강제 진동자의 정상 상태(식 <a class="ref" href="#eq-driven-response"></a>). 왼쪽: 정적 변위 \(F_0/k\)로 나눈 진폭. \(Q\)가 클수록 봉우리가 높고(\(\omega_0\)에서 높이 \(Q\)) 좁다. 오른쪽: 변위가 힘보다 늦는 위상 \(\phi\). 세 곡선 모두 \(\omega = \omega_0\)에서 90°를 지나고, \(Q\)가 클수록 0°에서 180°로 급하게 바뀐다.</figcaption>
+    </figure>
+    <div data-sim="oscillator" data-title="공명 곡선과 위상 지연" data-note="해볼 것: 감쇠비 ζ = γ/ω₀를 줄이면 공명 봉우리가 높아지고(봉우리 높이 ≈ Q, Q = 1/2ζ) 좁아집니다. 위상 지연이 공명에서 90°를 지나는지, ω ≫ ω₀에서 180°에 다가가는지 보세요. ω를 ω₀ 근처에 두고 '정지 상태에서 다시'를 누르면 과도 응답이 약 1/γ의 시간 동안 맥놀이처럼 섞였다가 사라집니다."></div>
+
+    <div class="box ex" id="ex-driven-resonance"><div class="box-h">강제 진동자의 공명 곡선</div>
+      <p>질량 \(m = 0.50\ \text{kg}\), 용수철 상수 \(k = 200\ \text{N/m}\), 저항 계수 \(b = 0.50\ \text{kg/s}\)인 진동자를 진폭 \(F_0 = 0.10\ \text{N}\)인 힘으로 흔든다. (가) \(\omega_0\), \(\gamma\), \(Q\)를 구하라. (나) \(\omega = 18, 20, 22\ \text{s}^{-1}\)에서 정상 상태의 진폭과 위상을 구하라. (다) 공명에서 흡수 전력과 반전력 진동수를 구하라. (라) 과도 응답이 처음의 1%로 줄 때까지 걸리는 시간은?</p>
+      <p><b>풀이.</b> (가) \(\omega_0 = \sqrt{200/0.50}\ \text{s}^{-1} = 20.0\ \text{s}^{-1}\)(\(f_0 = 3.18\ \text{Hz}\)), \(\gamma = b/2m = 0.50\ \text{s}^{-1}\)이므로 \(\zeta = 0.025\), \(Q = 20\)이다. 정적 변위는 \(F_0/k = 0.50\ \text{mm}\)이다.</p>
+      <p>(나) 식 <a class="ref" href="#eq-driven-response"></a>에 \(F_0/m = 0.20\ \text{m/s}^2\)를 넣는다.</p>
+      <div class="formula">\[ \begin{aligned} \omega = 18&:\ A = \frac{0.20}{\sqrt{76^2 + 18^2}} = 2.56\ \text{mm} \\ \omega = 20&:\ A = \frac{0.20}{20} = 10.0\ \text{mm} \\ \omega = 22&:\ A = \frac{0.20}{\sqrt{84^2 + 22^2}} = 2.30\ \text{mm} \end{aligned} \]</div>
+      <p>(분모의 단위는 \(\text{s}^{-2}\)). 위상은 \(\arctan(18/76) = 13.3°\), \(90°\), \(180° - \arctan(22/84) = 165.3°\)이다. 공명에서 진폭은 정적 변위의 \(Q = 20\)배다. 진동수를 10%만 바꿔도 진폭이 4분의 1 안팎(2.56 mm, 2.30 mm)으로 떨어진다. 진폭이 가장 큰 \(\omega_r = \sqrt{400 - 0.5}\ \text{s}^{-1} = 19.987\ \text{s}^{-1}\)에서의 진폭은 \(\omega_0\)에서보다 0.03%(\(\approx 1/8Q^2\)) 클 뿐이다.</p>
+      <p>(다) \(\bar P_{\max} = F_0^2/4m\gamma = (0.10)^2/(4 \times 0.50 \times 0.50)\ \text{W} = 10\ \text{mW}\)이다. 식 <a class="ref" href="#eq-power-absorbed"></a>의 두 번째 꼴로도 \(m\gamma\omega_0^2A^2 = 0.50 \times 0.50 \times 400 \times (0.010)^2\ \text{W} = 10\ \text{mW}\)이다. 반전력 진동수는 \(\sqrt{400.25} \pm 0.5\), 곧 \(19.51\ \text{s}^{-1}\)과 \(20.51\ \text{s}^{-1}\)이고 폭은 \(2\gamma = 1.0\ \text{s}^{-1}\)이다.</p>
+      <p>(라) 과도 응답은 \(e^{-\gamma t}\)로 주므로 \(t = \ln 100/\gamma = 9.2\ \text{s}\), 곧 약 29번 진동하는 시간이다. 정상 상태에 이르기까지 \(Q\)에 비례하는 횟수만큼 흔들어야 한다는 뜻이다. 차원 확인: \(F_0/m\)을 \(\text{s}^{-2}\)으로 나누면 길이이고, \(F_0^2/m\gamma\)는 \(\text{N}^2/(\text{kg}\cdot\text{s}^{-1}) = \text{N}\cdot\text{m/s} = \text{W}\)이다.</p>
+    </div>
+
+    <h3 id="s3-rlc">RLC 회로와의 대응</h3>
+    <p>2장 <a href="ch02.html#eq-rlc-ode">식 (2.37)</a>의 직렬 RLC 회로 \(L\,dI/dt + RI + q/C = v(t)\)에 \(I = \dot q\)를 넣고 \(L\)로 나누면 \(\ddot q + (R/L)\dot q + q/LC = v/L\)이다. 식 <a class="ref" href="#eq-damped-oscillator"></a>와 똑같은 꼴이다. 그래서 이 절의 모든 결과를 회로로 그대로 옮길 수 있다.</p>
+    <div class="box ex" id="ex-rlc-analogy"><div class="box-h">RLC 회로와 진동자의 대응</div>
+      <p>진동자와 직렬 RLC 회로의 양을 짝지어 표로 정리하라. 그 표로 2장의 <a href="ch02.html#ex-rlc-impedance">예제 2.8</a>의 회로(\(R = 30\ \Omega\), \(L = 80\ \text{mH}\), \(C = 25\ \mu\text{F}\), 진폭 \(100\ \text{V}\), \(\omega = 1000\ \text{s}^{-1}\))의 \(\gamma\), \(\omega_0\), \(Q\)를 구하고, 식 <a class="ref" href="#eq-driven-response"></a>로 구한 전류가 2장의 결과와 같은지 확인하라.</p>
+      <p><b>풀이.</b> 두 방정식 \(m\ddot x + b\dot x + kx = F\)와 \(L\ddot q + R\dot q + q/C = v\)를 항마다 맞추면 다음 표가 된다.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>진동자</th><th>RLC 회로</th></tr></thead>
+        <tbody>
+          <tr><td>변위 \(x\), 속도 \(\dot x\)</td><td>전하 \(q\), 전류 \(I = \dot q\)</td></tr>
+          <tr><td>질량 \(m\)</td><td>인덕턴스 \(L\)</td></tr>
+          <tr><td>저항 계수 \(b\)</td><td>저항 \(R\)</td></tr>
+          <tr><td>용수철 상수 \(k\)</td><td>\(1/C\)</td></tr>
+          <tr><td>힘 \(F(t)\)</td><td>전원 전압 \(v(t)\)</td></tr>
+          <tr><td>\(\tfrac12 m\dot x^2\), \(\tfrac12 kx^2\)</td><td>\(\tfrac12 LI^2\), \(q^2/2C\)</td></tr>
+          <tr><td>\(\gamma = b/2m\)</td><td>\(\gamma = R/2L\)</td></tr>
+          <tr><td>\(\omega_0 = \sqrt{k/m}\)</td><td>\(\omega_0 = 1/\sqrt{LC}\)</td></tr>
+          <tr><td>\(Q = \sqrt{km}/b\)</td><td>\(Q = \omega_0L/R = \sqrt{L/C}/R\)</td></tr>
+          <tr><td>\(\tilde F/\tilde v = b - i(\omega m - k/\omega)\)</td><td>\(Z = R - i(\omega L - 1/\omega C)\)</td></tr>
+        </tbody>
+      </table></div>
+      <p>마지막 줄의 역학적 임피던스는 \(m(-i\omega)\tilde v + b\tilde v + k\tilde v/(-i\omega) = \tilde F\)에서 나오고, 2장 <a href="ch02.html#eq-series-rlc">식 (2.40)</a>의 임피던스와 짝을 이룬다. 예제의 회로에서는</p>
+      <div class="formula">\[ \begin{aligned} \gamma &= \frac{R}{2L} = \frac{30}{0.160}\ \text{s}^{-1} = 187.5\ \text{s}^{-1} \\ \omega_0 &= \frac{1}{\sqrt{LC}} = 707.1\ \text{s}^{-1},\quad Q = \frac{\omega_0}{2\gamma} = 1.89 \end{aligned} \]</div>
+      <p>이다. \(\zeta = 0.27 &lt; 1\)이므로 전원을 끊으면 전하가 \(\omega_d = 682\ \text{s}^{-1}\)로 진동하며 \(1/\gamma = 5.3\ \text{ms}\)마다 \(1/e\)로 준다. \(\omega = 1000\ \text{s}^{-1}\)에서 전하의 페이저는 식 <a class="ref" href="#eq-driven-response"></a>에서 \(\tilde q = (\tilde V/L)/(\omega_0^2 - \omega^2 - 2i\gamma\omega)\)이고, \(\omega_0^2 - \omega^2 = -5.0 \times 10^5\ \text{s}^{-2}\), \(2\gamma\omega = 3.75 \times 10^5\ \text{s}^{-2}\)이다. 전류는 \(\tilde I = -i\omega\tilde q\)이므로</p>
+      <div class="formula">\[ \begin{aligned} \tilde I &= \frac{-i(1000)(100/0.080)}{-5.0\times10^5 - 3.75\times10^5\,i}\ \text{A} \\ &= (1.2 + 1.6i)\ \text{A} \end{aligned} \]</div>
+      <p>로 2장의 결과와 같다. 편각 \(53.1°\)가 양수이므로 이 책의 관례에서 전류는 전압보다 \(53.1°\) 늦다. 이 진동수에서 \(Z = (30 - 40i)\ \Omega\)는 \(\operatorname{Im}Z &lt; 0\)인 유도성 부하이고, 전류는 전압보다 \(-\arg Z = 53.1°\)만큼 늦는다. 2장의 <a href="ch02.html#def-impedance">정의 2.7</a>과 같은 관례다.</p>
+      <p><b>숫자로 보기.</b> 전류(진동자의 속도에 해당)의 진폭은 \(\lvert\tilde V\rvert/\lvert Z\rvert\)이고 \(\lvert Z\rvert\)는 \(\omega_0\)에서 가장 작으므로, 전류 공명은 \(\omega_r\)이 아니라 정확히 \(\omega_0 = 707\ \text{s}^{-1}\)에서 일어난다. 반전력 폭은 식 <a class="ref" href="#eq-resonance-width"></a>에서 \(2\gamma = R/L = 375\ \text{s}^{-1}\)이다. \(R/L\)의 단위는 \(\Omega/(\Omega\cdot\text{s}) = \text{s}^{-1}\)로 맞다. \(Q = 1.9\)는 낮은 값이라 이 회로는 진동수를 잘 고르지 못한다. 라디오의 동조 회로는 \(Q\)가 백 단위다(<a class="ref" href="#prob-radio-tuning"></a>).</p>
+    </div>
+
+    <div class="callout warn"><strong>감쇠율과 "공명 진동수"는 교재마다 다르게 쓴다</strong><p>이 책은 감쇠 항을 \(2\gamma\dot x\)로 써서 진폭이 \(e^{-\gamma t}\)로 줄고 \(Q = \omega_0/2\gamma\)이다. 많은 교재와 논문은 \(\ddot x + \gamma\dot x + \omega_0^2x\)로 써서(\(\gamma = b/m\)) 진폭이 \(e^{-\gamma t/2}\)로 줄고 \(Q = \omega_0/\gamma\)이며, 이때 \(\gamma\)는 에너지 감쇠율이자 흡수 봉우리의 반전력 폭이다. \(\beta\), \(\Gamma\), \(1/\tau\)를 쓰는 교재도 있으므로 식을 옮길 때는 감쇠 항의 계수를 먼저 확인한다. "공명 진동수"도 세 가지가 있다. 전력(속도) 공명 \(\omega_0\), 자유 감쇠 진동 \(\omega_d = \sqrt{\omega_0^2 - \gamma^2}\), 진폭 공명 \(\omega_r = \sqrt{\omega_0^2 - 2\gamma^2}\)이다. 셋의 차이는 \(1/Q^2\) 차수라서 \(Q\)가 크면 구별하지 않아도 되지만, \(Q\)가 작은 계에서는 어느 것인지 밝힌다. 전기공학의 \(e^{j\omega t}\) 관례에서는 위상의 부호가 반대다(10.6절의 표).</p></div>
+  </section>
+
+  <!-- ============================================================ 10.4 -->
+  <section id="s4">
+    <h2>비동차 방정식과 매개변수 변화법</h2>
+    <p>진동자를 사인파로만 흔드는 것은 아니다. 망치로 한 번 치기도 하고, 짐을 갑자기 올려놓기도 하고, 지진처럼 불규칙하게 흔들기도 한다. 힘이 어떤 모양이든 응답을 구하는 방법이 필요하다. 이 절에서는 먼저 비동차 방정식의 해의 구조를 정리하고, 특수해를 언제나 만들어 내는 매개변수 변화법을 유도한다. 그 결과를 물리로 읽으면 충격 응답과 합성곱이 나온다.</p>
+
+    <h3 id="s4-structure">해의 구조</h3>
+    <div class="box thm" id="thm-nonhomogeneous-general"><div class="box-h">비동차 방정식의 일반해</div>
+      <p>구간 \(I\)에서 \(p, q, f\)가 연속이고, \(y_1, y_2\)가 \(\ddot y + p\dot y + qy = 0\)의 선형 독립인 해, \(y_p\)가 \(\ddot y + p\dot y + qy = f\)의 해 하나라 하자. 그러면 비동차 방정식의 모든 해는 다음 꼴이다.</p>
+      <div class="formula" id="eq-general-nonhomogeneous">\[ y = y_p + c_1y_1 + c_2y_2 \]</div>
+    </div>
+    <p>증명은 두 정리를 잇기만 하면 된다. 아무 해 \(y\)에 대해 \(y - y_p\)는 동차 방정식의 해이고(<a class="ref" href="#thm-ode-superposition"></a>의 2), 동차 방정식의 해는 모두 \(c_1y_1 + c_2y_2\)이다(<a class="ref" href="#thm-wronskian-independence"></a>의 3). 그래서 비동차 문제는 특수해 \(y_p\) 하나를 찾는 문제가 된다. \(y_p\)는 아무것이나 하나면 되고, 처음 조건은 \(c_1, c_2\)가 맞춘다.</p>
+
+    <h3 id="s4-undetermined">미정계수법과 공명 성장</h3>
+    <p>원천 \(f\)가 다항식, 지수 함수, 사인과 코사인, 또는 그 곱이면 \(y_p\)도 같은 꼴로 짐작하고 계수를 맞추면 된다. 이런 함수는 미분해도 같은 부류에 머물기 때문이다. 이것을 <span class="term">미정계수법</span> <span class="en">(method of undetermined coefficients)</span>이라 한다. 10.3절에서 \(F_0\cos\omega t\)에 \(\operatorname{Re}[\tilde x e^{-i\omega t}]\)를 짐작한 것이 그 예다. 짐작한 꼴이 동차 방정식의 해와 겹치면 \(t\)를 곱해 짐작한다. 감쇠 없는 진동자 \(\ddot x + \omega_0^2x = (F_0/m)\cos\omega_0t\)를 고유 진동수로 흔드는 경우가 그렇다. \(x = a\,t\sin\omega_0t\)를 넣으면 \(\ddot x + \omega_0^2x = 2a\omega_0\cos\omega_0t\)이므로</p>
+    <div class="formula" id="eq-resonant-growth">\[ x_p(t) = \frac{F_0}{2m\omega_0}\,t\sin\omega_0t \]</div>
+    <p>이다. 진폭이 시간에 비례해 한없이 자란다. 감쇠가 조금이라도 있으면 이 성장은 정상 상태 진폭 \(QF_0/k\)에서 멈춘다. 성장률 \(F_0/2m\omega_0\)으로 그 진폭에 이르는 시간은 \((QF_0/k)(2m\omega_0/F_0) = 2Q/\omega_0 = 1/\gamma\)이고, 10.3절에서 본 과도 응답의 수명과 같다.</p>
+
+    <h3 id="s4-variation">매개변수 변화법</h3>
+    <p>미정계수법은 원천이 특별한 꼴일 때만 쓸 수 있다. 일반적인 \(f(t)\)에 대해서는 동차 해의 계수를 상수 대신 함수로 바꾼 꼴 \(y_p = u_1(t)y_1 + u_2(t)y_2\)를 찾는다. 미지 함수가 둘이므로 조건을 하나 더 마음대로 정할 수 있다. 미분하면</p>
+    <div class="formula">\[ \dot y_p = u_1\dot y_1 + u_2\dot y_2 + \big(\dot u_1y_1 + \dot u_2y_2\big) \]</div>
+    <p>인데, 괄호 안을 0으로 정한다. 그러면 \(\ddot y_p\)에 \(u\)의 2계 도함수가 나오지 않는다. 한 번 더 미분해 방정식에 넣으면 \(u_1(\ddot y_1 + p\dot y_1 + qy_1)\)과 \(u_2(\cdots)\)는 \(y_1, y_2\)가 동차 해이므로 0이고, 다음 두 조건이 남는다.</p>
+    <div class="formula" id="eq-variation-conditions">\[ \begin{aligned} \dot u_1y_1 + \dot u_2y_2 &= 0 \\ \dot u_1\dot y_1 + \dot u_2\dot y_2 &= f \end{aligned} \]</div>
+    <p>계수 행렬의 행렬식이 론스키안 \(W\)이므로 크라메르 공식으로 \(\dot u_1 = -y_2f/W\), \(\dot u_2 = y_1f/W\)이다. 시각 \(t_0\)부터 적분해 \(y_p\)에 넣으면</p>
+    <div class="formula" id="eq-variation-parameters">\[ y_p(t) = \int_{t_0}^{t}\frac{y_1(t')\,y_2(t) - y_1(t)\,y_2(t')}{W(t')}\,f(t')\,dt' \]</div>
+    <p>이다. 이것을 <span class="term">매개변수 변화법</span> <span class="en">(variation of parameters)</span>이라 한다. 이 \(y_p\)는 특별한 특수해다. \(t = t_0\)이면 적분 구간의 길이가 0이므로 \(y_p(t_0) = 0\)이다. 또 피적분 함수의 분자가 \(t' = t\)에서 0이므로 \(t\)로 미분할 때 위끝에서 나오는 항이 없고(3장 <a href="ch03.html#eq-leibniz-rule">식 (3.38)</a>), \(\dot y_p(t_0) = 0\)이다. 곧 식 <a class="ref" href="#eq-variation-parameters"></a>은 \(t_0\)에 정지해 있던 계의 응답이다.</p>
+    <p>진동자 식 <a class="ref" href="#eq-damped-oscillator"></a>(과소 감쇠)에 적용하자. \(y_1 = e^{-\gamma t}\cos\omega_dt\), \(y_2 = e^{-\gamma t}\sin\omega_dt\)이면 \(W = \omega_de^{-2\gamma t}\)이고, 분자는 사인의 뺄셈 정리로 \(e^{-\gamma(t + t')}\sin\omega_d(t - t')\)이다. \(W(t')\)로 나누면 \(e^{-\gamma(t - t')}\sin\omega_d(t - t')/\omega_d\)가 되어 \(t - t'\)에만 기댄다. \(f = F/m\)이므로</p>
+    <div class="formula" id="eq-oscillator-duhamel">\[ x(t) = \frac{1}{m\omega_d}\int_{t_0}^{t}e^{-\gamma(t - t')}\sin\omega_d(t - t')\,F(t')\,dt' \]</div>
+    <p>이다. \(\gamma = 0\)이면 3장의 <a href="ch03.html#ex-duhamel-response">예제 3.13</a>에서 라이프니츠 규칙으로 확인했던 <a href="ch03.html#eq-duhamel">식 (3.40)</a>이 된다. 3장에서는 이 식이 방정식을 만족함을 확인만 했고, 여기서 그것을 유도했다.</p>
+
+    <h3 id="s4-impulse">충격 응답과 합성곱</h3>
+    <p>식 <a class="ref" href="#eq-oscillator-duhamel"></a>의 피적분 함수를 물리로 읽어 보자. 시각 \(t'\)에서 짧은 시간 \(dt'\) 동안 힘 \(F(t')\)가 작용하면 추는 충격량 \(F(t')\,dt'\)을 받는다. 시간이 아주 짧으므로 추는 거의 움직이지 않고 속도만 \(F(t')\,dt'/m\) 바뀐다. 그 뒤로는 힘이 없으므로, 처음 위치 0과 처음 속도 \(F\,dt'/m\)로 출발하는 자유 감쇠 진동 \((F\,dt'/m\omega_d)\,e^{-\gamma(t - t')}\sin\omega_d(t - t')\)을 한다. 식 <a class="ref" href="#eq-oscillator-duhamel"></a>은 이 작은 진동을 모두 더한 것이다. 이 읽기를 일반적인 정의로 만든다.</p>
+    <div class="box def" id="def-impulse-response"><div class="box-h">충격 응답</div>
+      <p>상수 계수 선형계가 정지해 있다가 \(t = 0\)에 크기 1인 충격을 받을 때의 응답 \(h(t)\)를 <span class="term">충격 응답</span> <span class="en">(impulse response)</span>이라 한다. 충격은 지속 시간이 계의 어떤 시간 척도보다도 짧아서 적분 \(\int F\,dt = 1\)만이 의미 있는 원천이다. 6장의 <a href="ch06.html#def-dirac-delta">디랙 델타</a>로 쓰면 \(F(t) = \delta(t)\)에 대한 응답이다. 원인보다 결과가 먼저 올 수 없으므로 \(t &lt; 0\)에서 \(h(t) = 0\)이다. 진동자 식 <a class="ref" href="#eq-damped-oscillator"></a>의 충격 응답은 다음과 같다.</p>
+      <div class="formula" id="eq-impulse-response-oscillator">\[ h(t) = \Theta(t)\,\frac{e^{-\gamma t}\sin\omega_dt}{m\omega_d} \]<div class="where">\(\Theta\)는 계단 함수(6장 <a href="ch06.html#eq-step-derivative">\(\Theta' = \delta\)</a>)다. 과대 감쇠이면 \(\omega_d = i\kappa\), \(\kappa = \sqrt{\gamma^2 - \omega_0^2}\)으로 두어 \(\sin(i\kappa t)/i\kappa = \sinh\kappa t/\kappa\)이고, 임계 감쇠이면 극한 \(h = \Theta(t)\,te^{-\omega_0t}/m\)이다. 단위는 \(\text{m}/(\text{N}\cdot\text{s})\)이다.</div></div>
+    </div>
+    <p>계수가 상수이므로 계는 시간을 밀어도 똑같이 행동한다. 그래서 시각 \(t'\)에 받은 충격에 대한 응답은 \(h(t - t')\)이다. 힘 \(F(t)\)를 폭 \(\Delta t'\)인 충격 \(F(t_k)\Delta t'\)들의 열로 보고 중첩 원리(<a class="ref" href="#thm-ode-superposition"></a>의 3)로 더하면 \(x(t) \approx \sum_k h(t - t_k)F(t_k)\Delta t'\)이고, \(\Delta t' \to 0\)이면 적분이 된다.</p>
+    <div class="formula" id="eq-convolution-response">\[ \begin{aligned} x(t) &= \int_{-\infty}^{\infty}h(t - t')\,F(t')\,dt' \\ &= \int_{-\infty}^{t}h(t - t')\,F(t')\,dt' \end{aligned} \]<div class="where">두 번째 꼴은 \(t' > t\)에서 \(h(t - t') = 0\)인 것(인과율)을 쓴 것이다. 델타로 쓰면 \(F(t) = \int F(t')\,\delta(t - t')\,dt'\)(6장 <a href="ch06.html#eq-delta-sifting">거르기 성질</a>)에 선형성을 적용한 것이다.</div></div>
+    <p>이런 꼴의 적분을 두 함수의 <span class="term">합성곱</span> <span class="en">(convolution)</span>이라 하고 \(x = h * F\)로 쓴다. \(t &lt; t_0\)에서 \(F = 0\)이면 식 <a class="ref" href="#eq-oscillator-duhamel"></a>과 같다. 충격 응답 하나만 알면 어떤 힘에 대한 응답도 적분 하나로 구할 수 있다는 뜻이다. 1계 계에서도 같다. \(\tau\dot y + y = f\)의 충격 응답은 \(h = \Theta(t)e^{-t/\tau}/\tau\)이고, 식 <a class="ref" href="#eq-first-order-memory"></a>의 둘째 항이 바로 \(h * f\)이다.</p>
+
+    <div class="box ex" id="ex-oscillator-impulse"><div class="box-h">망치로 한 번 친 진동자</div>
+      <p><a class="ref" href="#ex-driven-resonance"></a>의 진동자(\(m = 0.50\ \text{kg}\), \(\omega_0 = 20.0\ \text{s}^{-1}\), \(\gamma = 0.50\ \text{s}^{-1}\))가 정지해 있다가 \(t = 0\)에 망치에 맞는다. 망치는 평균 \(20\ \text{N}\)의 힘을 \(1.0\ \text{ms}\) 동안 준다. (가) 그 뒤의 운동과 최대 변위를 구하라. (나) 충격이 \(1.0\ \text{ms}\) 동안 퍼져 있는 효과는 얼마나 되는가?</p>
+      <p><b>풀이.</b> (가) 충격량은 \(p = 20\ \text{N} \times 1.0 \times 10^{-3}\ \text{s} = 0.020\ \text{N}\cdot\text{s}\)이다. 충격을 순간적이라 보면 응답은 식 <a class="ref" href="#eq-impulse-response-oscillator"></a>의 \(p\)배다.</p>
+      <div class="formula">\[ \begin{aligned} x(t) &= \frac{p}{m\omega_d}\,e^{-\gamma t}\sin\omega_dt \\ &= (2.00\ \text{mm})\,e^{-0.50t}\sin(19.99\,t) \end{aligned} \]</div>
+      <p>(\(t\)는 초 단위). \(\omega_d = \sqrt{400 - 0.25}\ \text{s}^{-1} = 19.99\ \text{s}^{-1}\)이다. 맞은 직후의 속도는 \(p/m = 4.0\ \text{cm/s}\)이다. 첫 최대는 \(\dot x = 0\), 곧 \(\tan\omega_dt = \omega_d/\gamma\)인 \(t_1 = 0.0773\ \text{s}\)(4분의 1 주기 \(0.0786\ \text{s}\)보다 조금 이르다)에 오고, 그때 변위는 \(2.00\ \text{mm} \times e^{-0.039} \times \sin(1.546) = 1.92\ \text{mm}\)이다. 진폭은 \(1/\gamma = 2.0\ \text{s}\)마다 \(1/e\)로 주는데, 그동안 약 6.4번(\(Q/\pi\)) 진동한다. 단위 확인: \(p/m\omega_d\)는 \(\text{N}\cdot\text{s}/(\text{kg}\cdot\text{s}^{-1}) = \text{m}\)이다.</p>
+      <p>(나) <b>다음 항은 몇 차인가.</b> 크기 \(F_0\), 지속 시간 \(\tau\)인 사각 펄스의 응답을 식 <a class="ref" href="#eq-convolution-response"></a>로 정확히 계산해 비교하자. 감쇠를 무시하면 펄스가 끝난 뒤(\(t > \tau\))</p>
+      <div class="formula" id="eq-pulse-response">\[ \begin{aligned} x(t) &= \frac{F_0}{m\omega_0}\int_0^{\tau}\sin\omega_0(t - t')\,dt' \\ &= \frac{F_0\tau}{m\omega_0}\,\frac{\sin(\omega_0\tau/2)}{\omega_0\tau/2}\,\sin\omega_0\Big(t - \frac{\tau}{2}\Big) \end{aligned} \]</div>
+      <p>이다. 둘째 줄은 \(\cos\omega_0(t - \tau) - \cos\omega_0t = 2\sin(\omega_0\tau/2)\sin\omega_0(t - \tau/2)\)에서 나온다. 펄스 한가운데 \(t = \tau/2\)에 준 순간 충격 \(F_0\tau\)의 응답에 인자 \(\sin u/u = 1 - u^2/6 + \cdots\) (\(u = \omega_0\tau/2\))가 곱해진 꼴이다. 따라서 순간 충격 근사의 상대 오차는 \((\omega_0\tau)^2/24\)이고, 여기서는 \(\omega_0\tau = 0.020\)이므로 \(1.7 \times 10^{-5}\)이다. 충격은 지속 시간이 \(1/\omega_0 = 50\ \text{ms}\)보다 훨씬 짧으면 모양과 상관없이 충격량만으로 응답이 정해진다. 펄스의 가운데를 기준으로 잡았기 때문에 \(\omega_0\tau\)의 1차 오차가 없다.</p>
+    </div>
+
+    <div class="callout tip"><strong>충격 응답은 시간의 그린 함수다</strong><p>충격 응답은 "점 원천 하나에 대한 응답을 구해 두고 원천을 그것들의 합으로 본다"는 생각의 가장 단순한 예다. 20장에서는 이것을 <a href="ch20.html#def-green-function">그린 함수</a>로 일반화한다. 연산자를 \(\mathcal L = d^2/dt^2 + 2\gamma\,d/dt + \omega_0^2\)으로 잡으면 20장의 <a href="ch20.html#eq-green-oscillator">인과적 진동자 그린 함수</a> \(G(t) = \Theta(t)e^{-\gamma t}\sin\omega_dt/\omega_d\)이고, 이 장의 \(h\)는 \(G/m\)이다(힘을 \(m\)으로 나눈 것이 원천이기 때문이다). 양 끝의 값이 주어진 경계값 문제의 그린 함수도 20장에서 만든다.</p></div>
+  </section>
+
+  <!-- ============================================================ 10.5 -->
+  <section id="s5">
+    <h2>연립 선형 방정식과 위상 공간</h2>
+    <p>진동자의 상태는 위치 하나로 정해지지 않는다. 같은 자리에 있어도 속도가 다르면 다음 순간이 다르다. 위치와 속도를 함께 주어야 미래가 정해진다. 이 쌍 \((x, \dot x)\)를 한 점으로 보면 2계 방정식은 평면 위의 1계 방정식, 곧 "각 점에서 어느 쪽으로 움직이는가"를 정하는 규칙이 된다. 이렇게 보면 결합된 회로나 붕괴 사슬처럼 처음부터 여러 변수가 얽힌 문제도 같은 틀에 들어오고, 풀지 못하는 비선형 방정식에 대해서도 평형점 근처의 운동을 분류할 수 있다.</p>
+
+    <h3 id="s5-system">1계 연립 방정식으로 바꾸기</h3>
+    <p>진동자 식 <a class="ref" href="#eq-damped-oscillator"></a>(\(F = 0\))에서 \(x_1 = x\), \(x_2 = \dot x\)로 두면 \(\dot x_1 = x_2\), \(\dot x_2 = -\omega_0^2x_1 - 2\gamma x_2\)이다. 행렬로 쓰면</p>
+    <div class="formula" id="eq-oscillator-matrix">\[ \frac{d}{dt}\begin{pmatrix} x \\ \dot x \end{pmatrix} = \begin{pmatrix} 0 & 1 \\ -\omega_0^2 & -2\gamma \end{pmatrix}\begin{pmatrix} x \\ \dot x \end{pmatrix} \]</div>
+    <p>이다. 같은 방법으로 \(n\)계 방정식은 \(n\)개의 1계 방정식이 된다. 일반적으로 상수 행렬 \(A\)에 대해</p>
+    <div class="formula" id="eq-first-order-system">\[ \dot{\mathbf x} = A\,\mathbf x,\qquad \mathbf x(0) = \mathbf x_0 \]</div>
+    <p>을 푸는 문제가 된다. \(\mathbf x\)가 사는 공간을 <span class="term">위상 공간</span> <span class="en">(phase space)</span>, 2차원이면 위상 평면이라 한다.</p>
+
+    <h3 id="s5-matrix-exp">행렬 지수와 고유 모드</h3>
+    <p>성분이 하나이면 \(\dot x = ax\)의 해는 \(e^{at}x_0\)이다. 행렬에서도 같은 꼴을 쓰기 위해 지수 함수의 멱급수를 행렬에 그대로 쓴다. \(e^{At} = \sum_{k=0}^{\infty}(At)^k/k!\)를 <a href="ch08.html#def-matrix-exponential">행렬 지수</a>라 한다(8장). 이 급수는 모든 \(t\)에서 수렴하고, 항별로 미분하면 \(\tfrac{d}{dt}e^{At} = Ae^{At}\)이며 \(e^{A\cdot 0} = I\)이다. 따라서</p>
+    <div class="formula" id="eq-matrix-exp-solution">\[ \mathbf x(t) = e^{At}\,\mathbf x(0) \]</div>
+    <p>이 식 <a class="ref" href="#eq-first-order-system"></a>의 해다. 계수가 상수인 선형계이므로 해는 이것 하나뿐이다. 계산은 고유벡터로 한다. \(A\mathbf u = \lambda\mathbf u\)이면 \(A^k\mathbf u = \lambda^k\mathbf u\)이므로 \(e^{At}\mathbf u = e^{\lambda t}\mathbf u\)이다. \(A\)가 선형 독립인 고유벡터 \(\mathbf u_1, \ldots, \mathbf u_n\)을 가지면(8장의 <a href="ch08.html#thm-diagonalization">대각화 조건</a>) 처음 상태를 \(\mathbf x(0) = \sum_i c_i\mathbf u_i\)로 펼쳐</p>
+    <div class="formula" id="eq-eigen-mode-solution">\[ \mathbf x(t) = \sum_{i=1}^{n}c_i\,e^{\lambda_it}\,\mathbf u_i \]</div>
+    <p>를 얻는다. 각 고유벡터 방향의 운동은 서로 섞이지 않고 각자의 지수 \(e^{\lambda_it}\)로 자라거나 준다. 고유값은 \(\det(A - \lambda I) = 0\)의 근이다(0이 아닌 \(\mathbf u\)가 있을 조건, 7장의 <a href="ch07.html#thm-homogeneous-solution">정리 7.6</a>). 식 <a class="ref" href="#eq-oscillator-matrix"></a>의 행렬이면</p>
+    <div class="formula">\[ \det\begin{pmatrix} -\lambda & 1 \\ -\omega_0^2 & -2\gamma - \lambda \end{pmatrix} = \lambda^2 + 2\gamma\lambda + \omega_0^2 \]</div>
+    <p>이므로 고유값 방정식이 곧 식 <a class="ref" href="#eq-ode-characteristic"></a>의 특성 방정식이고, 고유벡터 \((1, \lambda)\)는 "위치가 \(e^{\lambda t}\)이면 속도는 \(\lambda e^{\lambda t}\)"라는 뜻이다. 결합 진동자처럼 변수가 여럿인 보존계는 8장의 <a href="ch08.html#eq-generalized-eigen">일반화된 고유값 문제</a>로 정규 모드를 구한다. 2×2 행렬의 고유값을 아래에 정리해 둔다.</p>
+    <div class="box math" id="math-two-by-two-eigen"><div class="box-h">2×2 행렬의 고유값</div>
+      <p>\(A = \begin{pmatrix} a & b \\ c & d \end{pmatrix}\)의 대각합을 \(\tau = a + d\), 행렬식을 \(\Delta = ad - bc\)라 하면 \(\det(A - \lambda I) = \lambda^2 - \tau\lambda + \Delta\)이다. 따라서</p>
+      <div class="formula" id="eq-two-by-two-eigenvalues">\[ \begin{aligned} \lambda_\pm &= \frac{\tau \pm\sqrt{\tau^2 - 4\Delta}}{2} \\ \lambda_+ + \lambda_- &= \tau,\quad \lambda_+\lambda_- = \Delta \end{aligned} \]</div>
+      <p>이다(여기서 \(\tau\)는 시간 상수가 아니라 대각합이다). \(b \ne 0\)이면 고유값 \(\lambda\)의 고유벡터는 \((b,\ \lambda - a)\)이다. \(\tau^2 = 4\Delta\)이면 고유값이 겹치고, 그때 \(A = \tfrac{\tau}{2}I\)가 아니면 고유벡터가 하나뿐이다.</p>
+    </div>
+
+    <div class="box ex" id="ex-critical-matrix-exp"><div class="box-h">임계 감쇠의 행렬 지수</div>
+      <p>임계 감쇠 진동자(\(\gamma = \omega_0\))의 \(e^{At}\)를 구하라. 고유벡터가 하나뿐이라 식 <a class="ref" href="#eq-eigen-mode-solution"></a>를 쓸 수 없다. 이 결과로 자동차 완충 장치(\(\omega_0 = 8.0\ \text{s}^{-1}\), 임계 감쇠)를 \(5.0\ \text{cm}\) 눌렀다 놓은 운동을 구하라.</p>
+      <p><b>풀이.</b> \(A = \begin{pmatrix} 0 & 1 \\ -\omega_0^2 & -2\omega_0 \end{pmatrix}\)은 \(\tau = -2\omega_0\), \(\Delta = \omega_0^2\)이므로 \(\tau^2 = 4\Delta\)이고 고유값은 \(-\omega_0\) 하나다. \(A = -\omega_0I + N\)으로 나누면</p>
+      <div class="formula">\[ N = \begin{pmatrix} \omega_0 & 1 \\ -\omega_0^2 & -\omega_0 \end{pmatrix},\qquad N^2 = \begin{pmatrix} 0 & 0 \\ 0 & 0 \end{pmatrix} \]</div>
+      <p>이다(직접 곱해 보라). \(-\omega_0I\)는 모든 행렬과 교환하므로 \(e^{At} = e^{-\omega_0t}e^{Nt}\)이고, \(N^2 = 0\)이라 \(e^{Nt}\)의 급수는 \(I + Nt\)에서 끝난다.</p>
+      <div class="formula" id="eq-critical-matrix-exp">\[ e^{At} = e^{-\omega_0t}\begin{pmatrix} 1 + \omega_0t & t \\ -\omega_0^2t & 1 - \omega_0t \end{pmatrix} \]</div>
+      <p>첫 행을 \((x_0, v_0)\)에 곱하면 \(x(t) = e^{-\omega_0t}\big[(1 + \omega_0t)x_0 + tv_0\big]\)이다. 10.2절에서 중근의 두 번째 해로 나온 \(te^{s_0t}\)가 여기서는 \(N\)에서 나온다. 고유벡터가 모자랄 때 지수 앞에 붙는 다항식은 이렇게 거듭제곱이 0이 되는 부분이 만든다.</p>
+      <p><b>숫자로 보기.</b> \(x_0 = 5.0\ \text{cm}\), \(v_0 = 0\)이면 \(x = (5.0\ \text{cm})(1 + 8.0t)e^{-8.0t}\)이다(\(t\)는 초 단위). \(t = 0.50\ \text{s}\)에서 \(5.0 \times 5e^{-4}\ \text{cm} = 0.46\ \text{cm}\)로, 넘치지 않고 돌아온다. 둘째 행에서 속도는 \(v = -\omega_0^2t\,e^{-\omega_0t}x_0\)이고, 그 크기는 \(t = 1/\omega_0 = 0.125\ \text{s}\)에서 가장 커서 \(\omega_0x_0/e = 14.7\ \text{cm/s}\)이다. 행렬 성분의 단위를 확인하자. \(\omega_0t\)는 무차원, \(t\)는 \(v_0\)에 곱해져 길이, \(\omega_0^2t\)는 \(x_0\)에 곱해져 속도가 된다.</p>
+    </div>
+
+    <h3 id="s5-fixed-points">평형점의 분류</h3>
+    <p>위상 평면의 각 점에는 속도 벡터 \(A\mathbf x\)가 하나씩 붙어 있고, 해는 그 벡터를 따라가는 곡선이다. 해가 하나뿐이므로 서로 다른 궤적은 엇갈리지 않는다. 속도가 0인 점이 <span class="term">평형점</span> <span class="en">(fixed point)</span>이고, 선형계에서는 원점이다. 원점 근처의 궤적 모양은 두 고유값으로 정해지며, 식 <a class="ref" href="#eq-two-by-two-eigenvalues"></a>에 따라 \(\tau\)와 \(\Delta\)만 보면 된다.</p>
+    <div class="box def" id="def-fixed-point-types"><div class="box-h">평형점의 종류</div>
+      <p>2차원 선형계 \(\dot{\mathbf x} = A\mathbf x\)에서 \(\tau = \operatorname{tr}A\), \(\Delta = \det A \ne 0\)이라 하자. 원점은 다음 넷 가운데 하나다(그림 10-4).</p>
+      <ul>
+        <li><span class="term">안장점</span> <span class="en">(saddle)</span>: \(\Delta &lt; 0\). 고유값이 부호가 다른 두 실수다. 한 고유벡터 방향으로는 다가오고 다른 방향으로는 멀어지므로 불안정하다.</li>
+        <li><span class="term">마디</span> <span class="en">(node)</span>: \(\Delta > 0\), \(\tau^2 > 4\Delta\). 고유값이 부호가 같은 두 실수다. \(\tau &lt; 0\)이면 안정, \(\tau > 0\)이면 불안정하다.</li>
+        <li><span class="term">나선</span> <span class="en">(spiral, focus)</span>: \(\Delta > 0\), \(0 &lt; \tau^2 &lt; 4\Delta\). 고유값이 켤레 복소수다. 궤적이 돌면서 \(\tau &lt; 0\)이면 다가오고 \(\tau > 0\)이면 멀어진다.</li>
+        <li><span class="term">중심</span> <span class="en">(center)</span>: \(\Delta > 0\), \(\tau = 0\). 고유값이 순허수이고 궤적은 닫힌 곡선이다.</li>
+      </ul>
+      <p>경계 \(\tau^2 = 4\Delta\)에서는 고유값이 겹치는 퇴화 마디가 된다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 500" role="img" aria-label="2차원 선형계의 네 가지 평형점: 중심, 안정 나선, 안정 마디, 안장점의 위상 궤적"><defs><clipPath id="f1004-clip0"><rect x="20" y="40" width="205" height="190"/></clipPath></defs><rect x="20" y="40" width="205" height="190" class="f-surface"/><line x1="20" y1="135.0" x2="225" y2="135.0" class="s-grid"/><line x1="122.5" y1="40" x2="122.5" y2="230" class="s-grid"/><path d="M145.8,135l-1.4,7.4 -4.2,6.7 -6.5,4.8 -7.9,2.5 -8.1,-.3 -7.8,-2.9 -6.1,-5.3 -3.7,-6.9 -.9,-6 1,-6.1 2.7,-5.5 4.4,-4.7 5.4,-3.3 6.5,-1.8 6.5,0 6.5,1.8 5.4,3.2 4.5,4.7 2.7,5.5 1,6.1 -.9,6 -2.7,5.7 -4.4,4.7 -5.7,3.4 -6.3,1.7 -6.7,0 -6.2,-1.7 -5.7,-3.4 -4.3,-4.6 -2.8,-5.6 -.9,-6 .9,-6.2 2.7,-5.5 4.4,-4.7 5.5,-3.3 6.4,-1.8 6.5,0 6.5,1.7 5.7,3.4 4.4,4.7" class="s-line" style="stroke:var(--text);stroke-width:1.6" clip-path="url(#f1004-clip0)"/><path d="M118.8,156.9L129.3,152.2L129.8,160.3z" class="f-dim"/><path d="M169.1,135l-.7,7.3 -2.1,7.5 -3.6,7 -4.9,6.3 -6,5.5 -6.9,4.3 -7.7,3.1 -8.2,1.8 -7.9,.4 -8.3,-1 -8,-2.2 -7.4,-3.6 -6.6,-4.8 -5.6,-5.8 -4.4,-6.6 -3.1,-7.2 -1.8,-11.9 1.9,-12.4 5.4,-10.9 8.8,-9.5 11,-6.5 12.9,-3.5 13,-.1 12.9,3.5 11,6.5 8.8,9.4 5.5,10.9 2,12.4 -1.8,11.9 -5.5,11.4 -8.8,9.4 -11.3,6.8 -12.5,3.3 -13.5,0 -12.5,-3.4 -11.3,-6.7 -8.5,-9.1 -5.6,-11.4 -1.9,-11.9 1.9,-12.4 5.4,-10.9 8.7,-9.5 10.9,-6.5 12.9,-3.6 13,-.1 13,3.4 11.3,6.8 8.8,9.4" class="s-line" style="stroke:var(--text);stroke-width:1.6" clip-path="url(#f1004-clip0)"/><path d="M120.4,178.4L130.9,173.7L131.4,181.8z" class="f-dim"/><path d="M192.4,135l-1,11 -3.3,11.2 -5.3,10.5 -7.3,9.5 -9,8.1 -10.4,6.5 -11.6,4.7 -12.2,2.6 -11.8,.6 -12.5,-1.3 -12,-3.5 -11.2,-5.3 -9.9,-7.2 -8.4,-8.6 -6.6,-10 -4.5,-10.8 -2.1,-8.9 -.7,-9 .7,-9 2.2,-9.5 3.4,-8.5 4.7,-8 5.8,-7.2 7.4,-6.9 7.8,-5.4 8.6,-4.4 9.2,-3.2 10.2,-2.1 9.7,-.7 9.8,.6 9.6,1.9 9.8,3.4 8.6,4.3 7.8,5.4 7,6.3 6.3,7.8 4.7,7.9 3.5,8.5 2.2,8.8 .8,9.7 -.7,9 -2,8.9 -3.3,8.5 -4.9,8.6 -6.3,7.8 -6.9,6.4 -7.9,5.4 -9.1,4.6 -9.2,3.2 -9.6,1.9 -9.7,.7 -10.5,-.7 -9.5,-2 -9.2,-3.1 -8.6,-4.3 -8.4,-5.8 -6.9,-6.4 -5.9,-7.3 -4.7,-7.9 -3.7,-9.1 -2.1,-8.9 -.7,-9 .7,-9 2.1,-9.5 3.4,-8.5 5.1,-8.5 5.8,-7.3 7,-6.4 7.8,-5.4 8.5,-4.4 9.1,-3.3 10.3,-2.1 9.7,-.7 9.8,.6 9.5,1.9 9.9,3.3 8.6,4.3 8.4,5.8 6.9,6.4 6.3,7.7" class="s-line" style="stroke:var(--text);stroke-width:1.6" clip-path="url(#f1004-clip0)"/><path d="M122.1,199.9L132.6,195.2L133.1,203.3z" class="f-dim"/><circle cx="122.5" cy="135.0" r="4" class="f-acc"/><text x="20" y="30" class="t-b" style="font-size:16px">(가) 중심</text><text x="225" y="30" class="t-dim" style="font-size:14px" text-anchor="end">τ = 0, Δ > 0</text><defs><clipPath id="f1004-clip1"><rect x="255" y="40" width="205" height="190"/></clipPath></defs><rect x="255" y="40" width="205" height="190" class="f-surface"/><line x1="255" y1="135.0" x2="460" y2="135.0" class="s-grid"/><line x1="357.5" y1="40" x2="357.5" y2="230" class="s-grid"/><path d="M441.4,135l-1.1,12 -3.3,11.6 -5.3,10.2 -7,8.5 -8.9,7.2 -10.2,5.1 -10.9,3.1 -12,1.1 -10.1,-.8 -10.4,-2.3 -9.9,-3.7 -9.1,-5 -8.6,-6.2 -7.2,-7.2 -5.8,-7.6 -4.5,-8.4 -3.6,-14 0,-7 1.2,-6.4 2.5,-6 3.6,-5.1 4.5,-4.1 5.4,-3.2 10.6,-2.6 11.3,.8 10.9,4.3 8.9,7 5.4,7.4 2.7,7.9 -.2,7.7 -3,6.2 -4.5,3.7 -5.6,1.9 -6.3,-.1 -6,-2.2 -4.3,-3 -3.3,-3.9 -1.8,-4.4 -.1,-4.3 1.2,-3 2.2,-2.3 2.9,-1.3 3.4,-.1 5.5,2.3 3.1,4.6 -.3,3.9 -2.9,2.1 -3.2,-.3 -2.5,-2 -.7,-2.1 .7,-1.8 3.3,-.1 1.1,2.4 -1.7,.6 -.9,-1 .8,-.3" class="s-line" style="stroke:var(--text);stroke-width:1.6" clip-path="url(#f1004-clip1)"/><path d="M321.7,161.4L331.5,167.5L325.1,172.5z" class="f-dim"/><path d="M273.6,135l1.1,-12 3.3,-11.6 5.3,-10.2 7,-8.5 8.9,-7.2 10.2,-5.1 10.9,-3.1 12,-1.1 10.1,.8 10.4,2.3 9.9,3.7 9.1,5 8.6,6.2 7.2,7.2 5.8,7.6 4.5,8.4 3.6,14 0,7 -1.2,6.4 -2.5,6 -3.6,5.1 -4.5,4.1 -5.4,3.2 -10.6,2.6 -11.3,-.8 -10.9,-4.3 -8.9,-7 -5.4,-7.4 -2.7,-7.9 .2,-7.7 3,-6.2 4.5,-3.7 5.6,-1.9 6.3,.1 6,2.2 4.3,3 3.3,3.9 1.8,4.4 .1,4.3 -1.2,3 -2.2,2.3 -2.9,1.3 -3.4,.1 -5.5,-2.3 -3.1,-4.6 .3,-3.9 2.9,-2.1 3.2,.3 2.5,2 .7,2.1 -.7,1.8 -3.3,.1 -1.1,-2.4 1.7,-.6 .9,1 -.8,.3" class="s-line" style="stroke:var(--text);stroke-width:1.6" clip-path="url(#f1004-clip1)"/><path d="M393.3,108.6L383.5,102.5L389.9,97.5z" class="f-dim"/><circle cx="357.5" cy="135.0" r="4" class="f-acc"/><text x="255" y="30" class="t-b" style="font-size:16px">(나) 안정 나선</text><text x="460" y="30" class="t-dim" style="font-size:14px" text-anchor="end">τ² < 4Δ</text><defs><clipPath id="f1004-clip2"><rect x="20" y="275" width="205" height="190"/></clipPath></defs><rect x="20" y="275" width="205" height="190" class="f-surface"/><line x1="20" y1="370.0" x2="225" y2="370.0" class="s-grid"/><line x1="122.5" y1="275" x2="122.5" y2="465" class="s-grid"/><line x1="20.0" y1="333.7" x2="225.0" y2="406.3" class="s-acc" stroke-dasharray="6 4" clip-path="url(#f1004-clip2)"/><line x1="20.0" y1="121.3" x2="225.0" y2="618.7" class="s-acc2" stroke-dasharray="6 4" clip-path="url(#f1004-clip2)"/><path d="M206.4,292.3l9.7,40.2 4.3,28 .4,11.2 -.8,8.7 -1.9,6.2 -3.4,4.8 -3.9,2.4 -4.7,1.1 -13.8,-1.4 -19.2,-5.7 -50.5,-17.8" class="s-line" style="stroke:var(--text);stroke-width:1.6" clip-path="url(#f1004-clip2)"/><path d="M146.9,378.6L158.4,378.4L155.7,386.0z" class="f-dim"/><path d="M38.6,447.7l-9.7,-40.2 -4.3,-28 -.4,-11.2 .8,-8.7 1.9,-6.2 3.4,-4.8 3.9,-2.4 4.7,-1.1 13.8,1.4 19.2,5.7 50.5,17.8" class="s-line" style="stroke:var(--text);stroke-width:1.6" clip-path="url(#f1004-clip2)"/><path d="M98.1,361.4L86.6,361.6L89.3,354.0z" class="f-dim"/><path d="M150.5,283.6l11.4,37 6.9,26.3 3.1,18.9 -.7,11.3 -1.5,2.9 -2.2,1.8 -6.9,.6 -10.4,-2.7 -27.7,-9.7" class="s-line" style="stroke:var(--text);stroke-width:1.6" clip-path="url(#f1004-clip2)"/><path d="M133.6,373.9L145.1,373.7L142.4,381.3z" class="f-dim"/><path d="M94.5,456.4l-11.4,-37 -6.9,-26.3 -3.1,-18.9 .7,-11.3 1.5,-2.9 2.2,-1.8 6.9,-.6 10.4,2.7 27.7,9.7" class="s-line" style="stroke:var(--text);stroke-width:1.6" clip-path="url(#f1004-clip2)"/><path d="M111.4,366.1L99.9,366.3L102.6,358.7z" class="f-dim"/><path d="M169.1,456.4l-21.4,-48.8 -12.4,-25.7 -5.8,-8.6 -7,-3.3" class="s-line" style="stroke:var(--text);stroke-width:1.6" clip-path="url(#f1004-clip2)"/><path d="M120.2,369.2L131.7,369.0L129.0,376.6z" class="f-dim"/><path d="M75.9,283.6l21.4,48.8 12.4,25.7 5.8,8.6 7,3.3" class="s-line" style="stroke:var(--text);stroke-width:1.6" clip-path="url(#f1004-clip2)"/><path d="M124.8,370.8L113.3,371.0L116.0,363.4z" class="f-dim"/><circle cx="122.5" cy="370.0" r="4" class="f-acc"/><text x="20" y="265" class="t-b" style="font-size:16px">(다) 안정 마디</text><text x="225" y="265" class="t-dim" style="font-size:14px" text-anchor="end">τ² > 4Δ</text><defs><clipPath id="f1004-clip3"><rect x="255" y="275" width="205" height="190"/></clipPath></defs><rect x="255" y="275" width="205" height="190" class="f-surface"/><line x1="255" y1="370.0" x2="460" y2="370.0" class="s-grid"/><line x1="357.5" y1="275" x2="357.5" y2="465" class="s-grid"/><line x1="255.0" y1="465.0" x2="460.0" y2="275.0" class="s-acc2" stroke-dasharray="6 4"/><line x1="255.0" y1="275.0" x2="460.0" y2="465.0" class="s-acc" stroke-dasharray="6 4"/><path d="M441.4,439.1l-22.9,-25.2 -14,-18.8 -7.1,-15.1 -1.3,-6.9 .1,-7.1 1.5,-7 3,-7.3 10.8,-16.9 18.8,-22.1 30.3,-31.4" class="s-line" style="stroke:var(--text);stroke-width:1.6" clip-path="url(#f1004-clip3)"/><path d="M406.0,397.6L415.5,404.0L409.0,408.7z" class="f-dim"/><path d="M273.6,300.9l22.9,25.2 14,18.8 7.1,15.1 1.3,6.9 -.1,7.1 -1.5,7 -3,7.3 -10.8,16.9 -18.8,22.1 -30.3,31.4" class="s-line" style="stroke:var(--text);stroke-width:1.6" clip-path="url(#f1004-clip3)"/><path d="M309.0,342.4L299.5,336.0L306.0,331.3z" class="f-dim"/><path d="M283,292.3l27.1,21.2 20.3,12.9 16.3,6.6 7.5,1.3 7.7,-.1 15.3,-4.2 18.3,-10.1 23.8,-17.3 33.9,-28.1" class="s-line" style="stroke:var(--text);stroke-width:1.6" clip-path="url(#f1004-clip3)"/><path d="M327.6,325.0L316.3,322.8L320.6,315.9z" class="f-dim"/><path d="M432,447.7l-27.1,-21.2 -20.3,-12.9 -16.3,-6.6 -7.5,-1.3 -7.7,.1 -15.3,4.2 -18.8,10.4 -24,17.6 -33.2,27.5" class="s-line" style="stroke:var(--text);stroke-width:1.6" clip-path="url(#f1004-clip3)"/><path d="M387.4,415.0L398.7,417.2L394.4,424.1z" class="f-dim"/><path d="M455.3,413.2l-5.5,-12.3 -3.8,-11.7 -2.1,-11.4 -.3,-11.1 1.4,-11.3 3,-11.5 4.9,-12.1 7.3,-13.7" class="s-line" style="stroke:var(--text);stroke-width:1.6" clip-path="url(#f1004-clip3)"/><path d="M445.8,389.0L452.8,398.1L445.1,400.5z" class="f-dim"/><path d="M259.7,326.8l5.5,12.3 3.8,11.7 2.1,11.4 .3,11.1 -1.4,11.3 -3,11.5 -4.9,12.1 -7.3,13.7" class="s-line" style="stroke:var(--text);stroke-width:1.6" clip-path="url(#f1004-clip3)"/><path d="M269.2,351.0L262.2,341.9L269.9,339.5z" class="f-dim"/><circle cx="357.5" cy="370.0" r="4" class="f-acc"/><text x="255" y="265" class="t-b" style="font-size:16px">(라) 안장점</text><text x="460" y="265" class="t-dim" style="font-size:14px" text-anchor="end">Δ < 0</text></svg>
+      <figcaption><b>그림 10-4.</b> 평형점의 네 종류(<a class="ref" href="#def-fixed-point-types"></a>). 행렬은 (가) \(\begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix}\), (나) \(\begin{pmatrix} 0 & 1 \\ -1 & -0.4 \end{pmatrix}\), (다) \(\begin{pmatrix} 0 & 1 \\ -1 & -3 \end{pmatrix}\), (라) \(\begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}\)이고 가로축은 \(x\), 세로축은 \(\dot x\)이다. (다)의 두 점선은 고유벡터 방향 \((1, -0.38)\)과 \((1, -2.62)\)이고, 궤적은 대부분 느린 쪽인 \((1, -0.38)\) 방향을 따라 들어온다. (라)의 두 점선은 다가오는 방향 \((1, -1)\)과 멀어지는 방향 \((1, 1)\)이다. 궤적은 RK4 수치 적분으로 그렸다.</figcaption>
+    </figure>
+    <p>진동자 행렬 식 <a class="ref" href="#eq-oscillator-matrix"></a>은 \(\tau = -2\gamma\), \(\Delta = \omega_0^2\)이고 \(\tau^2 - 4\Delta = 4(\gamma^2 - \omega_0^2)\)이다. 그래서 감쇠가 없으면 중심, 과소 감쇠이면 안정 나선, 임계 감쇠이면 퇴화 마디, 과대 감쇠이면 안정 마디다. 10.3절의 세 갈래가 위상 평면의 세 모양이다. 거꾸로 선 진자(<a class="ref" href="#ex-inverted-pendulum"></a>)는 \(\Delta = -g/L &lt; 0\)인 안장점이고, 거기서 본 특별한 처음 조건 \(\dot\phi_0 = -\lambda\phi_0\)은 다가오는 고유벡터 \((1, -\lambda)\) 위의 점이다.</p>
+
+    <h3 id="s5-linearization">비선형 방정식의 선형화</h3>
+    <p>비선형계 \(\dot{\mathbf x} = \mathbf f(\mathbf x)\)는 대개 풀 수 없지만, 평형점 \(\mathbf f(\mathbf x_*) = 0\) 근처는 다룰 수 있다. \(\mathbf x = \mathbf x_* + \boldsymbol\xi\)로 두고 다변수 테일러 전개(3장 <a href="ch03.html#eq-taylor-multi">식 (3.23)</a>)의 1차까지 남기면</p>
+    <div class="formula" id="eq-jacobian-linearization">\[ \dot{\boldsymbol\xi} = J\,\boldsymbol\xi,\qquad J_{ij} = \frac{\partial f_i}{\partial x_j}\bigg|_{\mathbf x_*} \]</div>
+    <p>이다. \(J\)를 야코비 행렬이라 한다. \(J\)의 고유값 가운데 실수부가 0인 것이 없으면, 평형점 근처의 비선형 궤적은 선형화한 궤적과 연속 변형으로 이어진다(하트만-그로브만 정리. 증명은 S. H. Strogatz, <i>Nonlinear Dynamics and Chaos</i>, 2nd ed., Westview 2015, 6.3절). 안정성과 안장점 여부는 이것으로 정해지고, \(\mathbf f\)가 매끄러우면 경계 경우 \(\tau^2 = 4\Delta\)가 아닌 한 마디와 나선의 구별도 유지된다. 중심은 예외다. 고유값이 순허수이면 버린 2차 항이 궤적을 조금씩 안으로 또는 밖으로 밀 수 있으므로, 닫힌 궤적인지는 에너지 보존 같은 다른 논리로 따로 확인해야 한다.</p>
+
+    <div class="box ex" id="ex-pendulum-fixed-points"><div class="box-h">진자의 두 평형점</div>
+      <p>감쇠를 받는 진자 \(\ddot\theta + 2\gamma\dot\theta + \omega_0^2\sin\theta = 0\) (\(\omega_0^2 = g/L\))의 평형점을 찾아 분류하라. 감쇠가 없을 때 위상 평면의 궤적을 에너지로 그리고, 진동과 회전을 가르는 경계를 구하라. \(L = 1.00\ \text{m}\)일 때 숫자를 계산하라.</p>
+      <p><b>풀이.</b> 상태를 \((\theta, \Omega)\), \(\Omega = \dot\theta\)로 두면 \(\mathbf f = (\Omega,\ -\omega_0^2\sin\theta - 2\gamma\Omega)\)이다. 평형점은 \(\Omega = 0\), \(\sin\theta = 0\)인 \(\theta = 0\)(아래)과 \(\theta = \pi\)(위)이다. 야코비 행렬은</p>
+      <div class="formula">\[ J = \begin{pmatrix} 0 & 1 \\ -\omega_0^2\cos\theta_* & -2\gamma \end{pmatrix} \]</div>
+      <p>이다. 아래(\(\cos\theta_* = 1\))에서는 \(\tau = -2\gamma\), \(\Delta = \omega_0^2\)이므로 약한 감쇠에서 안정 나선이다. 위(\(\cos\theta_* = -1\))에서는 \(\Delta = -\omega_0^2 &lt; 0\)이므로 감쇠와 상관없이 안장점이고, 고유값은 \(-\gamma \pm \sqrt{\gamma^2 + \omega_0^2}\)이다.</p>
+      <p>감쇠가 없으면(\(\gamma = 0\)) 아래 평형점의 선형화는 중심이라 정리만으로는 판정할 수 없다. 이때는 에너지가 보존된다. 방정식에 \(\dot\theta\)를 곱해 적분하면 \(E/mL^2 = \tfrac12\Omega^2 - \omega_0^2\cos\theta\)가 일정하므로, 궤적은 이 함수의 등위선이고 아래 평형점 둘레의 궤적은 정말로 닫혀 있다. 두 안장점(\(\theta = \pm\pi\)은 같은 점이다)을 지나는 등위선은 \(E = mgL\)이고, \(1 + \cos\theta = 2\cos^2(\theta/2)\)를 쓰면</p>
+      <div class="formula" id="eq-pendulum-separatrix">\[ \Omega = \pm 2\omega_0\cos\frac{\theta}{2} \]</div>
+      <p>이다. 이 곡선을 <span class="term">분리선</span> <span class="en">(separatrix)</span>이라 한다(그림 10-5). 안쪽 궤적은 좌우로 흔들리는 진동이고, 바깥 궤적은 꼭대기를 넘어 한 방향으로 도는 회전이다. 분리선 위의 진자는 꼭대기에 다가가지만, 안장점 근처에서 거리가 \(e^{-\omega_0t}\)로만 주므로 영원히 닿지 못한다. 진폭이 분리선에 가까워질수록 진동 주기가 한없이 길어지는 것은 이 때문이다(11장의 <a href="ch11.html#def-elliptic-integral">완전 타원 적분</a>이 \(k \to 1\)에서 로그로 발산한다).</p>
+      <p><b>숫자로 보기.</b> \(L = 1.00\ \text{m}\)이면 \(\omega_0 = 3.13\ \text{s}^{-1}\)이다. 감쇠가 없을 때 꼭대기에서 벗어난 각은 \(1/\omega_0 = 0.32\ \text{s}\)마다 \(e\)배로 자란다. \(\gamma = 0.10\ \text{s}^{-1}\)이면 꼭대기의 고유값은 \(+3.03\ \text{s}^{-1}\)과 \(-3.23\ \text{s}^{-1}\)이다. 분리선의 맨 아래(\(\theta = 0\))에서 각속도는 \(2\omega_0 = 6.26\ \text{s}^{-1}\)이므로 추의 속력은 \(6.26\ \text{m/s}\)이다. 이것은 에너지 보존 \(\tfrac12 mv^2 = 2mgL\)에서 얻는 \(\sqrt{4gL} = 6.26\ \text{m/s}\)와 같다. 맨 아래에서 이보다 빠르게 밀면 진자는 넘어간다. 단위 확인: \(2\omega_0L\)은 \(\text{s}^{-1}\cdot\text{m} = \text{m/s}\)이다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 290" role="img" aria-label="감쇠 없는 진자의 위상 그림. 아래 평형점 둘레의 닫힌 곡선(진동), 위 평형점을 잇는 분리선, 그 바깥의 회전 궤적"><defs><clipPath id="f1005-clip"><rect x="46" y="16" width="414" height="220"/></clipPath></defs><line x1="46.0" y1="16" x2="46.0" y2="236" class="s-grid"/><line x1="149.5" y1="16" x2="149.5" y2="236" class="s-grid"/><line x1="253.0" y1="16" x2="253.0" y2="236" class="s-grid"/><line x1="356.5" y1="16" x2="356.5" y2="236" class="s-grid"/><line x1="460.0" y1="16" x2="460.0" y2="236" class="s-grid"/><line x1="46" y1="210.6" x2="460" y2="210.6" class="s-grid"/><line x1="46" y1="168.3" x2="460" y2="168.3" class="s-grid"/><line x1="46" y1="126.0" x2="460" y2="126.0" class="s-grid"/><line x1="46" y1="83.7" x2="460" y2="83.7" class="s-grid"/><line x1="46" y1="41.4" x2="460" y2="41.4" class="s-grid"/><text x="46.0" y="258" class="t-dim" style="font-size:14px" text-anchor="middle">−π</text><text x="149.5" y="258" class="t-dim" style="font-size:14px" text-anchor="middle">−π/2</text><text x="253.0" y="258" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="356.5" y="258" class="t-dim" style="font-size:14px" text-anchor="middle">π/2</text><text x="460.0" y="258" class="t-dim" style="font-size:14px" text-anchor="middle">π</text><text x="38" y="215.6" class="t-dim" style="font-size:14px" text-anchor="end">−2</text><text x="38" y="173.3" class="t-dim" style="font-size:14px" text-anchor="end">−1</text><text x="38" y="131.0" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="38" y="88.7" class="t-dim" style="font-size:14px" text-anchor="end">1</text><text x="38" y="46.4" class="t-dim" style="font-size:14px" text-anchor="end">2</text><line x1="46" y1="126.0" x2="460" y2="126.0" class="s-line"/><line x1="46" y1="16" x2="46" y2="236" class="s-line"/><path d="M200.6,126l1,-6.4 3.2,-6.1 5,-5.7 6.5,-4.9 8.1,-4.2 8.9,-3 9.7,-1.8 10,-.7 10,.7 9.7,1.8 8.9,3 8.1,4.2 6.5,4.9 5,5.7 3.2,6.1 1,6.4 -1,6.4 -3.2,6.1 -5,5.7 -6.5,4.9 -8.1,4.2 -8.9,3 -9.7,1.8 -10,.7 -10,-.7 -9.7,-1.8 -8.9,-3 -8.1,-4.2 -6.5,-4.9 -5,-5.7 -3.2,-6.1 -1,-6.4" class="s-line" style="stroke:var(--text);stroke-width:1.6"/><path d="M258.4,93.2L247.6,97.3L247.6,89.2z" class="f-dim"/><path d="M162.8,126l1.8,-9.8 5.4,-9.7 9,-9.4 11.7,-8.3 14,-6.9 15.4,-5.2 16.2,-3.1 16.7,-1.1 16.7,1.1 16.2,3.1 15.4,5.2 14,6.9 11.7,8.3 9,9.4 5.4,9.7 1.8,9.8 -1.8,9.8 -5.4,9.7 -9,9.4 -11.7,8.3 -14,6.9 -15.4,5.2 -16.2,3.1 -16.7,1.1 -16.7,-1.1 -16.2,-3.1 -15.4,-5.2 -14,-6.9 -11.7,-8.3 -9,-9.4 -5.4,-9.7 -1.8,-9.8" class="s-line" style="stroke:var(--text);stroke-width:1.6"/><path d="M258.4,72.5L247.6,76.5L247.6,68.4z" class="f-dim"/><path d="M122.4,126l.6,-5.7 2,-5.8 8.5,-12.4 14.4,-12.7 18.9,-12 20.9,-9.6 21.5,-7 21.6,-4.2 22.2,-1.4 22.2,1.4 21.6,4.2 21.5,7 20.9,9.6 18.9,12 14.4,12.7 8.5,12.4 2,5.8 .6,5.7 -.6,5.7 -2,5.8 -8.5,12.4 -14.4,12.7 -18.9,12 -20.9,9.6 -21.5,7 -21.6,4.2 -22.2,1.4 -22.2,-1.4 -21.6,-4.2 -21.5,-7 -20.9,-9.6 -18.9,-12 -14.4,-12.7 -8.5,-12.4 -2,-5.8 -.6,-5.7" class="s-line" style="stroke:var(--text);stroke-width:1.6"/><path d="M258.4,55.2L247.6,59.2L247.6,51.1z" class="f-dim"/><path d="M46,79.7l18.6,-1.6 20.7,-4.7 74.6,-26.7 32.6,-9.6 30.5,-5.7 30,-1.9 30,1.9 30.5,5.7 32.6,9.6 74.6,26.7 20.7,4.7 18.6,1.6" class="s-acc"/><path d="M362.1,52.3L349.3,52.5L352.4,44.1z" class="f-acc"/><path d="M46,172.3l18.6,1.6 20.7,4.7 74.6,26.7 32.6,9.6 30.5,5.7 30,1.9 30,-1.9 30.5,-5.7 32.6,-9.6 74.6,-26.7 20.7,-4.7 18.6,-1.6" class="s-acc"/><path d="M144.4,199.8L157.2,199.7L154.1,208.1z" class="f-acc"/><path d="M46,126l66.2,-40.8 25.9,-13.6 23.8,-10.8 23.8,-8.6 22.8,-6 22.2,-3.6 22.3,-1.2 22.3,1.2 22.2,3.6 22.8,6 23.8,8.6 23.8,10.8 25.9,13.6 66.2,40.8" class="s-acc2" style="stroke-width:2.6" stroke-dasharray="8 4"/><path d="M46,126l66.2,40.8 25.9,13.6 23.8,10.8 23.8,8.6 22.8,6 22.2,3.6 22.3,1.2 22.3,-1.2 22.2,-3.6 22.8,-6 23.8,-8.6 23.8,-10.8 25.9,-13.6 66.2,-40.8" class="s-acc2" style="stroke-width:2.6" stroke-dasharray="8 4"/><circle cx="46.0" cy="126.0" r="5" class="f-acc2"/><circle cx="460.0" cy="126.0" r="5" class="f-acc2"/><circle cx="253.0" cy="126.0" r="5" class="f-acc"/><text x="261.0" y="146.0" class="t" style="font-size:14px">중심</text><text x="452.0" y="146.0" class="t" style="font-size:14px" text-anchor="end">안장점</text><text x="253.0" y="23" class="t-acc" style="font-size:14px" text-anchor="middle">회전</text><text x="117.9" y="60.4" class="t" style="font-size:14px;fill:var(--accent-2)" text-anchor="middle">분리선</text><text x="460" y="282" class="t-dim" style="font-size:14px" text-anchor="end">θ</text><text x="52" y="30" class="t-dim" style="font-size:14px">Ω / ω₀</text></svg>
+      <figcaption><b>그림 10-5.</b> 감쇠 없는 진자의 위상 평면. 등위선 \(\tfrac12\Omega^2 - \omega_0^2\cos\theta = \) 일정을 \(E/(mL^2\omega_0^2) = -0.7, -0.2, 0.4\)(닫힌 곡선, 진동), \(1\)(점선, 분리선 식 <a class="ref" href="#eq-pendulum-separatrix"></a>), \(1.6\)(위아래의 열린 곡선, 회전)에 대해 그렸다. 원점은 중심, \(\theta = \pm\pi\)는 같은 안장점이다. 화살표는 운동 방향이다. \(\Omega > 0\)이면 \(\theta\)가 커진다.</figcaption>
+    </figure>
+
+    <div class="callout deep" data-later="cm-grad"><strong>선형화로 보이지 않는 것: 극한 순환과 혼돈</strong><p>평형점의 분류는 국소적인 그림일 뿐이다. 비선형계에는 고립된 닫힌 궤적인 <span class="term">극한 순환</span> <span class="en">(limit cycle)</span>이 있을 수 있다(판데르폴 진동자). 2차원 자율계에서는 궤적이 엇갈릴 수 없어서 운동이 평형점이나 닫힌 궤적으로 가는 것 말고는 별로 할 일이 없지만(푸앵카레-벤딕손 정리), 3차원 이상이면 처음 조건의 작은 차이가 지수적으로 커지는 <span class="term">혼돈</span> <span class="en">(chaos)</span>이 가능하다. 대기 대류의 세 변수 모형에서 이것을 보인 로렌츠의 논문(E. N. Lorenz, J. Atmos. Sci. 20, 130 (1963))이 대표적이고, 주기적으로 흔드는 감쇠 진자도 \((\theta, \Omega, \omega t)\)의 3차원계라 혼돈을 보일 수 있다. 이 주제는 고전역학 대학원 책에서 다룬다.</p></div>
+  </section>
+
+  <!-- ============================================================ 10.6 -->
+  <section id="s6">
+    <h2>라플라스 변환</h2>
+    <p>스위치를 켜는 순간, 짐을 올려놓는 순간, 원자로에서 꺼낸 시료가 붕괴를 시작하는 순간처럼 많은 물리 문제는 "\(t = 0\)에 무언가가 시작된다"로 주어진다. 페이저는 영원히 계속되는 사인파의 정상 상태만 주고, 10.4절의 방법은 동차 해와 특수해를 따로 구해 처음 조건을 나중에 맞춘다. 라플라스 변환은 미분을 곱셈으로 바꾸면서 처음 조건까지 한꺼번에 식에 넣어, 초기값 문제를 대수 문제 하나로 만든다.</p>
+
+    <h3 id="s6-definition">정의와 기본 성질</h3>
+    <div class="box def" id="def-laplace-transform"><div class="box-h">라플라스 변환</div>
+      <p>\(t \ge 0\)에서 정의된 함수 \(f(t)\)의 <span class="term">라플라스 변환</span> <span class="en">(Laplace transform)</span>은 다음 함수다.</p>
+      <div class="formula" id="eq-laplace-transform">\[ F(s) = \mathcal{L}[f](s) = \int_0^{\infty}f(t)\,e^{-st}\,dt \]</div>
+      <p>\(f\)가 구간별 연속이고 \(\lvert f(t)\rvert \le Me^{\sigma t}\)인 상수 \(M, \sigma\)가 있으면(지수 차수) 적분은 \(\operatorname{Re}s > \sigma\)에서 수렴한다. 연속인 두 함수의 변환이 같으면 두 함수는 같다(레르흐 정리). 그래서 변환 표를 거꾸로 읽어 역변환을 구할 수 있다.</p>
+    </div>
+    <p>가장 기본이 되는 변환은 지수 함수다. \(\operatorname{Re}s > \operatorname{Re}a\)이면</p>
+    <div class="formula">\[ \mathcal L[e^{at}] = \int_0^\infty e^{-(s - a)t}\,dt = \frac{1}{s - a} \]</div>
+    <p>이다. \(a\)는 복소수여도 된다. \(a = \pm i\omega\)로 놓고 더하고 빼면 코사인과 사인의 변환이 나오고, \(a\)로 \(n\)번 미분하면 \(t^ne^{at}\)의 변환 \(n!/(s - a)^{n+1}\)이 나온다. 라플라스 변환이 미분방정식에 쓸모 있는 이유는 다음 성질 때문이다. 부분 적분하면 \(\int_0^\infty f'e^{-st}\,dt = \big[fe^{-st}\big]_0^\infty + s\int_0^\infty fe^{-st}\,dt\)이고, \(\operatorname{Re}s\)가 충분히 크면 위끝의 항은 0이다.</p>
+    <div class="formula" id="eq-laplace-derivative">\[ \begin{aligned} \mathcal L[f'] &= sF(s) - f(0) \\ \mathcal L[f''] &= s^2F(s) - sf(0) - f'(0) \end{aligned} \]</div>
+    <p>둘째 줄은 첫 줄을 두 번 쓴 것이다. 미분이 \(s\)를 곱하는 것으로 바뀌고 처음 조건이 저절로 들어온다. 2장의 페이저에서 미분이 \(-i\omega\)를 곱하는 것이었던 것과 비슷하다. 두 변환은 아래에서 이어진다. 다음 성질도 정의에서 바로 나온다.</p>
+    <div class="formula" id="eq-laplace-shift">\[ \begin{aligned} \mathcal L[e^{at}f(t)] &= F(s - a) \\ \mathcal L[\Theta(t - a)\,f(t - a)] &= e^{-as}F(s)\quad(a > 0) \end{aligned} \]</div>
+    <p>첫 줄은 \(e^{at}e^{-st} = e^{-(s-a)t}\)이고, 둘째 줄은 \(t' = t - a\)로 바꾸면 된다. 둘째 줄은 \(a\)만큼 늦게 켜진 원천을 다룰 때 쓴다. 가장 중요한 성질은 합성곱이 곱이 된다는 것이다.</p>
+    <div class="formula" id="eq-laplace-convolution">\[ \mathcal L\Big[\int_0^{t}f(t - t')\,g(t')\,dt'\Big] = F(s)\,G(s) \]</div>
+    <details class="proof"><summary>계산의 세부</summary>
+      <p>왼쪽은 \(\int_0^\infty dt\int_0^t dt'\,f(t - t')g(t')e^{-st}\)이다. 적분 영역 \(0 \le t' \le t &lt; \infty\)를 \(t'\)부터 훑으면 \(\int_0^\infty dt'\int_{t'}^\infty dt\)이고, 안쪽에서 \(u = t - t'\)로 바꾸면 \(e^{-st} = e^{-su}e^{-st'}\)이므로 \(\int_0^\infty g(t')e^{-st'}dt'\int_0^\infty f(u)e^{-su}du = G(s)F(s)\)이다. 두 적분이 절대 수렴하는 \(\operatorname{Re}s\)에서는 순서를 바꿔도 된다.</p>
+    </details>
+    <p>자주 쓰는 변환을 모으면 다음 표가 된다. \(\gamma\)와 \(\omega_d\)가 들어간 줄은 \(e^{-\gamma t}\cos\omega_dt\)와 \(e^{-\gamma t}\sin\omega_dt\)에 식 <a class="ref" href="#eq-laplace-shift"></a>의 첫 줄을 쓴 것이다.</p>
+    <div class="formula" id="eq-laplace-table">\[ \begin{aligned} 1 &\;\to\; \frac1s & t^n &\;\to\; \frac{n!}{s^{n+1}} \\ e^{at} &\;\to\; \frac{1}{s - a} & te^{at} &\;\to\; \frac{1}{(s - a)^2} \\ \cos\omega t &\;\to\; \frac{s}{s^2 + \omega^2} & \sin\omega t &\;\to\; \frac{\omega}{s^2 + \omega^2} \\ \delta(t - a) &\;\to\; e^{-as} & & \\ e^{-\gamma t}\cos\omega_dt &\;\to\; \frac{s + \gamma}{(s + \gamma)^2 + \omega_d^2} & & \\ e^{-\gamma t}\sin\omega_dt &\;\to\; \frac{\omega_d}{(s + \gamma)^2 + \omega_d^2} & & \end{aligned} \]</div>
+    <p>\(t^n\)의 변환은 11장의 <a href="ch11.html#def-gamma">감마 함수</a>로 쓰면 \(n\)이 정수가 아니어도 \(\Gamma(n+1)/s^{n+1}\)이다. 역변환은 대개 부분 분수로 나눈 뒤 이 표를 거꾸로 읽어 구한다. 표에 없는 함수의 역변환을 직접 계산하는 브롬위치 적분은 복소 적분이 필요하므로 19장의 <a href="ch19.html#ex-bromwich-inversion">브롬위치 적분 예제</a>로 미룬다.</p>
+    <div class="callout warn"><strong>아래끝 \(0\)은 \(0^-\)로 읽는다</strong><p>원천이 \(t = 0\)에 델타 함수를 가지면 적분의 아래끝이 문제가 된다. 이 책은 아래끝을 \(0^-\)(0보다 아주 조금 앞)로 읽어 \(\mathcal L[\delta(t)] = 1\)이 되게 하고, 식 <a class="ref" href="#eq-laplace-derivative"></a>의 \(f(0)\)도 충격을 받기 직전의 값 \(f(0^-)\)로 읽는다. 그러면 정지해 있던 진동자가 \(t = 0\)에 충격을 받는 문제는 처음 조건 0, 원천 \(\delta(t)\)로 풀린다. \(0^+\)로 잡는 교재에서는 같은 문제가 처음 속도 \(\dot x(0^+) = 1/m\)으로 주어진다. 두 방식을 섞으면 충격을 두 번 세거나 빠뜨린다.</p></div>
+
+    <h3 id="s6-transfer">전달 함수와 충격 응답</h3>
+    <p>정지해 있던 진동자(\(x(0) = \dot x(0) = 0\))에 식 <a class="ref" href="#eq-laplace-derivative"></a>을 쓰면 식 <a class="ref" href="#eq-damped-oscillator"></a>는 \(m(s^2 + 2\gamma s + \omega_0^2)X(s) = F(s)\)가 된다. 따라서 \(X = H(s)F(s)\)이고</p>
+    <div class="formula" id="eq-transfer-function">\[ H(s) = \frac{1}{m(s^2 + 2\gamma s + \omega_0^2)} = \frac{1}{m\big[(s + \gamma)^2 + \omega_d^2\big]} \]</div>
+    <p>를 <span class="term">전달 함수</span> <span class="en">(transfer function)</span>라 한다. 분모가 특성 다항식이므로 \(H\)의 극은 특성 근 \(s_\pm = -\gamma \pm i\omega_d\)이다. 이 식 하나에 앞 절들의 결과가 모두 들어 있다.</p>
+    <ul>
+      <li><b>충격 응답.</b> \(F = \delta(t)\)이면 \(F(s) = 1\)이므로 \(X = H\)이고, 표의 \(e^{-\gamma t}\sin\omega_dt\) 줄로 거꾸로 읽으면 \(x = e^{-\gamma t}\sin\omega_dt/m\omega_d\), 곧 식 <a class="ref" href="#eq-impulse-response-oscillator"></a>의 \(h(t)\)이다. 충격 응답은 전달 함수의 역변환이다.</li>
+      <li><b>합성곱.</b> 일반적인 \(F\)이면 \(X = HF\)이고, 식 <a class="ref" href="#eq-laplace-convolution"></a>에 따라 \(x = h * F\)이다. 식 <a class="ref" href="#eq-convolution-response"></a>가 다시 나온다.</li>
+      <li><b>처음 조건.</b> \(x(0) = x_0\), \(\dot x(0) = v_0\)이면 \(X = H(s)\big[F(s) + m(s + 2\gamma)x_0 + mv_0\big]\)이다. 둘째 항의 역변환이 자유 감쇠 진동이다.</li>
+    </ul>
+    <p>정상 상태와도 이어진다. 감쇠가 있어(\(\gamma > 0\)) \(h\)가 지수적으로 줄면, 인과적인 \(h\)의 시간 푸리에 변환(<a href="ch15.html#eq-ft-pair">15장에서 정하는 이 책의 관례</a> \(\tilde f(\omega) = \int f(t)e^{+i\omega t}dt\))은 라플라스 변환에 \(s = -i\omega\)를 넣은 것과 같다.</p>
+    <div class="formula" id="eq-laplace-fourier-link">\[ \tilde h(\omega) = H(-i\omega) = \frac{1/m}{\omega_0^2 - \omega^2 - 2i\gamma\omega} \]</div>
+    <p>이것은 식 <a class="ref" href="#eq-driven-response"></a>의 \(\tilde x/F_0\)와 똑같다. \(\gamma = 0\)이면 극이 실수축에 놓여 이 식을 그대로 쓸 수 없고, 19장의 <a href="ch19.html#eq-principal-value">주값</a> 처방이 필요하다. 정상 상태의 페이저 응답은 전달 함수를 허수축 \(s = -i\omega\) 위에서 읽은 값이다. 이 책이 진동을 \(e^{-i\omega t}\)로 쓰기 때문에 \(d/dt \to -i\omega\)와 \(d/dt \to s\)가 \(s = -i\omega\)로 맞물린다. \(H\)의 극 \(s = -\gamma \pm i\omega_d\)는 \(\omega\) 평면에서 \(\omega = \pm\omega_d - i\gamma\), 곧 아래 반평면에 있다. 19장의 <a href="ch19.html#ex-oscillator-response-contour">감쇠 진동자 응답의 윤곽 적분 예제</a>는 이 극의 위치에서 \(t &lt; 0\)이면 응답이 0이라는 인과율을 유수 정리로 끌어낸다.</p>
+    <div class="callout warn"><strong>공학의 전달 함수 \(H(j\omega)\)와 비교</strong><p>공학 교재는 \(e^{j\omega t}\)를 써서 정상 상태 응답을 \(H(j\omega)\)로 읽는다. 같은 진동자를 두 관례로 쓰면 다음과 같다.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th></th><th>이 책 \(e^{-i\omega t}\)</th><th>공학 \(e^{j\omega t}\)</th></tr></thead>
+        <tbody>
+          <tr><td>\(d/dt\)</td><td>\(-i\omega\)</td><td>\(j\omega\)</td></tr>
+          <tr><td>정상 상태 응답</td><td>\(H(-i\omega)\)</td><td>\(H(j\omega)\)</td></tr>
+          <tr><td>\(\omega\) 평면의 극</td><td>\(\pm\omega_d - i\gamma\) (아래 반평면)</td><td>\(\pm\omega_d + j\gamma\) (위 반평면)</td></tr>
+          <tr><td>늦는 위상</td><td>\(+\arg\tilde x\)</td><td>\(-\arg X\)</td></tr>
+          <tr><td>인덕터</td><td>\(\operatorname{Im}Z = -\omega L &lt; 0\)</td><td>\(\operatorname{Im}Z = +\omega L > 0\)</td></tr>
+        </tbody>
+      </table></div>
+      <p>\(s\) 평면의 극 \(-\gamma \pm i\omega_d\)는 두 관례에서 같고, 달라지는 것은 \(\omega\)로 바꾸는 법뿐이다. 공학 식은 \(j \to -i\)로 바꿔 읽는다(2장의 표).</p></div>
+
+    <div class="box ex" id="ex-step-response"><div class="box-h">저울에 갑자기 올려놓은 짐</div>
+      <p>용수철 저울에 \(2.0\ \text{kg}\)짜리 짐을 \(t = 0\)에 갑자기 올려놓는다(힘 \(F_0\Theta(t)\), \(F_0 = mg\)). 움직이는 질량은 거의 짐의 질량이고, 짐을 올린 저울은 \(\omega_0 = 30\ \text{s}^{-1}\), 감쇠비 \(\zeta = 0.20\)인 진동자처럼 움직인다고 하자. 바늘은 최대 얼마를 가리키는가? 넘침을 5% 아래로 줄이려면 감쇠비가 얼마 이상이어야 하는가?</p>
+      <p><b>풀이.</b> \(\mathcal L[\Theta] = 1/s\)이므로 \(X(s) = (F_0/m)/\big(s[(s + \gamma)^2 + \omega_d^2]\big)\)이다. 부분 분수로 나누면</p>
+      <div class="formula">\[ \frac{\omega_0^2}{s[(s + \gamma)^2 + \omega_d^2]} = \frac1s - \frac{(s + \gamma) + \gamma}{(s + \gamma)^2 + \omega_d^2} \]</div>
+      <p>이다(통분하면 분자가 \(\gamma^2 + \omega_d^2 = \omega_0^2\)). \(F_0/m\omega_0^2 = F_0/k\)이고, 표의 감쇠 코사인과 감쇠 사인 줄로 거꾸로 읽으면</p>
+      <div class="formula" id="eq-step-response">\[ x(t) = \frac{F_0}{k}\Big[1 - e^{-\gamma t}\Big(\cos\omega_dt + \frac{\gamma}{\omega_d}\sin\omega_dt\Big)\Big] \]</div>
+      <p>이다. 미분하면 괄호 안의 항들이 정리되어 \(\dot x = (F_0/k)(\omega_0^2/\omega_d)e^{-\gamma t}\sin\omega_dt\)이므로, 첫 최대는 \(t = \pi/\omega_d\)이고 그때 \(\cos = -1\), \(\sin = 0\)이다.</p>
+      <div class="formula" id="eq-step-overshoot">\[ x_{\max} = \frac{F_0}{k}\big(1 + e^{-\pi\gamma/\omega_d}\big),\quad \frac{\gamma}{\omega_d} = \frac{\zeta}{\sqrt{1 - \zeta^2}} \]</div>
+      <p>넘침의 비율 \(e^{-\pi\zeta/\sqrt{1 - \zeta^2}}\)은 감쇠비만으로 정해진다. 감쇠가 없으면 넘침이 100%, 곧 정적 변위의 두 배로 3장의 <a href="ch03.html#ex-duhamel-response">예제 3.13</a>과 같고, 임계 감쇠 이상이면 넘침이 없다.</p>
+      <p><b>숫자로 보기.</b> \(\zeta = 0.20\)이면 넘침은 \(e^{-0.641} = 0.527\)이다. 정적 변위는 \(g/\omega_0^2 = 10.9\ \text{mm}\)이고, 바늘은 \(t = \pi/\omega_d = 0.107\ \text{s}\)에 \(16.6\ \text{mm}\)까지 가서 잠깐 \(2.0 \times 1.527 = 3.05\ \text{kg}\)을 가리킨다. 넘침을 5% 아래로 하려면 \(\pi\zeta/\sqrt{1 - \zeta^2} \ge \ln 20 = 3.00\), 곧 \(\zeta^2 \ge 3.00^2/(\pi^2 + 3.00^2)\)이므로 \(\zeta \ge 0.69\)이다. 계측기의 바늘을 임계 감쇠보다 조금 약하게 맞추는 것은 이 정도 넘침을 받아들이고 빨리 자리 잡게 하려는 것이다(<a class="ref" href="#prob-settling-time"></a>). 차원 확인: \(F_0/k = mg/m\omega_0^2 = g/\omega_0^2\)의 단위는 \((\text{m/s}^2)/\text{s}^{-2} = \text{m}\)이다.</p>
+    </div>
+
+    <h3 id="s6-decay">방사성 붕괴 사슬</h3>
+    <p>여러 변수가 얽힌 연립 방정식에서 라플라스 변환은 특히 편하다. 미분방정식 여러 개가 연립 일차 방정식 여러 개가 되기 때문이다.</p>
+    <div class="box ex" id="ex-decay-chain"><div class="box-h">붕괴 사슬 \(A \to B \to C\)</div>
+      <p>어미핵 \(A\)가 붕괴 상수 \(\lambda_A\)로 딸핵 \(B\)가 되고, \(B\)는 \(\lambda_B\)로 안정한 \(C\)가 된다. \(t = 0\)에 \(A\)만 \(N_0\)개 있을 때 \(N_B(t)\)를 구하고, 딸핵이 가장 많아지는 시각을 구하라. 의료용 동위원소 발생기의 Mo-99(반감기 약 66시간) → Tc-99m(반감기 약 6.0시간)에 적용하라. 반감기는 NNDC NuDat 3의 평가값 65.98 h와 6.007 h를 반올림한 것이다.</p>
+      <p><b>풀이.</b> 붕괴율은 남은 수에 비례하므로</p>
+      <div class="formula" id="eq-decay-chain-ode">\[ \begin{aligned} \dot N_A &= -\lambda_AN_A \\ \dot N_B &= \lambda_AN_A - \lambda_BN_B \\ \dot N_C &= \lambda_BN_B \end{aligned} \]</div>
+      <p>이다. 세 식을 더하면 \(N_A + N_B + N_C\)가 일정하다. 식 <a class="ref" href="#eq-laplace-derivative"></a>로 변환하면 \((s + \lambda_A)\bar N_A = N_0\), \((s + \lambda_B)\bar N_B = \lambda_A\bar N_A\)이다(\(\bar N\)은 변환). 미분방정식이 차례로 풀리는 대수 방정식이 되었다.</p>
+      <div class="formula">\[ \begin{aligned} \bar N_B(s) &= \frac{\lambda_AN_0}{(s + \lambda_A)(s + \lambda_B)} \\ &= \frac{\lambda_AN_0}{\lambda_B - \lambda_A}\Big(\frac{1}{s + \lambda_A} - \frac{1}{s + \lambda_B}\Big) \end{aligned} \]</div>
+      <p>표의 \(e^{at}\) 줄로 거꾸로 읽으면</p>
+      <div class="formula" id="eq-bateman-two">\[ N_B(t) = \frac{\lambda_AN_0}{\lambda_B - \lambda_A}\big(e^{-\lambda_At} - e^{-\lambda_Bt}\big) \]</div>
+      <p>이고 \(N_C = N_0 - N_A - N_B\)이다. \(N_B\)는 0에서 출발해 커졌다가 다시 준다. \(\dot N_B = 0\), 곧 \(\lambda_Ae^{-\lambda_At} = \lambda_Be^{-\lambda_Bt}\)인 시각은</p>
+      <div class="formula" id="eq-decay-chain-peak">\[ t_{\max} = \frac{\ln(\lambda_B/\lambda_A)}{\lambda_B - \lambda_A} \]</div>
+      <p>이다. 이 순간 \(\dot N_B = 0\)이므로 \(\lambda_BN_B = \lambda_AN_A\), 곧 딸핵의 방사능(초당 붕괴 수)이 어미핵의 방사능과 같다. \(\lambda_B > \lambda_A\)이면 오랜 뒤에 \(e^{-\lambda_Bt}\)가 먼저 사라져, 방사능의 비가 \(\lambda_BN_B/\lambda_AN_A \to \lambda_B/(\lambda_B - \lambda_A)\)로 일정해진다. 딸핵이 어미핵의 붕괴 속도에 묶여 함께 줄어드는 이 상태를 <span class="term">과도 평형</span> <span class="en">(transient equilibrium)</span>이라 한다.</p>
+      <p><b>숫자로 보기.</b> \(\lambda_A = \ln 2/66\ \text{h} = 0.0105\ \text{h}^{-1}\), \(\lambda_B = \ln 2/6.0\ \text{h} = 0.1155\ \text{h}^{-1}\)이다. \(\lambda_B/\lambda_A = 11\)이므로 \(t_{\max} = \ln 11/(0.1050\ \text{h}^{-1}) = 22.8\ \text{h}\)이다. 발생기에서 Tc-99m를 뽑아낸 뒤 하루쯤 지나면 다시 가장 많이 모인다는 뜻이다. 그때 Tc-99m의 수는 \(N_B = 0.072N_0\)이고, 두 방사능은 모두 처음 어미 방사능의 0.79배다. 그 뒤로 방사능의 비는 \(T_A/(T_A - T_B) = 66/60 = 1.10\)에 머문다(그림 10-6). 실제 Mo-99의 붕괴 가운데 일부는 Tc-99m를 거치지 않으므로 \(N_B\)에 그 갈래 비를 곱해야 하지만, 갈래 비는 \(t_{\max}\)를 바꾸지 않는다. 차원 확인: \(\lambda t\)는 \(\text{h}^{-1}\cdot\text{h}\)로 무차원이다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 270" role="img" aria-label="어미핵과 딸핵의 방사능. 딸핵의 방사능이 22.8시간에 어미핵과 같아진 뒤 어미핵의 1.1배로 함께 줄어든다"><defs><clipPath id="f1006-clip"><rect x="50" y="16" width="410" height="200"/></clipPath></defs><line x1="50.0" y1="16" x2="50.0" y2="216" class="s-grid"/><line x1="132.0" y1="16" x2="132.0" y2="216" class="s-grid"/><line x1="214.0" y1="16" x2="214.0" y2="216" class="s-grid"/><line x1="296.0" y1="16" x2="296.0" y2="216" class="s-grid"/><line x1="378.0" y1="16" x2="378.0" y2="216" class="s-grid"/><line x1="460.0" y1="16" x2="460.0" y2="216" class="s-grid"/><line x1="50" y1="216.0" x2="460" y2="216.0" class="s-grid"/><line x1="50" y1="166.0" x2="460" y2="166.0" class="s-grid"/><line x1="50" y1="116.0" x2="460" y2="116.0" class="s-grid"/><line x1="50" y1="66.0" x2="460" y2="66.0" class="s-grid"/><line x1="50" y1="16.0" x2="460" y2="16.0" class="s-grid"/><text x="50.0" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="132.0" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">24</text><text x="214.0" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">48</text><text x="296.0" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">72</text><text x="378.0" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">96</text><text x="460.0" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">120</text><text x="42" y="221.0" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="42" y="171.0" class="t-dim" style="font-size:14px" text-anchor="end">0.25</text><text x="42" y="121.0" class="t-dim" style="font-size:14px" text-anchor="end">0.5</text><text x="42" y="71.0" class="t-dim" style="font-size:14px" text-anchor="end">0.75</text><text x="42" y="21.0" class="t-dim" style="font-size:14px" text-anchor="end">1</text><line x1="50" y1="216.0" x2="460" y2="216.0" class="s-line"/><line x1="50" y1="16" x2="50" y2="216" class="s-line"/><path d="M50,16l42.4,24.4 45.1,22.7 46.4,20.4 49.2,18.6 52,16.8 54.6,15 58.8,13.6 61.5,11.8" class="s-line" style="stroke:var(--text);stroke-width:2.4"/><path d="M50,216l6.8,-40.8 6.9,-31.6 6.8,-24.2 8.2,-21.5 8.2,-15.1 9.6,-11.8 10.9,-7.8 12.3,-3.9 16.4,-.2 19.1,4 23.3,7.5 83.3,30.9 54.7,17.6 69.7,18.6 73.8,15.9" class="s-acc"/><line x1="128.0" y1="16" x2="128.0" y2="216" class="s-acc2" stroke-dasharray="5 4"/><text x="134.0" y="206.0" class="t-acc" style="font-size:14px;fill:var(--accent-2)">t<tspan baseline-shift="sub" font-size="72%">max</tspan> = 22.8 h</text><text x="323.3" y="110.0" class="t" style="font-size:15px" text-anchor="middle">Mo-99 (어미)</text><text x="152.5" y="40.0" class="t-acc" style="font-size:15px" text-anchor="start">Tc-99m (딸)</text><text x="460" y="262" class="t-dim" style="font-size:14px" text-anchor="end">시간 t (h)</text><text x="453.2" y="32" class="t-dim" style="font-size:14px" text-anchor="end">방사능 / 처음 어미 방사능</text></svg>
+      <figcaption><b>그림 10-6.</b> Mo-99(굵은 선)와 Tc-99m(실선)의 방사능을 처음 Mo-99 방사능으로 나눈 값(식 <a class="ref" href="#eq-bateman-two"></a>, 갈래 비는 1로 둠). 딸핵의 방사능은 \(t_{\max} = 22.8\ \text{h}\)에 어미핵과 같아지고(점선), 그 뒤로는 어미핵의 1.10배로 함께 줄어든다.</figcaption>
+    </figure>
+    <p>두 붕괴 상수가 같으면 \(\bar N_B\)가 겹친 극 \(1/(s + \lambda)^2\)을 가져 \(N_B = \lambda N_0\,te^{-\lambda t}\)이다(<a class="ref" href="#prob-equal-decay"></a>). 중근의 \(te^{s_0t}\), 행렬 지수의 \(I + Nt\)와 같은 구조다.</p>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>변수 분리형 \(y' = f(x)g(y)\)는 \(\int dy/g = \int f\,dx\)로, 1계 선형 방정식 \(y' + py = q\)는 적분 인자 \(\mu = e^{\int p\,dx}\)를 곱해 \((\mu y)' = \mu q\)로 푼다. 선형 저항 낙하의 해 \(v = v_t + (v_0 - v_t)e^{-t/\tau}\)는 처음 속도와 상관없이 \(v_t = g\tau\)로 다가간다.</li>
+      <li>상수 계수 방정식 \(a\ddot y + b\dot y + cy = 0\)은 \(e^{st}\)로 풀고, \(s\)는 특성 방정식 \(as^2 + bs + c = 0\)의 근이다. 복소근 \(\alpha \pm i\beta\)는 \(e^{\alpha t}\cos\beta t\), \(e^{\alpha t}\sin\beta t\)를, 중근 \(s_0\)은 \(e^{s_0t}\), \(te^{s_0t}\)를 준다.</li>
+      <li>론스키안 \(W = y_1\dot y_2 - \dot y_1y_2\)는 아벨 공식 \(W = W_0e^{-\int p\,dt}\)를 따라 어디서나 0이거나 어디서도 0이 아니다. 두 해가 선형 독립일 필요충분조건은 \(W \ne 0\)이고, 그때 모든 해는 \(c_1y_1 + c_2y_2\)이다. 비동차 방정식의 해는 특수해 하나에 동차 해를 더한 것이다.</li>
+      <li>감쇠·강제 진동자 \(\ddot x + 2\gamma\dot x + \omega_0^2x = F/m\)는 \(\zeta = \gamma/\omega_0\)에 따라 과소·임계·과대 감쇠로 나뉜다. \(F_0\cos\omega t\)에 대한 정상 상태는 \(\tilde x = (F_0/m)/(\omega_0^2 - \omega^2 - 2i\gamma\omega)\)이고, 변위는 힘보다 \(\phi \in [0, \pi]\)만큼 늦는다(편각이 클수록 늦다). 공명에서 \(\phi = 90°\), 진폭은 정적 변위의 \(Q\)배다.</li>
+      <li>품질 인자 \(Q = \omega_0/2\gamma\)는 흡수 전력의 반전력 폭 \(\Delta\omega = 2\gamma\)(정확히)로 \(Q = \omega_0/\Delta\omega\)이고, 약한 감쇠에서 \(2\pi\times\)(저장 에너지)/(주기당 손실)이다. RLC 회로는 \(m \to L\), \(b \to R\), \(k \to 1/C\)로 옮겨 \(\gamma = R/2L\), \(Q = \omega_0L/R\)이다.</li>
+      <li>매개변수 변화법은 \(y_p = \int [y_1(t')y_2(t) - y_1(t)y_2(t')]f(t')/W(t')\,dt'\)를 준다. 진동자의 충격 응답은 \(h(t) = \Theta(t)e^{-\gamma t}\sin\omega_dt/m\omega_d\)이고, 임의의 힘에 대한 응답은 합성곱 \(x(t) = \int h(t - t')F(t')\,dt'\)이다.</li>
+      <li>\(\dot{\mathbf x} = A\mathbf x\)의 해는 \(\mathbf x(t) = e^{At}\mathbf x(0)\)이고 \(A\)의 고유값이 특성 근이다. 2차원 평형점은 \(\tau = \operatorname{tr}A\), \(\Delta = \det A\)로 안장점(\(\Delta &lt; 0\)), 마디, 나선, 중심으로 나뉜다. 비선형계는 야코비 행렬로 선형화한다. 진자의 아래 평형점은 중심(감쇠가 있으면 안정 나선), 위는 안장점이다.</li>
+      <li>라플라스 변환 \(F(s) = \int_0^\infty fe^{-st}dt\)에서 \(\mathcal L[f'] = sF - f(0)\), 합성곱은 곱이 된다. 진동자의 전달 함수 \(H(s) = 1/m(s^2 + 2\gamma s + \omega_0^2)\)의 역변환이 충격 응답이고, \(H(-i\omega)\)가 정상 상태의 페이저 응답이다. 붕괴 사슬의 딸핵은 \(t_{\max} = \ln(\lambda_B/\lambda_A)/(\lambda_B - \lambda_A)\)에 가장 많다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. 다음 가운데 선형 상미분방정식은?</p><div class="opts">
+        <button class="opt">\(\dot y + y^2 = 0\)</button>
+        <button class="opt" data-correct>\(\ddot y + t^2y = \sin t\)</button>
+        <button class="opt">\(y\,\dot y = t\)</button>
+        <button class="opt">\(\ddot y + \sin y = 0\)</button>
+      </div><div class="quiz-exp">미지 함수와 도함수가 일차로만 들어가면 선형이다. 계수 \(t^2\)이 독립 변수에 기대는 것과 원천 \(\sin t\)는 상관없다. 나머지는 \(y^2\), \(y\dot y\), \(\sin y\) 때문에 비선형이다.</div></div>
+      <div class="quiz-q"><p>2. 어떤 진동자의 특성 근이 \(s = (-1 \pm 4i)\ \text{s}^{-1}\)이다. 자유 운동에 대한 설명으로 옳은 것은?</p><div class="opts">
+        <button class="opt">진동하지 않고 \(e^{-t}\)와 \(e^{-4t}\)의 합으로 줄어든다.</button>
+        <button class="opt" data-correct>각진동수 \(4\ \text{s}^{-1}\)로 진동하며 진폭이 1초마다 \(1/e\)로 준다.</button>
+        <button class="opt">각진동수 \(1\ \text{s}^{-1}\)로 진동하며 진폭이 0.25초마다 \(1/e\)로 준다.</button>
+        <button class="opt">진폭이 \(e^{t}\)로 자란다.</button>
+      </div><div class="quiz-exp">\(e^{(-1 \pm 4i)t}\)의 실수부와 허수부가 \(e^{-t}\cos 4t\), \(e^{-t}\sin 4t\)이다. 실수부 \(-\gamma = -1\ \text{s}^{-1}\)이 진폭의 감쇠율, 허수부 \(\omega_d = 4\ \text{s}^{-1}\)이 각진동수다. 이 진동자는 \(\omega_0 = \sqrt{17}\ \text{s}^{-1}\), \(Q = \sqrt{17}/2 \approx 2.1\)이다.</div></div>
+      <div class="quiz-q"><p>3. 고유 진동수 \(f_0 = 1000\ \text{Hz}\), 품질 인자 \(Q = 50\)인 공진기가 있다. 흡수 전력의 반전력 폭(진동수 단위)은?</p><div class="opts">
+        <button class="opt">\(10\ \text{Hz}\)</button>
+        <button class="opt" data-correct>\(20\ \text{Hz}\)</button>
+        <button class="opt">\(50\ \text{Hz}\)</button>
+        <button class="opt">\(159\ \text{Hz}\)</button>
+      </div><div class="quiz-exp">식 <a class="ref" href="#eq-resonance-width"></a>에서 \(\Delta\omega = \omega_0/Q\)이고, 양변을 \(2\pi\)로 나누면 \(\Delta f = f_0/Q = 20\ \text{Hz}\)이다.</div></div>
+      <div class="quiz-q"><p>4. \(Q = 20\)인 진동자를 \(\omega = 3\omega_0\)으로 흔든다. 정상 상태에서 변위와 힘의 위상 관계는? (이 책의 관례)</p><div class="opts">
+        <button class="opt">변위가 힘과 위상이 같다.</button>
+        <button class="opt">변위가 힘보다 90° 늦다.</button>
+        <button class="opt" data-correct>변위가 힘보다 거의 180° 늦다(약 179°).</button>
+        <button class="opt">변위가 힘보다 90° 앞선다.</button>
+      </div><div class="quiz-exp">\(\tan\phi = 2\gamma\omega/(\omega_0^2 - \omega^2)\)에서 \(\omega = 3\omega_0\)이면 분모가 \(-8\omega_0^2\), 분자가 \(6\gamma\omega_0 = 0.15\,\omega_0^2\)이므로 \(\phi = 180° - 1.1° \approx 179°\)이다. 높은 진동수에서는 관성이 지배해 추가 힘과 반대로 움직인다. 응답이 힘보다 앞서는 일은 없다.</div></div>
+      <div class="quiz-q"><p>5. \(\ddot y + 2\dot y + 5y = 0\)의 두 해의 론스키안이 \(t = 0\)에서 3이다. \(t = 1\)에서 론스키안은?</p><div class="opts">
+        <button class="opt">\(3\)</button>
+        <button class="opt" data-correct>\(3e^{-2}\)</button>
+        <button class="opt">\(3e^{-5}\)</button>
+        <button class="opt">해를 알아야 정할 수 있다.</button>
+      </div><div class="quiz-exp">아벨 공식(식 <a class="ref" href="#eq-abel-formula"></a>)에서 \(p = 2\)이므로 \(W(t) = 3e^{-2t}\)이다. 해를 몰라도 \(\dot y\)의 계수만으로 정해진다.</div></div>
+      <div class="quiz-q"><p>6. \(\dot{\mathbf x} = A\mathbf x\), \(A = \begin{pmatrix} 1 & -2 \\ 3 & -4 \end{pmatrix}\)의 원점은 어떤 평형점인가?</p><div class="opts">
+        <button class="opt">안장점</button>
+        <button class="opt" data-correct>안정 마디</button>
+        <button class="opt">안정 나선</button>
+        <button class="opt">중심</button>
+      </div><div class="quiz-exp">\(\tau = -3\), \(\Delta = -4 + 6 = 2 > 0\)이고 \(\tau^2 - 4\Delta = 1 > 0\)이므로 마디이며, \(\tau &lt; 0\)이라 안정하다. 고유값은 \(-1\)과 \(-2\)이다.</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-thermometer-lag" data-level="1"><p>시간 상수 \(\tau\)인 온도계의 눈금 \(T\)는 \(\dot T = (T_a - T)/\tau\)를 따른다(\(T_a\)는 주위 온도). 처음에 \(T = T_a = T_0\)이던 오븐의 온도가 \(T_a = T_0 + \beta t\)로 일정하게 오른다. \(T(t)\)를 구하고, 오랜 뒤 온도계가 실제보다 얼마나 낮게 읽는지 구하라. \(\tau = 12\ \text{s}\), \(\beta = 3.0\ \text{K/min}\)이면?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(\dot T + T/\tau = (T_0 + \beta t)/\tau\)는 1계 선형 방정식이다. 적분 인자 \(e^{t/\tau}\)를 곱하면 \((Te^{t/\tau})' = (T_0 + \beta t)e^{t/\tau}/\tau\)이고, 부분 적분으로 \(\int (T_0 + \beta t)e^{t/\tau}dt/\tau = (T_0 + \beta t)e^{t/\tau} - \beta\tau e^{t/\tau}\)이다. 처음 조건 \(T(0) = T_0\)을 맞추면</p>
+        <div class="formula">\[ T(t) = T_0 + \beta(t - \tau) + \beta\tau e^{-t/\tau} \]</div>
+        <p>이다. 대입하면 \(\dot T = \beta(1 - e^{-t/\tau})\)이고 \((T_a - T)/\tau\)도 같다. 오랜 뒤 \(T_a - T \to \beta\tau\)이다. 온도계는 시간 \(\tau\) 전의 온도를 가리킨다. \(\beta = 0.050\ \text{K/s}\)이므로 차이는 \(0.050 \times 12\ \text{K} = 0.60\ \text{K}\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-torricelli-drain" data-level="1"><p>단면적 \(A = 0.10\ \text{m}^2\)인 원통형 물통 바닥에 넓이 \(a = 1.0\ \text{cm}^2\)인 구멍이 났다. 토리첼리 법칙에 따라 물은 속력 \(\sqrt{2gh}\)로 빠져나가므로 \(A\dot h = -a\sqrt{2gh}\)이다. 처음 높이 \(h_0 = 0.80\ \text{m}\)에서 물통이 비는 시간을 구하라. 물통이 빈 뒤의 해에 대해, 시간을 거꾸로 돌린 초기값 문제가 왜 해를 하나로 정하지 못하는지 설명하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>변수 분리하면 \(dh/\sqrt h = -(a/A)\sqrt{2g}\,dt\)이고 적분하면 \(2(\sqrt h - \sqrt{h_0}) = -(a/A)\sqrt{2g}\,t\), 곧 \(h(t) = \big(\sqrt{h_0} - (a/A)\sqrt{g/2}\,t\big)^2\)이다. \(h = 0\)이 되는 시각은 \(T = (A/a)\sqrt{2h_0/g} = 1000 \times \sqrt{1.6/9.81}\ \text{s} = 404\ \text{s}\), 약 6.7분이다. \(t > T\)에서는 \(h \equiv 0\)이다. 이제 \(h(t_1) = 0\)만 알고 과거를 묻으면, 아무 \(T \le t_1\)에 대해 "\(T\)에 비워진 해"가 모두 이 조건을 만족한다. \(F(h) = -(a/A)\sqrt{2gh}\)의 \(\partial F/\partial h\)가 \(h = 0\)에서 무한대라 유일성 정리의 조건이 깨지기 때문이다(10.1절의 콜아웃). 앞으로 가는 방향의 해는 하나뿐이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-legendre-second-solution" data-level="3"><p>르장드르 방정식 \((1 - x^2)y'' - 2xy' + 2y = 0\)은 \(y_1 = x\)를 해로 갖는다(확인하라). 아벨 공식과 식 <a class="ref" href="#eq-reduction-of-order"></a>로 \(-1 &lt; x &lt; 1\)에서 두 번째 해를 구하고, \(x \to \pm 1\)에서 어떻게 되는지 말하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(y_1 = x\)이면 \(y'' = 0\), \(y' = 1\)이므로 \(-2x + 2x = 0\)이다. \((1 - x^2)\)로 나누면 \(p = -2x/(1 - x^2)\)이고 \(-\int p\,dx = \int 2x/(1 - x^2)\,dx = -\ln(1 - x^2)\)이므로 \(W = C/(1 - x^2)\)이다. \(C = 1\)로 두면</p>
+        <div class="formula">\[ \begin{aligned} y_2 &= x\int\frac{dx}{x^2(1 - x^2)} \\ &= x\int\Big(\frac{1}{x^2} + \frac{1}{1 - x^2}\Big)dx \\ &= \frac{x}{2}\ln\frac{1 + x}{1 - x} - 1 \end{aligned} \]</div>
+        <p>이다. \(y_2' = \tfrac12\ln\tfrac{1+x}{1-x} + \tfrac{x}{1-x^2}\), \(y_2'' = \tfrac{2}{(1-x^2)^2}\)을 넣으면 \((1-x^2)y_2'' - 2xy_2' + 2y_2 = \tfrac{2 - 2x^2}{1-x^2} - 2 = 0\)이다. 이 해는 \(x \to \pm 1\)에서 로그로 발산한다. 12장에서 볼 <a href="ch12.html#def-legendre-equation">르장드르 방정식</a>의 제2종 해 \(Q_1\)이고, 구의 극(\(\theta = 0, \pi\))에서 유한해야 하는 물리 문제에서는 버려진다. 계수 \(1 - x^2\)이 0이 되는 \(x = \pm1\)에서는 <a class="ref" href="#thm-wronskian-independence"></a>의 연속 조건이 깨지고, 실제로 \(W\)도 발산한다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-settling-time" data-level="2"><p>진동자를 \(x_0\)에서 가만히 놓았을 때, 그 뒤로 언제나 \(\lvert x\rvert \le 0.01x_0\)이 되는 시각을 "자리 잡는 시간"이라 하자. \(\zeta = 0.7,\ 1,\ 2\)에 대해 \(\omega_0\)을 단위로 이 시간을 구하라(\(\zeta = 0.7\)은 포락선으로 위끝을 구하고 수치 결과와 비교하라). "임계 감쇠가 가장 빨리 돌아온다"는 말은 정확히 무슨 뜻인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(\zeta = 1\): 식 <a class="ref" href="#eq-damping-regimes"></a>에서 \((1 + u)e^{-u} = 0.01\) (\(u = \omega_0t\))을 풀면 \(u = 6.64\)이다. \(\zeta = 2\): \(s_\pm = -\omega_0(2 \mp \sqrt3)\)이고 느린 항 \(\tfrac{-s_-}{s_+ - s_-}e^{s_+t} = 1.077e^{-0.268u}\)이 지배하므로 \(u = \ln 107.7/0.268 = 17.5\)이다. \(\zeta = 0.7\): 과소 감쇠 해의 진폭은 \(x_0e^{-\zeta u}/\sqrt{1 - \zeta^2}\) 이하이므로 \(e^{-0.7u} \le 0.01\sqrt{0.51}\)에서 \(u \le \ln 140/0.7 = 7.06\)이다. 실제로 마지막으로 \(0.01x_0\)을 넘는 시각을 수치로 찾으면 \(u = 6.58\)로 임계 감쇠와 거의 같다. 처음 넘침이 \(e^{-\pi\zeta/\sqrt{1-\zeta^2}} = 4.6\%\)로 1% 띠보다 커서, 그 넘침이 1% 안으로 줄어들 때까지 기다려야 하기 때문이다. 넘침이 띠 폭과 같아지는 \(\pi\zeta/\sqrt{1-\zeta^2} = \ln 100\), 곧 \(\zeta = 0.83\)보다 감쇠가 조금이라도 크면 첫 넘침이 띠 안에 머물러 자리 잡는 시간이 \(u \approx 4.2\)로 짧아진다. 임계 감쇠보다 약 37% 빠르다. 따라서 \"가장 빨리\"는 <b>넘치지 않고</b> 돌아오는 운동 가운데 가장 빠르다는 뜻이다. 허용 오차만큼의 넘침을 받아들이면 임계보다 조금 약한 감쇠가 더 빨리 자리 잡고, 과대 감쇠는 훨씬 느리다. \(\omega_0 = 8.0\ \text{s}^{-1}\)인 완충 장치라면 \(\zeta = 0.7, 1, 2\)에서 각각 \(0.82\ \text{s}\), \(0.83\ \text{s}\), \(2.2\ \text{s}\)이고, \(\zeta = 0.83\)이면 \(0.53\ \text{s}\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-tuning-fork-q" data-level="1"><p>\(440\ \text{Hz}\) 소리굽쇠를 친 뒤 진폭이 2.0초마다 절반으로 준다. \(\gamma\), \(Q\), 한 주기에 잃는 에너지의 비율, 흡수 전력의 반전력 폭 \(\Delta f\)를 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(e^{-\gamma(2.0\ \text{s})} = 1/2\)에서 \(\gamma = \ln 2/2.0\ \text{s} = 0.347\ \text{s}^{-1}\)이다. \(Q = \omega_0/2\gamma = 2\pi(440)/(2 \times 0.347) = 3.99 \times 10^3\)이다. 한 주기에 잃는 에너지의 비율은 식 <a class="ref" href="#eq-quality-factor"></a>에서 \(2\pi/Q = 1.6 \times 10^{-3}\)이다. 반전력 폭은 \(\Delta\omega = 2\gamma\), 곧 \(\Delta f = \gamma/\pi = 0.11\ \text{Hz}\)이고, \(f_0/Q = 440/3990\ \text{Hz}\)와 같다. 소리굽쇠가 흡수하는 전력은 \(440\ \text{Hz}\)에서 \(0.06\ \text{Hz}\)만 벗어나도 절반으로 준다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-radio-tuning" data-level="2"><p>AM 라디오의 동조 회로가 \(L = 250\ \mu\text{H}\), \(R = 10\ \Omega\)인 직렬 RLC 회로다. (가) \(1000\ \text{kHz}\)에 맞추려면 \(C\)가 얼마여야 하는가? (나) \(Q\)와 반전력 폭 \(\Delta f\)를 구하라. (다) 같은 전압으로 \(1020\ \text{kHz}\)의 신호가 들어오면 회로가 흡수하는 전력은 \(1000\ \text{kHz}\) 신호의 몇 배인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(C = 1/\omega_0^2L = 1/\big[(2\pi \times 10^6\ \text{s}^{-1})^2(2.5 \times 10^{-4}\ \text{H})\big] = 1.01 \times 10^{-10}\ \text{F} = 101\ \text{pF}\)이다.</p>
+        <p>(나) \(Q = \omega_0L/R = (6.28 \times 10^6)(2.5 \times 10^{-4})/10 = 157\), \(\Delta f = f_0/Q = 6.4\ \text{kHz}\)이다.</p>
+        <p>(다) 전류 진폭의 비는 \(R/\lvert Z\rvert = \big[1 + (\omega L - 1/\omega C)^2/R^2\big]^{-1/2}\)이다. \(\omega_0L/R = Q\)이고 \(1/\omega CR = Q\omega_0/\omega\)이므로 \((\omega L - 1/\omega C)/R = Q(\omega/\omega_0 - \omega_0/\omega)\)이다. \(\omega/\omega_0 = 1.02\)이면 괄호는 \(0.0396\), \(Q\)를 곱하면 \(6.22\)이므로 전류 비는 \(1/\sqrt{1 + 38.7} = 0.159\)이고, 전력 비는 그 제곱 \(0.025\)(약 \(-16\ \text{dB}\))이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-slow-loading" data-level="3"><p>3장의 <a href="ch03.html#ex-duhamel-response">예제 3.13</a>의 진동자(\(m = 0.20\ \text{kg}\), \(k = 20\ \text{N/m}\), 감쇠 없음)에 힘을 갑자기 가하지 않고 \(0 \le t \le T\) 동안 \(F = F_0t/T\)로 고르게 키운 뒤 \(F_0 = 1.0\ \text{N}\)으로 유지한다. \(0 \le t \le T\)의 응답을 매개변수 변화법(식 <a class="ref" href="#eq-variation-parameters"></a>, \(y_1 = \cos\omega t\), \(y_2 = \sin\omega t\))으로 구하고, 식 <a class="ref" href="#eq-convolution-response"></a>로도 확인해서 \(t > T\)에서 남는 진동의 진폭이 \((F_0/k)\lvert\sin(\omega T/2)\rvert/(\omega T/2)\)임을 보이고, \(T = 2.0\ \text{s}\)일 때 값을 구하라. 어떤 \(T\)에서 진동이 전혀 남지 않는가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(W = \omega\)이므로 식 <a class="ref" href="#eq-variation-parameters"></a>의 핵은 \([\cos\omega t'\sin\omega t - \cos\omega t\sin\omega t']/\omega = \sin\omega(t - t')/\omega\)이고, \(f = F/m\)이므로 \(h * F\)와 같은 적분이 된다. 곧 \(h = \Theta(t)\sin\omega t/m\omega\)이다. 기울기 \(F_0/T\)인 경사 힘 \(r(t) = (F_0/T)t\,\Theta(t)\)의 응답은 \(\int_0^t t'\sin\omega(t - t')\,dt' = t/\omega - \sin\omega t/\omega^2\)이므로 \(x_r(t) = \dfrac{F_0}{kT}\Big(t - \dfrac{\sin\omega t}{\omega}\Big)\)이다(\(m\omega^2 = k\)). 실제 힘은 \(r(t) - r(t - T)\)이므로 중첩하면 \(t > T\)에서</p>
+        <div class="formula">\[ \begin{aligned} x &= \frac{F_0}{k}\Big[1 - \frac{\sin\omega t - \sin\omega(t - T)}{\omega T}\Big] \\ &= \frac{F_0}{k}\Big[1 - \frac{\sin(\omega T/2)}{\omega T/2}\cos\omega\Big(t - \frac T2\Big)\Big] \end{aligned} \]</div>
+        <p>이다. \(F_0/k\) 둘레의 진동 진폭이 주어진 식이다. \(T \to 0\)이면 인자가 1이라 갑자기 가한 경우(진폭 \(F_0/k\), 최대 변위 \(2F_0/k\))로 돌아간다. \(\omega = 10\ \text{s}^{-1}\), \(T = 2.0\ \text{s}\)이면 \(\lvert\sin 10\rvert/10 = 0.054\)이므로 진폭은 \(5.0\ \text{cm} \times 0.054 = 0.27\ \text{cm}\)이다. \(\omega T/2 = n\pi\), 곧 \(T\)가 주기 \(2\pi/\omega = 0.63\ \text{s}\)의 정수배이면 진동이 전혀 남지 않는다. 천천히(\(T \gg 1/\omega\)) 실을수록 남는 진동은 \(2/\omega T\) 이하로 작아진다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-classify-fixed-points" data-level="1"><p>\(\dot{\mathbf x} = A\mathbf x\)의 원점을 분류하고 고유값을 구하라. (가) \(\begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\) (나) \(\begin{pmatrix} -2 & 1 \\ 0 & -3 \end{pmatrix}\) (다) \(\begin{pmatrix} -1 & -4 \\ 1 & -1 \end{pmatrix}\) (라) \(\begin{pmatrix} 0 & 1 \\ -4 & 0 \end{pmatrix}\)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p><a class="ref" href="#math-two-by-two-eigen"></a>의 \(\tau, \Delta\)를 쓴다. (가) \(\tau = 2\), \(\Delta = -3 &lt; 0\): 안장점, 고유값 \(3, -1\). (나) \(\tau = -5\), \(\Delta = 6\), \(\tau^2 - 4\Delta = 1 > 0\): 안정 마디, 고유값 \(-2, -3\). (다) \(\tau = -2\), \(\Delta = 1 + 4 = 5\), \(\tau^2 - 4\Delta = -16 &lt; 0\): 안정 나선, 고유값 \(-1 \pm 2i\). (라) \(\tau = 0\), \(\Delta = 4\): 중심, 고유값 \(\pm 2i\). (라)는 \(\omega_0 = 2\)인 감쇠 없는 진동자다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-laplace-ivp" data-level="2"><p>라플라스 변환으로 \(\ddot y + 3\dot y + 2y = e^{-3t}\), \(y(0) = 1\), \(\dot y(0) = 0\)을 풀어라. 동차 부분은 어떤 감쇠에 해당하는가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>식 <a class="ref" href="#eq-laplace-derivative"></a>에서 \((s^2Y - s) + 3(sY - 1) + 2Y = 1/(s + 3)\)이므로 \((s + 1)(s + 2)Y = s + 3 + 1/(s + 3)\)이다. 부분 분수로 나누면</p>
+        <div class="formula">\[ \begin{aligned} Y &= \frac{s + 3}{(s+1)(s+2)} \\ &\quad + \frac{1}{(s+1)(s+2)(s+3)} \\ &= \frac{5/2}{s + 1} - \frac{2}{s + 2} + \frac{1/2}{s + 3} \end{aligned} \]</div>
+        <p>이고, \(y = \tfrac52e^{-t} - 2e^{-2t} + \tfrac12e^{-3t}\)이다. \(y(0) = 1\), \(\dot y(0) = -\tfrac52 + 4 - \tfrac32 = 0\)으로 맞는다. 동차 부분은 \(\omega_0 = \sqrt2\), \(\gamma = 3/2\), \(\zeta = 1.06\)인 과대 감쇠다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-equal-decay" data-level="2"><p>붕괴 사슬 \(A \to B \to C\)에서 \(\lambda_A = \lambda_B = \lambda\)이면 \(N_B(t)\)는 어떻게 되는가? 라플라스 변환으로 구하고, 식 <a class="ref" href="#eq-bateman-two"></a>와 식 <a class="ref" href="#eq-decay-chain-peak"></a>의 \(\lambda_B \to \lambda_A\) 극한과 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(\bar N_B = \lambda N_0/(s + \lambda)^2\)이고 식 <a class="ref" href="#eq-laplace-table"></a>의 \(te^{at}\) 줄에서 \(N_B = \lambda N_0\,te^{-\lambda t}\)이다. 최대는 \(\tfrac{d}{dt}(te^{-\lambda t}) = 0\)인 \(t_{\max} = 1/\lambda\)이고, 그때 \(N_B = N_0/e\)이다. 극한으로 보면 \(\lambda_B = \lambda_A + \varepsilon\)일 때 \((e^{-\lambda_At} - e^{-\lambda_Bt})/\varepsilon \to te^{-\lambda_At}\)이므로 식 <a class="ref" href="#eq-bateman-two"></a>가 같은 답을 주고, \(\ln(\lambda_B/\lambda_A)/(\lambda_B - \lambda_A) = \ln(1 + \varepsilon/\lambda)/\varepsilon \to 1/\lambda\)이다. 중근의 \(te^{s_0t}\)와 같은 구조다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+</body>
+</html>
