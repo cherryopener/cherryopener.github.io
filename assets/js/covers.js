@@ -1,0 +1,153 @@
+/* ==========================================================================
+   책 표지 그림. books.js의 motif 이름 → SVG 문자열 (viewBox 0 0 200 130, 흰 선 위주)
+   움직임은 base.css의 .cv-* 클래스가 담당하고, 카드에 마우스를 올렸을 때만 돈다.
+   새 모티프를 만들려면 M에 함수를 하나 추가하고 books.js의 motif에 이름을 쓰면 된다.
+   ========================================================================== */
+(function () {
+  "use strict";
+  const W = "currentColor";
+  const svg = (body) => `<svg class="cover-art" viewBox="0 0 200 130" aria-hidden="true" focusable="false">${body}</svg>`;
+  const range = (n) => Array.from({ length: n }, (_, i) => i);
+  const rnd = (seed) => () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+
+  const M = {
+    // 어텐션 행렬 + 토큰 사이의 호
+    attention() {
+      const r = rnd(11); let s = "";
+      range(7).forEach((j) => range(7).forEach((i) => {
+        const v = i <= j ? 0.15 + 0.85 * Math.exp(-Math.abs(i - j) * 0.7) * (0.6 + 0.4 * r()) : 0.04;
+        s += `<rect x="${110 + i * 12}" y="${14 + j * 12}" width="11" height="11" rx="2" fill="${W}" fill-opacity="${v.toFixed(2)}"${v > 0.6 ? ` class="cv-pulse" style="animation-delay:${(r() * 1.6).toFixed(2)}s"` : ""}/>`;
+      }));
+      const xs = [14, 32, 50, 68, 86];
+      [[0, 3, 0.9], [1, 4, 0.6], [0, 2, 0.4], [2, 4, 0.75], [3, 4, 0.3]].forEach(([a, b, w]) => {
+        const mx = (xs[a] + xs[b]) / 2, h = (xs[b] - xs[a]) * 0.85;
+        s += `<path d="M${xs[a]} 92 Q${mx} ${92 - h} ${xs[b]} 92" fill="none" stroke="${W}" stroke-width="${(1 + w * 2.4).toFixed(1)}" stroke-opacity="${w}"/>`;
+      });
+      xs.forEach((x) => (s += `<rect x="${x - 7}" y="94" width="14" height="10" rx="2.5" fill="${W}" fill-opacity=".85"/>`));
+      return svg(s);
+    },
+    // 겹쳐 흐르는 파형 + 예측 구간
+    waves() {
+      let s = `<rect x="128" y="8" width="66" height="112" rx="6" fill="${W}" fill-opacity=".1" stroke="${W}" stroke-opacity=".35" stroke-dasharray="3 4"/>`;
+      // 주기 P만큼 밀었다가 되돌리면 이음매 없이 반복된다
+      [[40, 12], [56, 9], [72, 7]].forEach(([P, A], k) => {
+        let d = "";
+        for (let x = 0; x <= 200 + P; x += 2) {
+          const y = 30 + k * 32 + A * Math.sin((2 * Math.PI * x) / P) + 3 * Math.sin((4 * Math.PI * x) / P + k);
+          d += (x ? "L" : "M") + x + " " + y.toFixed(1);
+        }
+        s += `<g class="cv-wave" style="--d:-${P}px;animation-duration:${1.6 + k * 0.6}s"><path d="${d}" fill="none" stroke="${W}" stroke-width="${2.2 - k * 0.4}" stroke-opacity="${1 - k * 0.22}"/></g>`;
+      });
+      return svg(s);
+    },
+    // 태양 주위의 타원 궤도
+    orbit() {
+      let s = "";
+      [[86, 30, 0.55], [62, 22, 0.4], [38, 14, 0.3]].forEach(([rx, ry, o]) => (s += `<ellipse cx="100" cy="65" rx="${rx}" ry="${ry}" fill="none" stroke="${W}" stroke-opacity="${o}" stroke-width="1.4"/>`));
+      s += `<circle cx="100" cy="65" r="11" fill="${W}"/><circle cx="100" cy="65" r="18" fill="${W}" fill-opacity=".14"/>`;
+      s += `<g class="cv-orbit"><circle cx="186" cy="65" r="5" fill="${W}"/></g>`;
+      s += `<g class="cv-orbit" style="animation-duration:3.2s"><circle cx="38" cy="65" r="3.5" fill="${W}"/></g>`;
+      range(26).forEach((i) => { const r = rnd(i + 3); s += `<circle cx="${(r() * 200).toFixed(0)}" cy="${(r() * 130).toFixed(0)}" r="${(0.6 + r()).toFixed(1)}" fill="${W}" fill-opacity=".5"/>`; });
+      return svg(s);
+    },
+    // 벡터장 화살표
+    field() {
+      let s = "";
+      range(7).forEach((j) => range(11).forEach((i) => {
+        const x = 12 + i * 17.6, y = 12 + j * 17.6;
+        const dx = x - 100, dy = y - 65, a = Math.atan2(dy, dx) + Math.PI / 2 + 0.4;
+        const L = 7, x2 = x + L * Math.cos(a), y2 = y + L * Math.sin(a);
+        s += `<line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${W}" stroke-opacity="${(0.25 + 0.6 * Math.exp(-Math.hypot(dx, dy) / 70)).toFixed(2)}" stroke-width="1.6" stroke-linecap="round"/>`;
+      }));
+      return svg(s + `<g class="cv-spin"><circle cx="100" cy="65" r="30" fill="none" stroke="${W}" stroke-dasharray="4 6" stroke-opacity=".7"/></g>`);
+    },
+    // 층으로 연결된 신경망
+    network() {
+      const L = [4, 6, 6, 3]; let s = "";
+      const pts = L.map((n, li) => range(n).map((k) => [30 + li * 46, 65 + (k - (n - 1) / 2) * 17]));
+      for (let li = 0; li < L.length - 1; li++) pts[li].forEach((a) => pts[li + 1].forEach((b) => (s += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="${W}" stroke-opacity=".22"/>`)));
+      pts.flat().forEach((p, i) => (s += `<circle cx="${p[0]}" cy="${p[1]}" r="5.5" fill="${W}"${i % 3 === 0 ? ` class="cv-pulse" style="animation-delay:${(i * 0.13).toFixed(2)}s"` : ""}/>`));
+      return svg(s);
+    },
+    // 가운데 모델과 둘레의 도구, 그 둘을 잇는 행동·관찰 고리. 바깥 점선 고리는 세션을 넘어 이어지는 장기 실행 루프
+    loop() {
+      const cx = 100, cy = 65, r = 40;
+      let s = `<g class="cv-spin" style="animation-duration:24s"><circle cx="${cx}" cy="${cy}" r="56" fill="none" stroke="${W}" stroke-opacity=".45" stroke-dasharray="2 7" stroke-width="1.6"/></g>`;
+      s += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${W}" stroke-opacity=".5" stroke-width="1.6"/>`;
+      range(5).forEach((k) => {
+        const a = -Math.PI / 2 + (k * 2 * Math.PI) / 5, x = cx + r * Math.cos(a), y = cy + r * Math.sin(a);
+        s += `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="${W}" stroke-opacity=".2"/>`;
+        s += `<rect x="${(x - 6).toFixed(1)}" y="${(y - 6).toFixed(1)}" width="12" height="12" rx="3" fill="${W}" fill-opacity=".85"${k % 2 ? ` class="cv-pulse" style="animation-delay:${(k * 0.3).toFixed(1)}s"` : ""}/>`;
+        // 고리 위 방향 표시 (시계 방향)
+        const b = a + Math.PI / 5, mx = cx + r * Math.cos(b), my = cy + r * Math.sin(b), d = (b * 180) / Math.PI + 90;
+        s += `<path d="M-3 -3 L1 0 L-3 3" transform="translate(${mx.toFixed(1)} ${my.toFixed(1)}) rotate(${d.toFixed(0)})" fill="none" stroke="${W}" stroke-opacity=".7" stroke-width="1.4" stroke-linecap="round"/>`;
+      });
+      s += `<circle cx="${cx}" cy="${cy}" r="17" fill="${W}" fill-opacity=".14"/><circle cx="${cx}" cy="${cy}" r="10" fill="${W}"/>`;
+      s += `<g class="cv-orbit"><circle cx="${cx + r}" cy="${cy}" r="3.6" fill="${W}"/></g>`;
+      return svg(s);
+    },
+    // 조화 진동자 퍼텐셜 우물과 에너지 준위, 각 준위 위의 고유함수 ψ_n (에르미트 함수)
+    levels() {
+      const X = (x) => 100 + x * 21, Y = (E) => 120 - E * 26;
+      let d = "";
+      for (let x = -4.2; x <= 4.21; x += 0.1) d += (d ? "L" : "M") + X(x).toFixed(1) + " " + Math.max(4, Y((x * x) / 2)).toFixed(1);
+      let s = `<path d="${d}" fill="none" stroke="${W}" stroke-width="2" stroke-opacity=".55"/>`;
+      const herm = (n, x) => { let a = 1, b = 2 * x; if (n === 0) return a; for (let k = 1; k < n; k++) [a, b] = [b, 2 * x * b - 2 * k * a]; return b; };
+      range(4).forEach((n) => {
+        const E = n + 0.5, xt = Math.sqrt(2 * E), pts = [];
+        for (let x = -4; x <= 4.01; x += 0.08) pts.push([x, herm(n, x) * Math.exp((-x * x) / 2)]);
+        const m = Math.max(...pts.map((p) => Math.abs(p[1])));
+        s += `<line x1="${X(-xt).toFixed(1)}" y1="${Y(E)}" x2="${X(xt).toFixed(1)}" y2="${Y(E)}" stroke="${W}" stroke-opacity=".4" stroke-dasharray="3 3"/>`;
+        s += `<path d="${pts.map((p, i) => (i ? "L" : "M") + X(p[0]).toFixed(1) + " " + (Y(E) - (p[1] / m) * 10).toFixed(1)).join("")}" fill="none" stroke="${W}" stroke-width="1.8"${n === 2 ? ' class="cv-pulse"' : ""}/>`;
+      });
+      return svg(s);
+    },
+    // 표준 정규 분포 곡선과 표본 히스토그램, 바닥에는 표본 하나하나를 눈금으로 (러그 그림)
+    bell() {
+      const X = (x) => 100 + x * 26, base = 108, H = 86, pdf = (x) => Math.exp((-x * x) / 2);
+      const r = rnd(5), n = 13, w = 6 / n;
+      let s = `<line x1="16" y1="${base}" x2="184" y2="${base}" stroke="${W}" stroke-opacity=".5"/>`;
+      range(n).forEach((i) => {
+        const x0 = -3 + i * w, h = H * pdf(x0 + w / 2) * (0.85 + 0.3 * r());
+        s += `<rect x="${(X(x0) + 1).toFixed(1)}" y="${(base - h).toFixed(1)}" width="${(w * 26 - 2).toFixed(1)}" height="${h.toFixed(1)}" rx="1.5" fill="${W}" fill-opacity=".3"${i === 4 || i === 8 ? ` class="cv-pulse" style="animation-delay:${(i * 0.2).toFixed(2)}s"` : ""}/>`;
+      });
+      let d = "";
+      for (let x = -3.4; x <= 3.41; x += 0.1) d += (d ? "L" : "M") + X(x).toFixed(1) + " " + (base - H * pdf(x)).toFixed(1);
+      s += `<path d="${d}" fill="none" stroke="${W}" stroke-width="2.2"/>`;
+      range(24).forEach(() => {
+        const z = Math.sqrt(-2 * Math.log(r())) * Math.cos(2 * Math.PI * r());
+        if (Math.abs(z) < 3.3) s += `<line x1="${X(z).toFixed(1)}" y1="${base + 6}" x2="${X(z).toFixed(1)}" y2="${base + 14}" stroke="${W}" stroke-opacity=".7" stroke-width="1.4"/>`;
+      });
+      return svg(s);
+    },
+    // 행렬 A = R(θu) diag(σ₁, σ₂) R(θv)ᵀ가 바꾼 격자, 점선 단위원이 옮겨 간 타원, 타원의 두 축 σᵢuᵢ
+    lattice() {
+      const u = 28, X = (x) => 100 + x * u, Y = (y) => 65 - y * u;
+      const tu = (28 * Math.PI) / 180, tv = (-20 * Math.PI) / 180, s1 = 1.9, s2 = 0.7;
+      const rot = (t, [x, y]) => [x * Math.cos(t) - y * Math.sin(t), x * Math.sin(t) + y * Math.cos(t)];
+      const A = (p) => { const q = rot(-tv, p); return rot(tu, [q[0] * s1, q[1] * s2]); };
+      let s = "";
+      range(13).forEach((i) => {
+        const k = i - 6;
+        [[[k, -7], [k, 7]], [[-7, k], [7, k]]].forEach(([a, b]) => {
+          const [x1, y1] = A(a), [x2, y2] = A(b);
+          s += `<line x1="${X(x1).toFixed(1)}" y1="${Y(y1).toFixed(1)}" x2="${X(x2).toFixed(1)}" y2="${Y(y2).toFixed(1)}" stroke="${W}" stroke-opacity="${k ? 0.26 : 0.5}"/>`;
+        });
+      });
+      s += `<circle cx="100" cy="65" r="${u}" fill="none" stroke="${W}" stroke-opacity=".55" stroke-dasharray="3 4"/>`;
+      s += `<ellipse cx="100" cy="65" rx="${s1 * u}" ry="${s2 * u}" transform="rotate(${(-tu * 180) / Math.PI} 100 65)" fill="${W}" fill-opacity=".12" stroke="${W}" stroke-width="2.2"/>`;
+      [[s1, tu], [s2, tu + Math.PI / 2]].forEach(([r, t], i) => {
+        const x = X(r * Math.cos(t)), y = Y(r * Math.sin(t));
+        s += `<line x1="100" y1="65" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="${W}" stroke-width="2.4" stroke-linecap="round"/>`;
+        s += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.6" fill="${W}" class="cv-pulse" style="animation-delay:${(i * 0.6).toFixed(1)}s"/>`;
+      });
+      return svg(s + `<circle cx="100" cy="65" r="2.6" fill="${W}"/>`);
+    },
+    // 빈 책: 점선 사각형과 +
+    blank() {
+      return svg(`<rect x="60" y="20" width="80" height="90" rx="8" fill="none" stroke="${W}" stroke-opacity=".6" stroke-dasharray="5 5"/><path d="M100 48v34M83 65h34" stroke="${W}" stroke-width="3" stroke-linecap="round"/>`);
+    },
+  };
+
+  window.Covers = { art: (name) => (M[name] || M.blank)(), motifs: Object.keys(M) };
+})();

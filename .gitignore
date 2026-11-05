@@ -1,0 +1,11 @@
+# OS / 편집기
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+
+# 도구 (나중에 npm 등을 쓸 경우)
+node_modules/
+
+# Claude Code 개인 설정
+.claude/settings.local.json
