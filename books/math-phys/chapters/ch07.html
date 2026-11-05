@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>07 행렬과 선형 변환 · 수리물리학</title>
+<meta name="description" content="연립 일차 방정식을 소거와 행렬식으로 풀고, 역행렬과 랭크로 해의 존재를 판정한다. 선형 변환과 기저 바꾸기, 직교 행렬과 회전, 회전의 생성자와 그 교환 관계까지 세운다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys" data-field="phys" data-chapter="ch07">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">07</span></div>
+    <h1 data-fill="chapter-title">행렬과 선형 변환</h1>
+    <p class="lead">회로의 전류, 탁자 다리가 받는 힘, 움직이는 관측자가 보는 시공간 좌표, 돌아간 물체의 새 방향은 모두 "여러 양이 일차식으로 엮인" 문제다. 이런 문제를 한꺼번에 다루는 언어가 행렬이다. 이 장에서는 연립 일차 방정식을 소거로 푸는 데서 출발해, 해가 하나인지를 판정하는 행렬식과 랭크를 세우고, 행렬을 공간을 바꾸는 변환으로 다시 읽는다. 마지막에는 회전을 아주 작게 쪼개 생성자를 얻고, 회전의 순서가 결과를 바꾼다는 사실을 교환 관계 \([L_x, L_y] = L_z\) 하나로 요약한다. 양자역학의 각운동량은 이 관계에서 시작한다.</p>
+    <ul class="objectives">
+      <li>가우스 소거로 연립 일차 방정식을 풀고, 랭크로 해가 하나인지, 없는지, 무한히 많은지 판정할 수 있다.</li>
+      <li>레비치비타 기호로 행렬식을 정의해 그 성질(\(\det(AB) = \det A\det B\), 행 연산의 효과)을 보이고, 크라메르 공식과 역행렬을 계산할 수 있다.</li>
+      <li>선형 사상을 기저에 대한 행렬로 나타내고, 기저를 바꿀 때 성분과 행렬이 어떻게 바뀌는지(닮음 변환) 계산할 수 있다.</li>
+      <li>직교 행렬로 회전과 반사를 구별하고, 로드리게스 공식으로 축 둘레 회전 행렬을 만들거나 주어진 회전의 축과 각을 구할 수 있다.</li>
+      <li>군의 조건을 확인하고, 무한소 회전에서 생성자를 얻어 교환 관계 \([L_i, L_j] = \varepsilon_{ijk}L_k\)를 유도할 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b>행렬 곱을 계산해 본 경험. 1장의 테일러 급수(7.6절), 2장의 오일러 공식과 쌍곡선 함수(7.4절, 7.5절), 4장의 내적과 외적, 지수 표기, 레비치비타 기호 \(\varepsilon_{ijk}\). 4장의 지수 표기는 이 장에서 쓰는 만큼 7.1절과 7.2절에서 다시 적는다.</p>
+  </header>
+
+  <!-- ============================================================ 7.1 -->
+  <section id="s1">
+    <h2>연립 일차 방정식과 소거</h2>
+    <p>다리가 셋인 탁자 위에 무거운 물건을 올려놓으면 다리마다 받는 힘이 다르다. 세 힘을 구하려면 힘의 평형 하나와 돌림힘의 평형 둘이 필요하고, 세 식에는 세 힘이 모두 일차로 들어 있다. 이처럼 미지수가 여러 개이고 식이 모두 일차인 문제를 <span class="term">연립 일차 방정식</span> <span class="en">(system of linear equations)</span>이라 한다. 이 절에서는 소거법과 행렬 표기를 정한다.</p>
+
+    <h3 id="s1-table">세 다리 탁자</h3>
+    <p>탁자 판을 위에서 본 평면에 좌표 \((x, y)\)를 두고, 다리 A, B, C가 각각 \((0.2, 0.1)\), \((1.4, 0.1)\), \((0.8, 1.0)\)(단위 m)에 있다고 하자(그림 7-1 (가)). 판의 무게는 무시하고, 점 P \((0.7, 0.4)\)에 무게 \(W = 1200\ \text{N}\)인 물체를 올린다. 다리가 위로 미는 힘을 \(N_A, N_B, N_C\)라 하면, 판이 가만히 있으려면 연직 방향의 힘이 평형을 이루고, \(x\)축과 \(y\)축 둘레의 돌림힘도 평형을 이루어야 한다. 돌림힘의 평형은 "힘에 \(x\) 좌표(또는 \(y\) 좌표)를 곱해 더한 것이 위아래로 같다"는 식이 된다.</p>
+    <div class="formula" id="eq-table-system">\[ \begin{aligned} N_A + N_B + N_C &= 1200 \\ 0.2N_A + 1.4N_B + 0.8N_C &= 0.7 \times 1200 \\ 0.1N_A + 0.1N_B + 1.0N_C &= 0.4 \times 1200 \end{aligned} \]</div>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 260" role="img" aria-label="세 다리로 받친 판을 위에서 본 그림. 다리 A, B, C가 삼각형을 이루고 하중점 P가 그 안에 있다"><rect x="40" y="51" width="320" height="187" class="f-surface" style="stroke-width:1.5"/><polygon points="80,221 320,221 200,68" class="f-acc-soft" fill-opacity="0.45" stroke-dasharray="6 4"/><circle cx="80" cy="221" r="7" class="f-acc"/><text x="74" y="243" class="t-math acc" style="font-size:15px" text-anchor="start">A: 500 N</text><circle cx="320" cy="221" r="7" class="f-acc"/><text x="326" y="243" class="t-math acc" style="font-size:15px" text-anchor="end">B: 300 N</text><circle cx="200" cy="68" r="7" class="f-acc"/><text x="200" y="54" class="t-math acc" style="font-size:15px" text-anchor="middle">C: 400 N</text><circle cx="180" cy="170" r="9" class="f-acc2"/><path d="M175,165L185,175M175,175L185,165" style="stroke:var(--bg-elev);stroke-width:2"/><text x="194" y="175" class="t-math acc2" style="font-size:15px" text-anchor="start">P: 1200 N</text><text x="12" y="18" class="t" style="font-size:14px" text-anchor="start">(가) 세 다리: 해가 하나</text></svg><svg viewBox="0 0 380 260" role="img" aria-label="네 다리 탁자를 위에서 본 그림. 대각선으로 마주 보는 두 다리 쌍이 서로 반대로 힘을 주고받는 모드가 있다"><rect x="105" y="58" width="170" height="170" class="f-surface" style="stroke-width:1.5"/><line x1="105" y1="228" x2="275" y2="58" class="s-acc" stroke-dasharray="6 4"/><line x1="275" y1="228" x2="105" y2="58" class="s-acc2" stroke-dasharray="6 4"/><circle cx="105" cy="228" r="7" class="f-acc"/><text x="91" y="233" class="t-math acc" style="font-size:15px" text-anchor="end">A <tspan font-size="90%">(+<tspan font-style="italic">s</tspan>)</tspan></text><circle cx="275" cy="228" r="7" class="f-acc2"/><text x="289" y="233" class="t-math acc2" style="font-size:15px" text-anchor="start">B <tspan font-size="90%">(−<tspan font-style="italic">s</tspan>)</tspan></text><circle cx="275" cy="58" r="7" class="f-acc"/><text x="289" y="63" class="t-math acc" style="font-size:15px" text-anchor="start">C <tspan font-size="90%">(+<tspan font-style="italic">s</tspan>)</tspan></text><circle cx="105" cy="58" r="7" class="f-acc2"/><text x="91" y="63" class="t-math acc2" style="font-size:15px" text-anchor="end">D <tspan font-size="90%">(−<tspan font-style="italic">s</tspan>)</tspan></text><circle cx="156" cy="160" r="9" class="f-acc2"/><path d="M151,155L161,165M151,165L161,155" style="stroke:var(--bg-elev);stroke-width:2"/><text x="142" y="165" class="t-math acc2" style="font-size:15px" text-anchor="end">P</text><text x="12" y="18" class="t" style="font-size:14px" text-anchor="start">(나) 네 다리: 해가 무한히 많다</text><text x="190" y="252" class="t-dim" style="font-size:13px" text-anchor="middle">한 변 1 m</text></svg></div>
+      <figcaption><b>그림 7-1.</b> 탁자 판을 위에서 본 그림. (가) 다리 A, B, C(강조색 점)가 이루는 삼각형 안의 점 P에 무게 1200 N이 놓이면, 세 다리가 받는 힘은 식 <a class="ref" href="#eq-table-system"></a>의 해로 하나뿐이다. (나) 다리가 넷이면 평형 조건은 여전히 셋이라 해가 무한히 많다. 마주 보는 다리 A, C가 \(s\)만큼 더 받고 B, D가 \(s\)만큼 덜 받아도 평형이 깨지지 않는다(<a class="ref" href="#ex-four-leg-table"></a>).</figcaption>
+    </figure>
+
+    <h3 id="s1-elimination">가우스 소거</h3>
+    <p>식 <a class="ref" href="#eq-table-system"></a>을 푸는 가장 기본적인 방법은 한 식에서 다른 식의 배수를 빼서 미지수를 하나씩 없애는 것이다. 둘째와 셋째 식에 10을 곱해 계수를 정수로 만든 뒤, 미지수는 빼고 계수와 우변만 줄지어 적자. 이렇게 우변까지 붙여 적은 표를 <span class="term">첨가 행렬</span> <span class="en">(augmented matrix)</span>이라 한다.</p>
+    <div class="formula">\[ \left(\begin{array}{ccc|c} 1 & 1 & 1 & 1200 \\ 2 & 14 & 8 & 8400 \\ 1 & 1 & 10 & 4800 \end{array}\right) \]</div>
+    <p>둘째 줄에서 첫째 줄의 2배를 빼고, 셋째 줄에서 첫째 줄을 빼면 첫째 열의 아래 두 칸이 0이 된다. 그러면 셋째 줄에는 \(N_C\)만 남는다.</p>
+    <div class="formula">\[ \left(\begin{array}{ccc|c} 1 & 1 & 1 & 1200 \\ 0 & 12 & 6 & 6000 \\ 0 & 0 & 9 & 3600 \end{array}\right) \]</div>
+    <p>이제 아래에서 위로 거꾸로 대입한다. 셋째 줄에서 \(N_C = 400\ \text{N}\), 둘째 줄에서 \(N_B = (6000 - 6 \times 400)/12 = 300\ \text{N}\), 첫째 줄에서 \(N_A = 1200 - 300 - 400 = 500\ \text{N}\)이다. \(N_A/W\)가 P와 A가 변 BC에서 떨어진 거리의 비라는 것은 <a class="ref" href="#ex-three-leg-table"></a>에서 본다.</p>
+    <p>소거에서 한 일은 세 가지뿐이다.</p>
+    <ol>
+      <li>한 줄에 0이 아닌 수를 곱한다.</li>
+      <li>한 줄에 다른 줄의 배수를 더한다.</li>
+      <li>두 줄의 자리를 바꾼다.</li>
+    </ol>
+    <p>이 세 가지를 <span class="term">기본 행 연산</span> <span class="en">(elementary row operations)</span>이라 한다. 각 연산은 되돌릴 수 있으므로 해를 바꾸지 않는다. 기본 행 연산으로 각 줄의 맨 앞 0이 아닌 수가 윗줄보다 오른쪽에 오게 만든 꼴을 <span class="term">행 사다리꼴</span> <span class="en">(row echelon form)</span>이라 하고, 그 맨 앞 수를 <span class="term">피벗</span> <span class="en">(pivot)</span>이라 한다. 위의 둘째 표에서 피벗은 1, 12, 9이다. 연립 방정식을 행 사다리꼴로 만든 뒤 거꾸로 대입하는 방법을 <span class="term">가우스 소거</span> <span class="en">(Gaussian elimination)</span>라 한다.</p>
+    <p>미지수가 \(n\)개이고 식이 \(n\)개이면, 소거에 드는 곱셈은 대략 \(n^3/3\)번이다. 컴퓨터가 큰 연립 방정식을 푸는 방법도 기본적으로 이것이다.</p>
+
+    <h3 id="s1-three-cases">해가 하나, 없음, 무한히 많음</h3>
+    <p>미지수가 둘인 식 두 개는 평면의 직선 두 개다. 두 직선은 한 점에서 만나거나(해가 하나), 평행해서 만나지 않거나(해가 없음), 겹친다(해가 무한히 많음). 소거에서는 이 차이가 마지막 줄에 드러난다. 예를 들어</p>
+    <div class="formula">\[ \begin{aligned} x + 2y &= 3 \\ 2x + 4y &= c \end{aligned} \]</div>
+    <p>에서 둘째 식에서 첫째 식의 2배를 빼면 \(0 = c - 6\)이 남는다. \(c \ne 6\)이면 "\(0 = \)0이 아닌 수"라는 모순이므로 해가 없고, \(c = 6\)이면 둘째 식이 아무 정보도 주지 않으므로 \(y = t\)를 마음대로 두고 \(x = 3 - 2t\)인 해가 무한히 많다. 미지수가 많아도 사정은 같다. 소거가 끝났을 때 "\(0 = \)0이 아닌 수"인 줄이 있으면 해가 없고, 없으면 피벗이 없는 열의 미지수가 자유롭게 정할 수 있는 매개변수가 된다. 이 관찰을 7.3절에서 랭크라는 수 하나로 정리한다.</p>
+
+    <h3 id="s1-matrix">행렬 표기와 행렬 곱</h3>
+    <p>소거에서 미지수의 이름은 아무 역할도 하지 않았다. 중요한 것은 계수의 표뿐이다. 그래서 계수를 직사각형으로 늘어놓은 <span class="term">행렬</span> <span class="en">(matrix)</span> \(A\)와 미지수를 세로로 늘어놓은 열벡터 \(\mathbf x\)로 연립 방정식을 한 줄에 쓴다. \(m\)행 \(n\)열인 행렬을 \(m \times n\) 행렬이라 하고, \(i\)행 \(j\)열의 성분을 \(A_{ij}\)로 쓴다.</p>
+    <div class="formula" id="eq-linear-system">\[ \begin{gathered} A\mathbf x = \mathbf b \\ \sum_{j=1}^{n} A_{ij}x_j = b_i \quad (i = 1, \ldots, m) \end{gathered} \]</div>
+    <p>식 <a class="ref" href="#eq-table-system"></a>이면 \(A\)는 계수의 \(3 \times 3\) 표, \(\mathbf x = (N_A, N_B, N_C)^{\mathsf T}\), \(\mathbf b = (1200, 840, 480)^{\mathsf T}\)이다. 위첨자 \(\mathsf T\)는 행과 열을 바꾸는 <span class="term">전치</span> <span class="en">(transpose)</span>로, \((A^{\mathsf T})_{ij} = A_{ji}\)이다. 가로로 적은 벡터에 \(\mathsf T\)를 붙여 열벡터를 뜻하게 했다.</p>
+    <p>이 장에서는 4장처럼 <b>합 규약</b>을 쓴다. 한 항에 같은 지수가 두 번 나오면 그 지수에 대해 1부터 \(n\)까지 더하고, 합 기호는 생략한다. 그러면 식 <a class="ref" href="#eq-linear-system"></a>의 둘째 식은 \(A_{ij}x_j = b_i\)가 된다. 두 번 나온 \(j\)는 더해서 사라지는 지수이고, 한 번 나온 \(i\)는 식이 몇 번째 줄인지를 가리키는 지수다. <span class="term">단위 행렬</span> <span class="en">(identity matrix)</span> \(I\)의 성분은 <a href="ch04.html#def-kronecker-delta">크로네커 델타</a> \(\delta_{ij}\)(\(i = j\)이면 1, 아니면 0)이다.</p>
+    <p>행렬 곱이 왜 "행과 열을 곱해 더하는" 규칙인지는 일차식을 두 번 연달아 대입해 보면 알 수 있다. \(\mathbf y = B\mathbf x\)이고 \(\mathbf z = A\mathbf y\)이면 \(z_i = A_{ij}y_j = A_{ij}B_{jk}x_k\)이므로, \(\mathbf z\)도 \(\mathbf x\)의 일차식이고 그 계수는 \(A_{ij}B_{jk}\)이다. 이 계수의 표를 \(A\)와 \(B\)의 곱으로 정한다.</p>
+    <div class="box def" id="def-matrix-product"><div class="box-h">행렬 곱</div>
+      <p>\(A\)가 \(m \times n\) 행렬이고 \(B\)가 \(n \times p\) 행렬일 때, 곱 \(AB\)는 다음 성분을 갖는 \(m \times p\) 행렬이다.</p>
+      <div class="formula" id="eq-matrix-product">\[ (AB)_{ik} = A_{ij}B_{jk} = \sum_{j=1}^{n} A_{ij}B_{jk} \]</div>
+      <p>곧 \(AB\)의 \((i, k)\) 성분은 \(A\)의 \(i\)행과 \(B\)의 \(k\)열의 성분을 차례로 곱해 더한 것이다. \(A\)의 열 수와 \(B\)의 행 수가 같아야 곱이 정의된다.</p>
+    </div>
+    <p>행렬 곱은 결합 법칙 \((AB)C = A(BC)\)와 분배 법칙 \(A(B + C) = AB + AC\)를 만족한다. 둘 다 성분으로 쓰면 수의 결합·분배 법칙으로 돌아간다. 예를 들어 \(((AB)C)_{il} = A_{ij}B_{jk}C_{kl} = (A(BC))_{il}\)이다. 단위 행렬은 \(AI = IA = A\)를 만족한다. 그러나 <b>교환 법칙은 성립하지 않는다</b>.</p>
+    <div class="formula">\[ \begin{aligned} \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}\begin{pmatrix} 1 & 0 \\ 1 & 1 \end{pmatrix} &= \begin{pmatrix} 2 & 1 \\ 1 & 1 \end{pmatrix} \\ \begin{pmatrix} 1 & 0 \\ 1 & 1 \end{pmatrix}\begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix} &= \begin{pmatrix} 1 & 1 \\ 1 & 2 \end{pmatrix} \end{aligned} \]</div>
+    <p>두 대입을 하는 순서가 결과를 바꾸는 것이다. 7.5절에서 이것이 "회전의 순서를 바꾸면 결과가 다르다"는 물리적 사실로 나타나고, 7.6절에서 그 차이 \(AB - BA\)가 중심 대상이 된다. 전치는 곱의 순서를 뒤집는다.</p>
+    <div class="formula" id="eq-transpose-product">\[ (AB)^{\mathsf T} = B^{\mathsf T}A^{\mathsf T} \]</div>
+    <p>성분으로 확인하면 \(((AB)^{\mathsf T})_{ki} = (AB)_{ik} = A_{ij}B_{jk} = (B^{\mathsf T})_{kj}(A^{\mathsf T})_{ji}\)이다. 마지막으로 행렬과 열벡터의 곱을 열 단위로 읽어 두자. \(A\)의 \(j\)번째 열을 \(\mathbf a_j\)라 하면</p>
+    <div class="formula" id="eq-column-combination">\[ A\mathbf x = x_1\mathbf a_1 + x_2\mathbf a_2 + \cdots + x_n\mathbf a_n \]</div>
+    <p>이다. 곧 \(A\mathbf x = \mathbf b\)를 푸는 것은 "\(\mathbf b\)를 \(A\)의 열들의 선형 결합으로 쓰는 계수를 찾는 것"이다. 이 읽기가 7.2절의 크라메르 공식과 7.3절의 랭크에서 쓰인다.</p>
+
+    <div class="box ex" id="ex-three-leg-table"><div class="box-h">세 다리가 받는 힘과 넘어지는 조건</div>
+      <p>위의 탁자에서 물체를 판 위의 임의의 점 \((p, q)\)에 놓는다. (가) 다리 C가 받는 힘 \(N_C\)를 \(p, q\)의 식으로 구하라. (나) 물체를 어디에 놓으면 탁자가 넘어지는가?</p>
+      <p><b>풀이.</b> (가) 우변만 \(\mathbf b = W(1, p, q)^{\mathsf T}\)로 바뀌고 계수 행렬은 같으므로, 같은 행 연산을 그대로 하면 된다. 둘째·셋째 식에 10을 곱한 첨가 행렬에서 같은 연산을 하면 셋째 줄은 \(9N_C = 10Wq - W\)가 된다. 따라서</p>
+      <div class="formula">\[ N_C = W\,\frac{q - 0.1\ \text{m}}{0.9\ \text{m}} \]</div>
+      <p>이다. \(q = 0.4\ \text{m}\)이면 \(N_C = 1200 \times 0.3/0.9 = 400\ \text{N}\)으로 앞의 결과와 같다. \(N_C\)가 \(q\)에만 기대는 것은 A와 B가 같은 직선 \(y = 0.1\ \text{m}\) 위에 있어서, 직선 AB 둘레의 돌림힘에 \(N_A\)와 \(N_B\)가 들어가지 않기 때문이다. 분자는 P에서 직선 AB까지의 거리, 분모는 C에서 직선 AB까지의 거리다.</p>
+      <p>(나) 다리는 바닥을 밀 수만 있으므로 세 힘이 모두 0 이상이어야 한다. \(N_C \ge 0\)은 \(q \ge 0.1\ \text{m}\), 곧 P가 직선 AB의 C 쪽에 있다는 조건이고, \(N_A \ge 0\)과 \(N_B \ge 0\)도 같은 꼴이다. 합치면 <b>P가 삼각형 ABC 안에 있어야 한다</b>. P가 밖으로 나가면 해의 한 힘이 음수가 되는데, 바닥은 그런 힘을 낼 수 없으므로 탁자가 그 변을 축으로 넘어진다. 예를 들어 P \(= (0.7, 0.05)\)이면 \(N_C = 1200 \times (0.05 - 0.1)/0.9 = -66.7\ \text{N}\)이다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 7.2 -->
+  <section id="s2">
+    <h2>행렬식</h2>
+    <p>7.1절의 소거는 해를 숫자로 주지만, 해가 하나뿐인지를 소거 전에 알 수는 없을까? 미지수가 둘인 경우를 문자로 풀어 보자. \(A_{11}x + A_{12}y = b_1\), \(A_{21}x + A_{22}y = b_2\)에서 첫 식에 \(A_{22}\)를, 둘째 식에 \(A_{12}\)를 곱해 빼면 \(y\)가 사라져 \(x\)가 나오고, 같은 방법으로 \(x\)를 없애면 \(y\)가 나온다.</p>
+    <div class="formula" id="eq-two-by-two-solution">\[ \begin{aligned} x &= \frac{b_1A_{22} - A_{12}b_2}{A_{11}A_{22} - A_{12}A_{21}} \\ y &= \frac{A_{11}b_2 - b_1A_{21}}{A_{11}A_{22} - A_{12}A_{21}} \end{aligned} \]</div>
+    <p>이다. 두 해의 분모가 같다. 이 분모 \(A_{11}A_{22} - A_{12}A_{21}\)이 0이 아니면 해가 하나로 정해지고, 0이면 7.1절의 "두 직선이 평행한" 경우다. 이 수를 \(2 \times 2\) 행렬의 <span class="term">행렬식</span> <span class="en">(determinant)</span>이라 한다. 이 절에서는 행렬식을 \(n \times n\)으로 넓히고, 그 성질을 레비치비타 기호로 증명한다.</p>
+
+    <h3 id="s2-volume">넓이와 부피로 보는 행렬식</h3>
+    <p>\(2 \times 2\) 행렬식에는 기하적인 뜻이 있다. 행렬 \(A\)의 두 열 \(\mathbf a_1 = (A_{11}, A_{21})\), \(\mathbf a_2 = (A_{12}, A_{22})\)가 만드는 평행사변형의 넓이는 \(\lvert A_{11}A_{22} - A_{12}A_{21}\rvert\)이다(2차원 외적의 크기). 그런데 \(\mathbf a_1 = A\hat{\mathbf e}_1\), \(\mathbf a_2 = A\hat{\mathbf e}_2\)이므로, 이 평행사변형은 넓이 1인 단위 정사각형이 \(A\)에 의해 옮겨진 모양이다(그림 7-2). 곧 <b>행렬식은 \(A\)가 넓이를 몇 배로 늘리는지를 나타낸다</b>. 부호는 방향을 기록한다. \(\mathbf a_1\)에서 \(\mathbf a_2\)로 시계 반대 방향으로 돌면 양수이고, 두 열을 맞바꾸면 같은 평행사변형인데 \(A_{12}A_{21} - A_{11}A_{22}\)로 부호가 바뀐다.</p>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 380 260" role="img" aria-label="단위 정사각형이 넓이 5인 평행사변형으로 바뀐다"><defs><marker id="f0702-arra" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker></defs><path d="M20,20V245M70,20V245M120,20V245M170,20V245M220,20V245M270,20V245M320,20V245M370,20V245M10,240H370M10,190H370M10,140H370M10,90H370M10,40H370" class="s-grid"/><polygon points="120,190 270,140 320,40 170,90" class="f-acc-soft" fill-opacity="0.55"/><polygon points="120,190 170,190 170,140 120,140" class="f-acc2-soft" fill-opacity="0.7"/><line x1="120" y1="190" x2="270" y2="140" class="s-acc" style="stroke-width:3" marker-end="url(#f0702-arra)"/><line x1="120" y1="190" x2="170" y2="90" class="s-acc" style="stroke-width:3" marker-end="url(#f0702-arra)"/><text x="278" y="156" class="t-math acc" style="font-size:16px" text-anchor="start"><tspan font-style="italic">A</tspan><tspan font-weight="700">e</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan></text><text x="162" y="84" class="t-math acc" style="font-size:16px" text-anchor="end"><tspan font-style="italic">A</tspan><tspan font-weight="700">e</tspan><tspan baseline-shift="sub" font-size="72%">2</tspan></text><text x="220" y="120" class="t-math" style="font-size:16px" text-anchor="middle">det <tspan font-style="italic">A</tspan> = 5</text><text x="145" y="210" class="t-math acc2" style="font-size:13px" text-anchor="middle">넓이 1</text></svg></div>
+      <figcaption><b>그림 7-2.</b> 행렬 \(A = \begin{pmatrix} 3 & 1 \\ 1 & 2 \end{pmatrix}\)는 단위 정사각형(보조색, 넓이 1)을 두 열 \(A\hat{\mathbf e}_1 = (3, 1)\), \(A\hat{\mathbf e}_2 = (1, 2)\)가 만드는 평행사변형(강조색)으로 옮긴다. 넓이는 \(\det A = 3 \cdot 2 - 1 \cdot 1 = 5\)이다.</figcaption>
+    </figure>
+    <p>3차원에서는 세 열 \(\mathbf a, \mathbf b, \mathbf c\)가 만드는 평행육면체의 부피가 같은 역할을 한다. 4장에서 본 것처럼 이 부피는 <a href="ch04.html#eq-triple-product">스칼라 삼중곱</a></p>
+    <div class="formula" id="eq-triple-product-epsilon">\[ \mathbf a\cdot(\mathbf b\times\mathbf c) = \varepsilon_{ijk}\,a_i b_j c_k \]</div>
+    <p>이고, 레비치비타 기호 \(\varepsilon_{ijk}\)가 "세 벡터를 순서대로 놓았을 때의 방향"을 기록한다. 이 식을 \(n\)차원으로 넓히면 행렬식의 정의가 된다.</p>
+
+    <div class="box math" id="math-permutation-symbol"><div class="box-h">\(n\)개 지수의 레비치비타 기호</div>
+      <p>4장의 <a href="ch04.html#def-levi-civita">레비치비타 기호</a> \(\varepsilon_{ijk}\)는 \((i, j, k)\)가 \((1, 2, 3)\)의 짝순열(\(123, 231, 312\))이면 \(+1\), 홀순열(\(132, 213, 321\))이면 \(-1\), 지수가 겹치면 0이다. 같은 규칙으로 \(n\)개 지수의 기호 \(\varepsilon_{i_1 i_2 \cdots i_n}\)을 정한다. \((i_1, \ldots, i_n)\)이 \((1, \ldots, n)\)을 두 개씩 맞바꾸기를 짝수 번 해서 얻어지면 \(+1\), 홀수 번이면 \(-1\), 같은 지수가 둘 이상이면 0이다. 성질 세 가지를 쓴다.</p>
+      <ol>
+        <li><b>완전 반대칭</b>: 어느 두 지수를 맞바꿔도 부호가 바뀐다. 예: \(\varepsilon_{jik} = -\varepsilon_{ijk}\).</li>
+        <li>0이 아닌 성분은 \(n!\)개이고, 각각 \(\pm 1\)이다. 따라서 \(\varepsilon_{i_1\cdots i_n}\varepsilon_{i_1\cdots i_n} = n!\)이다.</li>
+        <li>\(n = 3\)에서는 4장의 \(\varepsilon\)-\(\delta\) 항등식 <a href="ch04.html#eq-epsilon-delta">\(\varepsilon_{ijk}\varepsilon_{imn} = \delta_{jm}\delta_{kn} - \delta_{jn}\delta_{km}\)</a>이 성립한다. 7.6절에서 이것을 쓴다.</li>
+      </ol>
+    </div>
+
+    <h3 id="s2-definition">정의</h3>
+    <div class="box def" id="def-determinant"><div class="box-h">행렬식</div>
+      <p>\(n \times n\) 행렬 \(A\)의 행렬식은</p>
+      <div class="formula" id="eq-det-epsilon">\[ \det A = \varepsilon_{i_1 i_2\cdots i_n}\,A_{1i_1}A_{2i_2}\cdots A_{ni_n} \]</div>
+      <p>이다(합 규약). 각 행에서 성분을 하나씩, 서로 다른 열에서 고른 곱 \(n!\)개를 순열의 부호를 붙여 더한 것이다. \(\lvert A\rvert\)로도 쓴다.</p>
+    </div>
+    <p>\(n = 2\)이면 \(\varepsilon_{12} = 1\), \(\varepsilon_{21} = -1\)만 남아 \(\det A = A_{11}A_{22} - A_{12}A_{21}\)이 된다. \(n = 3\)이면 \(\det A = \varepsilon_{ijk}A_{1i}A_{2j}A_{3k}\)로, 식 <a class="ref" href="#eq-triple-product-epsilon"></a>에서 \(\mathbf a, \mathbf b, \mathbf c\)를 \(A\)의 세 <b>행</b>으로 둔 것이다. 여섯 항을 펼치면</p>
+    <div class="formula" id="eq-det-3x3">\[ \begin{aligned} \det A &= A_{11}(A_{22}A_{33} - A_{23}A_{32}) \\ &\quad - A_{12}(A_{21}A_{33} - A_{23}A_{31}) \\ &\quad + A_{13}(A_{21}A_{32} - A_{22}A_{31}) \end{aligned} \]</div>
+    <p>이다. 행으로 만든 부피인지 열로 만든 부피인지는 상관없다(\(\det A^{\mathsf T} = \det A\), 아래).</p>
+
+    <h3 id="s2-properties">성질</h3>
+    <p>행렬식의 성질은 모두 다음 등식에서 나온다. 식 <a class="ref" href="#eq-det-epsilon"></a>에서 행의 번호 \(1, 2, \ldots, n\)을 임의의 \(j_1, j_2, \ldots, j_n\)으로 바꾸면</p>
+    <div class="formula" id="eq-det-rows-permuted">\[ \varepsilon_{i_1\cdots i_n}\,A_{j_1i_1}\cdots A_{j_ni_n} = \varepsilon_{j_1\cdots j_n}\det A \]</div>
+    <p>이다. 이유는 이렇다. 왼쪽에서 \(j_1\)과 \(j_2\)를 맞바꾼 것은, 더하는 지수의 이름 \(i_1\)과 \(i_2\)를 맞바꾼 것과 같다. 그러면 \(\varepsilon\)의 앞 두 지수가 바뀌어 부호가 바뀐다. 따라서 왼쪽은 \(j\)들에 대해 완전 반대칭이고, 그런 양은 \(\varepsilon_{j_1\cdots j_n}\)의 상수배뿐이다. \(j_1 \cdots j_n = 1 \cdots n\)을 넣으면 그 상수가 \(\det A\)다. 양변에 \(\varepsilon_{j_1\cdots j_n}\)을 곱해 \(j\)에 대해서도 더하면, <a class="ref" href="#math-permutation-symbol"></a>의 2번(\(\varepsilon_{i_1\cdots i_n}\varepsilon_{i_1\cdots i_n} = n!\))에 따라 행과 열을 똑같이 다루는 꼴을 얻는다.</p>
+    <div class="formula" id="eq-det-symmetric-form">\[ \det A = \frac{1}{n!}\,\varepsilon_{i_1\cdots i_n}\varepsilon_{j_1\cdots j_n}\,A_{j_1i_1}\cdots A_{j_ni_n} \]</div>
+    <div class="box thm" id="thm-det-properties"><div class="box-h">행렬식의 성질</div>
+      <p>\(A\)가 \(n \times n\) 행렬일 때 다음이 성립한다.</p>
+      <ol>
+        <li>\(\det A^{\mathsf T} = \det A\). 그래서 아래의 "행"을 모두 "열"로 바꿔도 성립한다.</li>
+        <li>두 행을 맞바꾸면 행렬식의 부호가 바뀐다.</li>
+        <li>행렬식은 각 행에 대해 선형이다. 한 행에 \(c\)를 곱하면 행렬식도 \(c\)배가 되고, 따라서 \(\det(cA) = c^n\det A\)이다.</li>
+        <li>두 행이 같거나, 한 행이 다른 행들의 선형 결합이면 \(\det A = 0\)이다.</li>
+        <li>한 행에 다른 행의 배수를 더해도 행렬식은 바뀌지 않는다.</li>
+        <li><span class="term">삼각 행렬</span> <span class="en">(triangular matrix)</span>(대각선 아래나 위가 모두 0)의 행렬식은 대각 성분의 곱이다.</li>
+      </ol>
+      <details class="proof"><summary>증명</summary>
+        <p>1. 식 <a class="ref" href="#eq-det-symmetric-form"></a>은 \(A_{j i}\)를 \(A_{ij}\)로 바꾸어도(곧 두 \(\varepsilon\)의 역할을 바꾸어도) 그대로다. 2. 식 <a class="ref" href="#eq-det-rows-permuted"></a>에서 \(j\)를 \(1\cdots n\)의 두 수를 맞바꾼 것으로 두면 \(\varepsilon_{j_1\cdots j_n} = -1\)이다. 3. 식 <a class="ref" href="#eq-det-epsilon"></a>의 각 항에는 각 행의 성분이 정확히 하나씩 들어 있다. 4. 두 행이 같으면 그 둘을 맞바꿔도 행렬이 같은데 2에 따라 부호가 바뀌므로 \(\det A = -\det A = 0\)이다. 한 행이 다른 행들의 선형 결합이면 3에 따라 행렬식이 "같은 행이 두 번 나오는 행렬식"들의 합이 되어 0이다. 5. 3에 따라 바뀐 행렬식은 원래 행렬식에 "같은 행이 두 번 나오는 행렬식"의 배수를 더한 것이고, 4에 따라 그것은 0이다. 6. 위 삼각 행렬이면 \(A_{1i_1}\)부터 \(A_{ni_n}\)까지가 모두 0이 아니려면 \(i_n = n\), \(i_{n-1} = n - 1\), …으로 강제되므로 대각 성분의 곱 하나만 남는다.</p>
+      </details>
+    </div>
+    <p>성질 2, 3, 5는 기본 행 연산이 행렬식에 주는 효과다. 그래서 큰 행렬의 행렬식은 \(n!\)개 항을 더하지 않고 소거로 계산한다. 행을 바꾼 횟수가 \(s\)이면 \(\det A = (-1)^s \times (\text{피벗의 곱})\)이다. 예를 들어 다음 행렬(<a class="ref" href="#ex-kirchhoff-system"></a>의 계수 행렬)은 행을 바꾸지 않고 소거되어</p>
+    <div class="formula">\[ \begin{aligned} &\begin{pmatrix} 5 & -4 & 0 \\ -4 & 7 & -1 \\ 0 & -1 & 2 \end{pmatrix} \to \begin{pmatrix} 5 & -4 & 0 \\ 0 & 19/5 & -1 \\ 0 & 0 & 33/19 \end{pmatrix}, \\ &\det = 5 \cdot \frac{19}{5}\cdot\frac{33}{19} = 33 \end{aligned} \]</div>
+    <p>이다(둘째 행에 첫째 행의 \(4/5\)배를, 셋째 행에 새 둘째 행의 \(5/19\)배를 더했다). 식 <a class="ref" href="#eq-det-3x3"></a>로도 \(5(14 - 1) + 4(-8) = 33\)이다.</p>
+
+    <h3 id="s2-product">곱의 행렬식</h3>
+    <p>행렬식이 넓이와 부피의 배율이라면, 변환을 두 번 연달아 하면 배율이 곱해져야 한다. 이것이 행렬식의 가장 중요한 성질이다.</p>
+    <div class="box thm" id="thm-det-product"><div class="box-h">곱의 행렬식</div>
+      <p>\(n \times n\) 행렬 \(A, B\)에 대해</p>
+      <div class="formula" id="eq-det-product">\[ \det(AB) = \det A\,\det B \]</div>
+    </div>
+    <p>증명은 식 <a class="ref" href="#eq-det-rows-permuted"></a> 하나로 끝난다. 행렬식의 정의 <a class="ref" href="#eq-det-epsilon"></a>에 \((AB)_{ki} = A_{kj}B_{ji}\)를 넣고 곱의 순서를 정리하면</p>
+    <div class="formula">\[ \begin{aligned} \det(AB) &= \varepsilon_{i_1\cdots i_n}(A_{1j_1}B_{j_1i_1})\cdots(A_{nj_n}B_{j_ni_n}) \\ &= A_{1j_1}\cdots A_{nj_n}\,\big(\varepsilon_{i_1\cdots i_n}B_{j_1i_1}\cdots B_{j_ni_n}\big) \\ &= A_{1j_1}\cdots A_{nj_n}\,\varepsilon_{j_1\cdots j_n}\det B \\ &= \det A\,\det B \end{aligned} \]</div>
+    <p>이다. 셋째 줄에서 괄호 안에 식 <a class="ref" href="#eq-det-rows-permuted"></a>을 \(B\)에 대해 썼고, 넷째 줄은 \(\det A\)의 정의다. \(AB \ne BA\)여도 \(\det(AB) = \det(BA)\)이다.</p>
+
+    <h3 id="s2-cofactor">여인수 전개</h3>
+    <p>손으로 계산할 때는 행렬식을 작은 행렬식으로 쪼개는 방법이 편하다. \(A\)에서 \(i\)행과 \(j\)열을 지운 \((n-1) \times (n-1)\) 행렬의 행렬식을 <span class="term">소행렬식</span> <span class="en">(minor)</span> \(M_{ij}\)라 하고, 부호를 붙인 \(C_{ij} = (-1)^{i+j}M_{ij}\)를 <span class="term">여인수</span> <span class="en">(cofactor)</span>라 한다.</p>
+    <div class="box thm" id="thm-cofactor-expansion"><div class="box-h">여인수 전개 (라플라스 전개)</div>
+      <p>임의의 행 \(i\)를 하나 고르면</p>
+      <div class="formula" id="eq-cofactor-expansion">\[ \det A = \sum_{j=1}^{n} A_{ij}C_{ij} \]</div>
+      <p>이다. 열에 대해서도 같다. 또 \(k \ne i\)이면 \(\sum_j A_{kj}C_{ij} = 0\)이다.</p>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>성질 3에 따라 행렬식은 \(i\)행에 대해 선형이다. \(i\)행을 \(\sum_j A_{ij}\hat{\mathbf e}_j^{\mathsf T}\)로 쓰면 \(\det A = \sum_j A_{ij}D_j\)인데, \(D_j\)는 \(i\)행을 \(\hat{\mathbf e}_j^{\mathsf T}\)(\(j\)번째만 1)로 바꾼 행렬의 행렬식이다. 이 행렬에서 \(i\)행을 맨 위로, \(j\)열을 맨 왼쪽으로 옮기는 데 이웃한 행과 열을 \((i - 1) + (j - 1)\)번 맞바꾸므로 부호 \((-1)^{i+j}\)가 붙고, 남은 행렬식은 식 <a class="ref" href="#eq-det-epsilon"></a>에서 첫 지수가 1로 고정되어 \(M_{ij}\)가 된다. 둘째 주장은 \(i\)행 자리에 \(k\)행을 한 번 더 넣은 행렬, 곧 두 행이 같은 행렬의 행렬식을 \(i\)행으로 전개한 것이므로 성질 4에 따라 0이다.</p>
+      </details>
+    </div>
+    <p>식 <a class="ref" href="#eq-det-3x3"></a>는 첫째 행에 대한 여인수 전개다. 0이 많은 행이나 열을 골라 전개하면 계산이 줄어든다.</p>
+
+    <h3 id="s2-cramer">크라메르 공식</h3>
+    <p>식 <a class="ref" href="#eq-two-by-two-solution"></a>의 분자도 행렬식이다. \(x\)의 분자는 \(A\)의 첫째 열을 \(\mathbf b\)로 바꾼 행렬의 행렬식이고, \(y\)의 분자는 둘째 열을 바꾼 것이다. 이것이 일반적으로 성립한다.</p>
+    <div class="box thm" id="thm-cramer"><div class="box-h">크라메르 공식 <span class="en">(Cramer’s rule)</span></div>
+      <p>\(n \times n\) 행렬 \(A\)가 \(\det A \ne 0\)이면 \(A\mathbf x = \mathbf b\)의 해는 하나뿐이고</p>
+      <div class="formula" id="eq-cramer">\[ x_i = \frac{\det A_i}{\det A} \]</div>
+      <p>이다. \(A_i\)는 \(A\)의 \(i\)번째 열을 \(\mathbf b\)로 바꾼 행렬이다.</p>
+    </div>
+    <p>식 <a class="ref" href="#eq-column-combination"></a>로 보면 증명이 짧다. 해가 있다면 \(\mathbf b = x_1\mathbf a_1 + \cdots + x_n\mathbf a_n\)이다. 이것을 \(A_i\)의 \(i\)번째 열에 넣고 행렬식의 열에 대한 선형성(성질 1, 3)을 쓰면</p>
+    <div class="formula">\[ \begin{aligned} \det A_i &= \det(\mathbf a_1, \ldots, \textstyle\sum_j x_j\mathbf a_j, \ldots, \mathbf a_n) \\ &= \textstyle\sum_j x_j\det(\mathbf a_1, \ldots, \mathbf a_j, \ldots, \mathbf a_n) = x_i\det A \end{aligned} \]</div>
+    <p>이다. \(j \ne i\)인 항은 \(\mathbf a_j\)가 두 번 들어가 성질 4에 따라 0이다. 이것은 유일성을 보인다. 해가 실제로 있다는 것은 7.3절의 역행렬에서 보인다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 480 270" role="img" aria-label="세 고리로 된 사다리꼴 회로. 왼쪽 세로 가지에 12 V 전지, 오른쪽 세로 가지에 6 V 전지, 위쪽 가지에 저항 세 개, 가운데 세로 가지 두 개에 저항 두 개가 있다"><defs><marker id="f0703-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker></defs><g class="s-line" style="stroke:var(--text);stroke-width:2"><path d="M50,220H450"/><path d="M50,50 L62,50 L71.7,58 L81.3,42 L91,58 L100.7,42 L110.3,58 L120,42 L129.7,58 L139.3,42 L149,58 L158.7,42 L168.3,58 L178,50 L190,50"/><path d="M190,50 L202,50 L211.7,58 L221.3,42 L231,58 L240.7,42 L250.3,58 L260,42 L269.7,58 L279.3,42 L289,58 L298.7,42 L308.3,58 L318,50 L330,50"/><path d="M330,50 L342,50 L350,58 L358,42 L366,58 L374,42 L382,58 L390,42 L398,58 L406,42 L414,58 L422,42 L430,58 L438,50 L450,50"/><path d="M190,50 L190,62 L182,74.2 L198,86.3 L182,98.5 L198,110.7 L182,122.8 L198,135 L182,147.2 L198,159.3 L182,171.5 L198,183.7 L182,195.8 L190,208 L190,220"/><path d="M330,50 L330,62 L322,74.2 L338,86.3 L322,98.5 L338,110.7 L322,122.8 L338,135 L322,147.2 L338,159.3 L322,171.5 L338,183.7 L322,195.8 L330,208 L330,220"/><path d="M50,50V129M50,141V220"/><path d="M450,50V129M450,141V220"/></g><text x="120" y="29" class="t-math" style="font-size:15px" text-anchor="middle"><tspan font-style="italic">R</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan> = 1 kΩ</text><text x="260" y="29" class="t-math" style="font-size:15px" text-anchor="middle"><tspan font-style="italic">R</tspan><tspan baseline-shift="sub" font-size="72%">2</tspan> = 2 kΩ</text><text x="390" y="29" class="t-math" style="font-size:15px" text-anchor="middle"><tspan font-style="italic">R</tspan><tspan baseline-shift="sub" font-size="72%">3</tspan> = 1 kΩ</text><text x="204" y="140" class="t-math" style="font-size:15px" text-anchor="start"><tspan font-style="italic">R</tspan><tspan baseline-shift="sub" font-size="72%">4</tspan></text><text x="204" y="159" class="t-math" style="font-size:14px" text-anchor="start">4 kΩ</text><text x="344" y="140" class="t-math" style="font-size:15px" text-anchor="start"><tspan font-style="italic">R</tspan><tspan baseline-shift="sub" font-size="72%">5</tspan></text><text x="344" y="159" class="t-math" style="font-size:14px" text-anchor="start">1 kΩ</text><line x1="34" y1="129" x2="66" y2="129" class="s-line" style="stroke:var(--text);stroke-width:2.5"/><line x1="42" y1="141" x2="58" y2="141" class="s-line" style="stroke:var(--text);stroke-width:5"/><text x="70" y="125" class="t-math" style="font-size:15px" text-anchor="start">+</text><text x="70" y="151" class="t-math" style="font-size:15px" text-anchor="start"><tspan font-style="italic">E</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan></text><text x="70" y="171" class="t-math" style="font-size:14px" text-anchor="start">12 V</text><line x1="434" y1="129" x2="466" y2="129" class="s-line" style="stroke:var(--text);stroke-width:2.5"/><line x1="442" y1="141" x2="458" y2="141" class="s-line" style="stroke:var(--text);stroke-width:5"/><text x="430" y="125" class="t-math" style="font-size:15px" text-anchor="end">+</text><text x="430" y="151" class="t-math" style="font-size:15px" text-anchor="end"><tspan font-style="italic">E</tspan><tspan baseline-shift="sub" font-size="72%">2</tspan></text><text x="430" y="171" class="t-math" style="font-size:14px" text-anchor="end">6 V</text><path d="M97.4,91.8 A24,24 0 1 1 101.6,115.4" class="s-acc" marker-end="url(#f0703-arr)"/><text x="120" y="106" class="t-math acc" style="font-size:16px" text-anchor="middle"><tspan font-style="italic">I</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan></text><path d="M237.4,91.8 A24,24 0 1 1 241.6,115.4" class="s-acc" marker-end="url(#f0703-arr)"/><text x="260" y="106" class="t-math acc" style="font-size:16px" text-anchor="middle"><tspan font-style="italic">I</tspan><tspan baseline-shift="sub" font-size="72%">2</tspan></text><path d="M367.4,91.8 A24,24 0 1 1 371.6,115.4" class="s-acc" marker-end="url(#f0703-arr)"/><text x="390" y="106" class="t-math acc" style="font-size:16px" text-anchor="middle"><tspan font-style="italic">I</tspan><tspan baseline-shift="sub" font-size="72%">3</tspan></text></svg>
+      <figcaption><b>그림 7-3.</b> 고리 셋으로 된 회로. 가운데 두 세로 가지의 저항 \(R_4\), \(R_5\)는 이웃한 두 고리가 함께 쓰므로 그 가지에는 두 고리 전류의 차가 흐른다.</figcaption>
+    </figure>
+    <div class="box ex" id="ex-kirchhoff-system"><div class="box-h">세 고리 회로의 전류</div>
+      <p>그림 7-3의 회로에서 고리 전류 \(I_1, I_2, I_3\)(모두 시계 방향을 양으로 잡는다)를 키르히호프 법칙으로 세우고 크라메르 공식으로 구하라. 저항은 \(R_1 = 1\ \text{k}\Omega\), \(R_2 = 2\ \text{k}\Omega\), \(R_3 = 1\ \text{k}\Omega\), \(R_4 = 4\ \text{k}\Omega\), \(R_5 = 1\ \text{k}\Omega\), 전지는 \(E_1 = 12\ \text{V}\), \(E_2 = 6\ \text{V}\)이고 두 전지 모두 위쪽이 \(+\)극이다.</p>
+      <p><b>풀이.</b> 각 고리를 시계 방향으로 돌며 전압의 오르내림을 더하면 0이다(키르히호프 전압 법칙). 고리 1에서는 \(E_1\)에서 \(12\ \text{V}\)가 오르고 \(R_1I_1\), \(R_4(I_1 - I_2)\)가 내린다. 고리 3에서는 오른쪽 가지를 위에서 아래로 지나므로 \(E_2\)에서 \(6\ \text{V}\)가 내린다. 저항을 kΩ, 전압을 V로 쓰면 전류는 mA다.</p>
+      <div class="formula" id="eq-mesh-system">\[ \begin{pmatrix} 5 & -4 & 0 \\ -4 & 7 & -1 \\ 0 & -1 & 2 \end{pmatrix}\begin{pmatrix} I_1 \\ I_2 \\ I_3 \end{pmatrix} = \begin{pmatrix} 12 \\ 0 \\ -6 \end{pmatrix} \]</div>
+      <p>대각 성분은 그 고리를 이루는 저항의 합(\(1 + 4\), \(4 + 2 + 1\), \(1 + 1\))이고, 대각선 밖 성분은 두 고리가 함께 쓰는 저항에 \(-\)를 붙인 것이다. 그래서 계수 행렬은 대칭이다. 행렬식은 앞에서 구한 \(\det A = 33\)이다. 열을 하나씩 우변으로 바꾼 행렬식을 첫째 행(또는 0이 있는 행)으로 전개하면</p>
+      <div class="formula">\[ \begin{aligned} \det A_1 &= 12(14 - 1) + 4(0 - 6) = 132 \\ \det A_2 &= 5(0 - 6) - 12(-8 - 0) = 66 \\ \det A_3 &= 5(-42) + 4(24) + 12(4) = -66 \end{aligned} \]</div>
+      <p>이므로 식 <a class="ref" href="#eq-cramer"></a>에 따라 \(I_1 = 132/33 = 4\ \text{mA}\), \(I_2 = 66/33 = 2\ \text{mA}\), \(I_3 = -66/33 = -2\ \text{mA}\)이다.</p>
+      <p><b>숫자로 보기.</b> \(I_3\)가 음수이므로 고리 3의 전류는 실제로는 시계 반대 방향으로 \(2\ \text{mA}\) 흐른다. \(E_2\)가 위쪽 \(+\)극으로 전류를 위로 밀어 올리기 때문이다. 가지 전류는 \(R_4\)에 \(I_1 - I_2 = 2\ \text{mA}\), \(R_5\)에 \(I_2 - I_3 = 4\ \text{mA}\)가 아래로 흐른다. 에너지 보존으로 확인하자. 두 전지가 내는 일률은 \(12 \times 4 + 6 \times 2 = 60\ \text{mW}\)이고, 저항에서 나는 열은 \(\sum RI^2 = 1 \cdot 16 + 2 \cdot 4 + 1 \cdot 4 + 4 \cdot 4 + 1 \cdot 16 = 60\ \text{mW}\)로 같다(kΩ × mA² = mW). 단위도 맞는다. V/kΩ = mA이다.</p>
+    </div>
+    <p>크라메르 공식은 \(2 \times 2\), \(3 \times 3\)이나 계수가 문자인 경우에 좋다. 큰 \(n\)에서는 행렬식 \(n + 1\)개가 필요하고, 식 <a class="ref" href="#eq-det-epsilon"></a>대로 계산하면 행렬식 하나에 \(n!\)개 항(\(n = 20\)이면 \(2.4 \times 10^{18}\)개)이 들므로 소거를 쓴다.</p>
+  </section>
+
+  <!-- ============================================================ 7.3 -->
+  <section id="s3">
+    <h2>역행렬과 랭크</h2>
+    <p><a class="ref" href="#ex-kirchhoff-system"></a>의 회로에서 전지 전압을 바꿀 때마다 다시 풀어야 할까? 계수 행렬은 저항으로만 정해지고 전압은 우변에만 들어가므로, "우변을 넣으면 해가 나오는" 행렬을 한 번 구해 두면 된다. 그것이 역행렬이다. 절의 뒷부분에서는 역행렬이 없는 경우를 랭크로 정리한다.</p>
+
+    <h3 id="s3-inverse">역행렬</h3>
+    <div class="box def" id="def-inverse-matrix"><div class="box-h">역행렬</div>
+      <p>\(n \times n\) 행렬 \(A\)에 대해 \(AB = BA = I\)인 행렬 \(B\)가 있으면 \(A\)를 <span class="term">가역</span> <span class="en">(invertible)</span>이라 하고, \(B\)를 \(A\)의 <span class="term">역행렬</span> <span class="en">(inverse matrix)</span> \(A^{-1}\)이라 한다. 역행렬이 있으면 하나뿐이다(\(B\)와 \(B'\)이 모두 역행렬이면 \(B = BI = BAB' = IB' = B'\)).</p>
+    </div>
+    <p>역행렬이 있으면 \(A\mathbf x = \mathbf b\)의 양변 왼쪽에 \(A^{-1}\)을 곱해 \(\mathbf x = A^{-1}\mathbf b\)를 얻는다. 이 \(\mathbf x\)를 넣으면 실제로 \(A\mathbf x = AA^{-1}\mathbf b = \mathbf b\)이므로 해가 있다는 것도 보장된다. 역행렬은 언제 있고 어떻게 구할까? <a class="ref" href="#thm-cofactor-expansion"></a>의 두 식을 한 줄로 쓰면 \(\sum_j A_{kj}C_{ij} = \delta_{ki}\det A\)이다. 여인수를 전치한 행렬 \((\operatorname{adj} A)_{ji} = C_{ij}\)를 <span class="term">딸림 행렬</span> <span class="en">(adjugate)</span>이라 하면 이 식은 \(A\,\operatorname{adj}A = (\det A)I\)이다. 8장의 수반 행렬 \(A^\dagger\)와는 다른 행렬이다. 열에 대한 전개로 \(\operatorname{adj}A\,A = (\det A)I\)도 얻는다. 따라서 \(\det A \ne 0\)이면</p>
+    <div class="formula" id="eq-inverse-adjugate">\[ \begin{gathered} A^{-1} = \frac{1}{\det A}\,\operatorname{adj}A \\ (\operatorname{adj}A)_{ij} = C_{ji} \end{gathered} \]</div>
+    <p>이다. 반대로 \(\det A = 0\)이면 역행렬이 없다. 역행렬이 있다면 <a class="ref" href="#thm-det-product"></a>에 따라 \(\det A\,\det A^{-1} = \det I = 1\)이어야 하기 때문이다. 정리하면 <b>정사각 행렬은 \(\det A \ne 0\)일 때, 그리고 그때만 가역이다</b>. \(2 \times 2\)에서는 식 <a class="ref" href="#eq-inverse-adjugate"></a>이 외우기 쉬운 꼴이 된다.</p>
+    <div class="formula" id="eq-inverse-2x2">\[ \begin{pmatrix} a & b \\ c & d \end{pmatrix}^{-1} = \frac{1}{ad - bc}\begin{pmatrix} d & -b \\ -c & a \end{pmatrix} \]</div>
+    <p>역행렬의 성질 몇 가지는 정의에서 바로 나온다.</p>
+    <div class="formula" id="eq-inverse-properties">\[ \begin{aligned} (AB)^{-1} &= B^{-1}A^{-1} \\ (A^{\mathsf T})^{-1} &= (A^{-1})^{\mathsf T} \\ \det(A^{-1}) &= 1/\det A \end{aligned} \]</div>
+    <p>첫 식은 \((AB)(B^{-1}A^{-1}) = A(BB^{-1})A^{-1} = I\)에서 나온다. 둘째 식은 \(AA^{-1} = I\)의 양변을 전치해 식 <a class="ref" href="#eq-transpose-product"></a>를 쓰면 된다.</p>
+    <p>\(3 \times 3\)보다 큰 행렬의 역행렬은 소거로 구한다. 첨가 행렬 \((A \mid I)\)에 기본 행 연산을 해서 왼쪽을 \(I\)로 만들면 오른쪽이 \(A^{-1}\)이 된다(<span class="term">가우스-조르당 소거</span> <span class="en">(Gauss–Jordan elimination)</span>). 행 연산을 차례로 한 것은 왼쪽에 어떤 행렬 \(E\)를 곱한 것과 같고, \(EA = I\)가 되었다면 \(E = A^{-1}\)이 오른쪽의 \(EI\)에 남기 때문이다(<a class="ref" href="#prob-gauss-jordan"></a>).</p>
+
+    <h3 id="s3-reciprocity">회로의 역행렬과 상반성</h3>
+    <p><a class="ref" href="#ex-kirchhoff-system"></a>의 계수 행렬 \(R\)에 식 <a class="ref" href="#eq-inverse-adjugate"></a>을 쓰면(예: \(C_{11} = 7 \cdot 2 - (-1)^2 = 13\), \(C_{12} = -[(-4) \cdot 2 - 0] = 8\))</p>
+    <div class="formula" id="eq-mesh-inverse">\[ R^{-1} = \frac{1}{33}\begin{pmatrix} 13 & 8 & 4 \\ 8 & 10 & 5 \\ 4 & 5 & 19 \end{pmatrix}\ \text{mS} \]</div>
+    <p>이다. 이제 어떤 전압이 와도 곱셈만 하면 된다. \((12, 0, -6)\)을 넣으면 \(I_1 = (156 - 24)/33 = 4\), \(I_2 = (96 - 30)/33 = 2\), \(I_3 = (48 - 114)/33 = -2\)(mA)로 앞의 결과와 같다. \(R^{-1}\)의 \(j\)번째 열은 "고리 \(j\)에만 1 V를 넣었을 때의 고리 전류"다. \(R\)이 대칭이므로 \(R^{-1}\)도 대칭이고(\((R^{-1})^{\mathsf T} = (R^{\mathsf T})^{-1} = R^{-1}\)), 따라서 고리 1에 1 V를 넣었을 때 고리 3의 전류(\(4/33\ \text{mA}\))는 고리 3에 1 V를 넣었을 때 고리 1의 전류와 같다. 원천과 측정 위치를 맞바꿔도 응답이 같다는 이 사실을 회로 이론에서 <span class="term">상반 정리</span> <span class="en">(reciprocity theorem)</span>라 한다.</p>
+
+    <h3 id="s3-rank">랭크</h3>
+    <p>역행렬이 없을 때 무슨 일이 생기는지를 정리하려면 "식이 실제로 몇 개인가"를 셀 수 있어야 한다. 7.1절의 \(x + 2y = 3\), \(2x + 4y = 6\)은 식이 둘처럼 보이지만 둘째 식이 첫째 식의 2배라 정보는 하나뿐이다. 벡터 \(\mathbf v_1, \ldots, \mathbf v_k\) 가운데 어느 것도 나머지의 선형 결합으로 쓸 수 없으면, 곧 \(c_1\mathbf v_1 + \cdots + c_k\mathbf v_k = 0\)이 \(c_1 = \cdots = c_k = 0\)일 때만 성립하면, 이 벡터들이 <span class="term">선형 독립</span> <span class="en">(linearly independent)</span>이라 한다. 이 개념은 9장에서 <a href="ch09.html#def-linear-independence">일반적인 벡터 공간</a>으로 넓힌다.</p>
+    <div class="box def" id="def-rank"><div class="box-h">랭크</div>
+      <p>행렬 \(A\)의 선형 독립인 행의 최대 개수를 \(A\)의 <span class="term">랭크</span> <span class="en">(rank)</span>라 하고 \(\operatorname{rank}A\)로 쓴다. 다음은 모두 같은 수다.</p>
+      <ol>
+        <li>선형 독립인 행의 최대 개수</li>
+        <li>선형 독립인 열의 최대 개수</li>
+        <li>행 사다리꼴에서 피벗의 개수</li>
+        <li>\(k\)개 행과 \(k\)개 열을 골라 만든 \(k \times k\) 행렬식 가운데 0이 아닌 것이 있는 가장 큰 \(k\)</li>
+      </ol>
+    </div>
+    <p>1과 3이 같은 것은 기본 행 연산이 행들의 선형 결합만 만들어 선형 독립인 행의 수를 바꾸지 않기 때문이다. 1과 2가 같다는 것("행 랭크 = 열 랭크")은 행 연산이 열 사이의 선형 관계를 바꾸지 않고, 행 사다리꼴에서 피벗이 있는 열들이 나머지 열을 만든다는 데서 나온다. \(n \times n\) 행렬에서 \(\operatorname{rank}A = n\)은 \(\det A \ne 0\)과 같다. \(\operatorname{rank}A &lt; n\)이면 <a class="ref" href="#thm-det-properties"></a>의 4에 따라 \(\det A = 0\)이고, \(\operatorname{rank}A = n\)이면 행 사다리꼴의 피벗 \(n\)개가 모두 0이 아니므로 \(\det A = (-1)^s \times (\text{피벗의 곱}) \ne 0\)이다.</p>
+    <div class="box thm" id="thm-rank-solvability"><div class="box-h">연립 방정식의 해와 랭크</div>
+      <p>미지수 \(n\)개, 식 \(m\)개인 \(A\mathbf x = \mathbf b\)에 대해 다음이 성립한다.</p>
+      <ol>
+        <li>해가 있을 필요충분조건은 \(\operatorname{rank}A = \operatorname{rank}(A \mid \mathbf b)\)이다.</li>
+        <li>해가 있고 \(r = \operatorname{rank}A\)이면, 모든 해는 <span class="term">특수해</span> <span class="en">(particular solution)</span> 하나 \(\mathbf x_p\)와 동차 방정식 \(A\mathbf x = 0\)의 선형 독립인 해 \(n - r\)개 \(\mathbf v_1, \ldots, \mathbf v_{n-r}\)로 다음과 같이 쓸 수 있다.</li>
+      </ol>
+      <div class="formula" id="eq-general-solution">\[ \mathbf x = \mathbf x_p + t_1\mathbf v_1 + \cdots + t_{n-r}\mathbf v_{n-r} \]</div>
+      <p>여기서 \(t_1, \ldots, t_{n-r}\)은 마음대로 정할 수 있는 수다. 특히 \(r = n\)이면 해는 하나뿐이다.</p>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>첨가 행렬을 행 사다리꼴로 만든다. \(\operatorname{rank}(A \mid \mathbf b) > \operatorname{rank}A\)라는 것은 왼쪽이 모두 0인데 오른쪽이 0이 아닌 줄, 곧 "\(0 = \)0이 아닌 수"가 생긴다는 뜻이다. 그런 줄이 없으면 피벗이 있는 \(r\)개 열의 미지수는 거꾸로 대입으로 정해지고, 피벗이 없는 \(n - r\)개 열의 미지수는 아무 값이나 가질 수 있다. 자유 미지수 하나를 1, 나머지를 0으로 두고 \(\mathbf b = 0\)으로 푼 해가 \(\mathbf v_k\)다. 두 해의 차 \(\mathbf x - \mathbf x_p\)는 \(A(\mathbf x - \mathbf x_p) = 0\)을 만족하므로 언제나 동차 방정식의 해다.</p>
+      </details>
+    </div>
+    <p>식 <a class="ref" href="#eq-general-solution"></a>의 "특수해 + 동차해" 구조는 10장의 선형 미분방정식에서도 그대로 나온다. <span class="term">동차 방정식</span> <span class="en">(homogeneous equation)</span> \(A\mathbf x = 0\)은 \(\mathbf x = 0\)이라는 해를 언제나 갖는다. 물리에서 중요한 질문은 0이 아닌 해가 있느냐다.</p>
+    <div class="box thm" id="thm-homogeneous-solution"><div class="box-h">동차 방정식이 0이 아닌 해를 가질 조건</div>
+      <p>\(n \times n\) 행렬 \(A\)에 대해 다음은 모두 동치다.</p>
+      <ol>
+        <li>\(A\mathbf x = 0\)이 0이 아닌 해를 갖는다.</li>
+        <li>\(\det A = 0\)이다.</li>
+        <li>\(\operatorname{rank}A &lt; n\)이다.</li>
+        <li>\(A\)는 역행렬이 없다.</li>
+      </ol>
+      <details class="proof"><summary>증명</summary>
+        <p>2와 4의 동치는 식 <a class="ref" href="#eq-inverse-adjugate"></a> 앞뒤에서, 2와 3의 동치는 <a class="ref" href="#def-rank"></a> 뒤에서 보였다. 3이면 <a class="ref" href="#thm-rank-solvability"></a>에서 \(n - r \ge 1\)개의 자유 매개변수가 있으므로 1이다. 1이면 0이 아닌 \(\mathbf x\)에 대해 식 <a class="ref" href="#eq-column-combination"></a>의 \(x_1\mathbf a_1 + \cdots + x_n\mathbf a_n = 0\)이므로 열들이 선형 독립이 아니고, 따라서 3이다.</p>
+      </details>
+    </div>
+    <p>이 정리는 물리에서 "외부의 원천 없이도 0이 아닌 운동이 가능한가"라는 질문에 답한다. 예를 들어 용수철로 이은 물체들이 모두 같은 각진동수 \(\omega\)로 진동하는 해를 찾으면 \((K - \omega^2 M)\mathbf x = 0\) 꼴의 동차 방정식이 나온다. 0이 아닌 진동이 있으려면 \(\det(K - \omega^2 M) = 0\)이어야 하고, 이 조건이 허용되는 진동수를 정한다. 8장에서 이것을 <a href="ch08.html#eq-characteristic-eq">특성 방정식</a>과 <a href="ch08.html#def-normal-mode">정규 모드</a>로 다룬다.</p>
+
+    <div class="box ex" id="ex-four-leg-table"><div class="box-h">네 다리 탁자는 왜 흔들리는가</div>
+      <p>한 변이 1 m인 정사각형 탁자의 네 귀퉁이 A \((0, 0)\), B \((1, 0)\), C \((1, 1)\), D \((0, 1)\)에 다리가 있고, 점 \((0.3, 0.4)\)에 무게 \(W = 800\ \text{N}\)인 물체가 놓였다(그림 7-1 (나)). (가) 다리의 힘 \(N_A, \ldots, N_D\)에 대한 평형 조건의 랭크와 해의 모양을 구하라. (나) 네 다리의 탄성이 같고 판과 바닥이 단단하고 평평하면 힘은 어떻게 나뉘는가?</p>
+      <p><b>풀이.</b> (가) 7.1절과 같이 힘, \(x\) 모멘트, \(y\) 모멘트의 평형을 쓰면</p>
+      <div class="formula" id="eq-four-leg-system">\[ \begin{pmatrix} 1 & 1 & 1 & 1 \\ 0 & 1 & 1 & 0 \\ 0 & 0 & 1 & 1 \end{pmatrix}\begin{pmatrix} N_A \\ N_B \\ N_C \\ N_D \end{pmatrix} = \begin{pmatrix} 800 \\ 240 \\ 320 \end{pmatrix} \]</div>
+      <p>이다(N 단위). 계수 행렬은 이미 행 사다리꼴이고 피벗이 셋이므로 \(\operatorname{rank}A = \operatorname{rank}(A \mid \mathbf b) = 3\)이다. 미지수가 넷이므로 <a class="ref" href="#thm-rank-solvability"></a>에 따라 자유 매개변수가 \(4 - 3 = 1\)개다. \(N_C = s\)로 두고 거꾸로 대입하면 \(N_D = 320 - s\), \(N_B = 240 - s\), \(N_A = 800 - N_B - N_C - N_D = 240 + s\)이다.</p>
+      <div class="formula">\[ \mathbf N = \begin{pmatrix} 240 \\ 240 \\ 0 \\ 320 \end{pmatrix} + s\begin{pmatrix} 1 \\ -1 \\ 1 \\ -1 \end{pmatrix} \]</div>
+      <p>동차해 \((1, -1, 1, -1)\)은 대각선으로 마주 보는 두 다리 A, C가 더 받고 B, D가 그만큼 덜 받는 분배다. 힘의 합도 모멘트도 바꾸지 않으므로 평형 조건만으로는 \(s\)를 정할 수 없다. 이런 구조를 <span class="term">부정정</span> <span class="en">(statically indeterminate)</span>이라 한다. 다리가 바닥을 당길 수 없으므로 \(0 \le s \le 240\ \text{N}\)이다. \(s = 0\)이면 C가 바닥에서 뜨고, \(s = 240\ \text{N}\)이면 B가 뜬다. 바닥이 조금만 울퉁불퉁해도 탁자가 A–C 대각선과 B–D 대각선 사이를 오가며 흔들리는 것은 이 한 매개변수의 자유 때문이다.</p>
+      <p>(나) 판이 단단하면 판은 기울어진 평면으로 내려앉으므로, 다리가 눌린 길이는 \(\delta_i = a + bx_i + cy_i\) 꼴이다. 다리의 탄성이 같으면 \(N_i = k\delta_i\)이므로 \(\mathbf N\)은 계수 행렬의 세 행 \((1, 1, 1, 1)\), \((x_i)\), \((y_i)\)의 선형 결합이다. 세 행은 모두 동차해 \((1, -1, 1, -1)\)과 수직이므로 \(\mathbf N\)도 그것과 수직이어야 한다: \(N_A - N_B + N_C - N_D = 4s - 320 = 0\). 따라서 \(s = 80\ \text{N}\)이고</p>
+      <div class="formula">\[ (N_A, N_B, N_C, N_D) = (320, 160, 80, 240)\ \text{N} \]</div>
+      <p>이다. 합은 800 N이고, \(x\) 모멘트 \(160 + 80 = 240\), \(y\) 모멘트 \(80 + 240 = 320\)(N·m)으로 평형을 만족한다. 평형 조건이 모자랄 때 답을 정하는 것은 재료의 변형이다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 7.4 -->
+  <section id="s4">
+    <h2>선형 변환과 기저 바꾸기</h2>
+    <p>7.2절에서 행렬식을 "넓이의 배율"로 읽을 때 이미 행렬을 벡터를 받아 벡터를 내놓는 <b>변환</b>으로 보았다. 물리에서 이 관점은 두 질문에서 필요하다. "공간에서 무엇이 일어나는가"(물체를 돌리고, 그림자를 비추고, 결정을 늘인다)와 "같은 것을 다른 좌표로 보면 어떻게 적히는가"(결정축에 맞춘 좌표, 움직이는 관측자의 좌표)다. 이 절에서는 두 질문이 같은 수학임을 보인다.</p>
+
+    <h3 id="s4-linear-map">선형 사상과 그 행렬</h3>
+    <div class="box def" id="def-linear-map"><div class="box-h">선형 사상</div>
+      <p>벡터를 벡터로 보내는 함수 \(T\)가 모든 벡터 \(\mathbf u, \mathbf v\)와 수 \(a, b\)에 대해</p>
+      <div class="formula" id="eq-linearity">\[ T(a\mathbf u + b\mathbf v) = a\,T\mathbf u + b\,T\mathbf v \]</div>
+      <p>를 만족하면 \(T\)를 <span class="term">선형 사상</span> <span class="en">(linear map)</span> 또는 <span class="term">선형 변환</span> <span class="en">(linear transformation)</span>이라 한다.</p>
+    </div>
+    <p>원점을 중심으로 한 회전, 원점을 지나는 직선이나 평면으로의 <span class="term">투영</span> <span class="en">(projection)</span>, 한 방향으로 늘이기는 모두 선형이다. 평행 이동 \(\mathbf v \mapsto \mathbf v + \mathbf c\)(\(\mathbf c \ne 0\))는 선형이 아니다. 선형 사상은 언제나 \(T\mathbf 0 = \mathbf 0\)인데(\(a = b = 0\)), 평행 이동은 원점을 옮기기 때문이다. 다항식을 미분하는 \(d/dx\)도 식 <a class="ref" href="#eq-linearity"></a>를 만족한다. 함수에 작용하는 선형 사상은 <a href="ch09.html#def-adjoint">9장의 선형 연산자와 수반</a>에서 다룬다.</p>
+    <p>선형 사상은 기저 벡터를 어디로 보내는지만 알면 모두 정해진다. \(\mathbf v = v_j\hat{\mathbf e}_j\)이면 식 <a class="ref" href="#eq-linearity"></a>에 따라 \(T\mathbf v = v_jT\hat{\mathbf e}_j\)이기 때문이다. 기저 벡터의 상을 다시 기저로 전개해 \(T\hat{\mathbf e}_j = A_{ij}\hat{\mathbf e}_i\)로 쓰면</p>
+    <div class="formula" id="eq-matrix-of-map">\[ \begin{gathered} T\mathbf v = v_jA_{ij}\hat{\mathbf e}_i \\ (T\mathbf v)_i = A_{ij}v_j \end{gathered} \]</div>
+    <p>이다. 곧 <b>행렬 \(A\)의 \(j\)번째 열은 \(j\)번째 기저 벡터의 상이다</b>. 그림 7-2의 \(A\hat{\mathbf e}_1\), \(A\hat{\mathbf e}_2\)가 바로 \(A\)의 두 열이었다. 이 규칙만 기억하면 행렬을 외우지 않고 만들 수 있다(7.5절의 회전 행렬). 단위 벡터 \(\hat{\mathbf n}\) 방향의 직선으로 내리는 투영 \(P\mathbf v = \hat{\mathbf n}(\hat{\mathbf n}\cdot\mathbf v)\)은 \(P_{ij} = n_in_j\), 곧 \(P = \hat{\mathbf n}\hat{\mathbf n}^{\mathsf T}\)이다.</p>
+    <p>두 선형 사상을 연달아 하면, 곧 \(\mathbf v\)에 \(S\)를 한 뒤 \(T\)를 하면, \((T(S\mathbf v))_i = A_{ij}(B_{jk}v_k) = (AB)_{ik}v_k\)이다(\(A\), \(B\)는 각각 \(T\), \(S\)의 행렬). 따라서</p>
+    <div class="formula" id="eq-composition">\[ (T\circ S \text{의 행렬}) = AB \]</div>
+    <p>이다. \(AB\)는 오른쪽의 \(B\)를 먼저 하고 \(A\)를 나중에 한다는 뜻이다.</p>
+    <p>선형 사상이 0으로 보내는 벡터들의 모임 \(\ker T = \{\mathbf v : T\mathbf v = 0\}\)을 <span class="term">핵</span> <span class="en">(kernel)</span>, \(T\)가 만들어 내는 벡터들의 모임을 <span class="term">상</span> <span class="en">(image)</span>이라 한다. 식 <a class="ref" href="#eq-column-combination"></a>에 따라 상은 \(A\)의 열들의 선형 결합 전체이므로 그 차원은 \(\operatorname{rank}A\)이고, <a class="ref" href="#thm-rank-solvability"></a>의 동차해 \(n - r\)개가 핵을 이룬다. 그래서</p>
+    <div class="formula" id="eq-rank-nullity">\[ \dim\ker T + \operatorname{rank}A = n \]</div>
+    <p>이다(\(n\)은 정의역의 차원). 평면에서 직선으로의 투영은 상과 핵의 차원이 모두 1이다.</p>
+
+    <h3 id="s4-change-of-basis">기저 바꾸기</h3>
+    <p>이제 둘째 질문으로 가자. 같은 벡터 \(\mathbf v\)를 두 기저 \(\{\hat{\mathbf e}_i\}\)와 \(\{\mathbf e'_j\}\)로 전개하면 성분은 어떻게 다를까? 새 기저 벡터를 옛 기저로 전개해 그 성분을 열로 세운 행렬을 \(S\)라 하자.</p>
+    <div class="formula" id="eq-new-basis">\[ \mathbf e'_j = S_{ij}\,\hat{\mathbf e}_i \]</div>
+    <p>그러면 \(\mathbf v = v'_j\mathbf e'_j = v'_jS_{ij}\hat{\mathbf e}_i\)이고, 이것이 \(v_i\hat{\mathbf e}_i\)와 같으므로</p>
+    <div class="formula" id="eq-change-of-basis">\[ \begin{gathered} \mathbf v = S\mathbf v' \\ \mathbf v' = S^{-1}\mathbf v \end{gathered} \]</div>
+    <p>이다(여기서 \(\mathbf v\)와 \(\mathbf v'\)은 같은 벡터의 두 성분 열이다). 새 기저 벡터들이 선형 독립이므로 \(S\)의 열들이 선형 독립이고, 따라서 \(S\)는 가역이다. 선형 사상 \(T\)를 옛 기저에서 \(\mathbf w = A\mathbf v\)로 적었다면, 양쪽 성분을 새 기저로 바꾸면 \(S\mathbf w' = AS\mathbf v'\), 곧 \(\mathbf w' = S^{-1}AS\,\mathbf v'\)이다.</p>
+    <div class="box def" id="def-similarity"><div class="box-h">닮음 변환</div>
+      <p>가역 행렬 \(S\)에 대해</p>
+      <div class="formula" id="eq-similarity-transform">\[ A' = S^{-1}AS \]</div>
+      <p>를 \(A\)의 <span class="term">닮음 변환</span> <span class="en">(similarity transformation)</span>이라 하고, \(A\)와 \(A'\)이 <span class="term">닮았다</span> <span class="en">(similar)</span>고 한다. 닮은 두 행렬은 같은 선형 사상을 서로 다른 기저로 적은 것이다.</p>
+    </div>
+    <p>같은 사상이므로, 좌표에 기대지 않는 양은 닮음 변환에서 바뀌지 않아야 한다. 넓이·부피의 배율인 행렬식이 그렇다. <a class="ref" href="#thm-det-product"></a>에서 \(\det(S^{-1}AS) = \det S^{-1}\det A\det S = \det A\)이다. 대각 성분의 합인 <span class="term">대각합</span> <span class="en">(trace)</span> \(\operatorname{tr}A = A_{ii}\)도 그렇다. \(\operatorname{tr}(AB) = A_{ij}B_{ji} = B_{ji}A_{ij} = \operatorname{tr}(BA)\)이므로 \(\operatorname{tr}(S^{-1}(AS)) = \operatorname{tr}((AS)S^{-1}) = \operatorname{tr}A\)이다.</p>
+    <div class="formula" id="eq-similarity-invariants">\[ \begin{gathered} \det A' = \det A \\ \operatorname{tr}A' = \operatorname{tr}A \end{gathered} \]</div>
+    <p>랭크도 바뀌지 않는다. 반면 개별 성분, 예를 들어 \(A_{11}\)은 기저에 따라 바뀐다. 7.5절에서 이 불변량으로 회전 행렬의 회전각을 읽어 낸다. 기저를 잘 고르면 행렬이 아주 단순해질 수 있다는 것이 다음 예제의 요점이고, 그런 기저를 체계적으로 찾는 것이 8장의 <a href="ch08.html#thm-diagonalization">대각화</a>다.</p>
+
+    <div class="box ex" id="ex-projection-basis"><div class="box-h">투영을 알맞은 기저로 적기</div>
+      <p>평면에서 \(\hat{\mathbf n} = (2, 1)/\sqrt5\) 방향의 직선으로 내리는 투영 \(P\)를 표준 기저와, 기저 \(\mathbf e'_1 = (2, 1)\), \(\mathbf e'_2 = (-1, 2)\)로 각각 적어라.</p>
+      <p><b>풀이.</b> 표준 기저에서는 \(P = \hat{\mathbf n}\hat{\mathbf n}^{\mathsf T}\)이므로</p>
+      <div class="formula">\[ P = \frac15\begin{pmatrix} 4 & 2 \\ 2 & 1 \end{pmatrix} \]</div>
+      <p>이다. 새 기저의 성분을 열로 세우면 \(S = \begin{pmatrix} 2 & -1 \\ 1 & 2 \end{pmatrix}\)이고, \(\det S = 5\)이므로 식 <a class="ref" href="#eq-inverse-2x2"></a>에서 \(S^{-1} = \tfrac15\begin{pmatrix} 2 & 1 \\ -1 & 2 \end{pmatrix}\)이다. 차례로 곱하면</p>
+      <div class="formula">\[ \begin{aligned} PS &= \begin{pmatrix} 2 & 0 \\ 1 & 0 \end{pmatrix} \\ P' = S^{-1}PS &= \begin{pmatrix} 1 & 0 \\ 0 & 0 \end{pmatrix} \end{aligned} \]</div>
+      <p>이다. 결과는 계산하지 않아도 알 수 있다. \(\mathbf e'_1\)은 직선 위에 있어 그대로 남고(첫째 열 \((1, 0)\)), \(\mathbf e'_2\)는 직선에 수직이라 0이 된다(둘째 열 \((0, 0)\)). 두 표현의 대각합은 \((4 + 1)/5 = 1\)과 \(1\), 행렬식은 \((4 - 4)/25 = 0\)과 \(0\)으로 같다. 대각합 1은 "상의 차원이 1"이라는 뜻이고, 행렬식 0은 "투영은 넓이를 0으로 짓누른다"는 뜻이다.</p>
+    </div>
+    <div class="callout warn"><strong>기저 벡터와 성분은 반대로 변한다</strong><p>식 <a class="ref" href="#eq-new-basis"></a>은 새 기저를 \(S\)로 만들고, 식 <a class="ref" href="#eq-change-of-basis"></a>은 새 성분을 \(S^{-1}\)로 만든다. 자를 두 배 길게 바꾸면 같은 막대의 길이를 나타내는 수가 절반이 되는 것과 같다. 그래서 "좌표를 \(S\)로 바꾼다"는 말은 기저를 바꾸는 행렬인지 성분을 바꾸는 행렬인지에 따라 \(S\)와 \(S^{-1}\)이 뒤바뀐다. 교재를 옮길 때는 어느 쪽인지 먼저 확인한다. 22장에서 이 차이를 <a href="ch22.html#def-contravariant-covariant">반변 성분과 공변 성분</a>으로 정리한다.</p></div>
+
+    <h3 id="s4-lorentz">로런츠 변환을 행렬로</h3>
+    <p>특수 상대성 이론에서 \(x\)축 방향으로 속력 \(v = \beta c\)로 움직이는 관측자는 사건의 좌표 \((ct, x)\)를 \((ct', x')\)로 적는다. 두 좌표는 일차식으로 엮이므로 행렬 하나로 쓸 수 있다.</p>
+    <div class="box ex" id="ex-lorentz-matrix"><div class="box-h">1+1차원 로런츠 변환의 행렬과 속도 덧셈</div>
+      <p>로런츠 변환 \(ct' = \gamma(ct - \beta x)\), \(x' = \gamma(x - \beta ct)\), \(\gamma = 1/\sqrt{1 - \beta^2}\)를 행렬 \(\Lambda(\beta)\)로 쓰자. (가) \(\Lambda(\beta_1)\Lambda(\beta_2) = \Lambda(\beta)\)인 \(\beta\)를 구하라. (나) \(\det\Lambda\)와 \(\Lambda^{-1}\)을 구하라. (다) 지구에 대해 \(0.6c\)로 나는 우주선이, 자기에 대해 앞으로 \(0.6c\)인 탐사선을 쏜다. 지구에서 본 탐사선의 속력은?</p>
+      <p><b>풀이.</b> 열벡터를 \((ct, x)^{\mathsf T}\)로 두면</p>
+      <div class="formula" id="eq-lorentz-matrix">\[ \begin{pmatrix} ct' \\ x' \end{pmatrix} = \Lambda(\beta)\begin{pmatrix} ct \\ x \end{pmatrix}, \quad \Lambda(\beta) = \gamma\begin{pmatrix} 1 & -\beta \\ -\beta & 1 \end{pmatrix} \]</div>
+      <p>이다. 시간과 공간을 같은 단위로 쓰려고 \(ct\)를 성분으로 잡았다. 이 \(\Lambda\)는 사건은 그대로 두고 관측자를 바꾸는 <b>수동</b> 변환이다(7.5절의 관점 비교). 사건 자체를 \(+\beta\)로 밀어 보내는 능동 변환은 \(\Lambda(-\beta)\)다.</p>
+      <p>(가) 두 행렬을 곱하면</p>
+      <div class="formula">\[ \begin{aligned} &\Lambda(\beta_1)\Lambda(\beta_2) \\ &= \gamma_1\gamma_2\begin{pmatrix} 1 + \beta_1\beta_2 & -(\beta_1 + \beta_2) \\ -(\beta_1 + \beta_2) & 1 + \beta_1\beta_2 \end{pmatrix} \\ &= \gamma_1\gamma_2(1 + \beta_1\beta_2)\begin{pmatrix} 1 & -\beta \\ -\beta & 1 \end{pmatrix} \end{aligned} \]</div>
+      <p>이고, 여기서</p>
+      <div class="formula" id="eq-velocity-addition">\[ \beta = \frac{\beta_1 + \beta_2}{1 + \beta_1\beta_2} \]</div>
+      <p>이다. 앞의 인자가 \(\gamma(\beta)\)와 같은지 확인해야 한다. \(1 - \beta^2 = [(1 + \beta_1\beta_2)^2 - (\beta_1 + \beta_2)^2]/(1 + \beta_1\beta_2)^2 = (1 - \beta_1^2)(1 - \beta_2^2)/(1 + \beta_1\beta_2)^2\)이므로 \(\gamma(\beta) = \gamma_1\gamma_2(1 + \beta_1\beta_2)\)이다. 따라서 두 로런츠 변환의 곱은 다시 로런츠 변환이고, 그 속도가 상대론의 속도 덧셈 공식 <a class="ref" href="#eq-velocity-addition"></a>이다.</p>
+      <p>(나) \(\det\Lambda = \gamma^2(1 - \beta^2) = 1\)이다. 시공간 도표의 넓이를 바꾸지 않는다. 식 <a class="ref" href="#eq-inverse-2x2"></a>에서 \(\Lambda(\beta)^{-1} = \gamma\begin{pmatrix} 1 & \beta \\ \beta & 1 \end{pmatrix} = \Lambda(-\beta)\)이다. 거꾸로 가는 변환은 반대 속도의 변환이다.</p>
+      <p><b>숫자로 보기.</b> (다) 식 <a class="ref" href="#eq-velocity-addition"></a>에 \(\beta_1 = \beta_2 = 0.6\)을 넣으면 \(\beta = 1.2/1.36 = 15/17 = 0.882\)이다. 갈릴레이의 덧셈 \(1.2c\)와 달리 \(c\)를 넘지 않는다. 확인으로 \(\gamma_1\gamma_2(1 + \beta_1\beta_2) = 1.25 \times 1.25 \times 1.36 = 2.125\)이고 \(1/\sqrt{1 - (15/17)^2} = 17/8 = 2.125\)이다.</p>
+      <p><b>쌍곡선 각으로 보기.</b> 2장의 <a href="ch02.html#eq-lorentz-hyperbolic">쌍곡선 꼴 로런츠 변환</a>처럼 \(\beta = \tanh\zeta\)로 두면 \(\Lambda = \begin{pmatrix} \cosh\zeta & -\sinh\zeta \\ -\sinh\zeta & \cosh\zeta \end{pmatrix}\)이고, <a href="ch02.html#eq-hyperbolic-identities">쌍곡선 함수의 덧셈 정리</a>에 따라 두 행렬의 곱은 \(\zeta_1 + \zeta_2\)인 변환이다. 2장의 <a href="ch02.html#ex-rapidity">빠르기의 덧셈</a>이 행렬 곱으로는 이렇게 나타난다(여러 번 합성하는 것은 <a href="ch02.html#prob-rapidity-repeated">2장의 연습문제</a>). \(\beta = 0.6\)이면 \(\zeta = \ln 2\)이고, 두 번이면 \(\tanh(\ln 4) = 15/17\)로 같은 답이다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 300" role="img" aria-label="시공간 도표. 정지한 관측자의 x축과 ct축, 속도 0.6c로 움직이는 관측자의 x′축과 ct′축이 빛의 선을 향해 같은 각만큼 기울어 있다"><defs><clipPath id="f0704-clip"><rect x="10" y="10" width="460" height="282"/></clipPath><marker id="f0704-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker></defs><line x1="240" y1="250" x2="477.5" y2="12.5" class="s-line" stroke-dasharray="5 4" clip-path="url(#f0704-clip)"/><line x1="240" y1="250" x2="2.5" y2="12.5" class="s-line" stroke-dasharray="5 4" clip-path="url(#f0704-clip)"/><path d="M78.7,62.8 L98,79.2 L115.7,93.6 L132,106.2 L147,117 L160.9,126.3 L173.8,134.2 L186,140.7 L197.5,145.9 L208.6,149.9 L219.3,152.8 L229.7,154.4 L240,155 L250.3,154.4 L260.7,152.8 L271.4,149.9 L282.5,145.9 L294,140.7 L306.2,134.2 L319.1,126.3 L333,117 L348,106.2 L364.3,93.6 L382,79.2 L401.3,62.8" class="s-faint" style="stroke-width:1.5" clip-path="url(#f0704-clip)"/><path d="M335,250 L335.2,243.2 L336,236.4 L337.2,229.5 L338.9,222.5 L341.1,215.3 L343.9,208 L347.1,200.5 L350.9,192.7 L355.3,184.6 L360.3,176.2 L365.9,167.4 L372.1,158.2 L379,148.6 L386.6,138.4" class="s-faint" style="stroke-width:1.5" clip-path="url(#f0704-clip)"/><line x1="21.5" y1="250" x2="458.5" y2="250" class="s-line" marker-end="url(#f0704-arr)"/><line x1="240" y1="250" x2="240" y2="17.2" class="s-line" marker-end="url(#f0704-arr)"/><text x="456.5" y="270" class="t-math" style="font-size:16px" text-anchor="end"><tspan font-style="italic">x</tspan></text><text x="232" y="29.2" class="t-math" style="font-size:16px" text-anchor="end"><tspan font-style="italic">ct</tspan></text><line x1="240" y1="250" x2="439.5" y2="130.3" class="s-acc" style="stroke-width:2.5" marker-end="url(#f0704-arr)"/><text x="443.5" y="124.3" class="t-math acc" style="font-size:16px" text-anchor="start"><tspan font-style="italic">x</tspan><tspan dx="2">′</tspan></text><line x1="240" y1="250" x2="376.8" y2="22" class="s-acc" style="stroke-width:2.5" marker-end="url(#f0704-arr)"/><text x="384.8" y="32" class="t-math acc" style="font-size:16px" text-anchor="start"><tspan font-style="italic">ct</tspan><tspan dx="2">′</tspan></text><circle cx="358.8" cy="178.8" r="4" class="f-acc"/><text x="366.8" y="196.8" class="t-math acc" style="font-size:15px" text-anchor="start"><tspan font-style="italic">x</tspan><tspan dx="2">′</tspan> = 1</text><circle cx="311.2" cy="131.2" r="4" class="f-acc"/><text x="301.2" y="135.2" class="t-math acc" style="font-size:15px" text-anchor="end"><tspan font-style="italic">ct</tspan><tspan dx="2">′</tspan> = 1</text><circle cx="335" cy="250" r="4" class="f-dim"/><text x="335" y="270" class="t-math dim" style="font-size:15px" text-anchor="middle">1</text><circle cx="240" cy="155" r="4" class="f-dim"/><text x="232" y="160" class="t-math dim" style="font-size:15px" text-anchor="end">1</text><text x="35" y="71" class="t-math dim" style="font-size:14px" text-anchor="start"><tspan font-style="italic">ct</tspan> = −<tspan font-style="italic">x</tspan></text><text x="445" y="71" class="t-math dim" style="font-size:14px" text-anchor="end"><tspan font-style="italic">ct</tspan> = <tspan font-style="italic">x</tspan></text><text x="122.4" y="107.4" class="t-math dim" style="font-size:14px" text-anchor="end">(<tspan font-style="italic">ct</tspan>)² − <tspan font-style="italic">x</tspan>² = 1</text></svg>
+      <figcaption><b>그림 7-4.</b> 속력 \(0.6c\)인 관측자의 좌표축을 정지한 관측자의 시공간 도표에 그린 것. \(x'\)축(\(ct' = 0\), 곧 \(ct = 0.6x\))과 \(ct'\)축(\(x' = 0\), 곧 \(x = 0.6\,ct\))이 빛의 선 \(ct = x\)를 향해 같은 각만큼 접힌다(점선은 빛의 선 \(ct = \pm x\)). 표시한 두 점은 \(x' = 1\)인 점 \((ct, x) = (0.75, 1.25)\)와 \(ct' = 1\)인 점 \((1.25, 0.75)\)로, 각각 쌍곡선 \(x^2 - (ct)^2 = 1\)과 \((ct)^2 - x^2 = 1\)(흐린 선) 위에 있다. 회전과 달리 로런츠 변환은 \(x^2 + (ct)^2\)이 아니라 \((ct)^2 - x^2\)을 보존하므로 단위 눈금이 원이 아니라 쌍곡선 위에 놓인다.</figcaption>
+    </figure>
+    <p>그림 7-4가 보여 주듯 로런츠 변환은 길이 \(\sqrt{x^2 + (ct)^2}\)을 보존하지 않는다. \(\Lambda^{\mathsf T}\Lambda \ne I\)이다. 대신 \((ct)^2 - x^2\)을 보존하고, 이것을 행렬로 쓰면 \(\eta = \operatorname{diag}(-1, 1)\)에 대해 \(\Lambda^{\mathsf T}\eta\Lambda = \eta\)이다(<a class="ref" href="#prob-lorentz-rapidity"></a>). 다음 절의 직교 행렬은 같은 식에서 \(\eta\) 대신 \(I\)를 둔 것이다. 이 \(\eta\)가 22장의 <a href="ch22.html#def-minkowski-metric">민코프스키 계량</a>을 1+1차원으로 줄인 것이다.</p>
+  </section>
+
+  <!-- ============================================================ 7.5 -->
+  <section id="s5">
+    <h2>직교 행렬과 회전</h2>
+    <p>단단한 물체를 돌리면 두 점 사이의 거리도, 두 모서리 사이의 각도 바뀌지 않는다. 길이와 각을 보존하는 선형 변환은 어떤 행렬일까? 답은 조건 \(R^{\mathsf T}R = I\) 하나이고, 그 안에 회전과 거울 반사가 모두 들어 있다. 이 절에서는 이 조건을 세우고, 3차원 회전을 축과 각으로 적는 공식을 유도한다.</p>
+
+    <h3 id="s5-orthogonal">길이를 보존하는 행렬</h3>
+    <p>열벡터의 내적은 행렬 곱으로 \(\mathbf u\cdot\mathbf v = \mathbf u^{\mathsf T}\mathbf v\)이다. 변환한 두 벡터의 내적은 식 <a class="ref" href="#eq-transpose-product"></a>에 따라 \((R\mathbf u)^{\mathsf T}(R\mathbf v) = \mathbf u^{\mathsf T}(R^{\mathsf T}R)\mathbf v\)이다. 이것이 모든 \(\mathbf u, \mathbf v\)에 대해 \(\mathbf u^{\mathsf T}\mathbf v\)와 같으려면 \(R^{\mathsf T}R = I\)여야 한다(\(\mathbf u = \hat{\mathbf e}_i\), \(\mathbf v = \hat{\mathbf e}_j\)를 넣으면 \((R^{\mathsf T}R)_{ij} = \delta_{ij}\)). 길이만 보존한다고 해도 결론은 같다. 내적은 길이로 쓸 수 있기 때문이다: \(\mathbf u\cdot\mathbf v = \tfrac14(\lvert\mathbf u + \mathbf v\rvert^2 - \lvert\mathbf u - \mathbf v\rvert^2)\).</p>
+    <div class="box def" id="def-orthogonal-matrix"><div class="box-h">직교 행렬</div>
+      <p>실수 \(n \times n\) 행렬 \(R\)이</p>
+      <div class="formula" id="eq-orthogonal-condition">\[ \begin{gathered} R^{\mathsf T}R = RR^{\mathsf T} = I \\ R_{ki}R_{kj} = \delta_{ij} \end{gathered} \]</div>
+      <p>를 만족하면 <span class="term">직교 행렬</span> <span class="en">(orthogonal matrix)</span>이라 한다. 다음은 모두 같은 말이다: \(R^{-1} = R^{\mathsf T}\)이다. \(R\)의 열들이 서로 수직인 단위 벡터다. 행들이 서로 수직인 단위 벡터다. \(R\)이 모든 벡터의 길이를 보존한다. \(R\)이 모든 두 벡터의 내적을 보존한다.</p>
+    </div>
+    <p>정사각 행렬에서는 \(R^{\mathsf T}R = I\)이기만 하면 \(R^{\mathsf T}\)가 역행렬이므로 \(RR^{\mathsf T} = I\)도 따라온다. 직교 행렬의 행렬식은 <a class="ref" href="#thm-det-product"></a>와 \(\det R^{\mathsf T} = \det R\)에서 \((\det R)^2 = \det I = 1\)이므로</p>
+    <div class="formula" id="eq-orthogonal-det">\[ \det R = \pm 1 \]</div>
+    <p>이다. 부호가 둘로 갈린다. \(\det R = +1\)이면 오른손 좌표계를 오른손 좌표계로 보내는 <span class="term">고유 회전</span> <span class="en">(proper rotation)</span>, 곧 보통의 회전이다. \(\det R = -1\)이면 오른손을 왼손으로 바꾸는 <span class="term">비고유 회전</span> <span class="en">(improper rotation)</span>으로, 거울 반사가 들어 있다. 행렬식은 연속적으로 바뀌는데 \(\pm 1\)만 가능하므로, 회전을 아무리 조금씩 해도 거울 반사로 넘어갈 수 없다.</p>
+
+    <h3 id="s5-2d">평면의 회전</h3>
+    <p>7.4절의 규칙(열은 기저 벡터의 상)으로 평면에서 각 \(\theta\)만큼 시계 반대 방향으로 도는 회전을 적으면</p>
+    <div class="formula" id="eq-rotation-2d">\[ R(\theta) = \begin{pmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{pmatrix} \]</div>
+    <p>이다. 두 열이 수직인 단위 벡터이므로 직교 행렬이고, \(\det R = \cos^2\theta + \sin^2\theta = 1\)이다. 두 회전의 곱을 계산하면</p>
+    <div class="formula">\[ \begin{aligned} &R(\alpha)R(\beta) \\ &= \begin{pmatrix} \cos\alpha\cos\beta - \sin\alpha\sin\beta & \cdots \\ \sin\alpha\cos\beta + \cos\alpha\sin\beta & \cdots \end{pmatrix} \\ &= R(\alpha + \beta) \end{aligned} \]</div>
+    <p>이다. 둘째 줄의 첫째 열이 바로 삼각 함수의 덧셈 정리다. 평면의 회전은 순서를 바꿔도 결과가 같다(\(R(\alpha)R(\beta) = R(\beta)R(\alpha)\)). 2장에서 본 복소수로는 이 회전이 \(x + iy\)에 \(e^{i\theta}\)를 곱하는 것이고, 덧셈 정리는 <a href="ch02.html#eq-euler-formula">오일러 공식</a>의 \(e^{i\alpha}e^{i\beta} = e^{i(\alpha + \beta)}\)이다.</p>
+    <div class="callout warn"><strong>벡터를 돌리는가, 축을 돌리는가</strong><p>식 <a class="ref" href="#eq-rotation-2d"></a>는 좌표축은 그대로 두고 <b>벡터</b>를 \(\theta\)만큼 돌린 결과의 성분을 준다(<span class="term">능동적 관점</span> <span class="en">(active)</span>). 반대로 벡터는 그대로 두고 <b>좌표축</b>을 \(\theta\)만큼 돌리면, 새 축에서 본 벡터는 거꾸로 \(-\theta\)만큼 돈 것처럼 보이므로 새 성분은 \(R(-\theta) = R(\theta)^{\mathsf T}\)로 얻는다(<span class="term">수동적 관점</span> <span class="en">(passive)</span>). 식 <a class="ref" href="#eq-change-of-basis"></a>에서 새 기저가 \(S = R(\theta)\)이면 새 성분이 \(S^{-1} = R^{\mathsf T}\)로 바뀌는 것과 같은 이야기다. 교재마다 어느 관점을 기본으로 삼는지가 달라서, 같은 각에 대한 회전 행렬이 교재에 따라 서로 전치로 나온다. 이 장은 능동적 관점을 쓰고, 22장은 <a href="ch22.html#eq-vector-transformation">벡터의 변환 법칙</a>을 축을 돌리는 관점으로 다시 쓴다.</p></div>
+
+    <h3 id="s5-3d">3차원 회전은 순서에 따라 결과가 다르다</h3>
+    <p>3차원에서 좌표축 둘레의 회전은 그 축의 성분을 그대로 두고 나머지 두 성분에 식 <a class="ref" href="#eq-rotation-2d"></a>를 쓴 것이다. 회전 방향은 축의 양의 방향을 엄지로 했을 때 오른손의 네 손가락이 감기는 쪽이다.</p>
+    <div class="formula" id="eq-rotation-xyz">\[ \begin{aligned} R_x(\theta) &= \begin{pmatrix} 1 & 0 & 0 \\ 0 & \cos\theta & -\sin\theta \\ 0 & \sin\theta & \cos\theta \end{pmatrix} \\ R_y(\theta) &= \begin{pmatrix} \cos\theta & 0 & \sin\theta \\ 0 & 1 & 0 \\ -\sin\theta & 0 & \cos\theta \end{pmatrix} \\ R_z(\theta) &= \begin{pmatrix} \cos\theta & -\sin\theta & 0 \\ \sin\theta & \cos\theta & 0 \\ 0 & 0 & 1 \end{pmatrix} \end{aligned} \]</div>
+    <p>\(R_y\)만 \(\sin\theta\)의 부호 자리가 다른 둘과 달라 보인다. \(y\)축 둘레의 회전은 \(z\)를 \(x\) 쪽으로 돌리는데(순환 순서 \(x \to y \to z \to x\)에서 \(z\) 다음이 \(x\)), 행렬에서 \(x\)가 \(z\)보다 앞줄에 있기 때문이다. \(R_y(\theta)\hat{\mathbf z} = (\sin\theta, 0, \cos\theta)\)로 확인할 수 있다.</p>
+    <p>이제 책 한 권을 들고 \(x\)축 둘레로 90°, 이어서 \(y\)축 둘레로 90° 돌려 보자(여기서 \(x\), \(y\)축은 책에 붙은 축이 아니라 방에 고정된 축이다). 그다음 책을 처음 자리로 돌려 놓고 순서를 바꿔 \(y\)축 먼저, \(x\)축 나중으로 돌려 보자. 두 결과는 다르다(그림 7-5). 행렬로 계산하면, 나중에 하는 회전이 왼쪽에 오므로</p>
+    <div class="formula" id="eq-rotation-noncommute">\[ \begin{aligned} R_y(90^\circ)R_x(90^\circ) &= \begin{pmatrix} 0 & 1 & 0 \\ 0 & 0 & -1 \\ -1 & 0 & 0 \end{pmatrix} \\ R_x(90^\circ)R_y(90^\circ) &= \begin{pmatrix} 0 & 0 & 1 \\ 1 & 0 & 0 \\ 0 & 1 & 0 \end{pmatrix} \end{aligned} \]</div>
+    <p>이다. 7.1절의 \(AB \ne BA\)가 손으로 확인할 수 있는 물리적 사실이 되었다. 그래서 유한한 각의 회전은 화살표처럼 더할 수 없다. 반면 각속도는 벡터로 더할 수 있는데, 그 이유는 7.6절에서 드러난다.</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 400" role="img" aria-label="책을 x축 둘레로 90도 돌린 뒤 y축 둘레로 90도 돌린 결과와, 순서를 바꿔 y축 먼저 돌린 결과가 서로 다르다"><defs><marker id="f0705-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker></defs><line x1="40" y1="370" x2="22.8" y2="379.2" class="s-line" marker-end="url(#f0705-arr)"/><text x="15" y="388.3" class="t-math" style="font-size:15px" text-anchor="middle"><tspan font-style="italic">x</tspan></text><line x1="40" y1="370" x2="64.6" y2="376.4" class="s-line" marker-end="url(#f0705-arr)"/><text x="75.6" y="384.3" class="t-math" style="font-size:15px" text-anchor="middle"><tspan font-style="italic">y</tspan></text><line x1="40" y1="370" x2="40" y2="342.2" class="s-line" marker-end="url(#f0705-arr)"/><text x="40" y="334.7" class="t-math" style="font-size:15px" text-anchor="middle"><tspan font-style="italic">z</tspan></text><text x="12" y="27" class="t" style="font-size:14px" text-anchor="start">(가) x축 먼저</text><polygon points="53.9,135.7 96.5,146.9 96.5,79.4 53.9,68.2" class="f-acc-soft" style="stroke-width:1.5"/><polygon points="67.6,103.1 82.9,107.2 75.2,87.3" class="f-acc"/><polygon points="72.2,104.4 78.2,105.9 78.2,127.6 72.2,126.1" class="f-acc"/><polygon points="106.1,141.8 106.1,74.3 96.5,79.4 96.5,146.9" class="f-elev" style="stroke-width:1.5"/><polygon points="63.5,63.1 53.9,68.2 96.5,79.4 106.1,74.3" class="f-elev" style="stroke-width:1.5"/><polygon points="270,139.5 270,91.3 210.4,75.6 210.4,123.8" class="f-acc-soft" style="stroke-width:1.5"/><polygon points="238.1,115.7 238.1,98.3 222.3,102.9" class="f-acc"/><polygon points="238.1,110.4 238.1,103.6 257.3,108.6 257.3,115.4" class="f-acc"/><polygon points="279.6,86.2 220,70.5 210.4,75.6 270,91.3" class="f-elev" style="stroke-width:1.5"/><polygon points="279.6,134.4 279.6,86.2 270,91.3 270,139.5" class="f-elev" style="stroke-width:1.5"/><polygon points="454.7,97.1 395.1,81.5 365.3,97.4 424.9,113.1" class="f-acc2-soft" style="stroke-width:1.5"/><polygon points="424.9,113.1 365.3,97.4 365.3,112.9 424.9,128.5" class="f-elev" style="stroke-width:1.5"/><polygon points="454.7,97.1 424.9,113.1 424.9,128.5 454.7,112.6" class="f-elev" style="stroke-width:1.5"/><line x1="132" y1="105" x2="193" y2="105" class="s-line" marker-end="url(#f0705-arr)"/><text x="162.5" y="95" class="t-dim" style="font-size:13px" text-anchor="middle">x축 90°</text><line x1="297" y1="105" x2="358" y2="105" class="s-line" marker-end="url(#f0705-arr)"/><text x="327.5" y="95" class="t-dim" style="font-size:13px" text-anchor="middle">y축 90°</text><text x="12" y="217" class="t" style="font-size:14px" text-anchor="start">(나) y축 먼저</text><polygon points="53.9,325.7 96.5,336.9 96.5,269.4 53.9,258.2" class="f-acc-soft" style="stroke-width:1.5"/><polygon points="67.6,293.1 82.9,297.2 75.2,277.3" class="f-acc"/><polygon points="72.2,294.4 78.2,295.9 78.2,317.6 72.2,316.1" class="f-acc"/><polygon points="106.1,331.8 106.1,264.3 96.5,269.4 96.5,336.9" class="f-elev" style="stroke-width:1.5"/><polygon points="63.5,253.1 53.9,258.2 96.5,269.4 106.1,264.3" class="f-elev" style="stroke-width:1.5"/><polygon points="244.6,270.5 202.8,292.9 245.4,304 287.2,281.7" class="f-acc2-soft" style="stroke-width:1.5"/><polygon points="287.2,281.7 245.4,304 245.4,319.5 287.2,297.1" class="f-elev" style="stroke-width:1.5"/><polygon points="202.8,292.9 202.8,308.3 245.4,319.5 245.4,304" class="f-elev" style="stroke-width:1.5"/><polygon points="437.7,309.7 437.7,261.5 395.9,283.9 395.9,332.1" class="f-acc-soft" style="stroke-width:1.5"/><polygon points="415.3,306.3 415.3,288.9 404.3,303.5" class="f-acc"/><polygon points="415.3,301 415.3,294.2 428.7,287 428.7,293.8" class="f-acc"/><polygon points="424.1,257.9 382.3,280.3 395.9,283.9 437.7,261.5" class="f-elev" style="stroke-width:1.5"/><polygon points="382.3,328.5 395.9,332.1 395.9,283.9 382.3,280.3" class="f-elev" style="stroke-width:1.5"/><line x1="132" y1="295" x2="193" y2="295" class="s-line" marker-end="url(#f0705-arr)"/><text x="162.5" y="285" class="t-dim" style="font-size:13px" text-anchor="middle">y축 90°</text><line x1="297" y1="295" x2="358" y2="295" class="s-line" marker-end="url(#f0705-arr)"/><text x="327.5" y="285" class="t-dim" style="font-size:13px" text-anchor="middle">x축 90°</text></svg>
+      <figcaption><b>그림 7-5.</b> 같은 책을 두 축으로 90°씩 돌린 결과. 앞표지는 강조색에 화살표 무늬, 뒤표지는 보조색이다. (가) \(x\)축 둘레로 먼저, \(y\)축 둘레로 나중에 돌리면 앞표지가 \(-z\)쪽(아래)을 향하고 화살표는 \(-y\)를 가리킨다. (나) 순서를 바꾸면 앞표지가 \(+y\)쪽을 향하고 화살표는 \(+x\)를 가리킨다. 두 최종 상태의 행렬이 식 <a class="ref" href="#eq-rotation-noncommute"></a>이다. 앞표지의 법선 \(\hat{\mathbf x}\)와 화살표 방향 \(\hat{\mathbf z}\)가 어디로 갔는지는 각 행렬의 첫째 열과 셋째 열에서 읽을 수 있다.</figcaption>
+    </figure>
+
+    <h3 id="s5-rodrigues">축 둘레의 회전: 로드리게스 공식</h3>
+    <p>좌표축이 아닌 축, 예를 들어 지구의 자전축이나 분자의 대칭축 둘레의 회전은 어떻게 적을까? 단위 벡터 \(\hat{\mathbf n}\) 둘레로 각 \(\theta\)만큼 도는 회전을 \(R(\hat{\mathbf n}, \theta)\)라 하고, 벡터 \(\mathbf v\)를 축에 평행한 부분과 수직한 부분으로 나누자(그림 7-6).</p>
+    <div class="formula" id="eq-parallel-perpendicular">\[ \begin{gathered} \mathbf v_\parallel = \hat{\mathbf n}(\hat{\mathbf n}\cdot\mathbf v) \\ \mathbf v_\perp = \mathbf v - \hat{\mathbf n}(\hat{\mathbf n}\cdot\mathbf v) \end{gathered} \]</div>
+    <p>회전은 축 방향 성분 \(\mathbf v_\parallel\)을 바꾸지 않는다. 수직 성분 \(\mathbf v_\perp\)은 축에 수직인 평면 안에서 각 \(\theta\)만큼 돈다. 그 평면에서 \(\mathbf v_\perp\)과 수직이고 길이가 같은 벡터, 곧 "\(\mathbf v_\perp\)을 90° 돌린 것"이 \(\hat{\mathbf n}\times\mathbf v_\perp = \hat{\mathbf n}\times\mathbf v\)이다(\(\hat{\mathbf n}\times\mathbf v_\parallel = 0\)). 따라서 평면의 회전 <a class="ref" href="#eq-rotation-2d"></a>처럼 \(\mathbf v_\perp \mapsto \mathbf v_\perp\cos\theta + (\hat{\mathbf n}\times\mathbf v)\sin\theta\)이다. 두 부분을 다시 더하면 <span class="term">로드리게스 회전 공식</span> <span class="en">(Rodrigues’ rotation formula)</span>을 얻는다.</p>
+    <div class="formula" id="eq-rotation-axis">\[ \begin{aligned} R(\hat{\mathbf n}, \theta)\,\mathbf v &= \mathbf v\cos\theta + (\hat{\mathbf n}\times\mathbf v)\sin\theta \\ &\quad + \hat{\mathbf n}(\hat{\mathbf n}\cdot\mathbf v)(1 - \cos\theta) \end{aligned} \]</div>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 320" role="img" aria-label="축 n 둘레로 벡터 v를 각 θ만큼 돌린다. v를 축에 평행한 성분과 수직한 성분으로 나누면 수직 성분만 원을 따라 돈다"><defs><marker id="f0706-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker><marker id="f0706-arra" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker><marker id="f0706-arrb" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc2"/></marker></defs><line x1="260" y1="277.4" x2="260" y2="82.8" class="s-line" marker-end="url(#f0706-arr)"/><text x="268" y="96.8" class="t-math" style="font-size:17px" text-anchor="start"><tspan font-weight="700">n̂</tspan></text><ellipse cx="260" cy="169.8" rx="125" ry="71.7" class="s-faint" stroke-dasharray="4 4" style="stroke-width:1.5"/><path d="M231.9,141.9 A56.2,32.3 0 0 0 203.8,169.8" class="s-line"/><text x="195" y="153.3" class="t-math" style="font-size:16px" text-anchor="middle"><tspan font-style="italic">θ</tspan></text><line x1="260" y1="262" x2="197.5" y2="107.8" class="s-acc" style="stroke-width:2.5" marker-end="url(#f0706-arra)"/><text x="189.5" y="109.8" class="t-math acc" style="font-size:17px" text-anchor="end"><tspan font-weight="700">v</tspan></text><line x1="260" y1="262" x2="135" y2="169.8" class="s-acc2" style="stroke-width:2.5" marker-end="url(#f0706-arrb)"/><text x="125" y="175.8" class="t-math acc2" style="font-size:17px" text-anchor="end"><tspan font-weight="700">v</tspan><tspan dx="2">′</tspan></text><line x1="260" y1="169.8" x2="197.5" y2="107.8" class="s-acc" stroke-dasharray="5 3" marker-end="url(#f0706-arra)"/><text x="232.8" y="128.8" class="t-math acc" style="font-size:15px" text-anchor="middle"><tspan font-weight="700">v</tspan><tspan baseline-shift="sub" font-size="72%">⊥</tspan></text><line x1="260" y1="169.8" x2="151.7" y2="205.7" class="s-line" stroke-dasharray="5 3" marker-end="url(#f0706-arr)"/><text x="145.7" y="225.7" class="t-math dim" style="font-size:15px" text-anchor="middle"><tspan font-weight="700">n̂</tspan> × <tspan font-weight="700">v</tspan></text><line x1="260" y1="169.8" x2="135" y2="169.8" class="s-acc2" stroke-dasharray="5 3"/><circle cx="260" cy="169.8" r="3.5" class="f-dim"/><text x="268" y="163.8" class="t-math dim" style="font-size:15px" text-anchor="start"><tspan font-weight="700">v</tspan><tspan baseline-shift="sub" font-size="72%">∥</tspan></text><circle cx="260" cy="262" r="3.5" class="f-dim"/><text x="252" y="267" class="t-math dim" style="font-size:15px" text-anchor="end">O</text></svg></div>
+      <figcaption><b>그림 7-6.</b> 축 \(\hat{\mathbf n}\) 둘레로 \(\mathbf v\)를 \(\theta\)만큼 돌린 \(\mathbf v'\). 축 방향 성분 \(\mathbf v_\parallel\)은 그대로이고, 수직 성분 \(\mathbf v_\perp\)(강조색 점선)만 축에 수직인 평면의 원(흐린 점선)을 따라 돌아 \(\mathbf v'_\perp\)(보조색 점선)이 된다. 그 평면에서 \(\mathbf v_\perp\)을 90° 돌린 방향이 \(\hat{\mathbf n}\times\mathbf v\)다.</figcaption>
+    </figure>
+    <p>성분으로 쓰려면 \((\hat{\mathbf n}\times\mathbf v)_i = \varepsilon_{ikj}n_kv_j = -\varepsilon_{ijk}n_kv_j\)(<a href="ch04.html#eq-cross-index">4장의 외적 성분</a>)와 \((\hat{\mathbf n}(\hat{\mathbf n}\cdot\mathbf v))_i = n_in_jv_j\)를 쓴다. \(v_j\)의 계수를 모으면</p>
+    <div class="formula" id="eq-rotation-axis-index">\[ R_{ij} = \delta_{ij}\cos\theta + n_in_j(1 - \cos\theta) - \varepsilon_{ijk}n_k\sin\theta \]</div>
+    <p>이다. \(\hat{\mathbf n} = \hat{\mathbf z}\)를 넣으면 \(R_z(\theta)\)가 나온다. 이 식에서 두 가지를 바로 읽을 수 있다. 대각합은 \(\delta_{ii} = 3\), \(n_in_i = 1\), \(\varepsilon_{iik} = 0\)에서</p>
+    <div class="formula" id="eq-rotation-trace">\[ \operatorname{tr}R = 1 + 2\cos\theta \]</div>
+    <p>이고, 반대칭 부분은 \(R_{ij} - R_{ji} = -2\varepsilon_{ijk}n_k\sin\theta\)이다. 따라서 회전 행렬이 주어지면 대각합에서 각을, 반대칭 부분에서 축을 읽는다. 대각합은 식 <a class="ref" href="#eq-similarity-invariants"></a>에 따라 기저와 상관없으므로, 회전각이 어느 좌표계에서 보아도 같다는 것과 맞는다.</p>
+    <p>그런데 모든 \(3 \times 3\) 직교 행렬(\(\det = +1\))이 정말 어떤 축 둘레의 회전일까? 식 <a class="ref" href="#eq-rotation-noncommute"></a>의 두 행렬은 \(\hat{\mathbf x}\), \(\hat{\mathbf y}\), \(\hat{\mathbf z}\) 어느 축 둘레의 회전도 아니다. 그래도 답은 "그렇다"다.</p>
+    <div class="box thm" id="thm-euler-rotation"><div class="box-h">오일러의 회전 정리 <span class="en">(Euler’s rotation theorem)</span></div>
+      <p>\(3 \times 3\) 직교 행렬 \(R\)이 \(\det R = +1\)이면, \(R\hat{\mathbf n} = \hat{\mathbf n}\)인 단위 벡터 \(\hat{\mathbf n}\)이 있고 \(R\)은 \(\hat{\mathbf n}\) 둘레의 회전 \(R(\hat{\mathbf n}, \theta)\)이다. 따라서 고정점이 있는 강체는 처음과 끝의 자세가 어떻게 달라도 한 축 둘레의 회전 하나로 옮길 수 있다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>\(R - I = R - RR^{\mathsf T} = R(I - R^{\mathsf T}) = R(I - R)^{\mathsf T}\)이다. 양변의 행렬식을 취하고 <a class="ref" href="#thm-det-product"></a>, <a class="ref" href="#thm-det-properties"></a>의 1과 3을 쓰면 \(\det(R - I) = \det R\,\det(I - R) = (-1)^3\det(R - I)\)이므로 \(\det(R - I) = 0\)이다. <a class="ref" href="#thm-homogeneous-solution"></a>에 따라 \((R - I)\hat{\mathbf n} = 0\)인 단위 벡터 \(\hat{\mathbf n}\)이 있다. \(R\)은 내적을 보존하므로 \(\hat{\mathbf n}\)에 수직인 평면을 그 평면으로 보낸다. \(\hat{\mathbf n}\)과 그 평면의 정규직교 기저로 적으면 \(R = \begin{pmatrix} 1 & 0 \\ 0 & Q \end{pmatrix}\) 꼴이므로 \(\det Q = \det R = 1\)이고, \(Q\)는 길이를 보존하는 \(2 \times 2\) 행렬이라 식 <a class="ref" href="#eq-rotation-2d"></a>의 평면 회전이다.</p>
+      </details>
+    </div>
+    <p>\(R\hat{\mathbf n} = \hat{\mathbf n}\)은 "고유값 1인 고유벡터"라는 말이다. 8장의 <a href="ch08.html#def-eigen">고유값</a>으로 보면 3차원 회전 행렬의 고유값은 \(1, e^{i\theta}, e^{-i\theta}\)이다.</p>
+
+    <div class="box ex" id="ex-cube-diagonal-rotation"><div class="box-h">정육면체의 대각선 둘레 120° 회전</div>
+      <p>(가) 축 \(\hat{\mathbf n} = (1, 1, 1)/\sqrt3\) 둘레로 120° 도는 회전 행렬을 구하라. (나) 식 <a class="ref" href="#eq-rotation-noncommute"></a>의 두 번째 행렬의 축과 각을 구하라.</p>
+      <p><b>풀이.</b> (가) \(\cos120^\circ = -\tfrac12\), \(\sin120^\circ = \tfrac{\sqrt3}{2}\), \(n_in_j = \tfrac13\)(모든 \(i, j\))이다. 식 <a class="ref" href="#eq-rotation-axis-index"></a>의 세 항은 대각 성분에 \(-\tfrac12\), 모든 성분에 \(\tfrac13 \cdot \tfrac32 = \tfrac12\), 대각선 밖 성분에 \(-\varepsilon_{ijk}n_k\sin\theta = -\tfrac12\sum_k\varepsilon_{ijk}\)을 준다. 마지막 항은 \((i, j) = (1, 2), (2, 3), (3, 1)\)에서 \(-\tfrac12\), 그 반대 순서에서 \(+\tfrac12\)이다. 더하면</p>
+      <div class="formula" id="eq-cube-diagonal-rotation">\[ R\Big(\tfrac{(1,1,1)}{\sqrt3}, 120^\circ\Big) = \begin{pmatrix} 0 & 0 & 1 \\ 1 & 0 & 0 \\ 0 & 1 & 0 \end{pmatrix} \]</div>
+      <p>이다. 열을 읽으면 \(\hat{\mathbf x} \to \hat{\mathbf y} \to \hat{\mathbf z} \to \hat{\mathbf x}\)로, 세 좌표축을 차례로 맞바꾸는 회전이다. 정육면체의 꼭짓점에서 맞은편 꼭짓점으로 가는 대각선을 축으로 정육면체를 120° 돌리면, 그 꼭짓점에 모인 세 모서리가 서로 자리를 바꾸므로 정육면체가 제자리에 겹친다. 메테인(CH₄) 분자도 C–H 결합 하나를 축으로 이런 대칭을 갖는다. 확인: \(\operatorname{tr}R = 0 = 1 + 2\cos120^\circ\)이다.</p>
+      <p>(나) \(R_x(90^\circ)R_y(90^\circ)\)는 (가)의 행렬과 같다! 대각합이 0이므로 식 <a class="ref" href="#eq-rotation-trace"></a>에서 \(\cos\theta = -\tfrac12\), \(\theta = 120^\circ\)이다. 반대칭 부분은 \(R_{32} - R_{23} = 1\), \(R_{13} - R_{31} = 1\), \(R_{21} - R_{12} = 1\)이고, 이것이 \(2n_k\sin\theta\)(\(k = 1, 2, 3\))와 같으므로 \(\hat{\mathbf n} \propto (1, 1, 1)\)이다. 책을 \(y\)축 둘레로 90°, 이어서 \(x\)축 둘레로 90° 돌린 결과(그림 7-5 (나))는 대각선 \((1, 1, 1)\) 둘레의 120° 회전 하나와 같다. 같은 방법으로 \(R_y(90^\circ)R_x(90^\circ)\)는 \((1, 1, -1)/\sqrt3\) 둘레의 120° 회전이다.</p>
+    </div>
+
+    <h3 id="s5-parity">반사와 패리티</h3>
+    <p>\(\det R = -1\)인 직교 행렬은 회전으로 이어질 수 없는 변환이다. 가장 단순한 것은 모든 성분의 부호를 바꾸는 <span class="term">패리티</span> <span class="en">(parity)</span> 변환 \(P = -I\)이다. 3차원에서 \(\det P = (-1)^3 = -1\)이다. 2차원에서는 \(-I = R(180^\circ)\)가 회전이므로 패리티는 홀수 차원에서만 회전과 다르다.</p>
+    <div class="box ex" id="ex-parity-reflection"><div class="box-h">거울 반사, 모서리 반사경, 패리티</div>
+      <p>(가) 단위 법선이 \(\hat{\mathbf n}\)인 평면 거울의 반사 \(M = I - 2\hat{\mathbf n}\hat{\mathbf n}^{\mathsf T}\)가 직교 행렬이고 \(\det M = -1\)임을 보여라. (나) 서로 수직인 거울 세 장으로 만든 <span class="term">모서리 반사경</span> <span class="en">(corner-cube retroreflector)</span>에서 세 번 반사된 빛은 어느 쪽으로 나가는가? (다) 패리티 \(P\) 아래에서 위치 \(\mathbf r\), 운동량 \(\mathbf p\), 각운동량 \(\mathbf L = \mathbf r\times\mathbf p\)는 어떻게 바뀌는가?</p>
+      <p><b>풀이.</b> (가) \(M\mathbf v = \mathbf v - 2\hat{\mathbf n}(\hat{\mathbf n}\cdot\mathbf v)\)은 법선 성분의 부호만 바꾼다. \(M^{\mathsf T} = M\)이고 \(\hat{\mathbf n}^{\mathsf T}\hat{\mathbf n} = 1\)이므로</p>
+      <div class="formula">\[ M^{\mathsf T}M = I - 4\hat{\mathbf n}\hat{\mathbf n}^{\mathsf T} + 4\hat{\mathbf n}(\hat{\mathbf n}^{\mathsf T}\hat{\mathbf n})\hat{\mathbf n}^{\mathsf T} = I \]</div>
+      <p>이다. 행렬식은 기저를 \(\hat{\mathbf n}\)과 그에 수직인 두 단위 벡터로 바꾸면 쉽다. 그 기저에서 \(M\)은 \(\operatorname{diag}(-1, 1, 1)\)이고, 식 <a class="ref" href="#eq-similarity-invariants"></a>에 따라 \(\det M = -1\), \(\operatorname{tr}M = 1\)이다.</p>
+      <p><b>숫자로 보기.</b> (나) 세 거울의 법선을 \(\hat{\mathbf x}, \hat{\mathbf y}, \hat{\mathbf z}\)로 잡으면 각 반사는 성분 하나의 부호를 바꾼다. 빛이 세 거울에 한 번씩 부딪히면 순서와 상관없이</p>
+      <div class="formula" id="eq-corner-reflector">\[ M_xM_yM_z = \operatorname{diag}(-1, -1, -1) = P \]</div>
+      <p>이므로 빛의 진행 방향 \(\mathbf k\)가 \(-\mathbf k\)가 된다. 반사경이 어느 방향으로 놓였든 빛은 온 방향으로 정확히 되돌아간다. 자전거 반사판도 이 원리다. 아폴로 우주인이 달에 놓고 온 모서리 반사경 배열도 같은 원리이고, 지구에서 쏜 레이저가 되돌아오는 시간으로 달까지의 거리를 잰다(P. L. Bender et al., Science 182, 229 (1973)). 지구와 달의 중심 사이 평균 거리는 \(384\,400\ \text{km}\)이고, 두 반지름(\(6371\ \text{km}\), \(1737\ \text{km}\))을 빼면 관측소에서 반사경까지 약 \(3.763 \times 10^8\ \text{m}\)이다. 왕복 시간은 \(2 \times 3.763 \times 10^8\ \text{m}/(2.998 \times 10^8\ \text{m/s}) = 2.51\ \text{s}\)이다.</p>
+      <p>(다) \(P\mathbf r = -\mathbf r\)이고, \(\mathbf p = m\,d\mathbf r/dt\)이므로 \(\mathbf p \to -\mathbf p\)이다. 그러나 \(\mathbf L = \mathbf r\times\mathbf p \to (-\mathbf r)\times(-\mathbf p) = +\mathbf L\)이다. 각운동량은 패리티 아래에서 부호가 바뀌지 않는다. 외적으로 만든 벡터는 회전 아래에서는 보통 벡터처럼 바뀌지만 반사 아래에서는 보통 벡터와 다르게 바뀐다. 4장에서 이름만 본 유사 벡터가 이것이고, 22장에서 <a href="ch22.html#def-pseudotensor">유사 텐서</a>로 일반화한다. 확인으로 \(\det P = -1\), \(\operatorname{tr}P = -3\)이다. 또 법선이 \(\hat{\mathbf n}\)인 거울 반사 \(M\)과 같은 \(\hat{\mathbf n}\) 둘레의 180° 회전에 대해 \(P = M\,R(\hat{\mathbf n}, 180^\circ)\)이므로, 패리티는 "거울 반사 한 번과 회전 한 번"과 같다.</p>
+    </div>
+    <p>마지막 관찰은 일반적이다. 3차원 직교 행렬 \(R\)이 \(\det R = -1\)이면 \(-R = PR\)은 \(\det = +1\)이므로 회전이다. 따라서 모든 직교 행렬은 회전이거나, 회전 뒤에 패리티를 한 것이다. 거울에 비친 세상이 물리 법칙을 똑같이 따르는가는 "자연이 \(P\)를 대칭으로 갖는가"라는 질문이 되고, 약한 상호작용은 그렇지 않다는 것이 1957년의 베타 붕괴 실험으로 밝혀졌다(C. S. Wu et al., Phys. Rev. 105, 1413 (1957)).</p>
+  </section>
+
+  <!-- ============================================================ 7.6 -->
+  <section id="s6">
+    <h2>군의 첫걸음: 회전의 생성자</h2>
+    <p>회전 두 번은 회전 한 번이고(<a class="ref" href="#thm-euler-rotation"></a>), 아무것도 하지 않는 것도 회전이며, 어떤 회전이든 되돌릴 수 있다. 로런츠 변환도 그렇다. 이런 "합칠 수 있고 되돌릴 수 있는 변환들의 모임"이 군이고, 물리에서 대칭을 말할 때 늘 이 구조를 쓴다. 이 절에서는 군을 정의한 뒤, 회전을 아주 작게 쪼개서 얻는 세 행렬 \(L_x, L_y, L_z\)가 회전 전체의 정보를 담고, "회전의 순서에 따라 결과가 다르다"는 사실이 이 세 행렬의 교환 관계로 요약됨을 본다.</p>
+
+    <h3 id="s6-group">군</h3>
+    <div class="box def" id="def-group"><div class="box-h">군</div>
+      <p>집합 \(G\)와 그 위의 연산 \(\cdot\)(두 원소 \(a, b\)에서 원소 \(a\cdot b\)를 만듦)이 다음 네 조건을 만족하면 \((G, \cdot)\)를 <span class="term">군</span> <span class="en">(group)</span>이라 한다.</p>
+      <ol>
+        <li><b>닫힘</b>: \(a, b \in G\)이면 \(a\cdot b \in G\)이다.</li>
+        <li><b>결합 법칙</b>: \((a\cdot b)\cdot c = a\cdot(b\cdot c)\)이다.</li>
+        <li><b>항등원</b>: 모든 \(a\)에 대해 \(e\cdot a = a\cdot e = a\)인 \(e \in G\)가 있다.</li>
+        <li><b>역원</b>: 각 \(a\)에 대해 \(a\cdot a^{-1} = a^{-1}\cdot a = e\)인 \(a^{-1} \in G\)가 있다.</li>
+      </ol>
+      <p>모든 \(a, b\)에 대해 \(a\cdot b = b\cdot a\)이면 <span class="term">아벨 군</span> <span class="en">(abelian group)</span>이라 한다.</p>
+    </div>
+    <p>행렬 곱은 결합 법칙을 만족하므로, 행렬의 모임이 군인지 보려면 닫힘, 항등원 \(I\), 역행렬만 확인하면 된다. 이 장에서 만난 군은 다음과 같다.</p>
+    <ul>
+      <li><b>\(SO(2)\)</b>: 평면의 회전 \(R(\theta)\). \(R(\alpha)R(\beta) = R(\alpha + \beta)\), \(R(\theta)^{-1} = R(-\theta)\)이다. 아벨 군이다.</li>
+      <li><b>\(SO(3)\)</b>: \(\det R = +1\)인 \(3 \times 3\) 직교 행렬, 곧 3차원 회전. 두 직교 행렬의 곱은 \((R_1R_2)^{\mathsf T}(R_1R_2) = R_2^{\mathsf T}R_1^{\mathsf T}R_1R_2 = I\)이므로 직교 행렬이고, 행렬식은 \(1 \cdot 1 = 1\)이다. 식 <a class="ref" href="#eq-rotation-noncommute"></a>에서 보듯 아벨 군이 아니다. 이름의 S(special)는 \(\det = 1\), O는 직교(orthogonal)다.</li>
+      <li><b>\(O(3)\)</b>: \(3 \times 3\) 직교 행렬 전체.</li>
+      <li><b>1+1차원 로런츠 변환</b> \(\Lambda(\beta)\) (\(-1 &lt; \beta &lt; 1\)): 식 <a class="ref" href="#eq-velocity-addition"></a>이 닫힘이고, \(\Lambda(0) = I\), \(\Lambda(\beta)^{-1} = \Lambda(-\beta)\)이다. 빠르기가 더해지므로 아벨 군이다.</li>
+      <li><b>\(\{I, P\}\)</b>: 원소가 두 개뿐인 군. \(P^2 = I\)이다.</li>
+    </ul>
+    <p>군이 아닌 예도 보자. \(\det R = -1\)인 직교 행렬들은 두 개를 곱하면 \(\det = +1\)이 되므로 닫혀 있지 않고, \(I\)도 들어 있지 않다. \(3 \times 3\) 실수 행렬 전체는 곱에 대해 닫혀 있지만 \(\det = 0\)인 행렬은 역행렬이 없어 군이 아니다. 대신 \(\det \ne 0\)인 행렬 전체는 군이다(식 <a class="ref" href="#eq-inverse-properties"></a>).</p>
+    <p>\(SO(2)\), \(SO(3)\), 로런츠 변환은 원소가 연속적인 매개변수(각, 축, 속도)로 이어진 군이다. 이런 군은 항등원 근처의 "아주 작은 변환"이 구조를 거의 다 정한다.</p>
+
+    <h3 id="s6-generators">무한소 회전과 생성자</h3>
+    <p>로드리게스 공식 <a class="ref" href="#eq-rotation-axis-index"></a>에서 각이 아주 작은 \(\delta\theta\)이면 \(\cos\delta\theta = 1 + O(\delta\theta^2)\), \(\sin\delta\theta = \delta\theta + O(\delta\theta^3)\)이므로 1차까지 \(R_{ij} = \delta_{ij} - \delta\theta\,\varepsilon_{ijk}n_k\)이다. 이 둘째 항을 축 방향 성분 \(n_k\)마다 나누어 적자.</p>
+    <div class="box def" id="def-generator"><div class="box-h">회전의 생성자</div>
+      <p>세 개의 \(3 \times 3\) 행렬 \(L_1 = L_x\), \(L_2 = L_y\), \(L_3 = L_z\)를</p>
+      <div class="formula" id="eq-generator-components">\[ (L_k)_{ij} = -\varepsilon_{kij} \]</div>
+      <p>로 정의한다. 그러면 단위 벡터 \(\hat{\mathbf n}\) 둘레의 <span class="term">무한소 회전</span> <span class="en">(infinitesimal rotation)</span>은</p>
+      <div class="formula" id="eq-infinitesimal-rotation">\[ R(\hat{\mathbf n}, \delta\theta) = I + \delta\theta\,\hat{\mathbf n}\cdot\mathbf L + O(\delta\theta^2) \]</div>
+      <p>이다(\(\hat{\mathbf n}\cdot\mathbf L = n_kL_k\)). \(L_k\)를 \(k\)축 둘레 회전의 <span class="term">생성자</span> <span class="en">(generator)</span>라 한다. 생성자는 회전 행렬을 각으로 미분한 것이다: \(L_k = \dfrac{d}{d\theta}R(\hat{\mathbf e}_k, \theta)\Big|_{\theta = 0}\).</p>
+    </div>
+    <p>\(\varepsilon_{kij} = \varepsilon_{ijk}\)(순환)이므로 식 <a class="ref" href="#eq-infinitesimal-rotation"></a>의 \(\delta\theta\,n_k(L_k)_{ij}\)는 위의 \(-\delta\theta\,\varepsilon_{ijk}n_k\)와 같다. 세 생성자를 펼쳐 쓰면</p>
+    <div class="formula" id="eq-rotation-generators">\[ \begin{aligned} L_x &= \begin{pmatrix} 0 & 0 & 0 \\ 0 & 0 & -1 \\ 0 & 1 & 0 \end{pmatrix}, \quad L_y = \begin{pmatrix} 0 & 0 & 1 \\ 0 & 0 & 0 \\ -1 & 0 & 0 \end{pmatrix}, \\ L_z &= \begin{pmatrix} 0 & -1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix} \end{aligned} \]</div>
+    <p>이다. 식 <a class="ref" href="#eq-rotation-xyz"></a>의 각 행렬을 \(\theta\)로 미분하고 \(\theta = 0\)을 넣은 것과 같다. 세 생성자는 모두 <b>반대칭</b> <span class="en">(antisymmetric)</span>(\(L_k^{\mathsf T} = -L_k\))이다. 이것은 우연이 아니다. 직교 조건 \(R^{\mathsf T}R = I\)에 \(R = I + tG\)(\(t\)는 작은 수)를 넣으면 \(I + t(G + G^{\mathsf T}) + O(t^2) = I\)이므로 \(G^{\mathsf T} = -G\)여야 한다. \(3 \times 3\) 반대칭 행렬은 독립인 성분이 세 개(대각선 위의 세 칸)뿐이므로, 생성자도 세 개이고 회전축의 세 방향과 짝을 이룬다.</p>
+    <p>생성자가 벡터에 하는 일은 외적이다. \((\hat{\mathbf n}\cdot\mathbf L\,\mathbf v)_i = -n_k\varepsilon_{kij}v_j = \varepsilon_{ikj}n_kv_j = (\hat{\mathbf n}\times\mathbf v)_i\)이므로</p>
+    <div class="formula" id="eq-generator-cross">\[ \begin{gathered} (\hat{\mathbf n}\cdot\mathbf L)\,\mathbf v = \hat{\mathbf n}\times\mathbf v \\ R(\hat{\mathbf n}, \delta\theta)\,\mathbf v \approx \mathbf v + \delta\theta\,\hat{\mathbf n}\times\mathbf v \end{gathered} \]</div>
+    <p>이다. 무한소 회전 두 개는 1차까지 \((I + tA)(I + tB) = I + t(A + B) + O(t^2)\)이므로 순서와 상관이 없고, 생성자가 더해진다. 유한한 회전은 벡터처럼 더할 수 없지만 각속도는 벡터처럼 더할 수 있는 이유가 이것이다.</p>
+
+    <div class="box ex" id="ex-earth-rotation-velocity"><div class="box-h">자전하는 지구 위 한 점의 속도</div>
+      <p>지구는 \(\hat{\mathbf z}\)(북극 방향) 둘레로 항성일 \(T = 86\,164\ \text{s}\)마다 한 바퀴 돈다. 지구 중심에 원점을 둔 관성 좌표계에서 위도 \(\lambda\)인 지점의 위치를 \(\mathbf r(t) = R(\hat{\mathbf z}, \omega t)\,\mathbf r_0\)이라 할 때, 그 지점의 속도를 생성자로 구하고 서울(북위 \(37.57^\circ\))에서의 속력을 계산하라.</p>
+      <p><b>풀이.</b> 시간 \(dt\) 뒤의 위치는 \(\mathbf r(t + dt) = R(\hat{\mathbf z}, \omega\,dt)\,\mathbf r(t)\)이다(회전 두 번은 각이 더해진 회전 하나). 식 <a class="ref" href="#eq-infinitesimal-rotation"></a>와 <a class="ref" href="#eq-generator-cross"></a>으로 1차까지 펼치면 \(\mathbf r(t + dt) = \mathbf r(t) + \omega\,dt\,\hat{\mathbf z}\times\mathbf r(t)\)이므로</p>
+      <div class="formula" id="eq-rotation-velocity">\[ \begin{gathered} \frac{d\mathbf r}{dt} = \omega L_z\,\mathbf r = \boldsymbol\omega\times\mathbf r \\ \boldsymbol\omega = \omega\hat{\mathbf z} \end{gathered} \]</div>
+      <p>이다. 강체 회전의 속도 공식 \(\mathbf v = \boldsymbol\omega\times\mathbf r\)은 "생성자가 곧 외적"이라는 식 <a class="ref" href="#eq-generator-cross"></a>을 시간으로 읽은 것이다. 위도 \(\lambda\)인 지점은 \(\mathbf r = R_\oplus(\cos\lambda\,\hat{\mathbf x} + \sin\lambda\,\hat{\mathbf z})\)(\(t = 0\)에서 \(xz\) 평면)이므로 \(\mathbf v = \omega R_\oplus\cos\lambda\,\hat{\mathbf y}\), 곧 동쪽으로 \(v = \omega R_\oplus\cos\lambda\)이다.</p>
+      <p><b>숫자로 보기.</b> \(\omega = 2\pi/86\,164\ \text{s} = 7.292 \times 10^{-5}\ \text{rad/s}\), \(R_\oplus = 6371\ \text{km}\)이다. 적도에서 \(v = 465\ \text{m/s}\), 서울에서 \(v = 465 \times \cos37.57^\circ = 368\ \text{m/s}\)이다. 단위는 \(\text{rad/s} \times \text{m} = \text{m/s}\)이다(라디안은 차원이 없다). 극에서는 \(\cos90^\circ = 0\)이라 속도가 0이고, 이것은 축 위의 점이 회전에서 움직이지 않는다는 것과 맞는다.</p>
+    </div>
+
+    <h3 id="s6-exponential">유한 회전은 무한소 회전을 쌓은 것</h3>
+    <p>각 \(\theta\)를 \(N\)등분해서 작은 회전 \(N\)번으로 쪼개면 \(R(\hat{\mathbf n}, \theta) = R(\hat{\mathbf n}, \theta/N)^N\)이고, \(N\)이 크면 각 조각은 식 <a class="ref" href="#eq-infinitesimal-rotation"></a>로 쓸 수 있다. \((1 + x/N)^N \to e^x\)와 같은 극한으로</p>
+    <div class="formula" id="eq-rotation-exponential">\[ \begin{aligned} R(\hat{\mathbf n}, \theta) &= \lim_{N\to\infty}\Big(I + \frac{\theta}{N}\,\hat{\mathbf n}\cdot\mathbf L\Big)^N \\ &= e^{\theta\,\hat{\mathbf n}\cdot\mathbf L} = \sum_{m=0}^{\infty}\frac{\theta^m}{m!}(\hat{\mathbf n}\cdot\mathbf L)^m \end{aligned} \]</div>
+    <p>로 쓴다. 행렬의 지수 함수는 \(e^x\)의 멱급수에 행렬을 넣은 것이고, 8장에서 <a href="ch08.html#def-matrix-exponential">정의와 성질</a>을 정리한다. 여기서는 급수를 직접 더해 확인하자. \(G = \hat{\mathbf n}\cdot\mathbf L\)이라 하면 식 <a class="ref" href="#eq-generator-cross"></a>과 <a href="ch04.html#eq-bac-cab">BAC-CAB 공식</a>에서 \(G^2\mathbf v = \hat{\mathbf n}\times(\hat{\mathbf n}\times\mathbf v) = \hat{\mathbf n}(\hat{\mathbf n}\cdot\mathbf v) - \mathbf v\)이다. 이것은 \(-\mathbf v_\perp\)이므로 \(G^3 = -G\), \(G^4 = -G^2\), …이다. 급수를 홀수 차와 짝수 차로 모으면</p>
+    <div class="formula" id="eq-rotation-exponential-closed">\[ \begin{aligned} e^{\theta G} &= I + G\Big(\theta - \frac{\theta^3}{3!} + \cdots\Big) + G^2\Big(\frac{\theta^2}{2!} - \frac{\theta^4}{4!} + \cdots\Big) \\ &= I + G\sin\theta + G^2(1 - \cos\theta) \end{aligned} \]</div>
+    <p>이다. 괄호 안은 <a href="ch01.html#eq-standard-series">1장 식 (1.21)</a>의 \(\sin\theta\)와 \(1 - \cos\theta\)의 테일러 급수다. 이것을 \(\mathbf v\)에 작용하면 \(\mathbf v + (\hat{\mathbf n}\times\mathbf v)\sin\theta + (\hat{\mathbf n}(\hat{\mathbf n}\cdot\mathbf v) - \mathbf v)(1 - \cos\theta)\)이고, 정리하면 로드리게스 공식 <a class="ref" href="#eq-rotation-axis"></a>과 정확히 같다. 생성자 세 개만 알면 모든 회전을 만들 수 있다. 그래서 "생성자"다.</p>
+
+    <h3 id="s6-commutator">교환 관계</h3>
+    <p>생성자로 "회전의 순서가 결과를 바꾼다"는 사실을 정량적으로 보자. 두 행렬의 <span class="term">교환자</span> <span class="en">(commutator)</span>를 \([A, B] = AB - BA\)로 쓴다. 작은 회전 네 번, \(R_x(\alpha)R_y(\beta)R_x(-\alpha)R_y(-\beta)\)을 생각하자. 오른쪽부터 \(y\)축 둘레로 \(-\beta\), \(x\)축 둘레로 \(-\alpha\), \(y\)축 둘레로 \(\beta\), \(x\)축 둘레로 \(\alpha\)만큼 돌린 것이다. 회전이 교환한다면 이것은 아무 회전도 아니어야 한다. \(A = \alpha L_x\), \(B = \beta L_y\)로 두고 \(e^{A} = I + A + \tfrac12A^2 + \cdots\)를 2차까지 펼치면</p>
+    <div class="formula" id="eq-group-commutator">\[ \begin{aligned} &e^{A}e^{B}e^{-A}e^{-B} \\ &= \big(I + A + B + \tfrac12A^2 + AB + \tfrac12B^2\big) \\ &\quad\times\big(I - A - B + \tfrac12A^2 + AB + \tfrac12B^2\big) + \cdots \\ &= I + [A, B] + (\text{3차 이상}) \end{aligned} \]</div>
+    <p>이다. 1차 항은 \(A + B - A - B = 0\)으로 사라진다. 2차 항은 \(\tfrac12A^2 + AB + \tfrac12B^2\)가 두 번 나온 것에서 \((A + B)^2 = A^2 + AB + BA + B^2\)을 뺀 것이므로 \(AB - BA\)가 남는다. 따라서 네 번의 회전이 남기는 것은 교환자 \(\alpha\beta[L_x, L_y]\)다. 식 <a class="ref" href="#eq-rotation-generators"></a>로 곱해 보면 \(L_xL_y\)는 \((2, 1)\) 성분만 1이고 \(L_yL_x\)는 \((1, 2)\) 성분만 1이므로</p>
+    <div class="formula">\[ [L_x, L_y] = \begin{pmatrix} 0 & -1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 0 \end{pmatrix} = L_z \]</div>
+    <p>이다. 네 번의 회전은 \(I + \alpha\beta L_z\), 곧 \(z\)축 둘레로 각 \(\alpha\beta\)만큼의 회전이다. \(x\)와 \(y\)를 번갈아 돌리면 그 둘에 수직인 \(z\)축 둘레의 회전이 생긴다. 일반적으로 다음이 성립한다.</p>
+    <div class="formula" id="eq-so3-commutator">\[ [L_i, L_j] = \varepsilon_{ijk}L_k \]</div>
+    <p>증명은 4장의 \(\varepsilon\)-\(\delta\) 항등식 <a href="ch04.html#eq-epsilon-delta">\(\varepsilon_{kij}\varepsilon_{kmn} = \delta_{im}\delta_{jn} - \delta_{in}\delta_{jm}\)</a>로 한다. 성분으로 쓰면 \((L_iL_j)_{ab} = \varepsilon_{iac}\varepsilon_{jcb} = \varepsilon_{cia}\varepsilon_{cbj} = \delta_{ib}\delta_{aj} - \delta_{ij}\delta_{ab}\)이다. 마지막 항은 \(i, j\)에 대칭이라 교환자에서 지워지므로</p>
+    <div class="formula">\[ \begin{aligned} ([L_i, L_j])_{ab} &= \delta_{ib}\delta_{ja} - \delta_{jb}\delta_{ia} \\ &= -\varepsilon_{kij}\varepsilon_{kab} = \varepsilon_{ijk}(L_k)_{ab} \end{aligned} \]</div>
+    <p>이다. 둘째 줄의 첫 등호에서 \(\varepsilon\)-\(\delta\) 항등식을 거꾸로 썼다. 식 <a class="ref" href="#eq-so3-commutator"></a>은 \([L_x, L_y] = L_z\), \([L_y, L_z] = L_x\), \([L_z, L_x] = L_y\)를 한꺼번에 적은 것이다. 순환 순서를 거꾸로 하면 부호가 바뀐다.</p>
+
+    <div class="box ex" id="ex-small-rotation-commutator"><div class="box-h">작은 회전 네 번이 남기는 회전</div>
+      <p>책을 방에 고정된 \(y\)축 둘레로 \(-10^\circ\), \(x\)축 둘레로 \(-10^\circ\), \(y\)축 둘레로 \(+10^\circ\), \(x\)축 둘레로 \(+10^\circ\) 차례로 돌린다. 책은 결국 어느 축 둘레로 얼마나 돌아 있는가? 식 <a class="ref" href="#eq-group-commutator"></a>의 어림과 정확한 값을 비교하라.</p>
+      <p><b>풀이.</b> \(\alpha = \beta = 10^\circ = 0.1745\ \text{rad}\)이다. 식 <a class="ref" href="#eq-group-commutator"></a>과 \([L_x, L_y] = L_z\)에 따라 남는 것은 \(z\)축 둘레로</p>
+      <div class="formula">\[ \alpha\beta = (0.1745)^2 = 0.03046\ \text{rad} = 1.745^\circ \]</div>
+      <p>인 회전이다. 정확한 값은 네 행렬을 곱해 얻는다. 곱의 대각합에 식 <a class="ref" href="#eq-rotation-trace"></a>을 쓰면 회전각은 \(1.741^\circ\)이고, 반대칭 부분에서 읽은 축은 \((0.087, -0.087, 0.992)\)로 \(z\)축에서 \(7.1^\circ\) 기울어 있다. 회전각은 0.3% 안에서 맞는다.</p>
+      <p><b>다음 항은 몇 차인가.</b> 식 <a class="ref" href="#eq-group-commutator"></a>에서 버린 것은 \(\alpha^2\beta\), \(\alpha\beta^2\) 같은 3차 항이다. 축의 기울기 \(0.087 \approx \alpha/2\)는 \(\alpha\beta \times \alpha/2\) 크기의 3차 항이 \(x\), \(y\) 성분으로 들어온 것이다. 각을 반으로 줄이면(\(5^\circ\)) 회전각은 \(0.436^\circ\)로 \(\alpha\beta\)의 1/4이 되고 축의 기울기도 절반(\(3.5^\circ\))이 된다. </p>
+    </div>
+
+    <p>교환 관계 <a class="ref" href="#eq-so3-commutator"></a>은 \(SO(3)\)의 구조를 항등원 근처에서 완전히 담는다. 회전군이 아벨 군이 아니라는 사실이 "생성자가 교환하지 않는다"로 바뀐 것이다. 양자역학의 각운동량 연산자 \(J_i\)는 이 생성자에 \(i\hbar\)를 곱한 에르미트 행렬 \(J_i = i\hbar L_i\)이고, 식 <a class="ref" href="#eq-rotation-exponential"></a>은 \(R(\hat{\mathbf n}, \theta) = e^{-i\theta\,\hat{\mathbf n}\cdot\mathbf J/\hbar}\)가 되며, 식 <a class="ref" href="#eq-so3-commutator"></a>에서 바로 \([J_x, J_y] = i\hbar J_z\)가 나온다(\((i\hbar)^2/(i\hbar) = i\hbar\)). 에르미트 행렬은 8장의 <a href="ch08.html#def-hermitian-matrix">정의</a>를 따른다.</p>
+    <div class="callout deep" data-later="qm-grad"><strong>리 대수, \(SU(2)\), 스핀</strong><p>식 <a class="ref" href="#eq-so3-commutator"></a>처럼 생성자들의 교환자가 다시 생성자들의 선형 결합이 되는 구조를 <span class="term">리 대수</span> <span class="en">(Lie algebra)</span>라 하고, 회전군의 리 대수를 \(\mathfrak{so}(3)\)로 쓴다. 놀라운 점은 같은 교환 관계를 만족하는 행렬이 \(3 \times 3\)만 있는 것이 아니라는 것이다. 8장의 <a href="ch08.html#eq-pauli-matrices">파울리 행렬</a>로 만든 \(2 \times 2\) 복소 행렬 \(-i\sigma_k/2\)도 같은 교환 관계를 만족하고, 그 지수 함수가 만드는 군 \(SU(2)\)에서는 \(2\pi\) 회전이 \(-I\)이고 \(4\pi\)를 돌아야 제자리다(<a href="ch08.html#eq-pauli-exponential">8장의 스핀 회전</a>). 전자의 스핀이 바로 이것이다. 같은 리 대수를 만족하는 행렬의 모든 모양을 분류하는 것이 군의 표현론이고, 양자역학에서 각운동량의 합성과 클렙시-고든 계수가 여기서 나온다. 이 책은 정의와 교환 관계까지만 다루고, 표현론은 대학원 양자역학 책으로 넘긴다.</p></div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>연립 일차 방정식은 기본 행 연산으로 행 사다리꼴을 만들어 푼다(가우스 소거). 행렬 곱 \((AB)_{ik} = A_{ij}B_{jk}\)는 변환의 합성이고 교환 법칙이 없다. \((AB)^{\mathsf T} = B^{\mathsf T}A^{\mathsf T}\).</li>
+      <li>행렬식 \(\det A = \varepsilon_{i_1\cdots i_n}A_{1i_1}\cdots A_{ni_n}\)은 열(또는 행)이 만드는 부피의 배율이다. 행을 맞바꾸면 부호가 바뀌고, 행에 다른 행의 배수를 더해도 그대로이며, \(\det A^{\mathsf T} = \det A\), \(\det(AB) = \det A\det B\)이다.</li>
+      <li>\(\det A \ne 0\)이면 해는 하나뿐이고 크라메르 공식 \(x_i = \det A_i/\det A\)로 쓸 수 있다. 역행렬은 \(A^{-1} = \operatorname{adj}A/\det A\)이고 \((AB)^{-1} = B^{-1}A^{-1}\)이다.</li>
+      <li>랭크는 선형 독립인 행(= 열)의 수다. \(A\mathbf x = \mathbf b\)는 \(\operatorname{rank}A = \operatorname{rank}(A \mid \mathbf b)\)일 때 해가 있고, 해는 특수해에 \(n - r\)개의 자유 매개변수를 가진 동차해를 더한 것이다. 정사각 행렬에서 \(A\mathbf x = 0\)이 0이 아닌 해를 가질 조건은 \(\det A = 0\)이다.</li>
+      <li>선형 사상의 행렬은 열이 기저 벡터의 상이다. 기저를 \(\mathbf e'_j = S_{ij}\hat{\mathbf e}_i\)로 바꾸면 성분은 \(\mathbf v' = S^{-1}\mathbf v\), 행렬은 닮음 변환 \(A' = S^{-1}AS\)로 바뀌고, \(\det\)와 \(\operatorname{tr}\)은 바뀌지 않는다. 로런츠 변환 \(\Lambda(\beta)\)의 곱은 속도 덧셈 \((\beta_1 + \beta_2)/(1 + \beta_1\beta_2)\)를 준다.</li>
+      <li>직교 행렬 \(R^{\mathsf T}R = I\)는 길이와 내적을 보존하고 \(\det R = \pm1\)이다. \(+1\)은 회전, \(-1\)은 반사가 들어간 변환(패리티 \(P = -I\) 포함)이다. 3차원 회전은 교환하지 않는다.</li>
+      <li>축 \(\hat{\mathbf n}\) 둘레 각 \(\theta\)의 회전은 로드리게스 공식 \(R\mathbf v = \mathbf v\cos\theta + (\hat{\mathbf n}\times\mathbf v)\sin\theta + \hat{\mathbf n}(\hat{\mathbf n}\cdot\mathbf v)(1 - \cos\theta)\)이고, \(\operatorname{tr}R = 1 + 2\cos\theta\), \(R_{ij} - R_{ji} = -2\varepsilon_{ijk}n_k\sin\theta\)에서 각과 축을 읽는다. \(\det = +1\)인 모든 3차원 직교 행렬은 어떤 축 둘레의 회전이다.</li>
+      <li>군은 닫힘, 결합, 항등원, 역원을 갖는 모임이다. 회전의 생성자 \((L_k)_{ij} = -\varepsilon_{kij}\)는 \((\hat{\mathbf n}\cdot\mathbf L)\mathbf v = \hat{\mathbf n}\times\mathbf v\)이고, \(R(\hat{\mathbf n}, \theta) = e^{\theta\hat{\mathbf n}\cdot\mathbf L}\), 교환 관계는 \([L_i, L_j] = \varepsilon_{ijk}L_k\)이다. 양자역학의 각운동량은 \(J_i = i\hbar L_i\)로 \([J_x, J_y] = i\hbar J_z\)를 만족한다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. 미지수가 넷이고 식이 셋인 연립 일차 방정식에서 계수 행렬의 랭크가 3이다. 이 방정식의 해에 대해 옳은 것은?</p><div class="opts">
+        <button class="opt">해가 하나뿐이다.</button>
+        <button class="opt">해가 없다.</button>
+        <button class="opt" data-correct>해가 있고, 자유롭게 정할 수 있는 매개변수가 하나다.</button>
+        <button class="opt">해가 있고, 자유롭게 정할 수 있는 매개변수가 셋이다.</button>
+      </div><div class="quiz-exp">첨가 행렬은 \(3 \times 5\)라 랭크가 3을 넘을 수 없으므로 \(\operatorname{rank}A = \operatorname{rank}(A \mid \mathbf b) = 3\)이고 해가 있다. 자유 매개변수는 \(n - r = 4 - 3 = 1\)개다. 네 다리 탁자(<a class="ref" href="#ex-four-leg-table"></a>)가 이 경우다.</div></div>
+      <div class="quiz-q"><p>2. \(3 \times 3\) 행렬 \(A\)의 행렬식이 5이다. \(\det(-2A)\)는?</p><div class="opts">
+        <button class="opt">\(-10\)</button>
+        <button class="opt">\(20\)</button>
+        <button class="opt" data-correct>\(-40\)</button>
+        <button class="opt">\(40\)</button>
+      </div><div class="quiz-exp">행렬식은 각 행에 대해 선형이므로, 세 행에 모두 \(-2\)를 곱하면 \((-2)^3 = -8\)배가 된다. \(\det(cA) = c^n\det A\)이다.</div></div>
+      <div class="quiz-q"><p>3. 닮음 변환 \(A' = S^{-1}AS\)에서 일반적으로 <b>바뀔 수 있는</b> 것은?</p><div class="opts">
+        <button class="opt">\(\det A\)</button>
+        <button class="opt">\(\operatorname{tr}A\)</button>
+        <button class="opt">\(\operatorname{rank}A\)</button>
+        <button class="opt" data-correct>\(A_{11}\)</button>
+      </div><div class="quiz-exp">행렬식, 대각합, 랭크는 같은 선형 사상의 성질이라 기저와 상관없다. 개별 성분은 기저에 따라 바뀐다. <a class="ref" href="#ex-projection-basis"></a>에서 \(P_{11}\)은 \(4/5\)에서 1로 바뀌었다.</div></div>
+      <div class="quiz-q"><p>4. \(3 \times 3\) 직교 행렬 \(R\)이 \(\det R = 1\), \(\operatorname{tr}R = 0\)을 만족한다. \(R\)이 나타내는 회전각은?</p><div class="opts">
+        <button class="opt">\(60^\circ\)</button>
+        <button class="opt">\(90^\circ\)</button>
+        <button class="opt" data-correct>\(120^\circ\)</button>
+        <button class="opt">\(180^\circ\)</button>
+      </div><div class="quiz-exp">\(\operatorname{tr}R = 1 + 2\cos\theta = 0\)에서 \(\cos\theta = -1/2\), \(\theta = 120^\circ\)이다. 좌표축을 순환시키는 행렬 <a class="ref" href="#eq-cube-diagonal-rotation"></a>이 그 예다.</div></div>
+      <div class="quiz-q"><p>5. 다음 중 \(\det = -1\)인 \(3 \times 3\) 직교 행렬의 모임에 대해 옳은 것은?</p><div class="opts">
+        <button class="opt">행렬 곱에 대해 군을 이룬다.</button>
+        <button class="opt" data-correct>두 원소의 곱이 이 모임에 들지 않으므로 군이 아니다.</button>
+        <button class="opt">아벨 군이다.</button>
+        <button class="opt">모든 원소가 어떤 축 둘레의 회전이다.</button>
+      </div><div class="quiz-exp">두 행렬의 곱은 \(\det = (-1)(-1) = +1\)이라 모임 밖으로 나간다. 항등원 \(I\)도 들어 있지 않다. 이 모임의 원소는 회전 뒤에 패리티를 한 것이지 회전이 아니다.</div></div>
+      <div class="quiz-q"><p>6. 물체를 \(y\)축 둘레로 \(-0.1\ \text{rad}\), \(x\)축 둘레로 \(-0.1\ \text{rad}\), \(y\)축 둘레로 \(+0.1\ \text{rad}\), \(x\)축 둘레로 \(+0.1\ \text{rad}\) 차례로 돌렸다. 결과는 대략 어떤 회전인가?</p><div class="opts">
+        <button class="opt">회전이 남지 않는다.</button>
+        <button class="opt">\(x\)축 둘레로 \(0.01\ \text{rad}\)</button>
+        <button class="opt" data-correct>\(z\)축 둘레로 \(0.01\ \text{rad}\)</button>
+        <button class="opt">\(z\)축 둘레로 \(0.2\ \text{rad}\)</button>
+      </div><div class="quiz-exp">식 <a class="ref" href="#eq-group-commutator"></a>에 따라 \(R_x(\alpha)R_y(\beta)R_x(-\alpha)R_y(-\beta) \approx I + \alpha\beta[L_x, L_y] = I + \alpha\beta L_z\)이다. 1차 항은 지워지고, 2차의 교환자가 \(z\)축 둘레의 회전 \(\alpha\beta = 0.01\ \text{rad}\)을 남긴다.</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-elimination-cases" data-level="1"><p>연립 방정식 \(x + y + z = 2\), \(x + 2y + 3z = 5\), \(2x + 3y + kz = m\)이 (가) 해를 하나만 가질 조건, (나) 해를 갖지 않을 조건, (다) 해를 무한히 많이 가질 조건을 구하고, (다)의 경우 해를 매개변수로 써라. 각 경우의 계수 행렬과 첨가 행렬의 랭크도 밝혀라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>둘째 줄에서 첫째 줄을, 셋째 줄에서 첫째 줄의 2배를 빼고, 다시 셋째 줄에서 둘째 줄을 빼면</p>
+        <div class="formula">\[ \left(\begin{array}{ccc|c} 1 & 1 & 1 & 2 \\ 0 & 1 & 2 & 3 \\ 0 & 0 & k - 4 & m - 7 \end{array}\right) \]</div>
+        <p>이다. 행렬식은 피벗의 곱 \(k - 4\)이다. (가) \(k \ne 4\)이면 피벗이 셋, \(\operatorname{rank}A = 3\)이라 해가 하나다(\(m\)은 아무 값). (나) \(k = 4\), \(m \ne 7\)이면 마지막 줄이 \(0 = m - 7 \ne 0\)이다. \(\operatorname{rank}A = 2\), \(\operatorname{rank}(A \mid \mathbf b) = 3\)이라 해가 없다. (다) \(k = 4\), \(m = 7\)이면 두 랭크가 모두 2이고 자유 매개변수가 \(3 - 2 = 1\)개다. \(z = t\)로 두면 \(y = 3 - 2t\), \(x = 2 - y - z = -1 + t\), 곧 \((x, y, z) = (-1, 3, 0) + t(1, -2, 1)\)이다. 셋째 식에 넣으면 \(2(-1 + t) + 3(3 - 2t) + 4t = 7\)로 맞는다. 동차해 \((1, -2, 1)\)은 세 행 모두와 수직이다.</p>
+      </details>
+    </div>
+
+
+    <div class="prob" id="prob-free-fall-fit" data-level="2"><p>연직으로 던진 공의 높이 \(x(t) = x_0 + v_0t + at^2\)을 세 시각 \(t_1, t_2, t_3\)에서 재어 \(x_0, v_0, a\)를 정하려 한다. (가) 이 연립 방정식의 계수 행렬식이 \((t_2 - t_1)(t_3 - t_1)(t_3 - t_2)\)임을 보이고(방데르몽드 행렬식), 해가 하나로 정해질 조건을 말하라. (나) \(t = 0,\ 0.1,\ 0.2\ \text{s}\)에서 높이가 \(1.500,\ 1.651,\ 1.704\ \text{m}\)였다. 크라메르 공식으로 \(v_0\)과 중력 가속도 \(g = -2a\)를 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 계수 행렬의 행은 \((1, t_i, t_i^2)\)이다. 둘째·셋째 행에서 첫째 행을 빼면(행렬식 불변) 둘째 행은 \((0, t_2 - t_1, t_2^2 - t_1^2)\)이고, \(t_2 - t_1\)로 묶으면 \((0, 1, t_2 + t_1)\)이다. 셋째 행도 같은 방식으로 \(t_3 - t_1\)을 묶는다. 첫째 열로 전개하면</p>
+        <div class="formula">\[ \begin{aligned} \det &= (t_2 - t_1)(t_3 - t_1)\begin{vmatrix} 1 & t_2 + t_1 \\ 1 & t_3 + t_1 \end{vmatrix} \\ &= (t_2 - t_1)(t_3 - t_1)(t_3 - t_2) \end{aligned} \]</div>
+        <p>이다. 세 시각이 모두 다르면 0이 아니므로 해가 하나뿐이다. 같은 시각에 두 번 재면 정보가 모자란다.</p>
+        <p>(나) \(\det A = (0.1)(0.2)(0.1) = 0.002\ \text{s}^3\)이다. 첫째 식에서 바로 \(x_0 = 1.500\ \text{m}\)이다. 둘째 열을 측정값으로 바꾼 행렬식을 첫째 행으로 전개하면</p>
+        <div class="formula">\[ \begin{aligned} \det A_2 &= (1.651)(0.04) - (0.01)(1.704) \\ &\quad - 1.5\,(0.04 - 0.01) \\ &= 0.049 - 0.045 = 0.004 \end{aligned} \]</div>
+        <p>이므로 \(v_0 = 0.004/0.002 = 2.0\ \text{m/s}\)이다. 셋째 열을 바꾼 행렬식은 \((0.1)(1.704) - (1.651)(0.2) + 1.5\,(0.2 - 0.1) = -0.0098\)이므로 \(a = -4.9\ \text{m/s}^2\), \(g = 9.8\ \text{m/s}^2\)이다. 단위: \(\det A_3\)은 \(\text{m}\cdot\text{s}\), \(\det A\)는 \(\text{s}^3\)의 차원이므로 \(a\)는 \(\text{m/s}^2\)이다. 측정 간격이 짧으면 \(\det A \propto (\Delta t)^3\)이 작아져 측정 오차가 크게 부풀려진다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-gauss-jordan" data-level="1"><p>\(A = \begin{pmatrix} 1 & 1 & 0 \\ 0 & 1 & 1 \\ 1 & 1 & 1 \end{pmatrix}\)의 역행렬을 가우스-조르당 소거로 구하고, \(AA^{-1} = I\)와 식 <a class="ref" href="#eq-inverse-adjugate"></a>으로 확인하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\((A \mid I)\)에서 셋째 줄에서 첫째 줄을 빼면 셋째 줄이 \((0, 0, 1 \mid -1, 0, 1)\)이다. 둘째 줄에서 새 셋째 줄을 빼면 \((0, 1, 0 \mid 1, 1, -1)\), 첫째 줄에서 새 둘째 줄을 빼면 \((1, 0, 0 \mid 0, -1, 1)\)이다. 따라서</p>
+        <div class="formula">\[ A^{-1} = \begin{pmatrix} 0 & -1 & 1 \\ 1 & 1 & -1 \\ -1 & 0 & 1 \end{pmatrix} \]</div>
+        <p>이다. \(A\)의 첫째 행 \((1, 1, 0)\)과 \(A^{-1}\)의 세 열의 내적은 \(1, 0, 0\)이고, 나머지 행도 같은 방식으로 \(I\)를 준다. 여인수로 확인하면 \(\det A = 1(1 - 1) - 1(0 - 1) + 0 = 1\)이고, 예를 들어 \((A^{-1})_{12} = C_{21} = -\begin{vmatrix} 1 & 0 \\ 1 & 1 \end{vmatrix} = -1\)로 맞는다. \(\det A = 1\)이라 역행렬의 성분이 모두 정수다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-hexagonal-lattice" data-level="3"><p>2차원 육각 격자(그래핀의 브라베 격자)는 기본 벡터 \(\mathbf a_1 = a(1, 0)\), \(\mathbf a_2 = a(-\tfrac12, \tfrac{\sqrt3}{2})\)의 정수 결합 \(m\mathbf a_1 + n\mathbf a_2\)으로 된 점들이다. (가) 60° 회전 \(R(60^\circ)\)를 기저 \(\{\mathbf a_1, \mathbf a_2\}\)로 적은 행렬을 구하고, 대각합과 행렬식을 식 <a class="ref" href="#eq-rotation-2d"></a>의 것과 비교하라. (나) 어떤 회전이 격자를 자기 자신으로 보내면, 격자 기저로 적은 그 행렬의 성분은 모두 정수다. 이것과 식 <a class="ref" href="#eq-similarity-invariants"></a>를 써서, 결정이 가질 수 있는 회전 대칭은 1, 2, 3, 4, 6회 대칭뿐임을 보여라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(R\mathbf a_1 = a(\tfrac12, \tfrac{\sqrt3}{2}) = \mathbf a_1 + \mathbf a_2\), \(R\mathbf a_2 = a(-1, 0) = -\mathbf a_1\)이다. 열은 기저 벡터의 상이므로 격자 기저의 행렬은 \(\begin{pmatrix} 1 & -1 \\ 1 & 0 \end{pmatrix}\)이다. 대각합은 1로 \(2\cos60^\circ = 1\)과 같고, 행렬식은 1로 같다. 성분은 다르지만 두 행렬은 닮았다.</p>
+        <p>(나) 회전이 격자를 보존하면 \(R\mathbf a_1\), \(R\mathbf a_2\)가 격자점이므로 정수 결합으로 쓰이고, 그 계수가 행렬의 열이다. 따라서 대각합은 정수다. 대각합은 기저와 상관없으므로 직교 기저에서 계산한 \(2\cos\theta\)와 같아야 하고, \(\lvert 2\cos\theta\rvert \le 2\)이므로 \(2\cos\theta \in \{-2, -1, 0, 1, 2\}\), 곧 \(\theta = 180^\circ, 120^\circ, 90^\circ, 60^\circ, 0^\circ\)이다. 이것이 2, 3, 4, 6, 1회 대칭이다. 5회 대칭은 \(2\cos72^\circ = 0.618\)이 정수가 아니므로 불가능하다. 5회 대칭의 회절 무늬를 보이는 준결정은 바로 이 제약 때문에 주기적인 결정이 아니다(D. Shechtman et al., Phys. Rev. Lett. 53, 1951 (1984)).</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-lorentz-rapidity" data-level="2"><p>(가) \(\eta = \operatorname{diag}(-1, 1)\)에 대해 식 <a class="ref" href="#eq-lorentz-matrix"></a>의 \(\Lambda\)가 \(\Lambda^{\mathsf T}\eta\Lambda = \eta\)를 만족함을 보이고, 이것이 \(-(ct)^2 + x^2\)이 보존된다는 뜻임을 설명하라. (나) \(K = \begin{pmatrix} 0 & -1 \\ -1 & 0 \end{pmatrix}\)에 대해 \(K^2 = I\)를 써서 \(e^{\zeta K}\)의 급수를 더하고, 그것이 빠르기 \(\zeta\)인 로런츠 변환임을 보여라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\Lambda\)는 대칭이고 \(\eta\Lambda = \gamma\begin{pmatrix} -1 & \beta \\ -\beta & 1 \end{pmatrix}\)이므로</p>
+        <div class="formula">\[ \begin{aligned} \Lambda^{\mathsf T}(\eta\Lambda) &= \gamma^2\begin{pmatrix} -1 + \beta^2 & 0 \\ 0 & 1 - \beta^2 \end{pmatrix} \\ &= \eta \end{aligned} \]</div>
+        <p>이다. 열벡터 \(X = (ct, x)^{\mathsf T}\)에 대해 \(X^{\mathsf T}\eta X = -(ct)^2 + x^2\)이고, \(X' = \Lambda X\)이면 \(X'^{\mathsf T}\eta X' = X^{\mathsf T}\Lambda^{\mathsf T}\eta\Lambda X = X^{\mathsf T}\eta X\)이다. 직교 조건 \(R^{\mathsf T}IR = I\)에서 \(I\)를 \(\eta\)로 바꾼 것이다.</p>
+        <p>(나) \(K^2 = I\)이므로 짝수 거듭제곱은 \(I\), 홀수 거듭제곱은 \(K\)이다. 따라서</p>
+        <div class="formula">\[ \begin{aligned} e^{\zeta K} &= I\Big(1 + \frac{\zeta^2}{2!} + \cdots\Big) \\ &\quad + K\Big(\zeta + \frac{\zeta^3}{3!} + \cdots\Big) \\ &= I\cosh\zeta + K\sinh\zeta \\ &= \begin{pmatrix} \cosh\zeta & -\sinh\zeta \\ -\sinh\zeta & \cosh\zeta \end{pmatrix} \end{aligned} \]</div>
+        <p>이고, 이것은 \(\beta = \tanh\zeta\)인 \(\Lambda(\beta)\)다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-rotation-axis-angle" data-level="2"><p>\(R = \dfrac13\begin{pmatrix} 2 & -1 & 2 \\ 2 & 2 & -1 \\ -1 & 2 & 2 \end{pmatrix}\)에 대해 (가) 직교 행렬이고 \(\det R = 1\)임을 확인하라. (나) 회전축과 회전각을 구하라. (다) \(R^2\)을 계산하고 <a class="ref" href="#ex-cube-diagonal-rotation"></a>과 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 각 행의 길이는 \((4 + 1 + 4)/9 = 1\)이고, 첫째와 둘째 행의 내적은 \((4 - 2 - 2)/9 = 0\), 첫째와 셋째는 \((-2 - 2 + 4)/9 = 0\), 둘째와 셋째는 \((-2 + 4 - 2)/9 = 0\)이다. 식 <a class="ref" href="#eq-det-3x3"></a>로 \(27\det R = 2(4 + 2) + 1(4 - 1) + 2(4 + 2) = 27\)이므로 \(\det R = 1\)이다.</p>
+        <p>(나) \(\operatorname{tr}R = 6/3 = 2 = 1 + 2\cos\theta\)에서 \(\theta = 60^\circ\)이다. 반대칭 부분 \(R_{32} - R_{23} = (2 + 1)/3 = 1\), \(R_{13} - R_{31} = 1\), \(R_{21} - R_{12} = 1\)이 \(2n_k\sin60^\circ = \sqrt3\,n_k\)와 같으므로 \(\hat{\mathbf n} = (1, 1, 1)/\sqrt3\)이다.</p>
+        <p>(다) 행렬을 곱하면 \(R^2 = \begin{pmatrix} 0 & 0 & 1 \\ 1 & 0 & 0 \\ 0 & 1 & 0 \end{pmatrix}\)이다. 같은 축 둘레로 60°를 두 번 돌면 120°이므로 식 <a class="ref" href="#eq-cube-diagonal-rotation"></a>과 같아야 하고, 실제로 같다. 같은 축 둘레의 회전끼리는 교환한다.</p>
+      </details>
+    </div>
+
+
+    <div class="prob" id="prob-cubic-conductivity" data-level="3"><p>결정의 전기 전도는 \(\mathbf J = \sigma\mathbf E\)이고, \(\sigma\)는 \(3 \times 3\) 행렬이다. 결정이 회전 \(R\)에 대해 대칭이면(결정을 \(R\)만큼 돌려도 같은 결정이면), 실험 전체를 \(R\)로 돌려도 같은 관계가 성립해야 한다. (가) 이 조건이 \(R\sigma R^{\mathsf T} = \sigma\)임을 보여라. (나) 정육면체 결정은 대각선 둘레 120° 회전 \(C\)(식 <a class="ref" href="#eq-cube-diagonal-rotation"></a>)와 \(R_z(90^\circ)\)에 대해 대칭이다. 이 결정의 \(\sigma\)는 단위 행렬의 상수배임을 보여라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 전기장 \(\mathbf E\)에서 전류 \(\mathbf J = \sigma\mathbf E\)가 흐른다. 실험 전체를 돌리면 전기장은 \(R\mathbf E\), 전류는 \(R\mathbf J\)이고, 돌린 결정이 원래 결정과 같으므로 같은 \(\sigma\)로 \(R\mathbf J = \sigma R\mathbf E\)여야 한다. \(R\sigma\mathbf E = \sigma R\mathbf E\)가 모든 \(\mathbf E\)에 대해 성립하므로 \(R\sigma = \sigma R\), 곧 \(R\sigma R^{\mathsf T} = \sigma\)이다.</p>
+        <p>(나) \(C\)는 \(C_{13} = C_{21} = C_{32} = 1\)이므로 \((C\sigma C^{\mathsf T})_{ij} = \sigma_{c(i)c(j)}\)이고, \(c(1) = 3\), \(c(2) = 1\), \(c(3) = 2\)이다. 조건에서 \(\sigma_{11} = \sigma_{33} = \sigma_{22}\equiv s\), \(\sigma_{12} = \sigma_{31} = \sigma_{23}\equiv p\), \(\sigma_{21} = \sigma_{13} = \sigma_{32}\equiv q\)이다. \(R_z(90^\circ)\)는 \(\hat{\mathbf x} \to \hat{\mathbf y}\), \(\hat{\mathbf y} \to -\hat{\mathbf x}\)이므로 \((R\sigma R^{\mathsf T})_{13} = R_{12}\sigma_{23}R_{33} = -\sigma_{23}\), \((R\sigma R^{\mathsf T})_{23} = R_{21}\sigma_{13}R_{33} = \sigma_{13}\)이다. 조건에서 \(\sigma_{13} = -\sigma_{23}\), 곧 \(q = -p\)이고, \(\sigma_{23} = \sigma_{13}\), 곧 \(p = q\)이다. 따라서 \(p = q = 0\)이고 \(\sigma = sI\)이다. 구리나 나트륨 같은 정육면체 결정의 전도도이 방향과 상관없는 하나의 수인 이유다. 대칭이 낮은 결정에서 전류가 전기장과 다른 방향으로 흐르는 예는 <a href="ch22.html#ex-anisotropic-conductivity">22장</a>에서 다룬다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-angular-velocity-matrix" data-level="2"><p>강체의 방향이 시간에 따라 직교 행렬 \(R(t)\)로 바뀌어, 강체에 붙은 점이 \(\mathbf r(t) = R(t)\mathbf r_0\)에 있다. (가) \(\Omega = \dot R R^{\mathsf T}\)가 반대칭임을 보여라. (나) 반대칭 행렬을 \(\Omega_{ij} = -\varepsilon_{ijk}\omega_k\)로 쓰면 \(\dot{\mathbf r} = \boldsymbol\omega\times\mathbf r\)임을 보여라. (다) 분당 \(33\tfrac13\)회 도는 LP 음반의 중심에서 \(15\ \text{cm}\)인 점의 속력을 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(RR^{\mathsf T} = I\)를 시간으로 미분하면 \(\dot RR^{\mathsf T} + R\dot R^{\mathsf T} = 0\)이고, 둘째 항은 첫째 항의 전치이므로 \(\Omega + \Omega^{\mathsf T} = 0\)이다.</p>
+        <p>(나) \(\dot{\mathbf r} = \dot R\mathbf r_0 = \dot RR^{\mathsf T}\mathbf r = \Omega\mathbf r\)이다. \(\Omega_{ij} = -\varepsilon_{ijk}\omega_k = \omega_k(L_k)_{ij}\)이므로 \(\Omega = \boldsymbol\omega\cdot\mathbf L\)이고, 식 <a class="ref" href="#eq-generator-cross"></a>에 따라 \(\Omega\mathbf r = \boldsymbol\omega\times\mathbf r\)이다. \(R(t) = R_z(\omega t)\)이면 \(\Omega = \omega L_z\)로 <a class="ref" href="#ex-earth-rotation-velocity"></a>과 같다. 축이 시간에 따라 바뀌어도 성립하므로 어느 순간에나 순간 각속도 \(\boldsymbol\omega\)가 있다.</p>
+        <p>(다) \(\omega = 33.33 \times 2\pi/60\ \text{s} = 3.49\ \text{rad/s}\)이므로 \(v = \omega r = 3.49 \times 0.15 = 0.524\ \text{m/s}\)이다.</p>
+      </details>
+    </div>
+
+  </section>
+</main>
+</body>
+</html>
