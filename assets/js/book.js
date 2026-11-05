@@ -7,6 +7,8 @@
    - 책 홈: [data-chapter-grid](부가 있으면 부별로, data-sims-inside면 장 카드 안에 실험), [data-book-sims], [data-paper-table], [data-fill]
    ========================================================================== */
 (function () {
+  // 제목 글자: KaTeX가 그린 수식의 MathML 사본(.katex-mathml)을 빼고 읽는다
+  const plainText = (el) => { const c = el.cloneNode(true); c.querySelectorAll(".katex-mathml").forEach((m) => m.remove()); return c.textContent; };
   "use strict";
   const { $, $$, esc } = LS;
   const book = LS.currentBook();
@@ -98,9 +100,9 @@
       const h2 = $(":scope > h2", s);
       // 절 번호 span만 떼어 낸다 ("1차원 문제"처럼 숫자로 시작하는 제목이 있으므로 정규식으로 지우지 않는다)
       const hn = h2 && h2.querySelector(".h-num");
-      const text = h2 ? h2.textContent.slice(hn ? hn.textContent.length : 0).trim() : s.id;
+      const text = h2 ? plainText(h2).slice(hn ? hn.textContent.length : 0).trim() : s.id;
       // 절 안의 소제목(id가 있는 h3)은 한 칸 들여 목차에 넣는다
-      const subs = $$(":scope > h3[id]", s).map((h) => `<a class="sub" href="#${esc(h.id)}">${esc(h.textContent.trim())}</a>`).join("");
+      const subs = $$(":scope > h3[id]", s).map((h) => `<a class="sub" href="#${esc(h.id)}">${esc(plainText(h).trim())}</a>`).join("");
       return `<a href="#${esc(s.id)}">${esc(text)}</a>` + subs;
     }).join("");
     layout.append(toc);
