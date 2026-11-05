@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>08 고유값 문제 · 수리물리학</title>
+<meta name="description" content="고유값과 대각화, 에르미트 행렬의 스펙트럼 정리, 결합 진동자의 정규 모드, 관성 텐서의 주축, 동시 대각화와 행렬 지수로 스핀 회전을 다룬다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys" data-field="phys" data-chapter="ch08">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">08</span></div>
+    <h1 data-fill="chapter-title">고유값 문제</h1>
+    <p class="lead">비뚤게 달린 바퀴는 각운동량이 회전축과 어긋나서 축받이를 흔들고, 용수철로 이은 두 물체는 진동 에너지를 주고받으며, 양자역학의 측정값은 행렬이 허락하는 몇 개의 수로만 나온다. 세 현상에 공통된 질문은 "선형 변환이 방향을 바꾸지 않고 늘이기만 하는 벡터가 있는가"다. 이 장에서는 그런 벡터(고유벡터)와 배율(고유값)을 구하는 데서 출발해, 행렬을 대각 행렬로 바꿀 수 있는 조건을 세우고, 물리에서 가장 중요한 에르미트 행렬에 대해 스펙트럼 정리를 증명한다. 이 정리 하나로 결합 진동자의 정규 모드, 강체의 주축, 스핀의 회전을 같은 방식으로 푼다. 7장의 기저 바꾸기와 회전 생성자가 여기서 본격적으로 쓰인다.</p>
+    <ul class="objectives">
+      <li>특성 방정식으로 고유값과 고유벡터를 구하고, 대각화 가능 조건을 판정해 \(A = SDS^{-1}\)로 행렬의 거듭제곱과 함수를 계산할 수 있다.</li>
+      <li>에르미트 행렬의 고유값이 실수이고 고유벡터가 직교함을 증명하고, 스펙트럼 정리를 조건과 함께 진술·증명해 스펙트럼 분해 \(A = \sum_i\lambda_i\mathbf u_i\mathbf u_i^\dagger\)를 쓸 수 있다.</li>
+      <li>결합 진동자의 운동 방정식을 일반화된 고유값 문제 \(K\mathbf a = \omega^2M\mathbf a\)로 세워 정규 모드와 진동수를 구할 수 있다.</li>
+      <li>이차 형식과 관성 텐서를 대각화해 주축과 주 관성 모멘트를 구하고, 그 기하적 뜻을 설명할 수 있다.</li>
+      <li>교환하는 에르미트 행렬을 동시에 대각화하고, 행렬 지수를 계산해 파울리 행렬로 스핀의 회전을 나타낼 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b>7장의 행렬식, 동차 방정식이 0이 아닌 해를 가질 조건, 닮음 변환, 직교 행렬, 회전 생성자 \(L_k\)와 \(R = e^{\theta\hat{\mathbf n}\cdot\mathbf L}\). 2장의 복소수와 켤레, 오일러 공식, 진동의 시간 의존성 \(e^{-i\omega t}\). 4장의 지수 표기와 합 규약(이 장에서도 쓴다), 질점의 관성 텐서. 3장의 라그랑주 승수와 헤세 행렬. 복소 벡터의 내적은 이 장에서 행렬 곱 \(\mathbf u^\dagger\mathbf v\)로만 쓰고, 일반적인 내적 공간과 디랙 표기는 9장에서 세운다.</p>
+  </header>
+
+  <section id="s1">
+    <h2>고유값과 고유벡터</h2>
+    <p>4장의 예제에서 질량 0.50 kg인 공 두 개를 단 아령이 \(z\)축 둘레로 돌 때, 각운동량 \(\mathbf L\)은 회전축과 \(53^\circ\) 어긋났고 축받이가 그 어긋남을 버티느라 토크를 줘야 했다(<a href="ch04.html#ex-rigid-body-angular-momentum">예제 4.4</a>). 각운동량과 각속도는 행렬 하나로 이어진다. 질점마다 <a href="ch04.html#eq-inertia-point-mass">4장 식 (4.18)</a>의 \(I_{jm}\)을 더하면 \(L_j = I_{jm}\omega_m\)이다. 그렇다면 같은 아령을 어느 축으로 돌려야 \(\mathbf L\)이 \(\boldsymbol\omega\)와 나란할까? 식으로 쓰면 \(I\boldsymbol\omega = \lambda\boldsymbol\omega\)인 \(\boldsymbol\omega\)를 찾는 문제다.</p>
+
+    <h3 id="s1-definition">정의와 특성 방정식</h3>
+    <div class="box def" id="def-eigen"><div class="box-h">고유값과 고유벡터</div>
+      <p>\(n \times n\) 행렬 \(A\)(성분은 실수 또는 복소수)에 대해, 0이 아닌 열벡터 \(\mathbf v\)와 수 \(\lambda\)가</p>
+      <div class="formula" id="eq-eigen">\[ A\mathbf v = \lambda\mathbf v, \qquad \mathbf v \ne 0 \]</div>
+      <p>를 만족하면 \(\lambda\)를 \(A\)의 <span class="term">고유값</span> <span class="en">(eigenvalue)</span>, \(\mathbf v\)를 \(\lambda\)에 속하는 <span class="term">고유벡터</span> <span class="en">(eigenvector)</span>라 한다. \(\lambda\)와 \(\mathbf v\)의 성분은 복소수여도 된다. 고유값 \(\lambda\)에 대해 \(A\mathbf v = \lambda\mathbf v\)를 만족하는 벡터 전체(0 포함)는 부분 공간을 이루고, 이것을 <span class="term">고유 공간</span> <span class="en">(eigenspace)</span> \(E_\lambda\)라 한다. \(E_\lambda\)의 차원을 \(\lambda\)의 <span class="term">기하적 중복도</span> <span class="en">(geometric multiplicity)</span>라 한다.</p>
+    </div>
+    <p>\(\mathbf v\)가 고유벡터이면 0이 아닌 상수배 \(c\mathbf v\)도 고유벡터다. 그래서 고유벡터가 정하는 것은 방향(복소수면 위상까지 포함한 방향)이고, 크기와 부호는 우리가 고른다. 조건 \(\mathbf v \ne 0\)이 빠지면 \(\mathbf v = 0\)이 모든 \(\lambda\)에 대해 식 <a class="ref" href="#eq-eigen"></a>을 만족하므로 정의가 뜻을 잃는다.</p>
+    <p>고유값을 찾으려면 식 <a class="ref" href="#eq-eigen"></a>을 \((A - \lambda I)\mathbf v = 0\)으로 옮겨 적는다. 이것은 동차 방정식이고, 0이 아닌 해가 있을 조건은 <a href="ch07.html#thm-homogeneous-solution">7장 정리 7.6</a>에 따라 계수 행렬의 행렬식이 0인 것이다.</p>
+    <div class="formula" id="eq-characteristic-eq">\[ p(\lambda) \equiv \det(A - \lambda I) = 0 \]</div>
+    <p>이것을 <span class="term">특성 방정식</span> <span class="en">(characteristic equation)</span>, \(p(\lambda)\)를 <span class="term">특성 다항식</span> <span class="en">(characteristic polynomial)</span>이라 한다. 행렬식의 정의(<a href="ch07.html#eq-det-epsilon">7장 식 (7.8)</a>)에서 각 항은 행마다 성분 하나씩을 곱한 것이고 \(\lambda\)는 대각 성분에만 있으므로, \(p(\lambda)\)는 최고차항이 \((-\lambda)^n\)인 \(n\)차 다항식이다. 대수학의 기본 정리에 따라 \(p(\lambda)\)는 복소수 범위에서 중복을 세어 정확히 \(n\)개의 근 \(\lambda_1, \ldots, \lambda_n\)을 갖는다. 근으로 나타나는 횟수를 그 고유값의 <span class="term">대수적 중복도</span> <span class="en">(algebraic multiplicity)</span>라 한다. 따라서 모든 정사각 행렬은 고유값을 적어도 하나 갖는다. 다만 실수 행렬이라도 고유값이 실수라는 보장은 없다(<a class="ref" href="#ex-rotation-eigen"></a>).</p>
+
+    <h3 id="s1-trace-det">고유값의 합과 곱</h3>
+    <p>\(p(\lambda) = (\lambda_1 - \lambda)(\lambda_2 - \lambda)\cdots(\lambda_n - \lambda)\)로 인수분해되므로, 이것을 \(\det(A - \lambda I)\)의 전개와 비교하면 두 가지를 바로 얻는다. \(\lambda = 0\)을 넣으면 \(p(0) = \det A = \lambda_1\lambda_2\cdots\lambda_n\)이다. \(\lambda^{n-1}\)의 계수를 보면, 행렬식의 항 가운데 \(\lambda\)를 \(n-1\)번 이상 갖는 것은 대각 성분을 모두 곱한 항 \((A_{11} - \lambda)\cdots(A_{nn} - \lambda)\)뿐이다(다른 항은 대각 성분을 최대 \(n-2\)개 갖는다). 그 계수는 \((-1)^{n-1}\sum_i A_{ii}\)이고, 인수분해 쪽의 계수는 \((-1)^{n-1}\sum_i\lambda_i\)이다. 따라서</p>
+    <div class="formula" id="eq-eigen-trace-det">\[ \operatorname{tr}A = \sum_{i=1}^{n}\lambda_i, \qquad \det A = \prod_{i=1}^{n}\lambda_i \]</div>
+    <p>이다. 고유값은 중복을 세어 넣는다. 닮은 행렬은 특성 다항식이 같다는 것도 확인해 두자. \(\det(S^{-1}AS - \lambda I) = \det\big(S^{-1}(A - \lambda I)S\big) = \det(A - \lambda I)\)이다. 그래서 고유값은 기저를 어떻게 고르든 같은, 선형 사상 자체의 성질이고, <a href="ch07.html#eq-similarity-invariants">7장 식 (7.29)</a>의 두 불변량 \(\operatorname{tr}A\), \(\det A\)는 그 고유값의 합과 곱이었던 것이다.</p>
+
+    <div class="box ex" id="ex-eigen-3x3"><div class="box-h">\(3 \times 3\) 행렬의 고유값과 고유벡터</div>
+      <p>다음 행렬의 고유값과 고유벡터를 구하고, 식 <a class="ref" href="#eq-eigen-trace-det"></a>으로 확인하라.</p>
+      <div class="formula">\[ A = \begin{pmatrix} 2 & -1 & 0 \\ -1 & 2 & 0 \\ 1 & 1 & 2 \end{pmatrix} \]</div>
+      <p><b>풀이.</b> \(A - \lambda I\)의 셋째 열에서 0이 아닌 성분은 \((3, 3)\) 자리의 \(2 - \lambda\)뿐이므로 셋째 열로 여인수 전개하면</p>
+      <div class="formula">\[ \begin{aligned} p(\lambda) &= (2 - \lambda)\big[(2 - \lambda)^2 - 1\big] \\ &= (2 - \lambda)(1 - \lambda)(3 - \lambda) \end{aligned} \]</div>
+      <p>이다. 고유값은 \(1, 2, 3\)이다. 각 고유값에 대해 \((A - \lambda I)\mathbf v = 0\)을 푼다.</p>
+      <ul>
+        <li>\(\lambda = 1\): \(A - I\)의 행은 \((1, -1, 0)\), \((-1, 1, 0)\), \((1, 1, 1)\)이다. \(x = y\), \(x + y + z = 0\)이므로 \(\mathbf v_1 = (1, 1, -2)\).</li>
+        <li>\(\lambda = 2\): 행은 \((0, -1, 0)\), \((-1, 0, 0)\), \((1, 1, 0)\)이다. \(x = y = 0\)이고 \(z\)는 자유이므로 \(\mathbf v_2 = (0, 0, 1)\).</li>
+        <li>\(\lambda = 3\): 행은 \((-1, -1, 0)\), \((-1, -1, 0)\), \((1, 1, -1)\)이다. \(x + y = 0\), \(x + y - z = 0\)이므로 \(z = 0\), \(\mathbf v_3 = (1, -1, 0)\).</li>
+      </ul>
+      <p>확인하면 \(A\mathbf v_1 = (2 - 1,\ -1 + 2,\ 1 + 1 - 4) = (1, 1, -2) = \mathbf v_1\)이다. 대각합은 \(2 + 2 + 2 = 6 = 1 + 2 + 3\)이고, 행렬식은 셋째 열 전개로 \(2 \times (4 - 1) = 6 = 1 \times 2 \times 3\)이다. 세 고유벡터는 서로 수직이 아니다. 예를 들어 \(\mathbf v_1\cdot\mathbf v_2 = -2\)이다. 8.3절에서 보겠지만 대칭 행렬(더 넓게 에르미트 행렬)이면 이런 일이 생기지 않는다.</p>
+    </div>
+
+    <p>그림 8-1은 고유벡터가 무엇인지를 한눈에 보여 준다. 행렬은 단위 원 위의 벡터들을 타원 위로 보내는데, 대부분의 벡터는 방향이 바뀐다. 고유벡터만 자기가 놓인 직선을 떠나지 않고 길이만 \(\lambda\)배가 된다.</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 320" role="img" aria-label="행렬 A가 단위 원을 타원으로 보낸다. 일반 벡터 v는 방향이 바뀌지만 고유벡터 u1과 u2는 자기 직선 위에 머문다"><defs><marker id="f0801-ad" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker><marker id="f0801-aa" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker><marker id="f0801-ab" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc2"/></marker></defs><line x1="20" y1="165" x2="460" y2="165" class="s-grid"/><line x1="240" y1="12" x2="240" y2="312" class="s-grid"/><path d="M292,165 L291.8,160.5 L291.2,156 L290.2,151.5 L288.9,147.2 L287.1,143 L285,139 L282.6,135.2 L279.8,131.6 L276.8,128.2 L273.4,125.2 L269.8,122.4 L266,120 L262,117.9 L257.8,116.1 L253.5,114.8 L249,113.8 L244.5,113.2 L240,113 L235.5,113.2 L231,113.8 L226.5,114.8 L222.2,116.1 L218,117.9 L214,120 L210.2,122.4 L206.6,125.2 L203.2,128.2 L200.2,131.6 L197.4,135.2 L195,139 L192.9,143 L191.1,147.2 L189.8,151.5 L188.8,156 L188.2,160.5 L188,165 L188.2,169.5 L188.8,174 L189.8,178.5 L191.1,182.8 L192.9,187 L195,191 L197.4,194.8 L200.2,198.4 L203.2,201.8 L206.6,204.8 L210.2,207.6 L214,210 L218,212.1 L222.2,213.9 L226.5,215.2 L231,216.2 L235.5,216.8 L240,217 L244.5,216.8 L249,216.2 L253.5,215.2 L257.8,213.9 L262,212.1 L266,210 L269.8,207.6 L273.4,204.8 L276.8,201.8 L279.8,198.4 L282.6,194.8 L285,191 L287.1,187 L288.9,182.8 L290.2,178.5 L291.2,174 L291.8,169.5 L292,165" class="s-line" stroke-dasharray="4 4"/><path d="M344,139 L348.1,132.3 L351.4,125.9 L353.9,119.7 L355.5,113.9 L356.2,108.5 L356.1,103.5 L355,99 L353.1,94.9 L350.3,91.5 L346.7,88.5 L342.2,86.2 L337,84.5 L331.1,83.3 L324.4,82.8 L317.1,82.9 L309.3,83.7 L300.9,85 L292,87 L282.7,89.6 L273.2,92.7 L263.3,96.4 L253.3,100.6 L243.2,105.3 L233,110.5 L222.9,116 L213,122 L203.2,128.2 L193.8,134.8 L184.6,141.6 L175.9,148.5 L167.7,155.6 L160.1,162.8 L153,169.9 L146.6,177.1 L140.9,184.1 L136,191 L131.9,197.7 L128.6,204.1 L126.1,210.3 L124.5,216.1 L123.8,221.5 L123.9,226.5 L125,231 L126.9,235.1 L129.7,238.5 L133.3,241.5 L137.8,243.8 L143,245.5 L148.9,246.7 L155.6,247.2 L162.9,247.1 L170.7,246.3 L179.1,245 L188,243 L197.3,240.4 L206.8,237.3 L216.7,233.6 L226.7,229.4 L236.8,224.7 L247,219.5 L257.1,214 L267,208 L276.8,201.8 L286.2,195.2 L295.4,188.4 L304.1,181.5 L312.3,174.4 L319.9,167.2 L327,160.1 L333.4,152.9 L339.1,145.9 L344,139" class="s-faint" style="stroke-width:1.5"/><line x1="91.2" y1="239.4" x2="388.8" y2="90.6" class="s-acc2" style="stroke-width:1" stroke-dasharray="6 5"/><line x1="122.3" y1="47.3" x2="357.7" y2="282.7" class="s-acc2" style="stroke-width:1" stroke-dasharray="6 5"/><line x1="240" y1="165" x2="222.2" y2="116.1" class="s-line" style="stroke-width:2" marker-end="url(#f0801-ad)"/><line x1="240" y1="165" x2="253.3" y2="100.6" class="s-acc" style="stroke-width:2" marker-end="url(#f0801-aa)"/><text x="212.2" y="114.1" class="t-math" text-anchor="end"><tspan font-style="italic">v</tspan></text><text x="245.3" y="96.6" class="t-math acc" text-anchor="end"><tspan font-style="italic">A</tspan><tspan font-style="italic">v</tspan></text><line x1="240" y1="165" x2="356.3" y2="106.9" class="s-acc2" style="stroke-width:2.4" marker-end="url(#f0801-ab)"/><line x1="240" y1="165" x2="286.5" y2="141.7" class="s-line" style="stroke-width:2.4" marker-end="url(#f0801-ad)"/><text x="362.3" y="124.9" class="t-math acc2" text-anchor="start">Au<tspan baseline-shift="sub" font-size="11">1</tspan> = 2.5u<tspan baseline-shift="sub" font-size="11">1</tspan></text><text x="290.5" y="159.7" class="t-math" text-anchor="start">u<tspan baseline-shift="sub" font-size="11">1</tspan></text><line x1="240" y1="165" x2="276.8" y2="201.8" class="s-acc2" style="stroke-width:2.4" marker-end="url(#f0801-ab)"/><text x="284.8" y="209.8" class="t-math acc2" text-anchor="start">u<tspan baseline-shift="sub" font-size="11">2</tspan> = Au<tspan baseline-shift="sub" font-size="11">2</tspan></text></svg>
+      <figcaption><b>그림 8-1.</b> 행렬 \(A = \begin{pmatrix} 2 & 1 \\ 0.5 & 1.5 \end{pmatrix}\)이 하는 일. 점선 원(단위 벡터들)이 실선 타원으로 간다. 일반 벡터 \(\mathbf v\)는 \(A\mathbf v\)로 가면서 방향이 바뀌지만, 고유벡터 \(\mathbf u_1 \propto (2, 1)\)은 같은 직선 위에서 2.5배가 되고 \(\mathbf u_2 \propto (1, -1)\)은 그대로다(\(\lambda = 1\)). 두 고유 방향(파선)은 서로 수직이 아니다. 특성 방정식은 \(\lambda^2 - 3.5\lambda + 2.5 = 0\)이다.</figcaption>
+    </figure>
+
+    <h3 id="s1-physics">물리에서 만나는 고유값</h3>
+    <div class="box ex" id="ex-dumbbell-axes"><div class="box-h">기울어진 아령의 각운동량이 회전축과 나란한 축</div>
+      <p>질량을 무시할 수 있는 막대 양 끝 \(\pm(0.30, 0, 0.40)\ \text{m}\)에 질량 \(m = 0.50\ \text{kg}\)인 공이 붙어 있다(<a href="ch04.html#ex-rigid-body-angular-momentum">예제 4.4</a>의 아령). (가) 원점에 대한 관성 텐서 \(I\)의 고유값과 고유벡터를 구하라. (나) 어느 축 둘레로 돌리면 \(\mathbf L \parallel \boldsymbol\omega\)인가? (다) \(\boldsymbol\omega = 4.0\ \text{rad/s}\ \hat{\mathbf z}\)일 때 \(\mathbf L\)을 고유벡터로 계산하라.</p>
+      <p><b>풀이.</b> (가) 두 공 모두 \(r^2 = 0.25\ \text{m}^2\)이고 \(x_jx_m\)도 같으므로 \(I_{jm} = 2m(r^2\delta_{jm} - x_jx_m)\)이다. \(2m = 1.0\ \text{kg}\)을 넣으면(단위 \(\text{kg}\cdot\text{m}^2\))</p>
+      <div class="formula">\[ I = \begin{pmatrix} 0.16 & 0 & -0.12 \\ 0 & 0.25 & 0 \\ -0.12 & 0 & 0.09 \end{pmatrix} \]</div>
+      <p>이다. 둘째 행과 열은 따로 떨어져 있으므로 \(\lambda = 0.25\)이고 고유벡터는 \(\hat{\mathbf y}\)다. 나머지 \(xz\) 부분의 특성 방정식은</p>
+      <div class="formula">\[ \begin{aligned} &(0.16 - \lambda)(0.09 - \lambda) - 0.12^2 \\ &\quad = \lambda^2 - 0.25\lambda = 0 \end{aligned} \]</div>
+      <p>이므로 \(\lambda = 0\)과 \(\lambda = 0.25\)이다. \(\lambda = 0\)이면 \(0.16x - 0.12z = 0\)에서 고유벡터는 \((0.6, 0, 0.8)\), 곧 막대 방향이다. \(\lambda = 0.25\)이면 \(-0.09x - 0.12z = 0\)에서 \((0.8, 0, -0.6)\)이다. 정리하면 고유값은 \(0,\ 0.25,\ 0.25\ \text{kg}\cdot\text{m}^2\)이고, \(0.25\)는 대수적 중복도가 2다. 그 고유 공간은 \(\hat{\mathbf y}\)와 \((0.8, 0, -0.6)\)이 펼치는 평면, 곧 막대에 수직인 평면 전체다. 기하적 중복도도 2다.</p>
+      <p>(나) 막대에 수직인 축이면 어느 것이든 \(I\boldsymbol\omega = 0.25\,\boldsymbol\omega\)이므로 \(\mathbf L \parallel \boldsymbol\omega\)이고, 축받이는 토크를 줄 필요가 없다. 막대 방향으로 돌리면 \(\mathbf L = 0\)이다. 점질량들은 막대 위에 있어서 막대 둘레로 돌아도 움직이지 않기 때문이다. 4장에서 "\(\mathbf L\)이 막대에 수직"이었던 이유가 이것이다.</p>
+      <p>(다) \(\hat{\mathbf z}\)를 고유벡터로 나누면 \(\hat{\mathbf z} = 0.8\,(0.6, 0, 0.8) - 0.6\,(0.8, 0, -0.6)\)이다(두 성분은 \(\hat{\mathbf z}\)와 각 고유벡터의 내적이다). \(I\)를 곱하면 첫째 성분은 고유값 0 때문에 사라지고, 둘째 성분은 0.25배가 된다.</p>
+      <div class="formula">\[ \begin{aligned} \mathbf L &= 4.0 \times 0.25 \times (-0.6)\,(0.8, 0, -0.6) \\ &= (-0.48,\ 0,\ 0.36)\ \text{kg}\cdot\text{m}^2/\text{s} \end{aligned} \]</div>
+      <p><b>숫자로 보기.</b> 4장에서 BAC-CAB 공식으로 직접 계산한 값과 같다. 단위는 \(\text{rad/s} \times \text{kg}\cdot\text{m}^2\)이고 라디안은 차원이 없다. \(\mathbf L\)이 \(\boldsymbol\omega\)와 어긋난 까닭은, \(\boldsymbol\omega\)가 고유값이 서로 다른 두 고유 방향에 걸쳐 있어서 두 성분이 서로 다른 배율로 늘어났기 때문이다.</p>
+    </div>
+
+    <div class="box ex" id="ex-rotation-eigen"><div class="box-h">회전 행렬의 고유값과 원편광</div>
+      <p><a href="ch07.html#eq-rotation-xyz">7장 식 (7.35)</a>의 \(R_z(\theta)\) (\(0 &lt; \theta &lt; \pi\))의 고유값과 고유벡터를 구하고, 복소 고유벡터의 물리적 뜻을 말하라.</p>
+      <p><b>풀이.</b> 셋째 행과 열은 떨어져 있으므로</p>
+      <div class="formula">\[ \begin{aligned} p(\lambda) &= (1 - \lambda)\big[(\cos\theta - \lambda)^2 + \sin^2\theta\big] \\ &= (1 - \lambda)(\lambda - e^{i\theta})(\lambda - e^{-i\theta}) \end{aligned} \]</div>
+      <p>이다. 둘째 줄은 \(\lambda^2 - 2\lambda\cos\theta + 1\)의 근이 \(\cos\theta \pm i\sin\theta\)라는 것과 <a href="ch02.html#eq-euler-formula">오일러 공식 (2.10)</a>에서 나온다. 고유값 1의 고유벡터는 회전축 \(\hat{\mathbf z}\)다. \(\lambda = e^{-i\theta}\)이면 첫째 행 \((\cos\theta - e^{-i\theta})x - \sin\theta\,y = i\sin\theta\,x - \sin\theta\,y = 0\)에서 \(y = ix\)이므로 고유벡터는 \((1, i, 0)/\sqrt2\)이다. 같은 방법으로 \(\lambda = e^{i\theta}\)의 고유벡터는 \((1, -i, 0)/\sqrt2\)이다.</p>
+      <p>실수 행렬이지만 \(\theta \ne 0, \pi\)이면 실수 고유벡터는 축 하나뿐이다. 복소 고유벡터는 2장의 페이저로 읽는다. 전기장 \(\mathbf E = \operatorname{Re}\big[E_0(\hat{\mathbf x} + i\hat{\mathbf y})e^{-i\omega t}\big] = E_0(\cos\omega t,\ \sin\omega t,\ 0)\)은 \(z\)축 둘레로 시계 반대 방향으로 도는 원편광이다. 이 장의 모양을 \(\theta\)만큼 돌리면 \(e^{-i\theta}\)라는 위상만 붙는다. 원 운동을 돌려 놓은 것은 시간을 \(\theta/\omega\)만큼 옮긴 것과 같기 때문이다.</p>
+      <p><b>숫자로 보기.</b> \(\theta = 120^\circ\)이면 고유값은 \(1,\ e^{\pm 2\pi i/3} = -\tfrac12 \pm \tfrac{\sqrt3}{2}i\)이다. 합은 \(1 - \tfrac12 - \tfrac12 = 0\)으로 \(\operatorname{tr}R_z = 1 + 2\cos120^\circ = 0\)과 같고, 곱은 \(1 \times \lvert e^{2\pi i/3}\rvert^2 = 1 = \det R_z\)이다. <a href="ch07.html#eq-rotation-trace">7장 식 (7.40)</a>의 \(\operatorname{tr}R = 1 + 2\cos\theta\)는 식 <a class="ref" href="#eq-eigen-trace-det"></a>의 한 경우였던 것이다.</p>
+    </div>
+    <div class="callout warn"><strong>실수 행렬의 복소 고유값</strong><p>실수 행렬의 복소 고유값은 켤레 쌍으로 나온다(특성 다항식의 계수가 실수이므로). 실수 고유값의 고유벡터는 실수로 고를 수 있지만, 복소 고유값의 고유벡터는 반드시 복소수다.</p></div>
+  </section>
+
+  <section id="s2">
+    <h2>대각화</h2>
+    <p>같은 렌즈를 같은 간격으로 늘어놓은 광학계에서 광선의 높이와 기울기는 렌즈 한 구간마다 같은 \(2 \times 2\) 행렬 \(M\)으로 바뀐다. 렌즈 100개 뒤의 광선을 알려면 \(M^{100}\)이 필요하다. 고유벡터로 이루어진 기저에서는 행렬이 각 기저 벡터를 \(\lambda\)배 할 뿐이므로 대각 행렬이 되고, 거듭제곱은 \(\lambda^{100}\)이다. 이 절에서는 그런 기저가 언제 있는지를 정한다.</p>
+
+    <h3 id="s2-condition">대각화 가능 조건</h3>
+    <p>고유벡터 \(\mathbf v_1, \ldots, \mathbf v_n\)을 열로 세운 행렬을 \(S = (\mathbf v_1\ \mathbf v_2\ \cdots\ \mathbf v_n)\)이라 하자. \(AS\)의 \(j\)번째 열은 \(A\mathbf v_j = \lambda_j\mathbf v_j\)이므로</p>
+    <div class="formula" id="eq-eigen-columns">\[ AS = SD, \qquad D = \operatorname{diag}(\lambda_1, \ldots, \lambda_n) \]</div>
+    <p>이다. \(S\)가 가역이면 양변 왼쪽에 \(S^{-1}\)을 곱해 \(S^{-1}AS = D\)를 얻는다. <a href="ch07.html#eq-similarity-transform">7장 식 (7.28)</a>의 닮음 변환으로 읽으면, 고유벡터를 새 기저로 삼았을 때 \(A\)의 행렬이 \(D\)라는 뜻이다.</p>
+    <div class="box thm" id="thm-diagonalization"><div class="box-h">대각화 가능 조건</div>
+      <p>\(n \times n\) 행렬 \(A\)에 대해 가역 행렬 \(S\)와 대각 행렬 \(D\)가 있어 \(S^{-1}AS = D\)이면 \(A\)를 <span class="term">대각화 가능</span> <span class="en">(diagonalizable)</span>하다고 한다.</p>
+      <ol>
+        <li>\(A\)가 대각화 가능한 것과 \(A\)가 선형 독립인 고유벡터 \(n\)개를 갖는 것은 동치다. 이때 \(S\)의 열은 그 고유벡터이고, \(D\)의 대각 성분은 같은 순서의 고유값이다.</li>
+        <li>서로 다른 고유값에 속하는 고유벡터들은 선형 독립이다. 따라서 \(A\)의 고유값 \(n\)개가 모두 다르면 \(A\)는 대각화 가능하다.</li>
+        <li>일반적으로 \(A\)가 대각화 가능한 것은 모든 고유값에서 기하적 중복도가 대수적 중복도와 같은 것과 동치다.</li>
+      </ol>
+      <details class="proof"><summary>증명</summary>
+        <p>1. 선형 독립인 고유벡터 \(n\)개가 있으면 그것을 열로 세운 \(S\)는 가역이고(<a href="ch07.html#thm-homogeneous-solution">정리 7.6</a>), 식 <a class="ref" href="#eq-eigen-columns"></a>에서 \(S^{-1}AS = D\)이다. 거꾸로 \(S^{-1}AS = D\)이면 \(AS = SD\)의 \(j\)번째 열이 \(A\mathbf s_j = D_{jj}\mathbf s_j\)이므로 \(S\)의 열들은 고유벡터이고, \(S\)가 가역이므로 선형 독립이다.</p>
+        <p>2. 고유벡터의 개수 \(k\)에 대한 귀납법을 쓴다. \(k = 1\)이면 \(\mathbf v_1 \ne 0\)이라 성립한다. \(k - 1\)개에서 성립한다고 하고, \(c_1\mathbf v_1 + \cdots + c_k\mathbf v_k = 0\)이라 하자. 여기에 \(A - \lambda_kI\)를 곱하면 \(\sum_{i=1}^{k-1}c_i(\lambda_i - \lambda_k)\mathbf v_i = 0\)이다. 귀납 가정에서 \(c_i(\lambda_i - \lambda_k) = 0\)이고, \(\lambda_i \ne \lambda_k\)이므로 \(c_i = 0\) (\(i &lt; k\))이다. 남은 \(c_k\mathbf v_k = 0\)에서 \(c_k = 0\)이다.</p>
+        <p>3. 먼저 기하적 중복도 \(g\)가 대수적 중복도 \(a\)를 넘지 않음을 보이자. 고유값 \(\mu\)의 고유 공간의 기저 \(g\)개를 첫 \(g\)개의 열로 하고 나머지를 채워 가역 행렬 \(S\)를 만들면, \(S^{-1}AS\)의 왼쪽 위 \(g \times g\) 블록은 \(\mu I\)이고 그 아래는 0이다. 닮은 행렬은 특성 다항식이 같으므로 \(p(\lambda)\)는 \((\mu - \lambda)^g\)로 나누어지고, \(g \le a\)이다. 이제 고유 공간마다 기저를 골라 모두 모은다. 2와 같은 귀납 논증(각 \(\mathbf v_i\) 자리에 같은 고유 공간의 벡터들의 일차 결합을 넣는다)으로 이 벡터들은 선형 독립이다. 그 개수는 \(\sum g_i \le \sum a_i = n\)이고, 등호는 모든 \(g_i = a_i\)일 때만 성립한다. 1에 따라 \(n\)개일 때만 대각화 가능하다.</p>
+      </details>
+    </div>
+    <p>대각화가 되면 행렬을 거듭제곱하거나 행렬에 함수를 씌우는 일이 숫자를 다루는 일로 바뀐다.</p>
+    <div class="formula" id="eq-diagonalization">\[ A = SDS^{-1}, \qquad A^k = SD^kS^{-1} \]</div>
+    <p>가운데의 \(S^{-1}S\)가 모두 지워지기 때문이다(\(A^2 = SDS^{-1}SDS^{-1} = SD^2S^{-1}\)). 같은 이유로 멱급수 \(f(x) = \sum c_kx^k\)의 수렴 반경 안에 고유값이 모두 들어 있으면</p>
+    <div class="formula" id="eq-matrix-function">\[ f(A) = S\,\operatorname{diag}\big(f(\lambda_1), \ldots, f(\lambda_n)\big)\,S^{-1} \]</div>
+    <p>이다. <a class="ref" href="#ex-eigen-3x3"></a>의 행렬로 해 보자. 고유벡터를 고유값 \(1, 2, 3\)의 순서로 세우면</p>
+    <div class="formula">\[ S = \begin{pmatrix} 1 & 0 & 1 \\ 1 & 0 & -1 \\ -2 & 1 & 0 \end{pmatrix}, \quad S^{-1} = \begin{pmatrix} \tfrac12 & \tfrac12 & 0 \\ 1 & 1 & 1 \\ \tfrac12 & -\tfrac12 & 0 \end{pmatrix} \]</div>
+    <p>이고, \(D^k = \operatorname{diag}(1, 2^k, 3^k)\)을 끼워 곱하면</p>
+    <div class="formula" id="eq-power-example">\[ A^k = \begin{pmatrix} \tfrac{1 + 3^k}{2} & \tfrac{1 - 3^k}{2} & 0 \\ \tfrac{1 - 3^k}{2} & \tfrac{1 + 3^k}{2} & 0 \\ 2^k - 1 & 2^k - 1 & 2^k \end{pmatrix} \]</div>
+    <p>이다. \(k = 1\)이면 \(A\)가 되돌아온다. \(k\)가 크면 \(3^k\)이 지배하므로, \(A\)를 거듭 작용한 벡터는 가장 큰 고유값의 고유벡터 \((1, -1, 0)\) 방향으로 몰린다.</p>
+    <div class="callout deep"><strong>대각화되지 않는 행렬과 조르당 형식</strong><p>\(A = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}\)(밀림 변환)은 특성 다항식이 \((1 - \lambda)^2\)이라 고유값 1의 대수적 중복도가 2다. 그러나 \((A - I)\mathbf v = 0\)의 해는 \((1, 0)\) 방향뿐이라 기하적 중복도가 1이고, <a class="ref" href="#thm-diagonalization"></a>의 3에 따라 대각화되지 않는다. 이런 행렬도 \(\begin{pmatrix} \lambda & 1 \\ 0 & \lambda \end{pmatrix}\) 같은 블록을 대각선에 늘어놓은 꼴(<span class="term">조르당 형식</span> <span class="en">(Jordan normal form)</span>)과 닮았다는 것이 알려져 있다(R. A. Horn, C. R. Johnson, <i>Matrix Analysis</i>, 2nd ed., Cambridge 2013). 물리에서 이 경우는 임계 감쇠로 나타난다. \(\ddot x + 2\gamma\dot x + \gamma^2x = 0\)을 \((x, \dot x)\)의 1계 연립 방정식으로 쓰면 계수 행렬의 고유값 \(-\gamma\)가 겹치고 고유벡터는 하나뿐이어서, \(e^{-\gamma t}\) 말고 \(te^{-\gamma t}\)라는 해가 필요해진다(<a class="ref" href="#prob-defective-exponential"></a>, 10장의 <a href="ch10.html#eq-damped-oscillator">감쇠 진동자</a>).</p></div>
+
+    <h3 id="s2-lens">렌즈 열과 광선의 안정성</h3>
+    <div class="box ex" id="ex-lens-waveguide"><div class="box-h">같은 렌즈를 늘어놓은 광학계에서 광선이 빠져나가는 조건</div>
+      <p>초점 거리 \(f\)인 얇은 볼록 렌즈가 간격 \(d\)로 끝없이 늘어서 있다. 근축 광선의 상태를 축에서의 높이 \(y\)와 기울기 \(\theta\)의 열벡터 \((y, \theta)\)로 쓰면, 거리 \(d\)를 가는 것은 \(\begin{pmatrix} 1 & d \\ 0 & 1 \end{pmatrix}\), 렌즈를 지나는 것은 \(\begin{pmatrix} 1 & 0 \\ -1/f & 1 \end{pmatrix}\)이다. (가) 광선이 축 근처에 머무는 조건을 고유값으로 구하라. (나) \(f = 0.50\ \text{m}\)이고 \(d = 1.00\ \text{m}\)일 때와 \(d = 2.25\ \text{m}\)일 때, 렌즈 \(N\)개를 지난 광선을 구하라.</p>
+      <p><b>풀이.</b> (가) 한 구간(진행 뒤 렌즈)의 행렬은 나중 것을 왼쪽에 써서</p>
+      <div class="formula" id="eq-lens-period">\[ M = \begin{pmatrix} 1 & 0 \\ -\tfrac1f & 1 \end{pmatrix}\begin{pmatrix} 1 & d \\ 0 & 1 \end{pmatrix} = \begin{pmatrix} 1 & d \\ -\tfrac1f & 1 - \tfrac df \end{pmatrix} \]</div>
+      <p>이다. \(\det M = 1\)이고 \(\operatorname{tr}M = 2 - d/f\)이므로 특성 방정식은 \(\lambda^2 - (\operatorname{tr}M)\lambda + 1 = 0\)이고 두 고유값의 곱은 1이다. 두 경우로 나뉜다.</p>
+      <ul>
+        <li>\(\lvert\operatorname{tr}M\rvert &lt; 2\): 근이 켤레 복소수 \(\lambda = e^{\pm i\phi}\), \(\cos\phi = 1 - d/2f\)이다. 두 고유값이 다르므로 <a class="ref" href="#thm-diagonalization"></a>에 따라 \(M^N = S\operatorname{diag}(e^{iN\phi}, e^{-iN\phi})S^{-1}\)이고, 성분이 \(N\)에 대해 유계다. 광선은 렌즈마다 위상 \(\phi\)씩 나아가며 축 둘레에서 진동한다.</li>
+        <li>\(\lvert\operatorname{tr}M\rvert > 2\): 근이 실수이고 곱이 1이므로 하나는 절댓값이 1보다 크다. 그 고유벡터 성분이 \(\lvert\lambda\rvert^N\)으로 자라서, 광선은 결국 빠져나간다.</li>
+      </ul>
+      <p>따라서 안정 조건은 \(-2 &lt; 2 - d/f &lt; 2\), 곧 \(0 &lt; d &lt; 4f\)이다.</p>
+      <p>(나) \(d = 1.00\ \text{m}\)이면 \(d/f = 2\), \(\operatorname{tr}M = 0\), \(\phi = 90^\circ\)이다. \(M = \begin{pmatrix} 1 & 1.00\ \text{m} \\ -2.0\ \text{m}^{-1} & -1 \end{pmatrix}\)을 직접 제곱하면 \(M^2 = -I\)이다. 렌즈 둘을 지나면 광선이 축에 대해 뒤집히고, 넷을 지나면 제자리다. 고유값 \(\pm i\)의 네제곱이 1이라는 것과 같은 이야기다.</p>
+      <p>\(d = 2.25\ \text{m}\)이면 \(d/f = 4.5\), \(\operatorname{tr}M = -2.5\)이고 \(\lambda^2 + 2.5\lambda + 1 = 0\)에서 \(\lambda = -2,\ -\tfrac12\)이다. \((M + 2I)\mathbf v = 0\)의 첫째 행 \(3y + 2.25\theta = 0\)에서 고유벡터는 \((y, \theta) \propto (1\ \text{m},\ -\tfrac43)\), 같은 방법으로 \(\lambda = -\tfrac12\)의 고유벡터는 \((1\ \text{m},\ -\tfrac23)\)이다. 축과 나란히 높이 \(y_0\)으로 들어온 광선 \((y_0, 0)\)을 두 고유벡터로 나누면 계수가 \(-1\)과 \(2\)이므로(\(y_0\) 단위로), \(N\)번째 렌즈에서의 높이는</p>
+      <div class="formula" id="eq-lens-unstable">\[ y_N = y_0\big[2(-\tfrac12)^N - (-2)^N\big] \]</div>
+      <p>이다. \(N = 0, 1, 2\)에서 \(y_0,\ y_0,\ -3.5\,y_0\)이고, \(M\)을 직접 곱한 값과 같다.</p>
+      <p><b>숫자로 보기.</b> 축에서 \(y_0 = 1.0\ \text{mm}\) 떨어져 들어온 광선은 렌즈 10개 뒤에 \(\lvert y_{10}\rvert \approx 2^{10} \times 1.0\ \text{mm} = 1.0\ \text{m}\)에 있다. 렌즈 지름을 훨씬 넘으므로 빛은 렌즈 몇 개 만에 사라진다. 반면 \(d = 1.00\ \text{m}\)에서는 몇 개를 지나든 높이가 \(y_0, y_0, -y_0, -y_0, \ldots\)로 \(y_0\)을 넘지 않는다. 높이 \(y\)와 \(f\), \(d\)는 모두 길이이고 \(d/f\)는 차원이 없으므로 안정 조건 \(d &lt; 4f\)는 단위와 상관없다.</p>
+    </div>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 280" role="img" aria-label="(가) d = f: 안정, 6개마다 제자리"><defs><clipPath id="f0802a-clip"><rect x="38" y="28" width="330" height="224"/></clipPath></defs><line x1="40" y1="140" x2="366" y2="140" class="s-grid"/><line x1="67.2" y1="32" x2="67.2" y2="248" class="s-line" style="stroke-width:1"/><line x1="94.3" y1="32" x2="94.3" y2="248" class="s-line" style="stroke-width:1"/><line x1="121.5" y1="32" x2="121.5" y2="248" class="s-line" style="stroke-width:1"/><line x1="148.7" y1="32" x2="148.7" y2="248" class="s-line" style="stroke-width:1"/><line x1="175.8" y1="32" x2="175.8" y2="248" class="s-line" style="stroke-width:1"/><line x1="203" y1="32" x2="203" y2="248" class="s-line" style="stroke-width:1"/><line x1="230.2" y1="32" x2="230.2" y2="248" class="s-line" style="stroke-width:1"/><line x1="257.3" y1="32" x2="257.3" y2="248" class="s-line" style="stroke-width:1"/><line x1="284.5" y1="32" x2="284.5" y2="248" class="s-line" style="stroke-width:1"/><line x1="311.7" y1="32" x2="311.7" y2="248" class="s-line" style="stroke-width:1"/><line x1="338.8" y1="32" x2="338.8" y2="248" class="s-line" style="stroke-width:1"/><line x1="366" y1="32" x2="366" y2="248" class="s-line" style="stroke-width:1"/><path d="M40,63.1 L67.2,63.1 L94.3,140 L121.5,216.9 L148.7,216.9 L175.8,140 L203,63.1 L230.2,63.1 L257.3,140 L284.5,216.9 L311.7,216.9 L338.8,140 L366,63.1" class="s-acc" style="stroke-width:2.2" clip-path="url(#f0802a-clip)"/><text x="34" y="67.1" class="t-dim" text-anchor="end">1</text><text x="34" y="144" class="t-dim" text-anchor="end">0</text><text x="34" y="220.9" class="t-dim" text-anchor="end">-1</text><text x="12" y="20" class="t">(가) d = f: 안정, 6개마다 제자리</text><text x="366" y="268" class="t-dim" text-anchor="end">렌즈 번호 1 … 12</text></svg><svg viewBox="0 0 380 280" role="img" aria-label="(나) d = 4.5f: 불안정, 렌즈마다 −2배"><defs><clipPath id="f0802b-clip"><rect x="38" y="28" width="330" height="224"/></clipPath></defs><line x1="40" y1="140" x2="366" y2="140" class="s-grid"/><line x1="105.2" y1="32" x2="105.2" y2="248" class="s-line" style="stroke-width:1"/><line x1="170.4" y1="32" x2="170.4" y2="248" class="s-line" style="stroke-width:1"/><line x1="235.6" y1="32" x2="235.6" y2="248" class="s-line" style="stroke-width:1"/><line x1="300.8" y1="32" x2="300.8" y2="248" class="s-line" style="stroke-width:1"/><line x1="366" y1="32" x2="366" y2="248" class="s-line" style="stroke-width:1"/><path d="M40,137.5 L105.2,137.5 L170.4,148.8 L235.6,120.6 L300.8,179.7 L366,60.2" class="s-acc" style="stroke-width:2.2" clip-path="url(#f0802b-clip)"/><text x="34" y="69" class="t-dim" text-anchor="end">30</text><text x="34" y="144" class="t-dim" text-anchor="end">0</text><text x="34" y="219" class="t-dim" text-anchor="end">-30</text><text x="12" y="20" class="t">(나) d = 4.5f: 불안정, 렌즈마다 −2배</text><text x="366" y="268" class="t-dim" text-anchor="end">렌즈 번호 1 … 5</text></svg></div>
+      <figcaption><b>그림 8-2.</b> 렌즈 열을 지나는 광선의 높이(처음 높이 1, 기울기 0). 세로선이 렌즈다. (가) \(d = f\)이면 \(\cos\phi = 1/2\), \(\phi = 60^\circ\)라 높이가 \(1, 1, 0, -1, -1, 0, 1, \ldots\)으로 렌즈 6개마다 되풀이된다. (나) \(d = 4.5f\)이면 고유값 \(-2\)의 성분이 렌즈마다 부호를 바꾸며 두 배가 되어, 높이가 \(1, 1, -3.5, 7.75, -15.9, 31.9\)로 커진다. 세로 눈금이 (가)의 30배다. 점들은 \(M^N\)을 곱해 계산했다.</figcaption>
+    </figure>
+  </section>
+
+  <section id="s3">
+    <h2>에르미트 행렬과 유니타리 행렬</h2>
+    <p><a class="ref" href="#ex-rotation-eigen"></a>에서 보았듯이 실수 행렬만 다루어도 복소 고유벡터가 나온다. 양자역학은 처음부터 복소수로 쓰인다. 7장 끝에서 각운동량을 \(J_k = i\hbar L_k\)로 썼고, 이 행렬은 성분이 순허수다. 그런데 측정해서 얻는 각운동량은 실수여야 한다. 복소 행렬 가운데 어떤 것이 실수 고유값을 보장할까? 이 질문에 답하려면 먼저 복소 벡터의 길이를 정해야 한다.</p>
+
+    <h3 id="s3-dagger">복소 벡터의 길이와 수반</h3>
+    <p>실수 벡터의 길이 제곱은 \(\mathbf v^{\mathsf T}\mathbf v = \sum v_i^2\)이다. 복소 벡터에 그대로 쓰면 \(\mathbf v = (1, i)\)에서 \(1 + i^2 = 0\)이 되어, 0이 아닌 벡터의 길이가 0이 된다. 그래서 한쪽에 켤레를 씌운다. 열벡터 \(\mathbf u\)의 켤레 전치를 \(\mathbf u^\dagger = (\mathbf u^*)^{\mathsf T}\)라 하고</p>
+    <div class="formula" id="eq-complex-dot">\[ \mathbf u^\dagger\mathbf v = \sum_{i=1}^{n} u_i^*v_i, \qquad \mathbf v^\dagger\mathbf v = \sum_{i=1}^{n}\lvert v_i\rvert^2 \]</div>
+    <p>로 쓴다. \(\mathbf v^\dagger\mathbf v\)는 0 이상의 실수이고, \(\mathbf v = 0\)일 때만 0이다. \((\mathbf u^\dagger\mathbf v)^* = \mathbf v^\dagger\mathbf u\)이므로 순서를 바꾸면 켤레가 된다. \(\mathbf u^\dagger\mathbf v = 0\)이면 두 벡터가 <span class="term">직교한다</span>고 한다. 이것은 9장에서 정의할 <a href="ch09.html#def-inner-product">복소 내적</a>의 가장 단순한 예이고, 켤레가 왼쪽 자리에 붙는 물리 관례를 따른다.</p>
+    <p>행렬의 수반 \(A^\dagger = (A^*)^{\mathsf T}\)은 \((A^\dagger)_{ij} = A_{ji}^*\)이고, 전치처럼 \((AB)^\dagger = B^\dagger A^\dagger\)이다(<a href="ch07.html#eq-transpose-product">7장 식 (7.4)</a>에 켤레를 씌운 것). 그러면 \((A\mathbf u)^\dagger\mathbf v = \mathbf u^\dagger A^\dagger\mathbf v\), 곧</p>
+    <div class="formula" id="eq-dagger-move">\[ \mathbf u^\dagger(A\mathbf v) = (A^\dagger\mathbf u)^\dagger\mathbf v \]</div>
+    <p>이다. 행렬을 내적의 오른쪽 자리에서 왼쪽 자리로 옮기면 \(A^\dagger\)가 된다. 9장은 이 성질로 <a href="ch09.html#def-adjoint">수반 연산자</a>를 정의한다.</p>
+
+    <h3 id="s3-hermitian">에르미트 행렬과 파울리 행렬</h3>
+    <div class="box def" id="def-hermitian-matrix"><div class="box-h">에르미트 행렬</div>
+      <p>\(n \times n\) 복소 행렬 \(A\)가 \(A^\dagger = A\), 곧 모든 \(i, j\)에서 \(A_{ij} = A_{ji}^*\)이면 \(A\)를 <span class="term">에르미트 행렬</span> <span class="en">(Hermitian matrix)</span>이라 한다. 식 <a class="ref" href="#eq-dagger-move"></a>로 쓰면 모든 \(\mathbf u, \mathbf v\)에서 \(\mathbf u^\dagger(A\mathbf v) = (A\mathbf u)^\dagger\mathbf v\)인 것과 같다. \(A^\dagger = -A\)이면 <span class="term">반에르미트 행렬</span> <span class="en">(anti-Hermitian)</span>이라 한다.</p>
+    </div>
+    <p>에르미트 행렬의 대각 성분은 \(A_{ii} = A_{ii}^*\)이므로 실수다. 실수 에르미트 행렬은 실수 대칭 행렬이다. \(A\)가 반에르미트이면 \(iA\)는 에르미트다(\((iA)^\dagger = -iA^\dagger = iA\)). 7장의 생성자 \(L_k\)는 실수 반대칭이므로 반에르미트이고, \(J_k = i\hbar L_k\)는 \(J_k^\dagger = -i\hbar L_k^{\mathsf T} = i\hbar L_k = J_k\)로 에르미트다. 7장에서 미뤄 둔 약속을 이것으로 확인했다.</p>
+    <p>\(2 \times 2\) 에르미트 행렬은 대각에 실수 두 개, 대각선 밖에 복소수 하나(와 그 켤레)가 있으므로 실수 매개변수가 네 개다. 단위 행렬과 함께 이 공간의 기저가 되는 세 행렬이 <span class="term">파울리 행렬</span> <span class="en">(Pauli matrices)</span>이다.</p>
+    <div class="formula" id="eq-pauli-matrices">\[ \sigma_x = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}, \quad \sigma_y = \begin{pmatrix} 0 & -i \\ i & 0 \end{pmatrix}, \quad \sigma_z = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix} \]</div>
+    <p>셋 모두 에르미트이고 대각합이 0이다. \(\sigma_1 = \sigma_x\), \(\sigma_2 = \sigma_y\), \(\sigma_3 = \sigma_z\)로 쓰면, 두 개의 곱은 하나의 공식으로 정리된다(합 규약).</p>
+    <div class="formula" id="eq-pauli-product">\[ \sigma_i\sigma_j = \delta_{ij}I + i\varepsilon_{ijk}\sigma_k \]</div>
+    <p>예를 들어 \(\sigma_x\sigma_y = \begin{pmatrix} i & 0 \\ 0 & -i \end{pmatrix} = i\sigma_z\)이고, \(\sigma_x^2 = I\)이다. 나머지는 <a class="ref" href="#prob-pauli-identity"></a>에서 확인한다. 이 식의 \(i \leftrightarrow j\) 반대칭 부분과 대칭 부분을 나누면 \([\sigma_i, \sigma_j] = 2i\varepsilon_{ijk}\sigma_k\), \(\sigma_i\sigma_j + \sigma_j\sigma_i = 2\delta_{ij}I\)이다. 따라서 \(T_k = -i\sigma_k/2\)는</p>
+    <div class="formula">\[ [T_i, T_j] = -\tfrac14\,[\sigma_i, \sigma_j] = -\tfrac{i}{2}\varepsilon_{ijk}\sigma_k = \varepsilon_{ijk}T_k \]</div>
+    <p>로 회전 생성자와 똑같은 교환 관계(<a href="ch07.html#eq-so3-commutator">7장 식 (7.51)</a>)를 만족한다. \(2 \times 2\) 행렬이 3차원 회전의 구조를 흉내 내는 것이다. 8.7절에서 이 사실로 스핀의 회전을 계산한다. 모든 \(2 \times 2\) 에르미트 행렬은 실수 \(a_0\)와 실수 벡터 \(\mathbf a\)로</p>
+    <div class="formula" id="eq-hermitian-pauli">\[ H = a_0I + \mathbf a\cdot\boldsymbol\sigma = \begin{pmatrix} a_0 + a_3 & a_1 - ia_2 \\ a_1 + ia_2 & a_0 - a_3 \end{pmatrix} \]</div>
+    <p>로 쓸 수 있다(\(\mathbf a\cdot\boldsymbol\sigma = a_k\sigma_k\)).</p>
+
+    <h3 id="s3-unitary">유니타리 행렬</h3>
+    <p>직교 행렬이 실수 벡터의 길이를 보존하듯, 복소 벡터의 길이 \(\mathbf v^\dagger\mathbf v\)를 보존하는 행렬이 있다.</p>
+    <div class="box def" id="def-unitary-matrix"><div class="box-h">유니타리 행렬</div>
+      <p>\(n \times n\) 복소 행렬 \(U\)가</p>
+      <div class="formula" id="eq-unitary-condition">\[ U^\dagger U = UU^\dagger = I \]</div>
+      <p>를 만족하면 <span class="term">유니타리 행렬</span> <span class="en">(unitary matrix)</span>이라 한다. 다음은 같은 말이다: \(U^{-1} = U^\dagger\)이다. \(U\)의 열들이 정규직교한다(\(\mathbf u_i^\dagger\mathbf u_j = \delta_{ij}\)). 모든 \(\mathbf u, \mathbf v\)에서 \((U\mathbf u)^\dagger(U\mathbf v) = \mathbf u^\dagger\mathbf v\)이다.</p>
+    </div>
+    <p>실수 유니타리 행렬은 직교 행렬이다. \(\det U^\dagger = (\det U)^*\)이므로 \(\lvert\det U\rvert^2 = \det(U^\dagger U) = 1\), 곧 \(\lvert\det U\rvert = 1\)이다. 직교 행렬의 \(\det R = \pm1\)이 복소수에서는 단위원 위의 아무 점이 된다. 유니타리 행렬은 곱에 대해 군 \(U(n)\)을 이루고, 그 가운데 \(\det U = 1\)인 것이 \(SU(n)\)이다.</p>
+    <p>유니타리 행렬의 열 \(\mathbf u_1, \ldots, \mathbf u_n\)을 새 기저로 삼으면 <a href="ch07.html#eq-change-of-basis">7장 식 (7.27)</a>의 \(S^{-1}\)이 \(U^\dagger\)가 되어 성분은 \(\mathbf v' = U^\dagger\mathbf v\), 곧 \(v'_i = \mathbf u_i^\dagger\mathbf v\)이고, 행렬은 \(A' = U^\dagger AU\)로 바뀐다. 이것을 <span class="term">유니타리 닮음</span> <span class="en">(unitary similarity)</span>이라 한다. 에르미트성은 유니타리 닮음에서 보존된다: \((U^\dagger AU)^\dagger = U^\dagger A^\dagger U = U^\dagger AU\).</p>
+
+    <h3 id="s3-real-eigen">고유값은 실수, 고유벡터는 직교</h3>
+    <p>이제 이 절의 중심 정리다. 증명이 짧지만 이 장 전체와 양자역학이 기대는 결과이므로 펼쳐 쓴다.</p>
+    <div class="box thm" id="thm-hermitian-real-eigen"><div class="box-h">에르미트 행렬의 고유값과 고유벡터</div>
+      <p>\(A\)가 에르미트 행렬이면</p>
+      <ol>
+        <li>\(A\)의 고유값은 모두 실수다.</li>
+        <li>서로 다른 고유값에 속하는 고유벡터는 직교한다: \(A\mathbf u = \mu\mathbf u\), \(A\mathbf v = \lambda\mathbf v\), \(\mu \ne \lambda\)이면 \(\mathbf u^\dagger\mathbf v = 0\)이다.</li>
+      </ol>
+      <p>\(U\)가 유니타리 행렬이면 고유값은 모두 \(\lvert\lambda\rvert = 1\)이고, 서로 다른 고유값에 속하는 고유벡터는 직교한다.</p>
+    </div>
+    <p><b>증명.</b> 1. \(A\mathbf v = \lambda\mathbf v\), \(\mathbf v \ne 0\)이라 하자. 왼쪽에 \(\mathbf v^\dagger\)를 곱하면 \(\mathbf v^\dagger A\mathbf v = \lambda\,\mathbf v^\dagger\mathbf v\)이다. 왼쪽 수의 켤레는 \((\mathbf v^\dagger A\mathbf v)^* = (\mathbf v^\dagger A\mathbf v)^\dagger = \mathbf v^\dagger A^\dagger\mathbf v = \mathbf v^\dagger A\mathbf v\)이므로(수 하나의 수반은 켤레다) 왼쪽은 실수다. \(\mathbf v^\dagger\mathbf v\)는 양의 실수이므로 \(\lambda = \mathbf v^\dagger A\mathbf v/\mathbf v^\dagger\mathbf v\)는 실수다.</p>
+    <p>2. \(\mathbf u^\dagger A\mathbf v\)를 두 가지로 계산한다. 오른쪽에 작용시키면 \(\lambda\,\mathbf u^\dagger\mathbf v\)이다. 식 <a class="ref" href="#eq-dagger-move"></a>과 \(A^\dagger = A\)로 왼쪽에 작용시키면 \((A\mathbf u)^\dagger\mathbf v = (\mu\mathbf u)^\dagger\mathbf v = \mu^*\,\mathbf u^\dagger\mathbf v = \mu\,\mathbf u^\dagger\mathbf v\)이다(1에서 \(\mu\)는 실수). 두 값을 빼면</p>
+    <div class="formula" id="eq-orthogonality-proof">\[ (\lambda - \mu)\,\mathbf u^\dagger\mathbf v = 0 \]</div>
+    <p>이고 \(\lambda \ne \mu\)이므로 \(\mathbf u^\dagger\mathbf v = 0\)이다.</p>
+    <p>유니타리 행렬: \(U\mathbf v = \lambda\mathbf v\)이면 \(\mathbf v^\dagger\mathbf v = (U\mathbf v)^\dagger(U\mathbf v) = \lvert\lambda\rvert^2\mathbf v^\dagger\mathbf v\)이므로 \(\lvert\lambda\rvert = 1\)이다. \(U\mathbf u = \mu\mathbf u\)이면 \(\mathbf u^\dagger\mathbf v = (U\mathbf u)^\dagger(U\mathbf v) = \mu^*\lambda\,\mathbf u^\dagger\mathbf v\)이고, \(\mu^* = 1/\mu\)이므로 \((1 - \lambda/\mu)\mathbf u^\dagger\mathbf v = 0\)이다. \(\lambda \ne \mu\)이면 \(\mathbf u^\dagger\mathbf v = 0\)이다. ∎</p>
+    <p><a class="ref" href="#ex-rotation-eigen"></a>의 회전 행렬은 실수 직교 행렬, 곧 유니타리 행렬이므로 고유값 \(1, e^{\pm i\theta}\)가 모두 단위원 위에 있고, 세 고유벡터 \(\hat{\mathbf z}\), \((1, \pm i, 0)/\sqrt2\)는 서로 직교한다. 실제로 \((1, i, 0)^\dagger(1, -i, 0) = 1 + (-i)(-i) = 1 - 1 = 0\)이다. 켤레 없이 계산하면 \(1 + 1 = 2\)가 나와서 틀린다.</p>
+    <p>파울리 행렬로 연습해 보자. 단위 벡터 \(\hat{\mathbf n}\)에 대해 식 <a class="ref" href="#eq-pauli-product"></a>에서 \((\hat{\mathbf n}\cdot\boldsymbol\sigma)^2 = n_in_j(\delta_{ij}I + i\varepsilon_{ijk}\sigma_k) = I\)이다(\(\varepsilon_{ijk}n_in_j = 0\)). 고유값을 \(\lambda\)라 하면 \(\lambda^2 = 1\)이고, 대각합이 0이므로 고유값은 \(+1\)과 \(-1\)이 하나씩이다. \(\hat{\mathbf n} = (\sin\theta\cos\phi, \sin\theta\sin\phi, \cos\theta)\)이면</p>
+    <div class="formula" id="eq-spinor-eigen">\[ \begin{aligned} \lambda = +1:&\quad \begin{pmatrix} \cos\tfrac\theta2 \\ e^{i\phi}\sin\tfrac\theta2 \end{pmatrix} \\ \lambda = -1:&\quad \begin{pmatrix} -e^{-i\phi}\sin\tfrac\theta2 \\ \cos\tfrac\theta2 \end{pmatrix} \end{aligned} \]</div>
+    <p>이다. 반각 공식 \(\cos\theta = \cos^2\tfrac\theta2 - \sin^2\tfrac\theta2\), \(\sin\theta = 2\sin\tfrac\theta2\cos\tfrac\theta2\)로 \((\hat{\mathbf n}\cdot\boldsymbol\sigma)\mathbf v = \pm\mathbf v\)를 확인할 수 있고, 두 벡터의 \(\dagger\) 곱은 \(-e^{-i\phi}\cos\tfrac\theta2\sin\tfrac\theta2 + e^{-i\phi}\sin\tfrac\theta2\cos\tfrac\theta2 = 0\)이다. 스핀 1/2 입자의 스핀 행렬은 \(\mathbf S = \tfrac\hbar2\boldsymbol\sigma\)이므로, 어느 방향 \(\hat{\mathbf n}\)으로 재든 \(\hat{\mathbf n}\cdot\mathbf S\)의 고유값은 \(\pm\hbar/2\) 두 개뿐이다. 반각 \(\theta/2\)가 나오는 것은 8.7절의 \(4\pi\) 주기와 같은 뿌리를 갖는다.</p>
+    <div class="callout deep" data-later="qm"><strong>왜 물리량은 에르미트 행렬인가</strong><p>양자역학에서 측정할 수 있는 양은 에르미트 연산자로 나타내고, 측정값은 그 고유값이며, 서로 다른 측정값에 해당하는 상태는 직교한다. <a class="ref" href="#thm-hermitian-real-eigen"></a>는 이 체계가 앞뒤가 맞는다는 수학적 보증이다. 측정과 확률의 해석(공준)은 양자역학 책의 몫이고, 이 책은 9장에서 함수 공간의 <a href="ch09.html#def-hermitian-operator">에르미트 연산자</a>로, 16장에서 미분 연산자의 <a href="ch16.html#thm-sl-real-orthogonal">고유함수의 직교성</a>으로 같은 정리를 넓힌다.</p></div>
+
+    <div class="box ex" id="ex-two-level"><div class="box-h">두 준위계의 에너지와 준위 반발</div>
+      <p>양자 상태가 두 개뿐인 계의 해밀토니안이 \(H = \begin{pmatrix} E_1 & V \\ V^* & E_2 \end{pmatrix}\) (\(E_1, E_2\) 실수)이다. (가) 에너지 고유값을 구하라. (나) \(E_1 - E_2\)를 바꿔 갈 때 두 준위가 어떻게 움직이는지 설명하라. (다) 암모니아 분자 NH₃에서 질소 원자가 수소 세 개가 이루는 평면의 위쪽에 있는 상태와 아래쪽에 있는 상태는 에너지가 같고, 터널링이 둘을 \(V = -A\) (\(A > 0\))로 잇는다. 두 에너지 준위의 차이가 진동수 \(\nu = 23.87\ \text{GHz}\)의 광자 에너지와 같을 때 \(A\)를 구하라.</p>
+      <p><b>풀이.</b> (가) \(\bar E = (E_1 + E_2)/2\), \(\delta = (E_1 - E_2)/2\)로 두면 식 <a class="ref" href="#eq-hermitian-pauli"></a>의 꼴 \(H = \bar EI + \mathbf a\cdot\boldsymbol\sigma\), \(\mathbf a = (\operatorname{Re}V,\ -\operatorname{Im}V,\ \delta)\)이다. \(\mathbf a\cdot\boldsymbol\sigma = \lvert\mathbf a\rvert\,\hat{\mathbf n}\cdot\boldsymbol\sigma\)의 고유값은 \(\pm\lvert\mathbf a\rvert\)이므로</p>
+      <div class="formula" id="eq-two-level-energies">\[ E_\pm = \bar E \pm \sqrt{\delta^2 + \lvert V\rvert^2} \]</div>
+      <p>이다. 고유벡터는 식 <a class="ref" href="#eq-spinor-eigen"></a>에서 \(\hat{\mathbf n} = \mathbf a/\lvert\mathbf a\rvert\)로 얻는다. 확인: \(E_+ + E_- = 2\bar E = \operatorname{tr}H\), \(E_+E_- = \bar E^2 - \delta^2 - \lvert V\rvert^2 = E_1E_2 - \lvert V\rvert^2 = \det H\)이다.</p>
+      <p>(나) \(V = 0\)이면 에너지는 \(E_1\), \(E_2\) 그대로이고 \(\delta = 0\)에서 두 준위가 교차한다(그림 8-3의 파선). \(V \ne 0\)이면 \(E_+ - E_- = 2\sqrt{\delta^2 + \lvert V\rvert^2} \ge 2\lvert V\rvert\)이므로 두 준위는 결코 만나지 않는다. 이것을 <span class="term">준위 반발</span> <span class="en">(level repulsion)</span> 또는 회피 교차라 한다. \(\lvert\delta\rvert \gg \lvert V\rvert\)이면 <a href="ch01.html#eq-sqrt-expansions">1장 식 (1.22)</a>의 \(\sqrt{1 + x} \approx 1 + x/2\)로</p>
+      <div class="formula">\[ E_\pm \approx \bar E \pm \Big(\lvert\delta\rvert + \frac{\lvert V\rvert^2}{2\lvert\delta\rvert}\Big) \]</div>
+      <p>이다. 결합은 위 준위를 더 위로, 아래 준위를 더 아래로 \(\lvert V\rvert^2/2\lvert\delta\rvert\)만큼 민다. 이때 고유벡터는 원래 상태와 거의 같다. 예를 들어 \(\delta = 3A\)이면 아래 준위의 고유벡터에서 \(E_2\) 상태가 차지하는 몫은 \(\cos^2(\theta/2) = 0.974\)이다(\(\cos\theta = \delta/\sqrt{\delta^2 + A^2}\)).</p>
+      <p><b>다음 항은 몇 차인가.</b> 버린 항은 \(-\lvert V\rvert^4/8\lvert\delta\rvert^3\)이다. \(\delta = 3A\)이면 근사값 \(3.1667A\)와 정확한 값 \(\sqrt{10}\,A = 3.1623A\)의 차이가 이 항 \(A/216\)과 맞는다.</p>
+      <p>(다) \(E_1 = E_2 = E_0\), \(V = -A\)이면 \(\delta = 0\)이고 \(E_\pm = E_0 \pm A\)이다. 아래 준위의 고유벡터는 \((1, 1)/\sqrt2\)로 두 배치가 같은 비율로 섞인 대칭 상태이고, 위 준위는 \((1, -1)/\sqrt2\)이다. 분리 \(2A\)가 \(h\nu\)이므로</p>
+      <div class="formula">\[ \begin{aligned} 2A &= (6.626 \times 10^{-34}\ \text{J}\cdot\text{s})(2.387 \times 10^{10}\ \text{s}^{-1}) \\ &= 1.582 \times 10^{-23}\ \text{J} = 9.87 \times 10^{-5}\ \text{eV} \end{aligned} \]</div>
+      <p><b>숫자로 보기.</b> \(A = 4.94 \times 10^{-5}\ \text{eV}\)이다. 23.87 GHz는 최초의 메이저가 쓴 암모니아의 전이 진동수다(J. P. Gordon, H. J. Zeiger, C. H. Townes, Phys. Rev. 99, 1264 (1955)). 이 분리는 실온의 \(k_BT = 25.85\ \text{meV}\)보다 260배 작아서, 실온의 암모니아 기체에서는 두 준위의 분자 수가 거의 같다(볼츠만 인자의 비 \(e^{-2A/k_BT} = 0.996\)). 메이저는 전기장이 만드는 \(\delta\) 때문에 두 준위가 반대로 움직이는 성질(위의 (나))로 위 준위의 분자를 골라냈다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 300" role="img" aria-label="두 준위계의 에너지. 결합이 없으면 두 준위가 δ = 0에서 교차하지만, 결합 A가 있으면 2A만큼 벌어진 채 서로 밀어낸다"><text x="56" y="280" class="t-dim" text-anchor="middle" style="font-size:14px">-3</text><text x="123.3" y="280" class="t-dim" text-anchor="middle" style="font-size:14px">-2</text><text x="190.7" y="280" class="t-dim" text-anchor="middle" style="font-size:14px">-1</text><text x="258" y="280" class="t-dim" text-anchor="middle" style="font-size:14px">0</text><text x="325.3" y="280" class="t-dim" text-anchor="middle" style="font-size:14px">1</text><text x="392.7" y="280" class="t-dim" text-anchor="middle" style="font-size:14px">2</text><text x="460" y="280" class="t-dim" text-anchor="middle" style="font-size:14px">3</text><line x1="56" y1="245.9" x2="460" y2="245.9" class="s-grid"/><text x="48" y="250.9" class="t-dim" text-anchor="end" style="font-size:14px">-3</text><line x1="56" y1="210.6" x2="460" y2="210.6" class="s-grid"/><text x="48" y="215.6" class="t-dim" text-anchor="end" style="font-size:14px">-2</text><line x1="56" y1="175.3" x2="460" y2="175.3" class="s-grid"/><text x="48" y="180.3" class="t-dim" text-anchor="end" style="font-size:14px">-1</text><line x1="56" y1="140" x2="460" y2="140" class="s-grid"/><text x="48" y="145" class="t-dim" text-anchor="end" style="font-size:14px">0</text><line x1="56" y1="104.7" x2="460" y2="104.7" class="s-grid"/><text x="48" y="109.7" class="t-dim" text-anchor="end" style="font-size:14px">1</text><line x1="56" y1="69.4" x2="460" y2="69.4" class="s-grid"/><text x="48" y="74.4" class="t-dim" text-anchor="end" style="font-size:14px">2</text><line x1="56" y1="34.1" x2="460" y2="34.1" class="s-grid"/><text x="48" y="39.1" class="t-dim" text-anchor="end" style="font-size:14px">3</text><path d="M56,245.9 L62.7,242.4 L69.5,238.8 L76.2,235.3 L82.9,231.8 L89.7,228.2 L96.4,224.7 L103.1,221.2 L109.9,217.6 L116.6,214.1 L123.3,210.6 L130.1,207.1 L136.8,203.5 L143.5,200 L150.3,196.5 L157,192.9 L163.7,189.4 L170.5,185.9 L177.2,182.4 L183.9,178.8 L190.7,175.3 L197.4,171.8 L204.1,168.2 L210.9,164.7 L217.6,161.2 L224.3,157.6 L231.1,154.1 L237.8,150.6 L244.5,147.1 L251.3,143.5 L258,140 L264.7,136.5 L271.5,132.9 L278.2,129.4 L284.9,125.9 L291.7,122.4 L298.4,118.8 L305.1,115.3 L311.9,111.8 L318.6,108.2 L325.3,104.7 L332.1,101.2 L338.8,97.6 L345.5,94.1 L352.3,90.6 L359,87.1 L365.7,83.5 L372.5,80 L379.2,76.5 L385.9,72.9 L392.7,69.4 L399.4,65.9 L406.1,62.4 L412.9,58.8 L419.6,55.3 L426.3,51.8 L433.1,48.2 L439.8,44.7 L446.5,41.2 L453.3,37.6 L460,34.1" class="s-line" stroke-dasharray="5 4"/><path d="M56,28.4 L62.7,31.7 L69.5,35.1 L76.2,38.4 L82.9,41.7 L89.7,45 L96.4,48.2 L103.1,51.5 L109.9,54.7 L116.6,57.9 L123.3,61.1 L130.1,64.2 L136.8,67.3 L143.5,70.4 L150.3,73.4 L157,76.4 L163.7,79.3 L170.5,82.1 L177.2,84.9 L183.9,87.5 L190.7,90.1 L197.4,92.5 L204.1,94.8 L210.9,96.9 L217.6,98.8 L224.3,100.5 L231.1,102 L237.8,103.2 L244.5,104 L251.3,104.5 L258,104.7 L264.7,104.5 L271.5,104 L278.2,103.2 L284.9,102 L291.7,100.5 L298.4,98.8 L305.1,96.9 L311.9,94.8 L318.6,92.5 L325.3,90.1 L332.1,87.5 L338.8,84.9 L345.5,82.1 L352.3,79.3 L359,76.4 L365.7,73.4 L372.5,70.4 L379.2,67.3 L385.9,64.2 L392.7,61.1 L399.4,57.9 L406.1,54.7 L412.9,51.5 L419.6,48.2 L426.3,45 L433.1,41.7 L439.8,38.4 L446.5,35.1 L453.3,31.7 L460,28.4" class="s-acc" style="stroke-width:2.6"/><path d="M56,34.1 L62.7,37.6 L69.5,41.2 L76.2,44.7 L82.9,48.2 L89.7,51.8 L96.4,55.3 L103.1,58.8 L109.9,62.4 L116.6,65.9 L123.3,69.4 L130.1,72.9 L136.8,76.5 L143.5,80 L150.3,83.5 L157,87.1 L163.7,90.6 L170.5,94.1 L177.2,97.6 L183.9,101.2 L190.7,104.7 L197.4,108.2 L204.1,111.8 L210.9,115.3 L217.6,118.8 L224.3,122.4 L231.1,125.9 L237.8,129.4 L244.5,132.9 L251.3,136.5 L258,140 L264.7,143.5 L271.5,147.1 L278.2,150.6 L284.9,154.1 L291.7,157.6 L298.4,161.2 L305.1,164.7 L311.9,168.2 L318.6,171.8 L325.3,175.3 L332.1,178.8 L338.8,182.4 L345.5,185.9 L352.3,189.4 L359,192.9 L365.7,196.5 L372.5,200 L379.2,203.5 L385.9,207.1 L392.7,210.6 L399.4,214.1 L406.1,217.6 L412.9,221.2 L419.6,224.7 L426.3,228.2 L433.1,231.8 L439.8,235.3 L446.5,238.8 L453.3,242.4 L460,245.9" class="s-line" stroke-dasharray="5 4"/><path d="M56,251.6 L62.7,248.3 L69.5,244.9 L76.2,241.6 L82.9,238.3 L89.7,235 L96.4,231.8 L103.1,228.5 L109.9,225.3 L116.6,222.1 L123.3,218.9 L130.1,215.8 L136.8,212.7 L143.5,209.6 L150.3,206.6 L157,203.6 L163.7,200.7 L170.5,197.9 L177.2,195.1 L183.9,192.5 L190.7,189.9 L197.4,187.5 L204.1,185.2 L210.9,183.1 L217.6,181.2 L224.3,179.5 L231.1,178 L237.8,176.8 L244.5,176 L251.3,175.5 L258,175.3 L264.7,175.5 L271.5,176 L278.2,176.8 L284.9,178 L291.7,179.5 L298.4,181.2 L305.1,183.1 L311.9,185.2 L318.6,187.5 L325.3,189.9 L332.1,192.5 L338.8,195.1 L345.5,197.9 L352.3,200.7 L359,203.6 L365.7,206.6 L372.5,209.6 L379.2,212.7 L385.9,215.8 L392.7,218.9 L399.4,222.1 L406.1,225.3 L412.9,228.5 L419.6,231.8 L426.3,235 L433.1,238.3 L439.8,241.6 L446.5,244.9 L453.3,248.3 L460,251.6" class="s-acc" style="stroke-width:2.6"/><line x1="258" y1="104.7" x2="258" y2="175.3" class="s-acc2" style="stroke-width:2.4"/><text x="266" y="145" class="t-acc" style="font-size:15px">2A</text><text x="406.1" y="36.9" class="t-math acc" text-anchor="end">E<tspan baseline-shift="sub" font-size="11">+</tspan></text><text x="406.1" y="257.1" class="t-math acc" text-anchor="end">E<tspan baseline-shift="sub" font-size="11">−</tspan></text><text x="62.7" y="217.6" class="t-dim" style="font-size:14px">E = +δ</text><text x="62.7" y="58.8" class="t-dim" style="font-size:14px">E = −δ</text><text x="460" y="298" class="t-dim" text-anchor="end" style="font-size:14px">δ / A</text><text x="60" y="16" class="t-dim" style="font-size:14px">E / A</text></svg>
+      <figcaption><b>그림 8-3.</b> 두 준위계 \(H = \begin{pmatrix} \delta & -A \\ -A & -\delta \end{pmatrix}\)의 에너지 \(E_\pm = \pm\sqrt{\delta^2 + A^2}\)(실선)를 \(\delta\)의 함수로 그렸다. 결합이 없으면 두 준위 \(E = \pm\delta\)(파선)가 \(\delta = 0\)에서 교차하지만, 결합 \(A\)가 있으면 간격이 \(2A\)보다 작아지지 않는다. 멀리서는 실선이 파선에 다가가고 차이는 \(A^2/2\lvert\delta\rvert\)이다.</figcaption>
+    </figure>
+  </section>
+
+  <section id="s4">
+    <h2>스펙트럼 정리</h2>
+    <p><a class="ref" href="#thm-hermitian-real-eigen"></a>는 고유값이 모두 다르면 고유벡터들이 직교한다고 말한다. 그러면 \(n\)개의 직교 고유벡터를 단위 벡터로 맞춰 유니타리 행렬 \(U\)를 만들 수 있고, \(U^\dagger AU\)는 대각 행렬이다. 그런데 물리에서는 고유값이 겹치는 경우가 오히려 흔하다. <a class="ref" href="#ex-dumbbell-axes"></a>의 아령에서 \(0.25\ \text{kg}\cdot\text{m}^2\)가 두 번 나왔고, 대칭이 있는 계는 거의 언제나 겹친 준위를 갖는다. 고유값이 겹치면 고유벡터가 모자랄 수 있다(8.2절의 밀림 변환). 에르미트 행렬에서는 그런 일이 결코 생기지 않는다는 것이 이 절의 정리다.</p>
+
+    <h3 id="s4-theorem">정리와 증명</h3>
+    <div class="box thm" id="thm-spectral"><div class="box-h">스펙트럼 정리 (에르미트 행렬)</div>
+      <p>\(A\)가 \(n \times n\) 에르미트 행렬(\(A^\dagger = A\))이면, 유니타리 행렬 \(U\)가 있어서</p>
+      <div class="formula" id="eq-spectral-diag">\[ U^\dagger AU = D = \operatorname{diag}(\lambda_1, \ldots, \lambda_n), \qquad \lambda_i \in \mathbb R \]</div>
+      <p>이다. 같은 말로, \(\mathbb C^n\)에는 \(A\)의 고유벡터로 이루어진 정규직교 기저 \(\mathbf u_1, \ldots, \mathbf u_n\)(\(A\mathbf u_i = \lambda_i\mathbf u_i\), \(\mathbf u_i^\dagger\mathbf u_j = \delta_{ij}\))이 있다. \(U\)의 열이 바로 \(\mathbf u_i\)다. \(A\)가 실수 대칭 행렬이면 \(U\)를 실수 직교 행렬 \(R\)로, 고유벡터를 실수 벡터로 고를 수 있다: \(R^{\mathsf T}AR = D\).</p>
+    </div>
+    <p>고유값이 겹쳐도 상관없다는 것, 그리고 행렬이 실수 대칭이면 모든 것을 실수로 할 수 있다는 것이 정리의 요점이다. 증명은 행렬의 크기 \(n\)에 대한 귀납법이다. 핵심은 고유벡터 하나를 찾아 떼어 내면 남은 부분이 다시 에르미트 행렬이 된다는 것이다.</p>
+    <p><b>증명.</b> \(n = 1\)이면 \(A\)는 실수 하나이고 \(U = (1)\)이다. \(n - 1\)에서 정리가 성립한다고 하고 \(n \times n\) 에르미트 행렬 \(A\)를 보자.</p>
+    <p><i>1단계: 고유벡터 하나.</i> 특성 다항식은 복소수 근을 적어도 하나 갖는다(8.1절). 그 근 \(\lambda_1\)은 <a class="ref" href="#thm-hermitian-real-eigen"></a>에 따라 실수다. 그 고유벡터를 길이 1로 맞춘 것을 \(\mathbf u_1\)이라 하자.</p>
+    <p><i>2단계: 정규직교 기저로 채우기.</i> \(\mathbf u_1, \hat{\mathbf e}_1, \ldots, \hat{\mathbf e}_n\)에 그람-슈미트 과정을 쓰면(앞 벡터들의 성분을 빼고 길이를 1로 맞추되, 0이 되는 벡터는 버린다. 9장의 <a href="ch09.html#eq-gram-schmidt">그람-슈미트 공식</a>) \(\mathbf u_1\)로 시작하는 정규직교 기저 \(\mathbf u_1, \mathbf w_2, \ldots, \mathbf w_n\)을 얻는다. 이것을 열로 세운 \(U_1\)은 유니타리다.</p>
+    <p><i>3단계: 블록으로 쪼개기.</i> \(B = U_1^\dagger AU_1\)이라 하자. \(B\)의 첫째 열은 \(B\hat{\mathbf e}_1 = U_1^\dagger A\mathbf u_1 = \lambda_1U_1^\dagger\mathbf u_1 = \lambda_1\hat{\mathbf e}_1\)이다(\(U_1^\dagger\mathbf u_1\)의 성분은 \(\mathbf u_1\)과 각 기저 벡터의 \(\dagger\) 곱이므로 \(\hat{\mathbf e}_1\)이다). \(B\)는 에르미트이므로(유니타리 닮음) 첫째 행은 첫째 열의 켤레, 곧 \((\lambda_1, 0, \ldots, 0)\)이다. 따라서</p>
+    <div class="formula" id="eq-spectral-block">\[ U_1^\dagger AU_1 = \begin{pmatrix} \lambda_1 & 0 \\ 0 & A' \end{pmatrix} \]</div>
+    <p>이고, \((n-1) \times (n-1)\) 블록 \(A'\)도 에르미트다.</p>
+    <p><i>4단계: 귀납.</i> 귀납 가정에 따라 \(U'^\dagger A'U' = D'\)인 \((n-1) \times (n-1)\) 유니타리 \(U'\)가 있다. \(U = U_1\begin{pmatrix} 1 & 0 \\ 0 & U' \end{pmatrix}\)은 유니타리의 곱이므로 유니타리이고, \(U^\dagger AU = \operatorname{diag}(\lambda_1, D')\)이다.</p>
+    <p><i>실수 대칭의 경우.</i> 1단계에서 \(\lambda_1\)이 실수이므로 \(A - \lambda_1I\)는 실수 행렬이고, 실수 소거로 0이 아닌 실수 해 \(\mathbf u_1\)을 얻는다. 2단계의 그람-슈미트도 실수 연산만 쓴다. 따라서 \(U_1\), \(A'\), 그리고 귀납으로 \(U\)가 모두 실수다. ∎</p>
+    <p>3단계에서 \(A\)가 에르미트라는 사실은 "첫째 행도 0"을 얻는 데 한 번만 쓰였다. 이 한 줄을 빼면(1단계의 \(\lambda_1\)은 복소수여도 된다) 같은 귀납이 아무 정사각 행렬에 대해 \(U^\dagger AU\)를 <b>위 삼각 행렬</b>로 만든다. 이것을 <span class="term">슈르 삼각화</span> <span class="en">(Schur triangularization)</span>라 하고(Horn, Johnson, <i>Matrix Analysis</i>, 2.3절), 대각 성분은 \(A\)의 고유값이다. 8.7절에서 \(\det e^A\)를 계산할 때 쓴다.</p>
+    <div class="callout deep"><strong>에르미트가 아니어도 되는 경우: 정규 행렬</strong><p>유니타리 행렬로 대각화되는 정확한 조건은 \(AA^\dagger = A^\dagger A\)이고, 이런 행렬을 <span class="term">정규 행렬</span> <span class="en">(normal matrix)</span>이라 한다. 에르미트, 반에르미트, 유니타리 행렬이 모두 여기 든다. 증명은 슈르 삼각화한 \(T\)가 정규이면 대각선 밖 성분이 모두 0임을 보이는 것이다(Horn, Johnson, <i>Matrix Analysis</i>, 2.5절). 그래서 회전 행렬과 \(e^{-iHt/\hbar}\)도 정규직교 고유벡터를 갖는다.</p></div>
+
+    <h3 id="s4-decomposition">스펙트럼 분해</h3>
+    <p>\(A = UDU^\dagger\)를 열과 행으로 풀어 쓰면, \(U\)의 열이 \(\mathbf u_i\)이고 \(U^\dagger\)의 행이 \(\mathbf u_i^\dagger\)이므로</p>
+    <div class="formula" id="eq-spectral-decomposition">\[ A = \sum_{i=1}^{n}\lambda_i\,\mathbf u_i\mathbf u_i^\dagger \]</div>
+    <p>이다. 이것을 <span class="term">스펙트럼 분해</span> <span class="en">(spectral decomposition)</span>라 한다. 열벡터와 행벡터의 곱 \(P_i = \mathbf u_i\mathbf u_i^\dagger\)는 \(n \times n\) 행렬이고, \(P_i\mathbf v = \mathbf u_i(\mathbf u_i^\dagger\mathbf v)\)는 \(\mathbf v\)의 \(\mathbf u_i\) 방향 성분이다. 곧 \(P_i\)는 \(\mathbf u_i\) 방향으로의 <span class="term">투영</span>이다. 정규직교성에서 \(P_iP_j = \delta_{ij}P_i\)이고, \(UU^\dagger = I\)를 같은 방식으로 풀면</p>
+    <div class="formula" id="eq-completeness-matrix">\[ \sum_{i=1}^{n}\mathbf u_i\mathbf u_i^\dagger = I \]</div>
+    <p>이다. 이것을 <span class="term">완비성 관계</span> <span class="en">(completeness relation)</span>라 한다. 벡터를 각 고유 방향의 성분으로 나눈 뒤 다시 더하면 원래 벡터가 된다는 뜻이다. 식 <a class="ref" href="#eq-spectral-decomposition"></a>은 "\(A\)는 각 고유 방향의 성분을 \(\lambda_i\)배 하고 다시 더한다"는 뜻이다. 9장에서는 이 두 식을 <a href="ch09.html#def-ket-bra">디랙 표기</a>로 \(A = \sum_i\lambda_i|u_i\rangle\langle u_i|\), \(\sum_i|u_i\rangle\langle u_i| = I\)(<a href="ch09.html#eq-completeness">완비성 관계</a>)로 쓰고, \(P_i\)를 <a href="ch09.html#def-projector">투영 연산자</a>라 부른다.</p>
+    <p>고유값이 겹치면 그 고유 공간 안의 정규직교 기저는 하나로 정해지지 않는다. 그러나 고유값 \(\lambda\)에 속하는 항을 모은 \(P_\lambda = \sum_{\lambda_i = \lambda}\mathbf u_i\mathbf u_i^\dagger\)는 고유 공간 \(E_\lambda\)로의 투영이므로 기저를 어떻게 고르든 같다. 그래서 겹친 고유값이 있을 때 비교해야 할 것은 고유벡터가 아니라 투영이다. 대각화가 되었으므로 식 <a class="ref" href="#eq-matrix-function"></a>도 같은 꼴로 쓸 수 있다.</p>
+    <div class="formula" id="eq-spectral-function">\[ f(A) = \sum_{i=1}^{n}f(\lambda_i)\,\mathbf u_i\mathbf u_i^\dagger \]</div>
+    <p>여기서 \(f\)는 고유값에서 정의되기만 하면 되는 함수다. 예를 들어 고유값이 모두 0 이상이면 \(\sqrt A = \sum\sqrt{\lambda_i}\,\mathbf u_i\mathbf u_i^\dagger\)는 \((\sqrt A)^2 = A\)인 에르미트 행렬이다. 8.5절에서 이것을 쓴다.</p>
+    <div class="callout warn"><strong>수치 라이브러리의 고유벡터와 비교할 때</strong><p>NumPy의 <code>numpy.linalg.eigh</code>는 고유값을 작은 것부터 늘어놓고 길이 1인 고유벡터를 열로 준다. 고유벡터의 부호(복소수면 위상)는 정해져 있지 않고, 겹친 고유값에서는 고유 공간의 아무 정규직교 기저나 나온다(<code>eig</code>는 정렬도 하지 않는다). 그러니 고유벡터 대신 고유값과 투영 \(P_\lambda\)를 비교한다.</p></div>
+
+    <div class="box ex" id="ex-triangle-ring"><div class="box-h">세 원자 고리의 전자 준위와 겹친 고유값</div>
+      <p>같은 원자 세 개가 정삼각형의 꼭짓점에 있고, 원자마다 전자가 머물 수 있는 상태가 하나씩 있다. 이웃 원자로 옮겨 가는 결합을 \(-t\) (\(t > 0\))로 두고 원자 하나의 에너지를 0으로 잡으면(강한 결합 모형) 해밀토니안은</p>
+      <div class="formula">\[ H = -t\begin{pmatrix} 0 & 1 & 1 \\ 1 & 0 & 1 \\ 1 & 1 & 0 \end{pmatrix} \]</div>
+      <p>이다. 에너지 준위를 구하고 스펙트럼 분해를 써라. 겹친 준위의 고유벡터를 두 가지 방법으로 골라 투영이 같은지 확인하라.</p>
+      <p><b>풀이.</b> 모든 성분이 1인 행렬을 \(J\)라 하면 \(H = -t(J - I)\)이다. \(J\mathbf v\)의 성분은 모두 \(v_1 + v_2 + v_3\)이므로, \(J\)는 \((1, 1, 1)\)을 3배 하고 \((1, 1, 1)\)에 수직인 평면의 벡터를 0으로 보낸다. \(J\)의 고유값은 \(3, 0, 0\)이고 \(H\)의 고유값은</p>
+      <div class="formula">\[ \begin{gathered} E_0 = -t(3 - 1) = -2t \\ E_1 = E_2 = -t(0 - 1) = t \end{gathered} \]</div>
+      <p>이다. 바닥 상태 \(\mathbf u_0 = (1, 1, 1)/\sqrt3\)은 세 원자에 고르게 퍼져 있다. 준위 \(t\)는 두 번 겹치고, 그 고유 공간은 \(x + y + z = 0\)인 평면이다. 실수 기저로는 \(\mathbf u_1 = (1, -1, 0)/\sqrt2\), \(\mathbf u_2 = (1, 1, -2)/\sqrt6\)을 고를 수 있다. 투영은 \(P_{-2t} = \mathbf u_0\mathbf u_0^\dagger = J/3\)이고, 완비성 관계에서 \(P_t = I - J/3\)이다. 따라서</p>
+      <div class="formula" id="eq-triangle-spectral">\[ H = -2t\,\frac{J}{3} + t\Big(I - \frac{J}{3}\Big) \]</div>
+      <p>이다. 오른쪽을 정리하면 \(-tJ + tI\)로 \(H\)와 같다. 다른 기저로 \(\omega = e^{2\pi i/3}\)을 써서 \(\mathbf f_1 = (1, \omega, \omega^2)/\sqrt3\), \(\mathbf f_2 = (1, \omega^2, \omega)/\sqrt3\)을 고를 수도 있다. \(1 + \omega + \omega^2 = 0\)이므로 둘 다 평면 위에 있고 \(\mathbf f_1^\dagger\mathbf f_2 = (1 + \omega + \omega^2)/3 = 0\)이다. \(\mathbf f_1\mathbf f_1^\dagger + \mathbf f_2\mathbf f_2^\dagger\)의 \((j, k)\) 성분은 \((\omega^{j-k} + \omega^{2(j-k)})/3\)이다. 대각에서는 \(2/3\), 대각선 밖에서는 \((\omega + \omega^2)/3 = -1/3\)이므로 \(I - J/3\)과 같다. 기저는 다르지만 투영은 같다.</p>
+      <p><b>숫자로 보기.</b> 고유값의 합 \(-2t + t + t = 0\)은 \(\operatorname{tr}H = 0\)과 같고, 곱 \(-2t^3\)은 \(\det H = (-t)^3\det(J - I) = -t^3 \times 2\)와 같다(\(J - I\)의 고유값 \(2, -1, -1\)). 전자 두 개(H₃⁺ 이온)는 바닥 준위에 반대 스핀으로 함께 들어가 에너지 \(-4t\)를 얻는다.</p>
+    </div>
+
+    <h3 id="s4-evolution">스펙트럼 분해로 시간 변화 풀기</h3>
+    <div class="box ex" id="ex-ammonia-flip"><div class="box-h">암모니아 분자가 뒤집히는 시간</div>
+      <p><a class="ref" href="#ex-two-level"></a>의 암모니아 분자가 \(t = 0\)에 질소가 위에 있는 상태 \(\boldsymbol\psi(0) = (1, 0)\)에 있다. 상태는 슈뢰딩거 방정식 \(i\hbar\,d\boldsymbol\psi/dt = H\boldsymbol\psi\), \(H = \begin{pmatrix} E_0 & -A \\ -A & E_0 \end{pmatrix}\)를 따른다. 질소가 위에 있을 확률 \(\lvert\psi_1(t)\rvert^2\)을 구하고, 처음으로 완전히 아래로 넘어가는 시각을 구하라.</p>
+      <p><b>풀이.</b> (여기서 \(t\)는 시간이고 <a class="ref" href="#ex-triangle-ring"></a>의 결합 \(t\)와 다르다.) 고유벡터 \(\mathbf u_\mp = (1, \pm1)/\sqrt2\) (에너지 \(E_0 \mp A\)) 방향의 성분 \(c_\mp(t) = \mathbf u_\mp^\dagger\boldsymbol\psi(t)\)는 \(i\hbar\,\dot c_\mp = (E_0 \mp A)c_\mp\)를 따로 만족한다. 왼쪽에 \(\mathbf u_\mp^\dagger\)를 곱하고 \(\mathbf u_\mp^\dagger H = (E_0 \mp A)\mathbf u_\mp^\dagger\)를 썼다. 각 성분은 2장의 관례 <a href="ch02.html#eq-time-convention">(2.28)</a>대로 \(e^{-iEt/\hbar}\)로 돌므로, 식 <a class="ref" href="#eq-spectral-function"></a>의 \(f(E) = e^{-iEt/\hbar}\)를 쓴 것과 같다.</p>
+      <div class="formula" id="eq-two-level-evolution">\[ \boldsymbol\psi(t) = \sum_{\pm}e^{-i(E_0 \mp A)t/\hbar}\,\mathbf u_\mp\mathbf u_\mp^\dagger\,\boldsymbol\psi(0) \]</div>
+      <p>\(\mathbf u_\mp^\dagger\boldsymbol\psi(0) = 1/\sqrt2\)을 넣고 정리하면</p>
+      <div class="formula">\[ \boldsymbol\psi(t) = e^{-iE_0t/\hbar}\begin{pmatrix} \cos(At/\hbar) \\ i\sin(At/\hbar) \end{pmatrix} \]</div>
+      <p>이다. 따라서 \(\lvert\psi_1\rvert^2 = \cos^2(At/\hbar)\)이고, 질소는 위와 아래를 오간다. 처음으로 완전히 아래에 있는 시각은 \(At/\hbar = \pi/2\), 곧 \(t = \pi\hbar/2A\)이다. \(2A = h\nu\)이므로 \(t = 1/(2\nu)\)이다.</p>
+      <p><b>숫자로 보기.</b> \(\nu = 23.87\ \text{GHz}\)이면 \(t = 1/(2 \times 2.387 \times 10^{10}\ \text{s}^{-1}) = 2.09 \times 10^{-11}\ \text{s} = 20.9\ \text{ps}\)이고, 위에서 아래로 갔다가 돌아오는 주기는 \(41.9\ \text{ps}\)이다. \(At/\hbar\)는 \(\text{J} \times \text{s}/(\text{J}\cdot\text{s})\)로 차원이 없다. 공통 위상 \(e^{-iE_0t/\hbar}\)는 확률에 영향이 없다.</p>
+    </div>
+  </section>
+
+  <section id="s5">
+    <h2>결합 진동자의 정규 모드</h2>
+    <p>같은 진자 두 개를 약한 용수철로 잇고 한쪽만 당겼다 놓으면, 진동이 서서히 이웃 진자로 옮겨 갔다가 돌아온다. 그런데 두 진자를 같은 쪽으로 똑같이 당기면 둘은 끝까지 같은 진폭과 진동수로 움직이고 에너지는 오가지 않는다. 이런 특별한 운동이 정규 모드이고, 7장에서 예고한 \(\det(K - \omega^2M) = 0\)이 그 진동수를 정한다.</p>
+
+    <h3 id="s5-setup">운동 방정식과 일반화된 고유값 문제</h3>
+    <p>물체 \(N\)개가 안정한 평형점 근처에서 움직인다고 하자. 평형점에서 잰 변위를 \(\mathbf x = (x_1, \ldots, x_N)\)으로 쓰면 운동 에너지와 퍼텐셜 에너지는 2차까지</p>
+    <div class="formula" id="eq-kinetic-potential">\[ T = \frac12\,\dot{\mathbf x}^{\mathsf T}M\dot{\mathbf x}, \qquad V = \frac12\,\mathbf x^{\mathsf T}K\mathbf x \]</div>
+    <p>이다. \(M\)은 질량 행렬(물체마다 좌표가 하나면 대각 행렬 \(\operatorname{diag}(m_1, \ldots, m_N)\))이고, \(K_{ij} = \partial^2V/\partial x_i\partial x_j\)는 평형점에서 계산한 퍼텐셜의 헤세 행렬이다(<a href="ch03.html#eq-taylor-multi">3장 식 (3.23)</a>의 2차 항. 평형점이라 1차 항은 0이다). 둘 다 실수 대칭 행렬이다. 물체 \(i\)에 걸리는 힘은 \(-\partial V/\partial x_i = -K_{ij}x_j\)이므로 운동 방정식은</p>
+    <div class="formula" id="eq-coupled-eom">\[ M\ddot{\mathbf x} = -K\mathbf x \]</div>
+    <p>이다. 모든 좌표가 같은 진동수로 움직이는 해를 2장의 관례대로 \(\mathbf x(t) = \operatorname{Re}\big(\mathbf a\,e^{-i\omega t}\big)\)로 찾자. \(\ddot{\mathbf x} = -\omega^2\mathbf x\)이므로 상수 벡터 \(\mathbf a\)는</p>
+    <div class="formula" id="eq-generalized-eigen">\[ K\mathbf a = \omega^2M\mathbf a \]</div>
+    <p>를 만족해야 한다. \(M = I\)이면 보통의 고유값 문제이고, 일반적으로는 <span class="term">일반화된 고유값 문제</span> <span class="en">(generalized eigenvalue problem)</span>라 한다. \(\mathbf a \ne 0\)일 조건은 <a href="ch07.html#thm-homogeneous-solution">정리 7.6</a>에 따라 \(\det(K - \omega^2M) = 0\)이고, 이것은 \(\omega^2\)에 대한 \(N\)차 방정식이다.</p>
+    <p>양변에 \(M^{-1}\)을 곱해 \(M^{-1}K\)의 고유값 문제로 바꿀 수도 있다. 하지만 \(M^{-1}K\)는 일반적으로 대칭이 아니어서 스펙트럼 정리를 바로 쓸 수 없다. 대신 \(M\)의 제곱근으로 대칭성을 지키며 바꾼다.</p>
+    <div class="box thm" id="thm-generalized-eigen"><div class="box-h">일반화된 고유값 문제의 실수성과 \(M\)-직교성</div>
+      <p>\(K\)와 \(M\)이 \(N \times N\) 실수 대칭 행렬이고, \(M\)이 <span class="term">양의 정부호</span> <span class="en">(positive definite)</span>, 곧 모든 \(\mathbf x \ne 0\)에서 \(\mathbf x^{\mathsf T}M\mathbf x > 0\)이라 하자. 그러면 식 <a class="ref" href="#eq-generalized-eigen"></a>은 실수 고유값 \(\omega_1^2, \ldots, \omega_N^2\)(중복 포함)과 실수 고유벡터 \(\mathbf a_1, \ldots, \mathbf a_N\)을 가지며, 고유벡터는</p>
+      <div class="formula" id="eq-m-orthonormal">\[ \mathbf a_j^{\mathsf T}M\mathbf a_k = \delta_{jk} \]</div>
+      <p>를 만족하도록 고를 수 있다(<span class="term">\(M\)-정규직교</span>). 또 \(K\)가 양의 준정부호(모든 \(\mathbf x\)에서 \(\mathbf x^{\mathsf T}K\mathbf x \ge 0\), 곧 평형이 안정)이면 모든 \(\omega_k^2 \ge 0\)이다.</p>
+    </div>
+    <p><b>증명.</b> \(M\)은 실수 대칭이므로 스펙트럼 정리에 따라 \(M = \sum_i\mu_i\mathbf e_i\mathbf e_i^{\mathsf T}\)이고, \(\mu_i = \mathbf e_i^{\mathsf T}M\mathbf e_i > 0\)이다. 식 <a class="ref" href="#eq-spectral-function"></a>으로 \(M^{1/2} = \sum_i\sqrt{\mu_i}\,\mathbf e_i\mathbf e_i^{\mathsf T}\)과 \(M^{-1/2} = \sum_i\mathbf e_i\mathbf e_i^{\mathsf T}/\sqrt{\mu_i}\)를 정하면 둘 다 실수 대칭이고 서로 역행렬이다. \(\mathbf b = M^{1/2}\mathbf a\)로 두고 식 <a class="ref" href="#eq-generalized-eigen"></a>의 양변 왼쪽에 \(M^{-1/2}\)을 곱하면</p>
+    <div class="formula" id="eq-generalized-symmetric">\[ \tilde K\mathbf b = \omega^2\mathbf b, \qquad \tilde K = M^{-1/2}KM^{-1/2} \]</div>
+    <p>이다. \(\tilde K^{\mathsf T} = M^{-1/2}K^{\mathsf T}M^{-1/2} = \tilde K\)이므로 \(\tilde K\)는 실수 대칭이다. 스펙트럼 정리에 따라 실수 고유값 \(\omega_k^2\)과 정규직교하는 실수 고유벡터 \(\mathbf b_k\)가 있다. \(\mathbf a_k = M^{-1/2}\mathbf b_k\)로 되돌리면 \(\mathbf a_j^{\mathsf T}M\mathbf a_k = \mathbf b_j^{\mathsf T}M^{-1/2}MM^{-1/2}\mathbf b_k = \mathbf b_j^{\mathsf T}\mathbf b_k = \delta_{jk}\)이다. 끝으로 식 <a class="ref" href="#eq-generalized-eigen"></a>에 \(\mathbf a_k^{\mathsf T}\)를 곱하면 \(\omega_k^2 = \mathbf a_k^{\mathsf T}K\mathbf a_k \ge 0\)이다. ∎</p>
+    <p>질량이 다르면 모드들은 보통의 뜻으로는 직교하지 않고, 질량으로 가중한 곱 \(\mathbf a_j^{\mathsf T}M\mathbf a_k\)로 직교한다. 16장의 스투름-리우빌 이론에서 <a href="ch16.html#def-weight-function">가중 함수</a>가 같은 역할을 한다.</p>
+
+    <h3 id="s5-modes">정규 모드와 정규 좌표</h3>
+    <div class="box def" id="def-normal-mode"><div class="box-h">정규 모드</div>
+      <p>식 <a class="ref" href="#eq-generalized-eigen"></a>의 고유쌍 \((\omega_k^2, \mathbf a_k)\)에 대해 \(\mathbf x(t) = \mathbf a_k\cos(\omega_kt + \varphi_k)\)처럼 모든 좌표가 같은 진동수 \(\omega_k\)와 같은 위상으로, 고정된 비율 \(\mathbf a_k\)를 지키며 움직이는 해를 <span class="term">정규 모드</span> <span class="en">(normal mode)</span>라 한다. \(\omega_k\)를 <span class="term">정규 진동수</span>, \(\mathbf a_k\)를 모드의 모양이라 한다. \(\omega_k = 0\)이면 진동 대신 \(\mathbf x(t) = \mathbf a_k(\alpha + \beta t)\)이다.</p>
+    </div>
+    <p><a class="ref" href="#thm-generalized-eigen"></a>에 따라 \(\mathbf a_k\)들은 \(N\)개이고 선형 독립이므로 아무 변위든 \(\mathbf x = \sum_kq_k\mathbf a_k\)로 쓸 수 있다. 계수는 \(M\)-직교성으로 \(q_k = \mathbf a_k^{\mathsf T}M\mathbf x\)이다. 이것을 식 <a class="ref" href="#eq-kinetic-potential"></a>에 넣고 \(\mathbf a_j^{\mathsf T}K\mathbf a_k = \omega_k^2\delta_{jk}\)를 쓰면 교차항이 모두 사라진다.</p>
+    <div class="formula" id="eq-normal-coordinates">\[ T = \frac12\sum_k\dot q_k^2, \qquad V = \frac12\sum_k\omega_k^2q_k^2 \]</div>
+    <p>\(q_k\)를 <span class="term">정규 좌표</span> <span class="en">(normal coordinates)</span>라 한다. 결합된 \(N\)개의 진동자가 서로 독립인 \(N\)개의 단진동자 \(\ddot q_k = -\omega_k^2q_k\)로 풀렸다. 따라서 일반해는 정규 모드의 중첩이다.</p>
+    <div class="formula" id="eq-normal-mode-general">\[ \mathbf x(t) = \sum_{k=1}^{N}\mathbf a_k\big(A_k\cos\omega_kt + B_k\sin\omega_kt\big) \]</div>
+    <p>처음 조건에서 \(A_k = \mathbf a_k^{\mathsf T}M\mathbf x(0)\), \(\omega_kB_k = \mathbf a_k^{\mathsf T}M\dot{\mathbf x}(0)\)이다. 8.4절에서 상태를 에너지 고유벡터로 나누었듯, 여기서는 운동을 정규 모드로 나누고 각 모드가 제 진동수로 따로 도는 것을 다시 더한다.</p>
+
+    <div class="box ex" id="ex-two-coupled"><div class="box-h">용수철로 이은 두 물체와 맥놀이</div>
+      <p>질량 \(m\)인 물체 둘이 각각 용수철 상수 \(k\)인 용수철로 양쪽 벽에 매여 있고, 둘 사이는 용수철 상수 \(k_c\)인 용수철로 이어져 있다. (가) 정규 모드와 진동수를 구하라. (나) 물체 1만 \(x_1 = A\)로 당겼다가 가만히 놓을 때의 운동을 구하고, 에너지가 물체 2로 다 넘어가는 시간을 구하라. (다) \(\omega_0 = \sqrt{k/m} = 2\pi\ \text{rad/s}\), \(k_c/k = 0.10\)일 때 그 시간은?</p>
+      <p><b>풀이.</b> (가) \(V = \tfrac12kx_1^2 + \tfrac12kx_2^2 + \tfrac12k_c(x_1 - x_2)^2\)이므로</p>
+      <div class="formula">\[ M = mI, \qquad K = \begin{pmatrix} k + k_c & -k_c \\ -k_c & k + k_c \end{pmatrix} \]</div>
+      <p>이다. \(K\)의 두 행은 성분을 맞바꾼 꼴이라 \((1, 1)\)과 \((1, -1)\)이 고유벡터이고, 고유값은 \(k\)와 \(k + 2k_c\)이다. \(\omega^2 = (\text{고유값})/m\)이므로 \(\kappa = k_c/m\)이라 하면</p>
+      <div class="formula" id="eq-two-mass-modes">\[ \begin{aligned} \omega_1 &= \omega_0, &\quad \mathbf a_1 &\propto (1, 1) \\ \omega_2 &= \sqrt{\omega_0^2 + 2\kappa}, &\quad \mathbf a_2 &\propto (1, -1) \end{aligned} \]</div>
+      <p>이다. 같은 방향 모드에서는 가운데 용수철이 늘어나지 않으므로 진동수가 결합과 상관없이 \(\omega_0\)이다. 반대 방향 모드에서는 가운데 용수철이 양쪽에서 늘어나 복원력이 커진다.</p>
+      <p>(나) \(\mathbf x(0) = (A, 0) = \tfrac A2(1, 1) + \tfrac A2(1, -1)\)이고 처음 속도가 0이므로 식 <a class="ref" href="#eq-normal-mode-general"></a>에서 사인 항이 없다. 삼각 함수의 합을 곱으로 바꾸면(\(\bar\omega = (\omega_1 + \omega_2)/2\), \(\Delta\omega = \omega_2 - \omega_1\))</p>
+      <div class="formula" id="eq-beats">\[ \begin{aligned} x_1(t) &= \tfrac A2(\cos\omega_1t + \cos\omega_2t) \\ &= A\cos\bar\omega t\,\cos\tfrac{\Delta\omega\,t}{2} \\ x_2(t) &= \tfrac A2(\cos\omega_1t - \cos\omega_2t) \\ &= A\sin\bar\omega t\,\sin\tfrac{\Delta\omega\,t}{2} \end{aligned} \]</div>
+      <p>이다. 두 물체는 빠른 진동 \(\bar\omega\)를 하고, 진폭이 느린 포락선 \(\cos(\Delta\omega t/2)\)와 \(\sin(\Delta\omega t/2)\)로 번갈아 바뀐다(맥놀이). 물체 1의 진폭이 처음 0이 되는 \(\Delta\omega\,t/2 = \pi/2\), 곧 \(t = \pi/\Delta\omega\)에 진동이 물체 2로 다 넘어간다.</p>
+      <p>(다) <b>숫자로 보기.</b> \(2\kappa/\omega_0^2 = 2k_c/k = 0.20\)이므로 \(\omega_2 = \omega_0\sqrt{1.20} = 1.0954\,\omega_0 = 6.883\ \text{rad/s}\)이고 \(\Delta\omega = 0.0954 \times 2\pi\ \text{rad/s} = 0.600\ \text{rad/s}\)이다. 에너지가 넘어가는 시간은 \(\pi/\Delta\omega = 5.24\ \text{s}\)로, 혼자 진동할 때의 주기 1.00 s의 다섯 배 남짓이다.</p>
+      <p><b>다음 항은 몇 차인가.</b> 결합이 약하면(\(r = k_c/k \ll 1\)) \(\sqrt{1 + 2r} \approx 1 + r - r^2/2\)이므로 \(\Delta\omega \approx \omega_0(r - r^2/2)\)이고, 첫 항만 쓰면 \(\pi/\Delta\omega \approx \pi/(\omega_0r) = 5.00\ \text{s}\)이다. 둘째 항을 넣으면 \(5.26\ \text{s}\)로 정확한 값과 0.5% 안에서 맞는다. 남은 차이는 \(r^3\) 항(\(+r^3/2\))에서 온다. 결합이 약할수록 에너지가 넘어가는 데 오래 걸리고, 그 시간은 \(1/k_c\)에 비례한다.</p>
+    </div>
+    <div data-sim="coupled" data-title="결합 진동자 — 정규 모드는 고유벡터, 진동수의 제곱은 고유값" data-note="해볼 것: 결합 세기 κ/ω₀² = 0.1에서 물체 1만 당겨 놓으면, 에너지가 약 5.2 s마다 다른 물체로 넘어갑니다(예제의 π/Δω). 처음 모양을 고유벡터 (1, 1)이나 (1, −1)로 놓으면 모드 하나만 들떠서 에너지가 옮겨 가지 않습니다. 같은 방향 모드의 진동수는 결합을 바꿔도 ω₀ 그대로이고, 반대 방향 모드만 √(ω₀² + 2κ)로 올라갑니다."></div>
+
+    <h3 id="s5-co2">직선형 세 원자 분자</h3>
+    <div class="box ex" id="ex-triatomic-modes"><div class="box-h">CO₂ 모형의 세로 진동</div>
+      <p>CO₂ 분자를 일직선 위의 세 질점(산소 \(m\), 탄소 \(m_{\mathrm C}\), 산소 \(m\))과 이웃끼리 잇는 같은 용수철 \(k\) 두 개로 모형화하자. 축 방향 변위 \(x_1, x_2, x_3\)만 생각한다. (가) 정규 진동수와 모드 모양을 구하라. (나) 두 진동 모드의 진동수 비를 \(m = 16.00\ \text{u}\), \(m_{\mathrm C} = 12.00\ \text{u}\)로 계산하고, 측정값 \(\tilde\nu_1 = 1333\ \text{cm}^{-1}\), \(\tilde\nu_3 = 2349\ \text{cm}^{-1}\)(T. Shimanouchi, <i>Tables of Molecular Vibrational Frequencies, Consolidated Volume I</i>, NSRDS-NBS 39 (1972))과 비교하라.</p>
+      <p><b>풀이.</b> (가) \(V = \tfrac k2\big[(x_2 - x_1)^2 + (x_3 - x_2)^2\big]\)에서</p>
+      <div class="formula" id="eq-triatomic-matrices">\[ \begin{gathered} K = k\begin{pmatrix} 1 & -1 & 0 \\ -1 & 2 & -1 \\ 0 & -1 & 1 \end{pmatrix} \\ M = \begin{pmatrix} m & 0 & 0 \\ 0 & m_{\mathrm C} & 0 \\ 0 & 0 & m \end{pmatrix} \end{gathered} \]</div>
+      <p>이다. \(a = k - m\omega^2\), \(b = 2k - m_{\mathrm C}\omega^2\)으로 두고 첫째 행으로 전개하면 \(\det(K - \omega^2M) = a(ab - k^2) - k^2a = a(ab - 2k^2)\)이고, \(ab - 2k^2 = \omega^2\big(mm_{\mathrm C}\omega^2 - k(m_{\mathrm C} + 2m)\big)\)이므로</p>
+      <div class="formula">\[ \begin{aligned} &\det(K - \omega^2M) \\ &\quad = (k - m\omega^2)\,\omega^2\,\big(mm_{\mathrm C}\omega^2 - k(m_{\mathrm C} + 2m)\big) \end{aligned} \]</div>
+      <p>이다. 세 근과 모드는 다음과 같다(그림 8-4).</p>
+      <ul>
+        <li>\(\omega_0 = 0\), \(\mathbf a_0 \propto (1, 1, 1)\): 분자 전체의 평행 이동. 용수철이 늘지 않으므로 복원력이 없다.</li>
+        <li>\(\omega_1^2 = k/m\), \(\mathbf a_1 \propto (1, 0, -1)\): 탄소는 가만히 있고 두 산소가 반대로 움직이는 대칭 신축. 첫째 행 \((k - m\omega^2)a_1 = ka_2\)에서 \(a_2 = 0\)이다.</li>
+        <li>\(\omega_2^2 = \dfrac km\Big(1 + \dfrac{2m}{m_{\mathrm C}}\Big)\), \(\mathbf a_2 \propto (1, -2m/m_{\mathrm C}, 1)\): 두 산소가 같은 쪽으로, 탄소가 반대쪽으로 크게 움직이는 비대칭 신축. 첫째 행에서 \(a_2/a_1 = (k - m\omega_2^2)/k = -2m/m_{\mathrm C}\)이다.</li>
+      </ul>
+      <p>\(M\)-직교성을 확인하자. \(\mathbf a_0^{\mathsf T}M\mathbf a_2 = m - 2m + m = 0\), \(\mathbf a_1^{\mathsf T}M\mathbf a_2 = m - m = 0\), \(\mathbf a_0^{\mathsf T}M\mathbf a_1 = m - m = 0\)이다. 진동 모드가 평행 이동과 \(M\)-직교한다는 것은 \(\sum m_ix_i = 0\), 곧 진동하는 동안 질량 중심이 움직이지 않는다는 뜻이다. 보통의 내적으로는 \(\mathbf a_0\cdot\mathbf a_2 = 2 - 2m/m_{\mathrm C} \ne 0\)이다.</p>
+      <p>(나) 진동수 비는</p>
+      <div class="formula" id="eq-triatomic-ratio">\[ \frac{\omega_2}{\omega_1} = \sqrt{1 + \frac{2m}{m_{\mathrm C}}} = \sqrt{1 + \frac{32}{12}} = \sqrt{\frac{11}{3}} = 1.915 \]</div>
+      <p>이고, 측정값의 비는 \(2349/1333 = 1.762\)이다.</p>
+      <p><b>숫자로 보기.</b> 대칭 신축의 측정값으로 용수철 상수를 정하면 \(\omega_1 = 2\pi c\tilde\nu_1 = 2\pi(2.998 \times 10^{10}\ \text{cm/s})(1333\ \text{cm}^{-1}) = 2.511 \times 10^{14}\ \text{s}^{-1}\)이고, \(m = 16.00 \times 1.6605 \times 10^{-27}\ \text{kg} = 2.657 \times 10^{-26}\ \text{kg}\)이므로 \(k = m\omega_1^2 = 1.68 \times 10^3\ \text{N/m}\)이다. 이 \(k\)로 예측한 비대칭 신축은 \(1333 \times 1.915 = 2553\ \text{cm}^{-1}\)로 측정값보다 9% 높다. 모형이 두 결합 사이의 상호작용과 퍼텐셜의 비조화성을 모두 무시했으니(또 1333은 라만 스펙트럼의 두 줄 1388, 1285 cm⁻¹에서 굽힘 배음과의 페르미 공명을 걷어낸 값이다), 이 정도의 어긋남은 놀랍지 않다. 그래도 "비대칭 신축이 대칭 신축보다 훨씬 높다"는 구조와 모드의 모양은 행렬 두 개만으로 나온다. 단위 확인: \(\text{kg} \times \text{s}^{-2} = \text{N/m}\)이다. 세 번째 기본 진동(굽힘, \(667\ \text{cm}^{-1}\))은 축에 수직인 운동이라 이 모형에 들어 있지 않다.</p>
+    </div>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 440 290" role="img" aria-label="CO2 모형의 세 정규 모드: 평행 이동, 대칭 신축, 비대칭 신축"><defs><marker id="f0804-aa" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs><text x="12" y="28" class="t">(가) ω = 0: 평행 이동</text><line x1="150" y1="60" x2="370" y2="60" class="s-line" style="stroke-width:3"/><circle cx="150" cy="60" r="17" class="f-surface" style="stroke-width:1.5"/><text x="150" y="65" class="t-b" text-anchor="middle">O</text><line x1="150" y1="88" x2="172" y2="88" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0804-aa)"/><circle cx="260" cy="60" r="14" class="f-surface" style="stroke-width:1.5"/><text x="260" y="65" class="t-b" text-anchor="middle">C</text><line x1="260" y1="88" x2="282" y2="88" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0804-aa)"/><circle cx="370" cy="60" r="17" class="f-surface" style="stroke-width:1.5"/><text x="370" y="65" class="t-b" text-anchor="middle">O</text><line x1="370" y1="88" x2="392" y2="88" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0804-aa)"/><text x="12" y="118" class="t">(나) ω₁: 대칭 신축</text><line x1="150" y1="150" x2="370" y2="150" class="s-line" style="stroke-width:3"/><circle cx="150" cy="150" r="17" class="f-surface" style="stroke-width:1.5"/><text x="150" y="155" class="t-b" text-anchor="middle">O</text><line x1="150" y1="178" x2="128" y2="178" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0804-aa)"/><circle cx="260" cy="150" r="14" class="f-surface" style="stroke-width:1.5"/><text x="260" y="155" class="t-b" text-anchor="middle">C</text><circle cx="370" cy="150" r="17" class="f-surface" style="stroke-width:1.5"/><text x="370" y="155" class="t-b" text-anchor="middle">O</text><line x1="370" y1="178" x2="392" y2="178" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0804-aa)"/><text x="12" y="208" class="t">(다) ω₂: 비대칭 신축</text><line x1="150" y1="240" x2="370" y2="240" class="s-line" style="stroke-width:3"/><circle cx="150" cy="240" r="17" class="f-surface" style="stroke-width:1.5"/><text x="150" y="245" class="t-b" text-anchor="middle">O</text><line x1="150" y1="268" x2="172" y2="268" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0804-aa)"/><circle cx="260" cy="240" r="14" class="f-surface" style="stroke-width:1.5"/><text x="260" y="245" class="t-b" text-anchor="middle">C</text><line x1="260" y1="268" x2="201.3" y2="268" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0804-aa)"/><circle cx="370" cy="240" r="17" class="f-surface" style="stroke-width:1.5"/><text x="370" y="245" class="t-b" text-anchor="middle">O</text><line x1="370" y1="268" x2="392" y2="268" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0804-aa)"/></svg></div>
+      <figcaption><b>그림 8-4.</b> CO₂ 모형의 세 정규 모드. 화살표의 길이가 모드 모양 \(\mathbf a_k\)의 성분이다. (가) 평행 이동(\(\omega = 0\)). (나) 대칭 신축: 탄소는 멈춰 있다. (다) 비대칭 신축: 탄소가 산소보다 \(2m/m_{\mathrm C} = 8/3\)배 크게 반대로 움직여 질량 중심을 지킨다.</figcaption>
+    </figure>
+    <div class="callout tip"><strong>대칭이 모드 모양을 알려 준다</strong><p>두 예제에서 고유벡터를 거의 계산 없이 얻었다. 두 물체(두 산소)를 맞바꾸는 연산 \(P\)를 해도 계가 그대로이기 때문이다. 이때 \(P\)는 \(K\), \(M\)과 교환하고, 정규 모드는 \(P\)에 대해 짝(\(P\mathbf a = \mathbf a\))이거나 홀(\(P\mathbf a = -\mathbf a\))로 고를 수 있다. CO₂에서 \((1, 0, -1)\)은 홀, \((1, 1, 1)\)과 \((1, -2m/m_{\mathrm C}, 1)\)은 짝이다. 짝인 모드끼리만 섞이므로 \(3 \times 3\) 문제가 \(2 \times 2\)와 \(1 \times 1\)로 쪼개진다. 이 생각을 8.7절에서 <a class="ref" href="#thm-simultaneous-diag"></a>으로 정확히 한다.</p></div>
+    <div class="callout deep"><strong>물체가 무한히 많으면</strong><p>같은 질점을 일렬로 이은 사슬에서 \(N \to \infty\), 간격 \(\to 0\)이면 행렬은 미분 연산자 \(d^2/dx^2\)로, 고유벡터는 줄의 <a href="ch17.html#eq-string-modes">정상 모드</a>로, 식 <a class="ref" href="#eq-normal-mode-general"></a>는 푸리에 급수로 바뀐다(<a class="ref" href="#prob-ring-chain"></a>). 고유함수가 충분히 많은가는 16장의 <a href="ch16.html#thm-sl-completeness">완비성 정리</a>가 답한다.</p></div>
+  </section>
+
+  <section id="s6">
+    <h2>이차 형식과 관성 텐서의 주축</h2>
+    <p>8.5절의 \(V = \tfrac12\mathbf x^{\mathsf T}K\mathbf x\)와 4장의 회전 운동 에너지 \(T = \tfrac12\omega_jI_{jm}\omega_m\)은 계수가 대칭 행렬인 2차식이다. 좌표를 잘 돌리면 교차항이 모두 사라지는 축이 있고, 퍼텐셜에서는 그 축이 정규 모드의 방향, 강체에서는 \(\mathbf L \parallel \boldsymbol\omega\)인 회전축이다.</p>
+
+    <h3 id="s6-quadratic">이차 형식</h3>
+    <div class="box def" id="def-quadratic-form"><div class="box-h">이차 형식</div>
+      <p>\(n \times n\) 실수 대칭 행렬 \(A\)에 대해 \(\mathbf x \in \mathbb R^n\)의 함수</p>
+      <div class="formula" id="eq-quadratic-form">\[ Q(\mathbf x) = \mathbf x^{\mathsf T}A\mathbf x = A_{ij}x_ix_j \]</div>
+      <p>를 <span class="term">이차 형식</span> <span class="en">(quadratic form)</span>이라 한다. 모든 \(\mathbf x \ne 0\)에서 \(Q > 0\)이면 양의 정부호, \(Q \ge 0\)이면 양의 준정부호, \(Q &lt; 0\)이면 음의 정부호, 양수와 음수를 모두 가지면 <span class="term">부정부호</span> <span class="en">(indefinite)</span>라 한다.</p>
+    </div>
+    <p>대칭이 아닌 행렬 \(B\)로 \(\mathbf x^{\mathsf T}B\mathbf x\)를 만들어도 \(\mathbf x^{\mathsf T}B\mathbf x = \mathbf x^{\mathsf T}B^{\mathsf T}\mathbf x\)이므로 대칭 부분 \((B + B^{\mathsf T})/2\)만 남는다. 그래서 \(A\)는 늘 대칭으로 잡는다. 예를 들어 \(5x^2 + 4xy + 2y^2\)의 행렬은 \(xy\)의 계수 4를 둘로 나눈 \(\begin{pmatrix} 5 & 2 \\ 2 & 2 \end{pmatrix}\)이다.</p>
+    <p>스펙트럼 정리의 실수 판(<a class="ref" href="#thm-spectral"></a>)에 따라 \(A = RDR^{\mathsf T}\)인 직교 행렬 \(R\)이 있고, 그 열은 정규직교 고유벡터 \(\mathbf u_i\)다. 고유벡터를 축으로 하는 새 좌표를 \(\mathbf y = R^{\mathsf T}\mathbf x\)(\(y_i = \mathbf u_i\cdot\mathbf x\))라 하면 \(\mathbf x^{\mathsf T}A\mathbf x = \mathbf y^{\mathsf T}D\mathbf y\)이므로</p>
+    <div class="formula" id="eq-quadratic-diagonal">\[ Q = \lambda_1y_1^2 + \lambda_2y_2^2 + \cdots + \lambda_ny_n^2 \]</div>
+    <p>이다. 교차항이 모두 사라졌다. 이 축을 \(Q\)의 <span class="term">주축</span> <span class="en">(principal axes)</span>이라 한다. 여기서 곧바로, \(Q\)가 양의 정부호인 것은 모든 고유값이 양수인 것과 같고, 양의 준정부호인 것은 모든 고유값이 0 이상인 것과 같다. 3장의 <a href="ch03.html#thm-second-derivative-test">2계 도함수 판정법(정리 3.3)</a>이 \(n\)개 변수에서 헤세 행렬의 고유값 부호를 보는 이유가 이것이다. 모든 고유값이 양수이면 \(Q(\mathbf x) = 1\)은 주축 \(\mathbf u_i\)를 따라 반축의 길이가 \(1/\sqrt{\lambda_i}\)인 타원(3차원이면 타원면)이다.</p>
+    <p>단위 벡터 위에서 \(Q\)가 얼마나 커지고 작아질 수 있는지도 바로 읽힌다. \(\lvert\mathbf x\rvert = 1\)이면 \(\sum y_i^2 = 1\)이므로 \(Q = \sum\lambda_iy_i^2\)는 고유값들의 가중 평균이다.</p>
+    <div class="box thm" id="thm-quadratic-extremes"><div class="box-h">이차 형식의 최댓값과 최솟값</div>
+      <p>실수 대칭 행렬 \(A\)의 가장 작은 고유값과 가장 큰 고유값을 \(\lambda_{\min}\), \(\lambda_{\max}\)라 하면, 모든 \(\mathbf x \ne 0\)에서</p>
+      <div class="formula" id="eq-quadratic-bounds">\[ \lambda_{\min} \le \frac{\mathbf x^{\mathsf T}A\mathbf x}{\mathbf x^{\mathsf T}\mathbf x} \le \lambda_{\max} \]</div>
+      <p>이고, 등호는 \(\mathbf x\)가 각각의 고유벡터일 때 성립한다. 또 단위 구면 \(\lvert\mathbf x\rvert = 1\) 위에서 \(Q\)의 임계점은 정확히 \(A\)의 고유벡터이고, 그 점에서 \(Q\)의 값은 고유값이다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>부등식은 위의 가중 평균에서 바로 나온다: \(\lambda_{\min}\sum y_i^2 \le \sum\lambda_iy_i^2 \le \lambda_{\max}\sum y_i^2\). 임계점은 <a href="ch03.html#thm-lagrange-multiplier">3장의 라그랑주 승수법(정리 3.4)</a>으로 찾는다. 제약 \(g = \mathbf x^{\mathsf T}\mathbf x = 1\)에서 \(\nabla Q = \mu\nabla g\)이고, \(\partial_k(A_{ij}x_ix_j) = A_{kj}x_j + A_{ik}x_i = 2(A\mathbf x)_k\)(대칭성), \(\nabla g = 2\mathbf x\)이므로 조건은 \(A\mathbf x = \mu\mathbf x\)이다. 그때 \(Q = \mathbf x^{\mathsf T}(\mu\mathbf x) = \mu\)이다.</p>
+      </details>
+    </div>
+    <p>가운데 비는 16장의 <a href="ch16.html#eq-rayleigh-quotient">레일리 몫</a>의 유한 차원 판이고, 바닥 에너지를 변분으로 어림하는 방법이 이 부등식에 기댄다.</p>
+    <div class="callout tip"><strong>양의 정부호를 고유값 없이 판정하기</strong><p>\(2 \times 2\)이면 두 고유값이 모두 양수인 것은 곱 \(\det A > 0\)이고 합 \(\operatorname{tr}A > 0\)인 것과 같다. 3장의 "\(D > 0\)이고 \(f_{xx} > 0\)이면 극소"가 이것이다(\(D > 0\)이면 두 고유값의 부호가 같고, \(f_{xx} > 0\)이면 대각합도 양수다). \(n \times n\)에서는 왼쪽 위의 \(k \times k\) 부분 행렬식이 \(k = 1, \ldots, n\)에서 모두 양수인 것이 양의 정부호와 동치다(실베스터 판정법, Horn, Johnson, <i>Matrix Analysis</i>).</p></div>
+
+    <div class="box ex" id="ex-conic-axes"><div class="box-h">비등방 조화 퍼텐셜의 주축과 진동</div>
+      <p>질량 \(m = 0.10\ \text{kg}\)인 입자가 평면 위에서 퍼텐셜 \(V = \tfrac12k(5x^2 + 4xy + 2y^2)\), \(k = 1.0\ \text{N/m}\)에 붙들려 있다. (가) 등위선 \(5x^2 + 4xy + 2y^2 = 1\)의 주축과 반축의 길이를 구하라. (나) 입자의 정규 모드와 진동수를 구하라.</p>
+      <p><b>풀이.</b> (가) \(A = \begin{pmatrix} 5 & 2 \\ 2 & 2 \end{pmatrix}\)의 대각합은 7, 행렬식은 6이므로 특성 방정식 \(\lambda^2 - 7\lambda + 6 = 0\)에서 \(\lambda = 6, 1\)이다. \(A(2, 1) = (12, 6)\), \(A(-1, 2) = (-1, 2)\)이므로 고유벡터는 \(\mathbf u_1 = (2, 1)/\sqrt5\) (\(\lambda = 6\)), \(\mathbf u_2 = (-1, 2)/\sqrt5\) (\(\lambda = 1\))이고, 서로 수직이다. 주축 좌표로 등위선은</p>
+      <div class="formula">\[ 6y_1^2 + y_2^2 = 1 \]</div>
+      <p>인 타원이다. 반축은 \(\mathbf u_1\) 방향으로 \(1/\sqrt6 = 0.408\), \(\mathbf u_2\) 방향으로 \(1\)이다(그림 8-5). \(\mathbf u_1\)은 \(x\)축에서 \(\tan^{-1}(1/2) = 26.6^\circ\) 돌아간 방향이다. 넓이는 \(\pi \times 0.408 \times 1 = \pi/\sqrt6 = 1.28\)로, \(\pi/\sqrt{\det A}\)와 같다.</p>
+      <p>(나) \(M = mI\)이므로 식 <a class="ref" href="#eq-generalized-eigen"></a>은 \(kA\mathbf a = m\omega^2\mathbf a\)이고, 정규 모드는 주축 방향의 직선 진동이다. 진동수는 \(\omega_i = \sqrt{k\lambda_i/m}\)이다.</p>
+      <p><b>숫자로 보기.</b> \(k/m = 10\ \text{s}^{-2}\)이므로 \(\omega_1 = \sqrt{60}\ \text{s}^{-1} = 7.75\ \text{rad/s}\) (\(\mathbf u_1\) 방향, 퍼텐셜이 가파른 쪽), \(\omega_2 = \sqrt{10}\ \text{s}^{-1} = 3.16\ \text{rad/s}\) (\(\mathbf u_2\) 방향)이다. 처음 변위가 주축 방향이 아니면 두 진동이 섞여, 입자는 주축에 맞춰 놓인 직사각형 안을 채우는 리사주 곡선을 그린다.</p>
+    </div>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 300" role="img" aria-label="이차 곡선 5x² + 4xy + 2y² = 1. 기울어진 타원의 주축은 고유벡터 방향이고 반축의 길이는 고유값의 제곱근의 역수다"><defs><marker id="f0805-ab" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc2"/></marker></defs><line x1="20" y1="150" x2="400" y2="150" class="s-grid"/><line x1="210" y1="10" x2="210" y2="290" class="s-grid"/><text x="398" y="144" class="t-math dim" text-anchor="end"><tspan font-style="italic">x</tspan></text><text x="216" y="22" class="t-math dim"><tspan font-style="italic">y</tspan></text><line x1="88.6" y1="210.7" x2="331.4" y2="89.3" class="s-acc2" style="stroke-width:1.2" stroke-dasharray="6 5"/><line x1="272.3" y1="274.5" x2="147.7" y2="25.5" class="s-acc2" style="stroke-width:1.2" stroke-dasharray="6 5"/><path d="M253.1,128.5 L249.3,121.1 L245.3,114 L241.2,107 L236.9,100.2 L232.4,93.7 L227.9,87.4 L223.3,81.4 L218.6,75.8 L213.8,70.5 L209.1,65.7 L204.3,61.2 L199.6,57.2 L194.9,53.6 L190.3,50.5 L185.8,47.8 L181.5,45.7 L177.2,44.1 L173.1,43 L169.2,42.4 L165.5,42.3 L162,42.8 L158.8,43.8 L155.8,45.3 L153,47.3 L150.5,49.8 L148.4,52.8 L146.5,56.3 L144.9,60.2 L143.7,64.6 L142.8,69.4 L142.2,74.5 L141.9,80.1 L142,86 L142.3,92.2 L143.1,98.7 L144.1,105.4 L145.5,112.3 L147.2,119.5 L149.2,126.8 L151.5,134.1 L154,141.6 L156.9,149.1 L160,156.6 L163.3,164.1 L166.9,171.5 L170.7,178.9 L174.7,186 L178.8,193 L183.1,199.8 L187.6,206.3 L192.1,212.6 L196.7,218.6 L201.4,224.2 L206.2,229.5 L210.9,234.3 L215.7,238.8 L220.4,242.8 L225.1,246.4 L229.7,249.5 L234.2,252.2 L238.5,254.3 L242.8,255.9 L246.9,257 L250.8,257.6 L254.5,257.7 L258,257.2 L261.2,256.2 L264.2,254.7 L267,252.7 L269.5,250.2 L271.6,247.2 L273.5,243.7 L275.1,239.8 L276.3,235.4 L277.2,230.6 L277.8,225.5 L278.1,219.9 L278,214 L277.7,207.8 L276.9,201.3 L275.9,194.6 L274.5,187.7 L272.8,180.5 L270.8,173.2 L268.5,165.9 L266,158.4 L263.1,150.9 L260,143.4 L256.7,135.9 L253.1,128.5" class="s-acc" style="stroke-width:2.4"/><line x1="210" y1="150" x2="253.1" y2="128.5" class="s-acc2" style="stroke-width:2.4" marker-end="url(#f0805-ab)"/><line x1="210" y1="150" x2="157.2" y2="44.5" class="s-acc2" style="stroke-width:2.4" marker-end="url(#f0805-ab)"/><text x="335.4" y="93.3" class="t-math acc2">y<tspan baseline-shift="sub" font-size="11">1</tspan> (λ = 6)</text><text x="137.7" y="39.5" class="t-math acc2" text-anchor="end">y<tspan baseline-shift="sub" font-size="11">2</tspan> (λ = 1)</text><text x="237.5" y="161.2" class="t-mono" style="font-size:13px">1/√6</text><text x="173" y="92" class="t-mono" style="font-size:13px" text-anchor="end">1</text></svg></div>
+      <figcaption><b>그림 8-5.</b> 이차 곡선 \(5x^2 + 4xy + 2y^2 = 1\). 교차항 때문에 기울어진 타원의 축(파선)은 행렬 \(\begin{pmatrix} 5 & 2 \\ 2 & 2 \end{pmatrix}\)의 고유벡터 방향이고, 반축의 길이는 \(1/\sqrt{\lambda}\)이다. 고유값이 큰 방향일수록 \(Q\)가 빨리 커지므로 타원이 좁다.</figcaption>
+    </figure>
+
+    <h3 id="s6-inertia">관성 텐서와 주축</h3>
+    <p>4장에서 질점 하나가 각속도 \(\boldsymbol\omega\)로 돌 때 \(T = \tfrac12\omega_jI_{jm}\omega_m\)이었고(<a href="ch04.html#eq-inertia-point-mass">식 (4.18)</a>), 각운동량은 \(\mathbf L = m\big[r^2\boldsymbol\omega - (\mathbf r\cdot\boldsymbol\omega)\mathbf r\big]\)이었다(<a href="ch04.html#eq-rigid-angular-momentum">식 (4.24)</a>). 강체는 질점들의 합이다.</p>
+    <div class="box def" id="def-inertia-tensor"><div class="box-h">관성 텐서</div>
+      <p>원점 O에 대한 강체의 <span class="term">관성 텐서</span> <span class="en">(inertia tensor)</span>는 질점 \(m_a\)(위치 \(\mathbf r_a\))의 모임이면, 또는 질량 밀도 \(\rho(\mathbf r)\)이면</p>
+      <div class="formula" id="eq-inertia-tensor">\[ \begin{aligned} I_{ij} &= \sum_a m_a\big(r_a^2\delta_{ij} - x_{a,i}x_{a,j}\big) \\ &= \int\rho(\mathbf r)\big(r^2\delta_{ij} - x_ix_j\big)\,d^3r \end{aligned} \]</div>
+      <p>인 \(3 \times 3\) 실수 대칭 행렬이다. 원점을 지나는 축 둘레로 각속도 \(\boldsymbol\omega\)로 도는 강체의 각운동량과 운동 에너지는</p>
+      <div class="formula" id="eq-inertia-L-T">\[ \mathbf L = I\boldsymbol\omega, \qquad T = \frac12\,\boldsymbol\omega^{\mathsf T}I\boldsymbol\omega \]</div>
+      <p>이다. 대각 성분 \(I_{xx} = \int\rho(y^2 + z^2)\,d^3r\) 등은 좌표축에 대한 <span class="term">관성 모멘트</span>, 대각선 밖 성분 \(I_{xy} = -\int\rho\,xy\,d^3r\) 등은 <span class="term">관성곱</span> <span class="en">(product of inertia)</span>이다.</p>
+    </div>
+    <p>\(T = \tfrac12\boldsymbol\omega^{\mathsf T}I\boldsymbol\omega\)는 \(\boldsymbol\omega\)의 이차 형식이고, <a href="ch04.html#eq-rotation-speed-squared">4장 식 (4.17)</a>에 따라 \(\boldsymbol\omega^{\mathsf T}I\boldsymbol\omega = \sum_am_a\lvert\boldsymbol\omega\times\mathbf r_a\rvert^2 \ge 0\)이므로 \(I\)는 양의 준정부호다. 스펙트럼 정리에 따라 \(I\)는 서로 수직인 세 실수 고유벡터 \(\hat{\mathbf e}_1, \hat{\mathbf e}_2, \hat{\mathbf e}_3\)과 0 이상의 고유값 \(I_1, I_2, I_3\)을 갖는다.</p>
+    <div class="formula" id="eq-principal-axes">\[ I\hat{\mathbf e}_k = I_k\hat{\mathbf e}_k, \qquad \mathbf L = \sum_{k=1}^{3}I_k\omega_k\hat{\mathbf e}_k, \qquad T = \frac12\sum_{k=1}^{3}I_k\omega_k^2 \]</div>
+    <p>여기서 \(\omega_k = \hat{\mathbf e}_k\cdot\boldsymbol\omega\)는 주축에 대한 성분이다. \(\hat{\mathbf e}_k\)를 강체의 <span class="term">주축</span>, \(I_k\)를 <span class="term">주 관성 모멘트</span> <span class="en">(principal moments of inertia)</span>라 한다. \(\mathbf L\)이 \(\boldsymbol\omega\)와 나란한 것은 \(\boldsymbol\omega\)가 주축 방향(또는 겹친 고유값의 고유 공간 안)에 있을 때뿐이다. 다른 축으로 돌리면 \(\mathbf L\)이 \(\boldsymbol\omega\)와 어긋나서, 그 축을 유지하는 데 토크가 든다(<a class="ref" href="#ex-dumbbell-axes"></a>).</p>
+    <p>좌표축을 바꾸면 성분이 바뀐다. 새 정규직교 축 \(\mathbf e'_j\)를 옛 성분으로 적어 열로 세운 직교 행렬을 \(R\)이라 하면, <a href="ch07.html#eq-similarity-transform">7장 식 (7.28)</a>에서 \(S^{-1} = R^{\mathsf T}\)이므로 새 성분은 \(I' = R^{\mathsf T}IR\)이다. 주축을 \(R\)의 열로 고르면 \(I'\)이 대각 행렬이 된다. 이 변환 법칙이 바로 \(I\)를 "텐서"라 부르는 이유이고, 22장에서 <a href="ch22.html#def-cartesian-tensor">카르테시안 텐서</a>의 정의로 일반화한다. 원점을 옮기는 법도 필요하다. 질량 중심 C에서 잰 위치를 \(\mathbf r'_a\)라 하고 \(\mathbf r_a = \mathbf d + \mathbf r'_a\)로 쓰면 \(\sum_am_a\mathbf r'_a = 0\)이므로 \(\mathbf d\)와 \(\mathbf r'\)의 교차항이 모두 사라지고</p>
+    <div class="formula" id="eq-parallel-axis">\[ I_{ij}(\text{O}) = I_{ij}(\text{C}) + M_{\text{tot}}\big(d^2\delta_{ij} - d_id_j\big) \]</div>
+    <p>이다(\(M_{\text{tot}}\)은 전체 질량). 대각 성분만 보면 익숙한 평행축 정리다.</p>
+
+    <div class="box ex" id="ex-cube-inertia"><div class="box-h">정육면체의 꼭짓점에 대한 관성 텐서와 주축</div>
+      <p>한 변이 \(a\), 질량이 \(M\)인 고른 정육면체가 있다. 한 꼭짓점을 원점으로, 세 모서리를 좌표축으로 잡는다. (가) 원점에 대한 관성 텐서를 구하라. (나) 주축과 주 관성 모멘트를 구하라. (다) 한 변 10.0 cm인 알루미늄(밀도 \(2.70\ \text{g/cm}^3\)) 정육면체를 꼭짓점에서 \(x\)축 모서리를 축으로 \(\omega = 10\ \text{rad/s}\)로 돌릴 때, \(\mathbf L\)과 \(\boldsymbol\omega\) 사이의 각을 구하라.</p>
+      <p><b>풀이.</b> (가) \(\rho = M/a^3\)이고 적분 범위는 세 좌표 모두 \([0, a]\)이다. \(\int_0^ax^2\,dx = a^3/3\), \(\int_0^ax\,dx = a^2/2\)이므로</p>
+      <div class="formula">\[ \begin{aligned} I_{xx} &= \rho\Big(a \cdot \frac{a^3}{3} \cdot a + a \cdot a \cdot \frac{a^3}{3}\Big) = \frac23Ma^2 \\ I_{xy} &= -\rho\,\frac{a^2}{2}\cdot\frac{a^2}{2}\cdot a = -\frac14Ma^2 \end{aligned} \]</div>
+      <p>이고, 대칭에 따라 대각 성분은 모두 \(\tfrac23Ma^2\), 대각선 밖 성분은 모두 \(-\tfrac14Ma^2\)이다. 모든 성분이 1인 행렬 \(J\)로 쓰면</p>
+      <div class="formula" id="eq-cube-corner-inertia">\[ I = Ma^2\Big(\frac{11}{12}\,I_3 - \frac14\,J\Big) \]</div>
+      <p>이다(\(I_3\)은 \(3 \times 3\) 단위 행렬). (나) <a class="ref" href="#ex-triangle-ring"></a>에서 본 대로 \(J\)의 고유값은 \((1, 1, 1)\) 방향의 3과 그에 수직인 평면의 0(두 번)이다. 따라서</p>
+      <div class="formula">\[ \begin{gathered} I_1 = Ma^2\Big(\frac{11}{12} - \frac34\Big) = \frac16Ma^2 \\ I_2 = I_3 = \frac{11}{12}Ma^2 \end{gathered} \]</div>
+      <p>이다. 한 주축은 꼭짓점에서 맞은편 꼭짓점으로 가는 대각선 \((1, 1, 1)/\sqrt3\)이고, 나머지 둘은 대각선에 수직인 평면 안에서 아무렇게나 고른 두 수직 방향이다. 고유값이 겹쳤기 때문에 그 평면의 모든 축이 주축이다.</p>
+      <p>평행축 공식 <a class="ref" href="#eq-parallel-axis"></a>으로 확인하자. 질량 중심에 대한 정육면체의 관성 텐서는 \(\tfrac16Ma^2I_3\)이고(\(I_{xx} = M(a^2/12 + a^2/12)\), 관성곱은 대칭으로 0), \(\mathbf d = \tfrac a2(1, 1, 1)\), \(d^2 = \tfrac34a^2\)이다. 더하면 \(Ma^2\big(\tfrac16 + \tfrac34\big)I_3 - \tfrac14Ma^2J\)로 식 <a class="ref" href="#eq-cube-corner-inertia"></a>와 같다.</p>
+      <p>(다) \(M = 2.70\ \text{g/cm}^3 \times 1000\ \text{cm}^3 = 2.70\ \text{kg}\), \(Ma^2 = 0.0270\ \text{kg}\cdot\text{m}^2\)이다. \(\boldsymbol\omega = \omega\hat{\mathbf x}\)이면 \(\mathbf L = I\boldsymbol\omega\)는 \(I\)의 첫째 열에 \(\omega\)를 곱한 것이므로</p>
+      <div class="formula">\[ \begin{aligned} \mathbf L &= Ma^2\omega\,\big(\tfrac23, -\tfrac14, -\tfrac14\big) \\ &= (0.180,\ -0.068,\ -0.068)\ \text{kg}\cdot\text{m}^2/\text{s} \end{aligned} \]</div>
+      <p>이다. \(\cos\alpha = L_x/\lvert\mathbf L\rvert = (2/3)/\sqrt{4/9 + 1/8} = 0.884\)이므로 \(\alpha = 27.9^\circ\)이다.</p>
+      <p><b>숫자로 보기.</b> 주 관성 모멘트는 \(I_1 = 4.50 \times 10^{-3}\ \text{kg}\cdot\text{m}^2\), \(I_2 = I_3 = 2.48 \times 10^{-2}\ \text{kg}\cdot\text{m}^2\)로 5.5배 차이 난다. 모서리 둘레 회전의 운동 에너지는 \(T = \tfrac12I_{xx}\omega^2 = \tfrac12(0.0180)(100)\ \text{J} = 0.90\ \text{J}\)이다. \(\mathbf L\)이 축에서 \(28^\circ\) 기울어 강체와 함께 돌므로, 이 회전을 유지하려면 축받이가 크기 \(\omega L\sin\alpha = 10 \times 0.204 \times 0.468 = 0.95\ \text{N}\cdot\text{m}\)의 토크를 계속 줘야 한다(\(\boldsymbol\tau = \boldsymbol\omega\times\mathbf L\), 4장 예제 4.4와 같은 계산). 단위: \(\text{rad/s} \times \text{kg}\cdot\text{m}^2/\text{s} = \text{N}\cdot\text{m}\)이다.</p>
+    </div>
+    <div class="callout deep" data-later="cm-grad"><strong>가운데 축은 불안정하다</strong><p>주 관성 모멘트가 \(I_1 &lt; I_2 &lt; I_3\)인 강체(책, 테니스 라켓)를 던지면 \(I_1\), \(I_3\) 축 둘레의 회전은 안정하지만 \(I_2\) 축 둘레의 회전은 뒤집힌다. 이것을 보이는 오일러 방정식은 대학원 고전역학 책에서 다룬다.</p></div>
+  </section>
+
+  <section id="s7">
+    <h2>교환하는 행렬과 행렬 지수</h2>
+    <p><a class="ref" href="#ex-triangle-ring"></a>의 겹친 준위 \(t\)에는 실수 기저와 복소 기저가 모두 맞았다. 삼각형을 \(120^\circ\) 돌려도 분자는 그대로이므로, "돌렸을 때 어떻게 바뀌는가"로도 상태를 구별할 수 있다. 이 절의 주제는 두 행렬을 한꺼번에 대각화하는 조건과, 7장에서 회전을 만든 행렬 지수의 성질이다.</p>
+
+    <h3 id="s7-simultaneous">동시 대각화</h3>
+    <div class="box thm" id="thm-simultaneous-diag"><div class="box-h">동시 대각화 <span class="en">(simultaneous diagonalization)</span></div>
+      <p>\(A\)와 \(B\)가 \(n \times n\) 에르미트 행렬이라 하자. 하나의 유니타리 행렬 \(U\)로 \(U^\dagger AU\)와 \(U^\dagger BU\)를 함께 대각 행렬로 만들 수 있는 것은 \(AB = BA\)인 것과 동치다. 곧 두 행렬이 교환하면 둘의 공통 고유벡터로 이루어진 정규직교 기저가 있다.</p>
+    </div>
+    <p><b>증명.</b> (\(\Rightarrow\)) \(A = UD_AU^\dagger\), \(B = UD_BU^\dagger\)이면 대각 행렬끼리는 교환하므로 \(AB = UD_AD_BU^\dagger = UD_BD_AU^\dagger = BA\)이다.</p>
+    <p>(\(\Leftarrow\)) 열쇠는 다음 관찰이다. \(A\mathbf v = \lambda\mathbf v\)이면</p>
+    <div class="formula" id="eq-commute-invariant">\[ A(B\mathbf v) = BA\mathbf v = \lambda(B\mathbf v) \]</div>
+    <p>이므로 \(B\mathbf v\)도 \(A\)의 고유 공간 \(E_\lambda\)에 있다. \(B\)는 \(A\)의 각 고유 공간을 자기 자신으로 보낸다. 이제 스펙트럼 정리로 \(A\)의 서로 다른 고유값 \(\lambda\)마다 \(E_\lambda\)의 정규직교 기저를 골라 열로 세운 \(n \times d\) 행렬을 \(V_\lambda\)라 하자(\(d = \dim E_\lambda\)). \(BV_\lambda\)의 열도 \(E_\lambda\)에 있으므로 \(BV_\lambda = V_\lambda B_\lambda\)인 \(d \times d\) 행렬 \(B_\lambda = V_\lambda^\dagger BV_\lambda\)가 있고, 이것은 에르미트다. 스펙트럼 정리로 \(B_\lambda = W_\lambda D_\lambda W_\lambda^\dagger\)라 하면 \(V_\lambda W_\lambda\)의 열들은 정규직교하고, \(B(V_\lambda W_\lambda) = V_\lambda B_\lambda W_\lambda = (V_\lambda W_\lambda)D_\lambda\)이므로 \(B\)의 고유벡터이며, \(E_\lambda\) 안에 있으므로 여전히 \(A\)의 고유벡터다. 서로 다른 고유 공간은 <a class="ref" href="#thm-hermitian-real-eigen"></a>에 따라 직교하므로, 이 열들을 모든 \(\lambda\)에 대해 모으면 원하는 \(U\)다. ∎</p>
+    <p>특히 \(A\)의 고유값이 모두 다르면 각 \(E_\lambda\)가 1차원이라, 식 <a class="ref" href="#eq-commute-invariant"></a>에서 \(B\mathbf v \propto \mathbf v\)가 되어 \(A\)의 고유벡터는 저절로 \(B\)의 고유벡터다. 이 논증은 \(B\)가 에르미트가 아니어도 된다. 양자역학에서는 해밀토니안과 교환하는 대칭 연산의 고유값(양자수)으로 겹친 준위에 이름을 붙인다.</p>
+
+    <div class="box ex" id="ex-ring-rotation"><div class="box-h">고리 분자의 회전 대칭과 준위</div>
+      <p><a class="ref" href="#ex-triangle-ring"></a>의 세 원자 고리에서 원자 \(1 \to 2 \to 3 \to 1\)로 자리를 옮기는 행렬 \(C\)를 써서 (가) \([C, H] = 0\)을 보이고 \(C\)의 고유벡터로 \(H\)를 대각화하라. (나) 같은 원자 \(N\)개의 고리로 넓히고, \(N = 6\)(벤젠의 \(\pi\) 전자 모형)에서 전자 6개의 에너지를 구하라.</p>
+      <p><b>풀이.</b> (가) \((C\mathbf v)_j = v_{j-1}\)(지수는 3을 법으로)이므로</p>
+      <div class="formula">\[ C = \begin{pmatrix} 0 & 0 & 1 \\ 1 & 0 & 0 \\ 0 & 1 & 0 \end{pmatrix}, \qquad H = -t\,(C + C^{-1}) \]</div>
+      <p>이다. \(C\)는 <a href="ch07.html#eq-cube-diagonal-rotation">7장 식 (7.41)</a>의 대각선 둘레 \(120^\circ\) 회전과 같은 행렬이고, \(C^{-1} = C^{\mathsf T} = C^2\)이 \(H\)의 나머지 대각선 밖 성분을 채운다. \(H\)가 \(C\)의 거듭제곱의 합이므로 \([C, H] = 0\)이다. \(C\)는 유니타리(정규 행렬)이고, \(\mathbf f_p = (1, \omega^p, \omega^{2p})/\sqrt3\) (\(\omega = e^{2\pi i/3}\), \(p = 0, 1, 2\))에 대해 \(C\mathbf f_p = \omega^{-p}\mathbf f_p\)이다(\(\omega^3 = 1\)을 쓰면 확인된다). 세 고유값 \(1, \omega^{-1}, \omega^{-2}\)이 모두 다르므로 위의 논증으로 \(\mathbf f_p\)는 \(H\)의 고유벡터이고</p>
+      <div class="formula" id="eq-ring-energies">\[ E_p = -t\,(\omega^{-p} + \omega^{p}) = -2t\cos\frac{2\pi p}{3} \]</div>
+      <p>이다. \(E_0 = -2t\), \(E_1 = E_2 = t\)로 <a class="ref" href="#ex-triangle-ring"></a>과 같다. 겹친 두 상태는 \(C\)의 고유값 \(\omega^{\mp1}\)로 구별된다. 전자가 고리를 한쪽 방향으로 도는 상태와 반대 방향으로 도는 상태다. <a class="ref" href="#ex-rotation-eigen"></a>의 원편광과 같은 구조다.</p>
+      <p>(나) 원자 \(N\)개이면 같은 논증으로 \(\mathbf f_p = (\omega_N^{jp})_j/\sqrt N\), \(\omega_N = e^{2\pi i/N}\)이고</p>
+      <div class="formula" id="eq-ring-band">\[ E_p = -2t\cos\frac{2\pi p}{N}, \qquad p = 0, 1, \ldots, N - 1 \]</div>
+      <p>이다. \(N = 6\)이면 준위는 \(-2t,\ -t,\ -t,\ t,\ t,\ 2t\)이다.</p>
+      <p><b>숫자로 보기.</b> 전자 6개가 아래 세 준위를 두 개씩 채우면 에너지는 \(2(-2t) + 4(-t) = -8t\)이다. 이중 결합 셋이 따로 있는 것으로 보면(두 원자 문제의 바닥 준위 \(-t\)에 전자 2개씩) \(3 \times (-2t) = -6t\)이므로, 전자가 고리 전체에 퍼지면서 \(2t\)만큼 더 안정해진다. 확인: \(\sum_pE_p = 0 = \operatorname{tr}H\)이다.</p>
+    </div>
+
+    <h3 id="s7-exponential">행렬 지수</h3>
+    <div class="box def" id="def-matrix-exponential"><div class="box-h">행렬 지수</div>
+      <p>\(n \times n\) 행렬 \(A\)(복소 성분 가능)의 <span class="term">행렬 지수</span> <span class="en">(matrix exponential)</span>를</p>
+      <div class="formula" id="eq-matrix-exponential">\[ e^A = \sum_{k=0}^{\infty}\frac{A^k}{k!} = I + A + \frac{A^2}{2!} + \frac{A^3}{3!} + \cdots \]</div>
+      <p>로 정의한다. 이 급수는 모든 \(A\)에 대해 성분마다 절대 수렴한다.</p>
+    </div>
+    <p>수렴은 이렇게 보인다. \(c = n\max_{i,j}\lvert A_{ij}\rvert\)라 하면 \(\lvert(A^k)_{ij}\rvert \le c^k\)이다(귀납: \(\lvert(A^{k+1})_{ij}\rvert \le \sum_l\lvert(A^k)_{il}\rvert\lvert A_{lj}\rvert \le n\,c^k\max\lvert A\rvert = c^{k+1}\)). 따라서 각 성분의 급수는 \(\sum c^k/k! = e^c\)보다 작은 양항급수로 눌리므로 <a href="ch01.html#thm-comparison-test">1장의 비교 판정법(정리 1.2)</a>에 따라 절대 수렴한다. \(A\)가 대각화 가능하면 식 <a class="ref" href="#eq-matrix-function"></a>에 따라 \(e^A = S\operatorname{diag}(e^{\lambda_1}, \ldots, e^{\lambda_n})S^{-1}\)이다.</p>
+    <div class="box thm" id="thm-matrix-exp-properties"><div class="box-h">행렬 지수의 성질</div>
+      <p>\(n \times n\) 행렬 \(A, B\)와 수 \(s, t\)에 대해</p>
+      <ol>
+        <li>\(AB = BA\)이면 \(e^{A+B} = e^Ae^B\)이다. 특히 \(e^{(s+t)A} = e^{sA}e^{tA}\)이고, \(e^A\)는 늘 가역이며 \((e^A)^{-1} = e^{-A}\)이다.</li>
+        <li>\(\dfrac{d}{dt}e^{tA} = Ae^{tA} = e^{tA}A\)이다.</li>
+        <li>가역 \(S\)에 대해 \(Se^AS^{-1} = e^{SAS^{-1}}\)이고, \((e^A)^\dagger = e^{A^\dagger}\)이다.</li>
+        <li>행렬식과 대각합 사이에 다음이 성립한다.</li>
+      </ol>
+      <div class="formula" id="eq-det-exp-trace">\[ \det e^A = e^{\operatorname{tr}A} \]</div>
+      <details class="proof"><summary>증명</summary>
+        <p>1. \(AB = BA\)이면 이항 정리 \((A + B)^k = \sum_j\binom kjA^jB^{k-j}\)이 성립한다(교환하지 않으면 \(AB\)와 \(BA\)를 따로 세야 해서 깨진다). 두 절대 수렴 급수의 곱을 항별로 모으면 \(e^Ae^B = \sum_k\sum_jA^jB^{k-j}/(j!(k-j)!) = \sum_k(A + B)^k/k! = e^{A+B}\)이다. \(sA\)와 \(tA\)는 늘 교환하고, \(t = -s\)이면 \(e^{sA}e^{-sA} = e^0 = I\)이다.</p>
+        <p>2. 성분마다 \(t\)의 멱급수이므로 <a href="ch01.html#thm-power-series-calculus">1장 정리 1.6</a>으로 항별 미분한다: \(\sum_{k\ge1}kt^{k-1}A^k/k! = A\sum_{k\ge0}t^kA^k/k!\). \(A\)를 오른쪽으로 묶어 낼 수도 있다.</p>
+        <p>3. \((SAS^{-1})^k = SA^kS^{-1}\), \((A^k)^\dagger = (A^\dagger)^k\)를 항마다 쓴다.</p>
+        <p>4. 슈르 삼각화(8.4절)로 \(A = UTU^\dagger\), \(T\)는 대각 성분이 고유값 \(\lambda_i\)인 위 삼각 행렬이다. 위 삼각 행렬의 거듭제곱은 위 삼각이고 대각 성분은 \(\lambda_i^k\)이므로, \(e^T\)는 대각 성분이 \(e^{\lambda_i}\)인 위 삼각 행렬이다. 3과 정리 7.2에서 \(\det e^A = \det e^T = \prod_ie^{\lambda_i} = e^{\sum\lambda_i}\)이고, 식 <a class="ref" href="#eq-eigen-trace-det"></a>에서 이것은 \(e^{\operatorname{tr}A}\)이다.</p>
+      </details>
+    </div>
+    <p>2에 따라 \(\mathbf x(t) = e^{tA}\mathbf x(0)\)은 \(\dot{\mathbf x} = A\mathbf x\)의 해이고, 10장은 이것으로 <a href="ch10.html#eq-matrix-exp-solution">연립 선형 미분방정식</a>을 푼다. 회전 생성자들은 교환하지 않아서 \(e^{\alpha L_x}e^{\beta L_y} \ne e^{\alpha L_x + \beta L_y}\)이고, 그 차이가 <a href="ch07.html#eq-group-commutator">7장 식 (7.50)</a>의 교환자였다.</p>
+    <p>3과 4에서 물리에 쓸 두 결과가 나온다. \(H\)가 에르미트이면 \(U(t) = e^{-iHt/\hbar}\)는 \(U^\dagger = e^{iHt/\hbar} = U^{-1}\)이므로 유니타리다. 슈뢰딩거 방정식의 시간 변화가 확률(벡터의 길이)을 보존하는 이유다. 또 \(G\)가 실수 반대칭이면 \((e^G)^{\mathsf T} = e^{-G} = (e^G)^{-1}\)이므로 \(e^G\)는 직교 행렬이고, \(\operatorname{tr}G = 0\)이므로 \(\det e^G = e^0 = 1\)이다. 7장의 \(R = e^{\theta\hat{\mathbf n}\cdot\mathbf L}\)이 언제나 반사 없는 회전인 까닭이 식 <a class="ref" href="#eq-det-exp-trace"></a> 한 줄로 설명된다.</p>
+
+    <h3 id="s7-spin">파울리 행렬의 지수와 스핀 회전</h3>
+    <p>8.3절에서 \(T_k = -i\sigma_k/2\)가 회전 생성자와 같은 교환 관계를 만족함을 보았다. 7장에서 \(e^{\theta\hat{\mathbf n}\cdot\mathbf L}\)로 3차원 회전을 만들었듯, \(e^{\theta\hat{\mathbf n}\cdot\mathbf T}\)를 계산하자. \((\hat{\mathbf n}\cdot\boldsymbol\sigma)^2 = I\)이므로 짝수 거듭제곱은 \(I\), 홀수 거듭제곱은 \(\hat{\mathbf n}\cdot\boldsymbol\sigma\)이다. 급수를 짝수 차와 홀수 차로 나누고 \((-i)^{2m} = (-1)^m\)을 쓰면, 괄호 안이 <a href="ch01.html#eq-standard-series">1장 식 (1.21)</a>의 코사인과 사인 급수가 된다.</p>
+    <div class="formula" id="eq-pauli-exponential">\[ e^{-i\theta\,\hat{\mathbf n}\cdot\boldsymbol\sigma/2} = \cos\frac\theta2\,I - i\,\hat{\mathbf n}\cdot\boldsymbol\sigma\,\sin\frac\theta2 \]</div>
+    <p>이 행렬을 \(U(\hat{\mathbf n}, \theta)\)라 하자. \(\hat{\mathbf n}\cdot\boldsymbol\sigma\)가 에르미트이므로 \(U\)는 유니타리이고, \(\operatorname{tr}(\hat{\mathbf n}\cdot\boldsymbol\sigma) = 0\)이므로 식 <a class="ref" href="#eq-det-exp-trace"></a>에서 \(\det U = 1\), 곧 \(U \in SU(2)\)이다. 각에 반각이 들어 있으므로</p>
+    <div class="formula" id="eq-spin-2pi">\[ U(\hat{\mathbf n}, 2\pi) = -I, \qquad U(\hat{\mathbf n}, 4\pi) = I \]</div>
+    <p>이다. \(2\pi\)를 돌리면 상태 벡터의 부호가 바뀌고, \(4\pi\)를 돌려야 제자리다. 그런데 스핀이 가리키는 방향은 \(2\pi\)에 돌아온다. \(\hat{\mathbf n} = \hat{\mathbf z}\)이면 \(U = \operatorname{diag}(e^{-i\theta/2}, e^{i\theta/2})\)이고, 직접 곱하면</p>
+    <div class="formula" id="eq-spin-vector-rotation">\[ U^\dagger\sigma_xU = \cos\theta\,\sigma_x - \sin\theta\,\sigma_y, \qquad U^\dagger\sigma_zU = \sigma_z \]</div>
+    <p>이다. 기댓값 \(\langle\sigma_x\rangle\), \(\langle\sigma_y\rangle\)으로 이루어진 스핀 벡터가 \(R_z(\theta)\)로, 곧 각 \(\theta\)만큼 돈다(첫째 식이 \(R_z(\theta)\)의 첫째 행 \((\cos\theta, -\sin\theta, 0)\)이다). 일반 축에서도 \(U^\dagger\sigma_jU = R(\hat{\mathbf n}, \theta)_{jk}\sigma_k\)이고, \(R\)은 <a href="ch07.html#eq-rotation-axis-index">7장 식 (7.39)</a>의 회전 행렬이다. \(U\)와 \(-U\)가 같은 \(R\)을 주므로, \(SU(2)\)의 두 원소가 회전 하나에 대응한다.</p>
+
+    <div class="box ex" id="ex-spin-rotation"><div class="box-h">자기장 속 중성자의 스핀 세차와 4π 주기</div>
+      <p>스핀이 \(+x\)를 향한 중성자 \(\boldsymbol\psi(0) = (1, 1)/\sqrt2\)가 \(+z\) 방향의 균일한 자기장 \(B\)가 걸린 길이 \(\ell = 2.0\ \text{cm}\)의 구간을 속력 \(v = 2200\ \text{m/s}\)로 지난다. 자이로자기 비를 \(\gamma_n\)(감쇠율 \(\gamma\)와 다르다)이라 하면 해밀토니안은 \(H = -\gamma_n\mathbf S\cdot\mathbf B = -\tfrac12\gamma_n\hbar B\sigma_z\)이고 \(\lvert\gamma_n\rvert = 1.832 \times 10^8\ \text{s}^{-1}\text{T}^{-1}\)이다. (가) 구간을 지난 뒤의 상태를 \(U(\hat{\mathbf z}, \theta)\)로 쓰고 \(\theta\)를 구하라. (나) 중성자 간섭계에서 한 경로에만 이 자기장을 걸고 자기장이 없는 다른 경로와 합치면, 합친 빔의 세기는 \(B\)에 따라 어떻게 바뀌는가? 세기가 처음으로 0이 되는 \(B\)와 처음 값으로 돌아오는 \(B\)를 구하라.</p>
+      <p><b>풀이.</b> (가) 구간을 지나는 시간은 \(\tau = \ell/v\)이고, 상태는 \(e^{-iH\tau/\hbar}\boldsymbol\psi = e^{i\gamma_nB\tau\sigma_z/2}\boldsymbol\psi\)로 바뀐다. 식 <a class="ref" href="#eq-pauli-exponential"></a>과 견주면 \(U(\hat{\mathbf z}, \theta)\), \(\theta = -\gamma_nB\tau\)이다. 회전 방향은 \(\gamma_n\)의 부호가 정하고, 크기는 \(\lvert\theta\rvert = \lvert\gamma_n\rvert B\ell/v\)이다. \(U\boldsymbol\psi(0) = (e^{-i\theta/2}, e^{i\theta/2})/\sqrt2\)이고 \(\langle\sigma_x\rangle = \cos\theta\), \(\langle\sigma_y\rangle = \sin\theta\)이므로, 식 <a class="ref" href="#eq-spin-vector-rotation"></a>대로 스핀이 \(z\)축 둘레로 \(\theta\)만큼 세차한다(라모어 세차, 각진동수 \(\lvert\gamma_n\rvert B\)).</p>
+      <p>(나) 두 경로의 상태를 같은 무게로 더하면 세기는 \(\lvert\boldsymbol\psi(0) + U\boldsymbol\psi(0)\rvert^2/4 = \tfrac12(1 + \cos\tfrac\theta2)\)에 비례한다. 세기가 0이 되는 것은 \(\theta = 2\pi\), 처음 값으로 돌아오는 것은 \(\theta = 4\pi\)이다. \(v = 2200\ \text{m/s}\), \(\ell = 0.020\ \text{m}\), \(\lvert\gamma_n\rvert = 1.832 \times 10^8\ \text{s}^{-1}\text{T}^{-1}\)을 넣으면</p>
+      <div class="formula">\[ B_{2\pi} = \frac{2\pi v}{\lvert\gamma_n\rvert\ell} = 3.77\ \text{mT} \]</div>
+      <p>이고 \(B_{4\pi} = 7.54\ \text{mT}\)이다.</p>
+      <p><b>숫자로 보기.</b> 구간을 지나는 시간은 \(9.1\ \mu\text{s}\)이다. \(B = 3.77\ \text{mT}\)에서 스핀은 한 바퀴를 돌아 처음 방향으로 돌아왔는데도 상태의 부호가 바뀌어, 두 빔이 상쇄 간섭한다. 세기의 주기가 회전각 \(4\pi\)라는 것은 1975년 두 연구진이 중성자 간섭계로 확인했다(H. Rauch et al., Phys. Lett. A 54, 425 (1975); S. A. Werner et al., Phys. Rev. Lett. 35, 1053 (1975)). 단위 확인: \(\text{s}^{-1}\text{T}^{-1} \times \text{T} \times \text{m}/(\text{m/s})\)는 차원이 없다. 한 경로의 전체 위상은 관측할 수 없지만, 두 경로의 상대 위상은 간섭 무늬로 보인다.</p>
+    </div>
+      </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>고유값은 특성 방정식 \(\det(A - \lambda I) = 0\)의 근이고, 고유벡터는 \((A - \lambda I)\mathbf v = 0\)의 0이 아닌 해다. \(\operatorname{tr}A = \sum\lambda_i\), \(\det A = \prod\lambda_i\)이고, 닮은 행렬은 고유값이 같다. 실수 행렬도 복소 고유값을 가질 수 있다(회전 \(1, e^{\pm i\theta}\)).</li>
+      <li>\(A\)가 선형 독립인 고유벡터 \(n\)개를 가지면 \(A = SDS^{-1}\)(\(S\)의 열이 고유벡터)이고 \(A^k = SD^kS^{-1}\), \(f(A) = S f(D)S^{-1}\)이다. 고유값이 모두 다르면 충분하다. 기하적 중복도가 대수적 중복도보다 작으면 대각화되지 않는다.</li>
+      <li>복소 벡터의 길이는 \(\mathbf v^\dagger\mathbf v\)이다. 에르미트 행렬 \(A^\dagger = A\)는 고유값이 실수이고 서로 다른 고유값의 고유벡터가 직교한다. 유니타리 행렬 \(U^\dagger U = I\)는 길이를 보존하고 고유값이 \(\lvert\lambda\rvert = 1\)이다. 파울리 행렬은 \(\sigma_i\sigma_j = \delta_{ij}I + i\varepsilon_{ijk}\sigma_k\)를 만족한다.</li>
+      <li>스펙트럼 정리: 에르미트 행렬은 고유값이 겹쳐도 유니타리 \(U\)로 대각화된다(실수 대칭이면 직교 \(R\)). \(A = \sum_i\lambda_i\mathbf u_i\mathbf u_i^\dagger\), \(\sum_i\mathbf u_i\mathbf u_i^\dagger = I\), \(f(A) = \sum f(\lambda_i)\mathbf u_i\mathbf u_i^\dagger\). 겹친 고유값에서는 고유벡터가 아니라 투영이 유일하다.</li>
+      <li>결합 진동자 \(M\ddot{\mathbf x} = -K\mathbf x\)는 \(K\mathbf a = \omega^2M\mathbf a\)가 되고, 정규 모드는 \(\mathbf a_j^{\mathsf T}M\mathbf a_k = \delta_{jk}\)로 직교한다. 정규 좌표에서 \(N\)개의 독립된 단진동자로 풀린다. 두 물체의 모드는 \(\omega_0\)과 \(\sqrt{\omega_0^2 + 2\kappa}\), CO₂ 모형의 진동수 비는 \(\sqrt{1 + 2m/m_{\mathrm C}}\)이다.</li>
+      <li>이차 형식 \(\mathbf x^{\mathsf T}A\mathbf x\)는 주축 좌표에서 \(\sum\lambda_iy_i^2\)가 되고, \(\lambda_{\min} \le \mathbf x^{\mathsf T}A\mathbf x/\mathbf x^{\mathsf T}\mathbf x \le \lambda_{\max}\)이다. 관성 텐서 \(I_{ij} = \int\rho(r^2\delta_{ij} - x_ix_j)\,d^3r\)는 \(\mathbf L = I\boldsymbol\omega\), \(T = \tfrac12\boldsymbol\omega^{\mathsf T}I\boldsymbol\omega\)를 주고, 주축에서만 \(\mathbf L \parallel \boldsymbol\omega\)이다. 정육면체의 꼭짓점에서는 \(\tfrac16Ma^2\)(대각선)과 \(\tfrac{11}{12}Ma^2\)(두 번)이다.</li>
+      <li>교환하는 에르미트 행렬은 공통 고유벡터의 정규직교 기저를 갖는다. 대칭 연산과 교환하는 해밀토니안의 준위는 대칭의 고유값으로 구별된다(\(N\)원자 고리 \(E_p = -2t\cos(2\pi p/N)\)).</li>
+      <li>\(e^A = \sum A^k/k!\)는 늘 수렴하고, \(AB = BA\)일 때만 \(e^{A+B} = e^Ae^B\)가 보장된다. \(\det e^A = e^{\operatorname{tr}A}\), \(e^{-iHt/\hbar}\)는 유니타리다. \(e^{-i\theta\hat{\mathbf n}\cdot\boldsymbol\sigma/2} = \cos\tfrac\theta2 - i\hat{\mathbf n}\cdot\boldsymbol\sigma\sin\tfrac\theta2\)는 \(2\pi\)에서 \(-I\)이고 \(4\pi\)에서 제자리다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. \(2 \times 2\) 행렬 \(A\)의 대각합이 5, 행렬식이 6이다. \(A^2 - A\)의 고유값은?</p><div class="opts">
+        <button class="opt">\(1, 2\)</button>
+        <button class="opt" data-correct>\(2, 6\)</button>
+        <button class="opt">\(4, 9\)</button>
+        <button class="opt">\(5, 6\)</button>
+      </div><div class="quiz-exp">\(\lambda^2 - 5\lambda + 6 = 0\)에서 고유값은 2, 3이다. \(A\mathbf v = \lambda\mathbf v\)이면 \((A^2 - A)\mathbf v = (\lambda^2 - \lambda)\mathbf v\)이므로 \(4 - 2 = 2\), \(9 - 3 = 6\)이다.</div></div>
+      <div class="quiz-q"><p>2. 다음 가운데 <b>반드시</b> 대각화 가능한 행렬은?</p><div class="opts">
+        <button class="opt">역행렬이 있는 모든 \(3 \times 3\) 행렬</button>
+        <button class="opt">위 삼각 행렬</button>
+        <button class="opt" data-correct>고유값 세 개가 모두 다른 \(3 \times 3\) 행렬</button>
+        <button class="opt">\(\begin{pmatrix} 2 & 1 \\ 0 & 2 \end{pmatrix}\)</button>
+      </div><div class="quiz-exp">서로 다른 고유값의 고유벡터는 선형 독립이므로(<a class="ref" href="#thm-diagonalization"></a>의 2) 고유벡터 세 개로 \(S\)를 만들 수 있다. \(\begin{pmatrix} 2 & 1 \\ 0 & 2 \end{pmatrix}\)은 가역이고 위 삼각이지만 고유벡터가 하나뿐이다.</div></div>
+      <div class="quiz-q"><p>3. 에르미트 행렬 \(H\)의 서로 다른 고유값에 속하는 복소 고유벡터 \(\mathbf u, \mathbf v\)에 대해 반드시 성립하는 것은?</p><div class="opts">
+        <button class="opt">\(\mathbf u^{\mathsf T}\mathbf v = 0\)</button>
+        <button class="opt" data-correct>\(\mathbf u^\dagger\mathbf v = 0\)</button>
+        <button class="opt">\(\mathbf u = \mathbf v^*\)</button>
+        <button class="opt">\(\mathbf u^\dagger\mathbf v = 1\)</button>
+      </div><div class="quiz-exp"><a class="ref" href="#thm-hermitian-real-eigen"></a>의 직교는 켤레를 씌운 곱이다. 회전의 고유벡터 \((1, i, 0)\)과 \((1, -i, 0)\)은 \(\dagger\) 곱이 0이지만 켤레 없는 곱은 2다.</div></div>
+      <div class="quiz-q"><p>4. 같은 용수철 둘로 이은 직선형 분자 O–X–O에서 X의 질량이 산소의 2배라면, 비대칭 신축과 대칭 신축의 진동수 비는?</p><div class="opts">
+        <button class="opt">\(1\)</button>
+        <button class="opt">\(\sqrt{3/2}\)</button>
+        <button class="opt" data-correct>\(\sqrt2\)</button>
+        <button class="opt">\(\sqrt3\)</button>
+      </div><div class="quiz-exp">식 <a class="ref" href="#eq-triatomic-ratio"></a>에서 \(\sqrt{1 + 2m/m_{\mathrm C}} = \sqrt{1 + 2/2} = \sqrt2\)이다. 가운데 원자가 무거울수록 비대칭 신축에서 덜 움직여 비가 1에 다가간다.</div></div>
+      <div class="quiz-q"><p>5. 곡선 \(5x^2 + 4xy + 2y^2 = 1\) 위에서 원점까지 가장 먼 점의 거리는?</p><div class="opts">
+        <button class="opt">\(1/\sqrt6\)</button>
+        <button class="opt">\(1/\sqrt2\)</button>
+        <button class="opt" data-correct>\(1\)</button>
+        <button class="opt">\(\sqrt6\)</button>
+      </div><div class="quiz-exp">고유값 6, 1이므로 주축 좌표에서 \(6y_1^2 + y_2^2 = 1\)이다. 가장 긴 반축은 가장 작은 고유값의 \(1/\sqrt{\lambda_{\min}} = 1\)이다. <a class="ref" href="#thm-quadratic-extremes"></a>에서 \(\lvert\mathbf x\rvert^2 = 1/(\hat{\mathbf x}^{\mathsf T}A\hat{\mathbf x}) \le 1/\lambda_{\min}\)이다.</div></div>
+      <div class="quiz-q"><p>6. 스핀 1/2의 회전 \(U = e^{-i\theta\sigma_z/2}\)에서 \(\theta = 2\pi\)이면 \(U\)는?</p><div class="opts">
+        <button class="opt">\(I\)</button>
+        <button class="opt" data-correct>\(-I\)</button>
+        <button class="opt">\(\sigma_z\)</button>
+        <button class="opt">\(-i\sigma_z\)</button>
+      </div><div class="quiz-exp">식 <a class="ref" href="#eq-pauli-exponential"></a>에서 \(\cos\pi\,I - i\sigma_z\sin\pi = -I\)이다. 스핀 방향은 제자리지만 상태의 부호가 바뀌고, \(4\pi\)에서 \(I\)로 돌아온다.</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-eigen-practice" data-level="1"><p>\(A = \begin{pmatrix} 4 & 1 \\ 2 & 3 \end{pmatrix}\)의 고유값과 고유벡터를 구하고 \(\operatorname{tr}A\), \(\det A\)로 확인하라. \(A = SDS^{-1}\)을 써서 \(A^k\)의 \((1, 1)\) 성분을 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(\lambda^2 - 7\lambda + 10 = 0\)에서 \(\lambda = 5, 2\)이다(합 7, 곱 10). \(\lambda = 5\): \((A - 5I)\)의 첫째 행 \((-1, 1)\)에서 \(\mathbf v = (1, 1)\). \(\lambda = 2\): 첫째 행 \((2, 1)\)에서 \(\mathbf v = (1, -2)\). \(S = \begin{pmatrix} 1 & 1 \\ 1 & -2 \end{pmatrix}\), \(S^{-1} = \tfrac13\begin{pmatrix} 2 & 1 \\ 1 & -1 \end{pmatrix}\)이므로 \((A^k)_{11} = \tfrac13(2\cdot5^k + 2^k)\)이다. \(k = 1\)이면 \(12/3 = 4\)로 맞고, \(k = 2\)이면 \(54/3 = 18 = 4^2 + 1 \cdot 2\)로 맞는다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-defective-exponential" data-level="1"><p>(가) \(A = \begin{pmatrix} \lambda & 1 \\ 0 & \lambda \end{pmatrix}\)가 대각화되지 않음을 보여라. (나) \(A = \lambda I + N\), \(N^2 = 0\)을 써서 \(e^{tA} = e^{\lambda t}\begin{pmatrix} 1 & t \\ 0 & 1 \end{pmatrix}\)임을 보여라. (다) 임계 감쇠 진동자 \(\ddot x + 2\gamma\dot x + \gamma^2x = 0\)을 \(\mathbf y = (x, \dot x)\)의 \(\dot{\mathbf y} = B\mathbf y\)로 쓰고, \(B\)의 고유값과 고유벡터의 수를 구하라. 해에 \(te^{-\gamma t}\)가 나타나는 이유를 설명하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 고유값은 \(\lambda\)(대수적 중복도 2)이고 \(A - \lambda I = N = \begin{pmatrix} 0 & 1 \\ 0 & 0 \end{pmatrix}\)의 해는 \((1, 0)\) 방향뿐이라 기하적 중복도가 1이다. <a class="ref" href="#thm-diagonalization"></a>의 3에 따라 대각화되지 않는다. (나) \(\lambda I\)와 \(N\)은 교환하므로 \(e^{tA} = e^{\lambda t}e^{tN}\)이고, \(N^2 = 0\)이라 \(e^{tN} = I + tN\)이다. (다) \(B = \begin{pmatrix} 0 & 1 \\ -\gamma^2 & -2\gamma \end{pmatrix}\)의 특성 방정식은 \(\lambda^2 + 2\gamma\lambda + \gamma^2 = 0\)이라 \(\lambda = -\gamma\)가 겹친다. \(B + \gamma I = \begin{pmatrix} \gamma & 1 \\ -\gamma^2 & -\gamma \end{pmatrix}\)은 랭크 1이므로 고유벡터는 \((1, -\gamma)\) 하나다. \(B\)는 (가)의 꼴과 닮았으므로 \(e^{tB}\)에 \(te^{-\gamma t}\)가 들어 있고, 그것이 둘째 독립해다(10장의 <a href="ch10.html#eq-damped-oscillator">감쇠 진동자</a>).</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-angular-momentum-eigen" data-level="2"><p>7장의 생성자 \(L_z\)(<a href="ch07.html#eq-rotation-generators">식 (7.45)</a>)에 대해 (가) 고유값 \(0, \pm i\)와 고유벡터를 구하라. (나) \(J_z = i\hbar L_z\)의 고유값이 \(0, \pm\hbar\)임을 보이고, \(+\hbar\)의 고유벡터가 <a class="ref" href="#ex-rotation-eigen"></a>의 시계 반대 방향 원편광 \((1, i, 0)/\sqrt2\)임을 확인하라. (다) \(R_z(\theta) = e^{\theta L_z}\)의 고유값이 예제의 결과와 맞는지 보여라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(L_z\)는 반대칭이라 반에르미트이므로 고유값이 순허수다(\(iL_z\)가 에르미트). 특성 방정식 \(-\lambda(\lambda^2 + 1) = 0\)에서 \(0, \pm i\)이다. \(L_z(1, -i, 0) = (i, 1, 0) = i(1, -i, 0)\), \(L_z(1, i, 0) = (-i, 1, 0) = -i(1, i, 0)\), \(L_z\hat{\mathbf z} = 0\). (나) \(J_z\)의 고유값은 \(i\hbar\lambda\)이므로 \((1, -i, 0)\)은 \(i\hbar \cdot i = -\hbar\), \((1, i, 0)\)은 \(+\hbar\), \(\hat{\mathbf z}\)는 0이다. 광자 하나가 \(z\) 방향으로 \(\pm\hbar\)의 각운동량을 나르는 원편광 상태와 맞는다. (다) 같은 고유벡터에서 \(e^{\theta L_z}\mathbf v = e^{\theta\lambda}\mathbf v\)이므로 \((1, i, 0)\)의 고유값은 \(e^{-i\theta}\), \((1, -i, 0)\)은 \(e^{i\theta}\)이고, <a class="ref" href="#ex-rotation-eigen"></a>과 같다. \(R_z(\theta) = e^{-i\theta J_z/\hbar}\)로도 쓸 수 있다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-pauli-identity" data-level="2"><p>(가) 식 <a class="ref" href="#eq-pauli-product"></a>을 \(\sigma_y\sigma_z\), \(\sigma_z\sigma_x\), \(\sigma_y\sigma_x\)에 대해 직접 확인하라. (나) 실수 벡터 \(\mathbf a, \mathbf b\)에 대해 \((\mathbf a\cdot\boldsymbol\sigma)(\mathbf b\cdot\boldsymbol\sigma) = (\mathbf a\cdot\mathbf b)I + i(\mathbf a\times\mathbf b)\cdot\boldsymbol\sigma\)임을 보여라. (다) (나)를 써서 \(H = a_0I + \mathbf a\cdot\boldsymbol\sigma\)의 고유값이 \(a_0 \pm \lvert\mathbf a\rvert\)임을 보여라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\sigma_y\sigma_z = \begin{pmatrix} 0 & i \\ i & 0 \end{pmatrix} = i\sigma_x\), \(\sigma_z\sigma_x = \begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix} = i\sigma_y\), \(\sigma_y\sigma_x = \begin{pmatrix} -i & 0 \\ 0 & i \end{pmatrix} = -i\sigma_z\)로 \(\varepsilon_{213} = -1\)과 맞는다. (나) \(a_ib_j\sigma_i\sigma_j = a_ib_j(\delta_{ij}I + i\varepsilon_{ijk}\sigma_k)\)이고 \(\varepsilon_{ijk}a_ib_j = (\mathbf a\times\mathbf b)_k\)(<a href="ch04.html#eq-cross-index">4장 식 (4.12)</a>)이다. (다) \(\mathbf b = \mathbf a\)이면 \((\mathbf a\cdot\boldsymbol\sigma)^2 = \lvert\mathbf a\rvert^2I\)라 \(\mathbf a\cdot\boldsymbol\sigma\)의 고유값은 \(\pm\lvert\mathbf a\rvert\)이고(대각합 0이므로 하나씩), \(a_0I\)는 모든 고유값을 \(a_0\)만큼 옮긴다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-coupled-lc" data-level="2"><p>인덕턴스 \(L = 10\ \text{mH}\), 축전기 \(C = 1.0\ \mu\text{F}\)인 LC 회로 두 개가 축전기 \(C_c = 10\ \mu\text{F}\)를 공유한다. 고리 전하를 \(q_1, q_2\)라 하면 공유 축전기의 전하는 \(q_1 - q_2\)이다. (가) 운동 방정식을 \(M\ddot{\mathbf q} = -K\mathbf q\) 꼴로 쓰고 정규 진동수를 구하라. (나) 회로 1에만 처음 전하를 주면, 에너지가 회로 2로 다 넘어가는 데 얼마나 걸리는가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 고리마다 전압을 더하면 \(L\ddot q_1 + q_1/C + (q_1 - q_2)/C_c = 0\)이고 \(q_2\)도 같은 꼴이다. \(M = LI\), \(K = \begin{pmatrix} 1/C + 1/C_c & -1/C_c \\ -1/C_c & 1/C + 1/C_c \end{pmatrix}\)으로, <a class="ref" href="#ex-two-coupled"></a>과 같은 구조다(\(m \to L\), \(k \to 1/C\), \(k_c \to 1/C_c\)). 따라서 \(\omega_1 = 1/\sqrt{LC} = 1.00 \times 10^4\ \text{rad/s}\) (전류가 같은 방향, 공유 축전기에 전하가 쌓이지 않음), \(\omega_2 = \sqrt{(1/C + 2/C_c)/L} = \sqrt{1.2 \times 10^8}\ \text{s}^{-1} = 1.095 \times 10^4\ \text{rad/s}\)이다. (나) \(\pi/(\omega_2 - \omega_1) = \pi/(954.5\ \text{s}^{-1}) = 3.29\ \text{ms}\)이다. \(k_c/k = C/C_c = 0.10\)이라 진동 주기(0.63 ms)와의 비가 예제와 같다. 단위: \(1/(\text{H}\cdot\text{F}) = \text{s}^{-2}\)이다.</p>
+      </details>
+    </div>
+
+
+    <div class="prob" id="prob-square-plate-inertia" data-level="2"><p>한 변 \(a\), 질량 \(M\)인 얇고 고른 정사각형 판이 \(xy\) 평면에 놓여 있고 한 꼭짓점이 원점, 두 변이 \(x\), \(y\)축 위에 있다. (가) 원점에 대한 관성 텐서를 구하라. (나) 주축과 주 관성 모멘트를 구하고, 수직축 정리 \(I_3 = I_1 + I_2\)를 확인하라. (다) \(a = 0.30\ \text{m}\), \(M = 1.2\ \text{kg}\)일 때 값을 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(z = 0\)이므로 \(I_{xx} = \int y^2\,dm = \tfrac13Ma^2\), \(I_{yy} = \tfrac13Ma^2\), \(I_{zz} = \tfrac23Ma^2\), \(I_{xy} = -\int xy\,dm = -\tfrac14Ma^2\), \(I_{xz} = I_{yz} = 0\)이다. (나) \(xy\) 블록 \(Ma^2\begin{pmatrix} 1/3 & -1/4 \\ -1/4 & 1/3 \end{pmatrix}\)의 고유값은 \(\tfrac13 \mp \tfrac14\)이다. \((1, 1)/\sqrt2\)(대각선) 방향이 \(I_1 = \tfrac1{12}Ma^2\), \((1, -1)/\sqrt2\) 방향이 \(I_2 = \tfrac7{12}Ma^2\), \(\hat{\mathbf z}\)가 \(I_3 = \tfrac23Ma^2\)이다. \(\tfrac1{12} + \tfrac7{12} = \tfrac23\)이다. 대각선은 중심을 지나므로 \(I_1\)은 중심을 지나는 판 안의 축에 대한 값 \(Ma^2/12\)과 같다. (다) \(Ma^2 = 0.108\ \text{kg}\cdot\text{m}^2\)이므로 \(I_1 = 0.0090\), \(I_2 = 0.063\), \(I_3 = 0.072\ \text{kg}\cdot\text{m}^2\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-exp-noncommuting" data-level="2"><p>\(A = \begin{pmatrix} 0 & 1 \\ 0 & 0 \end{pmatrix}\), \(B = \begin{pmatrix} 0 & 0 \\ 1 & 0 \end{pmatrix}\)에 대해 \(e^Ae^B\)와 \(e^{A+B}\)를 계산해 서로 다름을 보이고, 두 행렬 모두 식 <a class="ref" href="#eq-det-exp-trace"></a>를 만족함을 확인하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(A^2 = B^2 = 0\)이므로 \(e^A = I + A\), \(e^B = I + B\)이고 \(e^Ae^B = \begin{pmatrix} 2 & 1 \\ 1 & 1 \end{pmatrix}\)이다. \(A + B = \sigma_x\), \(\sigma_x^2 = I\)이므로 \(e^{\sigma_x} = \cosh1\,I + \sinh1\,\sigma_x = \begin{pmatrix} 1.543 & 1.175 \\ 1.175 & 1.543 \end{pmatrix}\)이다. \([A, B] = \sigma_z \ne 0\)이라 다르다. 행렬식은 \(2 - 1 = 1\)과 \(\cosh^21 - \sinh^21 = 1\)이고, \(\operatorname{tr}A = \operatorname{tr}B = \operatorname{tr}(A + B) = 0\)이므로 \(e^0 = 1\)과 맞는다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-ring-chain" data-level="3"><p>질량 \(m\)인 물체 \(N\)개가 원 둘레에 놓여 이웃끼리 용수철 \(k\)로 이어져 있다(\(N\)번째와 1번째도 이어짐). 원 둘레 방향 변위 \(x_j\)만 생각한다. (가) 한 칸 돌리는 행렬 \(C\)가 \(K\)와 교환함을 보이고, \(x_j \propto e^{2\pi ipj/N}\)이 정규 모드임을 보여 \(\omega_p = 2\sqrt{k/m}\,\lvert\sin(\pi p/N)\rvert\)를 유도하라. (나) 겹친 진동수에서 실수 모드를 고르는 법을 말하라. (다) \(N = 4\), \(k = 10\ \text{N/m}\), \(m = 0.10\ \text{kg}\)일 때 진동수를 모두 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(m\ddot x_j = k(x_{j+1} - 2x_j + x_{j-1})\)이므로 \(K = k(2I - C - C^{-1})\)이고, \(C\)의 거듭제곱의 합이라 \(C\)와 교환한다. \(C\)의 고유벡터 \((e^{2\pi ipj/N})_j\)는 고유값이 모두 달라서(<a class="ref" href="#thm-simultaneous-diag"></a> 뒤의 논증) \(K\)의 고유벡터이고, 고유값은 \(k(2 - e^{i\phi} - e^{-i\phi}) = 2k(1 - \cos\phi) = 4k\sin^2(\phi/2)\), \(\phi = 2\pi p/N\)이다. \(\omega_p^2 = (4k/m)\sin^2(\pi p/N)\)이다. (나) \(p\)와 \(N - p\)는 진동수가 같고 서로 켤레이므로, 실수부와 허수부 \(\cos(2\pi pj/N)\), \(\sin(2\pi pj/N)\)을 실수 정규 모드로 쓴다(반대로 도는 두 진행파를 정상파로 바꾼 것). (다) \(\sqrt{k/m} = 10\ \text{rad/s}\)이므로 \(p = 0, 1, 2, 3\)에서 \(0,\ 14.1,\ 20.0,\ 14.1\ \text{rad/s}\)이다. \(p = 0\)은 고리 전체의 회전, \(p = 2\)는 이웃끼리 반대로 움직이는 모드다. \(N\)이 크고 \(p \ll N\)이면 \(\omega_p \approx 2\pi p\sqrt{k/m}/N\)으로 파수에 비례하는 소리 파동이 된다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-rabi-formula" data-level="3"><p>두 준위계 \(H = \begin{pmatrix} \delta & -A \\ -A & -\delta \end{pmatrix}\)가 \(t = 0\)에 \((1, 0)\)에 있다. 식 <a class="ref" href="#eq-pauli-exponential"></a>을 써서, 시각 \(t\)에 \((0, 1)\) 상태에 있을 확률이</p>
+      <div class="formula">\[ P(t) = \frac{A^2}{A^2 + \delta^2}\,\sin^2\frac{\sqrt{A^2 + \delta^2}\,t}{\hbar} \]</div>
+      <p>임을 보여라. \(\delta = 0\)과 \(\delta = A\)에서 \(P\)의 최댓값과 그때의 시각을 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(H = \delta\sigma_z - A\sigma_x = \Omega\,\hat{\mathbf n}\cdot\boldsymbol\sigma\), \(\Omega = \sqrt{A^2 + \delta^2}\), \(\hat{\mathbf n} = (-A, 0, \delta)/\Omega\)이다. \(e^{-iHt/\hbar}\)는 식 <a class="ref" href="#eq-pauli-exponential"></a>에서 \(\theta = 2\Omega t/\hbar\)인 경우이므로 \(\cos(\Omega t/\hbar)I - i\sin(\Omega t/\hbar)\,\hat{\mathbf n}\cdot\boldsymbol\sigma\)이다. \((2, 1)\) 성분은 \(-i\sin(\Omega t/\hbar)(n_x + in_y) = iA\sin(\Omega t/\hbar)/\Omega\)이고, 절댓값의 제곱이 \(P(t)\)이다. \(\delta = 0\)이면 최댓값 1, 처음 시각 \(\pi\hbar/2A\)(<a class="ref" href="#ex-ammonia-flip"></a>과 같다). \(\delta = A\)이면 최댓값 \(1/2\), 시각 \(\pi\hbar/(2\sqrt2A)\)로 더 빨리 오가지만 절반까지만 넘어간다. 에너지 차이가 큰 두 상태는 결합이 있어도 잘 섞이지 않는다는 그림 8-3의 이야기와 같다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>
