@@ -3,7 +3,7 @@
 친구의 [`yhlee52/bookshelf`](https://github.com/yhlee52/bookshelf) 엔진을 바탕으로 서재와 사진 앨범을 만드는 순서입니다. 근거가 되는 결정은 [DECISIONS.md](DECISIONS.md)에 있습니다.
 
 - 작성: 2026-11-05
-- 현재 단계: **1단계** (배포만 남음)
+- 현재 단계: **2단계** (1단계 완료: 2026-11-05 첫 배포)
 
 각 단계는 끝나면 체크하고, 위의 "현재 단계"를 고칩니다.
 
@@ -46,9 +46,9 @@ rsync -a --exclude .git /tmp/bookshelf/ ./
 
 ### 배포
 
-- [ ] `git init`을 하고, `cherryopener/cherryopener.github.io` 저장소를 Public으로 만들어 push합니다.
-- [ ] 저장소의 Settings → Pages에서 `Deploy from a branch`, `main`, `/ (root)`를 고릅니다.
-- [ ] `https://cherryopener.github.io/`가 뜨는지 확인합니다.
+- [x] `git init`을 하고, `cherryopener/cherryopener.github.io` 저장소를 Public으로 만들어 push합니다.
+- [x] 저장소의 Settings → Pages에서 `Deploy from a branch`, `main`, `/ (root)`를 고릅니다.
+- [x] `https://cherryopener.github.io/`가 뜨는지 확인합니다. 없는 주소에서는 404 페이지가 뜹니다.
 
 ## 2단계. 서재를 내 분야에 맞게 고치기
 
