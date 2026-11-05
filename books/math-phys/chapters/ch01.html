@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>01 급수와 근사 · 수리물리학</title>
+<meta name="description" content="급수의 수렴과 판정법, 멱급수와 수렴 반경, 테일러 전개와 나머지 항, 작은 매개변수 전개로 물리의 근사식을 세운다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys" data-field="phys" data-chapter="ch01">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">01</span></div>
+    <h1 data-fill="chapter-title">급수와 근사</h1>
+    <p class="lead">물리학자는 정확한 식보다 근사식을 훨씬 자주 쓴다. \(\sin\theta \approx \theta\), \(g \approx\) 상수, \(K \approx \tfrac12 mv^2\)이 모두 어떤 급수의 첫 항만 남긴 결과다. 이 장에서는 무한히 많은 항을 더한다는 것이 무슨 뜻인지에서 출발해, 급수가 언제 수렴하는지, 함수를 거듭제곱의 급수로 어떻게 펼치는지, 몇 항에서 끊으면 오차가 얼마인지를 차례로 세운다. 여기서 만든 테일러 전개와 이항급수는 이 책과 서재의 다른 물리 책이 가장 자주 꺼내 쓰는 도구다.</p>
+    <ul class="objectives">
+      <li>급수의 수렴을 부분합의 극한으로 정의하고, 비교·적분·비·교대급수 판정법으로 수렴 여부를 판정할 수 있다.</li>
+      <li>멱급수의 수렴 반경을 구하고, 수렴 구간의 끝점을 따로 조사할 수 있다.</li>
+      <li>함수의 테일러 급수를 구하고, 라그랑주 꼴 나머지 항으로 유한 차수 근사의 오차를 어림할 수 있다.</li>
+      <li>물리 식에서 작은 무차원 매개변수를 찾아 필요한 차수까지 일관되게 전개할 수 있다.</li>
+      <li>급수를 써서 \(0/0\) 꼴 극한과 닫힌 꼴이 없는 적분을 계산할 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b>일변수 미적분(극한, 미분, 정적분, 롤의 정리), 일반물리의 역학과 쿨롱 법칙. 통계역학의 볼츠만 인자 \(e^{-E/k_BT}\)는 1.3절의 예제 안에서 필요한 만큼 설명한다.</p>
+  </header>
+
+  <!-- ============================================================ 1.1 -->
+  <section id="s1">
+    <h2>수열과 급수의 수렴</h2>
+    <p>공을 1 m 높이에서 떨어뜨리면 공은 튀어 오르기를 되풀이하다가 멈춘다. 튈 때마다 높이가 일정한 비율로 줄어든다고 하면, 공은 무한히 여러 번 튄다. 그런데도 공이 멈추는 데 걸리는 시간은 유한하다. 무한히 많은 양을 더했는데 결과가 유한하다는 것은 어떤 뜻일까? 그리고 언제 그럴 수 있을까? 이 절에서는 이 질문에 정확한 말을 붙인다.</p>
+
+    <h3 id="s1-sequence">수열의 극한</h3>
+    <p>숫자를 차례로 늘어놓은 \(a_1, a_2, a_3, \ldots\)을 <span class="term">수열</span> <span class="en">(sequence)</span>이라 하고 \(\{a_n\}\)으로 쓴다. \(n\)이 커질 때 \(a_n\)이 어떤 수 \(L\)에 한없이 가까워지면 수열이 \(L\)로 <span class="term">수렴한다</span> <span class="en">(converge)</span>고 하고 \(\lim_{n\to\infty} a_n = L\)로 쓴다. "한없이 가까워진다"를 정확하게 말하면 다음과 같다. 아무리 작은 양수 \(\varepsilon\)을 주더라도, 그에 맞는 번호 \(M\)이 있어서 \(n > M\)인 모든 \(a_n\)이 \(\lvert a_n - L\rvert &lt; \varepsilon\)을 만족한다.</p>
+    <p>예를 들어 \(a_n = 1/n\)은 0으로 수렴한다(\(\varepsilon = 0.001\)이면 \(M = 1000\)). 수렴하지 않는 수열은 <span class="term">발산한다</span> <span class="en">(diverge)</span>고 한다. \(a_n = n\)처럼 한없이 커지는 경우도, \(a_n = (-1)^n\)처럼 두 값 사이를 오가는 경우도 모두 발산이다.</p>
+
+    <h3 id="s1-series">부분합과 급수의 합</h3>
+    <p>무한히 많은 수의 합은 한 번에 계산할 수 없다. 그래서 앞에서부터 유한 개씩 더한 값을 수열로 보고, 그 수열의 극한을 합으로 정한다.</p>
+    <div class="box def" id="def-series-convergence"><div class="box-h">급수의 수렴과 합</div>
+      <p>수열 \(\{a_n\}\)의 항을 모두 더하는 식 \(\sum_{n=1}^{\infty} a_n = a_1 + a_2 + \cdots\)을 <span class="term">무한급수</span> <span class="en">(infinite series)</span> 또는 줄여서 급수라 한다. 앞의 \(N\)개 항의 합</p>
+      <div class="formula" id="eq-partial-sum">\[ S_N = \sum_{n=1}^{N} a_n = a_1 + a_2 + \cdots + a_N \]</div>
+      <p>을 <span class="term">부분합</span> <span class="en">(partial sum)</span>이라 한다. 부분합의 수열 \(\{S_N\}\)이 유한한 값 \(S\)로 수렴하면 급수가 <span class="term">수렴한다</span>고 하고, \(S\)를 급수의 <span class="term">합</span>이라 하여 \(\sum_{n=1}^\infty a_n = S\)로 쓴다. \(\{S_N\}\)이 수렴하지 않으면 급수는 <span class="term">발산한다</span>.</p>
+    </div>
+    <p>정의에서 핵심은 "합"이 덧셈이 아니라 극한이라는 점이다. 유한한 합에서 당연했던 성질(순서를 바꿔도 같다, 괄호를 마음대로 친다)이 무한급수에서는 깨질 수 있다. 1.2절에서 그 예를 본다. 급수가 \(n = 0\)에서 시작하든 \(n = 1\)에서 시작하든, 앞의 유한 개 항을 바꾸거나 빼는 것은 수렴 여부에 영향을 주지 않는다. 합의 값만 그만큼 달라진다.</p>
+
+    <h3 id="s1-geometric">기하급수</h3>
+    <p>부분합을 닫힌 꼴로 쓸 수 있는 가장 중요한 급수는 이웃한 항의 비가 일정한 <span class="term">기하급수</span> <span class="en">(geometric series)</span>다. 첫 항이 \(a\), 공비가 \(r\)이면 \(S_N = a + ar + \cdots + ar^{N-1}\)이다. 양변에 \(r\)을 곱한 \(rS_N = ar + ar^2 + \cdots + ar^N\)을 \(S_N\)에서 빼면 가운데 항이 모두 지워지고 \((1 - r)S_N = a - ar^N\)이 남는다. 따라서 \(r \ne 1\)일 때</p>
+    <div class="formula" id="eq-geometric-partial">\[ S_N = \sum_{n=0}^{N-1} a r^n = a\,\frac{1 - r^N}{1 - r} \]</div>
+    <p>이다. \(\lvert r\rvert &lt; 1\)이면 \(N \to \infty\)에서 \(r^N \to 0\)이므로 부분합이 수렴한다.</p>
+    <div class="formula" id="eq-geometric-series">\[ \sum_{n=0}^{\infty} a r^n = a + ar + ar^2 + \cdots = \frac{a}{1 - r} \qquad (\lvert r\rvert &lt; 1) \]<div class="where">\(\lvert r\rvert \ge 1\)이면 (\(a \ne 0\)일 때) 발산한다. \(r = 1\)이면 \(S_N = Na\), \(r = -1\)이면 \(S_N\)이 \(a\)와 0을 오가고, \(\lvert r\rvert > 1\)이면 \(\lvert r^N\rvert\)이 한없이 커진다.</div></div>
+    <p>예를 들어 \(0.999\ldots = 0.9 + 0.09 + 0.009 + \cdots\)는 \(a = 0.9\), \(r = 0.1\)인 기하급수이고, 식 <a class="ref" href="#eq-geometric-series"></a>에 따라 합은 \(0.9/0.9 = 1\)이다. 기하급수는 이 장 전체에서 비교의 기준이 된다. 1.2절의 판정법 대부분은 "주어진 급수가 어떤 기하급수보다 작은가"를 묻는 것이고, 1.3절의 멱급수는 기하급수를 함수로 넓힌 것이다.</p>
+
+    <div class="box ex" id="ex-bouncing-ball"><div class="box-h">튀는 공이 멈출 때까지 걸리는 시간</div>
+      <p>공을 높이 \(h_0\)에서 가만히 놓는다. 바닥에 부딪힐 때마다 속력이 \(r\)배(\(0 &lt; r &lt; 1\), <span class="term">반발 계수</span> <span class="en">(coefficient of restitution)</span>)가 된다고 하자. 공기 저항은 무시한다. (가) 공이 멈출 때까지 걸리는 시간 \(T\)와 움직인 거리 \(D\)를 구하라. (나) 몇 번째 충돌까지 \(T\)의 99%가 지나가는가? 그때 공은 얼마나 높이 튀는가?</p>
+      <p><b>풀이.</b> (가) 첫 충돌까지 걸리는 시간은 \(t_0 = \sqrt{2h_0/g}\)이고, 그때 속력은 \(v_0 = gt_0\)이다. \(k\)번째 충돌 직후의 속력은 \(v_k = r^k v_0\)이다. 이 속력으로 튀어 올랐다가 다시 떨어지기까지 \(2v_k/g = 2r^k t_0\)가 걸리고, 그동안 올라가는 높이는 \(v_k^2/2g = r^{2k}h_0\)이다. 따라서 걸리는 시간은 첫 낙하에 공비 \(r\)인 기하급수를 더한 것이다.</p>
+      <div class="formula" id="eq-bounce-time">\[ T = t_0 + \sum_{k=1}^{\infty} 2r^k t_0 = t_0 + \frac{2r\,t_0}{1 - r} = t_0\,\frac{1 + r}{1 - r} \]</div>
+      <p>두 번째 등호에서 식 <a class="ref" href="#eq-geometric-series"></a>을 첫 항 \(2rt_0\), 공비 \(r\)로 썼다. 거리는 첫 낙하 \(h_0\)에, 튈 때마다 올라갔다 내려오는 \(2r^{2k}h_0\)를 더한 것이다. 이번에는 공비가 \(r^2\)이다.</p>
+      <div class="formula">\[ D = h_0 + \sum_{k=1}^{\infty} 2r^{2k}h_0 = h_0\,\frac{1 + r^2}{1 - r^2} \]</div>
+      <p>\(h_0 = 1.00\ \text{m}\), \(r = 0.80\), \(g = 9.81\ \text{m/s}^2\)를 넣으면 \(t_0 = 0.452\ \text{s}\)이고</p>
+      <div class="formula">\[ \begin{aligned} T &= 0.452\ \text{s} \times \frac{1.80}{0.20} = 4.06\ \text{s} \\ D &= 1.00\ \text{m} \times \frac{1.64}{0.36} = 4.56\ \text{m} \end{aligned} \]</div>
+      <p>이다. 공은 무한히 여러 번 튀지만 4.06초 안에 모두 끝난다(그림 1-1). 단위도 확인하자. \(t_0\)는 \(\sqrt{\text{m}/(\text{m/s}^2)} = \text{s}\)이고, \((1+r)/(1-r)\)는 차원이 없다.</p>
+      <p>(나) \(k\)번째 충돌 뒤에 남은 시간은 기하급수의 꼬리 \(\sum_{j\ge k} 2r^j t_0 = 2r^k t_0/(1 - r)\)이다. \(T\)에 대한 비는 \(2r^k/(1 + r)\)이고, 이것이 0.01보다 작으려면 \(r^k &lt; 0.009\), 곧 \(k > \ln 0.009/\ln 0.8 = 21.1\)이다. 따라서 22번째 충돌까지 \(T\)의 99%가 지나간다. 그 뒤 공이 튀는 높이는 \(r^{44}h_0 = 5.4 \times 10^{-5}\ \text{m}\), 곧 0.05 mm다. 이 높이는 공이 찌그러지는 정도보다 훨씬 작으므로, "충돌마다 속력이 일정한 비율로 준다"는 모형은 이 근처에서 이미 맞지 않는다. 무한히 많은 충돌은 수학적 이상화이고, 물리적으로 의미가 있는 것은 처음 스무 번 남짓이다. 그래도 \(T\)는 그 스무 번이 거의 다 정한다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 260" role="img" aria-label="튀는 공의 높이를 시간에 대해 그린 그래프. 튀는 높이가 0.64배씩 줄고, 무한히 많이 튀지만 4.06초에 멈춘다"><defs><clipPath id="f0101-clip"><rect x="46" y="18" width="420" height="190"/></clipPath></defs><line x1="46" y1="18" x2="46" y2="208" class="s-grid"/><line x1="141.5" y1="18" x2="141.5" y2="208" class="s-grid"/><line x1="236.9" y1="18" x2="236.9" y2="208" class="s-grid"/><line x1="332.4" y1="18" x2="332.4" y2="208" class="s-grid"/><line x1="427.8" y1="18" x2="427.8" y2="208" class="s-grid"/><line x1="46" y1="208" x2="466" y2="208" class="s-grid"/><line x1="46" y1="121.6" x2="466" y2="121.6" class="s-grid"/><line x1="46" y1="35.3" x2="466" y2="35.3" class="s-grid"/><line x1="46" y1="208" x2="466" y2="208" class="s-line"/><line x1="46" y1="18" x2="46" y2="208" class="s-line"/><text x="46" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="141.5" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">1</text><text x="236.9" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">2</text><text x="332.4" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">3</text><text x="427.8" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">4</text><text x="38" y="214" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="38" y="127.6" class="t-dim" style="font-size:14px" text-anchor="end">0.5</text><text x="38" y="41.3" class="t-dim" style="font-size:14px" text-anchor="end">1</text><path d="M46,35.3l2.7,.7 2.8,2 2.7,3.5 2.2,3.8 2.7,5.9 2.7,7.3 5.5,18.9 5.4,24.3 5.5,29.9 5.4,35.4 5.5,41 4.9-29.3 3.7-19.1 3.7-16.5 4.9-18 5-13.5 3.7-7.2 3.7-4.7 2.4-1.7 2.5-.5 1.2,.1 2.5,1.1 2.4,2.3 2.5,3.4 4.9,10.1 3.7,10.6 4.9,18 3.7,16.5 5,26 3.7,22.4 6.1-28 3.7-13.4 3.6-10.9 3.7-8.4 3.7-5.8 3.7-3.4 2.4-.8 2.5,.3 1.2,.5 3.7,3.4 3.7,5.8 3.6,8.4 3.7,10.9 3.7,13.4 6.1,28 6.3-22.2 5.1-12.4 2.5-4.4 2.5-3.3 2.5-2.1 2.6-.8 2.5,.3 2.5,1.4 3.8,4.5 2.5,4.4 5.1,12.4 6.3,22.2 3.7-11.1 2.6-5.9 2.5-4.7 2.5-3.6 2.5-2.3 2.6-1.2 1.2-.2 2.5,.6 1.3,.8 2.5,2.3 2.5,3.6 3.8,7.5 5.1,14.2 2.5-6.1 3.9-6.9 3.8-4.2 1.3-.7 2.6-.6 2.6,.6 3.8,3.2 3.9,6 3.8,8.7 2.7-4.9 2.6-3.6 2.7-2.3 2.6-1 2.7,.3 2.7,1.6 1.3,1.4 2.7,3.6 2.6,4.9 2.6-3.7 2.6-2.5 2.6-1.2 1.3-.2 2.5,.6 2.6,1.9 3.9,5.1 2.6-2.9 1.3-1 2.7-.9 1.3,0 2.6,.9 4,3.9 2.8-2.3 2.9-.8 2.9,.8 2.9,2.3 1.3-1 2.7-1 2.6,.4 2.7,1.6 3.2-1.2 2.1,.2 2.1,1 2.5-.8 1.7,.1 1.7,.7 2-.5 2.7,.5 1.7-.3 2.1,.3 13.6,0" class="s-acc" clip-path="url(#f0101-clip)"/><line x1="433.9" y1="18" x2="433.9" y2="208" class="s-acc2" stroke-dasharray="5 4"/><text x="427.9" y="32" class="t-acc" style="font-size:15px" text-anchor="end">T = 4.06 s</text><text x="466" y="254" class="t-dim" style="font-size:14px" text-anchor="end">시간 t (s)</text><text x="52" y="30" class="t-dim" style="font-size:14px" text-anchor="start">높이 (m)</text><text x="123.6" y="89.5" class="t-mono" style="font-size:13px" text-anchor="middle">0.64 m</text><text x="185.6" y="129.3" class="t-mono" style="font-size:13px" text-anchor="middle">0.41 m</text><text x="235.3" y="154.7" class="t-mono" style="font-size:13px" text-anchor="middle">0.26 m</text></svg>
+      <figcaption><b>그림 1-1.</b> 높이 1 m에서 놓은 공(반발 계수 \(r = 0.8\))의 높이. 튀어 오르는 최고 높이는 \(r^2 = 0.64\)배씩, 공중에 머무는 시간은 \(r = 0.8\)배씩 줄어든다. 튀는 횟수는 무한하지만 체공 시간이 기하급수를 이루므로 합은 \(T = 4.06\ \text{s}\)에서 멈춘다. 곡선은 각 구간의 포물선 \(v_k t - \tfrac12 gt^2\)을 계산해 그렸다.</figcaption>
+    </figure>
+
+    <h3 id="s1-term-test">일반항은 0으로 가야 한다</h3>
+    <p>급수가 수렴하려면 더하는 항이 점점 작아져야 할 것이다. 이 직관은 맞지만, 반대 방향은 성립하지 않는다.</p>
+    <div class="box thm" id="thm-term-test"><div class="box-h">수렴의 필요조건</div>
+      <p>급수 \(\sum a_n\)이 수렴하면 \(\lim_{n\to\infty} a_n = 0\)이다. 따라서 \(a_n\)이 0으로 가지 않으면 급수는 발산한다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>\(a_n = S_n - S_{n-1}\)이다. 급수가 \(S\)로 수렴하면 \(S_n\)과 \(S_{n-1}\)이 모두 \(S\)로 가므로 \(a_n \to S - S = 0\)이다.</p>
+      </details>
+    </div>
+    <p>가장 유명한 반례는 <span class="term">조화급수</span> <span class="en">(harmonic series)</span> \(\sum_{n=1}^\infty 1/n\)이다. 일반항 \(1/n\)은 0으로 가지만 부분합 \(H_N = \sum_{n=1}^N 1/n\)은 한없이 커진다. 항을 2의 거듭제곱마다 묶어 보면 알 수 있다.</p>
+    <div class="formula" id="eq-harmonic-bound">\[ \begin{aligned} H_{2^m} &= 1 + \frac12 + \Big(\frac13 + \frac14\Big) + \Big(\frac15 + \cdots + \frac18\Big) + \cdots \\ &\ge 1 + \frac12 + \Big(\frac14 + \frac14\Big) + \Big(\frac18 + \cdots + \frac18\Big) + \cdots \\ &= 1 + \underbrace{\frac12 + \frac12 + \cdots + \frac12}_{m\text{개}} = 1 + \frac{m}{2} \end{aligned} \]</div>
+    <p>괄호 하나에는 \(2^{k-1}\)개의 항이 있고 각 항은 \(1/2^k\) 이상이므로 괄호마다 \(\tfrac12\) 이상이다. \(m\)을 키우면 \(1 + m/2\)는 한없이 커지므로 조화급수는 발산한다. 다만 아주 느리게 발산한다. \(H_N\)이 10을 넘으려면 \(N = 12\,367\)개의 항이 필요하다. 1.2절의 적분 판정법으로 보면 \(H_N\)은 \(\ln N\)처럼 자란다.</p>
+    <div class="callout warn"><strong>"항이 0으로 가니 수렴한다"는 틀린 추론이다</strong><p>정리 <a class="ref" href="#thm-term-test"></a>은 발산을 판정하는 데만 쓸 수 있다. \(a_n \to 0\)은 수렴의 필요조건일 뿐 충분조건이 아니다. 수렴하려면 항이 "충분히 빨리" 0으로 가야 하고, 얼마나 빨라야 하는지는 1.2절의 판정법이 답한다. 예를 들어 \(\sum 1/n\)은 발산하고 \(\sum 1/n^2\)은 수렴한다.</p></div>
+
+  </section>
+
+  <!-- ============================================================ 1.2 -->
+  <section id="s2">
+    <h2>수렴 판정법</h2>
+    <p>기하급수와 달리 대부분의 급수는 부분합을 닫힌 꼴로 쓸 수 없다. 그래도 합의 값을 모른 채 수렴하는지는 판정할 수 있다. 물리에서 이 질문은 실제로 자주 나온다. 결정 속 이온 하나가 나머지 모든 이온에게서 받는 정전 에너지는 유한한가? 진동자의 모든 에너지 준위에 대한 볼츠만 인자의 합은 유한한가? 교대급수 판정법을 뺀 나머지 판정법은 모두 "모르는 급수를 아는 급수와 비교한다"는 한 가지 생각에서 나온다.</p>
+
+    <h3 id="s2-comparison">비교 판정법</h3>
+    <p>먼저 모든 항이 0 이상인 급수, 곧 <span class="term">양항급수</span> <span class="en">(series of nonnegative terms)</span>를 생각하자. 그러면 부분합 \(S_N\)은 \(N\)이 커질수록 줄어들지 않는다. 줄어들지 않는 수열은 위로 유계이면 수렴하고, 위로 유계가 아니면 무한대로 발산한다(실수의 완비성). 따라서 양항급수는 부분합이 유계인지만 보면 된다.</p>
+    <div class="box thm" id="thm-comparison-test"><div class="box-h">비교 판정법 <span class="en">(comparison test)</span></div>
+      <p>어떤 번호 이후의 모든 \(n\)에서 \(0 \le a_n \le b_n\)이라 하자.</p>
+      <ol>
+        <li>\(\sum b_n\)이 수렴하면 \(\sum a_n\)도 수렴한다.</li>
+        <li>\(\sum a_n\)이 발산하면 \(\sum b_n\)도 발산한다.</li>
+      </ol>
+      <p><b>극한 꼴.</b> \(a_n, b_n > 0\)이고 \(\lim_{n\to\infty} a_n/b_n = c\)가 \(0 &lt; c &lt; \infty\)이면 두 급수는 함께 수렴하거나 함께 발산한다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>앞의 유한 개 항은 수렴 여부에 영향이 없으므로 모든 \(n\)에서 \(0 \le a_n \le b_n\)이라 해도 된다. \(\sum b_n = B\)가 수렴하면 \(\sum_{n=1}^N a_n \le \sum_{n=1}^N b_n \le B\)이므로 \(\sum a_n\)의 부분합은 줄어들지 않으면서 위로 유계이고, 따라서 수렴한다. 2는 1의 대우다.</p>
+        <p>극한 꼴: 충분히 큰 \(n\)에서 \(\tfrac{c}{2} b_n &lt; a_n &lt; 2c\,b_n\)이다. 오른쪽 부등식과 1에서 \(\sum b_n\)이 수렴하면 \(\sum a_n\)이 수렴하고, 왼쪽 부등식과 1에서 \(\sum a_n\)이 수렴하면 \(\sum b_n\)이 수렴한다.</p>
+      </details>
+    </div>
+    <p>비교 대상으로는 기하급수와, 곧 볼 \(p\)급수 \(\sum 1/n^p\)를 쓴다. 예를 들어 \(\sum 1/(n^2 + n)\)은 \(1/(n^2+n) &lt; 1/n^2\)이므로 \(\sum 1/n^2\)이 수렴한다면 수렴한다. \(\sum (2n+1)/(n^2 + 5)\)는 \(n\)이 클 때 일반항이 \(2/n\)처럼 행동하므로(극한 꼴, \(c = 2\)) 조화급수와 함께 발산한다. 극한 꼴은 "큰 \(n\)에서 일반항의 주된 거듭제곱만 보면 된다"는 말을 정확하게 한 것이다.</p>
+
+    <h3 id="s2-integral">적분 판정법과 p급수</h3>
+    <p>일반항이 매끄러운 함수의 값 \(a_n = f(n)\)으로 주어지면, 합을 넓이로 볼 수 있다. 폭이 1이고 높이가 \(f(n)\)인 직사각형들을 늘어놓으면 그 넓이의 합이 곧 부분합이다. 그림 1-2처럼 직사각형을 곡선의 왼쪽 끝에 맞추면 곡선 위로 나오고, 오른쪽 끝에 맞추면 곡선 아래로 들어간다.</p>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 250" role="img" aria-label="왼쪽 끝 높이의 직사각형이 곡선 위로 나온다"><line x1="40" y1="200" x2="360" y2="200" class="s-line"/><line x1="40" y1="30" x2="40" y2="200" class="s-line"/><text x="80" y="218" class="t-dim" text-anchor="middle">1</text><text x="120" y="218" class="t-dim" text-anchor="middle">2</text><text x="160" y="218" class="t-dim" text-anchor="middle">3</text><text x="200" y="218" class="t-dim" text-anchor="middle">4</text><text x="240" y="218" class="t-dim" text-anchor="middle">5</text><text x="280" y="218" class="t-dim" text-anchor="middle">6</text><text x="320" y="218" class="t-dim" text-anchor="middle">7</text><text x="360" y="218" class="t-dim" text-anchor="middle">8</text><text x="32" y="204" class="t-dim" text-anchor="end">0</text><text x="32" y="130.1" class="t-dim" text-anchor="end">0.5</text><text x="32" y="56.2" class="t-dim" text-anchor="end">1</text><rect x="80" y="52.2" width="40" height="147.8" class="f-acc-soft" style="stroke-width:1"/><rect x="120" y="126.1" width="40" height="73.9" class="f-acc-soft" style="stroke-width:1"/><rect x="160" y="150.7" width="40" height="49.3" class="f-acc-soft" style="stroke-width:1"/><rect x="200" y="163" width="40" height="37" class="f-acc-soft" style="stroke-width:1"/><rect x="240" y="170.4" width="40" height="29.6" class="f-acc-soft" style="stroke-width:1"/><rect x="280" y="175.4" width="40" height="24.6" class="f-acc-soft" style="stroke-width:1"/><rect x="320" y="178.9" width="40" height="21.1" class="f-acc-soft" style="stroke-width:1"/><path d="M80,52.2l3.5,12 7.1,19 7.1,14.4 3.6,5.9 7.1,10 3.5,4.3 7.1,7.3 10.6,8.9 10.7,7 14.1,7.3 17.8,7 17.7,5.2 21.2,4.9 21.3,3.9 24.8,3.5 31.9,3.5 31.9,2.7 39,2.5" class="s-line" style="stroke:var(--text);stroke-width:2.2"/><text x="104" y="49.2" class="t-math" text-anchor="start">y = 1/x</text><text x="12" y="18" class="t" text-anchor="start">(가) 합 ≥ 넓이: 높이 1/n, 폭 [n, n+1]</text><text x="360" y="236" class="t-dim" text-anchor="end">x</text></svg><svg viewBox="0 0 380 250" role="img" aria-label="오른쪽 끝 높이의 직사각형이 곡선 아래에 들어간다"><line x1="40" y1="200" x2="360" y2="200" class="s-line"/><line x1="40" y1="30" x2="40" y2="200" class="s-line"/><text x="80" y="218" class="t-dim" text-anchor="middle">1</text><text x="120" y="218" class="t-dim" text-anchor="middle">2</text><text x="160" y="218" class="t-dim" text-anchor="middle">3</text><text x="200" y="218" class="t-dim" text-anchor="middle">4</text><text x="240" y="218" class="t-dim" text-anchor="middle">5</text><text x="280" y="218" class="t-dim" text-anchor="middle">6</text><text x="320" y="218" class="t-dim" text-anchor="middle">7</text><text x="360" y="218" class="t-dim" text-anchor="middle">8</text><text x="32" y="204" class="t-dim" text-anchor="end">0</text><text x="32" y="130.1" class="t-dim" text-anchor="end">0.5</text><text x="32" y="56.2" class="t-dim" text-anchor="end">1</text><rect x="80" y="126.1" width="40" height="73.9" class="f-acc2-soft" style="stroke-width:1"/><rect x="120" y="150.7" width="40" height="49.3" class="f-acc2-soft" style="stroke-width:1"/><rect x="160" y="163" width="40" height="37" class="f-acc2-soft" style="stroke-width:1"/><rect x="200" y="170.4" width="40" height="29.6" class="f-acc2-soft" style="stroke-width:1"/><rect x="240" y="175.4" width="40" height="24.6" class="f-acc2-soft" style="stroke-width:1"/><rect x="280" y="178.9" width="40" height="21.1" class="f-acc2-soft" style="stroke-width:1"/><rect x="320" y="181.5" width="40" height="18.5" class="f-acc2-soft" style="stroke-width:1"/><path d="M80,52.2l3.5,12 7.1,19 7.1,14.4 3.6,5.9 7.1,10 3.5,4.3 7.1,7.3 10.6,8.9 10.7,7 14.1,7.3 17.8,7 17.7,5.2 21.2,4.9 21.3,3.9 24.8,3.5 31.9,3.5 31.9,2.7 39,2.5" class="s-line" style="stroke:var(--text);stroke-width:2.2"/><text x="104" y="49.2" class="t-math" text-anchor="start">y = 1/x</text><text x="12" y="18" class="t" text-anchor="start">(나) 합 ≤ 넓이: 높이 1/(n+1), 폭 [n, n+1]</text><text x="360" y="236" class="t-dim" text-anchor="end">x</text></svg></div>
+      <figcaption><b>그림 1-2.</b> 적분 판정법의 그림. \(f(x) = 1/x\)에 대해 (가) 높이 \(f(n)\)인 직사각형을 구간 \([n, n+1]\)에 놓으면 곡선 위로 나오므로 \(\sum_{n=1}^{N} f(n) \ge \int_1^{N+1} f\,dx\)이고, (나) 높이 \(f(n+1)\)인 직사각형을 놓으면 곡선 아래에 들어가므로 \(\sum_{n=2}^{N} f(n) \le \int_1^{N} f\,dx\)이다. 그래서 급수와 적분은 함께 수렴하거나 함께 발산한다.</figcaption>
+    </figure>
+    <div class="box thm" id="thm-integral-test"><div class="box-h">적분 판정법 <span class="en">(integral test)</span></div>
+      <p>\(x \ge 1\)에서 \(f(x)\)가 연속이고, 양수이며, 감소한다고 하자. \(a_n = f(n)\)이면 급수 \(\sum_{n=1}^\infty a_n\)과 이상적분 \(\int_1^\infty f(x)\,dx\)는 함께 수렴하거나 함께 발산한다. 수렴할 때 \(N\)항 이후의 나머지는 다음 범위에 있다.</p>
+      <div class="formula" id="eq-integral-tail-bound">\[ \int_{N+1}^{\infty} f(x)\,dx \;\le\; \sum_{n=N+1}^{\infty} a_n \;\le\; \int_{N}^{\infty} f(x)\,dx \]</div>
+      <details class="proof"><summary>증명</summary>
+        <p>\(f\)가 감소하므로 \(n \le x \le n+1\)에서 \(f(n+1) \le f(x) \le f(n)\)이다. 이 구간에서 적분하면 \(a_{n+1} \le \int_n^{n+1} f\,dx \le a_n\)이다. 왼쪽 부등식을 \(n = 1\)부터 \(N-1\)까지 더하면 \(S_N - a_1 \le \int_1^N f\,dx\)이고, 오른쪽 부등식을 더하면 \(\int_1^{N+1} f\,dx \le S_N\)이다(그림 1-2). 첫 부등식은 적분이 수렴하면 부분합이 유계임을, 둘째 부등식은 적분이 발산하면 부분합도 발산함을 말한다. 같은 부등식을 \(n = N+1\)부터(또는 \(N\)부터) 무한대까지 더하면 식 <a class="ref" href="#eq-integral-tail-bound"></a>이 나온다.</p>
+      </details>
+    </div>
+    <p>\(f(x) = 1/x^p\) (\(p > 0\))에 적용하자. \(p \ne 1\)이면 \(\int_1^\infty x^{-p}\,dx = \big[x^{1-p}/(1-p)\big]_1^\infty\)이고, 이것은 \(p > 1\)일 때 \(1/(p-1)\)로 유한하고 \(p &lt; 1\)일 때 무한대다. \(p = 1\)이면 \(\int_1^\infty dx/x = \lim \ln X = \infty\)이다. 따라서</p>
+    <div class="formula" id="eq-p-series">\[ \sum_{n=1}^{\infty} \frac{1}{n^p} \;\text{ 은 }\; p > 1 \text{이면 수렴하고, } p \le 1 \text{이면 발산한다.} \]</div>
+    <p>이 결과를 <span class="term">p급수</span> <span class="en">(p-series)</span> 판정이라 한다. \(p \le 0\)이면 항이 0으로 가지 않으므로 정리 <a class="ref" href="#thm-term-test"></a>로 바로 발산이다. 그림 1-2의 부등식은 조화급수의 크기도 알려 준다. \(\ln(N+1) \le H_N \le 1 + \ln N\)이다. 실제로 \(H_N - \ln N\)은 \(N \to \infty\)에서 <span class="term">오일러-마스케로니 상수</span> <span class="en">(Euler–Mascheroni constant)</span> \(\gamma = 0.5772\ldots\)로 수렴한다.</p>
+
+    <div class="box ex" id="ex-basel-estimate"><div class="box-h">\(\sum 1/n^2\)을 열 항으로 유효숫자 네 자리까지 구하기</div>
+      <p>\(\sum_{n=1}^\infty 1/n^2\)의 값을 첫 10항과 식 <a class="ref" href="#eq-integral-tail-bound"></a>으로 어림하라.</p>
+      <p><b>풀이.</b> 첫 10항의 합은 \(S_{10} = 1.549\,768\)이다. 나머지는 \(f(x) = 1/x^2\)에 대해 \(\int_{11}^\infty dx/x^2 = 1/11\)과 \(\int_{10}^\infty dx/x^2 = 1/10\) 사이에 있다. 따라서</p>
+      <div class="formula">\[ \begin{aligned} \sum_{n=1}^\infty \frac{1}{n^2} &\ge 1.549\,768 + 0.090\,909 = 1.640\,677 \\ \sum_{n=1}^\infty \frac{1}{n^2} &\le 1.549\,768 + 0.1 = 1.649\,768 \end{aligned} \]</div>
+      <p>이다. 두 끝의 평균 \(1.645\,22\)는 참값 \(\pi^2/6 = 1.644\,93\)과 \(3 \times 10^{-4}\)만큼 다르다. 부분합 \(S_{10}\)만 쓰면 오차가 \(0.095\)로 300배 크다. 수렴이 느린 급수에서는 꼬리를 적분으로 어림하는 것이 항을 더 더하는 것보다 훨씬 효과적이다. 합이 정확히 \(\pi^2/6\)이라는 것은 <a href="ch14.html#ex-basel-parseval">14장에서 파르스발 정리로</a> 증명한다.</p>
+    </div>
+
+    <h3 id="s2-absolute">절대 수렴과 비 판정법</h3>
+    <p>항의 부호가 섞여 있으면 양항급수의 판정법을 바로 쓸 수 없다. 이때는 절댓값을 씌운 급수를 먼저 본다.</p>
+    <div class="box def" id="def-absolute-convergence"><div class="box-h">절대 수렴과 조건 수렴</div>
+      <p>\(\sum \lvert a_n\rvert\)이 수렴하면 \(\sum a_n\)이 <span class="term">절대 수렴한다</span> <span class="en">(converge absolutely)</span>고 한다. \(\sum a_n\)은 수렴하지만 \(\sum \lvert a_n\rvert\)은 발산하면 \(\sum a_n\)이 <span class="term">조건 수렴한다</span> <span class="en">(converge conditionally)</span>고 한다.</p>
+      <p><b>절대 수렴하는 급수는 수렴한다.</b> \(0 \le a_n + \lvert a_n\rvert \le 2\lvert a_n\rvert\)이므로 정리 <a class="ref" href="#thm-comparison-test"></a>에 따라 \(\sum (a_n + \lvert a_n\rvert)\)이 수렴하고, 수렴하는 두 급수의 차인 \(\sum a_n = \sum (a_n + \lvert a_n\rvert) - \sum \lvert a_n\rvert\)도 수렴한다.</p>
+    </div>
+    <p>절대 수렴하는 급수는 항의 순서를 바꾸거나 두 급수를 곱해 항을 아무 순서로 모아도 합이 같다. 조건 수렴하는 급수에서는 그렇지 않다(이 절의 끝).</p>
+    <p>절대 수렴을 판정하는 가장 실용적인 방법은 이웃한 항의 비를 보는 것이다. 비가 결국 1보다 작은 어떤 수 \(r\) 아래에 머물면 급수는 공비 \(r\)인 기하급수보다 빨리 줄어든다.</p>
+    <div class="box thm" id="thm-ratio-test"><div class="box-h">비 판정법 <span class="en">(ratio test)</span></div>
+      <p>충분히 큰 \(n\)에서 \(a_n \ne 0\)이고, 다음 극한이 있거나 \(\infty\)라 하자.</p>
+      <div class="formula" id="eq-ratio-limit">\[ \rho = \lim_{n\to\infty} \left\lvert \frac{a_{n+1}}{a_n} \right\rvert \]</div>
+      <p>\(\rho &lt; 1\)이면 \(\sum a_n\)은 절대 수렴하고, \(\rho > 1\)이면(\(\rho = \infty\) 포함) 발산한다. \(\rho = 1\)이면 이 판정법으로는 알 수 없다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>\(\rho &lt; 1\)이면 \(\rho &lt; r &lt; 1\)인 \(r\)을 고른다. 극한의 정의에 따라 어떤 \(M\) 이후로 \(\lvert a_{n+1}\rvert \le r\lvert a_n\rvert\)이므로 \(\lvert a_{M+k}\rvert \le \lvert a_M\rvert\,r^k\)이다. 오른쪽은 공비 \(r &lt; 1\)인 기하급수의 항이므로 비교 판정법에 따라 \(\sum \lvert a_n\rvert\)이 수렴한다. \(\rho > 1\)이면 어떤 번호 이후로 \(\lvert a_{n+1}\rvert > \lvert a_n\rvert\)이라 \(\lvert a_n\rvert\)이 0으로 가지 않으므로 정리 <a class="ref" href="#thm-term-test"></a>에 따라 발산한다. \(\rho = 1\)인 예로 발산하는 \(\sum 1/n\)과 수렴하는 \(\sum 1/n^2\)이 모두 있으므로 이 경우는 판정할 수 없다.</p>
+      </details>
+    </div>
+    <p>비 판정법은 \(n!\)이나 \(r^n\)이 들어 있는 급수에 잘 맞는다. 예를 들어 \(\sum 10^n/n!\)은 \(\lvert a_{n+1}/a_n\rvert = 10/(n+1) \to 0\)이므로 수렴한다. 반대로 \(\sum 1/n^p\)처럼 \(n\)의 거듭제곱만 있는 급수에는 언제나 \(\rho = 1\)이 나오므로, 비교 판정법이나 적분 판정법을 쓴다.</p>
+
+    <h3 id="s2-alternating">교대급수</h3>
+    <p>부호가 번갈아 바뀌는 급수는 절대 수렴하지 않아도 수렴할 수 있다. 항이 더했다 뺐다 하면서 서로를 상쇄하기 때문이다.</p>
+    <div class="box thm" id="thm-alternating-series"><div class="box-h">교대급수 판정법 <span class="en">(alternating series test)</span></div>
+      <p>\(a_n \ge 0\)이 줄어들면서(\(a_{n+1} \le a_n\)) 0으로 가면, 교대급수 \(\sum_{n=1}^\infty (-1)^{n+1}a_n = a_1 - a_2 + a_3 - \cdots\)은 수렴한다. 합 \(S\)와 부분합 \(S_N\)의 차이는 처음으로 버린 항보다 크지 않다.</p>
+      <div class="formula" id="eq-alternating-error">\[ \lvert S - S_N\rvert \le a_{N+1} \]</div>
+      <details class="proof"><summary>증명</summary>
+        <p>짝수 번째 부분합은 \(S_{2m+2} = S_{2m} + (a_{2m+1} - a_{2m+2}) \ge S_{2m}\)이므로 줄어들지 않고, 홀수 번째 부분합은 \(S_{2m+1} = S_{2m-1} - (a_{2m} - a_{2m+1}) \le S_{2m-1}\)이므로 늘어나지 않는다. 또 \(S_{2m} = S_{2m+1} - a_{2m+1} \le S_{2m+1} \le S_1\)이므로 짝수 번째 부분합은 위로 유계다. 따라서 \(S_{2m}\)은 어떤 값 \(S\)로 수렴하고, \(S_{2m+1} = S_{2m} + a_{2m+1}\)도 \(a_{2m+1} \to 0\)이므로 같은 \(S\)로 수렴한다. 이때 \(S\)는 늘 이웃한 두 부분합 사이에 있다: \(S_{2m} \le S \le S_{2m+1}\). 그래서 \(\lvert S - S_N\rvert \le \lvert S_{N+1} - S_N\rvert = a_{N+1}\)이다.</p>
+      </details>
+    </div>
+    <p>대표적인 예는 <span class="term">교대 조화급수</span> <span class="en">(alternating harmonic series)</span> \(1 - \tfrac12 + \tfrac13 - \tfrac14 + \cdots\)이다. 일반항 \(1/n\)이 줄어들면서 0으로 가므로 수렴하지만, 절댓값의 급수는 조화급수라 발산한다. 곧 조건 수렴이다. 1.3절에서 보이겠지만 이 합은 \(\ln 2\)이다.</p>
+
+    <div class="box ex" id="ex-madelung-1d"><div class="box-h">1차원 이온 사슬의 마델룽 상수</div>
+      <p>전하 \(+e\)와 \(-e\)인 이온이 간격 \(a\)로 번갈아 놓인 무한히 긴 사슬이 있다. 이온 하나가 나머지 모든 이온과 갖는 정전 에너지를 구하고, NaCl의 이웃 이온 간격 \(a = 0.282\ \text{nm}\)을 넣어 크기를 어림하라.</p>
+      <p><b>풀이.</b> 양이온 하나를 원점에 두자. 거리 \(na\)에는 양쪽에 하나씩 두 개의 이온이 있고, 전하는 \(n\)이 홀수이면 \(-e\), 짝수이면 \(+e\)이다. 따라서</p>
+      <div class="formula" id="eq-madelung-1d">\[ \begin{aligned} U &= \frac{e}{4\pi\varepsilon_0}\sum_{n=1}^{\infty} \frac{2\,(-1)^n e}{na} = -\frac{e^2}{4\pi\varepsilon_0 a}\,\alpha, \\ \alpha &= 2\Big(1 - \frac12 + \frac13 - \frac14 + \cdots\Big) = 2\ln 2 \end{aligned} \]</div>
+      <p>이다. 무차원 수 \(\alpha\)를 <span class="term">마델룽 상수</span> <span class="en">(Madelung constant)</span>라 한다. 괄호 안은 교대 조화급수로, 정리 <a class="ref" href="#thm-alternating-series"></a>에 따라 수렴하고 그 값은 \(\ln 2\)이다(식 <a class="ref" href="#eq-log-series"></a>에서 \(x = 1\)). 따라서 \(\alpha = 1.386\)이다. \(e^2/(4\pi\varepsilon_0) = 1.440\ \text{eV·nm}\)을 쓰면</p>
+      <div class="formula">\[ U = -\frac{1.440\ \text{eV·nm}}{0.282\ \text{nm}} \times 1.386 = -7.08\ \text{eV} \]</div>
+      <p>이다. 이웃 두 이온과의 에너지만 세면 \(-2 \times 5.11 = -10.2\ \text{eV}\)이므로, 먼 이온들이 이 값을 약 30% 줄인다. 수렴이 느리다는 것도 눈여겨보자. 식 <a class="ref" href="#eq-alternating-error"></a>에 따라 \(\alpha\)를 소수 셋째 자리까지 맞히려면 \(2/(N+1) &lt; 0.0005\), 곧 4000개 정도의 항이 필요하다.</p>
+    </div>
+    <div class="callout warn"><strong>조건 수렴하는 급수는 더하는 순서가 합을 바꾼다</strong><p>교대 조화급수의 항을 "양수 하나, 음수 둘"의 순서로 다시 늘어놓으면</p>
+      <div class="formula">\[ \begin{aligned} &1 - \frac12 - \frac14 + \frac13 - \frac16 - \frac18 + \frac15 - \cdots \\ &\quad = \frac12\Big(1 - \frac12 + \frac13 - \frac14 + \cdots\Big) = \frac12\ln 2 \end{aligned} \]</div>
+      <p>가 된다(괄호로 \((1 - \tfrac12) - \tfrac14 + (\tfrac13 - \tfrac16) - \tfrac18 + \cdots\)처럼 묶어 보라). 같은 항을 더했는데 합이 절반이 되었다. <span class="term">리만의 재배열 정리</span> <span class="en">(Riemann rearrangement theorem)</span>에 따르면, 조건 수렴하는 급수는 순서를 바꿔 어떤 값으로든 수렴하게 하거나 발산하게 할 수 있다. 물리에서도 같은 일이 생긴다. 3차원 NaCl 결정의 마델룽 상수 \(1.7476\)을 주는 격자 합은 절대 수렴하지 않아서 더하는 순서가 결과를 좌우한다. 원점을 중심으로 공 모양으로 넓혀 가며 더하면 수렴하지 않고(1951년 에머슬레벤이 보였다), 정육면체 모양으로 넓혀 가며 더하면 매우 느리게 올바른 값으로 수렴한다(D. Borwein, J. M. Borwein, K. F. Taylor, J. Math. Phys. 26, 2999 (1985)). 조건 수렴하는 급수를 만나면 "어떤 순서로 더하는 것이 물리적으로 옳은가"를 먼저 물어야 한다.</p></div>
+  </section>
+
+  <!-- ============================================================ 1.3 -->
+  <section id="s3">
+    <h2>멱급수와 수렴 반경</h2>
+    <p>각진동수 \(\omega\)인 양자 진동자의 분배 함수는 \(Z = 1 + q + q^2 + \cdots\), \(q = e^{-\hbar\omega/k_BT}\)이다(이 절 끝의 예제 <a class="ref" href="#ex-planck-mean-energy"></a>). 온도가 바뀌면 \(q\)가 바뀌므로 \(Z\)는 숫자 하나가 아니라 변수 \(q\)의 함수이고, 평균 에너지를 얻으려면 이 무한급수를 \(q\)로 미분해야 한다. 무한급수를 항마다 미분해도 되는가? 이 질문에 답하려면 항이 변수의 거듭제곱인 급수를 따로 다뤄야 한다. 기하급수 식 <a class="ref" href="#eq-geometric-series"></a>에서 \(a = 1\), \(r = x\)로 두면</p>
+    <div class="formula">\[ \frac{1}{1 - x} = 1 + x + x^2 + x^3 + \cdots \qquad (\lvert x\rvert &lt; 1) \]</div>
+    <p>이다. 왼쪽은 함수이고 오른쪽은 끝없는 다항식이다. 다항식은 더하고 곱하고 미분하고 적분하기 쉬우므로, 함수를 이런 꼴로 쓸 수 있으면 계산이 단순해진다. 동시에 등식이 \(\lvert x\rvert &lt; 1\)에서만 성립한다는 점도 보인다. 왼쪽 함수는 \(x = 2\)에서 \(-1\)이지만 오른쪽 급수는 발산한다. 이 절에서는 이런 급수가 어떤 \(x\)에서 의미가 있는지를 정한다.</p>
+    <div class="box def" id="def-power-series"><div class="box-h">멱급수</div>
+      <p>상수 \(c_0, c_1, c_2, \ldots\)와 중심 \(x_0\)에 대해</p>
+      <div class="formula" id="eq-power-series">\[ \begin{aligned} &\sum_{n=0}^{\infty} c_n (x - x_0)^n \\ &\quad = c_0 + c_1 (x - x_0) + c_2 (x - x_0)^2 + \cdots \end{aligned} \]</div>
+      <p>꼴의 급수를 \(x_0\)을 중심으로 하는 <span class="term">멱급수</span> <span class="en">(power series)</span>라 한다. \(c_n\)을 계수라 한다. 중심이 0인 경우가 많으므로, 이 절에서는 주로 \(\sum c_n x^n\)을 쓴다. 일반적인 경우는 \(x\) 대신 \(x - x_0\)을 넣으면 된다.</p>
+    </div>
+    <p>멱급수가 수렴하는 \(x\)의 범위는 언제나 단순한 모양이다. 중심에서 어떤 거리 \(R\)까지는 수렴하고 그 바깥에서는 발산한다. 비 판정법으로 보면 이유를 알 수 있다. \(a_n = c_n x^n\)이면</p>
+    <div class="formula">\[ \left\lvert \frac{a_{n+1}}{a_n} \right\rvert = \left\lvert \frac{c_{n+1}}{c_n} \right\rvert \lvert x\rvert \;\longrightarrow\; \frac{\lvert x\rvert}{R}, \qquad R = \lim_{n\to\infty} \left\lvert \frac{c_n}{c_{n+1}} \right\rvert \]</div>
+    <p>이므로 \(\lvert x\rvert &lt; R\)이면 절대 수렴하고 \(\lvert x\rvert > R\)이면 발산한다.</p>
+    <div class="box def" id="def-radius-convergence"><div class="box-h">수렴 반경</div>
+      <p>멱급수 \(\sum c_n (x - x_0)^n\)에 대해, \(\lvert x - x_0\rvert &lt; R\)이면 절대 수렴하고 \(\lvert x - x_0\rvert > R\)이면 발산하는 수 \(R\)(\(0 \le R \le \infty\))이 하나 있다. 이 \(R\)을 <span class="term">수렴 반경</span> <span class="en">(radius of convergence)</span>이라 하고, 열린 구간 \((x_0 - R, x_0 + R)\)을 <span class="term">수렴 구간</span> <span class="en">(interval of convergence)</span>이라 한다. 수렴 구간에 급수가 수렴하는 끝점을 더한 것을 이 책에서는 <span class="term">수렴 범위</span>라 부른다. 다음 극한이 있으면 그것이 \(R\)이다.</p>
+      <div class="formula" id="eq-radius-ratio">\[ R = \lim_{n\to\infty} \left\lvert \frac{c_n}{c_{n+1}} \right\rvert \]</div>
+      <p>끝점 \(x = x_0 \pm R\)에서는 수렴할 수도 발산할 수도 있으므로 따로 조사한다.</p>
+    </div>
+    <p>극한 <a class="ref" href="#eq-radius-ratio"></a>가 없을 때도(예: \(\sin x\)처럼 한 차수 걸러 계수가 0인 급수) \(R\)은 언제나 정해진다. 일반 공식은 \(1/R = \limsup_{n\to\infty} \lvert c_n\rvert^{1/n}\)(코시-아다마르 공식)이지만, 이 책의 급수는 대부분 \(x^2\)을 새 변수로 보면 식 <a class="ref" href="#eq-radius-ratio"></a>로 충분하다.</p>
+
+    <div class="box ex" id="ex-radius-examples"><div class="box-h">수렴 반경과 끝점</div>
+      <p>다음 멱급수의 수렴 범위를 구하라. (가) \(\sum_{n=1}^\infty x^n/n\) (나) \(\sum_{n=1}^\infty x^n/n^2\) (다) \(\sum_{n=0}^\infty x^n/n!\) (라) \(\sum_{n=0}^\infty n!\,x^n\)</p>
+      <p><b>풀이.</b> (가) \(c_n = 1/n\)이므로 \(R = \lim (n+1)/n = 1\)이다. \(x = 1\)이면 조화급수라 발산하고, \(x = -1\)이면 교대 조화급수의 부호를 바꾼 것이라 수렴한다. 수렴 범위는 \(-1 \le x &lt; 1\)이다.</p>
+      <p>(나) \(R = \lim (n+1)^2/n^2 = 1\)이다. 끝점 \(x = \pm 1\)에서 \(\sum \lvert x^n/n^2\rvert = \sum 1/n^2\)이 수렴하므로 두 끝점에서 모두 절대 수렴한다. 수렴 범위는 \(-1 \le x \le 1\)이다.</p>
+      <p>(다) \(R = \lim (n+1)!/n! = \lim (n+1) = \infty\)이므로 모든 \(x\)에서 수렴한다. 1.4절에서 보듯 이 급수의 합은 \(e^x\)이다.</p>
+      <p>(라) \(R = \lim 1/(n+1) = 0\)이므로 \(x = 0\)에서만 수렴한다. 이런 급수는 함수를 정의하지 못한다. 그러나 1.6절 끝에서 보듯 물리에서는 이런 급수도 쓸모가 있다.</p>
+      <p>(가)와 (나)는 수렴 반경이 같지만 끝점에서의 행동이 다르다. 끝점은 \(1/n\)과 \(1/n^2\) 같은 느린 인자가 정한다.</p>
+    </div>
+
+    <h3 id="s3-calculus">멱급수의 미분과 적분</h3>
+    <p>멱급수가 쓸모 있는 이유는 수렴 구간 안에서 다항식처럼 다룰 수 있기 때문이다.</p>
+    <div class="box thm" id="thm-power-series-calculus"><div class="box-h">항별 미분과 항별 적분</div>
+      <p>\(f(x) = \sum_{n=0}^\infty c_n x^n\)의 수렴 반경이 \(R > 0\)이면, \(\lvert x\rvert &lt; R\)에서 \(f\)는 연속이고 몇 번이든 미분할 수 있으며, 미분과 적분을 항마다 해도 된다.</p>
+      <div class="formula" id="eq-termwise">\[ \begin{aligned} f'(x) &= \sum_{n=1}^{\infty} n\,c_n x^{n-1} \\ \int_0^x f(t)\,dt &= \sum_{n=0}^{\infty} \frac{c_n}{n+1}\,x^{n+1} \end{aligned} \]</div>
+      <p>두 급수의 수렴 반경도 \(R\)이다. 끝점에서의 수렴 여부는 바뀔 수 있다.</p>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>수렴 반경이 같다는 것은 \(\lim \lvert nc_n/((n+1)c_{n+1})\rvert = \lim \lvert c_n/c_{n+1}\rvert\)에서 보인다. 항별 연산이 허용되는 것은 \(\lvert x\rvert \le r &lt; R\)에서 급수가 <span class="term">균등 수렴</span> <span class="en">(uniform convergence)</span>하기 때문이다(항이 \(x\)와 상관없이 하나의 수렴하는 기하급수로 억눌린다). 균등 수렴하는 급수는 항별로 적분할 수 있고, 미분한 급수가 균등 수렴하면 항별로 미분할 수 있다. 엄밀한 증명은 W. Rudin, <i>Principles of Mathematical Analysis</i>, 3rd ed.(McGraw-Hill 1976)의 정리 8.1에 있다.</p>
+      </details>
+    </div>
+    <p>이 정리로 기하급수에서 새 급수를 얻을 수 있다. \(1/(1+t) = 1 - t + t^2 - \cdots\) (\(\lvert t\rvert &lt; 1\))을 0부터 \(x\)까지 항별로 적분하면</p>
+    <div class="formula" id="eq-log-series">\[ \begin{aligned} \ln(1 + x) &= x - \frac{x^2}{2} + \frac{x^3}{3} - \frac{x^4}{4} + \cdots \\ &= \sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n}\,x^n \qquad (-1 &lt; x \le 1) \end{aligned} \]</div>
+    <p>이다. 수렴 반경은 1이고, 끝점 \(x = 1\)에서는 교대 조화급수가 되어 수렴한다. 그 합이 \(\ln 2\)라는 것은 <span class="term">아벨 정리</span> <span class="en">(Abel’s theorem)</span>가 보장한다. 멱급수가 끝점에서 수렴하면, 그 합은 수렴 구간 안에서 끝점으로 다가갈 때 함수의 극한과 같다는 정리다(Rudin, 같은 책 정리 8.2). 같은 방법으로 \(1/(1+t^2) = 1 - t^2 + t^4 - \cdots\)를 적분하면</p>
+    <div class="formula" id="eq-arctan-series">\[ \begin{aligned} \arctan x &= x - \frac{x^3}{3} + \frac{x^5}{5} - \cdots \\ &= \sum_{n=0}^{\infty} \frac{(-1)^n}{2n+1}\,x^{2n+1} \qquad (-1 \le x \le 1) \end{aligned} \]</div>
+    <p>이고, \(x = 1\)에서 \(\pi/4 = 1 - \tfrac13 + \tfrac15 - \cdots\)를 얻는다.</p>
+
+    <div class="callout tip"><strong>\(1/(1+x^2)\)의 수렴 반경은 왜 1인가</strong>
+      <p>\(1/(1-x)\)의 급수가 \(\lvert x\rvert &lt; 1\)에서만 수렴하는 것은 이해가 된다. \(x = 1\)에서 함수 자체가 무한대가 되기 때문이다. 그런데 \(1/(1+x^2) = 1 - x^2 + x^4 - \cdots\)도 수렴 반경이 1이다. 이 함수는 실수축 전체에서 유한하고 매끄럽다. \(x = \pm 1\)에서는 아무 일도 일어나지 않는데, 급수는 그 바깥에서 발산한다(그림 1-3 (가)).</p>
+      <p>수수께끼의 답은 실수축 밖에 있다. \(x\)를 복소수 \(z\)로 넓히면 \(1 + z^2 = 0\)인 점 \(z = \pm i\)에서 함수가 무한대가 된다. 이 두 점은 원점에서 거리가 정확히 1이다(그림 1-3 (나)). 멱급수는 실수만의 대상이 아니라 복소평면의 원판에서 수렴하며, 그 반지름은 중심에서 가장 가까운 특이점까지의 거리로 정해진다. 2장에서 복소수를 다시 세운 뒤, 19장에서 <a href="ch19.html#eq-taylor-complex">복소 테일러 급수</a>와 <a href="ch19.html#def-laurent">로랑 급수</a>로 이 사실을 증명한다.</p>
+    </div>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 400 270" role="img" aria-label="1/(1+x²)과 그 부분합. 구간 −1에서 1 안에서는 부분합이 곡선에 붙고, 밖에서는 위아래로 튀어 나간다"><defs><clipPath id="f0103-clip"><rect x="50" y="30" width="330" height="200"/></clipPath></defs><line x1="60.3" y1="30" x2="60.3" y2="230" class="s-grid"/><line x1="111.9" y1="30" x2="111.9" y2="230" class="s-grid"/><line x1="163.4" y1="30" x2="163.4" y2="230" class="s-grid"/><line x1="215" y1="30" x2="215" y2="230" class="s-grid"/><line x1="266.6" y1="30" x2="266.6" y2="230" class="s-grid"/><line x1="318.1" y1="30" x2="318.1" y2="230" class="s-grid"/><line x1="369.7" y1="30" x2="369.7" y2="230" class="s-grid"/><line x1="50" y1="220.9" x2="380" y2="220.9" class="s-grid"/><line x1="50" y1="175.5" x2="380" y2="175.5" class="s-grid"/><line x1="50" y1="130" x2="380" y2="130" class="s-grid"/><line x1="50" y1="84.5" x2="380" y2="84.5" class="s-grid"/><line x1="50" y1="39.1" x2="380" y2="39.1" class="s-grid"/><line x1="50" y1="175.5" x2="380" y2="175.5" class="s-line"/><line x1="215" y1="30" x2="215" y2="230" class="s-line"/><text x="60.3" y="248" class="t-dim" text-anchor="middle">−1.5</text><text x="111.9" y="248" class="t-dim" text-anchor="middle">−1</text><text x="163.4" y="248" class="t-dim" text-anchor="middle">−0.5</text><text x="215" y="248" class="t-dim" text-anchor="middle">0</text><text x="266.6" y="248" class="t-dim" text-anchor="middle">0.5</text><text x="318.1" y="248" class="t-dim" text-anchor="middle">1</text><text x="369.7" y="248" class="t-dim" text-anchor="middle">1.5</text><text x="42" y="224.9" class="t-dim" text-anchor="end">−0.5</text><text x="42" y="179.5" class="t-dim" text-anchor="end">0</text><text x="42" y="134" class="t-dim" text-anchor="end">0.5</text><text x="42" y="88.5" class="t-dim" text-anchor="end">1</text><text x="42" y="43.1" class="t-dim" text-anchor="end">1.5</text><line x1="111.9" y1="30" x2="111.9" y2="230" class="s-acc2" stroke-dasharray="4 4"/><line x1="318.1" y1="30" x2="318.1" y2="230" class="s-acc2" stroke-dasharray="4 4"/><path d="M50,-97.3l18.6,0 1,3.3 4.1,28.9 5.2,32 8.2,42.5 4.1,17.5 5.2,18.9 5.2,15.6 5.1,12.9 4.1,8.4 4.2,6.9 4.1,5.6 4.1,4.3 4.1,3.3 5.2,2.7 4.1,1.2 5.2,.6 7.2-.8 8.2-2.4 7.3-3 19.6-9.1 10.3-4 9.3-2.4 9.2-1 5.2,0 6.2,.7 11.3,2.7 10.3,4 24.8,11.3 6.2,2.2 5.1,1.2 6.2,.6 6.2-.8 6.2-2.5 5.2-3.6 4.1-4 4.1-5.3 4.1-6.6 3.1-5.8 7.2-17.3 7.3-22.8 6.1-24.6 6.2-29.9 6.2-35.8 6.2-42.3 1-3.3 18.6,0" class="s-acc2" clip-path="url(#f0103-clip)"/><path d="M50,448.2l41.2,0 1.1-6.9 3.1-74.5 3.1-58.2 3.1-45.2 3.1-34.9 3.1-26.8 4.1-26.2 2-10 3.1-12 2.1-6.4 3.1-7.7 5.1-9.2 6.2-7.4 8.3-6.8 13.4-8.5 20.6-11.5 14.4-6.5 6.2-2.1 6.2-1.6 6.2-.9 6.2-.4 6.2,.4 6.2,.9 6.2,1.6 6.2,2.1 14.4,6.5 20.6,11.5 13.4,8.5 8.3,6.8 6.2,7.4 5.1,9.2 3.1,7.7 2.1,6.4 3.1,12 2,10 4.1,26.2 3.1,26.8 3.1,34.9 3.1,45.2 3.1,58.2 3.1,74.5 1,6.9 41.3,0" class="s-acc" stroke-dasharray="6 4" clip-path="url(#f0103-clip)"/><path d="M50,-97.3l52.6,0 1,2.7 2.1,73 2.1,49.9 2,33.7 2.1,22.5 2,14.8 3.1,12.9 2.1,4.6 2.1,2.7 2,1.3 3.1,.5 4.1-.9 6.2-2.7 35.1-19.5 14.4-7 7.2-2.8 7.3-2.1 7.2-1.3 6.2-.4 6.2,.2 6.1,.8 6.2,1.5 6.2,2 8.3,3.4 8.2,4 33,18.5 9.3,4.6 4.1,1.4 3.1,.3 2.1-.5 2-1.3 2.1-2.7 1-2 3.1-10.1 3.1-20.2 2.1-22.5 3.1-56.3 3.1-100.3 1-2.7 52.6,0" class="s-acc" clip-path="url(#f0103-clip)"/><path d="M50,149.9l15.1-3.7 15.2-4.3 15.1-5.2 13.7-5.5 20.7-9.7 42.6-23.7 8.2-4.2 8.3-3.6 6.9-2.4 6.8-1.8 6.9-1 5.5-.3 5.5,.3 6.9,1 6.8,1.8 6.9,2.4 8.3,3.6 8.2,4.2 42.6,23.7 20.7,9.7 13.7,5.5 15.2,5.2 15.1,4.3 15.1,3.7" class="s-line" style="stroke:var(--text);stroke-width:2.6"/><text x="343" y="43" class="t-math acc2" style="font-size:14px" text-anchor="start"><tspan font-style="italic">N</tspan> = 2</text><text x="102.8" y="43" class="t-math acc" style="font-size:14px" text-anchor="end"><tspan font-style="italic">N</tspan> = 10</text><text x="330.5" y="225" class="t-math acc" style="font-size:14px" text-anchor="start"><tspan font-style="italic">N</tspan> = 5</text><text x="12" y="18" class="t" text-anchor="start">(가) 실수축 위의 부분합</text></svg><svg viewBox="0 0 400 270" role="img" aria-label="복소평면에서 ±i에 특이점이 있고, 원점을 중심으로 반지름 1인 원이 그 점들을 지난다"><defs><marker id="f0103-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker></defs><line x1="60" y1="145" x2="345" y2="145" class="s-line" marker-end="url(#f0103-arr)"/><line x1="200" y1="250" x2="200" y2="35" class="s-line" marker-end="url(#f0103-arr)"/><circle cx="200" cy="145" r="80" class="f-acc-soft" fill-opacity="0.5" style="stroke-width:1.5"/><line x1="120" y1="145" x2="280" y2="145" class="s-acc" style="stroke-width:4"/><path d="M193,58L207,72M193,72L207,58" class="s-acc2" style="stroke-width:3"/><text x="214" y="59" class="t-math acc2" text-anchor="start"><tspan font-style="italic">i</tspan></text><path d="M193,218L207,232M193,232L207,218" class="s-acc2" style="stroke-width:3"/><text x="214" y="241" class="t-math acc2" text-anchor="start">−<tspan font-style="italic">i</tspan></text><text x="284" y="163" class="t-math" text-anchor="start">1</text><text x="116" y="163" class="t-math" text-anchor="end">−1</text><text x="350" y="163" class="t-dim" text-anchor="end">Re</text><text x="192" y="44" class="t-dim" text-anchor="end">Im</text><text x="12" y="18" class="t" text-anchor="start">(나) 복소평면: 1 + z² = 0인 점</text></svg></div>
+      <figcaption><b>그림 1-3.</b> (가) \(1/(1+x^2)\)(굵은 선)과 부분합 \(S_N(x) = \sum_{n=0}^{N}(-1)^n x^{2n}\), \(N = 2\)(보조색 실선), \(N = 5\)(강조색 점선), \(N = 10\)(강조색 실선). 각 곡선 끝에 \(N\)을 적었다. 구간 \((-1, 1)\) 안에서는 \(N\)이 커질수록 곡선에 붙지만, 바깥에서는 위아래로 더 크게 벗어난다. (나) 복소평면에서 \(1/(1+z^2)\)이 무한대가 되는 두 점 \(\pm i\)(×)가 반지름 1인 원 위에 있다. 실수축 위의 수렴 구간(굵은 선분)은 이 원판의 지름이다.</figcaption>
+    </figure>
+
+    <div class="box ex" id="ex-planck-mean-energy"><div class="box-h">플랑크 진동자의 평균 에너지</div>
+      <p>각진동수 \(\omega\)인 진동자의 에너지가 \(E_n = n\hbar\omega\) (\(n = 0, 1, 2, \ldots\))만 가능하다고 하자(플랑크의 가설). 온도 \(T\)에서 에너지가 \(E_n\)일 확률은 볼츠만 인자에 비례한다: \(P_n = e^{-E_n/k_BT}/Z\). 규격화 상수 \(Z = \sum_n e^{-E_n/k_BT}\)를 <span class="term">분배 함수</span> <span class="en">(partition function)</span>라 한다. 평균 에너지 \(\langle E\rangle = \sum_n E_n P_n\)을 구하라.</p>
+      <p><b>풀이.</b> \(q = e^{-\hbar\omega/k_BT}\)로 두면 \(e^{-E_n/k_BT} = q^n\)이고, \(T > 0\)이면 \(0 &lt; q &lt; 1\)이다. 분배 함수는 공비 \(q\)인 기하급수다.</p>
+      <div class="formula" id="eq-planck-partition">\[ Z = \sum_{n=0}^{\infty} q^n = \frac{1}{1 - q} \]</div>
+      <p>평균 에너지에는 \(\sum n q^n\)이 필요하다. 기하급수 \(\sum q^n = 1/(1-q)\)는 수렴 반경이 1인 멱급수이고 \(q\)는 그 안에 있으므로, 정리 <a class="ref" href="#thm-power-series-calculus"></a>에 따라 양변을 \(q\)로 항별 미분할 수 있다. 미분하고 \(q\)를 곱하면</p>
+      <div class="formula" id="eq-planck-sum-n">\[ \sum_{n=0}^{\infty} n q^n = q\,\frac{d}{dq}\sum_{n=0}^{\infty} q^n = q\,\frac{d}{dq}\frac{1}{1-q} = \frac{q}{(1-q)^2} \]</div>
+      <p>이다. 따라서</p>
+      <div class="formula" id="eq-planck-mean-energy">\[ \begin{aligned} \langle E\rangle &= \frac{\hbar\omega}{Z}\sum_{n=0}^\infty n q^n = \hbar\omega\,(1 - q)\,\frac{q}{(1-q)^2} \\ &= \frac{\hbar\omega\, q}{1 - q} = \frac{\hbar\omega}{e^{\hbar\omega/k_BT} - 1} \end{aligned} \]</div>
+      <p>이다. 마지막 등호에서 분자와 분모에 \(1/q = e^{\hbar\omega/k_BT}\)를 곱했다. 이것이 흑체 복사의 플랑크 공식과 아인슈타인 고체 모형의 핵심 식이다.</p>
+      <p><b>숫자로 보기.</b> 300 K에서 \(k_BT = 25.85\ \text{meV}\)이다. 일산화탄소 분자의 신축 진동(파수 \(2143\ \text{cm}^{-1}\), \(\hbar\omega = 0.2657\ \text{eV}\))은 \(\hbar\omega/k_BT = 10.28\)이라 \(\langle E\rangle = 0.2657\ \text{eV}/(e^{10.28} - 1) = 9.1 \times 10^{-6}\ \text{eV}\)이다. 고전 물리가 예측하는 \(k_BT\)의 \(3.5 \times 10^{-4}\)배밖에 되지 않는다. 진동이 사실상 "얼어붙어" 있는 것이다. 반대로 \(\hbar\omega = 1\ \text{meV}\)인 느린 진동은 \(\langle E\rangle = 25.36\ \text{meV}\)로 \(k_BT\)에 가깝다. \(\hbar\omega \ll k_BT\)일 때 식 <a class="ref" href="#eq-planck-mean-energy"></a>이 어떻게 \(k_BT\)로 가는지는 1.6절의 예제 <a class="ref" href="#ex-planck-classical-limit"></a>에서 급수로 구한다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 1.4 -->
+  <section id="s4">
+    <h2>테일러 전개와 나머지 항</h2>
+    <p>1.3절에서는 급수가 주어지고 그 합이 어떤 함수인지를 물었다. 물리에서는 반대 방향이 더 자주 필요하다. 함수 \(f(x)\)가 주어졌을 때 그것을 멱급수로 펼치고 싶다. 예를 들어 진자의 운동 방정식에 있는 \(\sin\theta\)를, 또는 상대론적 에너지에 있는 \((1 - v^2/c^2)^{-1/2}\)을 거듭제곱의 합으로 쓰고 첫 몇 항만 남기려는 것이다. 이때 묻게 되는 것은 두 가지다. 계수는 무엇인가? 몇 항에서 끊으면 오차가 얼마인가?</p>
+
+    <h3 id="s4-coefficients">계수 정하기</h3>
+    <p>\(f\)가 \(a\)를 중심으로 하는 멱급수로 쓰인다고 가정하자: \(f(x) = c_0 + c_1(x - a) + c_2(x - a)^2 + \cdots\). \(x = a\)를 넣으면 \(c_0 = f(a)\)이다. 정리 <a class="ref" href="#thm-power-series-calculus"></a>에 따라 항별로 미분할 수 있으므로 한 번 미분하면 \(f'(x) = c_1 + 2c_2(x - a) + 3c_3(x-a)^2 + \cdots\)이고, \(x = a\)에서 \(c_1 = f'(a)\)이다. 한 번 더 미분하면 \(f''(a) = 2c_2\), 세 번 미분하면 \(f'''(a) = 3 \cdot 2\, c_3\)이다. \(k\)번 미분하면 \((x-a)^k\)의 항만 상수 \(k!\,c_k\)로 남고, 그보다 낮은 차수는 사라지며 높은 차수는 \(x = a\)에서 0이 된다. 따라서 \(c_k = f^{(k)}(a)/k!\)이다.</p>
+    <div class="formula" id="eq-taylor-series">\[ \begin{aligned} f(x) &= \sum_{n=0}^{\infty} \frac{f^{(n)}(a)}{n!}\,(x - a)^n \\ &= f(a) + f'(a)(x - a) + \frac{f''(a)}{2!}(x - a)^2 + \cdots \end{aligned} \]<div class="where">\(f^{(n)}\)은 \(n\)계 도함수, \(f^{(0)} = f\), \(0! = 1\)이다.</div></div>
+    <p>이것을 \(a\)에서 \(f\)의 <span class="term">테일러 급수</span> <span class="en">(Taylor series)</span>라 하고, \(a = 0\)인 경우를 <span class="term">매클로린 급수</span> <span class="en">(Maclaurin series)</span>라 한다. 위 논증은 "\(f\)가 멱급수로 쓰인다면 그 계수는 이것뿐"이라는 것을 보였다. 멱급수 전개는 유일하다. 그래서 어떤 방법으로 구하든(미분하든, 기하급수를 적분하든, 아는 급수를 곱하든) 같은 계수가 나온다. \(N\)차까지만 남긴 다항식</p>
+    <div class="formula">\[ P_N(x) = \sum_{n=0}^{N} \frac{f^{(n)}(a)}{n!}\,(x - a)^n \]</div>
+    <p>을 \(N\)차 <span class="term">테일러 다항식</span> <span class="en">(Taylor polynomial)</span>이라 한다. \(P_1\)은 \(a\)에서의 접선이고, \(P_2\)는 접선에 곡률까지 맞춘 포물선이다.</p>
+
+    <h3 id="s4-standard">자주 쓰는 전개</h3>
+    <p>\(f(x) = e^x\)는 모든 도함수가 \(e^x\)이므로 \(f^{(n)}(0) = 1\)이다. \(\sin x\)의 도함수는 \(\cos x, -\sin x, -\cos x, \sin x\)를 되풀이하므로 원점에서 \(0, 1, 0, -1\)이 반복된다. 홀수 차수만 남고 부호가 번갈아 바뀐다. \(\cos x\)는 짝수 차수만 남는다. \(\ln(1+x)\)는 식 <a class="ref" href="#eq-log-series"></a>에서 이미 구했다. \((1+x)^p\)는 \(n\)계 도함수가 \(p(p-1)\cdots(p-n+1)(1+x)^{p-n}\)이므로</p>
+    <div class="formula" id="eq-binomial-series">\[ \begin{aligned} (1 + x)^p &= \sum_{n=0}^{\infty} \binom{p}{n} x^n \\ &= 1 + px + \frac{p(p-1)}{2!}x^2 \\ &\quad + \frac{p(p-1)(p-2)}{3!}x^3 + \cdots \end{aligned} \]<div class="where">\(\lvert x\rvert &lt; 1\)에서 성립한다. \(\binom{p}{n} = \dfrac{p(p-1)\cdots(p-n+1)}{n!}\), \(\binom{p}{0} = 1\)이다. \(p\)는 아무 실수(복소수)여도 된다.</div></div>
+    <p>이것을 <span class="term">이항급수</span> <span class="en">(binomial series)</span>라 한다. \(p\)가 0 이상의 정수이면 \(n > p\)에서 \(\binom{p}{n} = 0\)이 되어 급수가 끝나고 고등학교의 이항 정리가 된다. 그렇지 않으면 무한급수이고, 계수의 비 \(\lvert \binom{p}{n} / \binom{p}{n+1}\rvert = \lvert (n+1)/(p-n)\rvert \to 1\)이므로 수렴 반경은 1이다. 계수를 테일러 공식으로 구했다고 해서 급수의 합이 \((1+x)^p\)라는 것이 저절로 보장되지는 않는다(이 절 끝의 흔한 실수를 보라). 이항급수는 다음처럼 직접 확인할 수 있다.</p>
+    <details class="proof"><summary>급수의 합이 \((1+x)^p\)임을 보이기</summary>
+      <p>\(\lvert x\rvert &lt; 1\)에서 \(g(x) = \sum_{n\ge0}\binom{p}{n}x^n\)이라 하자. 정의에서 \((n+1)\binom{p}{n+1} = (p - n)\binom{p}{n}\)이다. 정리 <a class="ref" href="#thm-power-series-calculus"></a>에 따라 항별 미분하면</p>
+      <div class="formula">\[ \begin{aligned} g'(x) &= \sum_{n\ge0}(n+1)\binom{p}{n+1}x^n \\ &= \sum_{n\ge0}(p - n)\binom{p}{n}x^n \end{aligned} \]</div>
+      <p>이고, \(xg'(x) = \sum_n n\binom{p}{n}x^n\)이므로 둘을 더하면 \((1 + x)g' = p\,g\)이다. 그러면</p>
+      <div class="formula">\[ \frac{d}{dx}\Big[\frac{g(x)}{(1+x)^p}\Big] = \frac{(1+x)g' - p\,g}{(1+x)^{p+1}} = 0 \]</div>
+      <p>이므로 \(g/(1+x)^p\)는 상수이고, \(g(0) = 1\)에서 그 상수는 1이다. 따라서 \(g(x) = (1+x)^p\)이다.</p>
+    </details>
+    <p>다섯 전개를 한곳에 모으면 다음과 같다.</p>
+    <div class="formula" id="eq-standard-series">\[ \begin{aligned} e^x &= 1 + x + \frac{x^2}{2!} + \frac{x^3}{3!} + \cdots \\ \sin x &= x - \frac{x^3}{3!} + \frac{x^5}{5!} - \cdots \\ \cos x &= 1 - \frac{x^2}{2!} + \frac{x^4}{4!} - \cdots \\ \ln(1 + x) &= x - \frac{x^2}{2} + \frac{x^3}{3} - \cdots \\ (1 + x)^p &= 1 + px + \frac{p(p-1)}{2!}x^2 + \cdots \end{aligned} \]</div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>함수</th><th>일반항</th><th>수렴 범위</th></tr></thead>
+      <tbody>
+        <tr><td>\(e^x\)</td><td>\(\dfrac{x^n}{n!}\)</td><td>모든 \(x\)</td></tr>
+        <tr><td>\(\sin x\)</td><td>\(\dfrac{(-1)^n x^{2n+1}}{(2n+1)!}\)</td><td>모든 \(x\)</td></tr>
+        <tr><td>\(\cos x\)</td><td>\(\dfrac{(-1)^n x^{2n}}{(2n)!}\)</td><td>모든 \(x\)</td></tr>
+        <tr><td>\(\ln(1+x)\)</td><td>\(\dfrac{(-1)^{n+1}x^n}{n}\ (n \ge 1)\)</td><td>\(-1 &lt; x \le 1\)</td></tr>
+        <tr><td>\((1+x)^p\)</td><td>\(\dbinom{p}{n}x^n\)</td><td>\(\lvert x\rvert &lt; 1\) (끝점은 \(p\)에 따라 다름)</td></tr>
+      </tbody>
+    </table></div>
+    <p>이항급수 가운데 물리에서 특히 자주 쓰는 것은 \(p = \pm\tfrac12\)과 \(p = -1, -2\)이다. 계수를 외워 두면 편하다.</p>
+    <div class="formula" id="eq-sqrt-expansions">\[ \begin{aligned} \sqrt{1 + x} &= 1 + \frac{x}{2} - \frac{x^2}{8} + \frac{x^3}{16} - \cdots \\ \frac{1}{\sqrt{1 + x}} &= 1 - \frac{x}{2} + \frac{3x^2}{8} - \frac{5x^3}{16} + \cdots \\ \frac{1}{1 + x} &= 1 - x + x^2 - x^3 + \cdots \\ \frac{1}{(1 + x)^2} &= 1 - 2x + 3x^2 - 4x^3 + \cdots \end{aligned} \]</div>
+    <p>\(e^x\)의 급수에 \(x = 1\)을 넣으면 \(e = 1 + 1 + \tfrac12 + \tfrac16 + \cdots = 2.718\,28\ldots\)이고, \(\sin x\)와 \(\cos x\)의 급수는 \(e^x\)의 급수에서 짝수 항과 홀수 항을 골라 부호를 번갈아 붙인 모양이다. 이 닮음은 우연이 아니다. 2장에서 \(x\)에 허수를 넣어 <a href="ch02.html#eq-euler-formula">오일러 공식</a> \(e^{i\theta} = \cos\theta + i\sin\theta\)를 이 급수들로 확인한다.</p>
+
+    <h3 id="s4-order">근사의 차수를 적는 법</h3>
+    <p>전개를 어디서 끊었는지 적어 두지 않으면, 두 근사식을 같은 차수끼리 비교하거나 곱할 수 없다. 그래서 버린 항의 크기를 나타내는 기호가 필요하다.</p>
+    <div class="box def" id="def-big-o"><div class="box-h">\(O(x^n)\)과 \(\approx\)</div>
+      <p>\(x \to 0\)일 때 \(f(x) = O(x^n)\)이라는 것은, 0 근처에서 \(\lvert f(x)\rvert \le C\lvert x\rvert^n\)을 만족하는 상수 \(C\)가 있다는 뜻이다. "\(x^n\)과 같은 차수이거나 더 작다"로 읽는다. 전개에서 버린 항을 나타낼 때 쓴다.</p>
+      <div class="formula">\[ \begin{aligned} \sin x &= x - \frac{x^3}{6} + O(x^5) \\ \sqrt{1 + x} &= 1 + \frac{x}{2} + O(x^2) \end{aligned} \]</div>
+      <p>기호 \(\approx\)는 "작은 양의 높은 차수를 버리면 같다"는 뜻으로 쓴다. \(\sin x \approx x\)는 \(\sin x = x + O(x^3)\)을 줄여 쓴 것이다. 버린 차수를 밝히고 싶으면 \(O\)를 쓰고, 어느 차수까지 맞는지가 문맥에서 분명하면 \(\approx\)를 쓴다.</p>
+    </div>
+    <p>이 책에서 \(\sim\)은 "크기 정도가 같다"(예: 원자의 크기 \(\sim 10^{-10}\ \text{m}\))는 뜻으로 쓰고, 11장에서 "점근적으로 같다"는 더 정확한 뜻을 <a href="ch11.html#def-asymptotic">정의</a>한다. \(\simeq\)는 쓰지 않는다. \(O\)는 \(x \to \infty\)에서도 쓴다. 예를 들어 \(1/(x^2 + 1) = 1/x^2 + O(1/x^4)\)이다.</p>
+
+    <h3 id="s4-remainder">나머지 항</h3>
+    <p>테일러 다항식 \(P_N\)으로 \(f\)를 근사하면 오차 \(R_N(x) = f(x) - P_N(x)\)가 남는다. 이 오차를 <span class="term">나머지 항</span> <span class="en">(remainder)</span>이라 한다. 다음 정리는 나머지 항이 "처음 버린 항과 같은 꼴"이라는 것을 말한다. 다만 도함수를 \(a\)가 아니라 \(a\)와 \(x\) 사이의 어떤 점에서 계산해야 한다.</p>
+    <div class="box thm" id="thm-taylor-remainder"><div class="box-h">테일러 정리 (라그랑주 꼴 나머지 항)</div>
+      <p>\(a\)와 \(x\)를 포함하는 구간에서 \(f\)가 \(N+1\)번 미분 가능하다고 하자. 그러면 \(a\)와 \(x\) 사이의 어떤 점 \(\xi\)가 있어서 다음이 성립한다.</p>
+      <div class="formula" id="eq-taylor-remainder">\[ \begin{aligned} f(x) &= P_N(x) + R_N(x) \\ R_N(x) &= \frac{f^{(N+1)}(\xi)}{(N+1)!}\,(x - a)^{N+1} \end{aligned} \]</div>
+      <p>따라서 그 구간에서 \(\lvert f^{(N+1)}\rvert \le M\)이면 다음 오차 한계를 얻는다.</p>
+      <div class="formula" id="eq-remainder-bound">\[ \lvert f(x) - P_N(x)\rvert \le \frac{M}{(N+1)!}\,\lvert x - a\rvert^{N+1} \]</div>
+      <details class="proof"><summary>증명</summary>
+        <p>\(x\)를 고정하고 \(t\)의 함수 \(F(t) = f(x) - \sum_{k=0}^{N} \dfrac{f^{(k)}(t)}{k!}(x - t)^k\)를 생각하자. \(F(x) = 0\)이고 \(F(a) = R_N(x)\)이다. \(t\)로 미분하면 각 항의 곱의 미분에서 나온 두 조각이 이웃한 항과 차례로 지워지고 마지막 하나만 남는다.</p>
+        <div class="formula">\[ \begin{aligned} F'(t) &= -\sum_{k=0}^{N} \frac{f^{(k+1)}(t)}{k!}(x-t)^k \\ &\quad + \sum_{k=1}^{N} \frac{f^{(k)}(t)}{(k-1)!}(x-t)^{k-1} \\ &= -\frac{f^{(N+1)}(t)}{N!}(x - t)^N \end{aligned} \]</div>
+        <p>이제 \(G(t) = F(t) - \Big(\dfrac{x - t}{x - a}\Big)^{N+1} F(a)\)로 두면 \(G(a) = 0\), \(G(x) = 0\)이므로 롤의 정리에 따라 \(a\)와 \(x\) 사이에 \(G'(\xi) = 0\)인 \(\xi\)가 있다.</p>
+        <div class="formula">\[ \begin{aligned} 0 = G'(\xi) &= -\frac{f^{(N+1)}(\xi)}{N!}(x - \xi)^N \\ &\quad + (N+1)\frac{(x - \xi)^N}{(x - a)^{N+1}}\,F(a) \end{aligned} \]</div>
+        <p>\(F(a)\)에 대해 풀면 \(R_N(x) = F(a) = f^{(N+1)}(\xi)(x - a)^{N+1}/(N+1)!\)이다.</p>
+      </details>
+    </div>
+    <p>식 <a class="ref" href="#eq-taylor-remainder"></a>에서 \(\xi\)가 어디인지는 모른다. 그래도 \(f^{(N+1)}\)의 크기를 어림할 수 있으면 오차의 상한이 나온다. \(N = 0\)이면 평균값 정리 \(f(x) - f(a) = f'(\xi)(x - a)\)와 같다. 나머지 항이 \(f\)를 정말로 표현하는지, 곧 \(N \to \infty\)에서 \(R_N \to 0\)인지가 테일러 급수가 \(f\)로 수렴하는지를 정한다. \(e^x\), \(\sin x\), \(\cos x\)는 \(\lvert f^{(N+1)}\rvert\)이 \(e^{\lvert x\rvert}\)이나 1로 유계이고 \((N+1)!\)이 \(\lvert x\rvert^{N+1}\)보다 훨씬 빨리 자라므로, 모든 \(x\)에서 \(R_N \to 0\)이다.</p>
+
+    <div class="box ex" id="ex-sine-remainder"><div class="box-h">\(\sin x\)의 테일러 다항식과 오차</div>
+      <p>\(\sin x\)를 원점에서 5차 테일러 다항식으로 근사할 때 \(x = \pi/2\)에서의 오차를 어림하고 실제 오차와 비교하라.</p>
+      <p><b>풀이.</b> \(P_5(x) = x - x^3/6 + x^5/120\)이다. \(\sin x\)의 6차 항은 0이므로 \(P_5 = P_6\)이고, 나머지 항을 \(N = 6\)으로 쓸 수 있다. \(\lvert f^{(7)}\rvert = \lvert \cos\xi\rvert \le 1\)이므로 식 <a class="ref" href="#eq-remainder-bound"></a>에 따라</p>
+      <div class="formula">\[ \Big\lvert \sin\frac{\pi}{2} - P_5\Big(\frac{\pi}{2}\Big)\Big\rvert \le \frac{(\pi/2)^7}{7!} = 0.004\,68 \]</div>
+      <p>이다. 실제로 \(P_5(\pi/2) = 1.570\,80 - 0.645\,96 + 0.079\,69 = 1.004\,52\)이므로 오차는 \(0.004\,52\)로 상한 안에 있고 상한과 거의 같다. 오차가 처음 버린 항 \(x^7/7!\)과 비슷한 것은, \(\sin x\)의 급수가 교대급수이고 항이 빨리 줄어들기 때문이다. 그림 1-4는 차수를 높일수록 근사가 좋은 구간이 넓어지는 모습을 보여 준다. 어떤 차수에서 끊든 원점에서 멀어지면 다항식은 결국 \(\pm\infty\)로 달아난다. 유한 차수 근사는 언제나 "중심 근처에서만" 좋다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 290" role="img" aria-label="sin x와 원점에서의 테일러 다항식 1, 3, 5, 7차. 차수가 높을수록 더 넓은 구간에서 곡선에 붙는다"><defs><clipPath id="f0104-clip"><rect x="36" y="12" width="432" height="240"/></clipPath></defs><line x1="43.2" y1="12" x2="43.2" y2="252" class="s-grid"/><line x1="147.6" y1="12" x2="147.6" y2="252" class="s-grid"/><line x1="252" y1="12" x2="252" y2="252" class="s-grid"/><line x1="356.4" y1="12" x2="356.4" y2="252" class="s-grid"/><line x1="460.8" y1="12" x2="460.8" y2="252" class="s-grid"/><line x1="36" y1="241.1" x2="468" y2="241.1" class="s-grid"/><line x1="36" y1="186.5" x2="468" y2="186.5" class="s-grid"/><line x1="36" y1="132" x2="468" y2="132" class="s-grid"/><line x1="36" y1="77.5" x2="468" y2="77.5" class="s-grid"/><line x1="36" y1="22.9" x2="468" y2="22.9" class="s-grid"/><line x1="36" y1="132" x2="468" y2="132" class="s-line"/><line x1="252" y1="12" x2="252" y2="252" class="s-line"/><text x="43.2" y="276" class="t-dim" style="font-size:14px" text-anchor="middle">−2π</text><text x="147.6" y="276" class="t-dim" style="font-size:14px" text-anchor="middle">−π</text><text x="252" y="276" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="356.4" y="276" class="t-dim" style="font-size:14px" text-anchor="middle">π</text><text x="460.8" y="276" class="t-dim" style="font-size:14px" text-anchor="middle">2π</text><text x="28" y="247.1" class="t-dim" style="font-size:14px" text-anchor="end">−2</text><text x="28" y="192.5" class="t-dim" style="font-size:14px" text-anchor="end">−1</text><text x="28" y="138" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="28" y="83.5" class="t-dim" style="font-size:14px" text-anchor="end">1</text><text x="28" y="28.9" class="t-dim" style="font-size:14px" text-anchor="end">2</text><path d="M36,295.6l116.3,0 199.4-327.2 116.3,0" class="s-acc2" stroke-dasharray="7 5" clip-path="url(#f0104-clip)"/><path d="M36,-31.6l103.8,0 7.5,51.3 5.8,35.2 6.7,34.2 6.6,28.1 6.7,22.6 3.3,9.2 4.2,9.9 3.3,6.6 4.1,6.7 3.4,4.1 4.1,3.8 2.5,1.5 3.3,1.3 2.5,.5 3.3-.1 3.4-.9 3.3-1.5 6.6-4.9 7.5-7.9 7.5-10 7.5-11.3 22.4-36 6.6-9.6 6.7-8.2 6.6-6.5 3.4-2.4 3.3-1.8 3.3-1.2 3.3-.5 3.3,.3 2.5,.7 4.2,2.3 4.1,3.8 4.2,5.3 4.2,7 4.1,8.8 3.3,8.4 4.2,12.2 3.3,11.2 7.5,30.5 6.6,33.4 6.7,39.8 7.5,51.3 103.8,0" class="s-acc2" clip-path="url(#f0104-clip)"/><path d="M36,295.6l74.8,0 4.1-33.8 3.3-22.9 3.4-19.1 4.1-19.2 4.2-14.7 4.1-10.7 2.5-4.8 2.5-3.7 2.5-2.8 2.5-1.9 2.5-1.1 3.3-.5 3.3,.4 4.2,1.7 6.6,4.3 16.7,13 4.9,3.1 4.2,2 4.1,1.3 4.2,.6 4.2-.2 3.3-.7 5-2.1 5.8-3.8 5-4.4 5.8-6.4 5.8-7.5 5.8-8.5 23.3-37.3 9.9-14.7 5.9-7.4 4.9-5.4 5-4.4 5-3.4 5-2.2 4.1-1 4.2-.2 5,.8 5,1.8 5.8,3.3 5.8,4.2 13.3,10.5 7.5,4.5 4.1,1.2 3.3,0 3.4-1.1 3.3-2.3 2.5-2.8 2.5-3.7 4.1-8.7 4.2-12.2 3.3-12.8 4.2-20.2 3.3-20 6.6-51.3 74.8,0" class="s-acc" stroke-dasharray="7 5" clip-path="url(#f0104-clip)"/><path d="M36,-31.6l64,0 6.6,37.5 6.7,29.5 8.3,29.1 9.1,25.6 6.7,16 6.6,14.5 7.5,14.8 7.5,13.4 6.6,10.6 6.6,9.1 5.9,6.6 5.8,5.2 4.1,2.8 4.2,2 4.1,1.1 3.4,.3 4.1-.4 4.2-1.2 4.1-2.1 4.2-2.8 4.1-3.6 4.2-4.3 8.3-10.4 9.1-13.6 25-39.8 7.4-10.4 6.7-7.8 4.1-4 4.2-3.3 4.1-2.6 3.4-1.4 4.1-1.1 4.2-.2 3.3,.4 4.1,1.3 5.9,3.3 6.6,5.6 6.7,7.4 6.6,9.1 7.5,12 8.3,15.2 7.5,15.1 7.4,16.8 5.9,14.5 4.9,13.8 5,15.5 4.2,14.7 7.5,31.8 7.4,41.6 64,0" class="s-acc" clip-path="url(#f0104-clip)"/><path d="M36,143.7l22.4-35.8 7.5-10.3 7.5-8.6 7.5-6.4 6.6-3.6 3.3-1 3.4-.5 3.3,.1 3.3,.6 5.8,2.3 5.8,4 5.8,5.3 5.9,6.7 11.6,16.4 27.4,43.6 7.5,10.3 6.6,7.6 7.5,6.6 6.7,3.8 3.3,1.1 3.3,.6 3.3,0 3.3-.5 5.9-2.2 5.8-3.8 5.8-5.3 6.6-7.6 11.7-16.4 26.6-42.4 7.4-10.4 6.7-7.8 6.6-6.1 6.7-4.2 3.3-1.3 3.3-.8 5.8-.1 5.8,1.6 6.7,3.8 5.8,4.9 6.7,7.3 5.8,7.5 6.6,9.7 27.4,43.7 7.5,10.3 6.7,7.8 6.6,6 5.8,3.7 5.8,2.1 5.8,.5 5.9-1.2 5.8-2.8 5.8-4.4 6.6-6.7 6.7-8.2 6.6-9.5 20.8-33.4" class="s-line" style="stroke:var(--text);stroke-width:2.6"/><text x="331.1" y="28" class="t-math acc2" text-anchor="start"><tspan font-style="italic">P</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan></text><text x="363.9" y="246" class="t-math acc2" text-anchor="start"><tspan font-style="italic">P</tspan><tspan baseline-shift="sub" font-size="72%">3</tspan></text><text x="393.7" y="28" class="t-math acc" text-anchor="start"><tspan font-style="italic">P</tspan><tspan baseline-shift="sub" font-size="72%">5</tspan></text><text x="402.2" y="246" class="t-math acc" text-anchor="start"><tspan font-style="italic">P</tspan><tspan baseline-shift="sub" font-size="72%">7</tspan></text><text x="95.4" y="67.5" class="t-math" text-anchor="middle">sin <tspan font-style="italic">x</tspan></text></svg>
+      <figcaption><b>그림 1-4.</b> \(\sin x\)(굵은 선)와 원점에서의 테일러 다항식 \(P_1 = x\), \(P_3\), \(P_5\), \(P_7\). 차수가 높을수록 \(\sin x\)에 붙어 있는 구간이 넓어진다. \(P_7\)은 \(\lvert x\rvert \lesssim 2.5\)에서 곡선과 오차 0.01 안으로 겹친다. 모든 다항식은 실제 식으로 계산해 그렸다.</figcaption>
+    </figure>
+
+    <div class="box ex" id="ex-pendulum-small-angle"><div class="box-h">단진자의 작은 각 근사가 맞는 범위</div>
+      <p>길이 \(L\)인 단진자의 운동 방정식은 \(\ddot\theta = -(g/L)\sin\theta\)이다. \(\sin\theta \approx \theta\)로 바꾸면 단순 조화 운동이 된다. 복원력의 상대 오차가 1% 아래이려면 진폭이 얼마 이하여야 하는가?</p>
+      <p><b>풀이.</b> \(\sin\theta\)의 2차 항은 0이므로 \(P_1 = P_2 = \theta\)이고, \(N = 2\)인 나머지 항은 \(R_2 = -\cos\xi\,\theta^3/6\)이다. \(\lvert\cos\xi\rvert \le 1\)이므로 \(\lvert\theta - \sin\theta\rvert \le \theta^3/6\)이다. 상대 오차는</p>
+      <div class="formula" id="eq-small-angle-error">\[ \frac{\theta - \sin\theta}{\theta} \le \frac{\theta^2}{6} \]</div>
+      <p>이다. 이것이 0.01 이하이려면 \(\theta \le \sqrt{0.06} = 0.245\ \text{rad} = 14.0°\)이다. 정확한 식 \((\theta - \sin\theta)/\theta = 0.01\)을 풀어도 \(\theta = 0.245\ \text{rad}\)으로 같다. "15° 이하에서는 작은 각 근사를 써도 된다"는 경험칙이 여기서 나온다. 이것은 복원력의 오차이지 주기의 오차가 아니다. 주기의 보정은 1.6절의 예제 <a class="ref" href="#ex-pendulum-period-series"></a>에서 구한다.</p>
+    </div>
+
+    <div class="callout warn"><strong>테일러 급수가 수렴해도 함수와 같지 않을 수 있다</strong><p>함수 \(f(x) = e^{-1/x^2}\) (\(x \ne 0\)), \(f(0) = 0\)은 원점에서 몇 번이든 미분할 수 있고, 모든 도함수가 \(f^{(n)}(0) = 0\)이다. \(e^{-1/x^2}\)이 \(x \to 0\)에서 어떤 거듭제곱 \(x^n\)보다도 빨리 0으로 가기 때문이다. 그래서 테일러 급수는 모든 계수가 0인 급수, 곧 모든 \(x\)에서 0으로 수렴하는 급수다. 그런데 \(x \ne 0\)에서 \(f(x) > 0\)이다. 급수는 수렴하지만 함수로 수렴하지 않는다. 나머지 항 \(R_N = f\)가 \(N\)을 키워도 줄지 않는 것이다. 이 장에서는 어떤 점의 근방에서 테일러 급수가 함수와 같으면 그 함수를 그 점에서 <span class="term">(실)해석적</span> <span class="en">(real analytic)</span>이라 한다. 18장은 해석 함수를 복소 미분으로 <a href="ch18.html#def-analytic">정의</a>하고, 19장의 <a href="ch19.html#eq-taylor-complex">복소 테일러 급수</a>가 두 뜻을 잇는다. 같은 성질의 양이 물리에도 있다. 양자역학의 터널링 확률 \(e^{-c/\hbar}\)는 \(\hbar\)의 멱급수로 전개해서는 결코 얻을 수 없다.</p></div>
+  </section>
+
+  <!-- ============================================================ 1.5 -->
+  <section id="s5">
+    <h2>작은 매개변수로 전개하기</h2>
+    <p>물리 문제가 정확히 풀리는 경우는 드물다. 대신 문제 안에 "작은 수"가 있는 경우가 많다. 지표에서의 높이와 지구 반지름의 비 \(h/R\), 속력과 광속의 비 \(v/c\), 전하 사이 거리와 관측 거리의 비 \(d/r\)이 그렇다. 이런 비를 \(\varepsilon\)이라 하고 정확한 식을 \(\varepsilon\)의 멱급수로 펼치면, 첫 항이 익숙한 근사식이 되고 다음 항이 그 근사의 보정이 된다. 이 절에서는 이 방법을 세 가지 물리 문제에 적용한다.</p>
+
+    <h3 id="s5-recipe">전개의 순서</h3>
+    <ol>
+      <li><b>작은 무차원 비를 찾는다.</b> 작다는 것은 무엇과 비교해 작은지가 있어야 의미가 있다. "\(h\)가 작다"가 아니라 "\(h/R \ll 1\)"이어야 한다. 차원이 있는 양은 그 자체로 크지도 작지도 않다.</li>
+      <li><b>식을 \((1 + \text{작은 양})^p\) 꼴로 정리한다.</b> 큰 양을 괄호 밖으로 묶어 낸다. 예: \((R + h)^{-2} = R^{-2}(1 + h/R)^{-2}\).</li>
+      <li><b>필요한 차수까지 전개한다.</b> 식 <a class="ref" href="#eq-standard-series"></a>과 <a class="ref" href="#eq-sqrt-expansions"></a>를 쓴다. 곱이나 합성이 있으면 모든 조각을 같은 차수까지 전개하고, 그보다 높은 차수는 한꺼번에 버린다.</li>
+      <li><b>확인한다.</b> \(\varepsilon \to 0\)에서 알려진 결과가 나오는지, 각 항의 차원이 맞는지, 보정의 부호가 물리적으로 그럴듯한지 본다.</li>
+    </ol>
+
+    <div class="box ex" id="ex-gravity-altitude"><div class="box-h">지표 근처의 중력 가속도</div>
+      <p>질량 \(M\), 반지름 \(R\)인 구형 지구 위 높이 \(h\)에서의 중력 가속도 \(g(h) = GM/(R + h)^2\)을 \(h/R\)의 1차까지 전개하라. 에베레스트 산 꼭대기(\(h = 8.85\ \text{km}\))와 국제우주정거장의 궤도(\(h \approx 400\ \text{km}\))에서 근사를 시험하라.</p>
+      <p><b>풀이.</b> 지표의 값 \(g_0 = GM/R^2\)을 밖으로 묶으면 \(g(h) = g_0 (1 + h/R)^{-2}\)이다. 식 <a class="ref" href="#eq-sqrt-expansions"></a>의 \(1/(1+x)^2 = 1 - 2x + 3x^2 - \cdots\)에 \(x = h/R\)을 넣으면</p>
+      <div class="formula" id="eq-gravity-altitude">\[ \begin{aligned} g(h) &= g_0\Big(1 - \frac{2h}{R} + \frac{3h^2}{R^2} - \cdots\Big) \\ &\approx g_0\Big(1 - \frac{2h}{R}\Big) \end{aligned} \]</div>
+      <p>이다. 지구의 평균 반지름 \(R = 6371\ \text{km}\), \(g_0 = 9.81\ \text{m/s}^2\)로 계산하자.</p>
+      <ul>
+        <li>에베레스트: \(h/R = 1.389 \times 10^{-3}\)이므로 \(g/g_0 \approx 1 - 0.002\,78 = 0.997\,22\), 곧 \(g \approx 9.78\ \text{m/s}^2\)이다. 정확한 값 \((1 + h/R)^{-2} = 0.997\,228\)과의 차이는 다음 항 \(3(h/R)^2 = 6 \times 10^{-6}\) 정도다.</li>
+        <li>국제우주정거장: \(h/R = 0.0628\)이므로 1차 근사는 \(0.874\), 2차까지는 \(0.886\), 정확한 값은 \(0.885\)이다. 1차 근사의 오차 1.2%는 다음 항 \(3(h/R)^2 = 1.2\%\)와 맞는다. 우주정거장에서도 중력은 지표의 88.5%다.</li>
+      </ul>
+      <p>1차 항은 높이에 따른 중력의 기울기 \(dg/dh = -2g_0/R = -3.08 \times 10^{-6}\ \text{s}^{-2}\)를 준다. 1 m 올라갈 때마다 \(g\)가 \(3.1 \times 10^{-6}\ \text{m/s}^2\)씩 줄어든다. 이 값 \(2g_0/R = 0.3080\ \text{mGal/m}\) (\(1\ \text{mGal} = 10^{-5}\ \text{m/s}^2\))은 측지학에서 중력 측정값을 해발 높이로 보정할 때 쓰는 <span class="term">자유 공기 보정</span> <span class="en">(free-air correction)</span>의 표준값 \(0.3086\ \text{mGal/m}\)과 0.2% 안에서 맞는다. 남은 차이는 지구의 자전과 편평도에서 온다.</p>
+    </div>
+
+    <div class="box ex" id="ex-relativistic-kinetic"><div class="box-h">상대론적 운동 에너지의 뉴턴 극한과 첫 보정</div>
+      <p>질량 \(m\)인 입자의 상대론적 운동 에너지는 \(K = (\gamma - 1)mc^2\), \(\gamma = (1 - v^2/c^2)^{-1/2}\)이다. \(\beta = v/c \ll 1\)일 때 \(K\)를 전개해 뉴턴 역학의 \(\tfrac12 mv^2\)과 그 다음 항을 구하라. 속력 \(0.1c\)인 전자에서 보정의 크기를 계산하라.</p>
+      <p><b>풀이.</b> 작은 양은 \(\beta^2\)이다. 이항급수 <a class="ref" href="#eq-binomial-series"></a>에 \(p = -\tfrac12\), \(x = -\beta^2\)을 넣는다. 계수는 \(\binom{-1/2}{1} = -\tfrac12\), \(\binom{-1/2}{2} = \tfrac{(-1/2)(-3/2)}{2} = \tfrac38\), \(\binom{-1/2}{3} = \tfrac{(-1/2)(-3/2)(-5/2)}{6} = -\tfrac{5}{16}\)이고, \(x^n = (-1)^n\beta^{2n}\)의 부호와 곱하면 모두 양수가 된다.</p>
+      <div class="formula" id="eq-lorentz-factor-series">\[ \begin{aligned} \gamma &= (1 - \beta^2)^{-1/2} \\ &= 1 + \frac12\beta^2 + \frac38\beta^4 + \frac{5}{16}\beta^6 + \cdots \end{aligned} \]</div>
+      <p>\(\gamma - 1\)에 \(mc^2\)을 곱하고 \(\beta^2 c^2 = v^2\)을 쓰면</p>
+      <div class="formula" id="eq-relativistic-kinetic-series">\[ \begin{aligned} K &= \frac12 mv^2 + \frac38\,\frac{mv^4}{c^2} + \frac{5}{16}\,\frac{mv^6}{c^4} + \cdots \\ &= \frac12 mv^2\Big(1 + \frac34\beta^2 + \frac58\beta^4 + \cdots\Big) \end{aligned} \]</div>
+      <p>이다. 첫 항은 뉴턴 역학의 운동 에너지이고, 상대론은 그것을 \(\tfrac34\beta^2\)의 비율만큼 키운다. 각 항의 차원을 확인하자. \(mv^4/c^2\)는 \(mv^2 \times (v/c)^2\)이므로 에너지다. 보정이 양수라는 것도 그럴듯하다. 같은 속력을 내려면 뉴턴 역학의 예상보다 더 많은 에너지가 필요하다.</p>
+      <p><b>숫자로 보기.</b> 전자의 정지 에너지는 \(m_ec^2 = 511.0\ \text{keV}\)이다. \(\beta = 0.1\)이면 \(\tfrac12 mv^2 = \tfrac12(511.0\ \text{keV})(0.01) = 2.555\ \text{keV}\)이고, 보정 비율은 \(\tfrac34(0.01) = 0.75\%\)이므로 \(K \approx 2.574\ \text{keV}\)이다. 정확한 값 \((\gamma - 1)m_ec^2 = 2.5743\ \text{keV}\)과 네 자리까지 맞는다. 옛 브라운관의 가속 전압 \(25\ \text{kV}\)에서는 \(\beta = 0.30\)이 되어 뉴턴 공식이 운동 에너지를 7% 작게 잡는다. 그림 1-5에서 보듯 \(\beta = 0.5\)에서는 2차 근사도 정확한 값보다 4% 작다(\(0.1484\)와 \(0.1547\)).</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 280" role="img" aria-label="운동 에너지를 정지 에너지로 나눈 값을 v/c에 대해 그린 그래프. 정확한 값, 1차 근사, 2차 근사를 비교한다"><defs><clipPath id="f0105-clip"><rect x="46" y="14" width="420" height="210"/></clipPath></defs><line x1="46" y1="14" x2="46" y2="224" class="s-grid"/><line x1="130" y1="14" x2="130" y2="224" class="s-grid"/><line x1="214" y1="14" x2="214" y2="224" class="s-grid"/><line x1="298" y1="14" x2="298" y2="224" class="s-grid"/><line x1="382" y1="14" x2="382" y2="224" class="s-grid"/><line x1="466" y1="14" x2="466" y2="224" class="s-grid"/><line x1="46" y1="224" x2="466" y2="224" class="s-grid"/><line x1="46" y1="171.5" x2="466" y2="171.5" class="s-grid"/><line x1="46" y1="119" x2="466" y2="119" class="s-grid"/><line x1="46" y1="66.5" x2="466" y2="66.5" class="s-grid"/><line x1="46" y1="14" x2="466" y2="14" class="s-grid"/><line x1="46" y1="224" x2="466" y2="224" class="s-line"/><line x1="46" y1="14" x2="46" y2="224" class="s-line"/><text x="46" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="130" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">0.2</text><text x="214" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">0.4</text><text x="298" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">0.6</text><text x="382" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">0.8</text><text x="466" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">1</text><text x="38" y="230" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="38" y="177.5" class="t-dim" style="font-size:14px" text-anchor="end">0.5</text><text x="38" y="125" class="t-dim" style="font-size:14px" text-anchor="end">1</text><text x="38" y="72.5" class="t-dim" style="font-size:14px" text-anchor="end">1.5</text><text x="38" y="20" class="t-dim" style="font-size:14px" text-anchor="end">2</text><path d="M46,224l52-.8 53.4-2.5 51.9-4.1 52-5.6 53.4-7.5 51.9-9 53.4-10.8 52-12.2" class="s-acc2" stroke-dasharray="7 5"/><path d="M46,224l35.1-.4 33.7-1 33.7-1.9 30.9-2.4 29.5-3.1 28.1-3.7 26.7-4.5 26.7-5.3 25.3-6 23.9-6.8 22.5-7.3 22.4-8.3 21.1-8.9 21.1-10.1 19.6-10.5 19.7-11.7" class="s-acc"/><path d="M46,224l29.1-.3 29.1-.7 27.8-1.3 27.8-1.8 25.3-2.2 24-2.6 22.7-3.2 21.5-3.6 19-3.9 17.7-4.4 16.4-4.8 15.2-5.3 13.9-5.8 12.6-6.3 11.4-6.6 11.4-7.9 8.9-7.3 8.8-8.5 7.6-8.7 6.3-8.4 6.3-9.9 6.4-11.6 5-11.1 5.3-13.8 4.8-15.2 4.4-17.1 4-18.5 3.3-19.6 3.1-21.5 2.8-25 4.8-58.1 7,0" class="s-line" style="stroke:var(--text);stroke-width:2.6" clip-path="url(#f0105-clip)"/><line x1="466" y1="14" x2="466" y2="224" class="s-line" stroke-dasharray="3 4"/><line x1="66" y1="50" x2="100" y2="50" class="s-line" style="stroke:var(--text);stroke-width:2.6"/><text x="110" y="55" class="t" style="font-size:15px" text-anchor="start">정확한 값 γ − 1</text><line x1="66" y1="74" x2="100" y2="74" class="s-acc"/><text x="110" y="79" class="t" style="font-size:15px" text-anchor="start">2차: β²/2 + 3β⁴/8</text><line x1="66" y1="98" x2="100" y2="98" class="s-acc2" stroke-dasharray="7 5"/><text x="110" y="103" class="t" style="font-size:15px" text-anchor="start">1차: β²/2</text><text x="466" y="270" class="t-dim" style="font-size:14px" text-anchor="end">β = v/c</text><text x="52" y="26" class="t-dim" style="font-size:14px" text-anchor="start">K / mc²</text></svg>
+      <figcaption><b>그림 1-5.</b> 운동 에너지를 정지 에너지로 나눈 값 \(K/mc^2\). 굵은 선은 정확한 값 \(\gamma - 1\), 점선은 1차 근사 \(\beta^2/2\), 실선은 2차 근사 \(\beta^2/2 + 3\beta^4/8\)이다. \(\beta \lesssim 0.3\)에서는 세 곡선이 거의 겹친다. 정확한 값은 \(\beta \to 1\)에서 무한대로 가는데, 이 특이점 때문에 \(\beta^2\)에 대한 급수의 수렴 반경이 1이다.</figcaption>
+    </figure>
+
+    <p>세 번째 예는 전자기학에서 가장 자주 쓰는 전개다. 전체 전하가 0인 전하 분포를 멀리서 보면, 퍼텐셜의 \(1/r\) 항이 사라지고 다음 항이 남는다. 이것을 얻으려면 "멀리"를 \(d/r \ll 1\)로 바꾸고 전개하면 된다.</p>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 300" role="img" aria-label="z축 위 d/2에 +q, −d/2에 −q가 있고, 원점에서 거리 r, 각 θ인 점 P까지의 거리가 r₊, r₋이다"><defs><marker id="f0106-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker></defs><line x1="120" y1="290" x2="120" y2="14" class="s-line" marker-end="url(#f0106-arr)"/><text x="130" y="24" class="t-math" text-anchor="start"><tspan font-style="italic">z</tspan></text><line x1="120" y1="112" x2="316.6" y2="32.3" class="s-acc" stroke-dasharray="6 4"/><line x1="120" y1="228" x2="316.6" y2="32.3" class="s-acc2" stroke-dasharray="6 4"/><line x1="120" y1="170" x2="316.6" y2="32.3" class="s-line" style="stroke:var(--text);stroke-width:2"/><path d="M120,130 A40,40 0 0 1 152.8,147.1" class="s-line"/><text x="143.5" y="130.8" class="t-math" text-anchor="middle"><tspan font-style="italic">θ</tspan></text><circle cx="120" cy="112" r="10" class="f-acc"/><text x="120" y="117" text-anchor="middle" style="fill:var(--bg-elev);font:700 15px var(--font)">+</text><circle cx="120" cy="228" r="10" class="f-acc2"/><text x="120" y="233" text-anchor="middle" style="fill:var(--bg-elev);font:700 15px var(--font)">−</text><circle cx="120" cy="170" r="3" class="f-dim"/><text x="102" y="118" class="t-math acc" text-anchor="end">+<tspan font-style="italic">q</tspan></text><text x="102" y="234" class="t-math acc2" text-anchor="end">−<tspan font-style="italic">q</tspan></text><text x="108" y="176" class="t-math dim" text-anchor="end">O</text><text x="110" y="147.0" class="t-math dim" text-anchor="end"><tspan font-style="italic">d</tspan>/2</text><text x="110" y="205.0" class="t-math dim" text-anchor="end"><tspan font-style="italic">d</tspan>/2</text><circle cx="316.6" cy="32.3" r="4" class="f-dim"/><text x="326.6" y="37.3" class="t-math" text-anchor="start">P</text><text x="184.8" y="72.1" class="t-math acc" text-anchor="end"><tspan font-style="italic">r</tspan><tspan baseline-shift="sub" font-size="72%">+</tspan></text><text x="246" y="132.6" class="t-math acc2" text-anchor="start"><tspan font-style="italic">r</tspan><tspan baseline-shift="sub" font-size="72%">−</tspan></text><text x="214.5" y="122" class="t-math" text-anchor="start"><tspan font-style="italic">r</tspan></text></svg></div>
+      <figcaption><b>그림 1-6.</b> 전기 쌍극자의 배치. \(z\)축 위 \(z = +d/2\)에 \(+q\), \(z = -d/2\)에 \(-q\)가 있다. 원점에서 거리 \(r\), \(z\)축과 이루는 각 \(\theta\)인 점 P에서 두 전하까지의 거리를 \(r_+\), \(r_-\)라 한다.</figcaption>
+    </figure>
+    <div class="box ex" id="ex-dipole-far-field"><div class="box-h">두 점전하의 먼 거리 퍼텐셜: 쌍극자 항</div>
+      <p>그림 1-6처럼 \(+q\)와 \(-q\)가 거리 \(d\)만큼 떨어져 있다. \(r \gg d\)인 점에서의 퍼텐셜을 \(d/r\)의 가장 낮은 차수까지 구하라.</p>
+      <p><b>풀이.</b> 코사인 법칙으로 두 거리를 쓴다.</p>
+      <div class="formula" id="eq-dipole-distance">\[ \begin{aligned} r_\pm^2 &= r^2 \mp r d\cos\theta + \frac{d^2}{4} = r^2\big(1 + u_\pm\big), \\ u_\pm &= \mp\frac{d}{r}\cos\theta + \frac{d^2}{4r^2} \end{aligned} \]</div>
+      <p>\(u_\pm\)는 \(d/r\)의 1차부터 시작하는 작은 양이다. \(1/\sqrt{1 + x} = 1 - x/2 + 3x^2/8 - \cdots\)를 쓰고 \(d/r\)의 1차까지 남기면, \(u_\pm\) 안의 \(d^2/4r^2\)과 \(u_\pm^2\)은 모두 2차이므로 버린다.</p>
+      <div class="formula" id="eq-dipole-inverse-distance">\[ \begin{aligned} \frac{1}{r_\pm} &= \frac1r\big(1 + u_\pm\big)^{-1/2} \\ &= \frac1r\Big(1 \pm \frac{d}{2r}\cos\theta + O\big(d^2/r^2\big)\Big) \end{aligned} \]</div>
+      <p>퍼텐셜은 두 점전하의 쿨롱 퍼텐셜의 합이다. \(1/r\) 항은 지워지고 1차 항만 남는다.</p>
+      <div class="formula" id="eq-dipole-potential">\[ \begin{aligned} V &= \frac{q}{4\pi\varepsilon_0}\Big(\frac{1}{r_+} - \frac{1}{r_-}\Big) \\ &\approx \frac{q}{4\pi\varepsilon_0}\,\frac{d\cos\theta}{r^2} = \frac{p\cos\theta}{4\pi\varepsilon_0 r^2} \end{aligned} \]</div>
+      <p>여기서 \(p = qd\)를 <span class="term">전기 쌍극자 모멘트</span> <span class="en">(electric dipole moment)</span>라 한다. 쌍극자의 퍼텐셜은 점전하의 \(1/r\)보다 빠른 \(1/r^2\)로 줄고, 각에 따라 \(\cos\theta\)로 바뀐다. 축 위(\(\theta = 0\))에서 가장 크고 적도면(\(\theta = 90°\))에서 0이다.</p>
+      <p><b>다음 항은 몇 차인가.</b> 2차까지 계산하면 \(1/r_\pm\)의 2차 항은 \(-\tfrac12 \cdot \tfrac{d^2}{4r^2} + \tfrac38 \cdot \tfrac{d^2\cos^2\theta}{r^2} = \tfrac{d^2}{8r^2}(3\cos^2\theta - 1)\)로, \(+\)와 \(-\)에서 똑같다. 그래서 차에서 지워지고, 쌍극자 근사의 상대 오차는 \((d/r)^2\) 차수다. 축 위에서는 정확한 값을 바로 쓸 수 있다: \(V = \tfrac{q}{4\pi\varepsilon_0}\big[\tfrac{1}{r - d/2} - \tfrac{1}{r + d/2}\big] = \tfrac{q}{4\pi\varepsilon_0}\tfrac{d}{r^2 - d^2/4}\). 근사와의 비는 \(1/(1 - d^2/4r^2)\)이므로 \(d/r = 0.1\)이면 오차가 0.25%다.</p>
+      <p><b>숫자로 보기.</b> 물 분자의 쌍극자 모멘트는 \(p = 6.2 \times 10^{-30}\ \text{C·m}\)이다. 이것을 기본 전하 두 개로 흉내 내면 간격이 \(d = p/e = 0.039\ \text{nm}\)이다. 축 방향으로 \(r = 1.0\ \text{nm}\) 떨어진 곳에서는 \(d/r \approx 0.04\)이므로 쌍극자 근사의 오차 \((d/r)^2\)은 0.2% 정도이고, 퍼텐셜은 \(V = (8.99 \times 10^9\ \text{N·m}^2/\text{C}^2)(6.2 \times 10^{-30}\ \text{C·m})/(1.0 \times 10^{-9}\ \text{m})^2 = 0.056\ \text{V}\)이다. 이 자리에 놓인 기본 전하의 에너지 \(0.056\ \text{eV}\)는 300 K의 \(k_BT = 0.026\ \text{eV}\)의 두 배쯤이다. 진공이라면 이온이 나노미터 거리의 물 분자를 꽤 정렬시킬 수 있다는 뜻이다. 실제 물속에서는 다른 물 분자들이 이온의 전기장을 가리므로(차폐), 뚜렷한 정렬은 이온을 둘러싼 첫 한두 겹의 수화 껍질에서만 일어난다.</p>
+    </div>
+    <p>여기서 쓴 전개를 모든 차수까지 체계적으로 하면 \(1/\lvert\mathbf r - \mathbf r'\rvert\)을 르장드르 다항식으로 펼친 <a href="ch12.html#eq-multipole-expansion">다중극 전개</a>가 된다. 위에서 나온 \(1\), \(\cos\theta\), \((3\cos^2\theta - 1)/2\)가 첫 세 르장드르 다항식 \(P_0\), \(P_1\), \(P_2\)이다. 12장에서 <a href="ch12.html#eq-legendre-generating">생성 함수</a>로 이것을 세운다.</p>
+
+    <div class="callout warn"><strong>첫 항이 지워지면 한 차수 더 전개해야 한다</strong><p>쌍극자에서는 0차 항(\(1/r\))이 지워져서 1차 항이 답이 되었다. 1차 항마저 지워지는 배치도 있다. \(z = \pm d\)에 \(+q\)를 하나씩, 원점에 \(-2q\)를 두면 <span class="term">선형 사중극</span> <span class="en">(linear quadrupole)</span>이 된다. 전체 전하도 0이고 쌍극자 모멘트도 0이다. 이때 1차까지만 전개하면 \(V \approx 0\)이라는, 틀리지는 않았지만 쓸모없는 답을 얻는다. 2차까지 전개해야 한다. 필요한 전개는 예제 <a class="ref" href="#ex-dipole-far-field"></a>의 "다음 항"에서 \(d/2\)를 \(d\)로 바꾼 것이다. 두 \(+q\)까지의 거리를 \(\lvert\mathbf r \mp d\hat{\mathbf z}\rvert\)로 쓰면(그림 1-6의 \(r_\pm\)과는 다른 거리다)</p>
+      <div class="formula">\[ \begin{aligned} \frac{1}{\lvert\mathbf r \mp d\hat{\mathbf z}\rvert} &= \frac1r\Big[1 \pm \frac{d}{r}\cos\theta \\ &\quad + \frac{d^2}{r^2}\,\frac{3\cos^2\theta - 1}{2} + O\Big(\frac{d^3}{r^3}\Big)\Big] \end{aligned} \]</div>
+      <p>이고, 두 식을 더하면 1차 항이 지워진다.</p>
+      <div class="formula" id="eq-quadrupole-potential">\[ \begin{aligned} V &= \frac{q}{4\pi\varepsilon_0}\Big(\frac{1}{\lvert\mathbf r - d\hat{\mathbf z}\rvert} + \frac{1}{\lvert\mathbf r + d\hat{\mathbf z}\rvert} - \frac{2}{r}\Big) \\ &\approx \frac{q\,d^2}{4\pi\varepsilon_0}\,\frac{3\cos^2\theta - 1}{r^3} \end{aligned} \]</div>
+      <p>일반적으로, 서로 크기가 비슷한 양의 차를 전개할 때는 지워지지 않는 첫 항이 나올 때까지 모든 조각을 같은 차수로 전개해야 한다. 한 조각만 높은 차수까지 전개하면 같은 차수의 다른 기여를 빠뜨린다(<a class="ref" href="#prob-doppler-order"></a>).</p></div>
+  </section>
+
+  <!-- ============================================================ 1.6 -->
+  <section id="s6">
+    <h2>급수로 극한과 적분 구하기</h2>
+    <p>테일러 전개는 근사뿐 아니라 정확한 계산에도 쓰인다. \(0/0\) 꼴 극한에서는 분자와 분모를 전개하면 어떤 항이 지워지고 어떤 항이 남는지가 바로 보인다. 원시 함수를 기본 함수로 쓸 수 없는 적분에서는 피적분 함수를 전개해 항별로 적분하면 원하는 정확도까지 값을 얻는다. 이 절에서는 이 두 방법으로 플랑크 진동자의 고온 극한과 큰 진폭에서 진자의 주기를 구한다.</p>
+
+    <h3 id="s6-limits">0/0 꼴 극한</h3>
+    <div class="box ex" id="ex-limits-by-series"><div class="box-h">급수로 극한 구하기</div>
+      <p>다음 극한을 구하라. (가) \(\displaystyle\lim_{x\to0}\frac{1 - \cos x}{x^2}\) (나) \(\displaystyle\lim_{x\to0}\frac{x - \sin x}{x^3}\) (다) \(\displaystyle\lim_{x\to0}\Big(\frac{1}{x^2} - \frac{1}{\sin^2 x}\Big)\)</p>
+      <p><b>풀이.</b> (가) \(1 - \cos x = x^2/2 - x^4/24 + \cdots\)이므로 극한은 \(1/2\)이다. (나) \(x - \sin x = x^3/6 - x^5/120 + \cdots\)이므로 극한은 \(1/6\)이다.</p>
+      <p>(다) 로피탈 정리를 쓰려면 통분한 뒤 네 번 미분해야 하지만, 급수로는 짧다. \(\sin^2 x = (x - x^3/6 + \cdots)^2 = x^2 - x^4/3 + O(x^6)\)이므로</p>
+      <div class="formula">\[ \begin{aligned} \frac{1}{\sin^2 x} &= \frac{1}{x^2}\Big(1 - \frac{x^2}{3} + O(x^4)\Big)^{-1} \\ &= \frac{1}{x^2}\Big(1 + \frac{x^2}{3} + O(x^4)\Big) \\ &= \frac{1}{x^2} + \frac13 + O(x^2) \end{aligned} \]</div>
+      <p>이다. 두 번째 등호에서 \(1/(1 - u) = 1 + u + \cdots\)를 썼다. 따라서 극한은 \(-1/3\)이다.</p>
+    </div>
+    <p>(다)에서 쓴 방법, 곧 분모의 급수를 \(1 + u\) 꼴로 정리해 \(1/(1+u) = 1 - u + u^2 - \cdots\)로 뒤집는 방법은 급수의 나눗셈을 하는 일반적인 방법이다. 이것으로 플랑크 공식에 나오는 함수 \(x/(e^x - 1)\)을 전개하자. \(e^x - 1 = x(1 + u)\), \(u = x/2 + x^2/6 + x^3/24 + x^4/120 + \cdots\)이므로</p>
+    <div class="formula">\[ \begin{aligned} \frac{x}{e^x - 1} &= \frac{1}{1 + u} = 1 - u + u^2 - u^3 + \cdots \\ u^2 &= \frac{x^2}{4} + \frac{x^3}{6} + O(x^4), \quad u^3 = \frac{x^3}{8} + O(x^4) \end{aligned} \]</div>
+    <p>이다. 차수별로 모으면 \(x\)의 계수는 \(-\tfrac12\), \(x^2\)의 계수는 \(-\tfrac16 + \tfrac14 = \tfrac{1}{12}\), \(x^3\)의 계수는 \(-\tfrac{1}{24} + \tfrac16 - \tfrac18 = 0\)이다. \(x^4\)의 계수는 \(-u\), \(u^2\), \(-u^3\), \(u^4\)에서 각각 \(-\tfrac{1}{120}\), \(\tfrac{5}{72}\), \(-\tfrac18\), \(\tfrac{1}{16}\)이 나와서 \((-6 + 50 - 90 + 45)/720 = -\tfrac{1}{720}\)이다. 따라서</p>
+    <div class="formula" id="eq-bernoulli-expansion">\[ \frac{x}{e^x - 1} = 1 - \frac{x}{2} + \frac{x^2}{12} - \frac{x^4}{720} + O(x^6) \]<div class="where">이 책에서는 \(x/(e^x - 1) = \sum_{n\ge0} B_n x^n/n!\)의 계수 \(B_n\)을 <span class="term">베르누이 수</span> <span class="en">(Bernoulli numbers)</span>라 한다: \(B_0 = 1\), \(B_1 = -\tfrac12\), \(B_2 = \tfrac16\), \(B_3 = 0\), \(B_4 = -\tfrac{1}{30}\). \(B_1\)의 부호를 \(+\tfrac12\)로 잡는 교재도 있다. 3차 이상의 홀수 차수 계수가 0인 것은 \(x/(e^x - 1) + x/2 = \tfrac{x}{2}\,(e^x + 1)/(e^x - 1)\)이 짝함수이기 때문이다. 분모는 \(e^x = 1\)인 \(x = \pm 2\pi i\)에서도 0이 되므로(<a href="ch02.html#eq-euler-formula">오일러 공식</a>으로 \(e^{\pm 2\pi i} = 1\)), 수렴 반경은 \(2\pi\)이다.</div></div>
+
+    <div class="box ex" id="ex-planck-classical-limit"><div class="box-h">플랑크 진동자의 고온 극한과 등분배</div>
+      <p>예제 <a class="ref" href="#ex-planck-mean-energy"></a>의 평균 에너지 \(\langle E\rangle = \hbar\omega/(e^{\hbar\omega/k_BT} - 1)\)이 \(k_BT \gg \hbar\omega\)에서 어떻게 되는지 \(\hbar\omega/k_BT\)의 2차까지 구하라.</p>
+      <p><b>풀이.</b> 작은 무차원 비는 \(x = \hbar\omega/k_BT\)이다. \(\langle E\rangle = k_BT \cdot x/(e^x - 1)\)로 쓰고 식 <a class="ref" href="#eq-bernoulli-expansion"></a>을 넣으면</p>
+      <div class="formula" id="eq-planck-high-t">\[ \begin{aligned} \langle E\rangle &= k_BT\Big(1 - \frac{x}{2} + \frac{x^2}{12} - \cdots\Big) \\ &= k_BT - \frac{\hbar\omega}{2} + \frac{(\hbar\omega)^2}{12\,k_BT} - \cdots \end{aligned} \]</div>
+      <p>이다. 첫 항 \(k_BT\)는 고전 통계역학의 <span class="term">등분배 정리</span> <span class="en">(equipartition theorem)</span>가 주는 값이다. 운동 에너지와 퍼텐셜 에너지가 각각 \(\tfrac12 k_BT\)씩 가진다. 둘째 항 \(-\hbar\omega/2\)는 \(T\)와 상관없는 상수다. 양자역학에서는 진동자의 에너지가 \((n + \tfrac12)\hbar\omega\)이므로 평균 에너지에 바닥 상태 에너지 \(\hbar\omega/2\)가 더해지는데, 그러면 이 항이 정확히 지워지고 \(\langle E\rangle = k_BT + (\hbar\omega)^2/12k_BT + \cdots\)가 되어 고전 값에 더 가까워진다. 각 항의 차원은 모두 에너지다.</p>
+      <p><b>숫자로 보기.</b> 300 K에서 \(\hbar\omega = 1.00\ \text{meV}\)이면 \(x = 0.0387\)이고 \(\langle E\rangle = 25.852 - 0.500 + 0.003 = 25.355\ \text{meV}\)이다. 정확한 식 <a class="ref" href="#eq-planck-mean-energy"></a>의 값 \(25.355\ \text{meV}\)과 다섯 자리까지 같다. 다음 항 \(-x^4/720\)이 \(3 \times 10^{-9}\)에 불과하기 때문이다.</p>
+    </div>
+
+    <h3 id="s6-integrals">항별 적분</h3>
+    <p>\(\int e^{-x^2}dx\)나 \(\int (\sin x/x)\,dx\)는 원시 함수를 기본 함수로 쓸 수 없다. 그러나 적분 구간이 피적분 함수의 멱급수의 수렴 구간 \((-R, R)\) 안에 들어 있으면, 정리 <a class="ref" href="#thm-power-series-calculus"></a>에 따라 항별로 적분할 수 있다. 적분 구간이 수렴 구간의 끝점에 닿으면 항별 적분이 허용되는지 따로 확인해야 한다(<a class="ref" href="#prob-dilog-integral"></a>).</p>
+    <div class="box ex" id="ex-gaussian-series-integral"><div class="box-h">1차원 맥스웰 분포에서 느린 분자의 비율</div>
+      <p>온도 \(T\)인 기체에서 질량 \(m\)인 분자의 속도 \(x\)성분 \(v_x\)는 확률 밀도 \(f(v_x) = \sqrt{m/2\pi k_BT}\;e^{-mv_x^2/2k_BT}\)를 따른다(1차원 맥스웰-볼츠만 분포). \(\lvert v_x\rvert &lt; \sqrt{2k_BT/m}\)인 분자의 비율을 소수 넷째 자리까지 구하라.</p>
+      <p><b>풀이.</b> \(u = v_x\sqrt{m/2k_BT}\)로 치환하면 \(f(v_x)\,dv_x = e^{-u^2}du/\sqrt\pi\)이고, 경계 \(v_x = \pm\sqrt{2k_BT/m}\)은 \(u = \pm 1\)이 된다. 피적분 함수가 짝함수이므로 구하는 비율은</p>
+      <div class="formula">\[ P = \frac{1}{\sqrt\pi}\int_{-1}^{1} e^{-u^2}du = \frac{2}{\sqrt\pi}\int_0^1 e^{-u^2}du \]</div>
+      <p>이다. 이 적분은 원시 함수를 기본 함수로 쓸 수 없다. \(e^w\)의 급수에 \(w = -u^2\)을 넣으면 \(e^{-u^2} = \sum_{n=0}^\infty (-1)^n u^{2n}/n!\)이고, 수렴 반경이 무한대이므로 0부터 1까지 항별로 적분해도 된다.</p>
+      <div class="formula" id="eq-gauss-series-integral">\[ \begin{aligned} \int_0^1 e^{-u^2}du &= \sum_{n=0}^{\infty} \frac{(-1)^n}{n!\,(2n+1)} \\ &= 1 - \frac13 + \frac{1}{10} - \frac{1}{42} + \frac{1}{216} - \cdots \end{aligned} \]</div>
+      <p>교대급수이고 항이 줄어들므로 정리 <a class="ref" href="#thm-alternating-series"></a>로 오차를 잡을 수 있다. \(n = 0\)부터 5까지 여섯 항을 더하면 \(0.746\,729\)이고, 오차는 처음 버린 항 \(1/(6! \cdot 13) = 1.07 \times 10^{-4}\) 이하다(실제 오차는 \(0.95 \times 10^{-4}\)). 오차를 \(10^{-6}\) 아래로 내리려면 세 항을 더해 \(n = 8\)까지 더해야 한다(\(n = 7\)까지는 \(1.3 \times 10^{-6}\), \(n = 8\)까지는 \(1.3 \times 10^{-7}\)). 적분값 \(0.746\,824\)에 \(2/\sqrt\pi\)를 곱하면</p>
+      <div class="formula">\[ P = 0.8427 \]</div>
+      <p>이다. 분자의 84%가 \(\lvert v_x\rvert &lt; \sqrt{2k_BT/m}\)에 있다. 경계 \(\sqrt{2k_BT/m}\)는 3차원 맥스웰 분포의 최빈 속력과 같은 크기다. 이 값 \(P\)는 11장에서 정의하는 <a href="ch11.html#def-erf">오차 함수</a>의 값 \(\operatorname{erf}1\)이다.</p>
+    </div>
+
+    <div class="box ex" id="ex-pendulum-period-series"><div class="box-h">큰 진폭에서 진자의 주기</div>
+      <p>진폭 \(\theta_0\)으로 흔들리는 단진자의 주기를 \(\theta_0\)의 4차까지 구하라. 작은 진폭의 주기는 \(T_0 = 2\pi\sqrt{L/g}\)이다.</p>
+      <p><b>풀이.</b> 에너지 보존 \(\tfrac12 mL^2\dot\theta^2 - mgL\cos\theta = -mgL\cos\theta_0\)에서 \(\dot\theta = \sqrt{2g/L}\sqrt{\cos\theta - \cos\theta_0}\)이다. 진자가 0에서 \(\theta_0\)까지 가는 데 주기의 \(\tfrac14\)이 걸리므로 \(T = 4\int_0^{\theta_0} d\theta/\dot\theta\)이다. 이 적분은 \(\theta = \theta_0\)에서 피적분 함수가 무한대가 되어 다루기 불편하다. 치환 \(\sin(\theta/2) = k\sin\phi\), \(k = \sin(\theta_0/2)\)를 하면 다음 꼴이 된다.</p>
+      <div class="formula" id="eq-pendulum-integral">\[ \begin{aligned} T &= 4\sqrt{\frac{L}{g}}\int_0^{\pi/2} \frac{d\phi}{\sqrt{1 - k^2\sin^2\phi}} \\ k &= \sin\frac{\theta_0}{2} \end{aligned} \]</div>
+      <details class="proof"><summary>치환의 계산</summary>
+        <p>\(\cos\theta = 1 - 2\sin^2(\theta/2)\)이므로 \(\cos\theta - \cos\theta_0 = 2\big(k^2 - \sin^2(\theta/2)\big) = 2k^2\cos^2\phi\)이다. 치환식을 미분하면 \(\tfrac12\cos(\theta/2)\,d\theta = k\cos\phi\,d\phi\)이고, \(\cos(\theta/2) = \sqrt{1 - k^2\sin^2\phi}\)이므로 \(d\theta = 2k\cos\phi\,d\phi/\sqrt{1 - k^2\sin^2\phi}\)이다. \(\theta\)가 0에서 \(\theta_0\)까지 갈 때 \(\phi\)는 0에서 \(\pi/2\)까지 간다. 피적분 함수는</p>
+        <div class="formula">\[ \begin{aligned} &\frac{d\theta}{\sqrt{\cos\theta - \cos\theta_0}} \\ &= \frac{2k\cos\phi}{\sqrt2\,k\cos\phi}\cdot\frac{d\phi}{\sqrt{1 - k^2\sin^2\phi}} \\ &= \frac{\sqrt2\,d\phi}{\sqrt{1 - k^2\sin^2\phi}} \end{aligned} \]</div>
+        <p>이므로 \(T = 4\sqrt{L/2g}\cdot\sqrt2\int_0^{\pi/2} d\phi/\sqrt{1 - k^2\sin^2\phi}\)이 되어 식 <a class="ref" href="#eq-pendulum-integral"></a>을 얻는다. 이 적분은 제1종 완전 타원 적분 \(K(k)\)이며, 11장에서 <a href="ch11.html#eq-pendulum-period">정확한 주기</a>로 다시 다룬다.</p>
+      </details>
+      <p>식 <a class="ref" href="#eq-sqrt-expansions"></a>의 \(1/\sqrt{1+x} = \sum c_n x^n\)에 \(x = -k^2\sin^2\phi\)를 넣는다. \(\theta_0 &lt; \pi\)이면 \(k &lt; 1\)이고, \(n\)번째 항의 크기는 \(\phi\)와 상관없이 \(\lvert c_n\rvert k^{2n}\) 이하다. \(\sum \lvert c_n\rvert k^{2n}\)은 비 판정법으로 수렴하므로(\(\lvert c_{n+1}/c_n\rvert \to 1\)) 급수는 \(0 \le \phi \le \pi/2\)에서 균등 수렴하고, 항별로 적분할 수 있다. 항별로 적분하고 \(\int_0^{\pi/2}\sin^2\phi\,d\phi = \pi/4\), \(\int_0^{\pi/2}\sin^4\phi\,d\phi = 3\pi/16\)을 쓰면</p>
+      <div class="formula" id="eq-pendulum-k-series">\[ \begin{aligned} T &= 4\sqrt{\frac{L}{g}}\Big[\frac{\pi}{2} + \frac{k^2}{2}\cdot\frac{\pi}{4} + \frac{3k^4}{8}\cdot\frac{3\pi}{16} + \cdots\Big] \\ &= T_0\Big(1 + \frac{k^2}{4} + \frac{9k^4}{64} + \cdots\Big) \end{aligned} \]</div>
+      <p>이다. 마지막으로 \(k = \sin(\theta_0/2) = \theta_0/2 - \theta_0^3/48 + \cdots\)를 넣는다. \(k^2 = \theta_0^2/4 - \theta_0^4/48 + O(\theta_0^6)\), \(k^4 = \theta_0^4/16 + O(\theta_0^6)\)이므로 \(\theta_0^4\)의 계수는 \(-\tfrac{1}{4}\cdot\tfrac{1}{48} + \tfrac{9}{64}\cdot\tfrac{1}{16} = \tfrac{-16 + 27}{3072}\)이다.</p>
+      <div class="formula" id="eq-pendulum-period-series">\[ T = T_0\Big(1 + \frac{\theta_0^2}{16} + \frac{11\,\theta_0^4}{3072} + O(\theta_0^6)\Big) \]</div>
+      <p>진폭이 커지면 주기가 길어진다. 진자가 끝에서 더 천천히 되돌아오기 때문이다(복원력 \(\sin\theta\)이 \(\theta\)보다 작다). 정확한 값(수치 적분)과 비교하면 다음과 같다.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>진폭 \(\theta_0\)</th><th>\(T/T_0\) 정확한 값</th><th>식 <a class="ref" href="#eq-pendulum-period-series"></a></th><th>\(1 + \theta_0^2/16\)만</th></tr></thead>
+        <tbody>
+          <tr><td>10°</td><td>1.001 907</td><td>1.001 907</td><td>1.001 904</td></tr>
+          <tr><td>30°</td><td>1.017 409</td><td>1.017 404</td><td>1.017 135</td></tr>
+          <tr><td>60°</td><td>1.073 182</td><td>1.072 845</td><td>1.068 539</td></tr>
+          <tr><td>90°</td><td>1.180 341</td><td>1.176 012</td><td>1.154 213</td></tr>
+        </tbody>
+      </table></div>
+      <p><b>숫자로 보기.</b> 괘종시계의 진자 진폭이 태엽이 풀리면서 5°에서 4°로 줄었다고 하자. 주기의 상대 변화는 \((\theta_1^2 - \theta_2^2)/16 = (0.0873^2 - 0.0698^2)/16 = 1.71 \times 10^{-4}\)이고, 하루(86 400 s)로 치면 시계가 15초 빨라진다. 작은 각에서도 \(\theta_0^2/16\) 보정은 정밀 시계로는 쓸 수 없을 만큼 크다. 정밀한 진자시계가 진폭을 일정하게 유지하는 장치를 갖추는 이유다.</p>
+      <p>아래는 표의 값을 확인하는 짧은 코드다. 수치 적분은 심프슨 공식으로 했다.</p>
+<pre><code>import math
+
+def period_ratio(theta0, n=2000):
+    """T/T0 = (2/pi) * int_0^{pi/2} dphi / sqrt(1 - k^2 sin^2 phi), 심프슨 공식"""
+    k2 = math.sin(theta0 / 2) ** 2
+    f = lambda p: 1 / math.sqrt(1 - k2 * math.sin(p) ** 2)
+    h = (math.pi / 2) / n
+    s = f(0) + f(math.pi / 2) + sum((4 if i % 2 else 2) * f(i * h) for i in range(1, n))
+    return (2 / math.pi) * s * h / 3
+
+for deg in (10, 30, 60, 90):
+    t = math.radians(deg)
+    series = 1 + t**2 / 16 + 11 * t**4 / 3072
+    print(f"{deg:3d}°  수치 적분 {period_ratio(t):.6f}   급수 {series:.6f}")</code></pre>
+    </div>
+
+    <div class="callout deep" data-later="qft"><strong>발산하는데도 쓸모 있는 급수</strong><p>1.3절의 \(\sum n!\,x^n\)처럼 수렴 반경이 0인 급수도 물리에 나온다. 예를 들어 적분 \(\int_0^\infty e^{-t}/(1 + xt)\,dt\)에서 \(1/(1 + xt)\)를 기하급수로 펼쳐 항별로 적분하면 \(\sum (-1)^n n!\,x^n\)을 얻는다. 이 급수는 \(x \ne 0\)이면 언제나 발산하지만, \(x\)가 작으면 처음 몇 항이 적분의 값을 아주 잘 맞히고 어느 차수부터 나빠진다. 이런 급수를 <span class="term">점근급수</span> <span class="en">(asymptotic series)</span>라 한다. 스털링 공식 \(n! \approx \sqrt{2\pi n}\,(n/e)^n\)도 점근급수의 첫 항이다. 11장에서 <a href="ch11.html#def-asymptotic">점근적으로 같음</a>을 정의하고 <a href="ch11.html#thm-stirling">스털링 공식</a>을 라플라스 방법으로 유도한다. 양자전기역학의 섭동급수도 점근급수라고 여겨진다.</p></div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>급수의 합은 부분합 \(S_N\)의 극한이다. 기하급수 \(\sum_{n=0}^\infty ar^n = a/(1 - r)\)은 \(\lvert r\rvert &lt; 1\)에서만 수렴하며, 모든 판정법의 비교 기준이다.</li>
+      <li>\(a_n \to 0\)은 수렴의 필요조건일 뿐이다. 조화급수 \(\sum 1/n\)은 \(\ln N\)처럼 발산하고, \(\sum 1/n^p\)는 \(p > 1\)일 때만 수렴한다.</li>
+      <li>판정법: 비교(양항, 극한 꼴), 적분(감소하는 양의 함수, 꼬리의 상한과 하한), 비(\(\rho &lt; 1\)이면 절대 수렴, \(\rho = 1\)이면 판정 불가), 교대(오차는 처음 버린 항 이하). 조건 수렴하는 급수는 더하는 순서에 따라 합이 바뀐다.</li>
+      <li>멱급수는 수렴 반경 \(R = \lim\lvert c_n/c_{n+1}\rvert\) 안에서 절대 수렴하고 항별로 미분·적분할 수 있다. 끝점은 따로 조사한다. \(R\)은 복소평면에서 가장 가까운 특이점까지의 거리로 정해진다.</li>
+      <li>테일러 급수 \(f(x) = \sum f^{(n)}(a)(x - a)^n/n!\)의 \(N\)차 다항식의 오차는 \(R_N = f^{(N+1)}(\xi)(x - a)^{N+1}/(N+1)!\)로, 처음 버린 항과 같은 꼴이다.</li>
+      <li>자주 쓰는 전개: \(e^x\), \(\sin x\), \(\cos x\)(모든 \(x\)), \(\ln(1+x)\)(\(-1 &lt; x \le 1\)), 이항급수 \((1+x)^p = \sum\binom{p}{n}x^n\)(\(\lvert x\rvert &lt; 1\)). 특히 \(\sqrt{1+x} \approx 1 + x/2 - x^2/8\), \(1/\sqrt{1+x} \approx 1 - x/2 + 3x^2/8\).</li>
+      <li>작은 매개변수 전개는 작은 무차원 비를 찾아 \((1 + \text{작은 양})^p\) 꼴로 정리하고 같은 차수까지 일관되게 전개한다. \(g(h) \approx g_0(1 - 2h/R)\), \(K \approx \tfrac12 mv^2 + \tfrac38 mv^4/c^2\), 쌍극자 \(V \approx p\cos\theta/(4\pi\varepsilon_0 r^2)\). 첫 항이 지워지면 한 차수 더 전개한다.</li>
+      <li>급수는 \(0/0\) 꼴 극한과 원시 함수를 기본 함수로 쓸 수 없는 적분을 계산한다. \(x/(e^x - 1) = 1 - x/2 + x^2/12 - \cdots\)에서 플랑크 진동자의 고온 극한 \(\langle E\rangle \to k_BT\)가, 항별 적분에서 진자의 주기 \(T \approx T_0(1 + \theta_0^2/16)\)이 나온다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. 급수 \(\sum a_n\)의 일반항이 \(a_n \to 0\)을 만족한다. 이 급수에 대해 옳은 것은?</p><div class="opts">
+        <button class="opt">반드시 수렴한다.</button>
+        <button class="opt">반드시 발산한다.</button>
+        <button class="opt" data-correct>수렴할 수도, 발산할 수도 있다.</button>
+        <button class="opt">반드시 절대 수렴한다.</button>
+      </div><div class="quiz-exp">\(a_n \to 0\)은 필요조건일 뿐이다. \(\sum 1/n^2\)은 수렴하지만 \(\sum 1/n\)은 발산한다. 둘 다 일반항은 0으로 간다.</div></div>
+      <div class="quiz-q"><p>2. 멱급수 \(\sum_{n=1}^\infty n\,x^n/2^n\)의 수렴 반경은?</p><div class="opts">
+        <button class="opt">\(1/2\)</button>
+        <button class="opt">\(1\)</button>
+        <button class="opt" data-correct>\(2\)</button>
+        <button class="opt">\(\infty\)</button>
+      </div><div class="quiz-exp">\(c_n = n/2^n\)이므로 \(\lvert c_n/c_{n+1}\rvert = 2n/(n+1) \to 2\)이다. 앞의 인자 \(n\)은 수렴 반경을 바꾸지 않는다.</div></div>
+      <div class="quiz-q"><p>3. \(1/(1+x^2)\)은 실수축 전체에서 매끄럽지만, 원점을 중심으로 한 멱급수의 수렴 반경은 1이다. 그 이유는?</p><div class="opts">
+        <button class="opt">\(x = \pm 1\)에서 함수의 도함수가 불연속이기 때문이다.</button>
+        <button class="opt">계수가 \(\pm 1\)뿐이라 비 판정법이 실패하기 때문이다.</button>
+        <button class="opt" data-correct>복소평면의 \(z = \pm i\)에서 함수가 무한대가 되고, 이 점들이 원점에서 거리 1에 있기 때문이다.</button>
+        <button class="opt">짝함수의 멱급수는 수렴 반경이 언제나 1이기 때문이다.</button>
+      </div><div class="quiz-exp">멱급수의 수렴 영역은 복소평면의 원판이고, 반지름은 가장 가까운 특이점까지의 거리다. \(1 + z^2 = 0\)인 \(z = \pm i\)까지의 거리가 1이다. 19장에서 증명한다.</div></div>
+      <div class="quiz-q"><p>4. \(x = 0.5\)에서 \(\sin x \approx x - x^3/6\)으로 근사할 때, 라그랑주 나머지 항이 주는 오차의 상한으로 가장 좋은 것은?</p><div class="opts">
+        <button class="opt">\(2.1 \times 10^{-2}\)</button>
+        <button class="opt">\(5.2 \times 10^{-3}\)</button>
+        <button class="opt" data-correct>\(2.6 \times 10^{-4}\)</button>
+        <button class="opt">\(2.6 \times 10^{-6}\)</button>
+      </div><div class="quiz-exp">\(\sin x\)의 4차 항은 0이므로 \(P_3 = P_4\)이고, \(N = 4\)인 나머지 항을 쓸 수 있다. \(\lvert f^{(5)}\rvert = \lvert\cos\xi\rvert \le 1\)이므로 오차는 \(\lvert x\rvert^5/5! = 0.5^5/120 = 2.6 \times 10^{-4}\) 이하다. 실제 오차는 \(2.59 \times 10^{-4}\)이다. \(N = 3\)으로 쓰면 \(0.5^4/4! = 2.6 \times 10^{-3}\)이라는 덜 좋은 상한이 나온다.</div></div>
+      <div class="quiz-q"><p>5. 속력 \(v = 0.1c\)로 움직이는 입자의 상대론적 운동 에너지는 \(\tfrac12 mv^2\)의 약 몇 배인가?</p><div class="opts">
+        <button class="opt">1.0050</button>
+        <button class="opt" data-correct>1.0075</button>
+        <button class="opt">1.0375</button>
+        <button class="opt">1.0750</button>
+      </div><div class="quiz-exp">식 <a class="ref" href="#eq-relativistic-kinetic-series"></a>에서 \(K/(\tfrac12 mv^2) = 1 + \tfrac34\beta^2 + \cdots = 1 + 0.0075\)이다. 다음 항 \(\tfrac58\beta^4 = 6 \times 10^{-5}\)은 이 정밀도에서 보이지 않는다.</div></div>
+      <div class="quiz-q"><p>6. \(\displaystyle\lim_{x\to0}\frac{\sqrt{1+x} - 1 - x/2}{x^2}\)의 값은?</p><div class="opts">
+        <button class="opt" data-correct>\(-1/8\)</button>
+        <button class="opt">\(1/8\)</button>
+        <button class="opt">\(-1/4\)</button>
+        <button class="opt">\(0\)</button>
+      </div><div class="quiz-exp">\(\sqrt{1+x} = 1 + x/2 - x^2/8 + O(x^3)\)이므로 분자는 \(-x^2/8 + O(x^3)\)이고 극한은 \(-1/8\)이다. 분자의 0차와 1차 항이 지워지도록 만든 식이라, 남는 것은 이항급수의 2차 계수 \(\binom{1/2}{2}\)이다.</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-telescoping" data-level="1"><p>부분합을 구해 \(\displaystyle\sum_{n=2}^{\infty}\frac{1}{n^2 - 1}\)의 값을 구하라. (힌트: 부분분수로 나누면 항이 서로 지워진다.)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(\dfrac{1}{n^2 - 1} = \dfrac12\Big(\dfrac{1}{n-1} - \dfrac{1}{n+1}\Big)\)이다. \(n = 2\)부터 \(N\)까지 더하면 \(\tfrac12\big[(1 - \tfrac13) + (\tfrac12 - \tfrac14) + (\tfrac13 - \tfrac15) + \cdots + (\tfrac{1}{N-1} - \tfrac{1}{N+1})\big]\)에서 양수 항 \(1/k\)과 음수 항 \(1/k\)이 \(k = 3\)부터 \(N-1\)까지 지워지고</p>
+        <div class="formula">\[ S_N = \frac12\Big(1 + \frac12 - \frac1N - \frac{1}{N+1}\Big) \]</div>
+        <p>만 남는다. \(N \to \infty\)이면 \(S_N \to \tfrac12 \cdot \tfrac32 = \tfrac34\)이다. 이처럼 항이 이웃끼리 지워지는 급수를 <span class="term">망원급수</span> <span class="en">(telescoping series)</span>라 한다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-tests" data-level="2"><p>다음 급수가 수렴하는지 판정하고, 쓴 판정법을 밝혀라. 부호가 섞인 급수는 절대 수렴인지 조건 수렴인지도 밝혀라. (가) \(\sum_{n=1}^\infty \dfrac{n}{n^3 + 1}\) (나) \(\sum_{n=1}^\infty \dfrac{n!}{n^n}\) (다) \(\sum_{n=2}^\infty \dfrac{1}{n\ln n}\) (라) \(\sum_{n=1}^\infty \dfrac{(-1)^n}{\sqrt n}\)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 수렴. \(n/(n^3 + 1) &lt; n/n^3 = 1/n^2\)이고 \(\sum 1/n^2\)이 수렴하므로 비교 판정법에 따라 수렴한다.</p>
+        <p>(나) 수렴. 비 판정법: \(\dfrac{a_{n+1}}{a_n} = \dfrac{(n+1)!}{(n+1)^{n+1}}\cdot\dfrac{n^n}{n!} = \Big(\dfrac{n}{n+1}\Big)^n = \Big(1 + \dfrac1n\Big)^{-n} \to e^{-1} &lt; 1\).</p>
+        <p>(다) 발산. \(f(x) = 1/(x\ln x)\)은 \(x \ge 2\)에서 양수이고 감소한다. \(\int_2^X \dfrac{dx}{x\ln x} = \ln\ln X - \ln\ln 2 \to \infty\)이므로 적분 판정법에 따라 발산한다. 아주 느린 발산이라, \(10^6\)항까지 더해도 부분합은 3.4 정도다.</p>
+        <p>(라) 조건 수렴. \(1/\sqrt n\)이 줄어들면서 0으로 가므로 교대급수 판정법에 따라 수렴한다. 절댓값의 급수 \(\sum 1/n^{1/2}\)은 \(p = \tfrac12 \le 1\)인 p급수라 발산한다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-radius" data-level="1"><p>다음 멱급수의 수렴 범위를 끝점까지 포함해 구하라. (가) \(\sum_{n=1}^\infty \dfrac{x^n}{n\,3^n}\) (나) \(\sum_{n=0}^\infty \dfrac{(x - 1)^{2n}}{4^n}\)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(c_n = 1/(n3^n)\)이므로 \(R = \lim \dfrac{(n+1)3^{n+1}}{n\,3^n} = 3\)이다. \(x = 3\)이면 \(\sum 1/n\)이라 발산하고, \(x = -3\)이면 \(\sum (-1)^n/n\)이라 수렴한다(합은 \(-\ln 2\)). 수렴 범위는 \(-3 \le x &lt; 3\)이다.</p>
+        <p>(나) \(u = (x-1)^2/4\)로 두면 \(\sum u^n\)인 기하급수이므로 \(\lvert u\rvert &lt; 1\), 곧 \(\lvert x - 1\rvert &lt; 2\)에서 수렴한다. 끝점 \(x = -1, 3\)에서는 \(u = 1\)이라 모든 항이 1이 되어 발산한다. 수렴 범위는 \(-1 &lt; x &lt; 3\)이고, 그 안에서 합은 \(1/(1 - u) = 4/(4 - (x-1)^2)\)이다. 이 급수는 홀수 차수 계수가 0이라 식 <a class="ref" href="#eq-radius-ratio"></a>를 그대로 쓸 수 없지만, 새 변수 \(u\)로 보면 바로 풀린다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-sum-n-squared" data-level="2"><p>\(\lvert x\rvert &lt; 1\)에서 \(\sum_{n=1}^\infty n^2 x^n\)의 닫힌 꼴을 구하고, 이것으로 \(\sum_{n=1}^\infty n^2/2^n\)의 값을 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>식 <a class="ref" href="#eq-planck-sum-n"></a>에서 \(\sum n x^n = x/(1-x)^2\)이다. 정리 <a class="ref" href="#thm-power-series-calculus"></a>에 따라 한 번 더 항별로 미분하고 \(x\)를 곱하면</p>
+        <div class="formula">\[ \begin{aligned} \sum_{n=1}^\infty n^2 x^n &= x\frac{d}{dx}\frac{x}{(1-x)^2} \\ &= x\,\frac{(1-x)^2 + 2x(1-x)}{(1-x)^4} \\ &= \frac{x(1 + x)}{(1 - x)^3} \end{aligned} \]</div>
+        <p>이다. \(x = 1/2\)을 넣으면 \(\dfrac{(1/2)(3/2)}{(1/2)^3} = 6\)이다. 이 결과는 플랑크 진동자의 에너지 요동 \(\langle E^2\rangle - \langle E\rangle^2\)을 구할 때 쓰인다.</p>
+      </details>
+    </div>
+
+
+    <div class="prob" id="prob-e-terms" data-level="2"><p>\(e = \sum_{n=0}^\infty 1/n!\)을 \(N\)차 테일러 다항식 \(P_N(1)\)로 계산하려 한다. 식 <a class="ref" href="#eq-taylor-remainder"></a>을 써서 오차가 \(10^{-6}\) 아래가 되는 가장 작은 \(N\)을 구하라. (\(e &lt; 3\)을 써도 된다.)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(f(x) = e^x\)이면 \(f^{(N+1)}(\xi) = e^\xi\)이고 \(0 &lt; \xi &lt; 1\)이므로 \(e^\xi &lt; e &lt; 3\)이다. 따라서 \(0 &lt; e - P_N(1) &lt; 3/(N+1)!\)이다. \(3/9! = 8.3 \times 10^{-6}\)이고 \(3/10! = 8.3 \times 10^{-7}\)이므로 \(N = 9\)이면 충분하다(\(N = 8\)의 실제 오차 \(3.1 \times 10^{-6}\)은 \(10^{-6}\)보다 크므로 \(N = 8\)로는 부족하다). 곧 \(1/9!\)까지 10개 항을 더하면 \(e = 2.718\,281\,5\ldots\)를 얻고, 실제 오차는 \(3.0 \times 10^{-7}\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-lennard-jones" data-level="2"><p>두 원자 사이의 레너드존스 퍼텐셜은 \(V(r) = 4\varepsilon\big[(\sigma/r)^{12} - (\sigma/r)^6\big]\)이다. (가) 퍼텐셜이 최소가 되는 거리 \(r_0\)과 최솟값을 구하라. (나) \(r_0\) 근처에서 \(V\)를 테일러 전개해 \(V \approx V(r_0) + \tfrac12 k(r - r_0)^2\)의 \(k\)를 \(\varepsilon\)과 \(\sigma\)로 나타내라. 이것이 분자 진동을 조화 진동자로 다루는 근거다.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(V'(r) = 4\varepsilon\big[-12\sigma^{12}/r^{13} + 6\sigma^6/r^7\big] = 0\)에서 \(r^6 = 2\sigma^6\), 곧 \(r_0 = 2^{1/6}\sigma \approx 1.12\sigma\)이다. 이때 \((\sigma/r_0)^6 = \tfrac12\)이므로 \(V(r_0) = 4\varepsilon(\tfrac14 - \tfrac12) = -\varepsilon\)이다.</p>
+        <p>(나) \(r_0\)에서 \(V' = 0\)이므로 1차 항이 없고, 2차 항의 계수가 \(\tfrac12 V''(r_0)\)이다. \(V''(r) = 4\varepsilon\big[156\sigma^{12}/r^{14} - 42\sigma^6/r^8\big]\)에 \((\sigma/r_0)^6 = \tfrac12\)을 넣으면</p>
+        <div class="formula">\[ \begin{aligned} k = V''(r_0) &= \frac{4\varepsilon}{r_0^2}\Big(156\cdot\frac14 - 42\cdot\frac12\Big) \\ &= \frac{72\,\varepsilon}{r_0^2} = \frac{72\,\varepsilon}{2^{1/3}\sigma^2} \approx 57.1\,\frac{\varepsilon}{\sigma^2} \end{aligned} \]</div>
+        <p>이다. 차원은 에너지/길이\(^2\)로 용수철 상수와 같다. 극솟값 근처의 퍼텐셜은 언제나 이렇게 포물선으로 근사되므로, 작은 진동은 거의 모두 조화 진동이다. 3차 항 \(\tfrac16 V'''(r_0)(r - r_0)^3\)은 비조화성을 주며, 진폭이 커지면 중요해진다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-horizon" data-level="1"><p>눈높이 \(h\)에서 바라본 바다의 수평선까지의 거리는 \(d = \sqrt{(R + h)^2 - R^2}\)이다(\(R\)은 지구 반지름). \(h \ll R\)에서 \(d\)를 \(h/R\)의 가장 낮은 차수로 근사하고, 첫 보정의 상대 크기를 구하라. \(h = 1.7\ \text{m}\), \(R = 6371\ \text{km}\)이면 \(d\)는 얼마인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(d = \sqrt{2Rh + h^2} = \sqrt{2Rh}\,(1 + h/2R)^{1/2} = \sqrt{2Rh}\,\big(1 + \tfrac{h}{4R} + \cdots\big)\)이다. 가장 낮은 차수는 \(d \approx \sqrt{2Rh}\)이고, 첫 보정의 상대 크기는 \(h/4R\)이다. 숫자를 넣으면 \(d \approx \sqrt{2 \times 6.371 \times 10^6\ \text{m} \times 1.7\ \text{m}} = 4.65 \times 10^3\ \text{m}\), 곧 약 4.7 km이다. 보정은 \(h/4R = 6.7 \times 10^{-8}\)으로 무시할 만하다. 실제 수평선은 대기의 굴절 때문에 몇 % 더 멀다. 근사의 오차보다 모형에서 빠진 물리가 더 크다.</p>
+      </details>
+    </div>
+
+
+    <div class="prob" id="prob-ring-axis" data-level="2"><p>반지름 \(a\)인 고리에 전하 \(Q\)가 고르게 퍼져 있다. 고리의 축 위, 중심에서 거리 \(z\)인 점의 전기장은 \(E_z = \dfrac{1}{4\pi\varepsilon_0}\dfrac{Qz}{(z^2 + a^2)^{3/2}}\)이다. \(z \gg a\)에서 \(E_z\)를 \(a/z\)의 2차까지 전개하고, 점전하의 전기장으로 근사했을 때 오차가 1% 아래가 되는 거리를 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(z^3\)을 묶어 내면 \(E_z = \dfrac{Q}{4\pi\varepsilon_0 z^2}\Big(1 + \dfrac{a^2}{z^2}\Big)^{-3/2} = \dfrac{Q}{4\pi\varepsilon_0 z^2}\Big(1 - \dfrac{3a^2}{2z^2} + \cdots\Big)\)이다. 첫 항은 점전하의 전기장이고, 보정의 상대 크기는 \(3a^2/2z^2\)이다. 고리의 전하가 중심보다 평균적으로 멀리 있으므로 전기장이 점전하보다 약간 작다. \(3a^2/2z^2 &lt; 0.01\)이면 \(z > \sqrt{150}\,a = 12.2a\)이다. 정확한 식 \(1 - (1 + a^2/z^2)^{-3/2} = 0.01\)을 풀면 \(z = 12.2a\)로 같은 값이 나온다. 쌍극자 항이 없는 것은 고리가 중심에 대해 대칭이기 때문이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-doppler-order" data-level="2"><p>광원이 관측자에게 속력 \(v = \beta c\)로 다가올 때 관측되는 진동수는 \(f = f_0\sqrt{(1+\beta)/(1-\beta)}\)이다(상대론적 도플러 효과). (가) \((1+\beta)^{1/2}\)과 \((1-\beta)^{-1/2}\)을 각각 \(\beta^2\)까지 전개해 곱하고, \(f/f_0\)를 \(\beta\)의 2차까지 구하라. (나) 한 인수만 2차까지 전개하고 다른 인수는 1차에서 끊으면 \(\beta^2\)의 계수가 어떻게 되는가? (다) \(\beta = 0.1\)에서 정확한 값과 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 식 <a class="ref" href="#eq-sqrt-expansions"></a>에서 \((1+\beta)^{1/2} = 1 + \tfrac{\beta}{2} - \tfrac{\beta^2}{8} + O(\beta^3)\), \((1-\beta)^{-1/2} = 1 + \tfrac{\beta}{2} + \tfrac{3\beta^2}{8} + O(\beta^3)\)이다. 곱의 \(\beta^2\) 항은 \(1 \times \beta^2\), \(\beta \times \beta\), \(\beta^2 \times 1\)의 세 곳에서 나온다.</p>
+        <div class="formula">\[ \begin{aligned} \frac{f}{f_0} &= \Big(1 + \frac{\beta}{2} - \frac{\beta^2}{8}\Big) \\ &\quad \times \Big(1 + \frac{\beta}{2} + \frac{3\beta^2}{8}\Big) + O(\beta^3) \\ &= 1 + \beta + \Big(\frac38 + \frac14 - \frac18\Big)\beta^2 + O(\beta^3) \\ &= 1 + \beta + \frac{\beta^2}{2} + O(\beta^3) \end{aligned} \]</div>
+        <p>(나) \((1 + \tfrac{\beta}{2})(1 + \tfrac{\beta}{2} + \tfrac{3\beta^2}{8})\)이면 \(\beta^2\)의 계수가 \(\tfrac58\)이 되고, \((1 + \tfrac{\beta}{2} - \tfrac{\beta^2}{8})(1 + \tfrac{\beta}{2})\)이면 \(\tfrac18\)이 된다. 둘 다 틀렸다. 한 인수를 1차에서 끊으면 그 인수의 \(\beta^2\) 항이 만드는 기여를 빠뜨리기 때문이다. 곱의 어느 차수까지 원하면 모든 인수를 그 차수까지 전개해야 한다.</p>
+        <p>(다) \(\beta = 0.1\)이면 정확한 값은 \(\sqrt{1.1/0.9} = 1.105\,54\)이고, 올바른 2차 근사는 \(1.105\)로 차이 \(5.4 \times 10^{-4}\)가 다음 항 \(\beta^3/2 = 5 \times 10^{-4}\)과 맞는다. 틀린 두 근사 \(1.106\,25\)와 \(1.101\,25\)는 오차가 그보다 크고, 그 크기가 \(\beta^2\) 차수(\(10^{-3}\) 이상)다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-einstein-heat-capacity" data-level="3"><p>진동수가 모두 \(\omega\)인 진동자 \(3N\)개로 고체를 모형화하면(아인슈타인 모형), 내부 에너지는 식 <a class="ref" href="#eq-planck-mean-energy"></a>의 \(3N\)배이다. (가) 열용량 \(C = dU/dT\)가 \(C = 3Nk_B\,\dfrac{x^2e^x}{(e^x - 1)^2}\), \(x = \hbar\omega/k_BT\)임을 보여라. (나) 고온(\(x \ll 1\))에서 \(C = 3Nk_B\big(1 - x^2/12 + O(x^4)\big)\)임을 보여라. (다) 저온(\(x \gg 1\))에서 \(C\)는 어떻게 되는가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(U = 3N\hbar\omega(e^x - 1)^{-1}\)이고 \(dx/dT = -x/T\)이다. \(\dfrac{dU}{dT} = 3N\hbar\omega\cdot\dfrac{-e^x}{(e^x - 1)^2}\cdot\Big(-\dfrac xT\Big) = 3N\,\dfrac{\hbar\omega}{T}\,\dfrac{xe^x}{(e^x-1)^2}\)이고, \(\hbar\omega/T = k_Bx\)이므로 주어진 식이 된다.</p>
+        <p>(나) \(\dfrac{x^2e^x}{(e^x - 1)^2} = \Big(\dfrac{x}{e^x - 1}\Big)^2 e^x\)이다. 식 <a class="ref" href="#eq-bernoulli-expansion"></a>에서 \(\big(x/(e^x - 1)\big)^2 = (1 - x/2 + x^2/12)^2 + O(x^3) = 1 - x + \tfrac{x^2}{4} + \tfrac{x^2}{6} + O(x^3) = 1 - x + \tfrac{5x^2}{12} + O(x^3)\)이고, \(e^x = 1 + x + x^2/2 + O(x^3)\)을 곱하면 \(1 + (1 - 1)x + \big(\tfrac12 - 1 + \tfrac{5}{12}\big)x^2 + O(x^3) = 1 - \tfrac{x^2}{12} + O(x^3)\)이다. 이 함수는 짝함수이므로(\(x \to -x\)로 바꿔 보라) \(x^3\) 항도 0이고, 오차는 \(O(x^4)\)이다. 따라서 고온에서 \(C \to 3Nk_B\)(뒬롱-프티 법칙)이고, 보정 \(-x^2/12\)만큼 작다. 예를 들어 \(x = 0.5\)에서 정확한 값 \(0.979\,42\)와 2차 근사 \(0.979\,17\)은 0.03% 다르다.</p>
+        <p>(다) \(x \gg 1\)이면 \(e^x - 1 \approx e^x\)이므로 \(C \approx 3Nk_B\,x^2e^{-x}\)이다. 열용량이 지수적으로 0으로 간다. 실제 고체는 저온에서 \(T^3\)으로 줄어드는데(디바이 모형), 아인슈타인 모형이 이것을 맞히지 못하는 것은 진동수를 하나로 두었기 때문이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-dilog-integral" data-level="3"><p>항별 적분으로 \(\displaystyle\int_0^1 \frac{\ln(1 + x)}{x}\,dx = 1 - \frac{1}{2^2} + \frac{1}{3^2} - \frac{1}{4^2} + \cdots\)임을 보이고, \(\sum 1/n^2 = \pi^2/6\)을 써서 그 값을 구하라. 끝점 \(x = 1\)이 수렴 구간의 경계라는 점은 어떻게 처리하는가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(\lvert x\rvert &lt; 1\)에서 \(\ln(1 + x)/x = \sum_{n=1}^\infty (-1)^{n+1}x^{n-1}/n\)이고, 이 급수의 수렴 반경은 1이다. \(0 \le x \le r &lt; 1\)에서 항별로 적분하면 \(\int_0^r \frac{\ln(1+x)}{x}dx = \sum_{n=1}^\infty (-1)^{n+1} r^n/n^2\)이다. 오른쪽 급수는 \(r = 1\)에서도 \(\sum 1/n^2\)으로 절대 수렴하므로 \(0 \le r \le 1\)에서 균등 수렴하고 연속이다(바이어슈트라스 판정). 왼쪽 적분도 \(r\)에 대해 연속이므로 \(r \to 1\)로 보내면 등식이 끝점에서도 성립한다.</p>
+        <p>값을 구하자. 교대급수의 짝수 항은 \(\sum 1/(2m)^2 = \tfrac14\sum 1/m^2\)이므로</p>
+        <div class="formula">\[ \begin{aligned} \sum_{n=1}^{\infty}\frac{(-1)^{n+1}}{n^2} &= \sum_{n=1}^\infty\frac{1}{n^2} - 2\sum_{m=1}^\infty\frac{1}{(2m)^2} \\ &= \Big(1 - \frac12\Big)\frac{\pi^2}{6} = \frac{\pi^2}{12} \end{aligned} \]</div>
+        <p>이다. 두 급수가 절대 수렴하므로 항을 나누어 더해도 된다. 값은 \(0.822\,467\)이고, 심프슨 공식으로 적분을 직접 계산한 값과 일치한다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+</body>
+</html>

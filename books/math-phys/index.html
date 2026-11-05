@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Physics · 수리물리학</title>
+<meta name="description" content="보아스의 순서를 뼈대로, 급수와 복소수에서 출발해 벡터 해석, 선형대수, 상미분방정식과 특수 함수, 푸리에 해석과 편미분방정식, 복소해석과 그린 함수, 변분법과 텐서까지 — 학부 물리 전체가 기대는 수학 도구를 물리 예제와 함께 유도하고, 서재의 전자기학·양자역학과 대학원 책들이 돌아와 참조하는 기준이 되는 이론서입니다.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/book.css">
+<script defer src="../../data/site.js"></script>
+<script defer src="../../data/books.js"></script>
+<script defer src="../../assets/js/viz.js"></script>
+<script defer src="../../assets/js/core.js"></script>
+<script defer src="../../assets/js/lab.js"></script>
+<script defer src="../../assets/sims/dl.js"></script>
+<script defer src="../../assets/sims/ts.js"></script>
+<script defer src="../../assets/sims/phys.js"></script>
+<script defer src="../../assets/sims/math.js"></script>
+<script defer src="../../assets/js/heroes.js"></script>
+<script defer src="../../assets/js/book.js"></script>
+</head>
+<body data-root="../../" data-book="math-phys" data-field="phys" data-page="book-home">
+
+<section class="home-hero">
+  <div class="inner">
+    <div>
+      <div class="eyebrow" data-fill="book-en">Mathematical Methods for Physics</div>
+      <h1>급수 한 줄에서<br><span class="grad">시공간의 텐서까지</span></h1>
+      <p data-fill="book-desc">보아스의 순서를 뼈대로, 급수와 복소수에서 출발해 벡터 해석, 선형대수, 상미분방정식과 특수 함수, 푸리에 해석과 편미분방정식, 복소해석과 그린 함수, 변분법과 텐서까지 — 학부 물리 전체가 기대는 수학 도구를 물리 예제와 함께 유도하고, 서재의 전자기학·양자역학과 대학원 책들이 돌아와 참조하는 기준이 되는 이론서입니다.</p>
+      <div class="cta">
+        <a class="btn primary big" href="chapters/ch01.html">1장부터 시작하기 →</a>
+        <a class="btn ghost big" href="#chapters">전체 목차</a>
+      </div>
+      <div class="hero-badges"><span><b data-fill="part-count">7</b>부 <b data-fill="chapter-count">22</b>장</span><span>정의 → 유도 → 예제 → 연습문제</span><span>모든 장에 물리 예제</span><span data-fill="book-status">집필 중</span></div>
+    </div>
+    <div class="hero-stage">
+      <svg viewBox="0 0 540 400" width="100%" height="100%" role="img" aria-label="사각파와 그 푸리에 급수의 부분합. 항을 1개, 2개, 10개 더할수록 사각파에 가까워지고, 불연속점 근처에는 약 9퍼센트의 넘침이 남는다">
+        <path d="M40 190 H500" class="s-line" opacity="0.35" stroke-width="1"/>
+        <path d="M270 62 V318" class="s-line" opacity="0.35" stroke-width="1"/>
+        <path d="M40 290 H270 V90 H500" class="s-line" stroke-dasharray="5 5"/>
+        <path d="M40.0 190.0 L41.9 193.3 L43.8 196.7 L45.8 200.0 L47.7 203.3 L49.6 206.6 L51.5 209.9 L53.4 213.2 L55.3 216.5 L57.2 219.7 L59.2 223.0 L61.1 226.2 L63.0 229.3 L64.9 232.5 L66.8 235.6 L68.8 238.7 L70.7 241.8 L72.6 244.8 L74.5 247.8 L76.4 250.8 L78.3 253.7 L80.2 256.5 L82.2 259.3 L84.1 262.1 L86.0 264.8 L87.9 267.5 L89.8 270.1 L91.8 272.7 L93.7 275.2 L95.6 277.6 L97.5 280.0 L99.4 282.4 L101.3 284.6 L103.2 286.8 L105.2 288.9 L107.1 291.0 L109.0 293.0 L110.9 294.9 L112.8 296.8 L114.8 298.6 L116.7 300.3 L118.6 301.9 L120.5 303.4 L122.4 304.9 L124.3 306.3 L126.2 307.6 L128.2 308.9 L130.1 310.0 L132.0 311.1 L133.9 312.1 L135.8 313.0 L137.8 313.8 L139.7 314.5 L141.6 315.2 L143.5 315.8 L145.4 316.2 L147.3 316.6 L149.2 316.9 L151.2 317.1 L153.1 317.3 L155.0 317.3 L156.9 317.3 L158.8 317.1 L160.8 316.9 L162.7 316.6 L164.6 316.2 L166.5 315.8 L168.4 315.2 L170.3 314.5 L172.2 313.8 L174.2 313.0 L176.1 312.1 L178.0 311.1 L179.9 310.0 L181.8 308.9 L183.8 307.6 L185.7 306.3 L187.6 304.9 L189.5 303.4 L191.4 301.9 L193.3 300.3 L195.2 298.6 L197.2 296.8 L199.1 294.9 L201.0 293.0 L202.9 291.0 L204.8 288.9 L206.8 286.8 L208.7 284.6 L210.6 282.4 L212.5 280.0 L214.4 277.6 L216.3 275.2 L218.2 272.7 L220.2 270.1 L222.1 267.5 L224.0 264.8 L225.9 262.1 L227.8 259.3 L229.8 256.5 L231.7 253.7 L233.6 250.8 L235.5 247.8 L237.4 244.8 L239.3 241.8 L241.2 238.7 L243.2 235.6 L245.1 232.5 L247.0 229.3 L248.9 226.2 L250.8 223.0 L252.8 219.7 L254.7 216.5 L256.6 213.2 L258.5 209.9 L260.4 206.6 L262.3 203.3 L264.2 200.0 L266.2 196.7 L268.1 193.3 L270.0 190.0 L271.9 186.7 L273.8 183.3 L275.8 180.0 L277.7 176.7 L279.6 173.4 L281.5 170.1 L283.4 166.8 L285.3 163.5 L287.2 160.3 L289.2 157.0 L291.1 153.8 L293.0 150.7 L294.9 147.5 L296.8 144.4 L298.8 141.3 L300.7 138.2 L302.6 135.2 L304.5 132.2 L306.4 129.2 L308.3 126.3 L310.2 123.5 L312.2 120.7 L314.1 117.9 L316.0 115.2 L317.9 112.5 L319.8 109.9 L321.8 107.3 L323.7 104.8 L325.6 102.4 L327.5 100.0 L329.4 97.6 L331.3 95.4 L333.3 93.2 L335.2 91.1 L337.1 89.0 L339.0 87.0 L340.9 85.1 L342.8 83.2 L344.8 81.4 L346.7 79.7 L348.6 78.1 L350.5 76.6 L352.4 75.1 L354.3 73.7 L356.2 72.4 L358.2 71.1 L360.1 70.0 L362.0 68.9 L363.9 67.9 L365.8 67.0 L367.7 66.2 L369.7 65.5 L371.6 64.8 L373.5 64.2 L375.4 63.8 L377.3 63.4 L379.2 63.1 L381.2 62.9 L383.1 62.7 L385.0 62.7 L386.9 62.7 L388.8 62.9 L390.8 63.1 L392.7 63.4 L394.6 63.8 L396.5 64.2 L398.4 64.8 L400.3 65.5 L402.3 66.2 L404.2 67.0 L406.1 67.9 L408.0 68.9 L409.9 70.0 L411.8 71.1 L413.7 72.4 L415.7 73.7 L417.6 75.1 L419.5 76.6 L421.4 78.1 L423.3 79.7 L425.2 81.4 L427.2 83.2 L429.1 85.1 L431.0 87.0 L432.9 89.0 L434.8 91.1 L436.7 93.2 L438.7 95.4 L440.6 97.6 L442.5 100.0 L444.4 102.4 L446.3 104.8 L448.3 107.3 L450.2 109.9 L452.1 112.5 L454.0 115.2 L455.9 117.9 L457.8 120.7 L459.8 123.5 L461.7 126.3 L463.6 129.2 L465.5 132.2 L467.4 135.2 L469.3 138.2 L471.2 141.3 L473.2 144.4 L475.1 147.5 L477.0 150.7 L478.9 153.8 L480.8 157.0 L482.8 160.3 L484.7 163.5 L486.6 166.8 L488.5 170.1 L490.4 173.4 L492.3 176.7 L494.2 180.0 L496.2 183.3 L498.1 186.7 L500.0 190.0" class="s-line" opacity="0.6"/>
+        <path d="M40.0 190.0 L41.9 196.7 L43.8 203.3 L45.8 209.9 L47.7 216.4 L49.6 222.9 L51.5 229.2 L53.4 235.4 L55.3 241.4 L57.2 247.3 L59.2 253.0 L61.1 258.4 L63.0 263.7 L64.9 268.7 L66.8 273.4 L68.8 277.9 L70.7 282.2 L72.6 286.1 L74.5 289.7 L76.4 293.1 L78.3 296.1 L80.2 298.8 L82.2 301.3 L84.1 303.4 L86.0 305.2 L87.9 306.7 L89.8 307.9 L91.8 308.9 L93.7 309.5 L95.6 309.9 L97.5 310.0 L99.4 309.9 L101.3 309.6 L103.2 309.0 L105.2 308.2 L107.1 307.3 L109.0 306.1 L110.9 304.8 L112.8 303.4 L114.8 301.9 L116.7 300.3 L118.6 298.6 L120.5 296.8 L122.4 295.0 L124.3 293.2 L126.2 291.4 L128.2 289.6 L130.1 287.8 L132.0 286.1 L133.9 284.5 L135.8 283.0 L137.8 281.5 L139.7 280.2 L141.6 279.0 L143.5 277.9 L145.4 277.0 L147.3 276.3 L149.2 275.7 L151.2 275.2 L153.1 275.0 L155.0 274.9 L156.9 275.0 L158.8 275.2 L160.8 275.7 L162.7 276.3 L164.6 277.0 L166.5 277.9 L168.4 279.0 L170.3 280.2 L172.2 281.5 L174.2 283.0 L176.1 284.5 L178.0 286.1 L179.9 287.8 L181.8 289.6 L183.8 291.4 L185.7 293.2 L187.6 295.0 L189.5 296.8 L191.4 298.6 L193.3 300.3 L195.2 301.9 L197.2 303.4 L199.1 304.8 L201.0 306.1 L202.9 307.3 L204.8 308.2 L206.8 309.0 L208.7 309.6 L210.6 309.9 L212.5 310.0 L214.4 309.9 L216.3 309.5 L218.2 308.9 L220.2 307.9 L222.1 306.7 L224.0 305.2 L225.9 303.4 L227.8 301.3 L229.8 298.8 L231.7 296.1 L233.6 293.1 L235.5 289.7 L237.4 286.1 L239.3 282.2 L241.2 277.9 L243.2 273.4 L245.1 268.7 L247.0 263.7 L248.9 258.4 L250.8 253.0 L252.8 247.3 L254.7 241.4 L256.6 235.4 L258.5 229.2 L260.4 222.9 L262.3 216.4 L264.2 209.9 L266.2 203.3 L268.1 196.7 L270.0 190.0 L271.9 183.3 L273.8 176.7 L275.8 170.1 L277.7 163.6 L279.6 157.1 L281.5 150.8 L283.4 144.6 L285.3 138.6 L287.2 132.7 L289.2 127.0 L291.1 121.6 L293.0 116.3 L294.9 111.3 L296.8 106.6 L298.8 102.1 L300.7 97.8 L302.6 93.9 L304.5 90.3 L306.4 86.9 L308.3 83.9 L310.2 81.2 L312.2 78.7 L314.1 76.6 L316.0 74.8 L317.9 73.3 L319.8 72.1 L321.8 71.1 L323.7 70.5 L325.6 70.1 L327.5 70.0 L329.4 70.1 L331.3 70.4 L333.3 71.0 L335.2 71.8 L337.1 72.7 L339.0 73.9 L340.9 75.2 L342.8 76.6 L344.8 78.1 L346.7 79.7 L348.6 81.4 L350.5 83.2 L352.4 85.0 L354.3 86.8 L356.2 88.6 L358.2 90.4 L360.1 92.2 L362.0 93.9 L363.9 95.5 L365.8 97.0 L367.7 98.5 L369.7 99.8 L371.6 101.0 L373.5 102.1 L375.4 103.0 L377.3 103.7 L379.2 104.3 L381.2 104.8 L383.1 105.0 L385.0 105.1 L386.9 105.0 L388.8 104.8 L390.8 104.3 L392.7 103.7 L394.6 103.0 L396.5 102.1 L398.4 101.0 L400.3 99.8 L402.3 98.5 L404.2 97.0 L406.1 95.5 L408.0 93.9 L409.9 92.2 L411.8 90.4 L413.7 88.6 L415.7 86.8 L417.6 85.0 L419.5 83.2 L421.4 81.4 L423.3 79.7 L425.2 78.1 L427.2 76.6 L429.1 75.2 L431.0 73.9 L432.9 72.7 L434.8 71.8 L436.7 71.0 L438.7 70.4 L440.6 70.1 L442.5 70.0 L444.4 70.1 L446.3 70.5 L448.3 71.1 L450.2 72.1 L452.1 73.3 L454.0 74.8 L455.9 76.6 L457.8 78.7 L459.8 81.2 L461.7 83.9 L463.6 86.9 L465.5 90.3 L467.4 93.9 L469.3 97.8 L471.2 102.1 L473.2 106.6 L475.1 111.3 L477.0 116.3 L478.9 121.6 L480.8 127.0 L482.8 132.7 L484.7 138.6 L486.6 144.6 L488.5 150.8 L490.4 157.1 L492.3 163.6 L494.2 170.1 L496.2 176.7 L498.1 183.3 L500.0 190.0" class="s-acc2"/>
+        <path d="M40.0 190.0 L41.9 222.8 L43.8 252.7 L45.8 277.3 L47.7 294.9 L49.6 304.9 L51.5 308.0 L53.4 305.5 L55.3 299.6 L57.2 292.4 L59.2 285.9 L61.1 281.6 L63.0 280.1 L64.9 281.4 L66.8 284.8 L68.8 289.1 L70.7 293.1 L72.6 295.9 L74.5 296.9 L76.4 296.0 L78.3 293.6 L80.2 290.5 L82.2 287.5 L84.1 285.4 L86.0 284.6 L87.9 285.4 L89.8 287.2 L91.8 289.7 L93.7 292.1 L95.6 293.9 L97.5 294.5 L99.4 293.9 L101.3 292.3 L103.2 290.2 L105.2 288.1 L107.1 286.6 L109.0 286.1 L110.9 286.6 L112.8 288.0 L114.8 289.9 L116.7 291.7 L118.6 293.1 L120.5 293.6 L122.4 293.1 L124.3 291.8 L126.2 290.1 L128.2 288.4 L130.1 287.1 L132.0 286.7 L133.9 287.1 L135.8 288.3 L137.8 290.0 L139.7 291.6 L141.6 292.8 L143.5 293.2 L145.4 292.8 L147.3 291.6 L149.2 290.0 L151.2 288.4 L153.1 287.3 L155.0 286.8 L156.9 287.3 L158.8 288.4 L160.8 290.0 L162.7 291.6 L164.6 292.8 L166.5 293.2 L168.4 292.8 L170.3 291.6 L172.2 290.0 L174.2 288.3 L176.1 287.1 L178.0 286.7 L179.9 287.1 L181.8 288.4 L183.8 290.1 L185.7 291.8 L187.6 293.1 L189.5 293.6 L191.4 293.1 L193.3 291.7 L195.2 289.9 L197.2 288.0 L199.1 286.6 L201.0 286.1 L202.9 286.6 L204.8 288.1 L206.8 290.2 L208.7 292.3 L210.6 293.9 L212.5 294.5 L214.4 293.9 L216.3 292.1 L218.2 289.7 L220.2 287.2 L222.1 285.4 L224.0 284.6 L225.9 285.4 L227.8 287.5 L229.8 290.5 L231.7 293.6 L233.6 296.0 L235.5 296.9 L237.4 295.9 L239.3 293.1 L241.2 289.1 L243.2 284.8 L245.1 281.4 L247.0 280.1 L248.9 281.6 L250.8 285.9 L252.8 292.4 L254.7 299.6 L256.6 305.5 L258.5 308.0 L260.4 304.9 L262.3 294.9 L264.2 277.3 L266.2 252.7 L268.1 222.8 L270.0 190.0 L271.9 157.2 L273.8 127.3 L275.8 102.7 L277.7 85.1 L279.6 75.1 L281.5 72.0 L283.4 74.5 L285.3 80.4 L287.2 87.6 L289.2 94.1 L291.1 98.4 L293.0 99.9 L294.9 98.6 L296.8 95.2 L298.8 90.9 L300.7 86.9 L302.6 84.1 L304.5 83.1 L306.4 84.0 L308.3 86.4 L310.2 89.5 L312.2 92.5 L314.1 94.6 L316.0 95.4 L317.9 94.6 L319.8 92.8 L321.8 90.3 L323.7 87.9 L325.6 86.1 L327.5 85.5 L329.4 86.1 L331.3 87.7 L333.3 89.8 L335.2 91.9 L337.1 93.4 L339.0 93.9 L340.9 93.4 L342.8 92.0 L344.8 90.1 L346.7 88.3 L348.6 86.9 L350.5 86.4 L352.4 86.9 L354.3 88.2 L356.2 89.9 L358.2 91.6 L360.1 92.9 L362.0 93.3 L363.9 92.9 L365.8 91.7 L367.7 90.0 L369.7 88.4 L371.6 87.2 L373.5 86.8 L375.4 87.2 L377.3 88.4 L379.2 90.0 L381.2 91.6 L383.1 92.7 L385.0 93.2 L386.9 92.7 L388.8 91.6 L390.8 90.0 L392.7 88.4 L394.6 87.2 L396.5 86.8 L398.4 87.2 L400.3 88.4 L402.3 90.0 L404.2 91.7 L406.1 92.9 L408.0 93.3 L409.9 92.9 L411.8 91.6 L413.7 89.9 L415.7 88.2 L417.6 86.9 L419.5 86.4 L421.4 86.9 L423.3 88.3 L425.2 90.1 L427.2 92.0 L429.1 93.4 L431.0 93.9 L432.9 93.4 L434.8 91.9 L436.7 89.8 L438.7 87.7 L440.6 86.1 L442.5 85.5 L444.4 86.1 L446.3 87.9 L448.3 90.3 L450.2 92.8 L452.1 94.6 L454.0 95.4 L455.9 94.6 L457.8 92.5 L459.8 89.5 L461.7 86.4 L463.6 84.0 L465.5 83.1 L467.4 84.1 L469.3 86.9 L471.2 90.9 L473.2 95.2 L475.1 98.6 L477.0 99.9 L478.9 98.4 L480.8 94.1 L482.8 87.6 L484.7 80.4 L486.6 74.5 L488.5 72.0 L490.4 75.1 L492.3 85.1 L494.2 102.7 L496.2 127.3 L498.1 157.2 L500.0 190.0" class="s-acc"/>
+        <text x="40" y="52" class="t-b">사각파의 푸리에 부분합</text>
+        <text x="40" y="344" class="t-dim">점선: 사각파  ·  회색: 항 1개  ·  보조색: 항 2개  ·  강조색: 항 10개</text>
+        <text x="40" y="364" class="t-dim">불연속점 곁의 넘침은 항을 늘려도 약 9%로 남습니다 (14장)</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="home-section">
+  <h2>이 책의 지도</h2>
+  <p class="sub">1부가 모든 장의 계산 도구를 갖추고, 2–3부가 전자기학과 양자역학의 언어를 세웁니다. 4–6부는 그 위에서 특수 함수, 푸리에 해석, 복소해석과 그린 함수로 올라가고, 7부는 대학원 책으로 가는 다리입니다. 상자를 누르면 그 부의 첫 장으로 갑니다.</p>
+  <figure class="diagram scroll">
+    <svg viewBox="0 0 1100 420" role="img" aria-label="이 책의 구성: 1부 기초 도구에서 2부 벡터 해석, 3부 선형대수, 4부 미분방정식과 특수 함수, 5부 푸리에 해석과 편미분방정식, 6부 복소해석과 그린 함수로 이어지고, 7부 변분법과 텐서는 2부와 3부에서 점선으로 이어지며 6부 다음에도 읽는다">
+      <defs><marker id="mp-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs>
+
+      <a href="chapters/ch01.html"><g transform="translate(20,20)">
+        <rect width="220" height="150" rx="14" class="f-surface"/>
+        <text x="16" y="28" class="t-acc">1부 · 1–3장</text>
+        <text x="16" y="54" class="t-b">기초 도구</text>
+        <text x="16" y="82" class="t-dim">급수와 근사</text>
+        <text x="16" y="102" class="t-dim">복소수와 오일러 공식</text>
+        <text x="16" y="122" class="t-dim">다변수 미적분 다시 보기</text>
+      </g></a>
+      <path d="M244 95 H294" class="s-acc" marker-end="url(#mp-arr)"/>
+
+      <a href="chapters/ch04.html"><g transform="translate(300,20)">
+        <rect width="220" height="150" rx="14" class="f-surface"/>
+        <text x="16" y="28" class="t-acc">2부 · 4–6장</text>
+        <text x="16" y="54" class="t-b">벡터 해석</text>
+        <text x="16" y="82" class="t-dim">기울기 · 발산 · 회전</text>
+        <text x="16" y="102" class="t-dim">적분 정리</text>
+        <text x="16" y="122" class="t-dim">곡선 좌표계와 디랙 델타</text>
+      </g></a>
+      <path d="M524 95 H574" class="s-acc" marker-end="url(#mp-arr)"/>
+
+      <a href="chapters/ch07.html"><g transform="translate(580,20)">
+        <rect width="220" height="150" rx="14" class="f-surface"/>
+        <text x="16" y="28" class="t-acc">3부 · 7–9장</text>
+        <text x="16" y="54" class="t-b">선형대수</text>
+        <text x="16" y="82" class="t-dim">행렬과 회전</text>
+        <text x="16" y="102" class="t-dim">고유값 문제</text>
+        <text x="16" y="122" class="t-dim">벡터 공간과 함수 공간</text>
+      </g></a>
+      <path d="M804 95 H854" class="s-acc" marker-end="url(#mp-arr)"/>
+
+      <a href="chapters/ch10.html"><g transform="translate(860,20)">
+        <rect width="220" height="150" rx="14" class="f-surface"/>
+        <text x="16" y="28" class="t-acc">4부 · 10–13장</text>
+        <text x="16" y="54" class="t-b">미분방정식과 특수 함수</text>
+        <text x="16" y="82" class="t-dim">상미분방정식</text>
+        <text x="16" y="102" class="t-dim">감마 함수와 특수 적분</text>
+        <text x="16" y="122" class="t-dim">르장드르 · 베셀 함수</text>
+        <text x="16" y="142" class="t-dim">에르미트 · 라게르 다항식</text>
+      </g></a>
+      <path d="M970 174 V244" class="s-acc" marker-end="url(#mp-arr)"/>
+
+      <a href="chapters/ch14.html"><g transform="translate(860,250)">
+        <rect width="220" height="150" rx="14" class="f-acc-soft" stroke-width="2"/>
+        <text x="16" y="28" class="t-acc">5부 · 14–17장</text>
+        <text x="16" y="54" class="t-b">푸리에 해석과 편미분방정식</text>
+        <text x="16" y="82" class="t-dim">푸리에 급수와 변환</text>
+        <text x="16" y="102" class="t-dim">스투름-리우빌 이론</text>
+        <text x="16" y="122" class="t-dim">변수 분리</text>
+      </g></a>
+      <path d="M856 325 H806" class="s-acc" marker-end="url(#mp-arr)"/>
+
+      <a href="chapters/ch18.html"><g transform="translate(580,250)">
+        <rect width="220" height="150" rx="14" class="f-surface"/>
+        <text x="16" y="28" class="t-acc">6부 · 18–20장</text>
+        <text x="16" y="54" class="t-b">복소해석과 그린 함수</text>
+        <text x="16" y="82" class="t-dim">해석 함수</text>
+        <text x="16" y="102" class="t-dim">유수 정리</text>
+        <text x="16" y="122" class="t-dim">그린 함수와 인과율</text>
+      </g></a>
+      <path d="M576 325 H526" class="s-acc flow-dash" marker-end="url(#mp-arr)"/>
+
+      <a href="chapters/ch21.html"><g transform="translate(300,250)">
+        <rect width="220" height="150" rx="14" class="f-surface"/>
+        <text x="16" y="28" class="t-acc">7부 · 21–22장</text>
+        <text x="16" y="54" class="t-b">변분법과 텐서</text>
+        <text x="16" y="82" class="t-dim">오일러-라그랑주 방정식</text>
+        <text x="16" y="102" class="t-dim">해밀턴 원리</text>
+        <text x="16" y="122" class="t-dim">텐서 · 계량 · 4-벡터</text>
+      </g></a>
+
+      <path d="M790 174 C 800 212, 850 222, 884 246" class="s-acc flow-dash" marker-end="url(#mp-arr)"/>
+      <text x="660" y="214" class="t-dim">9장 → 14·16장</text>
+
+      <path d="M360 174 V244" class="s-acc flow-dash" marker-end="url(#mp-arr)"/>
+      <path d="M598 174 L526 246" class="s-acc flow-dash" marker-end="url(#mp-arr)"/>
+      <text x="372" y="214" class="t-dim">앞 장 일부만 씁니다</text>
+    </svg>
+    <figcaption><b>그림 0-1.</b> 일곱 부의 순서와 의존 관계. 실선 화살표는 앞 부를 이어서 읽는 주된 흐름이고, 점선은 일부 장만 가져다 쓴다는 뜻입니다. 5부(강조색)의 16장 스투름-리우빌 이론이 푸리에 급수와 르장드르·베셀 함수를 한 틀로 묶습니다. 6부의 그린 함수(20장)는 5부의 변수 분리와 15장의 푸리에 변환, 19장의 유수 정리를 모두 씁니다. 7부는 3·4·6·8·10장만 쓰므로 6부를 마치지 않아도 읽을 수 있고, 일부러 맨 뒤에 둔 것은 대학원 책으로 가는 다리이기 때문입니다.</figcaption>
+  </figure>
+</section>
+
+<section class="home-section" id="chapters">
+  <h2>전체 목차</h2>
+  <p class="sub">카드 아래 줄이 그 장에서 다루는 내용입니다. 모든 장은 물리 문제에서 출발해 정의, 유도, 예제 순서로 진행하고, 장마다 그 장의 도구로 물리 결과 하나를 끝까지 계산합니다.</p>
+  <div class="ch-grid" data-chapter-grid></div>
+</section>
+
+<section class="home-section">
+  <h2>추천 읽기 경로</h2>
+  <p class="sub">처음 읽는다면 1장부터 차례로 읽기를 권합니다. 서재의 다른 책을 읽으러 왔다면 아래 경로로 필요한 장만 골라 읽어도 됩니다. 각 경로는 장 머리의 선수 지식을 지키는 순서입니다.</p>
+  <div class="paths">
+    <div class="path"><h3>전자기학을 읽기 전에</h3><p>기울기·발산·회전과 적분 정리, 점전하를 델타 함수로 쓰는 법을 익히고, RLC 회로와 르장드르 다항식(다중극 전개)까지 갑니다.</p><div class="steps"><a href="chapters/ch01.html">01</a><a href="chapters/ch02.html">02</a><a href="chapters/ch03.html">03</a><a href="chapters/ch04.html">04</a><a href="chapters/ch05.html">05</a><a href="chapters/ch06.html">06</a><a href="chapters/ch10.html">10</a><a href="chapters/ch12.html">12</a></div></div>
+    <div class="path"><h3>양자역학을 읽기 전에</h3><p>회전 행렬, 에르미트 행렬과 스펙트럼 정리, 디랙 표기와 함수 공간을 거쳐, 각운동량의 구면 조화 함수와 조화 진동자·수소 원자의 특수 함수에 이릅니다.</p><div class="steps"><a href="chapters/ch01.html">01</a><a href="chapters/ch02.html">02</a><a href="chapters/ch03.html">03</a><a href="chapters/ch04.html">04</a><a href="chapters/ch07.html">07</a><a href="chapters/ch08.html">08</a><a href="chapters/ch09.html">09</a><a href="chapters/ch10.html">10</a><a href="chapters/ch11.html">11</a><a href="chapters/ch12.html">12</a><a href="chapters/ch13.html">13</a></div></div>
+    <div class="path"><h3>상대성이론과 대학원 역학으로</h3><p>벡터 해석과 고유값 문제를 바탕으로 변분법(해밀턴 원리)과 텐서(계량, 4-벡터)까지 갑니다. 대학원 고전역학과 상대성이론으로 이어지는 길입니다.</p><div class="steps"><a href="chapters/ch01.html">01</a><a href="chapters/ch02.html">02</a><a href="chapters/ch03.html">03</a><a href="chapters/ch04.html">04</a><a href="chapters/ch05.html">05</a><a href="chapters/ch06.html">06</a><a href="chapters/ch07.html">07</a><a href="chapters/ch08.html">08</a><a href="chapters/ch10.html">10</a><a href="chapters/ch21.html">21</a><a href="chapters/ch22.html">22</a></div></div>
+    <div class="path"><h3>유수 정리만 빨리</h3><p>양자장론과 대학원 전자기학에서 쓰는 윤곽 적분을 가장 짧게 갑니다. 19장 안에서 푸리에 변환(15장)이나 감마 함수(11장)가 나오면 그때 돌아가 읽으면 됩니다.</p><div class="steps"><a href="chapters/ch01.html">01</a><a href="chapters/ch02.html">02</a><a href="chapters/ch18.html">18</a><a href="chapters/ch19.html">19</a></div></div>
+  </div>
+</section>
+
+<section class="home-section">
+  <h2>이 책을 읽는 법</h2>
+  <p class="sub">일변수·다변수 미적분, 행렬 곱 수준의 선형대수, 일반물리(역학, 전자기학, 파동)를 안다고 가정합니다. 복소수는 고등학교 수준만 알면 되고, 2장에서 다시 세웁니다. 이 책은 증명보다 사용에 무게를 두지만 유도의 중간 단계를 건너뛰지 않습니다. 새 도구는 항상 "어떤 물리 문제에서 이것이 필요해지는가"로 시작합니다.</p>
+  <div class="flow">
+    <div><b>목표 확인</b>장 머리의 리드 문단, 학습 목표, 선수 지식을 먼저 봅니다.</div>
+    <div><b>물리에서 시작</b>절마다 풀고 싶은 물리 문제를 먼저 놓고, 그 문제가 요구하는 수학을 찾아 나섭니다.</div>
+    <div><b>정의와 유도</b>정의를 세우고 중간 단계를 건너뛰지 않고 결과를 끌어냅니다. 정리에는 성립 조건을 모두 적습니다.</div>
+    <div><b>물리 예제</b>절마다 식과 숫자로 끝까지 계산하는 물리 예제가 있습니다. 숫자에는 단위를 끝까지 붙입니다.</div>
+    <div><b>핵심 정리 · 퀴즈</b>장을 덮기 전에 요점을 짚고 개념 확인 문항으로 바로 점검합니다.</div>
+    <div><b>연습문제</b>난이도 ★1–3의 문제를 스스로 풀어 본 뒤, 접어 둔 풀이와 맞춰 봅니다.</div>
+  </div>
+  <div class="callout tip"><strong>수학 상자</strong><p>이 장의 주제 밖에 있는 수학이 잠깐 필요하면, 그 자리에 <b>수학 상자</b>로 짧게 다시 적습니다. 본문과 독립적으로 쓰여 있으므로 이미 아는 독자는 건너뛰어도 흐름이 이어집니다. 물리 예제는 <b>예제</b> 상자에 두고, 제목에 어떤 물리 대상인지 밝힙니다.</p></div>
+  <div class="callout warn"><strong>교재마다 다른 관례</strong><p>푸리에 변환의 \(2\pi\)를 어디에 붙이는가, 연관 르장드르 함수의 위상, 그린 함수의 부호처럼 교재마다 다른 관례는 본문의 <b>흔한 실수</b> 콜아웃에서 비교합니다. 다른 책의 식을 옮길 때는 아래 표기 규칙부터 확인하세요.</p></div>
+</section>
+
+<section class="home-section" id="notation">
+  <h2>표기 규칙</h2>
+  <p class="sub">이 표기는 서재의 물리 책들이 함께 쓰는 기준입니다. 전자기학과 양자역학 책은 이 표를 그대로 가져가고, 다른 표기가 필요하면 그 책에서 차이를 밝힙니다. 다른 교재와 다른 점은 작은 글씨로 덧붙였습니다. 번호는 식 (n.k), 정의·정리·예제 n.k, 문제 n.k이며 장마다 1부터 셉니다.</p>
+
+  <h3>기본 표기</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>기호</th><th>뜻</th></tr></thead>
+    <tbody>
+      <tr><td>\(\mathbf A\), \(\boldsymbol\omega\), \(A = \lvert\mathbf A\rvert\)</td><td>벡터는 굵은 글씨, 크기는 보통 글씨<div class="note">4장. 손글씨 화살표(\(\vec A\))는 쓰지 않습니다.</div></td></tr>
+      <tr><td>\(\hat{\mathbf x},\ \hat{\mathbf r},\ \hat{\mathbf e}_i,\ \hat{\mathbf n}\)</td><td>단위 벡터는 굵은 글씨에 모자. 면의 법선은 \(\hat{\mathbf n}\)<div class="note">4장. 보아스는 \(\mathbf i, \mathbf j, \mathbf k\)를 씁니다. 굵지 않은 모자(\(\hat p\))는 양자역학의 연산자 표기입니다.</div></td></tr>
+      <tr><td>\(\mathbf r,\ \mathbf r',\ \mathbf r - \mathbf r'\)</td><td>위치, 원천의 위치, 둘 사이의 벡터<div class="note">4장. 그리피스의 필기체 r은 쓰지 않고 \(\mathbf r - \mathbf r'\)로 그대로 씁니다.</div></td></tr>
+      <tr><td>\(d\mathbf l,\ d\mathbf a = \hat{\mathbf n}\,da,\ d^3r\)</td><td>선, 면, 부피 요소 (부피를 강조할 때 \(dV\))<div class="note">5장. 그리피스는 \(d\tau\), 보아스는 면 요소에 \(d\sigma\)를 씁니다.</div></td></tr>
+      <tr><td>\(\nabla f,\ \nabla\cdot\mathbf A,\ \nabla\times\mathbf A,\ \nabla^2\)</td><td>기울기, 발산, 회전, 라플라시안. 편미분은 \(\partial f/\partial x\), 줄여서 \(\partial_i f\)<div class="note">4장. 고정 변수는 \((\partial U/\partial V)_T\)처럼 아래에 씁니다 (3장).</div></td></tr>
+      <tr><td>\(i, j, k \in \{1,2,3\}\)</td><td>직교 좌표 지수. \(x_1 = x,\ x_2 = y,\ x_3 = z\)<div class="note">4장</div></td></tr>
+      <tr><td>합 규약</td><td>4장부터, 직교 좌표 성분에서 같은 라틴 지수가 두 번 나오면 1–3을 더합니다. 장마다 처음 쓸 때 밝힙니다.<div class="note">지수가 위아래로 나뉘는 것은 22장에서만 씁니다.</div></td></tr>
+      <tr><td>\(\delta_{ij},\ \varepsilon_{ijk}\)</td><td>크로네커 델타, 레비치비타 기호 (\(\varepsilon_{123} = +1\))<div class="note">4장</div></td></tr>
+      <tr><td>\((s, \phi, z)\)</td><td>원통 좌표. \(s\)는 \(z\)축까지의 거리<div class="note">6장. 아프켄과 잭슨은 \((\rho, \varphi, z)\), 보아스는 \((r, \theta, z)\). 전하 밀도 \(\rho\)와 구면 좌표의 \(r\)이 겹치지 않게 \(s\)를 씁니다.</div></td></tr>
+      <tr><td>\((r, \theta, \phi)\)</td><td>구면 좌표. \(\theta \in [0, \pi]\)는 \(+z\)축에서 잰 극각, \(\phi \in [0, 2\pi)\)는 방위각<div class="note">6장. 물리 관례(ISO 80000-2)입니다. 미적분 교재 일부는 \(\theta\)와 \(\phi\)를 바꿔 씁니다. \(\varphi\)는 쓰지 않습니다.</div></td></tr>
+      <tr><td>\(A,\ A_{ij},\ \mathbf x\)</td><td>행렬은 대문자 이탤릭, 성분 \(A_{ij}\)는 \(i\)행 \(j\)열, 열벡터는 굵은 소문자<div class="note">7장. 코드와 함께 읽을 때는 0부터 세는 인덱스와의 차이를 밝힙니다.</div></td></tr>
+      <tr><td>\(A^{\mathsf T},\ A^*,\ A^\dagger = (A^*)^{\mathsf T}\)</td><td>전치, 성분마다 복소켤레, 수반<div class="note">7장. 수학 교재는 \(\bar A\), \(A^H\)도 씁니다.</div></td></tr>
+      <tr><td>\(I,\ \operatorname{tr}A,\ \det A\)</td><td>단위 행렬, 대각합, 행렬식<div class="note">7장</div></td></tr>
+      <tr><td>\(z = x + iy,\ z^*,\ \lvert z\rvert\)</td><td>복소수와 그 켤레, 절댓값. \(\arg z\), 주값 \(\operatorname{Arg}z \in (-\pi, \pi]\), 주로그 \(\operatorname{Log}z\), \(\operatorname{Re}z\), \(\operatorname{Im}z\)<div class="note">2장. 수학 교재는 켤레를 \(\bar z\)로 씁니다.</div></td></tr>
+      <tr><td>\(e^{-i\omega t},\ e^{i(\mathbf k\cdot\mathbf r - \omega t)}\)</td><td>진동과 평면파의 시간 의존성<div class="note">2장. 전기공학은 \(e^{j\omega t}\)를 써서 임피던스의 허수부 부호가 반대입니다. 2장과 10장에서 표로 비교합니다.</div></td></tr>
+      <tr><td>\(\lvert v\rangle,\ \langle u\rvert\)</td><td>추상 벡터의 디랙 표기. 기하적 3차원 벡터에는 굵은 글씨를 계속 씁니다.<div class="note">9장</div></td></tr>
+      <tr><td>\(\langle u\vert v\rangle,\ \langle f\vert g\rangle\)</td><td>내적: \(\sum_i u_i^* v_i\), 함수는 \(\int_a^b f^*(x)\,g(x)\,w(x)\,dx\). 왼쪽 자리에 켤레 선형, 오른쪽 자리에 선형입니다.<div class="note">9장. 물리 관례이며 수학 교재 다수는 반대입니다. 가중 함수 \(w(x) = 1\)이면 생략합니다.</div></td></tr>
+      <tr><td>\(\mathcal L,\ \mathcal L^\dagger\)</td><td>미분 연산자와 그 수반. 양자역학 예제에서만 모자를 씌웁니다 (\(\hat p = -i\hbar\,d/dx\)).<div class="note">9장</div></td></tr>
+      <tr><td>\(\delta(x),\ \delta^3(\mathbf r),\ \Theta(x)\)</td><td>디랙 델타, 3차원 델타, 계단 함수<div class="note">6장. 계단 함수를 \(H(x)\)로 쓰는 교재도 있습니다.</div></td></tr>
+      <tr><td>\(\mathcal L\,G(\mathbf r, \mathbf r') = \delta^3(\mathbf r - \mathbf r')\)</td><td>그린 함수의 정의. 그래서 \(\nabla^2 G = \delta^3\)의 해는 \(G = -\dfrac{1}{4\pi\lvert\mathbf r - \mathbf r'\rvert}\)<div class="note">20장. 잭슨은 \(\nabla^2 G = -4\pi\delta^3\)으로 정해 \(G = 1/\lvert\mathbf r - \mathbf r'\rvert\)이고, \(-\delta\)로 정하는 교재도 있습니다. 다른 책의 식을 옮길 때 반드시 확인하세요.</div></td></tr>
+      <tr><td>\(\eta_{\mu\nu} = \operatorname{diag}(-1,+1,+1,+1)\)</td><td>민코프스키 계량, \(x^0 = ct\), 그리스 지수 \(\mu, \nu \in \{0,1,2,3\}\)<div class="note">22장. 상대성이론 교재(MTW, 캐럴)의 관례입니다. 입자물리·양자장론 교재는 \((+,-,-,-)\)를 씁니다.</div></td></tr>
+      <tr><td>\(\ln,\ i,\ e,\ dx\)</td><td>자연로그, 허수 단위, 자연상수, 미분소는 이탤릭 그대로<div class="note">1장</div></td></tr>
+      <tr><td>\(\approx,\ \sim\)</td><td>\(\approx\)는 근사적으로 같음, \(\sim\)는 크기 정도가 같음(또는 점근적으로 같음, 11장에서 정의). \(\simeq\)는 쓰지 않습니다.<div class="note">1장</div></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>변환과 특수 함수의 관례</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>대상</th><th>이 책의 관례</th></tr></thead>
+    <tbody>
+      <tr><td>푸리에 급수 (14장)</td><td>주기 \(2L\): \(f(x) = \sum_{n=-\infty}^{\infty} c_n e^{in\pi x/L}\), \(c_n = \dfrac{1}{2L}\displaystyle\int_{-L}^{L} f(x)\,e^{-in\pi x/L}\,dx\). 실수 형식은 \(\dfrac{a_0}{2} + \sum_{n\ge1}(a_n\cos\tfrac{n\pi x}{L} + b_n\sin\tfrac{n\pi x}{L})\)<div class="note">주기를 \(L\)이나 \(2\pi\)로 두는 교재가 많고, 상수항을 \(a_0\)으로 쓰는 교재도 있습니다.</div></td></tr>
+      <tr><td>푸리에 변환, 공간 (15장)</td><td>\(\tilde f(k) = \displaystyle\int f(x)\,e^{-ikx}\,dx\), \(\quad f(x) = \displaystyle\int \frac{dk}{2\pi}\,\tilde f(k)\,e^{ikx}\). 3차원은 \(d^3k/(2\pi)^3\)<div class="note">\(2\pi\)는 역변환의 \(dk\)에 붙입니다. 보아스는 \(1/2\pi\)를 순변환에, 아프켄과 라일리-홉슨-벤스는 양쪽에 \(1/\sqrt{2\pi}\)를 붙입니다. 지수의 부호도 교재마다 다릅니다.</div></td></tr>
+      <tr><td>푸리에 변환, 시간 (15장)</td><td>\(\tilde f(\omega) = \displaystyle\int f(t)\,e^{+i\omega t}\,dt\), \(\quad f(t) = \displaystyle\int \frac{d\omega}{2\pi}\,\tilde f(\omega)\,e^{-i\omega t}\)<div class="note">지수 부호가 공간과 반대인 것은 평면파 \(e^{i(kx - \omega t)}\)에 맞추기 위해서입니다. 신호처리는 진동수 \(\nu\)로 \(e^{-2\pi i\nu t}\)를 씁니다.</div></td></tr>
+      <tr><td>라플라스 변환 (10장)</td><td>\(F(s) = \displaystyle\int_0^\infty f(t)\,e^{-st}\,dt\)</td></tr>
+      <tr><td>감마 함수, 오차 함수 (11장)</td><td>\(\Gamma(z) = \displaystyle\int_0^\infty t^{z-1}e^{-t}\,dt\), \(\Gamma(n+1) = n!\) / \(\operatorname{erf}x = \dfrac{2}{\sqrt\pi}\displaystyle\int_0^x e^{-t^2}\,dt\)<div class="note">가우스의 \(\Pi(z) = \Gamma(z+1)\)은 쓰지 않습니다. 통계의 누적 분포 \(\Phi(x)\)와의 관계는 11장에 적습니다.</div></td></tr>
+      <tr><td>타원 적분 (11장)</td><td>\(K(k) = \displaystyle\int_0^{\pi/2}\frac{d\theta}{\sqrt{1 - k^2\sin^2\theta}}\), 모듈러스 \(k\)로 씁니다.<div class="note">SciPy의 <code>ellipk</code>와 일부 표는 매개변수 \(m = k^2\)을 받습니다.</div></td></tr>
+      <tr><td>르장드르 다항식, 연관 르장드르 함수 (12장)</td><td>\(P_l(1) = 1\), \(P_l^m(x) = (-1)^m(1-x^2)^{m/2}\dfrac{d^m}{dx^m}P_l(x)\). 콘던-쇼틀리 위상 \((-1)^m\)을 \(P_l^m\)에 넣습니다.<div class="note">아프켄, 잭슨, SciPy와 같습니다. 위상을 \(P_l^m\)에서 빼거나 \(Y_l^m\)에 따로 붙이는 교재가 있습니다.</div></td></tr>
+      <tr><td>구면 조화 함수 (12장)</td><td>\(Y_l^m(\theta, \phi) = \sqrt{\dfrac{2l+1}{4\pi}\dfrac{(l-m)!}{(l+m)!}}\,P_l^m(\cos\theta)\,e^{im\phi}\) (\(m \ge 0\)), \(Y_l^{-m} = (-1)^m (Y_l^m)^*\). 정규직교입니다.<div class="note">SciPy의 구면 조화 함수는 버전에 따라 각의 인수 순서가 다릅니다.</div></td></tr>
+      <tr><td>베셀 함수 (13장)</td><td>\(J_\nu\), 제2종 \(Y_\nu\), 한켈 \(H_\nu^{(1,2)} = J_\nu \pm iY_\nu\). 구면 베셀 \(j_l,\ y_l\), \(y_0(x) = -\cos x/x\)<div class="note">노이만 함수를 \(N_\nu\), \(y_l\)을 \(n_l\)로 쓰는 교재가 있고 부호가 반대인 정의도 있습니다.</div></td></tr>
+      <tr><td>에르미트 다항식 (13장)</td><td>물리학자의 \(H_n(x) = (-1)^n e^{x^2}\dfrac{d^n}{dx^n}e^{-x^2}\), 가중 함수 \(e^{-x^2}\)<div class="note">확률론의 \(He_n\)(가중 함수 \(e^{-x^2/2}\))과 다릅니다.</div></td></tr>
+      <tr><td>라게르 다항식 (13장)</td><td>\(L_n(x) = \dfrac{e^x}{n!}\dfrac{d^n}{dx^n}(x^n e^{-x})\), \(L_n(0) = 1\)<div class="note">현대 관례입니다. 오래된 양자역학 교재에는 \(1/n!\)이 없는 정의가 있어 수소 파동함수의 규격화 상수가 달라집니다.</div></td></tr>
+      <tr><td>주값 (19장)</td><td>\(\mathcal P\displaystyle\int\)<div class="note">\(\mathrm{PV}\int\)로 쓰는 교재도 있습니다.</div></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout"><strong>단위와 상수</strong><p>SI 단위를 씁니다. 쿨롱 법칙은 \(\mathbf F = \dfrac{1}{4\pi\varepsilon_0}\dfrac{q_1 q_2}{r^2}\hat{\mathbf r}\)이며, 가우스 단위 교재의 식은 SI로 바꿔 쓰고 바꾼 사실을 적습니다. 물리 상수는 CODATA 최신 권장값을 쓰고, 근삿값에는 유효숫자를 밝힙니다. 예제에는 단위를 끝까지 붙이고 차원 분석으로 답을 확인합니다. 용어는 한국물리학회와 대한수학회 용어를 따르고, 처음 나올 때 영어를 함께 적습니다.</p></div>
+</section>
+
+<section class="home-section">
+  <h2>참고 교재</h2>
+  <p class="sub">보아스의 주제와 깊이를 뼈대로 삼고, 두 권을 보조로 씁니다. 교재의 순서와 주제만 참고하고, 문장, 예제, 연습문제, 그림은 모두 새로 씁니다.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>교재</th><th>이 책에서의 역할</th></tr></thead>
+    <tbody>
+      <tr><td>M. L. Boas, <i>Mathematical Methods in the Physical Sciences</i>, 3rd ed. (Wiley, 2006)</td><td>뼈대. 미적분을 마친 물리학과 학부생에게 필요한 도구를 사용 중심으로 다루는 주제와 깊이를 따릅니다. 급수와 복소수로 시작하는 순서도 이 책에서 가져왔고, 선형대수를 벡터 해석 뒤로 보내는 것처럼 바꾼 곳은 지도에서 밝힙니다.</td></tr>
+      <tr><td>G. B. Arfken, H. J. Weber, F. E. Harris, <i>Mathematical Methods for Physicists</i>, 7th ed. (Academic Press, 2013)</td><td>스투름-리우빌 이론, 특수 함수, 그린 함수에서 더 깊은 설명이 필요할 때와 변환·특수 함수의 관례를 확인하는 데 씁니다.</td></tr>
+      <tr><td>K. F. Riley, M. P. Hobson, S. J. Bence, <i>Mathematical Methods for Physics and Engineering</i>, 3rd ed. (Cambridge University Press, 2006)</td><td>유도와 예제를 검산하고, 같은 주제를 다른 각도에서 설명한 곳을 찾는 데 씁니다.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><strong>이 책을 쓰는 원칙</strong><p>위 교재의 문장, 예제, 연습문제, 그림을 옮기지 않고 새로 씁니다. 학부 수준에서 멈추고, 군 표현론, 다양체와 곡률, 함수 해석학 같은 주제는 맛보기로만 다룬 뒤 해당 대학원 책으로 넘깁니다.</p></div>
+</section>
+</body>
+</html>
