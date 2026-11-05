@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>03 다변수 미적분 다시 보기 · 수리물리학</title>
+<meta name="description" content="편미분과 전미분, 고정 변수와 순환 관계, 르장드르 변환, 헤세 행렬과 라그랑주 승수, 야코비 행렬식, 적분 기호 안의 미분을 열역학과 역학의 예로 다시 세운다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys" data-field="phys" data-chapter="ch03">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">03</span></div>
+    <h1 data-fill="chapter-title">다변수 미적분 다시 보기</h1>
+    <p class="lead">물리량은 대개 변수 하나가 아니라 여럿에 기댄다. 기체의 압력은 온도와 부피에, 퍼텐셜 에너지는 세 좌표에 기댄다. 그러면 "무엇을 고정하고 미분하는가"가 답을 바꾸고, 극값은 여러 방향에서 동시에 찾아야 하며, 적분은 넓이와 부피 위에서 해야 한다. 이 장에서는 독자가 이미 계산할 줄 아는 편미분과 다중 적분을 열역학과 역학의 문제 위에서 다시 세운다. 1장의 테일러 전개를 여러 변수로 넓혀 극값을 판정하고, 맥스웰 관계식, 열역학 퍼텐셜, 볼츠만 분포, 가우스 적분을 이 도구들로 끝까지 계산한다.</p>
+    <ul class="objectives">
+      <li>전미분으로 작은 변화와 측정 오차의 전파를 계산하고, 미분 형식이 완전 미분인지 판정할 수 있다.</li>
+      <li>고정 변수를 밝혀 다변수 연쇄 법칙과 순환 관계를 쓰고, 맥스웰 관계식으로 재기 어려운 편미분을 잴 수 있는 양으로 바꿀 수 있다.</li>
+      <li>르장드르 변환의 기하적 뜻을 설명하고, 내부 에너지 \(U(S, V)\)에서 \(F\), \(H\), \(G\)와 그 자연 변수를 얻을 수 있다.</li>
+      <li>헤세 행렬로 임계점을 분류하고, 라그랑주 승수로 제약 조건이 있는 극값을 구하며 승수의 물리적 뜻을 말할 수 있다.</li>
+      <li>야코비 행렬식으로 다중 적분의 변수를 바꾸고, 라이프니츠 규칙으로 적분 기호 안에서 미분할 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b>일변수 미적분, 편미분과 이중 적분의 기계적인 계산, 1장의 테일러 전개(<a href="ch01.html#eq-taylor-series">식 (1.19)</a>), 2×2 행렬식. 일반물리의 열역학(이상 기체의 상태 방정식, 열역학 제1법칙, 열용량)을 안다고 가정하고, 엔트로피와 온도의 관계 \(dU = T\,dS - p\,dV\)는 3.1절에서 필요한 만큼 다시 적는다.</p>
+  </header>
+
+  <!-- ============================================================ 3.1 -->
+  <section id="s1">
+    <h2>편미분과 전미분</h2>
+    <p>이상 기체 \(n\) 몰의 압력은 \(p = nRT/V\)이다. 기체를 데우면 압력이 오르고, 부피를 늘리면 압력이 내린다. 두 가지를 동시에 하면 압력은 얼마나 변하는가? 1장에서는 한 변수 함수를 그 점의 접선으로 근사했다. 여러 변수 함수에서 같은 일을 하는 것이 이 절의 전미분이다. 같은 질문을 뒤집어 볼 수도 있다. 기체가 상태 A에서 상태 B로 가는 동안 내부 에너지의 변화는 어느 길로 가든 같지만, 기체가 받은 열은 길에 따라 다르다. 이 차이를 수학의 말로 하면 "어떤 미분 형식은 완전 미분이고 어떤 것은 아니다"가 된다.</p>
+
+    <h3 id="s1-partial">편미분</h3>
+    <div class="box def" id="def-partial-derivative"><div class="box-h">편미분</div>
+      <p>두 변수 함수 \(f(x, y)\)에서 \(y\)를 고정하고 \(x\)만 바꿀 때의 변화율</p>
+      <div class="formula">\[ \frac{\partial f}{\partial x} = \lim_{h\to0}\frac{f(x + h, y) - f(x, y)}{h} \]</div>
+      <p>을 \(x\)에 대한 <span class="term">편미분</span> <span class="en">(partial derivative)</span>이라 한다. \(\partial_x f\), \(f_x\)로도 쓴다. 고정한 변수를 밝혀야 할 때는 \((\partial f/\partial x)_y\)처럼 아래첨자로 적는다. 변수가 \(n\)개인 함수 \(f(x_1, \ldots, x_n)\)의 \(\partial f/\partial x_i\)는 나머지 \(n - 1\)개를 모두 고정하고 \(x_i\)로 미분한 것이다.</p>
+    </div>
+    <p>계산은 일변수 미분과 같다. 고정한 변수를 상수로 보면 된다. 이상 기체에서</p>
+    <div class="formula">\[ \Big(\frac{\partial p}{\partial T}\Big)_V = \frac{nR}{V}, \qquad \Big(\frac{\partial p}{\partial V}\Big)_T = -\frac{nRT}{V^2} = -\frac{p}{V} \]</div>
+    <p>이다. 첫째는 부피를 고정한 용기를 데울 때 압력이 오르는 비율이고, 둘째는 온도를 고정하고(등온) 부피를 늘릴 때 압력이 내리는 비율이다. 아래첨자는 지금은 군더더기처럼 보이지만, 3.2절에서는 이것을 빼면 식의 뜻이 달라진다.</p>
+
+    <h3 id="s1-mixed">섞인 편미분</h3>
+    <p>편미분을 한 번 더 하면 이계 편미분 \(\partial^2 f/\partial x^2\), \(\partial^2 f/\partial y^2\)와 <span class="term">섞인 편미분</span> <span class="en">(mixed partial derivative)</span> \(\partial^2 f/\partial y\,\partial x = \partial_y(\partial_x f)\)가 나온다. 이상 기체에서 \(\partial_V(\partial_T p) = \partial_V(nR/V) = -nR/V^2\)이고 \(\partial_T(\partial_V p) = \partial_T(-nRT/V^2) = -nR/V^2\)로, 미분 순서를 바꿔도 같다. 이것은 우연이 아니다.</p>
+    <div class="box thm" id="thm-mixed-partials"><div class="box-h">섞인 편미분의 대칭: 슈바르츠 정리 <span class="en">(Schwarz’s theorem)</span></div>
+      <p>열린 영역에서 \(f\)의 섞인 편미분 \(\partial_x\partial_y f\)와 \(\partial_y\partial_x f\)가 있고 연속이면, 그 영역에서 둘은 같다.</p>
+      <div class="formula" id="eq-mixed-partials">\[ \frac{\partial^2 f}{\partial x\,\partial y} = \frac{\partial^2 f}{\partial y\,\partial x} \]</div>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>두 번 차분한 양 \(\Delta = f(x+h, y+k) - f(x+h, y) - f(x, y+k) + f(x, y)\)를 생각하자. \(\phi(s) = f(s, y+k) - f(s, y)\)로 두면 \(\Delta = \phi(x+h) - \phi(x)\)이고, 평균값 정리를 \(s\)에 대해 한 번, 다시 \(y\) 방향으로 한 번 쓰면 \(\Delta = hk\,\partial_y\partial_x f(\xi, \eta)\)가 된다. 같은 \(\Delta\)를 \(y\) 방향 차분부터 묶으면 \(\Delta = hk\,\partial_x\partial_y f(\xi', \eta')\)이다. \(h, k \to 0\)이면 두 점이 모두 \((x, y)\)로 가고, 섞인 편미분이 연속이므로 두 값이 같아진다. 연속성 조건은 필요하다. \(f = xy(x^2 - y^2)/(x^2 + y^2)\), \(f(0, 0) = 0\)은 원점에서 \(\partial_y\partial_x f = -1\), \(\partial_x\partial_y f = +1\)이다. 섞인 편미분이 원점에서 연속이 아니기 때문이다. 물리에서 만나는 함수는 거의 모두 이 조건을 만족한다.</p>
+      </details>
+    </div>
+
+    <h3 id="s1-total">전미분</h3>
+    <p>이제 두 변수를 함께 조금씩 바꾸자. \(f(x + \Delta x, y + \Delta y) - f(x, y)\)를 두 단계로 나누면</p>
+    <div class="formula">\[ \begin{aligned} \Delta f &= \big[f(x + \Delta x, y + \Delta y) - f(x, y + \Delta y)\big] \\ &\quad + \big[f(x, y + \Delta y) - f(x, y)\big] \end{aligned} \]</div>
+    <p>이다. 첫째 괄호는 \(y + \Delta y\)를 고정하고 \(x\)만 바꾼 것이므로 평균값 정리에 따라 \(\partial_x f(x + \theta\Delta x, y + \Delta y)\,\Delta x\) (\(0 &lt; \theta &lt; 1\))이고, 둘째 괄호는 \(\partial_y f(x, y + \theta'\Delta y)\,\Delta y\)이다. 편미분이 연속이면 이 값들은 \(\Delta x, \Delta y \to 0\)에서 \((x, y)\)의 편미분으로 간다. 따라서 \(\Delta f\)의 1차 부분은 두 편미분에 각 변화량을 곱해 더한 것이다.</p>
+    <div class="box def" id="def-total-differential"><div class="box-h">전미분</div>
+      <p>편미분이 연속인 함수 \(f(x_1, \ldots, x_n)\)의 <span class="term">전미분</span> <span class="en">(total differential)</span>은</p>
+      <div class="formula" id="eq-total-differential">\[ df = \frac{\partial f}{\partial x_1}\,dx_1 + \cdots + \frac{\partial f}{\partial x_n}\,dx_n = \sum_{i=1}^{n} \frac{\partial f}{\partial x_i}\,dx_i \]</div>
+      <p>이다. 작은 변화 \(\Delta x_i\)에 대해 \(\Delta f = \sum_i (\partial f/\partial x_i)\Delta x_i + O(\Delta^2)\)이고, \(df\)는 이 1차 부분이다. 2계 편미분까지 연속이면 나머지는 \(\Delta x_i\Delta x_j\) 꼴의 2차 이상 항 \(O(\Delta^2)\)이다.</p>
+    </div>
+    <p>두 변수이면 \(z = f(x_0, y_0) + f_x(x - x_0) + f_y(y - y_0)\)은 곡면 \(z = f(x, y)\)에 \((x_0, y_0)\)에서 접하는 평면이다. 전미분은 1장의 1차 테일러 다항식(접선)을 여러 변수로 넓힌 것이고, 3.4절에서 2차 항까지 넓힌다. 이상 기체에서는</p>
+    <div class="formula">\[ dp = \frac{nR}{V}\,dT - \frac{nRT}{V^2}\,dV \quad\Longrightarrow\quad \frac{dp}{p} = \frac{dT}{T} - \frac{dV}{V} \]</div>
+    <p>이다. 온도를 1% 올리고 부피를 1% 늘리면 압력은 1차 근사에서 변하지 않는다. 오른쪽처럼 \(p\)로 나눈 꼴은 거듭제곱의 곱에서 늘 쓸 수 있다. \(f = C x^a y^b\)이면 \(\ln f = \ln C + a\ln x + b\ln y\)이므로</p>
+    <div class="formula" id="eq-log-differential">\[ \frac{df}{f} = a\,\frac{dx}{x} + b\,\frac{dy}{y} \]</div>
+    <p>이다. 상대 변화는 지수를 가중치로 더해진다. 실험에서 오차가 어떻게 퍼지는지가 바로 이 식이다.</p>
+
+    <div class="box ex" id="ex-pendulum-g-error"><div class="box-h">진자로 잰 중력 가속도의 오차</div>
+      <p>길이 \(L = 1.200 \pm 0.002\ \text{m}\)인 진자의 주기를 \(T = 2.198 \pm 0.002\ \text{s}\)로 쟀다. \(g = 4\pi^2 L/T^2\)과 그 불확도를 구하라. 길이와 주기 가운데 어느 쪽을 더 정밀하게 재야 하는가?</p>
+      <p><b>풀이.</b> 값은 \(g = 4\pi^2(1.200\ \text{m})/(2.198\ \text{s})^2 = 9.806\ \text{m/s}^2\)이다. 식 <a class="ref" href="#eq-log-differential"></a>에 \(a = 1\), \(b = -2\)를 넣으면</p>
+      <div class="formula" id="eq-pendulum-g">\[ \frac{dg}{g} = \frac{dL}{L} - 2\,\frac{dT}{T} \]</div>
+      <p>이다. 두 항은 \(dL/L = 0.002/1.200 = 1.67 \times 10^{-3}\), \(2\,dT/T = 2 \times 0.002/2.198 = 1.82 \times 10^{-3}\)이다. 오차의 부호를 모르므로 최악의 경우는 두 크기를 더한 \(3.5 \times 10^{-3}\), 곧 \(\pm 0.034\ \text{m/s}^2\)이다. 두 오차가 서로 독립인 무작위 오차라면, 확률론의 결과에 따라 제곱해서 더한 뒤 제곱근을 취한다: \(\sqrt{(1.67)^2 + (1.82)^2} \times 10^{-3} = 2.5 \times 10^{-3}\). 따라서</p>
+      <div class="formula">\[ g = 9.81 \pm 0.02\ \text{m/s}^2 \]</div>
+      <p>이다. 주기의 상대 오차는 지수 2가 붙어 두 배로 들어간다. 그래서 주기는 한 번이 아니라 여러 번 흔들린 시간을 재서 나눈다. 20번 흔들린 시간을 같은 정밀도 \(\pm 0.002\ \text{s}\)로 재면 \(dT\)가 1/20로 줄어 주기의 기여가 \(9 \times 10^{-5}\)로 떨어지고, 이제 길이의 오차가 결과를 정한다.</p>
+      <p><b>다음 항은 몇 차인가.</b> 버린 항은 \((dT/T)^2\)이나 \((dL/L)(dT/T)\) 꼴로, 크기가 \(10^{-6}\) 정도다. 불확도 \(2.5 \times 10^{-3}\)보다 세 자리 작으므로 전미분으로 충분하다.</p>
+    </div>
+
+    <h3 id="s1-exact">완전 미분</h3>
+    <p>전미분을 거꾸로 묻자. 두 함수 \(M(x, y)\), \(N(x, y)\)로 만든 미분 형식 \(M\,dx + N\,dy\)가 주어졌을 때, 이것이 어떤 함수의 전미분인가? 열역학에서 이 질문은 "이 양이 상태만으로 정해지는가"와 같다.</p>
+    <div class="box def" id="def-exact-differential"><div class="box-h">완전 미분</div>
+      <p>미분 형식 \(M\,dx + N\,dy\)에 대해 \(df = M\,dx + N\,dy\), 곧 \(\partial f/\partial x = M\), \(\partial f/\partial y = N\)인 함수 \(f\)가 있으면 이 형식을 <span class="term">완전 미분</span> <span class="en">(exact differential)</span>이라 한다. 완전 미분을 곡선 \(C\)를 따라 적분하면 끝점의 값만 남는다.</p>
+      <div class="formula">\[ \int_C (M\,dx + N\,dy) = \int_C df = f(B) - f(A) \]</div>
+      <p>따라서 적분은 A와 B를 잇는 경로에 기대지 않고, 닫힌 경로를 한 바퀴 돌면 0이다. \(M\), \(N\)의 편미분이 연속이면 완전 미분일 필요조건은</p>
+      <div class="formula" id="eq-exactness-condition">\[ \frac{\partial M}{\partial y} = \frac{\partial N}{\partial x} \]</div>
+      <p>이고, 정의역이 직사각형이나 평면 전체처럼 구멍이 없는 영역(단순 연결 영역)이면 이 조건이 충분조건이기도 하다. 변수가 \(n\)개인 형식 \(\sum_i M_i\,dx_i\)의 조건은 모든 쌍에 대해 \(\partial M_i/\partial x_j = \partial M_j/\partial x_i\)이다.</p>
+    </div>
+    <p>필요조건은 <a class="ref" href="#thm-mixed-partials"></a>에서 바로 나온다. \(M = \partial_x f\), \(N = \partial_y f\)이면 \(\partial_y M = \partial_y\partial_x f = \partial_x\partial_y f = \partial_x N\)이다. 충분조건은 \(f\)를 직접 만들어 보이면 된다.</p>
+    <details class="proof"><summary>충분조건의 증명 (직사각형 영역)</summary>
+      <p>영역 안의 한 점 \((x_0, y_0)\)을 고르고, 먼저 \(x\) 방향으로 간 뒤 \(y\) 방향으로 가는 경로를 따라 적분해서</p>
+      <div class="formula">\[ f(x, y) = \int_{x_0}^{x} M(s, y_0)\,ds + \int_{y_0}^{y} N(x, s)\,ds \]</div>
+      <p>로 정한다. 직사각형 영역이면 이 경로는 영역 안에 있다. 미적분의 기본 정리에 따라 \(\partial_y f = N(x, y)\)이다. \(x\)로 미분할 때 둘째 적분은 피적분 함수가 \(x\)에 기대므로 3.6절의 식 <a class="ref" href="#eq-leibniz-rule"></a>(적분 기호 안의 미분)을 쓴다.</p>
+      <div class="formula">\[ \begin{aligned} \partial_x f &= M(x, y_0) + \int_{y_0}^{y} \partial_x N(x, s)\,ds \\ &= M(x, y_0) + \int_{y_0}^{y} \partial_s M(x, s)\,ds = M(x, y) \end{aligned} \]</div>
+      <p>둘째 등호에서 조건 <a class="ref" href="#eq-exactness-condition"></a>를 썼다. 따라서 \(df = M\,dx + N\,dy\)이다.</p>
+    </details>
+    <div class="callout warn"><strong>구멍이 있는 영역에서는 조건만으로 부족하다</strong><p>원점을 뺀 평면에서 \(M = -y/(x^2 + y^2)\), \(N = x/(x^2 + y^2)\)는 조건 <a class="ref" href="#eq-exactness-condition"></a>를 만족한다(직접 미분해 보라). 그런데 단위원을 한 바퀴 도는 적분은 \(\oint (M\,dx + N\,dy) = \int_0^{2\pi} d\theta = 2\pi\)로 0이 아니다. 이 형식은 편각 \(\theta\)의 미분 \(d\theta\)인데, \(\theta\)는 원점을 한 바퀴 돌면 \(2\pi\)만큼 늘어나서 평면 전체에서 하나의 값을 갖는 함수가 아니다. 무한 직선 전류의 자기장이 꼭 이 모양이다. 5장에서 이 형식을 선적분으로 다시 보고 <a href="ch05.html#thm-conservative-equiv">보존장의 동치 조건</a>과 <a href="ch05.html#ex-wire-not-conservative">직선 전류의 예</a>로 정리한다.</p></div>
+
+    <h3 id="s1-thermo">상태 함수와 경로 함수</h3>
+    <p>열역학에서 내부 에너지 \(U\), 온도 \(T\), 압력 \(p\)처럼 기체의 상태만으로 정해지는 양을 <span class="term">상태 함수</span> <span class="en">(state function)</span>라 한다. 상태 함수의 작은 변화는 완전 미분이다. 반면 기체가 하는 일 \(p\,dV\)와 받는 열은 상태 함수의 미분이 아니다. 단원자 이상 기체 \(n\) 몰을 \((T, V)\)를 변수로 보자. \(U = \tfrac32 nRT\)이므로 정적 열용량은 \(C_V = \tfrac32 nR\)이다. 기체가 하는 작은 일과 받는 작은 열은 제1법칙에서</p>
+    <div class="formula">\[ \begin{aligned} \delta W &= p\,dV = 0\,dT + \frac{nRT}{V}\,dV \\ \delta Q &= dU + \delta W = C_V\,dT + \frac{nRT}{V}\,dV \end{aligned} \]</div>
+    <p>이다. 조건 <a class="ref" href="#eq-exactness-condition"></a>로 시험하자. \(\delta W\)는 \(M = 0\), \(N = nRT/V\)이므로 \(\partial_V M = 0\)이지만 \(\partial_T N = nR/V\)이다. \(\delta Q\)도 \(\partial_V C_V = 0 \ne \partial_T(nRT/V)\)이다. 둘 다 완전 미분이 아니다. 그런데 \(\delta Q\)를 \(T\)로 나누면</p>
+    <div class="formula">\[ \begin{aligned} \frac{\delta Q}{T} &= \frac{C_V}{T}\,dT + \frac{nR}{V}\,dV, \\ \partial_V\Big(\frac{C_V}{T}\Big) &= 0 = \partial_T\Big(\frac{nR}{V}\Big) \end{aligned} \]</div>
+    <p>로 조건을 만족한다. 완전 미분이 아닌 형식에 곱해서 완전 미분으로 만드는 함수를 <span class="term">적분 인자</span> <span class="en">(integrating factor)</span>라 한다(10장의 <a href="ch10.html#eq-integrating-factor">1계 선형 방정식의 적분 인자</a>와 같은 생각이다). 여기서는 \(1/T\)이 적분 인자이고, 그렇게 얻은 상태 함수가 <span class="term">엔트로피</span> <span class="en">(entropy)</span> \(S\)이다. 가역 과정에서 \(dS = \delta Q/T\)이다. 이상 기체에서는 적분해서</p>
+    <div class="formula" id="eq-entropy-ideal-gas">\[ S(T, V) = C_V\ln T + nR\ln V + \text{상수} \]</div>
+    <p>를 얻는다.</p>
+
+    <div class="callout warn"><strong>불완전 미분의 기호는 교재마다 다르다</strong><p>이 책은 완전 미분이 아닌 작은 양을 \(\delta Q\), \(\delta W\)로 쓴다. 가로줄 그은 <i>đQ</i>나 \(dQ\)에 빗금을 친 기호를 쓰는 교재도 있고, 아무 표시 없이 \(dQ\)로 쓰는 교재도 있다. 어느 쪽이든 "\(Q\)라는 상태 함수가 있어서 그 미분이다"라는 뜻이 아니다. 일의 부호도 교재마다 다르다. 이 책은 \(\delta W\)를 기체가 <em>하는</em> 일로 잡아 \(dU = \delta Q - \delta W\)로 쓴다. 기체가 <em>받는</em> 일로 잡는 화학 교재는 \(dU = \delta Q + \delta W\)로 쓴다.</p></div>
+
+    <div class="box ex" id="ex-ideal-gas-two-paths"><div class="box-h">두 경로를 따라 계산한 일, 열, 엔트로피</div>
+      <p>단원자 이상 기체 1.00 몰을 상태 A (\(T = 300\ \text{K}\), \(V = 10.0\ \text{L}\))에서 상태 B (\(600\ \text{K}\), \(20.0\ \text{L}\))로 가역적으로 옮긴다. 경로 1은 300 K에서 20.0 L까지 등온 팽창한 뒤(A→C) 부피를 고정하고 600 K까지 데운다(C→B). 경로 2는 먼저 10.0 L에서 600 K까지 데운 뒤(A→D) 600 K에서 20.0 L까지 등온 팽창한다(D→B). 두 경로에서 \(W\), \(Q\), \(\Delta U\), \(\Delta S\)를 구하라.</p>
+      <p><b>풀이.</b> 등온 팽창의 일은 \(\int p\,dV = nRT\int dV/V = nRT\ln(V_2/V_1)\)이고, 정적 가열에서는 일이 없다. 부피비가 2이므로</p>
+      <div class="formula">\[ \begin{aligned} W_1 &= nR(300\ \text{K})\ln 2 = 1.73\ \text{kJ} \\ W_2 &= nR(600\ \text{K})\ln 2 = 3.46\ \text{kJ} \end{aligned} \]</div>
+      <p>이다. 내부 에너지 변화는 두 경로에서 같다: \(\Delta U = \tfrac32 nR(300\ \text{K}) = 3.74\ \text{kJ}\). 열은 \(Q = \Delta U + W\)이므로 \(Q_1 = 5.47\ \text{kJ}\), \(Q_2 = 7.20\ \text{kJ}\)으로 다르다. 엔트로피 변화는 각 구간의 \(\int\delta Q/T\)를 더한다. 등온 구간에서는 \(Q/T\), 정적 구간에서는 \(\int C_V\,dT/T = C_V\ln(T_2/T_1)\)이다.</p>
+      <div class="formula">\[ \begin{aligned} \Delta S_1 &= \frac{1.729\ \text{kJ}}{300\ \text{K}} + \tfrac32 R\ln 2 \\ &= 5.76 + 8.64 = 14.41\ \text{J/K} \\ \Delta S_2 &= \tfrac32 R\ln 2 + \frac{3.458\ \text{kJ}}{600\ \text{K}} \\ &= 8.64 + 5.76 = 14.41\ \text{J/K} \end{aligned} \]</div>
+      <p>두 값이 같고, 식 <a class="ref" href="#eq-entropy-ideal-gas"></a>이 주는 \(\Delta S = C_V\ln 2 + nR\ln 2 = \tfrac52 R\ln 2 = 14.41\ \text{J/K}\)와도 같다. 그림 3-1에서 일은 경로 아래의 넓이이므로, 위쪽으로 돌아가는 경로 2가 일을 두 배 한다. 일과 열은 경로에 기대고, \(U\)와 \(S\)는 기대지 않는다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 300" role="img" aria-label="p-V 도표에서 상태 A에서 B로 가는 두 경로. 경로 1은 300 K 등온선을 따라 팽창한 뒤 부피를 고정하고 가열하고, 경로 2는 먼저 가열한 뒤 600 K 등온선을 따라 팽창한다"><defs><clipPath id="f0301-clip"><rect x="56" y="20" width="404" height="230"/></clipPath></defs><line x1="136.8" y1="20" x2="136.8" y2="250" class="s-grid"/><line x1="217.6" y1="20" x2="217.6" y2="250" class="s-grid"/><line x1="298.4" y1="20" x2="298.4" y2="250" class="s-grid"/><line x1="379.2" y1="20" x2="379.2" y2="250" class="s-grid"/><line x1="460" y1="20" x2="460" y2="250" class="s-grid"/><line x1="56" y1="208.2" x2="460" y2="208.2" class="s-grid"/><line x1="56" y1="166.4" x2="460" y2="166.4" class="s-grid"/><line x1="56" y1="124.5" x2="460" y2="124.5" class="s-grid"/><line x1="56" y1="82.7" x2="460" y2="82.7" class="s-grid"/><line x1="56" y1="40.9" x2="460" y2="40.9" class="s-grid"/><line x1="56" y1="250" x2="460" y2="250" class="s-line"/><line x1="56" y1="20" x2="56" y2="250" class="s-line"/><text x="56" y="270" class="t-dim" style="font-size:15px" text-anchor="middle">0</text><text x="136.8" y="270" class="t-dim" style="font-size:15px" text-anchor="middle">5</text><text x="217.6" y="270" class="t-dim" style="font-size:15px" text-anchor="middle">10</text><text x="298.4" y="270" class="t-dim" style="font-size:15px" text-anchor="middle">15</text><text x="379.2" y="270" class="t-dim" style="font-size:15px" text-anchor="middle">20</text><text x="460" y="270" class="t-dim" style="font-size:15px" text-anchor="middle">25</text><text x="48" y="255" class="t-dim" style="font-size:15px" text-anchor="end">0</text><text x="48" y="213.2" class="t-dim" style="font-size:15px" text-anchor="end">100</text><text x="48" y="171.4" class="t-dim" style="font-size:15px" text-anchor="end">200</text><text x="48" y="129.5" class="t-dim" style="font-size:15px" text-anchor="end">300</text><text x="48" y="87.7" class="t-dim" style="font-size:15px" text-anchor="end">400</text><text x="48" y="45.9" class="t-dim" style="font-size:15px" text-anchor="end">500</text><path d="M217.6,250L217.6,145.7 225.7,150.7 233.8,155.2 241.8,159.3 249.9,163.1 258,166.6 266.1,169.8 274.2,172.7 282.2,175.5 290.3,178.1 298.4,180.5 306.5,182.7 314.6,184.8 322.6,186.8 330.7,188.6 338.8,190.4 346.9,192.1 355,193.6 363,195.1 371.1,196.5 379.2,197.8 379.2,250Z" class="f-acc-soft" style="stroke:none"/><path d="M120.6,-10.8l8.1,29 8.1,23.2 8.1,18.9 8.1,15.9 8,13.3 8.1,11.5 8.1,9.9 8.1,8.7 8.1,7.7 8,6.8 8.1,6.1 8.1,5.5 8.1,5 8.1,4.5 8,4.1 8.1,3.8 8.1,3.5 8.1,3.2 8.1,2.9 8,2.8 8.1,2.6 8.1,2.4 8.1,2.2 8.1,2.1 8,2 8.1,1.8 8.1,1.8 8.1,1.7 8.1,1.5 8,1.5 8.1,1.4 8.1,1.3 8.1,1.3 8.1,1.2 8,1.2 8.1,1.1 8.1,1 8.1,1 8.1,1 8,0.9 8.1,0.9 8.1,0.9" class="s-grid" style="stroke-width:1.5" stroke-dasharray="5 4" clip-path="url(#f0301-clip)"/><path d="M120.6,-271.5l8.1,57.9 8.1,46.4 8.1,37.9 8.1,31.6 8,26.8 8.1,22.9 8.1,19.8 8.1,17.4 8.1,15.4 8,13.6 8.1,12.2 8.1,11 8.1,9.9 8.1,9 8,8.3 8.1,7.6 8.1,6.9 8.1,6.4 8.1,6 8,5.5 8.1,5.1 8.1,4.8 8.1,4.5 8.1,4.2 8,4 8.1,3.7 8.1,3.5 8.1,3.3 8.1,3.1 8,3 8.1,2.8 8.1,2.7 8.1,2.5 8.1,2.5 8,2.3 8.1,2.2 8.1,2.1 8.1,2 8.1,1.9 8,1.9 8.1,1.8 8.1,1.7" class="s-grid" style="stroke-width:1.5" stroke-dasharray="5 4" clip-path="url(#f0301-clip)"/><path d="M217.6,145.7l8.1,5 8.1,4.5 8,4.1 8.1,3.8 8.1,3.5 8.1,3.2 8.1,2.9 8,2.8 8.1,2.6 8.1,2.4 8.1,2.2 8.1,2.1 8,2 8.1,1.8 8.1,1.8 8.1,1.7 8.1,1.5 8,1.5 8.1,1.4 8.1,1.3 0,-52.1" class="s-acc" style="stroke-width:3" fill="none"/><path d="M217.6,145.7l0,-104.3 0,0 8.1,9.9 8.1,9 8,8.3 8.1,7.6 8.1,6.9 8.1,6.4 8.1,6 8,5.5 8.1,5.1 8.1,4.8 8.1,4.5 8.1,4.2 8,4 8.1,3.7 8.1,3.5 8.1,3.3 8.1,3.1 8,3 8.1,2.8 8.1,2.7" class="s-acc2" style="stroke-width:3" fill="none"/><circle cx="217.6" cy="145.7" r="4.5" class="f-dim"/><text x="207.6" y="163.7" class="t-math" style="font-size:16px" text-anchor="end">A</text><circle cx="379.2" cy="145.7" r="4.5" class="f-dim"/><text x="389.2" y="139.7" class="t-math" style="font-size:16px" text-anchor="start">B</text><circle cx="379.2" cy="197.8" r="4.5" class="f-dim"/><text x="389.2" y="215.8" class="t-math" style="font-size:16px" text-anchor="start">C</text><circle cx="217.6" cy="41.4" r="4.5" class="f-dim"/><text x="227.6" y="35.4" class="t-math" style="font-size:16px" text-anchor="start">D</text><text x="440.6" y="152.3" class="t-dim" style="font-size:15px" text-anchor="end">600 K</text><text x="440.6" y="196.2" class="t-dim" style="font-size:15px" text-anchor="end">300 K</text><text x="272.5" y="160.2" class="t-math acc" style="font-size:16px" text-anchor="start">경로 1</text><text x="285.5" y="91.1" class="t-math acc2" style="font-size:16px" text-anchor="start">경로 2</text><text x="298.4" y="227" class="t-math" style="font-size:16px" text-anchor="middle"><tspan font-style="italic">W</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan> = 1.73 kJ</text><text x="460" y="294" class="t-dim" style="font-size:15px" text-anchor="end">부피 <tspan font-style="italic">V</tspan> (L)</text><text x="62" y="32" class="t-dim" style="font-size:15px" text-anchor="start">압력 <tspan font-style="italic">p</tspan> (kPa)</text></svg>
+      <figcaption><b>그림 3-1.</b> <a class="ref" href="#ex-ideal-gas-two-paths"></a>의 두 경로를 \(p\)-\(V\) 도표에 그린 것. 점선은 300 K와 600 K의 등온선 \(p = nRT/V\)이다. 경로 1(A→C→B)이 하는 일 \(W_1\)은 색칠한 넓이이고, 경로 2(A→D→B)는 높은 압력에서 팽창하므로 일이 두 배다. A와 B는 압력이 249 kPa로 같다. 등온선은 실제 식으로 계산해 그렸다.</figcaption>
+    </figure>
+    <p>열역학 제1법칙과 엔트로피를 합치면 가역 과정에서 \(dU = T\,dS - p\,dV\)이다. 이 식은 \(U\)를 \(S\)와 \(V\)의 함수로 볼 때 \(T = (\partial U/\partial S)_V\), \(p = -(\partial U/\partial V)_S\)라는 뜻이다. \(dU\)는 완전 미분이므로 조건 <a class="ref" href="#eq-exactness-condition"></a>를 \(M = T\), \(N = -p\)에 쓰면</p>
+    <div class="formula" id="eq-maxwell-from-u">\[ \Big(\frac{\partial T}{\partial V}\Big)_S = -\Big(\frac{\partial p}{\partial S}\Big)_V \]</div>
+    <p>을 얻는다. 단열 팽창할 때의 온도 변화가 정적 상태에서 엔트로피를 넣을 때의 압력 변화와 연결된다. 이런 식을 <span class="term">맥스웰 관계식</span> <span class="en">(Maxwell relation)</span>이라 하고, 3.2절과 3.3절에서 나머지를 만든다.</p>
+  </section>
+
+  <!-- ============================================================ 3.2 -->
+  <section id="s2">
+    <h2>연쇄 법칙과 고정 변수</h2>
+    <p>평면의 점은 \((x, y)\)로도, 극좌표 \((r, \theta)\)로도 나타낼 수 있다. \(r = \sqrt{x^2 + y^2}\)에서 \((\partial r/\partial x)_y = x/r = \cos\theta\)이고, \(x = r\cos\theta\)에서 \((\partial x/\partial r)_\theta = \cos\theta\)이다. 두 값은 서로 역수가 아니다. 앞의 미분은 \(y\)를 고정했고 뒤의 미분은 \(\theta\)를 고정했기 때문이다. \(\theta\)를 고정하면, 곧 원점에서 나가는 반직선을 따라가면 \(r = x/\cos\theta\)이므로 \((\partial r/\partial x)_\theta = 1/\cos\theta\)이고, 이것은 \((\partial x/\partial r)_\theta\)의 역수가 맞다. 열역학에서는 같은 일이 더 자주 생긴다. 기체의 상태는 \((T, V)\), \((T, p)\), \((S, V)\), \((S, p)\) 어느 쌍으로도 정할 수 있고, 같은 \(U\)라도 어느 쌍의 함수로 보느냐에 따라 편미분이 다르다. 이 절에서는 변수를 바꾸는 규칙을 세우고, 그것으로 \(C_p - C_V\)를 구한다.</p>
+
+    <h3 id="s2-chain">연쇄 법칙</h3>
+    <p>\(f(x, y)\)에서 \(x\)와 \(y\)가 모두 시간 \(t\)에 따라 바뀌면, 전미분 <a class="ref" href="#eq-total-differential"></a>를 \(dt\)로 나눠</p>
+    <div class="formula" id="eq-chain-rule-path">\[ \frac{df}{dt} = \frac{\partial f}{\partial x}\frac{dx}{dt} + \frac{\partial f}{\partial y}\frac{dy}{dt} \]</div>
+    <p>를 얻는다. \(x\)와 \(y\)가 다른 두 변수 \((u, v)\)의 함수이면, \(v\)를 고정하고 \(u\)만 바꾸는 경로에 같은 식을 쓴다. 고정 변수까지 적으면</p>
+    <div class="formula" id="eq-chain-rule-multi">\[ \Big(\frac{\partial f}{\partial u}\Big)_v = \Big(\frac{\partial f}{\partial x}\Big)_y\Big(\frac{\partial x}{\partial u}\Big)_v + \Big(\frac{\partial f}{\partial y}\Big)_x\Big(\frac{\partial y}{\partial u}\Big)_v \]<div class="where">변수가 \(n\)개이면 \(\partial f/\partial u_j = \sum_i (\partial f/\partial x_i)(\partial x_i/\partial u_j)\)이다. 행렬로 보면 편미분을 늘어놓은 행렬의 곱이며, 3.5절의 야코비 행렬식이 여기서 나온다.</div></div>
+    <p>이다. 이것이 <span class="term">다변수 연쇄 법칙</span> <span class="en">(multivariable chain rule)</span>이다. \(f\)가 \(x\)를 통해, 그리고 \(y\)를 통해 \(u\)에 기대므로 두 길의 기여를 더한다.</p>
+
+    <div class="box ex" id="ex-moving-thermometer"><div class="box-h">달리는 차에서 잰 기온의 변화율</div>
+      <p>한랭 전선이 다가와 어느 지점에서든 기온이 시간당 \(2.0\ \text{K}\)씩 내려가고, 같은 시각에 북쪽으로 \(1\ \text{km}\) 갈 때마다 기온이 \(0.050\ \text{K}\)씩 낮다. 시속 60 km로 북쪽으로 달리는 차의 온도계는 시간당 몇 K씩 내려가는가?</p>
+      <p><b>풀이.</b> 기온 \(T(x, t)\)에서 \((\partial T/\partial t)_x = -2.0\ \text{K/h}\), \((\partial T/\partial x)_t = -0.050\ \text{K/km}\), \(dx/dt = 60\ \text{km/h}\)이다. 식 <a class="ref" href="#eq-chain-rule-path"></a>에 따라</p>
+      <div class="formula">\[ \begin{aligned} \frac{dT}{dt} &= \Big(\frac{\partial T}{\partial t}\Big)_x + \Big(\frac{\partial T}{\partial x}\Big)_t\frac{dx}{dt} \\ &= -2.0 + (-0.050)(60) = -5.0\ \text{K/h} \end{aligned} \]</div>
+      <p>이다. 시간이 흘러서 2.0 K/h, 더 추운 곳으로 가서 3.0 K/h만큼 식는다. 단위는 \((\text{K/km})(\text{km/h}) = \text{K/h}\)이다. 3차원으로 넓힌 \(dT/dt = \partial T/\partial t + \mathbf v\cdot\nabla T\)를 유체역학에서 <span class="term">물질 도함수</span> <span class="en">(material derivative)</span>라 한다(\(\nabla T\)는 4장의 <a href="ch04.html#def-gradient">기울기</a>).</p>
+    </div>
+
+    <h3 id="s2-fixed">세 변수 사이의 관계</h3>
+    <p>기체의 \(p\), \(V\), \(T\)는 상태 방정식 하나로 묶여 있어서 둘만 자유롭다. 일반적으로 세 변수가 \(F(x, y, z) = 0\)으로 묶여 있으면, 어느 둘을 독립 변수로 골라도 된다. \(x = x(y, z)\)와 \(y = y(x, z)\)의 전미분은</p>
+    <div class="formula">\[ \begin{aligned} dx &= \Big(\frac{\partial x}{\partial y}\Big)_z dy + \Big(\frac{\partial x}{\partial z}\Big)_y dz \\ dy &= \Big(\frac{\partial y}{\partial x}\Big)_z dx + \Big(\frac{\partial y}{\partial z}\Big)_x dz \end{aligned} \]</div>
+    <p>이다. 둘째 식을 첫째 식에 넣으면</p>
+    <div class="formula">\[ \begin{aligned} dx &= \Big(\frac{\partial x}{\partial y}\Big)_z\Big(\frac{\partial y}{\partial x}\Big)_z dx \\ &\quad + \Big[\Big(\frac{\partial x}{\partial y}\Big)_z\Big(\frac{\partial y}{\partial z}\Big)_x + \Big(\frac{\partial x}{\partial z}\Big)_y\Big]dz \end{aligned} \]</div>
+    <p>이다. \(x\)와 \(z\)는 서로 독립으로 바꿀 수 있으므로 양변에서 \(dx\)와 \(dz\)의 계수가 각각 같아야 한다. \(dx\)의 계수에서 첫째 관계가, \(dz\)의 계수가 0이라는 데서 둘째 관계가 나온다.</p>
+    <div class="box thm" id="thm-partial-relations"><div class="box-h">역수 관계 <span class="en">(reciprocal relation)</span>와 순환 관계 <span class="en">(cyclic relation)</span></div>
+      <p>세 변수가 \(F(x, y, z) = 0\)으로 묶여 있고 필요한 편미분이 0이 아니면</p>
+      <div class="formula" id="eq-reciprocal-relation">\[ \Big(\frac{\partial x}{\partial y}\Big)_z = \frac{1}{(\partial y/\partial x)_z} \]</div>
+      <div class="formula" id="eq-cyclic-relation">\[ \Big(\frac{\partial x}{\partial y}\Big)_z\Big(\frac{\partial y}{\partial z}\Big)_x\Big(\frac{\partial z}{\partial x}\Big)_y = -1 \]</div>
+      <p>이다. 역수 관계는 <b>고정 변수가 같을 때만</b> 성립한다. 순환 관계 <a class="ref" href="#eq-cyclic-relation"></a>은 \(dz\)의 계수 \((\partial x/\partial y)_z(\partial y/\partial z)_x + (\partial x/\partial z)_y = 0\)에 \((\partial x/\partial z)_y = 1/(\partial z/\partial x)_y\)를 넣어 얻는다.</p>
+    </div>
+    <p>이상 기체 \(pV = nRT\)로 확인하자. \((\partial p/\partial V)_T = -nRT/V^2\), \((\partial V/\partial T)_p = nR/p\), \((\partial T/\partial p)_V = V/nR\)이므로 곱은 \(-nRT/(pV) = -1\)이다. 세 편미분 가운데 \((\partial p/\partial V)_T\)만 음수라 곱이 \(-1\)이다. "분수처럼 약분하면 1"이라는 어림은 고정 변수가 모두 달라서 틀린다.</p>
+    <p>마지막으로, 함수 \(f(x, y)\)를 \(x\)로 미분하되 \(y\) 대신 다른 변수 \(z\)를 고정하고 싶을 때가 있다. \(df = f_x\,dx + f_y\,dy\)에 \(dy = (\partial y/\partial x)_z dx + (\partial y/\partial z)_x dz\)를 넣고 \(dz = 0\)으로 두면</p>
+    <div class="formula" id="eq-change-fixed-variable">\[ \Big(\frac{\partial f}{\partial x}\Big)_z = \Big(\frac{\partial f}{\partial x}\Big)_y + \Big(\frac{\partial f}{\partial y}\Big)_x\Big(\frac{\partial y}{\partial x}\Big)_z \]</div>
+    <p>이다. 고정 변수를 \(y\)에서 \(z\)로 바꾸면, \(z\)를 지키느라 \(y\)가 따라 변하는 효과(둘째 항)가 더해진다.</p>
+    <div class="callout warn"><strong>고정 변수를 빼면 다른 양이 된다</strong><p>이상 기체의 내부 에너지 \(U = \tfrac32 nRT\)는 온도에만 기대므로 \((\partial U/\partial V)_T = 0\)이다. 그런데 \(dU = T\,dS - p\,dV\)에서 \((\partial U/\partial V)_S = -p\)이다. 같은 "\(\partial U/\partial V\)"인데 하나는 0이고 하나는 음수다. 등온 팽창에서는 기체가 한 일만큼 열이 들어와 에너지가 그대로이고, 단열 팽창에서는 열이 들어오지 않아 한 일만큼 에너지가 준다. 열역학 식에서 \(\partial U/\partial V\)처럼 고정 변수 없이 쓴 편미분을 보면, 먼저 무엇이 고정되었는지 물어야 한다.</p></div>
+
+    <div class="box ex" id="ex-maxwell-relation"><div class="box-h">맥스웰 관계식과 \(C_p - C_V\): 이상 기체와 판데르발스 기체</div>
+      <p>(가) \(U - TS\)의 미분이 완전 미분임을 써서 \((\partial S/\partial V)_T = (\partial p/\partial T)_V\)를 보여라. (나) 정압 열용량과 정적 열용량의 차를 상태 방정식만으로 나타내라. (다) 이상 기체에서 \(C_p - C_V\)를 구하라. (라) 판데르발스 기체 \(p = nRT/(V - nb) - an^2/V^2\)에서 \(C_p - C_V\)를 구하고, CO\(_2\) 1.00 몰, 300 K에서 부피가 1.00 L일 때와 24.6 L일 때의 값을 계산하라. CO\(_2\)의 상수는 \(a = 0.364\ \text{Pa}\cdot\text{m}^6/\text{mol}^2\), \(b = 4.27 \times 10^{-5}\ \text{m}^3/\text{mol}\)이다(R. C. Weast 편, <i>CRC Handbook of Chemistry and Physics</i>, 53판, Chemical Rubber Co. 1972의 판데르발스 상수 표).</p>
+      <p><b>풀이.</b> (가) \(dU = T\,dS - p\,dV\)이므로 \(d(U - TS) = dU - T\,dS - S\,dT = -S\,dT - p\,dV\)이다. \(U - TS\)는 상태 함수(3.3절의 <span class="term">헬름홀츠 자유 에너지</span> <span class="en">(Helmholtz free energy)</span> \(F\))이므로 이 형식은 \((T, V)\)에 대한 완전 미분이다. 조건 <a class="ref" href="#eq-exactness-condition"></a>를 \(M = -S\), \(N = -p\)에 쓰면</p>
+      <div class="formula" id="eq-maxwell-tv">\[ \Big(\frac{\partial S}{\partial V}\Big)_T = \Big(\frac{\partial p}{\partial T}\Big)_V \]</div>
+      <p>이다. 왼쪽(등온 팽창에서 엔트로피가 느는 비율)은 직접 재기 어렵지만, 오른쪽은 밀폐 용기를 데우며 압력계를 읽으면 된다.</p>
+      <p>(나) 열용량은 \(\delta Q = T\,dS\)에서 \(C_V = T(\partial S/\partial T)_V\), \(C_p = T(\partial S/\partial T)_p\)이다. 식 <a class="ref" href="#eq-change-fixed-variable"></a>를 \(f = S\), \(x = T\), \(y = V\), \(z = p\)로 쓰면 \((\partial S/\partial T)_p = (\partial S/\partial T)_V + (\partial S/\partial V)_T(\partial V/\partial T)_p\)이고, 여기에 식 <a class="ref" href="#eq-maxwell-tv"></a>을 넣는다. 다시 순환 관계로 \((\partial V/\partial T)_p = -(\partial p/\partial T)_V/(\partial p/\partial V)_T\)를 쓰면</p>
+      <div class="formula" id="eq-cp-cv">\[ \begin{aligned} C_p - C_V &= T\Big(\frac{\partial p}{\partial T}\Big)_V\Big(\frac{\partial V}{\partial T}\Big)_p \\ &= -T\,\frac{(\partial p/\partial T)_V^2}{(\partial p/\partial V)_T} = \frac{TV\alpha^2}{\kappa_T} \end{aligned} \]<div class="where">\(\alpha = \frac1V(\partial V/\partial T)_p\)는 <span class="term">부피 팽창 계수</span> <span class="en">(thermal expansion coefficient)</span>, \(\kappa_T = -\frac1V(\partial V/\partial p)_T\)는 <span class="term">등온 압축률</span> <span class="en">(isothermal compressibility)</span>이다. 마지막 꼴은 순환 관계로 \((\partial p/\partial T)_V = \alpha/\kappa_T\)를 써서 얻는다.</div></div>
+      <p>이다. 안정한 물질은 누르면 부피가 줄므로 \(\kappa_T > 0\)이고, 따라서 언제나 \(C_p \ge C_V\)이다.</p>
+      <p>(다) 이상 기체는 \((\partial p/\partial T)_V = nR/V\), \((\partial p/\partial V)_T = -nRT/V^2\)이므로 \(C_p - C_V = T(nR/V)^2 \cdot V^2/(nRT) = nR\)이다. 단원자 기체는 \(C_V = \tfrac32 nR\), \(C_p = \tfrac52 nR\)이다.</p>
+      <p>(라) 판데르발스 기체는 \((\partial p/\partial T)_V = nR/(V - nb)\), \((\partial p/\partial V)_T = -nRT/(V - nb)^2 + 2an^2/V^3\)이다. 식 <a class="ref" href="#eq-cp-cv"></a>의 둘째 꼴에 넣고 분자와 분모를 \(nRT/(V - nb)^2\)으로 나누면</p>
+      <div class="formula" id="eq-cp-cv-vdw">\[ C_p - C_V = \frac{nR}{1 - \dfrac{2an\,(V - nb)^2}{RT\,V^3}} \]</div>
+      <p>이다. \(a \to 0\)이면 \(nR\)로 돌아간다. 분모의 둘째 항은 차원이 없다: \(\text{Pa}\cdot\text{m}^6\text{/mol}^2 \times \text{mol} \times \text{m}^6 / (\text{J/mol} \times \text{m}^9) = \text{Pa}\cdot\text{m}^3/\text{J} = 1\).</p>
+      <p><b>숫자로 보기.</b> \(RT = 2494\ \text{J/mol}\)이다. \(V = 1.00\ \text{L}\)이면 둘째 항은 \(2(0.364)(9.57 \times 10^{-4})^2/(2494 \times 10^{-9}) = 0.267\)이므로 \(C_p - C_V = R/0.733 = 1.37R = 11.4\ \text{J/(mol}\cdot\text{K)}\)이다. 이때 압력은 22.4 bar로, 이상 기체 값 24.9 bar보다 10% 낮다. \(V = 24.6\ \text{L}\)(약 1 bar)이면 둘째 항은 \(0.0118\)이고 \(C_p - C_V = 1.012R = 8.41\ \text{J/(mol}\cdot\text{K)}\)로 이상 기체 값에 가깝다. 분자 사이의 인력(\(a\))이 있으면 같은 압력에서 데울 때 부피가 더 많이 는다. 그러면 대기를 미는 일 \(p\,dV\)에 더해, 서로 끄는 분자를 떼어 놓는 에너지 \((an^2/V^2)\,dV\)(<a class="ref" href="#prob-vdw-free-expansion"></a>)까지 열로 넣어야 하므로 차가 커진다. 액체-기체 임계점에서는 \((\partial p/\partial V)_T = 0\)이 되어 분모가 0이 되고, \(C_p\)가 한없이 커진다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 3.3 -->
+  <section id="s3">
+    <h2>르장드르 변환</h2>
+    <p>3.1절에서 본 \(dU = T\,dS - p\,dV\)는 내부 에너지를 \(S\)와 \(V\)의 함수로 볼 때 가장 깔끔하다. \(U(S, V)\) 하나를 알면 \(T = (\partial U/\partial S)_V\)와 \(p = -(\partial U/\partial V)_S\)가 미분으로 나오고, 다음 예제에서 보듯 상태 방정식과 열용량까지 모두 나온다. 문제는 실험실에서 엔트로피를 고정하기가 어렵다는 것이다. 우리가 손쉽게 고정하는 것은 온도(열 저장고에 담근다)와 압력(대기에 열어 둔다)이다. 그래서 \(T\)나 \(p\)를 독립 변수로 하면서 \(U(S, V)\)와 똑같은 정보를 담은 함수가 필요하다. 이 절의 <span class="term">르장드르 변환</span> <span class="en">(Legendre transform)</span>이 그것을 만든다.</p>
+
+    <h3 id="s3-naive">그냥 변수를 바꾸면 정보를 잃는다</h3>
+    <p>가장 쉬운 방법은 \(T = \partial U/\partial S\)를 \(S\)에 대해 풀어 \(U\)에 넣는 것이다. 이렇게 하면 왜 안 되는지 용수철로 보자. 자연 길이 \(x_0\), 용수철 상수 \(k\)인 용수철의 에너지는 \(U(x) = \tfrac12 k(x - x_0)^2\)이고, 길이 \(x\)를 유지하는 데 드는 힘은 \(F = dU/dx = k(x - x_0)\)이다. \(U\)를 \(F\)로 바꿔 쓰면 \(U = F^2/2k\)이다. 그런데 이 식에는 \(x_0\)이 없다. 자연 길이가 다른 용수철들이 모두 같은 \(U(F)\)를 준다. \(U(F) = F^2/2k\)에서 \(U(x)\)를 되살리려면 \(F = dU/dx\)를 넣은 미분방정식 \(U = (dU/dx)^2/2k\)를 풀어야 하고, 그 해 \(\tfrac12 k(x - x_0)^2\)의 \(x_0\)은 정해지지 않는다. 변수를 바꾸면서 정보를 잃은 것이다.</p>
+
+    <h3 id="s3-geometry">접선으로 곡선을 나타내기</h3>
+    <p>정보를 잃지 않는 방법은 기하에 있다. 아래로 볼록한 곡선 \(y = f(x)\)는 그 접선들이 감싸서 만드는 모양이다(그림 3-2). 접선 하나는 기울기 \(p\)와 \(y\)절편으로 정해지므로, "기울기가 \(p\)인 접선의 절편"을 \(p\)의 함수로 주면 곡선 전체가 정해진다. 점 \(x\)에서의 접선 \(Y = f(x) + p(X - x)\)의 절편은 \(f(x) - px\)이다. 부호를 바꾼 것을 새 함수로 삼는다.</p>
+    <div class="box def" id="def-legendre-transform"><div class="box-h">르장드르 변환</div>
+      <p>구간에서 \(f''(x) > 0\)인 함수 \(f(x)\)를 생각하자. 그러면 \(p = f'(x)\)는 \(x\)의 증가 함수이므로 거꾸로 풀어 \(x = x(p)\)로 쓸 수 있다. \(f\)의 <span class="term">르장드르 변환</span>은</p>
+      <div class="formula" id="eq-legendre-def">\[ g(p) = p\,x(p) - f\big(x(p)\big), \qquad p = f'(x) \]</div>
+      <p>이다. \(-g(p)\)는 기울기가 \(p\)인 접선의 \(y\)절편이다. 변수가 여럿이면 바꾸려는 변수에 대해서만 같은 일을 하고, 나머지 변수는 그대로 둔다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 300" role="img" aria-label="볼록한 곡선 y = f(x)에 기울기 p인 접선을 긋고, 접선이 세로축과 만나는 절편이 −g(p)임을 보이는 그림"><defs><clipPath id="f0302-clip"><rect x="40" y="16" width="420" height="254"/></clipPath></defs><line x1="40" y1="219.2" x2="460" y2="219.2" class="s-line"/><line x1="130" y1="16" x2="130" y2="270" class="s-line"/><line x1="40" y1="181.1" x2="460" y2="270" class="s-grid" clip-path="url(#f0302-clip)" style="stroke-width:1.2"/><line x1="40" y1="204.9" x2="460" y2="160.5" class="s-grid" clip-path="url(#f0302-clip)" style="stroke-width:1.2"/><line x1="40" y1="236.7" x2="460" y2="103.3" class="s-grid" clip-path="url(#f0302-clip)" style="stroke-width:1.2"/><line x1="40" y1="408.1" x2="460" y2="8.1" class="s-grid" clip-path="url(#f0302-clip)" style="stroke-width:1.2"/><path d="M40,179.5l3,0.9 3,1 3,0.8 3,0.9 3,0.8 3,0.8 3,0.7 3,0.7 3,0.7 3,0.6 3,0.7 3,0.6 3,0.5 3,0.5 3,0.5 3,0.5 3,0.4 3,0.4 3,0.4 3,0.3 3,0.3 3,0.3 3,0.2 3,0.2 3,0.2 3,0.1 3,0.2 3,0 3,0.1 3,0 3,0 3,-0.1 3,0 3,-0.2 3,-0.1 3,-0.2 3,-0.2 3,-0.2 3,-0.3 3,-0.3 3,-0.3 3,-0.4 3,-0.4 3,-0.4 3,-0.5 3,-0.5 3,-0.5 3,-0.5 3,-0.6 3,-0.7 3,-0.6 3,-0.7 3,-0.7 3,-0.7 3,-0.8 3,-0.8 3,-0.9 3,-0.8 3,-1 3,-0.9 3,-1 3,-1 3,-1 3,-1.1 3,-1 3,-1.2 3,-1.1 3,-1.2 3,-1.2 3,-1.3 3,-1.3 3,-1.3 3,-1.4 3,-1.3 3,-1.4 3,-1.5 3,-1.5 3,-1.5 3,-1.5 3,-1.6 3,-1.6 3,-1.6 3,-1.7 3,-1.7 3,-1.7 3,-1.8 3,-1.8 3,-1.8 3,-1.9 3,-1.8 3,-2 3,-1.9 3,-2 3,-2 3,-2.1 3,-2.1 3,-2.1 3,-2.1 3,-2.2 3,-2.2 3,-2.2 3,-2.3 3,-2.3 3,-2.3 3,-2.4 3,-2.4 3,-2.4 3,-2.5 3,-2.5 3,-2.5 3,-2.6 3,-2.5 3,-2.7 3,-2.6 3,-2.7 3,-2.7 3,-2.8 3,-2.7 3,-2.8 3,-2.9 3,-2.9 3,-2.9 3,-2.9 3,-3 3,-3 3,-3 3,-3.1 3,-3.1 3,-3.1 3,-3.2 3,-3.1 3,-3.3 3,-3.2 3,-3.3 3,-3.3 3,-3.4 3,-3.4 3,-3.4 3,-3.4 3,-3.5" class="s-line" style="stroke:var(--text);stroke-width:2.6" fill="none" clip-path="url(#f0302-clip)"/><line x1="40" y1="308.1" x2="460" y2="41.4" class="s-acc" style="stroke-width:2.4" clip-path="url(#f0302-clip)"/><circle cx="310" cy="136.7" r="5" class="f-acc"/><circle cx="130" cy="250.9" r="5" class="f-acc2"/><line x1="310" y1="136.7" x2="310" y2="219.2" class="s-line" stroke-dasharray="4 4"/><text x="310" y="239.2" class="t-math" style="font-size:16px" text-anchor="middle"><tspan font-style="italic">x</tspan></text><line x1="358" y1="106.2" x2="418" y2="106.2" class="s-acc" style="stroke-width:1.5"/><line x1="418" y1="106.2" x2="418" y2="68.1" class="s-acc" style="stroke-width:1.5"/><text x="388" y="124.2" class="t-math acc" style="font-size:15px" text-anchor="middle">1</text><text x="426" y="92.1" class="t-math acc" style="font-size:16px" text-anchor="start"><tspan font-style="italic">p</tspan></text><text x="120" y="255.9" class="t-math acc2" style="font-size:16px" text-anchor="end">−<tspan font-style="italic">g</tspan>(<tspan font-style="italic">p</tspan>)</text><text x="300" y="126.7" class="t-math" style="font-size:16px" text-anchor="end">(<tspan font-style="italic">x</tspan>, <tspan font-style="italic">f</tspan>(<tspan font-style="italic">x</tspan>))</text><text x="76" y="151" class="t-math" style="font-size:16px" text-anchor="start"><tspan font-style="italic">y</tspan> = <tspan font-style="italic">f</tspan>(<tspan font-style="italic">x</tspan>)</text><text x="448" y="211.2" class="t-dim" style="font-size:16px" text-anchor="end"><tspan font-style="italic">x</tspan></text><text x="138" y="30" class="t-dim" style="font-size:16px" text-anchor="start"><tspan font-style="italic">y</tspan></text></svg>
+      <figcaption><b>그림 3-2.</b> 르장드르 변환의 기하. 볼록한 곡선 \(y = f(x)\)(굵은 선, 여기서는 \(f = x^2/4 + 1\))에 점 \(x = 3\)에서 그은 접선(강조색)의 기울기는 \(p = 1.5\)이고, 세로축과 만나는 절편은 \(f(x) - px = -1.25\)이다. 이 절편이 \(-g(p)\)이다. 흐린 선은 다른 점에서 그은 접선들로, 접선을 모두 모으면 곡선이 다시 그려진다. 곡선과 접선은 실제 식으로 계산했다.</figcaption>
+    </figure>
+    <p>르장드르 변환의 가장 중요한 성질은 미분이 서로 자리를 바꾼다는 것이다. 식 <a class="ref" href="#eq-legendre-def"></a>을 \(p\)로 미분하면 연쇄 법칙에 따라 \(g'(p) = x + p\,x'(p) - f'(x)\,x'(p)\)이고, \(f'(x) = p\)이므로 가운데 두 항이 지워진다.</p>
+    <div class="formula" id="eq-legendre-derivative">\[ \frac{dg}{dp} = x, \qquad\text{곧}\qquad df = p\,dx \;\longleftrightarrow\; dg = x\,dp \]</div>
+    <p>\(f\)의 기울기가 \(p\)이고 \(g\)의 기울기가 \(x\)이다. 또 \(g''(p) = dx/dp = 1/f''(x) > 0\)이므로 \(g\)도 볼록하고, \(g\)를 다시 르장드르 변환하면 \(p\,x - g(p) = f(x)\)로 원래 함수가 돌아온다. 두 함수는 대칭인 관계로 묶여 있다.</p>
+    <div class="formula" id="eq-legendre-involution">\[ f(x) + g(p) = p\,x \qquad (p = f'(x),\ x = g'(p)) \]</div>
+    <p>용수철에 적용하면 \(F = k(x - x_0)\)에서 \(x = x_0 + F/k\)이고, \(g(F) = Fx - U = Fx_0 + F^2/2k\)이다. 이번에는 \(x_0\)이 살아 있다. \(g'(F) = x_0 + F/k = x\)로 길이가 미분으로 나온다. 또 \(f\)가 볼록하면 \(px - f(x)\)는 \(x\)에 대해 위로 볼록하고(오목 함수), 그 극대는 \(p = f'(x)\)인 점이다. 따라서 \(g(p) = \max_x\,[\,px - f(x)\,]\)로도 쓸 수 있다. 이 꼴은 다음 예제처럼 "외부에서 힘을 고정했을 때 무엇이 최소가 되는가"로 읽힌다.</p>
+    <div class="callout warn"><strong>부호 관례가 분야마다 다르다</strong><p>수학과 역학은 식 <a class="ref" href="#eq-legendre-def"></a>처럼 \(g = px - f\)로 쓴다. 해밀토니안 \(H = p\dot q - L\)이 그렇다. 열역학은 반대 부호로 쓴다. 헬름홀츠 자유 에너지 \(F = U - TS\)는 \(U\)를 \(S\)에 대해 변환한 \(TS - U\)에 \(-1\)을 곱한 것이다. 엔탈피 \(H = U + pV\)도, \(\partial U/\partial V = -p\)이므로 수학 관례의 변환 \((-p)V - U\)에 \(-1\)을 곱한 것이다. 부호는 정보와 상관이 없다. 이 책은 열역학 퍼텐셜에는 열역학의 관례를, 그 밖에는 식 <a class="ref" href="#eq-legendre-def"></a>을 쓴다.</p></div>
+
+    <div class="box ex" id="ex-spring-fixed-force"><div class="box-h">추를 매단 용수철: 힘을 고정한 평형</div>
+      <p>자연 길이 \(x_0 = 0.300\ \text{m}\), 용수철 상수 \(k = 50\ \text{N/m}\)인 용수철에 무게 \(F = 2.0\ \text{N}\)인 추를 매달았다. 추의 퍼텐셜 에너지까지 더한 \(\Phi(x) = U(x) - Fx\)가 평형에서 최소임을 보이고, 그 최솟값이 \(-g(F)\)임을 확인하라.</p>
+      <p><b>풀이.</b> 추가 \(x\)만큼 아래에 있으면 중력 퍼텐셜 에너지는 \(-Fx\)이다. 용수철과 추를 합친 에너지는 \(\Phi(x) = \tfrac12 k(x - x_0)^2 - Fx\)이고, \(\Phi'(x) = k(x - x_0) - F = 0\)에서 \(x = x_0 + F/k\)이다. \(\Phi'' = k > 0\)이므로 최소다. 숫자를 넣으면 늘어난 길이는 \(F/k = 0.040\ \text{m}\), 평형 길이는 \(0.340\ \text{m}\)이고</p>
+      <div class="formula">\[ \begin{aligned} \Phi_{\min} &= \tfrac12(50)(0.040)^2 - (2.0)(0.340) \\ &= 0.040 - 0.680 = -0.640\ \text{J} \end{aligned} \]</div>
+      <p>이다. 한편 \(g(F) = Fx_0 + F^2/2k = 0.600 + 0.040 = 0.640\ \text{J}\)이므로 \(\Phi_{\min} = -g(F)\)이다. 단위는 \(\text{N}^2/(\text{N/m}) = \text{N}\cdot\text{m} = \text{J}\)로 맞다. 길이 \(x\)를 고정하면 \(U(x)\)가 정보를 담지만, 힘 \(F\)를 고정한 상황(추를 매단 경우)에서는 \(U - Fx\)를 최소로 하는 \(x\)가 평형이고, 그 최솟값의 부호를 바꾼 것이 르장드르 변환 \(g(F)\)이다. 아래에서 기체를 일정한 압력의 대기에 열어 둘 때 \(U + pV\)가 같은 역할을 한다.</p>
+    </div>
+
+    <h3 id="s3-potentials">열역학 퍼텐셜</h3>
+    <p>\(U(S, V)\)에서 출발해 \(S\)를 \(T = (\partial U/\partial S)_V\)로, \(V\)를 \(p = -(\partial U/\partial V)_S\)로, 또는 둘 다를 바꾸면 세 개의 새 함수 \(F\), <span class="term">엔탈피</span> <span class="en">(enthalpy)</span> \(H\), <span class="term">깁스 자유 에너지</span> <span class="en">(Gibbs free energy)</span> \(G\)가 나온다. \(U\)와 이 셋을 <span class="term">열역학 퍼텐셜</span> <span class="en">(thermodynamic potential)</span>이라 한다. 각각의 미분은 \(dU = T\,dS - p\,dV\)에서 곱의 미분을 더하거나 빼서 얻는다. 예를 들어 \(F = U - TS\)이면 \(dF = dU - T\,dS - S\,dT = -S\,dT - p\,dV\)이다.</p>
+    <div class="formula" id="eq-thermo-differentials">\[ \begin{aligned} dU &= T\,dS - p\,dV \\ dF &= -S\,dT - p\,dV, & F &= U - TS \\ dH &= T\,dS + V\,dp, & H &= U + pV \\ dG &= -S\,dT + V\,dp, & G &= U - TS + pV \end{aligned} \]</div>
+    <p>미분의 꼴에서 각 퍼텐셜의 <span class="term">자연 변수</span> <span class="en">(natural variables)</span>가 보인다. \(F\)는 \((T, V)\), \(H\)는 \((S, p)\), \(G\)는 \((T, p)\)의 함수로 볼 때 그 편미분이 다른 상태 변수를 준다. 예를 들어 \((\partial G/\partial T)_p = -S\), \((\partial G/\partial p)_T = V\)이다. 네 미분이 모두 완전 미분이므로 조건 <a class="ref" href="#eq-exactness-condition"></a>에서 네 개의 맥스웰 관계식이 나온다.</p>
+    <div class="formula" id="eq-maxwell-relations">\[ \begin{aligned} \Big(\frac{\partial T}{\partial V}\Big)_S &= -\Big(\frac{\partial p}{\partial S}\Big)_V, & \Big(\frac{\partial S}{\partial V}\Big)_T &= \Big(\frac{\partial p}{\partial T}\Big)_V \\ \Big(\frac{\partial T}{\partial p}\Big)_S &= \Big(\frac{\partial V}{\partial S}\Big)_p, & \Big(\frac{\partial S}{\partial p}\Big)_T &= -\Big(\frac{\partial V}{\partial T}\Big)_p \end{aligned} \]<div class="where">차례로 \(U\), \(F\), \(H\), \(G\)에서 나온다. 첫째는 식 <a class="ref" href="#eq-maxwell-from-u"></a>, 둘째는 식 <a class="ref" href="#eq-maxwell-tv"></a>이다.</div></div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>퍼텐셜</th><th>자연 변수</th><th>최소 조건</th><th>뜻</th></tr></thead>
+      <tbody>
+        <tr><td>\(U\)</td><td>\(S, V\)</td><td>\(S\)·\(V\) 고정</td><td>정적 과정의 열 \(\Delta U\)</td></tr>
+        <tr><td>\(F\)</td><td>\(T, V\)</td><td>\(T\)·\(V\) 고정</td><td>등온 최대 일 \(-\Delta F\)</td></tr>
+        <tr><td>\(H\)</td><td>\(S, p\)</td><td>\(S\)·\(p\) 고정</td><td>정압 과정의 열 \(\Delta H\)</td></tr>
+        <tr><td>\(G\)</td><td>\(T, p\)</td><td>\(T\)·\(p\) 고정</td><td>상평형·화학 평형, \(G = \mu N\)</td></tr>
+      </tbody>
+    </table></div>
+    <p>\(-TS\)는 열 저장고와 열을 주고받는 몫이고, \(+pV\)는 대기를 밀어내는 데 드는 일의 몫이다. <a class="ref" href="#ex-spring-fixed-force"></a>에서 추의 퍼텐셜 에너지 \(-Fx\)를 더한 것과 같은 이유다. 외부와 무엇을 주고받는지를 정하면, 계와 외부를 합친 에너지에 해당하는 퍼텐셜이 평형에서 최소가 된다.</p>
+
+    <div class="box ex" id="ex-thermo-potentials"><div class="box-h">단원자 이상 기체의 \(U\), \(F\), \(H\), \(G\)</div>
+      <p>입자 \(N\)개인 단원자 이상 기체의 내부 에너지가 \(S\)와 \(V\)의 함수로</p>
+      <div class="formula" id="eq-ideal-gas-u-sv">\[ U(S, V) = C\,V^{-2/3}\exp\Big(\frac{2S}{3Nk_B}\Big) \]</div>
+      <p>로 주어진다(\(C\)는 \(N\)과 원자의 질량에 기대는 상수다). (가) 이 함수 하나에서 에너지와 온도의 관계, 상태 방정식을 얻어라. (나) \(F(T, V)\)와 \(H(S, p)\)를 자연 변수로 구하고 편미분으로 확인하라. (다) 헬륨 1.00 몰, 298.15 K, 1 bar에서 \(U\), \(H\), \(F\), \(G\)의 값을 구하라.</p>
+      <p><b>풀이.</b> (가) \(T = (\partial U/\partial S)_V = \frac{2}{3Nk_B}U\)이므로 \(U = \tfrac32 Nk_BT\)이다. \(p = -(\partial U/\partial V)_S = \frac{2}{3}\frac{U}{V}\)이므로 \(pV = \tfrac23 U = Nk_BT\)이다. 이상 기체 법칙과 등분배가 함수 하나에 들어 있다.</p>
+      <p>(나) \(F\): 온도의 식을 \(S\)에 대해 풀면 \(S = \tfrac32 Nk_B\ln\big(3Nk_BT\,V^{2/3}/2C\big)\)이고, \(U = \tfrac32 Nk_BT\)이므로</p>
+      <div class="formula">\[ \begin{aligned} F(T, V) &= U - TS \\ &= \tfrac32 Nk_BT\Big[1 - \ln\frac{3Nk_BT\,V^{2/3}}{2C}\Big] \end{aligned} \]</div>
+      <p>이다. 확인: \((\partial F/\partial V)_T = -\tfrac32 Nk_BT \cdot \tfrac{2}{3V} = -Nk_BT/V = -p\)이고, \((\partial F/\partial T)_V = \tfrac32 Nk_B[1 - \ln(\cdots)] - \tfrac32 Nk_B = -S\)이다. 식 <a class="ref" href="#eq-thermo-differentials"></a>와 맞는다.</p>
+      <p>\(H\): 상태 방정식 \(pV = \tfrac23 U\)에서 \(V = 2U/3p\)를 식 <a class="ref" href="#eq-ideal-gas-u-sv"></a>에 넣으면 \(U^{5/3} = C(3p/2)^{2/3}e^{2S/3Nk_B}\)이다. \(H = U + pV = \tfrac53 U\)이므로</p>
+      <div class="formula">\[ H(S, p) = \tfrac53\,C^{3/5}\Big(\frac{3p}{2}\Big)^{2/5}\exp\Big(\frac{2S}{5Nk_B}\Big) \]</div>
+      <p>이다. 확인: \((\partial H/\partial S)_p = \frac{2}{5Nk_B}H = \frac{2U}{3Nk_B} = T\), \((\partial H/\partial p)_S = \frac{2H}{5p} = \frac{2U}{3p} = V\)이다. 또 \(H = \tfrac52 Nk_BT\)이므로 정압 열용량은 \(C_p = \tfrac52 Nk_B\)로, <a class="ref" href="#ex-maxwell-relation"></a>의 (다)와 맞는다.</p>
+      <p>(다) 숫자를 넣으려면 상수 \(C\), 곧 엔트로피의 절대값이 필요하다. 이것은 열역학만으로는 정해지지 않고 통계역학이 정한다. 결과는 <span class="term">자쿠르-테트로데 식</span> <span class="en">(Sackur–Tetrode equation)</span></p>
+      <div class="formula" id="eq-sackur-tetrode">\[ S = Nk_B\Big[\ln\frac{V}{N\lambda^3} + \frac52\Big], \qquad \lambda = \frac{h}{\sqrt{2\pi m k_BT}} \]</div>
+      <p>이다. 이 식을 \(U\)에 대해 풀면 식 <a class="ref" href="#eq-ideal-gas-u-sv"></a>의 꼴이 된다. \(N\)에 대한 의존성은 11장의 <a href="ch11.html#ex-ideal-gas-phase-volume">위상 공간 부피 예제</a>에서 유도한다. 헬륨 원자(\(m = 4.0026\ \text{u}\))는 298.15 K에서 \(\lambda = 50.5\ \text{pm}\)이고, 1 bar에서 원자 하나가 차지하는 부피는 \(V/N = k_BT/p = 4.12 \times 10^{-26}\ \text{m}^3\)이다. 그 비는 \(3.19 \times 10^5\), 로그는 12.67이므로</p>
+      <div class="formula">\[ \begin{aligned} S &= R\,(12.67 + 2.50) \\ &= 126.15\ \text{J/(mol}\cdot\text{K)} \end{aligned} \]</div>
+      <p>이다. 헬륨의 표준 몰 엔트로피 표값 \(126.153\ \text{J/(mol}\cdot\text{K)}\)(J. D. Cox, D. D. Wagman, V. A. Medvedev, <i>CODATA Key Values for Thermodynamics</i>, Hemisphere 1989)와 같다. 이제 \(RT = 2.479\ \text{kJ}\), \(TS = 37.61\ \text{kJ}\)이므로</p>
+      <div class="formula">\[ \begin{aligned} U &= \tfrac32 RT = 3.72\ \text{kJ} \\ H &= \tfrac52 RT = 6.20\ \text{kJ} \\ F &= U - TS = -33.89\ \text{kJ} \\ G &= H - TS = -31.42\ \text{kJ} \end{aligned} \]</div>
+      <p>이다. \(H - U = G - F = pV = RT\)로 맞는다. 원자 하나당 깁스 에너지는 <span class="term">화학 퍼텐셜</span> <span class="en">(chemical potential)</span> \(\mu = G/N = -0.326\ \text{eV}\)이다. 퍼텐셜마다 쓰임이 다르다. 298.15 K에서 부피를 두 배로 등온 팽창시키면 얻을 수 있는 최대 일은 \(-\Delta F = RT\ln 2 = 1.72\ \text{kJ}\)이고, 1 bar에서 온도를 1 K 올리는 데 드는 열은 \(\Delta H = \tfrac52 R \times 1\ \text{K} = 20.8\ \text{J}\)이다. 같은 일을 부피를 고정하고 하면 \(\Delta U = 12.5\ \text{J}\)로 충분하다.</p>
+    </div>
+    <div class="callout deep" data-later="cm-grad"><strong>라그랑지안에서 해밀토니안으로</strong><p>역학의 라그랑지안 \(L(q, \dot q)\)은 위치 \(q\)와 속도 \(\dot q\)의 함수다. 속도 대신 운동량 \(p = \partial L/\partial\dot q\)를 변수로 쓰려면 \(\dot q\)에 대해서만 르장드르 변환을 한다: \(H(q, p) = p\dot q - L\). 식 <a class="ref" href="#eq-legendre-derivative"></a>에 해당하는 것이 \(\partial H/\partial p = \dot q\)이고, \(q\)는 바꾸지 않은 변수라 \(\partial H/\partial q = -\partial L/\partial q\)이다. 자유 입자 \(L = \tfrac12 m\dot q^2\)이면 \(p = m\dot q\), \(H = p^2/2m\)이다. 라그랑지안 자체는 21장의 <a href="ch21.html#eq-lagrange-equations">라그랑주 방정식</a>에서 세우고, 해밀턴 역학은 대학원 고전역학 책에서 다룬다. 상대론적 자유 입자의 변환은 <a class="ref" href="#prob-relativistic-hamiltonian"></a>에서 한다.</p></div>
+  </section>
+
+  <!-- ============================================================ 3.4 -->
+  <section id="s4">
+    <h2>극값과 라그랑주 승수</h2>
+    <p>물리의 평형은 대부분 극값 문제다. 역학의 안정 평형은 퍼텐셜 에너지의 극소이고, 3.3절에서 보았듯 온도와 부피를 고정한 계는 \(F\)가 최소인 상태에 머문다. 고립계는 에너지를 고정한 채 엔트로피가 최대인 상태로 간다. 변수가 여럿이면 두 가지가 새로 필요하다. 임계점이 극소인지, 극대인지, <span class="term">안장점</span> <span class="en">(saddle point)</span>인지 판정하는 법과, "에너지가 고정되어 있다" 같은 제약 조건 아래에서 극값을 찾는 법이다.</p>
+
+    <h3 id="s4-hessian">임계점과 헤세 행렬</h3>
+    <p>1장의 테일러 전개를 여러 변수로 넓히자. 점 \(\mathbf a\)에서 방향 \(\mathbf h = (h_1, \ldots, h_n)\)으로 가는 직선 위의 함수 \(\phi(t) = f(\mathbf a + t\mathbf h)\)를 생각한다. 연쇄 법칙 <a class="ref" href="#eq-chain-rule-path"></a>에 따라 \(\phi'(t) = \sum_i \partial_i f\,h_i\), \(\phi''(t) = \sum_{i,j}\partial_i\partial_j f\,h_ih_j\)이다. \(\phi\)에 <a href="ch01.html#eq-taylor-series">식 (1.19)</a>를 쓰고 \(t = 1\)로 두면</p>
+    <div class="formula" id="eq-taylor-multi">\[ \begin{aligned} f(\mathbf a + \mathbf h) &= f(\mathbf a) + \sum_i \partial_i f\,h_i \\ &\quad + \frac12\sum_{i,j} H_{ij}\,h_ih_j + O(\lvert\mathbf h\rvert^3) \end{aligned} \]<div class="where">편미분은 모두 \(\mathbf a\)에서 계산한다. \(H_{ij} = \partial^2 f/\partial x_i\,\partial x_j\)를 늘어놓은 \(n \times n\) 행렬을 <span class="term">헤세 행렬</span> <span class="en">(Hessian matrix)</span>이라 한다. <a class="ref" href="#thm-mixed-partials"></a>에 따라 대칭 행렬이다.</div></div>
+    <p>\(\mathbf a\)가 극값이면 어느 방향으로 가든 1차 항이 0이어야 하므로 모든 \(\partial_i f(\mathbf a) = 0\)이다. 이런 점을 <span class="term">임계점</span> <span class="en">(critical point)</span>이라 한다. 임계점에서 \(f\)의 모양은 2차 항 \(\tfrac12\sum H_{ij}h_ih_j\), 곧 헤세 행렬의 이차 형식이 정한다.</p>
+    <div class="box thm" id="thm-second-derivative-test"><div class="box-h">2계 도함수 판정법</div>
+      <p>\(f\)의 2계 편미분이 연속이고 \(\mathbf a\)가 임계점이라 하자. 두 변수이면 \(\mathbf a\)에서 계산한</p>
+      <div class="formula" id="eq-hessian-discriminant">\[ D = f_{xx}f_{yy} - f_{xy}^2 = \det\begin{pmatrix} f_{xx} & f_{xy} \\ f_{xy} & f_{yy} \end{pmatrix} \]</div>
+      <p>로 판정한다.</p>
+      <ol>
+        <li>\(D > 0\)이고 \(f_{xx} > 0\)이면 극소, \(D > 0\)이고 \(f_{xx} &lt; 0\)이면 극대다.</li>
+        <li>\(D &lt; 0\)이면 안장점이다. 어떤 방향으로는 올라가고 어떤 방향으로는 내려간다.</li>
+        <li>\(D = 0\)이면 이 판정법으로는 알 수 없다.</li>
+      </ol>
+      <p>변수가 \(n\)개이면 헤세 행렬의 고유값이 모두 양수일 때 극소, 모두 음수일 때 극대, 양수와 음수가 함께 있으면 안장점이다. 0인 고유값이 있고 나머지가 모두 같은 부호이면 이 판정법으로는 알 수 없다.</p>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>두 변수의 2차 항은 \(Q = f_{xx}h^2 + 2f_{xy}hk + f_{yy}k^2\)이다. \(f_{xx} \ne 0\)이면 완전제곱식으로 \(Q = f_{xx}\big[(h + f_{xy}k/f_{xx})^2 + D\,k^2/f_{xx}^2\big]\)로 쓸 수 있다. \(D > 0\)이면 대괄호가 \((h, k) \ne 0\)에서 늘 양수이므로 \(Q\)의 부호는 \(f_{xx}\)의 부호와 같고, \(D &lt; 0\)이면 대괄호가 방향에 따라 양수도 음수도 된다. 2차 항이 0이 아닐 때는 \(\mathbf h\)가 작으면 3차 이상의 항이 부호를 바꾸지 못한다. \(n\)개 변수에서는 대칭 행렬을 회전해서 대각 행렬로 만들면 \(Q = \sum_i \lambda_i y_i^2\)가 되므로 고유값 \(\lambda_i\)의 부호가 모양을 정한다. 이 대각화는 8장의 <a href="ch08.html#thm-spectral">스펙트럼 정리</a>와 <a href="ch08.html#def-quadratic-form">이차 형식</a>에서 다룬다.</p>
+      </details>
+    </div>
+
+    <div class="box ex" id="ex-earnshaw-saddle"><div class="box-h">네 전하 가운데의 시험 전하</div>
+      <p>\(xy\) 평면의 네 점 \((\pm a, 0, 0)\), \((0, \pm a, 0)\)에 전하 \(q\)가 하나씩 있다. 원점에 놓인 같은 부호의 시험 전하 \(Q\)는 대칭 때문에 힘을 받지 않는다. 이 평형은 안정한가? \(q = Q = 1.0\ \text{nC}\), \(a = 1.0\ \text{cm}\), 시험 전하의 질량 \(m = 1.0\ \text{mg}\)일 때 작은 진동의 각진동수나 불안정이 자라는 시간 척도를 구하라.</p>
+      <p><b>풀이.</b> 시험 전하의 퍼텐셜 에너지는 \(U = QV\)이고, \(V = \sum_j kq/\lvert\mathbf r - \mathbf r_j\rvert\) (\(k = 1/4\pi\varepsilon_0\))이다. \((a, 0, 0)\)의 전하에 대해 \(\lvert\mathbf r - a\hat{\mathbf x}\rvert^{-1} = a^{-1}(1 + u)^{-1/2}\), \(u = (-2ax + r^2)/a^2\)으로 쓰고 <a href="ch01.html#eq-sqrt-expansions">식 (1.22)</a>의 \(1 - u/2 + 3u^2/8\)을 2차까지 모으면</p>
+      <div class="formula">\[ \frac{1}{\lvert\mathbf r - a\hat{\mathbf x}\rvert} = \frac1a\Big[1 + \frac{x}{a} + \frac{2x^2 - y^2 - z^2}{2a^2} + \cdots\Big] \]</div>
+      <p>이다. 이 전하는 원점에서 \(V_{xx} = 2kq/a^3\), \(V_{yy} = V_{zz} = -kq/a^3\)을 준다. \((-a, 0, 0)\)의 전하도 같은 2차 항을 주고 1차 항은 반대 부호라 지워진다. \(y\)축 위의 두 전하는 \(x\)와 \(y\)의 역할을 바꾼다. 네 개를 더하면 섞인 편미분은 0이고</p>
+      <div class="formula">\[ V_{xx} = V_{yy} = \frac{2kq}{a^3}, \qquad V_{zz} = -\frac{4kq}{a^3} \]</div>
+      <p>이다. 헤세 행렬은 대각 행렬이고 고유값의 부호가 \((+, +, -)\)로 섞여 있으므로 <a class="ref" href="#thm-second-derivative-test"></a>에 따라 원점은 안장점이다. 시험 전하는 평면 안에서는 원점으로 되돌아오지만, \(z\) 방향으로 조금만 밀려도 달아난다.</p>
+      <p>세 고유값의 합이 0인 것은 우연이 아니다. 전하가 없는 곳에서 퍼텐셜은 라플라스 방정식 \(V_{xx} + V_{yy} + V_{zz} = 0\)을 만족한다(4장의 <a href="ch04.html#def-laplacian">라플라시안</a>). 합이 0인 세 고유값이 모두 양수일 수는 없으므로, 정전기장만으로는 전하를 안정하게 가둘 수 없다. 이것이 <span class="term">언쇼 정리</span> <span class="en">(Earnshaw’s theorem)</span>이다.</p>
+      <p><b>숫자로 보기.</b> \(kqQ/(ma^3) = (8.99 \times 10^9)(1.0 \times 10^{-9})^2/\big[(1.0 \times 10^{-6})(1.0 \times 10^{-2})^3\big] = 8.99 \times 10^3\ \text{s}^{-2}\)이다. 평면 안의 각진동수는 \(\omega = \sqrt{QV_{xx}/m} = \sqrt{2 \times 8.99 \times 10^3}\ \text{s}^{-1} = 134\ \text{s}^{-1}\)(21 Hz)이다. \(z\) 방향으로는 운동 방정식이 \(\ddot z = +z/\tau^2\), \(\tau = 1/\sqrt{4 \times 8.99 \times 10^3}\ \text{s} = 5.3\ \text{ms}\)가 되어 변위가 \(e^{t/\tau}\)로 자란다. \(\tau\ln 2 = 3.7\ \text{ms}\)마다 두 배가 된다. 단위 확인: \(\text{N}\cdot\text{m}^2\text{C}^{-2}\cdot\text{C}^2/(\text{kg}\cdot\text{m}^3) = \text{N/(kg}\cdot\text{m)} = \text{s}^{-2}\)이다.</p>
+      <p><b>다음 항은 몇 차인가.</b> 전하 배치가 \(x \to -x\), \(y \to -y\), \(z \to -z\) 각각에 대해 대칭이므로 퍼텐셜에 홀수 차 항이 없다. 버린 항은 4차이고, 2차 항에 대한 상대 크기는 \((r/a)^2\) 정도다. 변위가 0.1 mm(\(r/a = 0.01\))이면 \(10^{-4}\)이다. 중력은 무시했다. 질량 1 mg에 걸리는 중력 \(9.8\ \mu\text{N}\)은 평형점을 \(z\) 방향으로 0.27 mm쯤 옮기지만, 그 자리의 헤세 행렬은 \((r/a)^2 \sim 10^{-3}\) 정도만 달라지므로 안정성 판정은 같다.</p>
+    </div>
+
+    <h3 id="s4-lagrange">제약 조건과 라그랑주 승수</h3>
+    <p>이제 곡선 \(g(x, y) = c\) 위에서만 \(f(x, y)\)의 극값을 찾자. 제약식을 풀어 넣는 대신 기하로 보자. 곡선을 따라 움직일 때 \(f\)의 변화율은 \(\nabla f\cdot\mathbf t\)이다(\(\mathbf t\)는 곡선의 접선 방향). 극값에서는 이것이 0이므로 \(\nabla f\)는 곡선에 수직이다. 한편 \(g\)는 곡선 위에서 상수이므로 \(\nabla g\)도 곡선에 수직이다. 평면에서 같은 직선에 수직인 두 벡터는 나란하다: \(\nabla f = \lambda\nabla g\). 그림 3-3에서 보듯, 극값은 \(f\)의 등위선이 제약 곡선에 접하는 점이다.</p>
+    <div class="box thm" id="thm-lagrange-multiplier"><div class="box-h">라그랑주 승수법</div>
+      <p>\(f\)와 \(g_1, \ldots, g_m\)이 \(n\)개 변수의 함수이고(\(m &lt; n\)) 편미분이 연속이라 하자. 제약 조건 \(g_k(\mathbf x) = c_k\) (\(k = 1, \ldots, m\))를 만족하는 점 가운데 \(\mathbf x^*\)에서 \(f\)가 극값을 갖고, \(\mathbf x^*\)에서 \(\nabla g_1, \ldots, \nabla g_m\)이 선형 독립이면, 다음을 만족하는 수 \(\lambda_1, \ldots, \lambda_m\)이 있다.</p>
+      <div class="formula" id="eq-lagrange-condition">\[ \nabla f(\mathbf x^*) = \sum_{k=1}^{m} \lambda_k\,\nabla g_k(\mathbf x^*) \]</div>
+      <p>\(\lambda_k\)를 <span class="term">라그랑주 승수</span> <span class="en">(Lagrange multiplier)</span>라 한다. 실제 계산에서는 \(\Lambda = f - \sum_k \lambda_k(g_k - c_k)\)를 만들고, \(n\)개의 \(x_i\)와 \(m\)개의 \(\lambda_k\)에 대한 편미분을 모두 0으로 놓은 \(n + m\)개의 방정식을 푼다.</p>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>제약 조건을 만족하는 점들은 \(n - m\)차원 곡면을 이룬다. \(\nabla g_k\)가 선형 독립이면 음함수 정리에 따라, 모든 \(k\)에 대해 \(\nabla g_k\cdot\mathbf h = 0\)인 방향 \(\mathbf h\)마다 그 방향으로 출발하는 곡면 위의 곡선이 있다. 그 곡선을 따라 \(f\)가 극값이므로 \(\nabla f\cdot\mathbf h = 0\)이다. 곧 \(\nabla f\)는 "모든 \(\nabla g_k\)에 수직인 벡터들"에 다시 수직이고, 선형대수에 따라 그런 벡터는 \(\nabla g_k\)들의 일차 결합이다. 자세한 증명은 R. Courant, F. John, <i>Introduction to Calculus and Analysis</i>, Vol. II(Springer 1989, Wiley 1974판의 재판)의 3.7절에 있다.</p>
+      </details>
+    </div>
+    <p>승수는 계산을 돕는 보조 변수에 그치지 않는다. 제약값 \(c\)를 조금 바꿀 때 극값 \(f^*(c) = f(\mathbf x^*(c))\)가 얼마나 바뀌는지가 바로 \(\lambda\)이다. 연쇄 법칙과 식 <a class="ref" href="#eq-lagrange-condition"></a>에 따라 \(df^*/dc = \nabla f\cdot d\mathbf x^*/dc = \lambda\,\nabla g\cdot d\mathbf x^*/dc = \lambda\,d g(\mathbf x^*(c))/dc\)이고, \(g(\mathbf x^*(c)) = c\)이므로</p>
+    <div class="formula" id="eq-multiplier-sensitivity">\[ \frac{df^*}{dc} = \lambda \]</div>
+    <p>이다. 승수는 "제약을 한 단위 풀어 줄 때 목표가 얼마나 좋아지는가"이다. 아래 두 예제에서 승수는 각각 전압과 온도가 된다.</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 300" role="img" aria-label="소모 전력의 등위선(타원)과 제약 직선 I1 + I2 = 3. 직선이 P = 12 W 타원에 점 (2, 1)에서 접하고, 그 점에서 두 기울기 벡터가 나란하다"><defs><clipPath id="f0303-clip"><rect x="56" y="16" width="404" height="246"/></clipPath><marker id="f0303-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs><line x1="157" y1="16" x2="157" y2="262" class="s-grid"/><line x1="258" y1="16" x2="258" y2="262" class="s-grid"/><line x1="359" y1="16" x2="359" y2="262" class="s-grid"/><line x1="460" y1="16" x2="460" y2="262" class="s-grid"/><line x1="56" y1="210.8" x2="460" y2="210.8" class="s-grid"/><line x1="56" y1="159.5" x2="460" y2="159.5" class="s-grid"/><line x1="56" y1="108.2" x2="460" y2="108.2" class="s-grid"/><line x1="56" y1="57" x2="460" y2="57" class="s-grid"/><line x1="56" y1="262" x2="460" y2="262" class="s-line"/><line x1="56" y1="16" x2="56" y2="262" class="s-line"/><text x="56" y="282" class="t-dim" style="font-size:15px" text-anchor="middle">0</text><text x="157" y="282" class="t-dim" style="font-size:15px" text-anchor="middle">1</text><text x="258" y="282" class="t-dim" style="font-size:15px" text-anchor="middle">2</text><text x="359" y="282" class="t-dim" style="font-size:15px" text-anchor="middle">3</text><text x="460" y="282" class="t-dim" style="font-size:15px" text-anchor="middle">4</text><text x="48" y="267" class="t-dim" style="font-size:15px" text-anchor="end">0</text><text x="48" y="215.8" class="t-dim" style="font-size:15px" text-anchor="end">0.5</text><text x="48" y="164.5" class="t-dim" style="font-size:15px" text-anchor="end">1</text><text x="48" y="113.2" class="t-dim" style="font-size:15px" text-anchor="end">1.5</text><text x="48" y="62" class="t-dim" style="font-size:15px" text-anchor="end">2</text><ellipse cx="56" cy="262" rx="174.9" ry="125.5" class="s-grid" style="stroke-width:1.6" fill="none" clip-path="url(#f0303-clip)"/><ellipse cx="56" cy="262" rx="247.4" ry="177.5" class="s-acc" style="stroke-width:2.6" fill="none" clip-path="url(#f0303-clip)"/><ellipse cx="56" cy="262" rx="349.9" ry="251.1" class="s-grid" style="stroke-width:1.6" fill="none" clip-path="url(#f0303-clip)"/><text x="144.1" y="145.2" class="t-math dim" style="font-size:15px" text-anchor="start"><tspan font-style="italic">P</tspan> = 6 W</text><text x="64" y="76" class="t-math acc" style="font-size:15px" text-anchor="start"><tspan font-style="italic">P</tspan> = 12 W</text><text x="226.3" y="34.3" class="t-math dim" style="font-size:15px" text-anchor="start"><tspan font-style="italic">P</tspan> = 24 W</text><line x1="116.6" y1="16" x2="359" y2="262" class="s-acc2" style="stroke-width:2.4"/><text x="364" y="243.6" class="t-math acc2" style="font-size:15px" text-anchor="start"><tspan font-style="italic">I</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan> + <tspan font-style="italic">I</tspan><tspan baseline-shift="sub" font-size="72%">2</tspan> = 3 A</text><circle cx="258" cy="159.5" r="5" class="f-acc"/><line x1="258" y1="159.5" x2="303.5" y2="113.4" class="s-acc" style="stroke-width:2.2" marker-end="url(#f0303-arr)"/><text x="309.5" y="111.4" class="t-math acc" style="font-size:15px" text-anchor="start">∇<tspan font-style="italic">P</tspan> ∥ ∇<tspan font-style="italic">g</tspan></text><text x="250" y="179.5" class="t-math" style="font-size:15px" text-anchor="end">(2, 1)</text><text x="460" y="294" class="t-dim" style="font-size:15px" text-anchor="end"><tspan font-style="italic">I</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan> (A)</text><text x="62" y="28" class="t-dim" style="font-size:15px" text-anchor="start"><tspan font-style="italic">I</tspan><tspan baseline-shift="sub" font-size="72%">2</tspan> (A)</text></svg>
+      <figcaption><b>그림 3-3.</b> <a class="ref" href="#ex-current-divider"></a>의 그림. 타원은 소모 전력 \(P = 2I_1^2 + 4I_2^2\) (W)의 등위선이고, 직선은 제약 \(I_1 + I_2 = 3\ \text{A}\)이다. 직선 위에서 \(P\)가 가장 작은 점 \((2, 1)\)에서 직선은 \(P = 12\ \text{W}\)인 타원에 접하고, 두 기울기 벡터 \(\nabla P\)와 \(\nabla g\)가 나란하다. 타원과 직선은 실제 식으로 그렸다.</figcaption>
+    </figure>
+
+    <div class="box ex" id="ex-current-divider"><div class="box-h">병렬 저항에 전류가 나뉘는 방식</div>
+      <p>저항 \(R_1 = 2.0\ \Omega\)과 \(R_2 = 4.0\ \Omega\)이 병렬로 연결되어 있고, 전체 전류 \(I = 3.0\ \text{A}\)가 흐른다. 키르히호프의 전압 법칙을 쓰지 않고, 전류가 열 손실 \(P = I_1^2R_1 + I_2^2R_2\)를 최소로 하도록 나뉜다고 가정해서 \(I_1\), \(I_2\)를 구하라. 승수의 뜻은 무엇인가?</p>
+      <p><b>풀이.</b> \(\Lambda = I_1^2R_1 + I_2^2R_2 - \lambda(I_1 + I_2 - I)\)로 두고 편미분을 0으로 놓으면</p>
+      <div class="formula">\[ 2I_1R_1 = \lambda, \qquad 2I_2R_2 = \lambda, \qquad I_1 + I_2 = I \]</div>
+      <p>이다. 처음 두 식에서 \(I_1R_1 = I_2R_2\), 곧 두 저항에 걸린 전압이 같다. 최소 손실의 원리에서 키르히호프의 전압 법칙이 나왔다. 셋째 식과 함께 풀면 \(I_1 = IR_2/(R_1 + R_2) = 2.0\ \text{A}\), \(I_2 = 1.0\ \text{A}\)이고, 전력은 \(P = 8.0 + 4.0 = 12.0\ \text{W}\)이다. 직선 위에서 \(P\)는 아래로 볼록한 이차식이므로 이 점은 최소다(그림 3-3).</p>
+      <p>승수는 \(\lambda = 2I_1R_1 = 8.0\ \text{V}\)로, 저항에 걸린 전압 \(V = 4.0\ \text{V}\)의 두 배다. 식 <a class="ref" href="#eq-multiplier-sensitivity"></a>으로 확인하자. 최소 전력은 \(P^*(I) = I^2R_1R_2/(R_1 + R_2) = \tfrac43 I^2\)이므로 \(dP^*/dI = \tfrac83 I = 8.0\ \text{W/A}\)이고, \(\text{W/A} = \text{V}\)이다. 전체 전류를 1 A 늘리면 열 손실이 \(\lambda\)만큼 는다.</p>
+    </div>
+
+    <div class="box ex" id="ex-boltzmann-max-entropy"><div class="box-h">엔트로피 최대에서 볼츠만 분포로</div>
+      <p>에너지 준위가 \(E_1, E_2, \ldots, E_M\)인 계가 준위 \(i\)에 있을 확률을 \(p_i\)라 하자. 통계역학의 엔트로피(<span class="term">깁스 엔트로피</span> <span class="en">(Gibbs entropy)</span>)는</p>
+      <div class="formula" id="eq-gibbs-entropy">\[ S = -k_B\sum_{i=1}^{M} p_i\ln p_i \]</div>
+      <p>이다(모든 \(p_i\)가 \(1/\Omega\)로 같으면 \(S = k_B\ln\Omega\)이다). 평균 에너지 \(\sum_i p_iE_i = U\)가 정해졌을 때 \(S\)를 최대로 하는 분포를 구하라. 승수와 온도의 관계를 밝히고, 준위가 \(0\), \(\varepsilon\), \(2\varepsilon\)인 계에서 \(U = 0.5\varepsilon\)일 때 분포와 온도를 계산하라.</p>
+      <p><b>풀이.</b> 제약은 둘이다: \(\sum_i p_i = 1\), \(\sum_i p_iE_i = U\). 승수를 \(\alpha\), \(\lambda_E\)로 두고</p>
+      <div class="formula">\[ \begin{aligned} \Lambda &= -k_B\sum_i p_i\ln p_i - \alpha\Big(\sum_i p_i - 1\Big) \\ &\quad - \lambda_E\Big(\sum_i p_iE_i - U\Big) \end{aligned} \]</div>
+      <p>를 \(p_i\)로 미분하면 \(-k_B(\ln p_i + 1) - \alpha - \lambda_E E_i = 0\)이다. 따라서 \(p_i = e^{-1 - \alpha/k_B}\,e^{-\lambda_E E_i/k_B}\)이다. \(\beta = \lambda_E/k_B\)로 두고 규격화 조건으로 앞의 상수를 정하면</p>
+      <div class="formula" id="eq-boltzmann-distribution">\[ p_i = \frac{e^{-\beta E_i}}{Z}, \qquad Z = \sum_{j} e^{-\beta E_j} \]</div>
+      <p>이다. \(\beta\)는 \(\sum_i p_iE_i = U\)에서 정해진다. 두 제약의 기울기 \((1, 1, \ldots)\)와 \((E_1, E_2, \ldots)\)는 준위가 모두 같지 않으면 선형 독립이므로 <a class="ref" href="#thm-lagrange-multiplier"></a>의 조건이 맞는다. 이 점이 최대인 것도 확인할 수 있다. \(S\)의 헤세 행렬은 대각 성분이 \(-k_B/p_i &lt; 0\)인 대각 행렬이라 \(S\)는 위로 볼록하고, 제약을 만족하는 점들은 평평한 집합이므로 임계점은 하나뿐이고 그것이 최대다.</p>
+      <p>승수의 뜻은 식 <a class="ref" href="#eq-multiplier-sensitivity"></a>이 알려 준다. 최대 엔트로피는 \(dS^*/dU = \lambda_E = k_B\beta\)로 바뀐다. 열역학에서 \(dU = T\,dS - p\,dV\)이므로 부피가 고정되면 \((\partial S/\partial U)_V = 1/T\)이다. 따라서</p>
+      <div class="formula">\[ \beta = \frac{1}{k_BT} \]</div>
+      <p>이다. 이 분포를 <span class="term">볼츠만 분포</span> <span class="en">(Boltzmann distribution)</span>라 한다. 볼츠만 인자 \(e^{-E/k_BT}\)는 "평균 에너지만 알고 나머지는 가장 모른다"는 조건에서 나오고, 그 승수가 온도다. <a href="ch01.html#ex-planck-mean-energy">1장의 예제 1.5</a>는 이 분포를 가정하고 플랑크 진동자의 평균 에너지를 구했다.</p>
+      <p><b>숫자로 보기.</b> 준위가 \(0, \varepsilon, 2\varepsilon\)이면 \(x = e^{-\beta\varepsilon}\)으로 두고 평균 에너지 조건을 쓴다: \((x + 2x^2)/(1 + x + x^2) = 0.5\). 정리하면 \(3x^2 + x - 1 = 0\)이므로 \(x = (\sqrt{13} - 1)/6 = 0.4343\), \(\beta\varepsilon = 0.834\)이다. 분포는</p>
+      <div class="formula">\[ (p_0, p_1, p_2) = (0.616,\ 0.268,\ 0.116) \]</div>
+      <p>이고, \(S/k_B = 0.901\)이다. 같은 평균 에너지 \(0.5\varepsilon\)을 주는 다른 분포와 비교하자. \((0.5, 0.5, 0)\)은 \(S/k_B = 0.693\), \((0.75, 0, 0.25)\)는 \(0.562\), \((0.6, 0.3, 0.1)\)은 \(0.898\)로 모두 볼츠만 분포보다 작다. \(\varepsilon = 10.0\ \text{meV}\)이면 \(k_B = 0.08617\ \text{meV/K}\)이므로 \(T = \varepsilon/(0.834\,k_B) = 139\ \text{K}\)이다. \(\beta\varepsilon\)은 차원이 없어 지수에 들어갈 수 있다.</p>
+    </div>
+    <div class="callout warn"><strong>승수법이 극값을 놓치는 경우</strong><p><a class="ref" href="#thm-lagrange-multiplier"></a>의 조건 "\(\nabla g \ne 0\)"을 빼먹으면 답을 놓친다. 곡선 \(g = y^2 - x^3 = 0\) 위에서 \(f = x\)의 최솟값을 구해 보자. 곡선 위에서 \(x = \lvert y\rvert^{2/3} \ge 0\)이므로 최솟값은 원점에서 \(0\)이다. 그런데 승수법의 방정식 \(1 = -3\lambda x^2\), \(0 = 2\lambda y\), \(y^2 = x^3\)은 해가 없다. 원점에서 \(\nabla g = (0, 0)\)이라 곡선이 뾰족하게 꺾이기 때문이다. 승수법으로 후보를 찾은 뒤에는 \(\nabla g = 0\)인 점과 영역의 경계도 따로 조사해야 한다. 또 식 <a class="ref" href="#eq-lagrange-condition"></a>는 필요조건일 뿐이라, 찾은 점이 최대인지 최소인지는 따로 판정해야 한다.</p></div>
+    <div class="callout deep"><strong>함수 하나를 통째로 바꾸는 극값 문제</strong><p>변수가 유한 개의 \(p_i\)가 아니라 함수 \(y(x)\) 전체이면 극값 문제는 <a href="ch21.html#def-functional">범함수</a>의 극값 문제가 된다. 21장에서 \(\partial f/\partial x_i = 0\)에 해당하는 오일러-라그랑주 방정식을 세우고, 이 절의 승수로 <a href="ch21.html#eq-constrained-el">제약이 있는 경우</a>도 다룬다.</p></div>
+  </section>
+
+  <!-- ============================================================ 3.5 -->
+  <section id="s5">
+    <h2>다중 적분과 야코비 행렬식</h2>
+    <p>원판의 관성 모멘트, 대전된 공의 전체 전하, 확률 분포의 규격화는 모두 넓이나 부피 위의 적분이다. 직교 좌표로 적분 영역을 나누면 원판의 경계가 \(y = \pm\sqrt{R^2 - x^2}\) 같은 꼴이 되어 계산이 번거롭다. 영역의 모양에 맞는 좌표(원판이면 극좌표)로 바꾸면 경계가 \(r = R\)처럼 단순해진다. 그 대가로 넓이 요소가 \(dx\,dy\)에서 다른 것으로 바뀌는데, 그 바뀌는 비율이 야코비 행렬식이다.</p>
+
+    <h3 id="s5-iterated">반복 적분</h3>
+    <p>영역 \(R\) 위의 이중 적분 \(\iint_R f\,dA\)는 \(R\)을 작은 직사각형으로 나눠 \(f \times (\text{넓이})\)를 더한 합의 극한이다. 계산은 한 변수씩 적분하는 <span class="term">반복 적분</span> <span class="en">(iterated integral)</span>으로 한다. 직사각형 \([a, b] \times [c, d]\)에서</p>
+    <div class="formula">\[ \begin{aligned} \iint_R f\,dA &= \int_a^b\Big(\int_c^d f(x, y)\,dy\Big)dx \\ &= \int_c^d\Big(\int_a^b f(x, y)\,dx\Big)dy \end{aligned} \]</div>
+    <p>이다. 두 순서가 같다는 것을 <span class="term">푸비니 정리</span> <span class="en">(Fubini’s theorem)</span>라 한다. \(f\)가 닫힌 유계 영역에서 연속이면 성립하고, 영역이 무한하거나 \(f\)가 발산하는 점이 있으면 \(\iint\lvert f\rvert\,dA\)가 유한할 때 성립한다. \(f \ge 0\)이면 이 조건 없이도 두 순서의 값이 같다(무한대일 수는 있다). 세 변수의 적분도 같은 방식으로 한 변수씩 한다.</p>
+    <div class="callout warn"><strong>적분 순서를 바꾸면 값이 바뀌는 함수</strong><p>정사각형 \(0 &lt; x, y \le 1\)에서 \(f = (x^2 - y^2)/(x^2 + y^2)^2\)을 보자. \(\partial_y[y/(x^2 + y^2)] = f\)이므로 \(y\)부터 적분하면 \(\int_0^1 f\,dy = 1/(1 + x^2)\)이고, 다시 \(x\)로 적분하면 \(\pi/4\)이다. \(f\)는 \(x\)와 \(y\)를 바꾸면 부호만 바뀌므로 반대 순서로는 \(-\pi/4\)이다. 원점 근처에서 \(\lvert f\rvert\)이 \(1/r^2\)처럼 커서 \(\iint\lvert f\rvert\,dA\)가 발산하기 때문이다. 1장에서 조건 수렴하는 급수의 합이 더하는 순서에 따라 바뀐 것과 같은 현상이다.</p></div>
+
+    <h3 id="s5-jacobian">변수 바꾸기</h3>
+    <p>새 변수 \((u, v)\)로 점을 나타내자: \(x = x(u, v)\), \(y = y(u, v)\). \((u, v)\) 평면의 작은 직사각형 \([u, u + du] \times [v, v + dv]\)는 \((x, y)\) 평면에서 휘어진 작은 사각형으로 옮겨진다. 충분히 작으면 이것은 두 벡터</p>
+    <div class="formula">\[ \mathbf a = \Big(\frac{\partial x}{\partial u}, \frac{\partial y}{\partial u}\Big)du, \qquad \mathbf b = \Big(\frac{\partial x}{\partial v}, \frac{\partial y}{\partial v}\Big)dv \]</div>
+    <p>가 만드는 평행사변형이다. \(\mathbf a\)는 \(v\)를 고정하고 \(u\)만 \(du\) 바꿀 때 점이 움직이는 변위다. 평행사변형의 넓이는 두 변 벡터의 성분으로 만든 행렬식의 절댓값이다: \(\lvert a_xb_y - a_yb_x\rvert\). 그래서 넓이의 비율을 주는 다음 양이 필요하다.</p>
+    <div class="formula" id="eq-jacobian-def">\[ \frac{\partial(x, y)}{\partial(u, v)} = \det\begin{pmatrix} \partial x/\partial u & \partial x/\partial v \\ \partial y/\partial u & \partial y/\partial v \end{pmatrix} = x_uy_v - x_vy_u \]<div class="where">이 행렬식을 <span class="term">야코비 행렬식</span> <span class="en">(Jacobian determinant)</span>이라 하고, 괄호 안의 행렬을 야코비 행렬이라 한다. 변수가 \(n\)개이면 \(n \times n\) 행렬 \(\partial x_i/\partial u_j\)의 행렬식이다.</div></div>
+    <div class="box thm" id="thm-change-of-variables"><div class="box-h">다중 적분의 변수 바꾸기</div>
+      <p>사상 \((u, v) \mapsto (x, y)\)가 영역 \(R'\)을 영역 \(R\)로 일대일로 옮기고(넓이가 0인 경계는 예외로 해도 된다), 편미분이 연속이며, \(R'\) 안에서 야코비 행렬식이 0이 아니면</p>
+      <div class="formula" id="eq-jacobian-change">\[ \begin{aligned} &\iint_R f(x, y)\,dx\,dy \\ &\quad = \iint_{R'} f\big(x(u, v), y(u, v)\big)\,\Big\lvert\frac{\partial(x, y)}{\partial(u, v)}\Big\rvert\,du\,dv \end{aligned} \]</div>
+      <p>이다. \(n\)차원에서는 \(d^nx = \lvert\det(\partial x_i/\partial u_j)\rvert\,d^nu\)이다. 증명은 위의 평행사변형 논증을 리만 합에 적용하는 것이다.</p>
+    </div>
+    <p>야코비 행렬식에는 분수처럼 다룰 수 있는 성질이 있다. \((x, y) \to (u, v) \to (x, y)\)로 돌아오면 연쇄 법칙 <a class="ref" href="#eq-chain-rule-multi"></a>에 따라 두 야코비 행렬의 곱이 단위 행렬이고, 행렬식은 곱을 곱으로 옮기므로</p>
+    <div class="formula" id="eq-jacobian-inverse">\[ \frac{\partial(x, y)}{\partial(u, v)}\cdot\frac{\partial(u, v)}{\partial(x, y)} = 1 \]</div>
+    <p>이다. \(x, y\)를 \(u, v\)로 쓰기 어렵고 반대가 쉬울 때 이 식으로 야코비 행렬식을 구한다(<a class="ref" href="#prob-carnot-jacobian"></a>).</p>
+    <p>가장 자주 쓰는 예는 극좌표 \(x = r\cos\theta\), \(y = r\sin\theta\)이다.</p>
+    <div class="formula" id="eq-polar-area-element">\[ \begin{aligned} \frac{\partial(x, y)}{\partial(r, \theta)} &= \det\begin{pmatrix} \cos\theta & -r\sin\theta \\ \sin\theta & r\cos\theta \end{pmatrix} = r \\ dx\,dy &= r\,dr\,d\theta \end{aligned} \]</div>
+    <p>그림 3-4처럼 극좌표의 작은 칸은 지름 방향으로 \(dr\), 둘레 방향으로 호의 길이 \(r\,d\theta\)인 거의 직사각형이다. 같은 \(dr\,d\theta\)라도 원점에서 멀수록 칸이 넓다. 원통 좌표와 구면 좌표의 부피 요소도 \(3 \times 3\) 야코비 행렬식으로 얻는다. 6장에서 척도 인자로 <a href="ch06.html#eq-volume-element-spherical">구면 좌표의 부피 요소</a>를 세운다.</p>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 300" role="img" aria-label="극좌표 격자. r과 r+dr 사이, θ와 θ+dθ 사이의 작은 칸은 변의 길이가 dr과 r dθ인 거의 직사각형이다"><defs><marker id="f0304-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker></defs><line x1="50" y1="260" x2="400" y2="260" class="s-line" marker-end="url(#f0304-arr)"/><line x1="60" y1="270" x2="60" y2="20" class="s-line" marker-end="url(#f0304-arr)"/><path d="M125,260 A65,65 0 0 0 60,195" class="s-grid" fill="none"/><path d="M190,260 A130,130 0 0 0 60,130" class="s-grid" fill="none"/><path d="M255,260 A195,195 0 0 0 60,65" class="s-grid" fill="none"/><path d="M320,260 A260,260 0 0 0 60,0" class="s-grid" fill="none"/><line x1="60" y1="260" x2="320.8" y2="190.1" class="s-grid"/><line x1="60" y1="260" x2="293.8" y2="125" class="s-grid"/><line x1="60" y1="260" x2="250.9" y2="69.1" class="s-grid"/><line x1="60" y1="260" x2="195" y2="26.2" class="s-grid"/><line x1="60" y1="260" x2="129.9" y2="-0.8" class="s-grid"/><path d="M207.2,175 206.5,173.7 205.7,172.4 204.9,171.2 204.2,169.9 203.4,168.7 202.6,167.4 201.8,166.2 200.9,164.9 200.1,163.7 199.3,162.5 198.4,161.3 197.5,160.1 196.7,158.9 195.8,157.7 194.9,156.5 194,155.3 193,154.2 192.1,153 191.2,151.9 190.2,150.7 189.3,149.6 188.3,148.5 187.3,147.4 186.3,146.2 219.8,116.1 221,117.5 222.3,118.9 223.5,120.4 224.7,121.8 225.9,123.2 227.1,124.7 228.3,126.2 229.4,127.6 230.6,129.1 231.7,130.6 232.8,132.1 233.9,133.6 235,135.1 236.1,136.7 237.2,138.2 238.2,139.8 239.3,141.3 240.3,142.9 241.3,144.5 242.3,146.1 243.3,147.7 244.3,149.3 245.3,150.9 246.2,152.5Z" class="f-acc-soft" style="stroke-width:2"/><line x1="60" y1="260" x2="207.2" y2="175" class="s-acc2" style="stroke-width:2"/><text x="145" y="233.2" class="t-math acc2" style="font-size:16px" text-anchor="middle"><tspan font-style="italic">r</tspan></text><path d="M100,260l0,-0.9 0,-0.8 -0.1,-0.9 -0.1,-0.9 0,-0.9 -0.1,-0.8 -0.2,-0.9 -0.1,-0.8 -0.2,-0.9 -0.1,-0.9 -0.2,-0.8 -0.3,-0.9 -0.2,-0.8 -0.3,-0.8 -0.2,-0.9 -0.3,-0.8 -0.3,-0.8 -0.3,-0.8 -0.4,-0.8 -0.3,-0.8 -0.4,-0.8 -0.4,-0.8 -0.4,-0.7 -0.5,-0.8" class="s-line" fill="none"/><text x="112" y="250" class="t-math" style="font-size:16px" text-anchor="start"><tspan font-style="italic">θ</tspan></text><path d="M120.6,225l-0.3,-0.5 -0.3,-0.6 -0.3,-0.5 -0.3,-0.5 -0.4,-0.5 -0.3,-0.5 -0.3,-0.5 -0.4,-0.5 -0.3,-0.5 -0.4,-0.6 -0.3,-0.4 -0.4,-0.5 -0.3,-0.5 -0.4,-0.5 -0.4,-0.5 -0.3,-0.5 -0.4,-0.5 -0.4,-0.5 -0.4,-0.4 -0.4,-0.5 -0.4,-0.5 -0.4,-0.4 -0.4,-0.5 -0.4,-0.4" class="s-line" fill="none"/><text x="127.1" y="214.2" class="t-math" style="font-size:16px" text-anchor="start">d<tspan font-style="italic">θ</tspan></text><text x="236.7" y="185.8" class="t-math acc" style="font-size:16px" text-anchor="middle">d<tspan font-style="italic">r</tspan></text><text x="244.4" y="126.9" class="t-math acc" style="font-size:16px" text-anchor="start"><tspan font-style="italic">r</tspan> d<tspan font-style="italic">θ</tspan></text><text x="400" y="280" class="t-dim" style="font-size:16px" text-anchor="end"><tspan font-style="italic">x</tspan></text><text x="70" y="32" class="t-dim" style="font-size:16px" text-anchor="start"><tspan font-style="italic">y</tspan></text></svg></div>
+      <figcaption><b>그림 3-4.</b> 극좌표의 넓이 요소. 반지름 \(r\)과 \(r + dr\), 각 \(\theta\)와 \(\theta + d\theta\) 사이의 칸(색칠한 곳)은 변의 길이가 \(dr\)과 \(r\,d\theta\)이므로 넓이가 \(r\,dr\,d\theta\)이다. 격자의 칸은 바깥으로 갈수록 넓어진다.</figcaption>
+    </figure>
+    <div class="callout tip"><strong>열역학의 편미분은 야코비 행렬식의 비다</strong><p>식 <a class="ref" href="#eq-jacobian-def"></a>에서 \(\partial(f, y)/\partial(x, y) = (\partial f/\partial x)_y\)이다. 고정 변수가 위아래에 함께 들어간 셈이다. 연쇄 법칙 때문에 야코비 행렬식은 분수처럼 약분되고, 두 변수의 자리를 바꾸면 부호가 바뀐다. 순환 관계 <a class="ref" href="#eq-cyclic-relation"></a>의 세 인자를 이렇게 쓰면 \(\frac{\partial(x, z)}{\partial(y, z)}\frac{\partial(y, x)}{\partial(z, x)}\frac{\partial(z, y)}{\partial(x, y)}\)에서 모두 약분되고 자리 바꿈 세 번의 부호 \((-1)^3\)만 남는다.</p></div>
+
+    <h3 id="s5-gaussian">가우스 적분</h3>
+    <p>\(e^{-x^2}\)은 원시 함수를 기본 함수로 쓸 수 없어서, <a href="ch01.html#ex-gaussian-series-integral">1장의 예제 1.13</a>에서는 급수로 유한 구간의 적분을 구했다. 그런데 실수 전체에서의 적분, 곧 <span class="term">가우스 적분</span> <span class="en">(Gaussian integral)</span>은 정확히 계산된다. 한 변수 적분을 제곱해 두 변수 적분으로 만들고, 극좌표로 바꾸는 것이 열쇠다. \(I = \int_{-\infty}^{\infty} e^{-x^2}dx\)라 하면</p>
+    <div class="formula">\[ \begin{aligned} I^2 &= \int_{-\infty}^{\infty}e^{-x^2}dx\int_{-\infty}^{\infty}e^{-y^2}dy = \iint e^{-(x^2 + y^2)}\,dx\,dy \\ &= \int_0^{2\pi}\!\!\int_0^\infty e^{-r^2}\,r\,dr\,d\theta = 2\pi\Big[-\frac12 e^{-r^2}\Big]_0^\infty = \pi \end{aligned} \]</div>
+    <p>이다. 극좌표의 \(r\)이 피적분 함수 \(e^{-r^2}\)의 원시 함수를 만들어 준 것이다. \(I > 0\)이므로</p>
+    <div class="formula" id="eq-gaussian-integral">\[ \int_{-\infty}^{\infty} e^{-x^2}\,dx = \sqrt{\pi} \]</div>
+    <p>이다. \(x = t\sqrt a\)로 치환하면, \(a > 0\)일 때</p>
+    <div class="formula" id="eq-gaussian-scaled">\[ \int_{-\infty}^{\infty} e^{-at^2}\,dt = \sqrt{\frac{\pi}{a}} \]</div>
+    <p>이다. 무한 영역에서 직교 좌표의 적분(정사각형으로 넓혀 감)과 극좌표의 적분(원판으로 넓혀 감)이 같다는 것은 따로 확인해야 한다. 피적분 함수가 양수이므로, 한 변 \(2L\)인 정사각형 위의 적분은 반지름 \(L\)인 원판과 \(\sqrt2 L\)인 원판 위의 적분 사이에 있다. \(L \to \infty\)에서 두 원판의 적분이 모두 \(\pi\)로 가므로 정사각형의 적분도 \(\pi\)로 간다. \(x^{2n}e^{-ax^2}\) 같은 모멘트와 \(e^{-ax^2 + bx}\)의 적분은 11장의 <a href="ch11.html#eq-gaussian-moments">가우스 적분의 모멘트</a>와 <a href="ch11.html#eq-gaussian-general">일반 가우스 적분</a>에서 다룬다.</p>
+
+    <div class="box ex" id="ex-gaussian-beam-power"><div class="box-h">레이저 빔의 출력과 중심 세기</div>
+      <p>단일 모드 레이저 빔의 단면에서 세기는 축으로부터의 거리 \(s\)에 대해 \(I(s) = I_0\,e^{-2s^2/w^2}\)이다(\(w\)는 빔 반지름). (가) 빔의 전체 출력 \(P\)를 \(I_0\)과 \(w\)로 나타내라. (나) 출력의 몇 %가 \(s &lt; w\) 안에 있는가? (다) 출력 5.0 mW, \(w = 1.0\ \text{mm}\)인 레이저 포인터의 중심 세기를 구하라.</p>
+      <p><b>풀이.</b> (가) 단면의 극좌표 \((s, \phi)\)에서 넓이 요소는 식 <a class="ref" href="#eq-polar-area-element"></a>에 따라 \(s\,ds\,d\phi\)이다.</p>
+      <div class="formula" id="eq-gaussian-beam-power">\[ \begin{aligned} P &= \int_0^{2\pi}\!\!\int_0^\infty I_0\,e^{-2s^2/w^2}\,s\,ds\,d\phi \\ &= 2\pi I_0\Big[-\frac{w^2}{4}e^{-2s^2/w^2}\Big]_0^\infty = \frac{\pi w^2}{2}\,I_0 \end{aligned} \]</div>
+      <p>이다. 출력은 중심 세기에 넓이 \(\pi w^2/2\)를 곱한 것과 같다. (나) 적분을 \(w\)까지만 하면 \(P(s &lt; w)/P = 1 - e^{-2} = 0.865\), 곧 86.5%이다.</p>
+      <p><b>숫자로 보기.</b> (다) \(I_0 = 2P/(\pi w^2) = 2(5.0 \times 10^{-3}\ \text{W})/\big(\pi(1.0 \times 10^{-3}\ \text{m})^2\big) = 3.2 \times 10^3\ \text{W/m}^2\)이다. 지구 대기 밖에서 받는 햇빛의 세기 \(1361\ \text{W/m}^2\)(G. Kopp, J. L. Lean, Geophys. Res. Lett. 38, L01706 (2011))의 2.3배다. 눈은 이 빛을 망막의 작은 점으로 모으므로 레이저 포인터를 들여다보면 안 된다.</p>
+    </div>
+
+    <div class="box ex" id="ex-moment-of-inertia"><div class="box-h">원판과 구의 관성 모멘트</div>
+      <p>(가) 질량 \(M\), 반지름 \(R\)인 균일한 원판의 중심축에 대한 관성 모멘트를 구하라. (나) 균일한 구의 지름에 대한 관성 모멘트를 원판을 쌓아서 구하라. (다) 원판, 구, 얇은 고리가 높이 1.00 m의 빗면을 미끄러지지 않고 굴러 내려올 때 바닥에서의 속력을 비교하라.</p>
+      <p><b>풀이.</b> (가) 넓이 밀도는 \(\sigma = M/\pi R^2\)이다. 축에서 거리 \(s\)인 작은 넓이의 관성 모멘트는 \(\sigma s^2\,dA\)이므로, 극좌표에서</p>
+      <div class="formula">\[ I_{\text{원판}} = \int_0^{2\pi}\!\!\int_0^R \sigma s^2\,s\,ds\,d\phi = 2\pi\sigma\frac{R^4}{4} = \frac12 MR^2 \]</div>
+      <p>이다. 넓이 요소의 \(s\)를 빠뜨리면 \(\tfrac23 MR\)이 나온다. 차원부터 맞지 않는다.</p>
+      <p>(나) 부피 밀도를 \(\rho = M/(\tfrac43\pi R^3)\)로 두고 구를 \(z\)축에 수직인 얇은 원판으로 자른다. 높이 \(z\)의 원판은 반지름이 \(\sqrt{R^2 - z^2}\), 두께가 \(dz\), 질량이 \(dm = \rho\pi(R^2 - z^2)\,dz\)이고, (가)에 따라 관성 모멘트가 \(\tfrac12 dm\,(R^2 - z^2)\)이다. 이것을 \(z\)로 적분한다. 안쪽의 이중 적분은 (가)에서 이미 했으므로 남은 것은 한 변수 적분이다.</p>
+      <div class="formula" id="eq-inertia-sphere">\[ \begin{aligned} I_{\text{구}} &= \frac{\rho\pi}{2}\int_{-R}^{R}(R^2 - z^2)^2\,dz = \frac{\rho\pi}{2}\cdot\frac{16R^5}{15} \\ &= \frac{8\pi}{15}\rho R^5 = \frac25 MR^2 \end{aligned} \]</div>
+      <p>이다. 구면 좌표의 부피 요소(6장)로 한 번에 적분해도 같은 값이 나온다. 구는 질량이 축 근처에 더 모여 있어서 원판보다 계수가 작다.</p>
+      <p>(다) 구르는 물체의 운동 에너지는 \(\tfrac12 Mv^2 + \tfrac12 I\omega^2\)이고 미끄러지지 않으면 \(\omega = v/R\)이다. \(I = cMR^2\)으로 쓰면 에너지 보존 \(Mgh = \tfrac12 Mv^2(1 + c)\)에서</p>
+      <div class="formula" id="eq-rolling-speed">\[ v = \sqrt{\frac{2gh}{1 + c}} \]</div>
+      <p>이다. 질량과 반지름에는 기대지 않는다.</p>
+      <p><b>숫자로 보기.</b> \(h = 1.00\ \text{m}\), \(g = 9.81\ \text{m/s}^2\)이면 구(\(c = 0.4\))는 \(3.74\ \text{m/s}\), 원판(\(c = 0.5\))은 \(3.62\ \text{m/s}\), 고리(\(c = 1\))는 \(3.13\ \text{m/s}\)이다. 마찰 없이 미끄러지면 \(\sqrt{2gh} = 4.43\ \text{m/s}\)이다. 같은 빗면에서 구가 언제나 원판보다, 원판이 고리보다 먼저 내려온다. 위치 에너지 가운데 회전에 들어가는 몫 \(c/(1 + c)\)가 작을수록 빠르다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 3.6 -->
+  <section id="s6">
+    <h2>적분 기호 안에서 미분하기</h2>
+    <p><a href="ch01.html#ex-planck-mean-energy">1장의 예제 1.5</a>에서는 분배 함수의 합 \(\sum_n q^n\)(\(q = e^{-\beta\hbar\omega}\))을 매개변수 \(q\)로 미분해서 평균 에너지를 얻었다. 에너지가 연속적으로 분포하면 합이 적분 \(Z(\beta) = \int e^{-\beta E}\cdots\)이 되고, 같은 일을 하려면 적분을 매개변수로 미분해야 한다. 적분의 끝이 매개변수에 기대는 경우도 있다. 시각 \(t\)까지 받은 힘을 모두 더해서 진동자의 위치를 구하면 위끝이 \(t\)인 적분이 나온다. 이 절에서는 이런 적분을 미분하는 규칙을 세운다.</p>
+
+    <h3 id="s6-rule">라이프니츠 규칙</h3>
+    <div class="box thm" id="thm-leibniz-integral"><div class="box-h">라이프니츠 적분 규칙 <span class="en">(Leibniz integral rule)</span></div>
+      <p>\(f(x, t)\)와 \(\partial f/\partial t\)가 닫힌 직사각형 \([A, B] \times [t_0, t_1]\)에서 연속이고, \(a(t)\), \(b(t)\)가 미분 가능하며 값이 \([A, B]\) 안에 있으면, \(t_0 &lt; t &lt; t_1\)에서</p>
+      <div class="formula" id="eq-leibniz-rule">\[ \begin{aligned} &\frac{d}{dt}\int_{a(t)}^{b(t)} f(x, t)\,dx \\ &\quad = f\big(b(t), t\big)\,b'(t) - f\big(a(t), t\big)\,a'(t) \\ &\qquad + \int_{a(t)}^{b(t)} \frac{\partial f}{\partial t}(x, t)\,dx \end{aligned} \]</div>
+      <p>이다. 끝이 고정되어 있으면 앞의 두 항이 없어지고, 미분이 적분 기호 안으로 들어간다.</p>
+    </div>
+    <p>이 규칙은 연쇄 법칙의 한 예다. 세 변수의 함수 \(G(u, w, t) = \int_u^{w} f(x, t)\,dx\)를 생각하면 구하는 적분은 \(G\big(a(t), b(t), t\big)\)이다. 미적분의 기본 정리에 따라 \(\partial G/\partial w = f(w, t)\), \(\partial G/\partial u = -f(u, t)\)이고, 끝을 고정한 \(\partial G/\partial t\)는 \(\int_u^{w}\partial_t f\,dx\)이다(아래 증명). 이 셋을 식 <a class="ref" href="#eq-chain-rule-path"></a>에 넣으면 식 <a class="ref" href="#eq-leibniz-rule"></a>이 된다. 그림 3-5는 세 항의 뜻을 보여 준다. 시간이 \(dt\) 지나는 동안 넓이는 곡선이 올라가서(적분 항), 오른쪽 끝이 밀려나서(\(f(b)\,db\)), 왼쪽 끝이 따라와서(\(-f(a)\,da\)) 바뀐다.</p>
+    <details class="proof"><summary>끝이 고정된 경우의 증명</summary>
+      <p>\(G(t) = \int_u^{w} f(x, t)\,dx\)의 차분 몫에 평균값 정리를 쓰면, 각 \(x\)마다 \(0 &lt; \theta_x &lt; 1\)이 있어서</p>
+      <div class="formula">\[ \begin{aligned} &\frac{G(t + h) - G(t)}{h} - \int_u^{w}\partial_t f(x, t)\,dx \\ &\quad = \int_u^{w}\big[\partial_t f(x, t + \theta_x h) \\ &\qquad\qquad - \partial_t f(x, t)\big]\,dx \end{aligned} \]</div>
+      <p>이다. \(\partial_t f\)는 닫힌 직사각형에서 연속이므로 고르게 연속이다. 곧 \(\lvert h\rvert\)가 충분히 작으면 모든 \(x\)에서 괄호의 크기가 주어진 \(\varepsilon\)보다 작다. 그러면 오른쪽은 \((w - u)\varepsilon\) 이하이므로 \(h \to 0\)에서 0으로 간다.</p>
+    </details>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 290" role="img" aria-label="적분 기호 안에서 미분하는 규칙의 그림. 시간이 dt만큼 지나면 넓이가 세 가지로 바뀐다: 두 곡선 사이의 띠, 오른쪽 끝에 새로 들어온 띠, 왼쪽 끝에서 빠진 띠"><line x1="40" y1="250" x2="460" y2="250" class="s-line"/><line x1="40" y1="20" x2="40" y2="250" class="s-line"/><path d="M145,250L145,111.1 151.6,111.6 158.2,112.5 164.7,113.8 171.3,115.6 177.9,117.7 184.5,120.2 191.1,123.1 197.6,126.3 204.2,129.8 210.8,133.6 217.4,137.5 224,141.6 230.5,145.9 237.1,150.3 243.7,154.6 250.3,159 256.9,163.3 263.4,167.6 270,171.7 276.6,175.6 283.2,179.3 289.8,182.7 296.3,185.9 302.9,188.7 309.5,191.1 316.1,193.2 322.7,194.9 329.2,196.1 335.8,196.9 342.4,197.3 342.4,250Z" class="f-surface" style="stroke:none"/><path d="M145,77.1 151.6,77.1 158.2,77.5 164.7,78.4 171.3,79.7 177.9,81.4 184.5,83.5 191.1,85.9 197.6,88.7 204.2,91.7 210.8,95 217.4,98.5 224,102.2 230.5,106 237.1,109.9 243.7,113.9 250.3,117.8 256.9,121.7 263.4,125.5 270,129.1 276.6,132.6 283.2,135.8 289.8,138.8 296.3,141.5 302.9,143.8 309.5,145.8 316.1,147.5 322.7,148.7 329.2,149.5 335.8,149.8 342.4,149.7 342.4,197.3 335.8,196.9 329.2,196.1 322.7,194.9 316.1,193.2 309.5,191.1 302.9,188.7 296.3,185.9 289.8,182.7 283.2,179.3 276.6,175.6 270,171.7 263.4,167.6 256.9,163.3 250.3,159 243.7,154.6 237.1,150.3 230.5,145.9 224,141.6 217.4,137.5 210.8,133.6 204.2,129.8 197.6,126.3 191.1,123.1 184.5,120.2 177.9,117.7 171.3,115.6 164.7,113.8 158.2,112.5 151.6,111.6 145,111.1Z" class="f-acc-soft" style="stroke:none"/><path d="M342.4,250L342.4,149.7 343.7,149.7 344.9,149.6 346.2,149.5 347.4,149.4 348.7,149.2 350,149.1 351.2,148.9 352.5,148.7 353.7,148.5 355,148.3 356.3,148.1 357.5,147.8 358.8,147.6 360,147.3 361.3,147 362.6,146.7 363.8,146.4 365.1,146 366.3,145.7 367.6,145.3 368.9,144.9 370.1,144.5 371.4,144.1 372.6,143.7 373.9,143.2 375.2,142.7 376.4,142.3 377.7,141.8 378.9,141.3 380.2,140.8 380.2,250Z" class="f-acc2-soft" style="stroke-width:1.2"/><path d="M124,250L124,112.6 124.7,112.5 125.4,112.4 126.1,112.3 126.8,112.2 127.5,112 128.2,112 128.9,111.9 129.6,111.8 130.3,111.7 131,111.6 131.7,111.5 132.4,111.5 133.1,111.4 133.8,111.3 134.5,111.3 135.2,111.2 135.9,111.2 136.6,111.2 137.3,111.1 138,111.1 138.7,111.1 139.4,111.1 140.1,111.1 140.8,111 141.5,111 142.2,111 142.9,111.1 143.6,111.1 144.3,111.1 145,111.1 145,250Z" class="s-line" fill="none" stroke-dasharray="4 3" style="stroke-width:1.5"/><path d="M56.8,143.1l12.9,-8.1 12.9,-7.2 12.8,-6.3 12.9,-4.9 12.9,-3.4 12.9,-1.9 12.9,-0.1 12.8,1.6 12.9,3.2 12.9,4.7 12.9,6.1 12.9,7.1 12.8,7.9 12.9,8.5 12.9,8.5 12.9,8.4 12.9,7.9 12.8,7.1 12.9,5.9 12.9,4.6 12.9,3.1 12.9,1.4 12.8,-0.3 12.9,-2 12.9,-3.5 12.9,-5.1 12.9,-6.3 12.8,-7.4 12.9,-8.1 12.9,-8.5" class="s-line" style="stroke:var(--text);stroke-width:2.4" fill="none"/><path d="M56.8,115.1l12.9,-8.9 12.9,-8.2 12.8,-7.1 12.9,-5.8 12.9,-4.3 12.9,-2.7 12.9,-1.1 12.8,0.7 12.9,2.4 12.9,3.8 12.9,5.2 12.9,6.2 12.8,7.1 12.9,7.5 12.9,7.7 12.9,7.5 12.9,7 12.8,6.2 12.9,5.1 12.9,3.7 12.9,2.2 12.9,0.5 12.8,-1.1 12.9,-2.9 12.9,-4.5 12.9,-5.9 12.9,-7.2 12.8,-8.3 12.9,-8.9 12.9,-9.4" class="s-acc" style="stroke-width:2.4" fill="none"/><line x1="124" y1="250" x2="124" y2="256" class="s-line"/><line x1="145" y1="250" x2="145" y2="256" class="s-line"/><line x1="342.4" y1="250" x2="342.4" y2="256" class="s-line"/><line x1="380.2" y1="250" x2="380.2" y2="256" class="s-line"/><text x="122" y="272" class="t-math" style="font-size:16px" text-anchor="end"><tspan font-style="italic">a</tspan></text><text x="147" y="272" class="t-math" style="font-size:16px" text-anchor="start"><tspan font-style="italic">a</tspan>+d<tspan font-style="italic">a</tspan></text><text x="340.4" y="272" class="t-math" style="font-size:16px" text-anchor="end"><tspan font-style="italic">b</tspan></text><text x="382.2" y="272" class="t-math" style="font-size:16px" text-anchor="start"><tspan font-style="italic">b</tspan>+d<tspan font-style="italic">b</tspan></text><text x="439" y="94.7" class="t-math acc" style="font-size:15px" text-anchor="end"><tspan font-style="italic">f</tspan>(<tspan font-style="italic">x</tspan>, <tspan font-style="italic">t</tspan> + d<tspan font-style="italic">t</tspan>)</text><text x="439" y="206" class="t-math" style="font-size:15px" text-anchor="end"><tspan font-style="italic">f</tspan>(<tspan font-style="italic">x</tspan>, <tspan font-style="italic">t</tspan>)</text><text x="224.8" y="206.9" class="t-math" style="font-size:16px" text-anchor="middle"><tspan font-style="italic">F</tspan>(<tspan font-style="italic">t</tspan>)</text><text x="460" y="286" class="t-dim" style="font-size:16px" text-anchor="end"><tspan font-style="italic">x</tspan></text></svg>
+      <figcaption><b>그림 3-5.</b> 라이프니츠 규칙의 그림. \(F(t) = \int_{a}^{b} f(x, t)\,dx\)는 곡선 \(f(x, t)\)(굵은 선) 아래의 넓이다. \(dt\) 뒤에는 곡선이 \(f(x, t + dt)\)(강조색)로 올라가 두 곡선 사이의 띠(강조색으로 칠한 곳, \(\int\partial_t f\,dt\,dx\))만큼 넓이가 늘고, 오른쪽 끝이 \(b + db\)로 밀려 \(f(b)\,db\)(보조색 띠)만큼 늘며, 왼쪽 끝이 \(a + da\)로 따라와 \(f(a)\,da\)(점선으로 둘러싼 띠)만큼 준다. 곡선은 \(f = 1 + 0.45\sin 1.3x\)와 거기에 \(0.28 + 0.06x\)를 더한 것으로 그렸다.</figcaption>
+    </figure>
+    <p>적분 구간이 무한하면 조건이 더 필요하다. 각 \(t\)에서 \(\int f\,dx\)가 수렴하고, 쓰려는 \(t\)의 범위 전체에서 \(\lvert\partial f/\partial t\rvert \le g(x)\)이고 \(\int g\,dx\)가 유한한 함수 \(g\)가 있으면, 끝이 고정된 무한 구간에서도 미분을 적분 안으로 넣을 수 있다. \(g\)가 \(t\)와 상관없이 피적분 함수를 한꺼번에 눌러 준다는 뜻이다.</p>
+    <div class="callout warn"><strong>무한 구간에서 미분을 넣으면 안 되는 예</strong><p>\(t > 0\)이면 \(x' = tx\)로 치환해서 \(\int_0^\infty \frac{\sin tx}{x}\,dx = \int_0^\infty\frac{\sin x'}{x'}\,dx'\)이 \(t\)에 기대지 않는 상수임을 안다(그 값 \(\pi/2\)는 19장의 유수 정리로 구한다). 따라서 \(t\)로 미분하면 0이다. 그런데 미분을 적분 안에 넣으면 \(\int_0^\infty \cos tx\,dx\)가 되어 수렴하지 않는다. \(\partial_t(\sin tx/x) = \cos tx\)를 눌러 줄 적분 가능한 \(g(x)\)가 없기 때문이다. 피적분 함수가 무한대에서 지수적으로 줄어드는 경우(가우스 함수, 볼츠만 인자)는 조건을 쉽게 만족한다.</p></div>
+
+    <div class="box ex" id="ex-equipartition"><div class="box-h">분배 함수의 미분과 에너지 등분배</div>
+      <p>온도 \(T\)인 기체에서 분자 운동량의 \(x\)성분 \(p_x\)가 \(e^{-\beta p_x^2/2m}\)에 비례하는 확률 밀도를 따른다(\(\beta = 1/k_BT\), <a class="ref" href="#ex-boltzmann-max-entropy"></a>). \(Z(\beta) = \int_{-\infty}^\infty e^{-\beta p_x^2/2m}\,dp_x\)를 써서 \(\langle p_x^2/2m\rangle\)을 구하라. 300 K의 질소 분자(\(m = 28.01\ \text{u}\))에서 값을 계산하라.</p>
+      <p><b>풀이.</b> 식 <a class="ref" href="#eq-gaussian-scaled"></a>에서 \(a = \beta/2m\)이므로 \(Z = \sqrt{2\pi m/\beta}\)이다. 평균은 \(\langle E\rangle = Z^{-1}\int E\,e^{-\beta E}\,dp_x\) (\(E = p_x^2/2m\))이고, \(E\,e^{-\beta E} = -\partial_\beta e^{-\beta E}\)이다. \(\beta \ge \beta_0 > 0\)이면 \(\lvert\partial_\beta e^{-\beta E}\rvert \le E\,e^{-\beta_0 E}\)이고 이것은 적분 가능하므로, 미분을 적분 밖으로 꺼낼 수 있다.</p>
+      <div class="formula" id="eq-mean-energy-logz">\[ \langle E\rangle = -\frac{1}{Z}\frac{\partial Z}{\partial\beta} = -\frac{\partial\ln Z}{\partial\beta} \]</div>
+      <p>\(\ln Z = \tfrac12\ln(2\pi m) - \tfrac12\ln\beta\)이므로</p>
+      <div class="formula">\[ \Big\langle\frac{p_x^2}{2m}\Big\rangle = \frac{1}{2\beta} = \frac12 k_BT \]</div>
+      <p>이다. 이차식으로 들어가는 자유도마다 평균 에너지 \(\tfrac12 k_BT\)가 돌아간다는 <span class="term">에너지 등분배</span> <span class="en">(equipartition of energy)</span>다. 식 <a class="ref" href="#eq-mean-energy-logz"></a>를 1장의 \(Z = 1/(1 - e^{-\beta\hbar\omega})\)에 쓰면 <a href="ch01.html#eq-planck-mean-energy">식 (1.18)</a>이 한 줄로 나오고, 1장의 <a href="ch01.html#ex-planck-classical-limit">예제 1.12</a>에서 본 고온 극한 \(k_BT\)는 운동 에너지와 퍼텐셜 에너지의 \(\tfrac12 k_BT\)를 더한 것이다. 질량 \(m\)이 답에 남지 않는 것도 눈여겨보자.</p>
+      <p><b>숫자로 보기.</b> 300 K에서 \(\tfrac12 k_BT = 12.9\ \text{meV}\)이다. \(\langle p_x^2\rangle = mk_BT\)이므로, \(m = 4.651 \times 10^{-26}\ \text{kg}\)을 넣으면 속도 성분의 제곱 평균 제곱근은 \(\sqrt{k_BT/m} = 298\ \text{m/s}\)이다. 세 성분을 합친 속력의 분포와 평균 속력은 11장의 <a href="ch11.html#ex-maxwell-speeds">맥스웰 분포 예제</a>에서 다룬다.</p>
+    </div>
+
+    <div class="box ex" id="ex-duhamel-response"><div class="box-h">힘을 받는 진동자의 응답</div>
+      <p>질량 \(m\), 용수철 상수 \(k\)인 진동자가 \(t = 0\)에 정지해 있다가 힘 \(F(t)\)를 받는다. \(\omega = \sqrt{k/m}\)일 때</p>
+      <div class="formula" id="eq-duhamel">\[ x(t) = \frac{1}{m\omega}\int_0^t F(t')\,\sin\omega(t - t')\,dt' \]</div>
+      <p>이 운동 방정식 \(m\ddot x + kx = F(t)\)와 처음 조건 \(x(0) = \dot x(0) = 0\)을 만족함을 보여라. \(m = 0.20\ \text{kg}\), \(k = 20\ \text{N/m}\)인 진동자에 \(t = 0\)부터 일정한 힘 \(F_0 = 1.0\ \text{N}\)을 가하면 최대 변위는 얼마인가?</p>
+      <p><b>풀이.</b> \(t\)가 위끝과 피적분 함수 양쪽에 있으므로 식 <a class="ref" href="#eq-leibniz-rule"></a>을 쓴다. 위끝에서 피적분 함수는 \(F(t)\sin 0 = 0\)이므로</p>
+      <div class="formula">\[ \begin{aligned} \dot x &= \frac{1}{m\omega}\int_0^t F(t')\,\omega\cos\omega(t - t')\,dt' \\ &= \frac1m\int_0^t F(t')\cos\omega(t - t')\,dt' \end{aligned} \]</div>
+      <p>이다. 한 번 더 미분하면 이번에는 위끝에서 \(F(t)\cos 0 = F(t)\)가 나온다.</p>
+      <div class="formula">\[ \begin{aligned} \ddot x &= \frac{F(t)}{m} - \frac{\omega}{m}\int_0^t F(t')\sin\omega(t - t')\,dt' \\ &= \frac{F(t)}{m} - \omega^2 x \end{aligned} \]</div>
+      <p>양변에 \(m\)을 곱하면 \(m\ddot x + kx = F\)이다. \(t = 0\)이면 적분 구간의 길이가 0이므로 \(x(0) = \dot x(0) = 0\)이다. 식 <a class="ref" href="#eq-duhamel"></a>은 시각 \(t'\)에 받은 작은 충격 \(F(t')\,dt'\) 각각에 대한 응답 \(\sin\omega(t - t')/m\omega\)을 모두 더한 것이다. 10장에서 이것을 <a href="ch10.html#def-impulse-response">충격 응답</a>과 <a href="ch10.html#eq-convolution-response">합성곱</a>으로 유도하고, 20장에서 그린 함수로 넓힌다. 차원은 \(\text{N}\cdot\text{s}/(\text{kg}\cdot\text{s}^{-1}) = \text{m}\)으로 맞다.</p>
+      <p><b>숫자로 보기.</b> \(\omega = \sqrt{20/0.20} = 10\ \text{rad/s}\)이다. \(F = F_0\)이면 \(\int_0^t\sin\omega(t - t')\,dt' = (1 - \cos\omega t)/\omega\)이므로</p>
+      <div class="formula">\[ x(t) = \frac{F_0}{k}\big(1 - \cos\omega t\big) = (5.0\ \text{cm})\big(1 - \cos 10t\big) \]</div>
+      <p>이다. 추를 살며시 내려놓아 정지시킨 경우의 변위 \(F_0/k = 5.0\ \text{cm}\)를 중심으로 진동하고, \(t = \pi/\omega = 0.31\ \text{s}\)에서 최대 변위 \(10\ \text{cm}\)에 이른다. 갑자기 가한 하중은 같은 크기의 정적 하중보다 두 배 큰 변위를 만든다.</p>
+    </div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>편미분은 다른 변수를 고정한 미분이고, 고정한 변수를 \((\partial U/\partial V)_T\)처럼 밝힌다. 전미분 \(df = \sum_i(\partial f/\partial x_i)\,dx_i\)는 작은 변화의 1차 부분이며, 거듭제곱의 곱은 \(df/f = a\,dx/x + b\,dy/y\)로 상대 오차가 더해진다.</li>
+      <li>\(M\,dx + N\,dy\)가 완전 미분이면 \(\partial M/\partial y = \partial N/\partial x\)이고, 단순 연결 영역에서는 그 역도 성립한다. 상태 함수(\(U\), \(S\))의 미분은 완전 미분이고 일과 열(\(\delta W\), \(\delta Q\))은 아니다. \(1/T\)이 \(\delta Q\)의 적분 인자이다.</li>
+      <li>다변수 연쇄 법칙 \(\partial f/\partial u = \sum_i(\partial f/\partial x_i)(\partial x_i/\partial u)\). 세 변수가 묶여 있으면 역수 관계(고정 변수가 같을 때만)와 순환 관계 \((\partial x/\partial y)_z(\partial y/\partial z)_x(\partial z/\partial x)_y = -1\)이 성립한다. 이것과 맥스웰 관계식에서 \(C_p - C_V = TV\alpha^2/\kappa_T\)가 나온다(이상 기체는 \(nR\)).</li>
+      <li>르장드르 변환 \(g(p) = px - f(x)\), \(p = f'(x)\)는 볼록한 곡선을 접선의 절편으로 나타내며 정보를 잃지 않는다. \(dg = x\,dp\)이고 두 번 하면 제자리다. \(F = U - TS\), \(H = U + pV\), \(G = U - TS + pV\)의 자연 변수는 \((T, V)\), \((S, p)\), \((T, p)\)이고, 각 미분의 완전성에서 맥스웰 관계식이 나온다.</li>
+      <li>임계점(\(\nabla f = 0\))의 종류는 헤세 행렬이 정한다. 두 변수이면 \(D = f_{xx}f_{yy} - f_{xy}^2\)의 부호, \(n\)변수이면 고유값의 부호를 본다. 정전기 퍼텐셜의 헤세 행렬은 대각합이 0이라 극소가 없다(언쇼 정리).</li>
+      <li>제약 \(g = c\) 아래의 극값에서 \(\nabla f = \lambda\nabla g\)이고(\(\nabla g \ne 0\)일 때), 승수는 \(\lambda = df^*/dc\)이다. 평균 에너지를 고정하고 엔트로피 \(-k_B\sum p_i\ln p_i\)를 최대로 하면 볼츠만 분포 \(p_i = e^{-\beta E_i}/Z\)가 나오고 승수가 \(\beta = 1/k_BT\)이다.</li>
+      <li>변수를 바꾸면 \(dx\,dy = \lvert\partial(x, y)/\partial(u, v)\rvert\,du\,dv\)이고, 극좌표는 \(r\,dr\,d\theta\)이다. 이것으로 \(\int e^{-x^2}dx = \sqrt\pi\), \(\int e^{-ax^2}dx = \sqrt{\pi/a}\)를 얻는다. 원판과 구의 관성 모멘트는 \(\tfrac12 MR^2\), \(\tfrac25 MR^2\)이다.</li>
+      <li>라이프니츠 규칙: \(\frac{d}{dt}\int_{a(t)}^{b(t)}f\,dx = f(b)b' - f(a)a' + \int\partial_t f\,dx\). 무한 구간에서는 \(\partial_t f\)를 적분 가능한 함수로 눌러야 한다. 분배 함수에서 \(\langle E\rangle = -\partial\ln Z/\partial\beta\)이고, 이차 자유도마다 \(\tfrac12 k_BT\)가 돌아간다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. 다음 가운데 완전 미분인 것은?</p><div class="opts">
+        <button class="opt">\(y\,dx - x\,dy\)</button>
+        <button class="opt" data-correct>\(y\,dx + x\,dy\)</button>
+        <button class="opt">\(x\,dx + x\,dy\)</button>
+        <button class="opt">\((T, V)\)를 변수로 본 이상 기체의 \(p\,dV\)</button>
+      </div><div class="quiz-exp">\(M = y\), \(N = x\)이면 \(\partial_y M = 1 = \partial_x N\)이고, 실제로 \(y\,dx + x\,dy = d(xy)\)이다. \(y\,dx - x\,dy\)는 \(1 \ne -1\), \(x\,dx + x\,dy\)는 \(0 \ne 1\)이다. \(p\,dV = (nRT/V)\,dV\)는 \(\partial_T(nRT/V) = nR/V \ne 0\)이라 완전 미분이 아니다. 일은 경로에 기댄다.</div></div>
+      <div class="quiz-q"><p>2. 이상 기체에서 \((\partial U/\partial V)_T = 0\)이다. 같은 기체에서 \((\partial U/\partial V)_S\)는?</p><div class="opts">
+        <button class="opt">\(0\)</button>
+        <button class="opt" data-correct>\(-p\)</button>
+        <button class="opt">\(+p\)</button>
+        <button class="opt">\(-T\)</button>
+      </div><div class="quiz-exp">\(dU = T\,dS - p\,dV\)에서 \(S\)를 고정하면 \(dU = -p\,dV\)이다. 고정 변수가 다르면 같은 \(\partial U/\partial V\)라도 다른 양이다. 단열 팽창에서는 기체가 한 일만큼 내부 에너지가 준다.</div></div>
+      <div class="quiz-q"><p>3. 깁스 자유 에너지 \(G = U - TS + pV\)의 자연 변수와, 그 편미분으로 옳은 것은?</p><div class="opts">
+        <button class="opt">\((S, V)\); \((\partial G/\partial S)_V = T\)</button>
+        <button class="opt">\((T, V)\); \((\partial G/\partial V)_T = -p\)</button>
+        <button class="opt" data-correct>\((T, p)\); \((\partial G/\partial p)_T = V\)</button>
+        <button class="opt">\((S, p)\); \((\partial G/\partial p)_S = V\)</button>
+      </div><div class="quiz-exp">\(dG = dU - T\,dS - S\,dT + p\,dV + V\,dp = -S\,dT + V\,dp\)이다. 자연 변수는 \(T\)와 \(p\)이고 \((\partial G/\partial T)_p = -S\), \((\partial G/\partial p)_T = V\)이다. 둘째 보기는 \(F\)의 성질이다.</div></div>
+      <div class="quiz-q"><p>4. 함수 \(f(x, y)\)의 임계점에서 \(f_{xx} = 2\), \(f_{yy} = 3\), \(f_{xy} = 3\)이다. 이 점은?</p><div class="opts">
+        <button class="opt">극소점</button>
+        <button class="opt">극대점</button>
+        <button class="opt" data-correct>안장점</button>
+        <button class="opt">이 정보로는 알 수 없다</button>
+      </div><div class="quiz-exp">\(D = f_{xx}f_{yy} - f_{xy}^2 = 6 - 9 = -3 &lt; 0\)이므로 안장점이다. \(f_{xx}\)와 \(f_{yy}\)가 모두 양수여도 섞인 항이 크면 어떤 방향(여기서는 \(h = -k\) 근처)으로는 내려간다.</div></div>
+      <div class="quiz-q"><p>5. 변환 \(x = 2u + v\), \(y = u - v\)가 \((u, v)\) 평면의 넓이 1인 정사각형을 옮긴 영역의 넓이는?</p><div class="opts">
+        <button class="opt">1</button>
+        <button class="opt">2</button>
+        <button class="opt" data-correct>3</button>
+        <button class="opt">\(-3\)</button>
+      </div><div class="quiz-exp">\(\partial(x, y)/\partial(u, v) = (2)(-1) - (1)(1) = -3\)이다. 넓이는 절댓값 3이다. 음수 부호는 방향(시계/반시계)이 뒤집혔다는 뜻일 뿐이다.</div></div>
+      <div class="quiz-q"><p>6. \(\displaystyle\frac{d}{dt}\int_0^{t^2} e^{-x^2}\,dx\)는?</p><div class="opts">
+        <button class="opt">\(e^{-t^4}\)</button>
+        <button class="opt" data-correct>\(2t\,e^{-t^4}\)</button>
+        <button class="opt">\(2t\,e^{-t^2}\)</button>
+        <button class="opt">\(-2t^3 e^{-t^4}\)</button>
+      </div><div class="quiz-exp">피적분 함수는 \(t\)에 기대지 않으므로 라이프니츠 규칙의 위끝 항만 남는다: \(f(b(t))\,b'(t) = e^{-(t^2)^2}\cdot 2t\).</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-cylinder-volume-error" data-level="1"><p>원기둥 시료의 반지름을 1% 크게, 높이를 2% 작게 깎았다. 부피 \(V = \pi r^2h\)의 상대 변화를 전미분으로 구하라. 정확한 값과 비교하고, 차이가 몇 차 항인지 밝혀라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>식 <a class="ref" href="#eq-log-differential"></a>에서 \(dV/V = 2\,dr/r + dh/h = 2(0.01) + (-0.02) = 0\)이다. 1차 근사에서는 부피가 변하지 않는다. 정확한 값은 \((1.01)^2(0.98) - 1 = -3.0 \times 10^{-4}\)으로 \(-0.03\%\)이다. 이 차이는 2차 항이다. \((1 + u)^2(1 + w) = 1 + (2u + w) + (u^2 + 2uw) + u^2w\)에서 \(u = 0.01\), \(w = -0.02\)이면 2차 항 \(u^2 + 2uw = 0.0001 - 0.0004 = -3 \times 10^{-4}\)이 결과를 정한다. 1차 항이 지워지면 다음 차수까지 봐야 한다는 1장의 교훈과 같다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-exact-potential" data-level="1"><p>(가) \((2xy + 3)\,dx + (x^2 - 4y)\,dy\)가 완전 미분임을 보이고, \(df\)가 이것과 같은 \(f\)를 구하라. 원점에서 \((1, 2)\)까지 이 형식을 선적분한 값은 얼마인가? (나) \(y\,dx - x\,dy\)는 완전 미분이 아니다. \(1/y^2\)을 곱하면 \(y \ne 0\)에서 완전 미분이 됨을 보이고, 그 원시 함수를 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\partial_y(2xy + 3) = 2x = \partial_x(x^2 - 4y)\)이므로 조건 <a class="ref" href="#eq-exactness-condition"></a>를 만족한다. \(\partial_x f = 2xy + 3\)을 \(x\)로 적분하면 \(f = x^2y + 3x + h(y)\)이고, \(\partial_y f = x^2 + h'(y) = x^2 - 4y\)에서 \(h = -2y^2\)이다. 따라서 \(f = x^2y + 3x - 2y^2 + C\)이다. 선적분은 경로와 상관없이 \(f(1, 2) - f(0, 0) = 2 + 3 - 8 = -3\)이다.</p>
+        <p>(나) \(\partial_y(y) = 1 \ne -1 = \partial_x(-x)\)이므로 완전 미분이 아니다. \(1/y^2\)을 곱하면 \(M = 1/y\), \(N = -x/y^2\)이고 \(\partial_y M = -1/y^2 = \partial_x N\)이다. \(\partial_x f = 1/y\)에서 \(f = x/y + h(y)\), \(\partial_y f = -x/y^2 + h'\)이므로 \(h\)는 상수이다. 원시 함수는 \(x/y\)이고, \(1/y^2\)이 적분 인자이다. 적분 인자는 하나로 정해지지 않는다(\(1/x^2\)도 된다).</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-expansion-compressibility" data-level="2"><p>물질의 부피를 \(V(T, p)\)로 보면 \(dV/V = \alpha\,dT - \kappa_T\,dp\)이다(\(\alpha\)와 \(\kappa_T\)는 식 <a class="ref" href="#eq-cp-cv"></a>의 정의). (가) \((\partial\alpha/\partial p)_T = -(\partial\kappa_T/\partial T)_p\)임을 보이고, 이상 기체로 확인하라. (나) 25 °C의 물이 \(\alpha = 2.57 \times 10^{-4}\ \text{K}^{-1}\), \(\kappa_T = 4.52 \times 10^{-10}\ \text{Pa}^{-1}\), 몰 부피 \(18.07\ \text{cm}^3\text{/mol}\), \(C_p = 75.3\ \text{J/(mol}\cdot\text{K)}\)라 하자. \(C_p - C_V\)는 \(C_p\)의 몇 %인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(dV/V = d(\ln V)\)는 상태 함수 \(\ln V\)의 미분이므로 완전 미분이다. \(M = \alpha\), \(N = -\kappa_T\)에 조건 <a class="ref" href="#eq-exactness-condition"></a>를 쓰면 \((\partial\alpha/\partial p)_T = (\partial(-\kappa_T)/\partial T)_p\)이다. 이상 기체는 \(V = nRT/p\)이므로 \(\alpha = 1/T\), \(\kappa_T = 1/p\)이고 양변이 모두 0이다. 또 식 <a class="ref" href="#eq-cp-cv"></a>에서 \(C_p - C_V = TV\alpha^2/\kappa_T = TV p/T^2 = pV/T = nR\)로 <a class="ref" href="#ex-maxwell-relation"></a>와 맞는다.</p>
+        <p>(나) \(C_p - C_V = TV\alpha^2/\kappa_T = (298.15)(18.07 \times 10^{-6})(2.57 \times 10^{-4})^2/(4.52 \times 10^{-10}) = 0.787\ \text{J/(mol}\cdot\text{K)}\)이다. \(C_p\)의 1.0%이다. 단위는 \(\text{K}\cdot\text{m}^3\text{/mol}\cdot\text{K}^{-2}/\text{Pa}^{-1} = \text{Pa}\cdot\text{m}^3/(\text{mol}\cdot\text{K}) = \text{J/(mol}\cdot\text{K)}\)이다. 액체와 고체는 잘 팽창하지 않아서 두 열용량이 거의 같다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-vdw-free-expansion" data-level="2"><p>(가) 맥스웰 관계식 <a class="ref" href="#eq-maxwell-tv"></a>을 써서 \((\partial U/\partial V)_T = T(\partial p/\partial T)_V - p\)임을 보여라. (나) 판데르발스 기체에서 이 값이 \(an^2/V^2\)임을 보여라. (다) CO\(_2\) 1.00 몰이 단열된 용기 안에서 1.00 L에서 2.00 L로 진공 속으로 퍼진다(자유 팽창, \(\Delta U = 0\)). \(C_V = 28.8\ \text{J/(mol}\cdot\text{K)}\)가 온도에 기대지 않는다고 할 때 온도 변화를 구하라. 이상 기체라면 어떻게 되는가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(dU = T\,dS - p\,dV\)에서 \(T\)를 고정하고 \(dV\)로 나누면 \((\partial U/\partial V)_T = T(\partial S/\partial V)_T - p\)이고, 식 <a class="ref" href="#eq-maxwell-tv"></a>으로 \((\partial S/\partial V)_T\)를 \((\partial p/\partial T)_V\)로 바꾼다.</p>
+        <p>(나) \(T(\partial p/\partial T)_V = nRT/(V - nb)\)이므로 \(T(\partial p/\partial T)_V - p = an^2/V^2\)이다. 따라서 \(dU = C_V\,dT + (an^2/V^2)\,dV\)이고, \(C_V\)가 상수이면 \(U = C_VT - an^2/V + \text{상수}\)이다. 분자 사이의 인력 때문에, 부피가 늘어 분자가 멀어지면 퍼텐셜 에너지가 커진다.</p>
+        <p>(다) \(\Delta U = 0\)에서 \(C_V\Delta T = an^2(1/V_2 - 1/V_1)\)이다.</p>
+        <div class="formula">\[ \Delta T = \frac{0.364}{28.8}\,(500 - 1000)\ \text{K} = -6.3\ \text{K} \]</div>
+        <p>이다(\(1/V\)는 \(\text{m}^{-3}\) 단위로 넣었다). 기체는 아무 일도 하지 않고 열도 받지 않았는데 식는다. 분자가 서로 끌어당기는 힘을 이기고 멀어지는 데 운동 에너지를 썼기 때문이다. 이상 기체(\(a = 0\))는 온도가 변하지 않는다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-relativistic-hamiltonian" data-level="2"><p>자유 입자의 상대론적 라그랑지안은 \(L(v) = -mc^2\sqrt{1 - v^2/c^2}\)이다. (가) \(L\)이 \(v\)에 대해 아래로 볼록함을 보여라. (나) \(p = dL/dv\)와 르장드르 변환 \(H = pv - L\)을 구하고, \(H\)를 \(p\)의 함수로 나타내라. (다) 운동량이 \(1.00\ \text{MeV}/c\)인 전자의 \(H\)와 속력을 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\gamma = (1 - v^2/c^2)^{-1/2}\)로 두면 \(L' = m v\gamma\), \(L'' = m\gamma^3 > 0\)이다.</p>
+        <p>(나) \(p = \gamma mv\)이다. \(H = \gamma mv^2 + mc^2/\gamma = \gamma mc^2\big(v^2/c^2 + 1 - v^2/c^2\big) = \gamma mc^2\)이다. \(p\)로 쓰면 \(p^2c^2 = \gamma^2m^2v^2c^2 = \gamma^2m^2c^4 - m^2c^4\)이므로</p>
+        <div class="formula">\[ H(p) = \sqrt{p^2c^2 + m^2c^4} \]</div>
+        <p>이다. 식 <a class="ref" href="#eq-legendre-derivative"></a>에 해당하는 \(dH/dp = pc^2/H = v\)도 확인된다. \(p \ll mc\)이면 1장의 이항 전개로 \(H \approx mc^2 + p^2/2m\)이다.</p>
+        <p>(다) \(m_ec^2 = 0.511\ \text{MeV}\)이므로 \(H = \sqrt{1.00^2 + 0.511^2}\ \text{MeV} = 1.123\ \text{MeV}\)이고, 운동 에너지는 \(0.612\ \text{MeV}\)이다. 속력은 \(v/c = pc/H = 0.890\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-critical-points" data-level="1"><p>평면에서 움직이는 입자의 퍼텐셜 에너지가 \(V(x, y) = x^3 - 3x + y^2\)이다(무차원 단위). 임계점을 모두 찾아 분류하라. 극소점 근처에서 질량 1인 입자의 작은 진동의 각진동수를 \(x\), \(y\) 방향으로 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(V_x = 3x^2 - 3 = 0\), \(V_y = 2y = 0\)에서 임계점은 \((1, 0)\)과 \((-1, 0)\)이다. \(V_{xx} = 6x\), \(V_{yy} = 2\), \(V_{xy} = 0\)이다. \((1, 0)\)에서 \(D = 12 > 0\), \(V_{xx} = 6 > 0\)이므로 극소이고 \(V = -2\)이다. \((-1, 0)\)에서 \(D = -12 &lt; 0\)이므로 안장점이고 \(V = 2\)이다. 극소점 근처에서 \(V \approx -2 + \tfrac12(6)(x - 1)^2 + \tfrac12(2)y^2\)이므로 각진동수는 \(\omega_x = \sqrt6 = 2.45\), \(\omega_y = \sqrt2 = 1.41\)이다. 입자가 안장점의 높이 \(V = 2\)보다 큰 에너지를 가지면 우물을 빠져나간다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-inelastic-min-energy" data-level="2"><p>질량 \(m_1\), \(m_2\)인 두 물체의 운동량의 합이 \(P\)로 고정되어 있다. 라그랑주 승수로 운동 에너지 \(K = p_1^2/2m_1 + p_2^2/2m_2\)의 최솟값을 구하고, 그때 두 물체의 속도가 같음을 보여라. 승수의 뜻은? 2.0 kg인 물체가 3.0 m/s로 정지한 1.0 kg 물체와 충돌할 때 잃을 수 있는 운동 에너지의 최댓값을 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(\Lambda = K - \lambda(p_1 + p_2 - P)\)에서 \(p_1/m_1 = \lambda = p_2/m_2\)이다. 곧 두 속도가 \(\lambda\)로 같다. \(p_i = m_i\lambda\)를 제약에 넣으면 \(\lambda = P/(m_1 + m_2)\)로 질량 중심의 속도이고, \(K_{\min} = P^2/2(m_1 + m_2)\)이다. \(K\)는 \((p_1, p_2)\)의 볼록한 이차식이므로 이 점은 최소다. 식 <a class="ref" href="#eq-multiplier-sensitivity"></a>으로 확인하면 \(dK_{\min}/dP = P/(m_1 + m_2) = \lambda\)이다.</p>
+        <p>운동량은 충돌에서 보존되므로, 충돌 뒤의 운동 에너지는 \(K_{\min}\)보다 작을 수 없다. 숫자를 넣으면 \(P = 6.0\ \text{kg}\cdot\text{m/s}\), 처음 운동 에너지 \(9.0\ \text{J}\), \(K_{\min} = 36/6.0 = 6.0\ \text{J}\)이다. 잃을 수 있는 최대 에너지는 \(3.0\ \text{J}\)이고, 두 물체가 붙어서 2.0 m/s로 함께 움직이는 완전 비탄성 충돌에서 일어난다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-oscillator-max-entropy" data-level="3"><p>에너지 준위가 \(E_n = n\hbar\omega\) (\(n = 0, 1, 2, \ldots\))인 진동자에서 평균 양자수 \(\sum_n n\,p_n = \bar n\)이 주어졌다. (가) 엔트로피 <a class="ref" href="#eq-gibbs-entropy"></a>을 최대로 하는 분포가 \(p_n = (1 - q)q^n\), \(q = \bar n/(1 + \bar n)\)임을 보여라. (나) 최대 엔트로피가 \(S/k_B = (1 + \bar n)\ln(1 + \bar n) - \bar n\ln\bar n\)임을 보여라. (다) \(\bar n = 2\)이면 \(\hbar\omega/k_BT\)는 얼마인가? 1장 <a href="ch01.html#eq-planck-mean-energy">식 (1.18)</a>과 맞는지 확인하고, \(\hbar\omega = 10.0\ \text{meV}\)일 때 온도를 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) <a class="ref" href="#ex-boltzmann-max-entropy"></a>와 같은 계산으로 \(p_n \propto e^{-\beta\hbar\omega n} = q^n\)이다(\(q = e^{-\beta\hbar\omega}\)). 규격화하면 기하급수 \(\sum q^n = 1/(1 - q)\)이므로 \(p_n = (1 - q)q^n\)이다. 평균은 1장 <a href="ch01.html#eq-planck-sum-n">식 (1.17)</a>로 \(\bar n = (1 - q)\,q/(1 - q)^2 = q/(1 - q)\)이므로 \(q = \bar n/(1 + \bar n)\)이다.</p>
+        <p>(나) \(\ln p_n = \ln(1 - q) + n\ln q\)이므로 \(S/k_B = -\sum p_n\ln p_n = -\ln(1 - q) - \bar n\ln q\)이다. \(1 - q = 1/(1 + \bar n)\)을 넣으면 \(S/k_B = \ln(1 + \bar n) - \bar n\ln\bar n + \bar n\ln(1 + \bar n)\)으로 주어진 식이 된다.</p>
+        <p>(다) \(q = 2/3\)이므로 \(\hbar\omega/k_BT = \ln(3/2) = 0.405\)이다. 식 (1.18)에서 \(\langle E\rangle/\hbar\omega = 1/(e^{0.405} - 1) = 1/(1.5 - 1) = 2\)로 맞는다. 최대 엔트로피는 \(S/k_B = 3\ln3 - 2\ln2 = 1.910\)이다. \(\hbar\omega = 10.0\ \text{meV}\)이면 \(T = 10.0/(0.08617 \times 0.405)\ \text{K} = 286\ \text{K}\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-carnot-jacobian" data-level="3"><p>단원자 이상 기체 \(n\) 몰의 카르노 순환은 \(p\)-\(V\) 도표에서 두 등온선 \(pV = nRT_h\), \(pV = nRT_c\)와 두 단열선 \(pV^\gamma = K_1\), \(pV^\gamma = K_2\) (단열 지수 \(\gamma = C_p/C_V = 5/3\))로 둘러싸인 영역을 돈다. 한 순환에서 기체가 하는 일은 이 영역의 넓이 \(\iint dV\,dp\)이다. (가) \(u = pV\), \(w = pV^\gamma\)로 변수를 바꾸고 식 <a class="ref" href="#eq-jacobian-inverse"></a>을 써서 \(dV\,dp = du\,dw/\big((\gamma - 1)w\big)\)임을 보여라. (나) 넓이를 계산해서, 고온 등온선 위의 팽창이 \(V_A\)에서 \(V_B\)까지일 때 \(W = nR(T_h - T_c)\ln(V_B/V_A)\)임을 보여라. (다) \(n = 1.00\), \(T_h = 500\ \text{K}\), \(T_c = 300\ \text{K}\), \(V_B/V_A = 2\)일 때 \(W\)와 효율 \(W/Q_h\)를 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 반대 방향의 야코비 행렬식이 쉽다.</p>
+        <div class="formula">\[ \begin{aligned} \frac{\partial(u, w)}{\partial(V, p)} &= \det\begin{pmatrix} p & V \\ \gamma pV^{\gamma - 1} & V^\gamma \end{pmatrix} \\ &= -(\gamma - 1)\,pV^\gamma \end{aligned} \]</div>
+        <p>이고 \(pV^\gamma = w\)이다. 식 <a class="ref" href="#eq-jacobian-inverse"></a>에 따라 \(\lvert\partial(V, p)/\partial(u, w)\rvert = 1/\big((\gamma - 1)w\big)\)이다.</p>
+        <p>(나) 새 변수에서 영역은 직사각형 \(nRT_c \le u \le nRT_h\), \(K_1 \le w \le K_2\)이다. 따라서 \(W = \frac{1}{\gamma - 1}(u_h - u_c)\ln(K_2/K_1)\)이다. 고온 등온선 위에서는 \(w = pV^\gamma = nRT_hV^{\gamma - 1}\)이므로 \(\ln(K_2/K_1) = (\gamma - 1)\ln(V_B/V_A)\)이다. 넣으면 \(W = nR(T_h - T_c)\ln(V_B/V_A)\)이다.</p>
+        <p>(다) \(W = (8.314)(200)\ln 2\ \text{J} = 1.15\ \text{kJ}\)이다. 고온 등온 팽창에서 받은 열은 \(Q_h = nRT_h\ln 2 = 2.88\ \text{kJ}\)이므로 효율은 \(0.400 = 1 - T_c/T_h\)로 카르노 효율과 같다. \(\gamma\)는 결과에서 사라진다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-two-layer-planet" data-level="2"><p>반지름 \(R\)인 행성이 반지름 \(R/2\)인 핵(밀도 \(2\rho_0\))과 그 바깥의 맨틀(밀도 \(\rho_0\))로 되어 있다. <a class="ref" href="#ex-moment-of-inertia"></a>의 식 <a class="ref" href="#eq-inertia-sphere"></a>을 써서 자전축에 대한 관성 모멘트의 비 \(I/MR^2\)을 구하라. 균일한 구의 0.4와 비교해 어떤가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>행성을 밀도 \(\rho_0\)인 반지름 \(R\)의 구와, 밀도 \(\rho_0\)인 반지름 \(R/2\)의 구를 겹친 것으로 본다(적분은 더할 수 있다). 질량은 \(M = \tfrac{4\pi}{3}\rho_0\big[R^3 + (R/2)^3\big] = \tfrac{4\pi}{3}\rho_0R^3\cdot\tfrac98\)이고, 관성 모멘트는 \(I = \tfrac{8\pi}{15}\rho_0\big[R^5 + (R/2)^5\big] = \tfrac{8\pi}{15}\rho_0R^5\cdot\tfrac{33}{32}\)이다. 따라서</p>
+        <div class="formula">\[ \frac{I}{MR^2} = \frac25\cdot\frac{33/32}{9/8} = \frac{11}{30} = 0.367 \]</div>
+        <p>이다. 질량이 중심에 몰릴수록 비가 0.4보다 작아진다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-gaussian-cosine" data-level="3"><p>\(I(k) = \displaystyle\int_0^\infty e^{-x^2}\cos kx\,dx\)라 하자. (가) 라이프니츠 규칙과 부분 적분으로 \(dI/dk = -(k/2)\,I\)임을 보이고, 미분을 적분 안에 넣어도 되는 이유를 밝혀라. (나) \(I(k) = \tfrac{\sqrt\pi}{2}e^{-k^2/4}\)임을 보이고, \(I(2)\)의 값을 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\lvert\partial_k(e^{-x^2}\cos kx)\rvert = \lvert x\,e^{-x^2}\sin kx\rvert \le x\,e^{-x^2}\)이고 \(\int_0^\infty x\,e^{-x^2}dx = \tfrac12\)이 유한하므로 미분을 넣을 수 있다. \(I'(k) = -\int_0^\infty x\,e^{-x^2}\sin kx\,dx\)이다. \(-x\,e^{-x^2} = \tfrac{d}{dx}\big(\tfrac12 e^{-x^2}\big)\)로 보고 부분 적분하면</p>
+        <div class="formula">\[ \begin{aligned} I'(k) &= \Big[\tfrac12 e^{-x^2}\sin kx\Big]_0^\infty \\ &\quad - \frac{k}{2}\int_0^\infty e^{-x^2}\cos kx\,dx \\ &= -\frac{k}{2}\,I(k) \end{aligned} \]</div>
+        <p>이다.</p>
+        <p>(나) 이 미분방정식의 해는 \(I(k) = I(0)\,e^{-k^2/4}\)이고, 식 <a class="ref" href="#eq-gaussian-integral"></a>에서 \(I(0) = \sqrt\pi/2\)이다. \(I(2) = 0.8862 \times e^{-1} = 0.3260\)이며, 심프슨 공식으로 직접 계산한 값과 일치한다. 가우스 함수를 코사인과 곱해 적분하면 다시 가우스 함수가 나온다는 이 결과는 15장에서 <a href="ch15.html#eq-gaussian-ft">가우스 함수의 푸리에 변환</a>으로 다시 만난다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+</body>
+</html>
