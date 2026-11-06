@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>12 급수 풀이와 르장드르 함수 · 수리물리학</title>
+<meta name="description" content="멱급수 풀이와 프로베니우스 방법으로 르장드르 방정식을 풀고, 로드리게스 공식·생성 함수·점화식, 직교성과 르장드르 급수, 다중극 전개, 연관 르장드르 함수와 구면 조화 함수를 유도한다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys" data-field="phys" data-chapter="ch12">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">12</span></div>
+    <h1 data-fill="chapter-title">급수 풀이와 르장드르 함수</h1>
+    <p class="lead">10장의 상미분방정식은 계수가 상수라서 \(e^{st}\)를 넣으면 풀렸다. 그런데 구면 좌표에서 라플라스 방정식이나 슈뢰딩거 방정식을 변수 분리하면, 계수가 \(\cos\theta\)에 따라 바뀌는 방정식이 나온다. 이 장에서는 해를 멱급수로 놓고 계수를 하나씩 정하는 방법을 세우고, 그 방법으로 르장드르 방정식을 푼다. 극에서 유한한 해를 요구하면 \(l(l+1)\)이 양자화되고, 그 해인 르장드르 다항식에서 다중극 전개와 구면 조화 함수가 나온다. 마지막으로 계수가 발산하는 점 근처에서 쓰는 프로베니우스 방법을 정확한 조건과 함께 진술한다.</p>
+    <ul class="objectives">
+      <li>정상점 둘레에서 멱급수 해의 계수 점화식을 세우고, 급수가 수렴하는 범위를 방정식의 특이점 위치로 판단할 수 있다.</li>
+      <li>르장드르 방정식의 해가 \(x = \pm1\)에서 유한하려면 \(\lambda = l(l+1)\)이어야 함을 보이고, 로드리게스 공식, 생성 함수, 점화식을 유도해 쓸 수 있다.</li>
+      <li>르장드르 다항식의 직교성과 규격화를 증명하고, 함수를 르장드르 급수로 전개하며, 다중극 전개로 전하 분포의 퍼텐셜을 계산할 수 있다.</li>
+      <li>연관 르장드르 함수와 구면 조화 함수를 콘던-쇼틀리 위상 관례로 쓰고, 정규직교성과 덧셈 정리를 쓸 수 있다.</li>
+      <li>정칙 특이점에서 결정 방정식을 세우고, 두 근의 관계에 따라 프로베니우스 급수 해의 꼴을 정할 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b>1장 (멱급수와 수렴 반경, 이항급수), 10장 (2계 선형 방정식, 론스키안과 아벨 공식), 6장 (구면 좌표의 라플라시안), 9장 (함수의 내적과 직교 기저), 11장 (감마 함수와 베타 함수). 전기 퍼텐셜과 쿨롱 법칙은 일반물리 수준이면 된다.</p>
+  </header>
+
+  <!-- ============================================================ 12.1 -->
+  <section id="s1">
+    <h2>멱급수 풀이</h2>
+    <p>계수가 변수에 기대는 2계 선형 방정식은 물리 곳곳에 나온다. 구면 좌표에서 각 부분을 분리하면 르장드르 방정식이(12.2절), 원통 좌표에서는 베셀 방정식이(13장), 조화 진동자와 수소 원자에서는 에르미트·라게르 방정식이(13장) 나온다. 이 방정식들은 지수 함수 하나로 풀리지 않는다. 대신 해를 \(y = \sum a_n x^n\)으로 놓고 방정식에 넣어 계수를 차례로 정할 수 있다. 이 절에서는 이 방법이 언제 통하는지, 얻은 급수가 어디까지 수렴하는지를 정하고, 거울 위에서 튀는 중성자의 양자 상태를 이 방법으로 구한다.</p>
+
+    <h3 id="s1-ordinary">정상점과 특이점</h3>
+    <p>2계 선형 동차 방정식 \(a(x)y'' + b(x)y' + c(x)y = 0\)을 \(a(x)\)로 나누어 표준형으로 쓴다(10장의 <a href="ch10.html#def-linear-ode">정의 10.1</a>).</p>
+    <div class="formula" id="eq-ode-standard-form">\[ y'' + p(x)\,y' + q(x)\,y = 0, \quad p = \frac{b}{a}, \;\; q = \frac{c}{a} \]</div>
+    <p>멱급수 풀이가 통하는지는 \(p\)와 \(q\)가 한 점 근처에서 멱급수로 쓰이는지에 달려 있다.</p>
+    <div class="box def" id="def-ordinary-point"><div class="box-h">정상점과 특이점</div>
+      <p>식 <a class="ref" href="#eq-ode-standard-form"></a>의 \(p(x)\)와 \(q(x)\)가 모두 \(x_0\)에서 <span class="term">해석적</span> <span class="en">(analytic)</span>이면, 곧 \(x_0\)을 중심으로 하고 수렴 반경이 0보다 큰 멱급수로 쓰이면, \(x_0\)을 방정식의 <span class="term">정상점</span> <span class="en">(ordinary point)</span>이라 한다. 정상점이 아닌 점을 <span class="term">특이점</span> <span class="en">(singular point)</span>이라 한다.</p>
+    </div>
+    <p>판정은 반드시 표준형에서 한다. 예를 들어 \((1 - x^2)y'' - 2xy' + \lambda y = 0\)은 \(p = -2x/(1 - x^2)\), \(q = \lambda/(1 - x^2)\)이므로 \(x = \pm1\)이 특이점이고 나머지 실수는 모두 정상점이다. 계수가 다항식인 \(y'' - xy = 0\)에는 특이점이 없다. 정상점에서는 다음 정리가 성립한다.</p>
+    <div class="box thm" id="thm-series-ordinary-point"><div class="box-h">정상점에서의 멱급수 해</div>
+      <p>\(x_0\)이 식 <a class="ref" href="#eq-ode-standard-form"></a>의 정상점이고, \(p\)와 \(q\)의 \(x_0\) 중심 멱급수가 모두 \(\lvert x - x_0\rvert &lt; R\)에서 수렴한다고 하자. 그러면 아무 두 수 \(a_0, a_1\)에 대해 \(y(x_0) = a_0\), \(y'(x_0) = a_1\)인 해가 오직 하나 있고, 그 해는 멱급수</p>
+      <div class="formula" id="eq-series-ansatz">\[ y(x) = \sum_{n=0}^{\infty} a_n (x - x_0)^n \]</div>
+      <p>로 쓰이며 이 급수는 적어도 \(\lvert x - x_0\rvert &lt; R\)에서 수렴한다. \((a_0, a_1) = (1, 0)\)과 \((0, 1)\)으로 얻은 두 해는 선형 독립이고, 모든 해는 이 둘의 일차 결합이다.</p>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>급수를 방정식에 넣으면 아래의 식 <a class="ref" href="#eq-series-recursion"></a>처럼 \(a_{n+2}\)가 앞의 계수들로 하나씩 정해지므로, 형식적인 급수 해는 오직 하나다. 남는 일은 이 급수가 \(\lvert x - x_0\rvert &lt; R\)에서 수렴함을 보이는 것이다. \(R\)보다 작은 \(\rho\)를 고르면 \(p, q\)의 계수가 \(\lvert p_j\rvert, \lvert q_j\rvert \le M/\rho^j\)를 만족하는 상수 \(M\)이 있다. 이 상한을 계수로 하는 비교 방정식의 급수 해는 닫힌 꼴로 구할 수 있고 \(\lvert x - x_0\rvert &lt; \rho\)에서 수렴하며, 그 계수가 \(\lvert a_n\rvert\)보다 크다는 것을 귀납법으로 보인다(<span class="term">우급수</span> <span class="en">(majorant series)</span>의 방법). 엄밀한 증명은 코딩턴(E. A. Coddington, <i>An Introduction to Ordinary Differential Equations</i>, Prentice-Hall 1961) 3장에 있다. 두 해의 선형 독립은 \(x_0\)에서 론스키안이 \(1\cdot1 - 0\cdot0 = 1 \ne 0\)이므로 10장의 <a href="ch10.html#thm-wronskian-independence">정리 10.2</a>에서 나온다.</p>
+      </details>
+    </div>
+    <p>이 정리에서 수렴 반경은 "적어도" \(R\)이다. \(p\)와 \(q\)를 복소 함수로 보았을 때 \(x_0\)에서 가장 가까운 특이점까지의 거리를 \(R\)로 잡을 수 있다. 이것은 1장에서 \(1/(1+x^2)\)의 수렴 반경을 정한 것과 같은 이유다(<a href="ch01.html#def-radius-convergence">정의 1.4</a>, 이유는 19장의 <a href="ch19.html#def-laurent">로랑 급수</a>에서 보인다).</p>
+
+    <h3 id="s1-recursion">계수의 점화식</h3>
+    <p>\(x_0 = 0\)으로 두고 \(p = \sum_j p_j x^j\), \(q = \sum_j q_j x^j\)라 하자. 1장의 <a href="ch01.html#thm-power-series-calculus">정리 1.6</a>에 따라 수렴 구간 안에서는 항별로 미분할 수 있으므로</p>
+    <div class="formula">\[ \begin{aligned} y' &= \sum_{n=0}^\infty (n+1)a_{n+1}x^n, \\ y'' &= \sum_{n=0}^\infty (n+2)(n+1)a_{n+2}x^n \end{aligned} \]</div>
+    <p>이다. 합의 번호를 옮겨 모든 급수를 \(x^n\)의 계수로 맞춘 것이 요령이다. \(py'\)과 \(qy\)는 두 멱급수의 곱이므로 \(x^n\)의 계수는 \(\sum_{k=0}^{n} p_{n-k}(k+1)a_{k+1}\)과 \(\sum_{k=0}^n q_{n-k}a_k\)이다. 방정식의 좌변이 모든 \(x\)에서 0이려면 \(x^n\)의 계수가 모두 0이어야 하므로(멱급수 전개는 오직 하나다)</p>
+    <div class="formula" id="eq-series-recursion">\[ \begin{aligned} &(n+2)(n+1)\,a_{n+2} \\ &\quad = -\sum_{k=0}^{n}\Big[(k+1)\,p_{n-k}\,a_{k+1} + q_{n-k}\,a_k\Big] \end{aligned} \]<div class="where">\(n = 0, 1, 2, \ldots\). 오른쪽에는 \(a_0, \ldots, a_{n+1}\)만 들어 있으므로, \(a_0\)과 \(a_1\)을 정하면 나머지 계수가 차례로 정해진다.</div></div>
+    <p>실제 계산에서는 이 일반식에 넣기보다, 방정식에 급수를 직접 넣고 같은 거듭제곱끼리 모으는 편이 빠르다. 결과는 늘 식 <a class="ref" href="#eq-series-recursion"></a>의 특수한 경우다.</p>
+
+    <div class="box ex" id="ex-oscillator-series"><div class="box-h">급수로 다시 푸는 단진동</div>
+      <p>\(y'' + \omega^2 y = 0\)을 \(x = 0\) 둘레의 멱급수로 풀고, 10장의 결과와 비교하라.</p>
+      <p><b>풀이.</b> \(p = 0\), \(q = \omega^2\)이므로 식 <a class="ref" href="#eq-series-recursion"></a>에서 \(k = n\)인 항만 남는다.</p>
+      <div class="formula" id="eq-oscillator-recursion">\[ a_{n+2} = -\frac{\omega^2}{(n+2)(n+1)}\,a_n \]</div>
+      <p>점화식이 두 칸씩 건너뛰므로 짝수 번째 계수는 \(a_0\)에서, 홀수 번째 계수는 \(a_1\)에서 나온다. 되풀이하면 \(a_{2k} = (-1)^k\omega^{2k}a_0/(2k)!\), \(a_{2k+1} = (-1)^k\omega^{2k}a_1/(2k+1)!\)이므로</p>
+      <div class="formula">\[ \begin{aligned} y &= a_0\sum_{k=0}^\infty \frac{(-1)^k(\omega x)^{2k}}{(2k)!} \\ &\quad + \frac{a_1}{\omega}\sum_{k=0}^\infty \frac{(-1)^k(\omega x)^{2k+1}}{(2k+1)!} \end{aligned} \]</div>
+      <p>이고, 1장의 전개 표(<a href="ch01.html#eq-standard-series">식 (1.21)</a>)에서 두 급수는 \(\cos\omega x\)와 \(\sin\omega x\)이다. 곧 \(y = a_0\cos\omega x + (a_1/\omega)\sin\omega x\)로, 10장의 특성 방정식으로 얻은 해와 같다. 특이점이 없으므로 <a class="ref" href="#thm-series-ordinary-point"></a>에 따라 급수는 모든 \(x\)에서 수렴하고, 실제로 \(\lvert a_{n+2}/a_n\rvert \to 0\)이다.</p>
+      <p><b>숫자로 보기.</b> \(\omega x = 1\)에서 짝수 급수를 \(k = 3\)까지 더하면 \(1 - \tfrac12 + \tfrac1{24} - \tfrac1{720} = 0.540\,28\)이고, \(\cos 1 = 0.540\,30\)과 \(2 \times 10^{-5}\)만큼 다르다. 교대급수의 오차 한계 \(1/8! = 2.5 \times 10^{-5}\) 안에 있다.</p>
+    </div>
+
+    <h3 id="s1-airy">에어리 방정식</h3>
+    <p>계수가 상수가 아닌 가장 간단한 방정식은 \(q\)가 \(x\)에 비례하는 경우다. 물리에서는 균일한 힘을 받는 양자 입자가 이 방정식을 따른다.</p>
+    <div class="box ex" id="ex-neutron-gravity-states"><div class="box-h">거울 위 중성자의 중력 양자 상태</div>
+      <p>질량 \(m\)인 중성자가 수평 거울 위에서 중력을 받는다. 거울은 넘을 수 없는 벽(\(z = 0\)에서 \(\psi = 0\))이고, 위쪽 퍼텐셜은 \(V = mgz\)이다. 슈뢰딩거 방정식</p>
+      <div class="formula" id="eq-neutron-schrodinger">\[ -\frac{\hbar^2}{2m}\frac{d^2\psi}{dz^2} + mgz\,\psi = E\psi \]</div>
+      <p>에서 \(z \to \infty\)로 갈 때 0으로 가는 해가 있게 하는 에너지 \(E\)를 구하라. 중성자에 대해 가장 낮은 세 준위의 에너지와 고전적으로 올라갈 수 있는 높이를 숫자로 구하라.</p>
+      <p><b>풀이.</b> 먼저 차원을 없앤다. 길이 척도 \(\ell\)과 무차원 변수를 다음과 같이 둔다.</p>
+      <div class="formula" id="eq-neutron-scale">\[ \ell = \Big(\frac{\hbar^2}{2m^2g}\Big)^{1/3}, \quad x = \frac{z}{\ell} - \varepsilon, \quad \varepsilon = \frac{E}{mg\ell} \]</div>
+      <p>\(d^2/dz^2 = \ell^{-2}d^2/dx^2\)이고 \(2m^2g\ell^3/\hbar^2 = 1\)이므로, 식 <a class="ref" href="#eq-neutron-schrodinger"></a>는 매개변수가 하나도 없는 <span class="term">에어리 방정식</span> <span class="en">(Airy equation)</span>이 된다.</p>
+      <div class="formula" id="eq-airy-equation">\[ \frac{d^2y}{dx^2} = x\,y \]</div>
+      <p>\(p = 0\), \(q = -x\)(곧 \(q_1 = -1\))를 식 <a class="ref" href="#eq-series-recursion"></a>에 넣으면 \(k = n-1\)인 항만 남아 \((n+2)(n+1)a_{n+2} = a_{n-1}\)이다. \(n = 0\)에서는 \(a_{-1} = 0\)으로 읽으므로 \(a_2 = 0\)이고, 번호를 하나 옮기면</p>
+      <div class="formula" id="eq-airy-recursion">\[ a_{n+3} = \frac{a_n}{(n+3)(n+2)}, \quad a_2 = 0 \]</div>
+      <p>이다. 계수가 세 칸씩 이어진다. \(a_0 = 1, a_1 = 0\)인 해를 \(f\), \(a_0 = 0, a_1 = 1\)인 해를 \(g\)라 하면</p>
+      <div class="formula" id="eq-airy-series">\[ \begin{aligned} f(x) &= 1 + \frac{x^3}{6} + \frac{x^6}{180} + \frac{x^9}{12\,960} + \cdots \\ g(x) &= x + \frac{x^4}{12} + \frac{x^7}{504} + \frac{x^{10}}{45\,360} + \cdots \end{aligned} \]</div>
+      <p>이다. 특이점이 없으므로 두 급수는 모든 \(x\)에서 수렴한다.</p>
+      <p>\(x > 0\)에서 \(f\)와 \(g\)는 계수가 모두 양수이므로 둘 다 한없이 커진다. 0으로 가는 해는 둘의 커지는 부분이 지워지는 조합 \(c_1 f - c_2 g\)뿐이다. 비 \(c_2/c_1\)은 \(f(X)/g(X)\)의 \(X \to \infty\) 극한이어야 하므로 급수로 직접 잴 수 있다. \(X = 2, 4, 6\)에서 이 비는 \(0.7563\), \(0.729\,04\), \(0.729\,011\)로 빠르게 \(0.729\,011\)에 다가간다. 이 조합을 관례대로 규격화한 것을 <span class="term">에어리 함수</span> <span class="en">(Airy function)</span> \(\operatorname{Ai}(x) = \operatorname{Ai}(0)f(x) + \operatorname{Ai}'(0)g(x)\)라 한다. 값은 \(\operatorname{Ai}(0) = 3^{-2/3}/\Gamma(\tfrac23) = 0.355\,03\), \(\operatorname{Ai}'(0) = -3^{-1/3}/\Gamma(\tfrac13) = -0.258\,82\)이다(NIST DLMF 9.2절. \(\Gamma\)는 11장의 <a href="ch11.html#def-gamma">정의 11.1</a>). 비 \(-\operatorname{Ai}'(0)/\operatorname{Ai}(0) = 0.729\,01\)은 위에서 급수로 잰 \(c_2/c_1\)과 맞는다.</p>
+      <p>이제 해는 \(\psi(z) = \operatorname{Ai}(z/\ell - \varepsilon)\)이다. 거울 조건 \(\psi(0) = \operatorname{Ai}(-\varepsilon) = 0\)에서, 허용되는 \(\varepsilon\)은 에어리 함수의 영점 \(-\varepsilon_n\)으로 정해진다. 급수와 이분법으로 영점을 찾으면 \(\varepsilon_1 = 2.338\,11\), \(\varepsilon_2 = 4.087\,95\), \(\varepsilon_3 = 5.520\,56\)이다. 따라서</p>
+      <div class="formula" id="eq-neutron-levels">\[ E_n = \varepsilon_n\, mg\ell, \quad z_n = \varepsilon_n\,\ell \]<div class="where">\(z_n\)은 \(mgz_n = E_n\)인 고전적 전환점이다.</div></div>
+      <p><b>숫자로 보기.</b> \(\hbar = 1.0546 \times 10^{-34}\ \text{J}\cdot\text{s}\), \(m = 1.6749 \times 10^{-27}\ \text{kg}\), \(g = 9.81\ \text{m/s}^2\)를 넣으면</p>
+      <div class="formula">\[ \begin{aligned} \ell &= 5.87\ \mu\text{m}, \\ mg\ell &= 9.64 \times 10^{-32}\ \text{J} = 0.602\ \text{peV} \end{aligned} \]</div>
+      <p>이다(\(1\ \text{peV} = 10^{-12}\ \text{eV}\)). 세 준위는 \(E_1 = 1.41\ \text{peV}\), \(E_2 = 2.46\ \text{peV}\), \(E_3 = 3.32\ \text{peV}\)이고, 고전적 높이는 \(z_1 = 13.7\ \mu\text{m}\), \(z_2 = 24.0\ \mu\text{m}\), \(z_3 = 32.4\ \mu\text{m}\)이다(그림 12-1). 높이 \(z_1\)에서 떨어지는 중성자의 속력은 \(\sqrt{2gz_1} = 1.6\ \text{cm/s}\)에 불과하다. 이런 수십 마이크로미터 규모의 양자 상태는 극저온 중성자를 거울과 흡수판 사이로 통과시키는 실험에서 실제로 관측되었다(V. V. Nesvizhevsky 외, Nature 415, 297 (2002)). 단위 확인: \(\hbar^2/(m^2g)\)의 단위는 \(\text{kg}^2\text{m}^4\text{s}^{-2}/(\text{kg}^2\,\text{m}\,\text{s}^{-2}) = \text{m}^3\)이므로 \(\ell\)은 길이다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 300" role="img" aria-label="거울 위 중력장 속 중성자의 세 에너지 준위와 파동함수. 퍼텐셜 mgz가 직선으로 오르고, 각 준위의 파동함수는 고전적 전환점을 조금 넘어서 빠르게 줄어든다"><defs><clipPath id="f1201-clip"><rect x="60" y="24" width="400" height="226"/></clipPath></defs><line x1="60" y1="250" x2="460" y2="250" class="s-grid"/><text x="52" y="255" class="t-dim" style="font-size:14px" text-anchor="end">0</text><line x1="60" y1="193.5" x2="460" y2="193.5" class="s-grid"/><text x="52" y="198.5" class="t-dim" style="font-size:14px" text-anchor="end">1</text><line x1="60" y1="137" x2="460" y2="137" class="s-grid"/><text x="52" y="142" class="t-dim" style="font-size:14px" text-anchor="end">2</text><line x1="60" y1="80.5" x2="460" y2="80.5" class="s-grid"/><text x="52" y="85.5" class="t-dim" style="font-size:14px" text-anchor="end">3</text><line x1="60" y1="24" x2="460" y2="24" class="s-grid"/><text x="52" y="29" class="t-dim" style="font-size:14px" text-anchor="end">4</text><text x="60" y="270" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="160" y="270" class="t-dim" style="font-size:14px" text-anchor="middle">10</text><text x="260" y="270" class="t-dim" style="font-size:14px" text-anchor="middle">20</text><text x="360" y="270" class="t-dim" style="font-size:14px" text-anchor="middle">30</text><text x="460" y="270" class="t-dim" style="font-size:14px" text-anchor="middle">40</text><line x1="60" y1="250" x2="460" y2="250" class="s-line"/><line x1="60" y1="24" x2="60" y2="250" class="s-line" style="stroke:var(--text);stroke-width:3"/><line x1="60" y1="36" x2="51" y2="45" class="s-line"/><line x1="60" y1="62" x2="51" y2="71" class="s-line"/><line x1="60" y1="88" x2="51" y2="97" class="s-line"/><line x1="60" y1="114" x2="51" y2="123" class="s-line"/><line x1="60" y1="140" x2="51" y2="149" class="s-line"/><line x1="60" y1="166" x2="51" y2="175" class="s-line"/><line x1="60" y1="192" x2="51" y2="201" class="s-line"/><line x1="60" y1="218" x2="51" y2="227" class="s-line"/><line x1="60" y1="244" x2="51" y2="253" class="s-line"/><path d="M60,250l400-231.8" class="s-line" style="stroke:var(--text);stroke-width:2" clip-path="url(#f1201-clip)"/><text x="130" y="235.2" class="t-math" text-anchor="start"><tspan font-style="italic">V</tspan> = <tspan font-style="italic">mgz</tspan></text><line x1="60" y1="170.5" x2="197.2" y2="170.5" class="s-line" stroke-dasharray="4 4"/><path d="M60,170.5l4.4-2 4.5-2 4.4-1.9 4.5-1.9 4.4-1.8 4.5-1.6 4.4-1.6 4.5-1.4 4.4-1.3 4.4-1.1 4.5-1 4.4-.8 4.5-.7 4.4-.5 4.5-.4 4.4-.2 4.5-.1 4.4,0 4.4,.1 4.5,.2 4.4,.3 4.5,.4 4.4,.5 4.5,.6 4.4,.6 4.5,.6 4.4,.7 4.4,.7 4.5,.7 4.4,.8 4.5,.7 4.4,.8 4.5,.7 4.4,.7 4.5,.7 4.4,.7 4.4,.7 4.5,.6 4.4,.7 4.5,.6 4.4,.5 4.5,.5 4.4,.6 4.5,.4 4.4,.5 4.4,.4 4.5,.4 4.4,.3 4.5,.4 4.4,.3 4.5,.3 4.4,.2 4.5,.3 4.4,.2 4.4,.2 4.5,.2 4.4,.1 4.5,.2 4.4,.1 4.5,.1 4.4,.1 4.5,.1 4.4,.1 4.4,.1 4.5,.1 4.4,0 4.5,.1 4.4,.1 4.5,0 4.4,0 4.5,.1 4.4,0 4.4,0 4.5,0 4.4,.1 4.5,0 4.4,0 4.5,0 4.4,0 4.5,0 4.4,0 4.4,.1 4.5,0 4.4,0 4.5,0 4.4,0 4.5,0 4.4,0 4.5,0 4.4,0" class="s-acc" clip-path="url(#f1201-clip)"/><circle cx="197.2" cy="170.5" r="3" class="f-dim"/><text x="460" y="187.5" class="t" style="font-size:14px" text-anchor="end">n = 1</text><line x1="60" y1="111" x2="299.9" y2="111" class="s-line" stroke-dasharray="4 4"/><path d="M60,111l4.4,2.3 4.5,2.3 4.4,2.1 4.5,2 4.4,1.8 4.5,1.6 4.4,1.3 4.5,1.1 4.4,.8 4.4,.5 4.5,.1 4.4-.1 4.5-.4 4.4-.7 4.5-.9 4.4-1.2 4.5-1.4 4.4-1.5 4.4-1.7 4.5-1.9 4.4-1.9 4.5-2 4.4-2 4.5-2 4.4-2 4.5-1.9 4.4-1.9 4.4-1.8 4.5-1.7 4.4-1.5 4.5-1.5 4.4-1.2 4.5-1.2 4.4-1 4.5-.8 4.4-.7 4.4-.6 4.5-.3 4.4-.3 4.5-.1 4.4,0 4.5,.1 4.4,.2 4.5,.3 4.4,.4 4.4,.5 4.5,.5 4.4,.6 4.5,.6 4.4,.7 4.5,.7 4.4,.8 4.5,.7 4.4,.7 4.4,.8 4.5,.7 4.4,.7 4.5,.8 4.4,.7 4.5,.6 4.4,.7 4.5,.6 4.4,.6 4.4,.6 4.5,.5 4.4,.5 4.5,.5 4.4,.4 4.5,.5 4.4,.3 4.5,.4 4.4,.3 4.4,.4 4.5,.2 4.4,.3 4.5,.2 4.4,.3 4.5,.2 4.4,.2 4.5,.1 4.4,.2 4.4,.1 4.5,.1 4.4,.1 4.5,.1 4.4,.1 4.5,.1 4.4,.1 4.5,0 4.4,.1" class="s-acc" clip-path="url(#f1201-clip)"/><circle cx="299.9" cy="111" r="3" class="f-dim"/><text x="460" y="128" class="t" style="font-size:14px" text-anchor="end">n = 2</text><line x1="60" y1="62.3" x2="383.9" y2="62.3" class="s-line" stroke-dasharray="4 4"/><path d="M60,62.3l4.4-2.5 4.5-2.4 4.4-2.2 4.5-2.1 4.4-1.7 4.5-1.5 4.4-1 4.5-.7 4.4-.3 4.4,.1 4.5,.4 4.4,.9 4.5,1.2 4.4,1.5 4.5,1.8 4.4,2 4.5,2.1 4.4,2.3 4.4,2.3 4.5,2.3 4.4,2.2 4.5,2.2 4.4,2 4.5,1.7 4.4,1.6 4.5,1.3 4.4,1.1 4.4,.7 4.5,.5 4.4,.1 4.5-.1 4.4-.5 4.5-.7 4.4-.9 4.5-1.2 4.4-1.4 4.4-1.6 4.5-1.7 4.4-1.8 4.5-2 4.4-2 4.5-2 4.4-2 4.5-2 4.4-1.9 4.4-1.9 4.5-1.8 4.4-1.6 4.5-1.6 4.4-1.4 4.5-1.3 4.4-1.1 4.5-1 4.4-.8 4.4-.7 4.5-.5 4.4-.4 4.5-.2 4.4-.1 4.5,0 4.4,.1 4.5,.2 4.4,.3 4.4,.4 4.5,.5 4.4,.6 4.5,.6 4.4,.6 4.5,.7 4.4,.7 4.5,.7 4.4,.7 4.4,.8 4.5,.7 4.4,.8 4.5,.7 4.4,.7 4.5,.7 4.4,.7 4.5,.6 4.4,.6 4.4,.6 4.5,.6 4.4,.5 4.5,.5 4.4,.5 4.5,.5 4.4,.4 4.5,.4 4.4,.3" class="s-acc" clip-path="url(#f1201-clip)"/><circle cx="383.9" cy="62.3" r="3" class="f-dim"/><text x="460" y="79.3" class="t" style="font-size:14px" text-anchor="end">n = 3</text><text x="460" y="292" class="t-dim" style="font-size:14px" text-anchor="end">높이 z (μm)</text><text x="68" y="16" class="t-dim" style="font-size:14px" text-anchor="start">에너지 (peV)</text><text x="30" y="175" class="t-dim" style="font-size:13px" text-anchor="middle" transform="rotate(-90 30 175)">거울</text></svg>
+      <figcaption><b>그림 12-1.</b> 거울(\(z = 0\)) 위 중력장 속 중성자의 세 준위. 점선은 에너지 \(E_n\), 작은 점은 고전적 전환점 \(z_n\)이고, 각 점선 위에 파동함수 \(\operatorname{Ai}(z/\ell - \varepsilon_n)\)을 높이를 맞추어 그렸다. 파동함수는 전환점을 조금 넘어서 들어간 뒤 빠르게 0으로 줄어들고, \(n\)번째 상태는 거울과 전환점 사이에 마디가 \(n - 1\)개 있다. 곡선은 식 <a class="ref" href="#eq-airy-series"></a>의 급수로 계산했다.</figcaption>
+    </figure>
+    <div class="callout warn"><strong>특이점은 해가 특이하다는 뜻이 아니다</strong><p>특이점은 방정식의 계수가 해석적이지 않은 점이지, 모든 해가 그곳에서 발산하는 점이 아니다. 르장드르 방정식은 \(x = \pm1\)이 특이점인데, 12.2절에서 보듯 \(\lambda = l(l+1)\)이면 다항식 해가 있어 \(x = \pm1\)에서도 멀쩡하다. 반대로 <a class="ref" href="#thm-series-ordinary-point"></a>이 보장하는 수렴 반경은 하한일 뿐이다. 급수가 끊겨 다항식이 되면 수렴 반경은 무한대다. 특이점에서 해가 어떻게 행동하는지는 12.6절의 프로베니우스 방법이 알려 준다.</p></div>
+  </section>
+
+  <!-- ============================================================ 12.2 -->
+  <section id="s2">
+    <h2>르장드르 방정식과 르장드르 다항식</h2>
+    <p>구 둘레의 퍼텐셜, 구 위의 온도, 회전하는 분자의 파동함수는 모두 극각 \(\theta\)에 따라 어떻게 바뀌는지가 문제의 핵심이다. 이 각 부분을 정하는 방정식이 르장드르 방정식이다. 이 절에서는 그것이 어디서 나오는지 보이고 멱급수로 푼 뒤, 구의 두 극에서 유한해야 한다는 물리적 조건이 매개변수를 \(l(l+1)\)로 양자화한다는 것을 증명한다.</p>
+
+    <h3 id="s2-origin">구면 좌표에서 나오는 방정식</h3>
+    <p>\(z\)축 둘레로 대칭인(\(\phi\)에 기대지 않는) 퍼텐셜 \(V(r, \theta)\)가 라플라스 방정식 \(\nabla^2V = 0\)을 만족한다고 하자. 6장에서 구면 좌표의 라플라시안을 지름 부분과 각 부분으로 나누었다(<a href="ch06.html#eq-laplacian-angular-split">식 (6.35)</a>). \(\phi\)에 기대지 않는 함수에 대해 각 부분은 \(\Lambda = \frac{1}{\sin\theta}\frac{\partial}{\partial\theta}\big(\sin\theta\frac{\partial}{\partial\theta}\big)\)이다. \(V = R(r)\Theta(\theta)\)로 두고 \(\nabla^2V = 0\)에 넣은 뒤 \(R\Theta/r^2\)로 나누면</p>
+    <div class="formula">\[ \frac{r}{R}\frac{d^2}{dr^2}(rR) = -\frac{1}{\Theta}\,\frac{1}{\sin\theta}\frac{d}{d\theta}\Big(\sin\theta\,\frac{d\Theta}{d\theta}\Big) \]</div>
+    <p>이다. 왼쪽은 \(r\)에만, 오른쪽은 \(\theta\)에만 기대므로 양쪽은 같은 상수여야 한다. 그 상수를 \(\lambda\)라 하자. 각 부분은 \(\frac{1}{\sin\theta}(\sin\theta\,\Theta')' + \lambda\Theta = 0\)이다. 변수를 \(x = \cos\theta\)로 바꾸면 \(d/d\theta = -\sin\theta\,d/dx\)이고 \(\sin^2\theta = 1 - x^2\)이므로 \(\frac{1}{\sin\theta}\frac{d}{d\theta}\big(\sin\theta\frac{d\Theta}{d\theta}\big) = \frac{d}{dx}\big((1 - x^2)\frac{d\Theta}{dx}\big)\)가 된다. 지름 부분 \(r^2R'' + 2rR' - \lambda R = 0\)은 12.6절의 <a class="ref" href="#ex-euler-radial"></a>에서 푼다. 변수 분리로 편미분방정식을 푸는 일반론은 17장의 몫이다.</p>
+    <div class="box def" id="def-legendre-equation"><div class="box-h">르장드르 방정식</div>
+      <p>다음 방정식을 <span class="term">르장드르 방정식</span> <span class="en">(Legendre equation)</span>이라 한다.</p>
+      <div class="formula" id="eq-legendre-equation">\[ (1 - x^2)\,y'' - 2x\,y' + \lambda\,y = 0 \]</div>
+      <p>앞의 두 항을 묶으면 \(\dfrac{d}{dx}\Big[(1 - x^2)\dfrac{dy}{dx}\Big] + \lambda y = 0\)이다. 구면 좌표에서 나올 때 \(x = \cos\theta\)이므로 물리적인 구간은 \(-1 \le x \le 1\)이고, 끝점 \(x = \pm1\)은 구의 두 극(\(\theta = 0, \pi\)), 곧 \(z\)축이다.</p>
+    </div>
+
+    <h3 id="s2-series">급수 풀이와 끊김 조건</h3>
+    <p>\(x = 0\)은 정상점이고 가장 가까운 특이점은 \(x = \pm1\)이므로, <a class="ref" href="#thm-series-ordinary-point"></a>에 따라 \(x = 0\) 둘레의 급수 해는 적어도 \(\lvert x\rvert &lt; 1\)에서 수렴한다. \(y = \sum a_n x^n\)을 넣고 \(x^n\)의 계수를 모으면</p>
+    <div class="formula">\[ (n+2)(n+1)a_{n+2} - n(n-1)a_n - 2n\,a_n + \lambda a_n = 0 \]</div>
+    <p>이다. 첫 항은 \(y''\)에서, 둘째 항은 \(-x^2y''\)에서, 셋째 항은 \(-2xy'\)에서 왔다. 따라서</p>
+    <div class="formula" id="eq-legendre-recursion">\[ a_{n+2} = \frac{n(n+1) - \lambda}{(n+2)(n+1)}\,a_n \]</div>
+    <p>이다. 짝수 차수만 있는 해 \(y_e\)(\(a_0 = 1\), \(a_1 = 0\))와 홀수 차수만 있는 해 \(y_o\)(\(a_0 = 0\), \(a_1 = 1\))가 나온다. 예를 들어 \(y_e = 1 - \tfrac{\lambda}{2}x^2 + \tfrac{\lambda(\lambda - 6)}{24}x^4 - \cdots\)이다.</p>
+    <p>큰 \(n\)에서 \(a_{n+2}/a_n \to 1\)이므로 비 판정법은 \(\lvert x\rvert &lt; 1\)에서의 수렴만 알려 주고, \(x = \pm1\)에서 무슨 일이 생기는지는 알려 주지 않는다. 그런데 바로 이 끝점이 물리적으로 중요하다. 핵심은 \(c_n = n\,a_n\)이 놀랄 만큼 단순한 점화식을 따른다는 것이다. 식 <a class="ref" href="#eq-legendre-recursion"></a>의 양변에 \(n+2\)를 곱하면</p>
+    <div class="formula" id="eq-legendre-cn">\[ c_{n+2} = \Big(1 - \frac{\lambda}{n(n+1)}\Big)\,c_n, \quad c_n = n\,a_n \]</div>
+    <p>이다(\(n \ge 1\)). 오른쪽 괄호는 \(n\)이 커지면 \(1 - O(1/n^2)\)이고, \(\sum 1/n^2\)이 수렴하므로 이 곱은 0이 아닌 극한으로 수렴한다. 다만 식 <a class="ref" href="#eq-legendre-recursion"></a>의 분자 \(n(n+1) - \lambda\)가 어떤 \(n\)에서 0이 되면, 곧 \(\lambda = n(n+1)\)이면 그 뒤의 계수가 모두 0이 되어 급수가 끊긴다. 그래서 끊기지 않는 급수는 \(a_n \approx C/n\)처럼 행동하고, \(\sum x^n/n\)처럼 \(x \to \pm1\)에서 로그로 발산한다.</p>
+    <div class="box thm" id="thm-legendre-termination"><div class="box-h">극에서 유한한 해의 조건</div>
+      <p>르장드르 방정식 <a class="ref" href="#eq-legendre-equation"></a>이 \(-1 \le x \le 1\) 전체에서 유한한, 0이 아닌 해를 가질 필요충분조건은 음이 아닌 정수 \(l\)에 대해</p>
+      <div class="formula" id="eq-legendre-quantization">\[ \lambda = l(l+1), \quad l = 0, 1, 2, \ldots \]</div>
+      <p>인 것이다. 이때 그런 해는 \(l\)차 다항식 하나의 상수배뿐이다. 그 밖의 해는 \(x = 1\)이나 \(x = -1\)에서 \(\ln(1 \mp x)\)처럼 발산한다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p><i>1단계: 끊기지 않는 급수의 계수.</i> \(y_e\)의 계수 사슬(짝수 \(n\))을 보자. 이 사슬이 끊기지 않는다고, 곧 식 <a class="ref" href="#eq-legendre-recursion"></a>의 분자 \(n(n+1) - \lambda\)가 사슬의 어느 \(n\)에서도 0이 아니라고 하자. 짝 사슬은 \(c_0 = 0\)이므로 \(c_2 = 2a_2 = -\lambda a_0 \ne 0\)에서 출발하고(분자가 \(n = 0\)에서 0이 아니라는 가정이 곧 \(\lambda \ne 0\)이다), 홀 사슬은 \(c_1 = a_1 = 1\)에서 출발한다. 그 뒤로는 식 <a class="ref" href="#eq-legendre-cn"></a>의 괄호가 0이 아니므로 사슬의 모든 \(c_n\)이 0이 아니다. \(n_0(n_0+1) > 2\lvert\lambda\rvert\)인 \(n_0\) 이후로는 괄호가 \(\tfrac12\)과 \(\tfrac32\) 사이에 있고, \(\lvert\ln(1 - u)\rvert \le 2\lvert u\rvert\) (\(\lvert u\rvert \le \tfrac12\))이므로 \(\sum_n \lvert\ln(1 - \lambda/(n(n+1)))\rvert \le 2\lvert\lambda\rvert\sum 1/n^2 &lt; \infty\)이다. 따라서 \(\ln c_n\)이 수렴하고 \(c_n \to C_e \ne 0\)이다. 꼬리의 합이 \(O(1/n)\)이므로 \(c_n - C_e = O(1/n)\), 곧 \(a_n = C_e/n + O(1/n^2)\)이다. \(y_o\)도 같아서 \(a_n = C_o/n + O(1/n^2)\)이다.</p>
+        <p><i>2단계: 끝점에서의 행동.</i> \(\sum O(1/n^2)\)은 절대 수렴하므로 \(0 \le x &lt; 1\)에서 유계인 부분만 남긴다. 그리고 \(\sum_{k\ge1} x^{2k}/(2k) = -\tfrac12\ln(1 - x^2)\), \(\sum_{k\ge0}x^{2k+1}/(2k+1) = \tfrac12\ln\tfrac{1+x}{1-x}\)이므로(1장의 <a href="ch01.html#eq-log-series">식 (1.14)</a>), \(x \to 1^-\)에서</p>
+        <div class="formula">\[ \begin{aligned} y_e &= -\tfrac{C_e}{2}\ln(1 - x) + (\text{유계}), \\ y_o &= -\tfrac{C_o}{2}\ln(1 - x) + (\text{유계}) \end{aligned} \]</div>
+        <p>이다. \(y_e\)는 짝함수, \(y_o\)는 홀함수이므로 \(x \to -1^+\)에서는 \(\ln(1 - x)\)를 \(\ln(1 + x)\)로 바꾸고 \(y_o\)의 부호를 뒤집으면 된다.</p>
+        <p><i>3단계: 조합.</i> 일반해 \(y = Ay_e + By_o\)의 로그 계수는 \(x = 1\)에서 \(-(AC_e + BC_o)/2\), \(x = -1\)에서 \(-(AC_e - BC_o)/2\)이다. 두 끝에서 모두 유한하려면 \(AC_e = BC_o = 0\)이어야 한다. \(\lambda\)가 어떤 \(l(l+1)\)도 아니면 두 사슬 모두 끊기지 않아 \(C_e, C_o \ne 0\)이므로 \(A = B = 0\)이다. \(\lambda = l(l+1)\)이면 \(l\)과 홀짝이 같은 사슬만 \(n = l\)에서 끊겨 \(l\)차 다항식이 되고(괄호가 0이 되는 \(n\)은 \(n = l\) 하나뿐이다), 다른 사슬은 끊기지 않아 그 계수가 0이어야 한다. 남는 해는 그 다항식의 상수배다.</p>
+      </details>
+    </div>
+    <p>이것이 구면 좌표의 물리에서 \(l(l+1)\)이 나오는 이유다. 6장에서 수소 원자의 각 부분을 분리할 때 \(\Lambda Y = -l(l+1)Y\)로 둔 것(<a href="ch06.html#ex-hydrogen-laplacian-split">예제 6.6</a>)은 이 정리의 결과를 미리 쓴 것이다. 양자역학에서 각운동량의 제곱이 \(\hbar^2l(l+1)\)로 양자화되는 것도 같은 조건에서 나온다.</p>
+
+    <h3 id="s2-polynomials">르장드르 다항식</h3>
+    <p>\(\lambda = l(l+1)\)일 때의 다항식 해는 \(x = 1\)에서 0이 될 수 없다. 방정식을 \(k\)번 미분하고 \(x = 1\)을 넣으면 \((1 - x^2)\)이 붙은 항이 사라져</p>
+    <div class="formula" id="eq-legendre-at-one">\[ 2(k+1)\,y^{(k+1)}(1) = \big[l(l+1) - k(k+1)\big]\,y^{(k)}(1) \]</div>
+    <p>이 되기 때문이다. \(y(1) = 0\)이면 모든 도함수가 \(x = 1\)에서 0이 되고, 다항식은 0이 된다. 그래서 \(x = 1\)의 값을 1로 맞추어 해를 하나로 정할 수 있다.</p>
+    <div class="box def" id="def-legendre-polynomial"><div class="box-h">르장드르 다항식</div>
+      <p>\(l = 0, 1, 2, \ldots\)에 대해 \(\lambda = l(l+1)\)인 르장드르 방정식의 다항식 해 가운데 \(P_l(1) = 1\)인 것을 \(l\)차 <span class="term">르장드르 다항식</span> <span class="en">(Legendre polynomial)</span> \(P_l(x)\)라 한다. 처음 다섯 개는 다음과 같다.</p>
+      <div class="formula" id="eq-legendre-table">\[ \begin{aligned} P_0 &= 1, \quad P_1 = x, \quad P_2 = \tfrac12(3x^2 - 1), \\ P_3 &= \tfrac12(5x^3 - 3x), \\ P_4 &= \tfrac18(35x^4 - 30x^2 + 3) \end{aligned} \]</div>
+    </div>
+    <p>예를 들어 \(l = 2\)이면 식 <a class="ref" href="#eq-legendre-recursion"></a>에서 \(a_2 = (0 - 6)/2\cdot a_0 = -3a_0\)이고 \(a_4 = (6 - 6)/12\cdot a_2 = 0\)이므로 \(y_e = a_0(1 - 3x^2)\)이다. \(x = 1\)에서 1이 되게 \(a_0 = -\tfrac12\)로 두면 \(P_2\)가 나온다. 9장에서 \(1, x, x^2\)에 그람-슈미트 과정을 적용해 얻은 다항식(<a href="ch09.html#eq-legendre-from-gs">식 (9.17)</a>)과 같다. 그 까닭은 12.4절에서 밝힌다.</p>
+    <p>정의에서 바로 나오는 성질이 두 가지 있다. 첫째, 식 <a class="ref" href="#eq-legendre-recursion"></a>가 두 칸씩 건너뛰므로 \(P_l\)은 \(l\)과 홀짝이 같은 거듭제곱만 갖는다.</p>
+    <div class="formula" id="eq-legendre-parity">\[ P_l(-x) = (-1)^l P_l(x), \quad P_l(-1) = (-1)^l \]</div>
+    <p>둘째, 식 <a class="ref" href="#eq-legendre-at-one"></a>에서 \(k = 0\)으로 두면 \(P_l'(1) = l(l+1)/2\)이다. 물리적으로 \(P_l(\cos\theta)\)는 북극(\(\theta = 0\))에서 1이고, 남극에서 \((-1)^l\)이며, 그 사이에서 \(l\)번 부호를 바꾼다(그림 12-2, 증명은 12.4절의 <a class="ref" href="#thm-legendre-zeros"></a>).</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 290" role="img" aria-label="구간 −1에서 1까지 르장드르 다항식 P0부터 P4까지의 그래프. 모두 x = 1에서 1이고, P_l은 구간 안에서 l번 0을 지난다"><line x1="50" y1="244" x2="460" y2="244" class="s-grid"/><text x="42" y="249" class="t-dim" style="font-size:14px" text-anchor="end">−1</text><line x1="50" y1="188" x2="460" y2="188" class="s-grid"/><text x="42" y="193" class="t-dim" style="font-size:14px" text-anchor="end">−0.5</text><line x1="50" y1="132" x2="460" y2="132" class="s-grid"/><text x="42" y="137" class="t-dim" style="font-size:14px" text-anchor="end">0</text><line x1="50" y1="76" x2="460" y2="76" class="s-grid"/><text x="42" y="81" class="t-dim" style="font-size:14px" text-anchor="end">0.5</text><line x1="50" y1="20" x2="460" y2="20" class="s-grid"/><text x="42" y="25" class="t-dim" style="font-size:14px" text-anchor="end">1</text><line x1="50" y1="20" x2="50" y2="244" class="s-grid"/><text x="50" y="264" class="t-dim" style="font-size:14px" text-anchor="middle">−1</text><line x1="152.5" y1="20" x2="152.5" y2="244" class="s-grid"/><text x="152.5" y="264" class="t-dim" style="font-size:14px" text-anchor="middle">−0.5</text><line x1="255" y1="20" x2="255" y2="244" class="s-grid"/><text x="255" y="264" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><line x1="357.5" y1="20" x2="357.5" y2="244" class="s-grid"/><text x="357.5" y="264" class="t-dim" style="font-size:14px" text-anchor="middle">0.5</text><line x1="460" y1="20" x2="460" y2="244" class="s-grid"/><text x="460" y="264" class="t-dim" style="font-size:14px" text-anchor="middle">1</text><line x1="50" y1="132" x2="460" y2="132" class="s-line"/><path d="M50,20l8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0 8.2,0" class="s-faint" style="stroke-width:2"/><path d="M50,244l8.2-4.5 8.2-4.5 8.2-4.4 8.2-4.5 8.2-4.5 8.2-4.5 8.2-4.5 8.2-4.4 8.2-4.5 8.2-4.5 8.2-4.5 8.2-4.5 8.2-4.4 8.2-4.5 8.2-4.5 8.2-4.5 8.2-4.5 8.2-4.4 8.2-4.5 8.2-4.5 8.2-4.5 8.2-4.5 8.2-4.4 8.2-4.5 8.2-4.5 8.2-4.5 8.2-4.5 8.2-4.4 8.2-4.5 8.2-4.5 8.2-4.5 8.2-4.5 8.2-4.4 8.2-4.5 8.2-4.5 8.2-4.5 8.2-4.5 8.2-4.4 8.2-4.5 8.2-4.5 8.2-4.5 8.2-4.5 8.2-4.4 8.2-4.5 8.2-4.5 8.2-4.5 8.2-4.5 8.2-4.4 8.2-4.5 8.2-4.5" class="s-line" style="stroke:var(--text);stroke-width:2"/><path d="M50,20l8.2,13.2 8.2,12.6 8.2,12.1 8.2,11.6 8.2,11 8.2,10.5 8.2,9.9 8.2,9.4 8.2,8.9 8.2,8.3 8.2,7.8 8.2,7.3 8.2,6.7 8.2,6.2 8.2,5.6 8.2,5.1 8.2,4.6 8.2,4 8.2,3.5 8.2,3 8.2,2.4 8.2,1.9 8.2,1.3 8.2,.8 8.2,.3 8.2-.3 8.2-.8 8.2-1.3 8.2-1.9 8.2-2.4 8.2-3 8.2-3.5 8.2-4 8.2-4.6 8.2-5.1 8.2-5.6 8.2-6.2 8.2-6.7 8.2-7.3 8.2-7.8 8.2-8.3 8.2-8.9 8.2-9.4 8.2-9.9 8.2-10.5 8.2-11 8.2-11.6 8.2-12.1 8.2-12.6 8.2-13.2" class="s-acc"/><path d="M50,244l8.2-25.6 8.2-22.9 8.2-20.5 8.2-18.2 8.2-15.8 8.2-13.8 8.2-11.7 8.2-9.7 8.2-7.9 8.2-6.2 8.2-4.6 8.2-3.1 8.2-1.7 8.2-.4 8.2,.8 8.2,1.9 8.2,2.8 8.2,3.7 8.2,4.5 8.2,5 8.2,5.7 8.2,6 8.2,6.4 8.2,6.6 8.2,6.7 8.2,6.7 8.2,6.6 8.2,6.4 8.2,6 8.2,5.7 8.2,5 8.2,4.5 8.2,3.7 8.2,2.8 8.2,1.9 8.2,.8 8.2-.4 8.2-1.7 8.2-3.1 8.2-4.6 8.2-6.2 8.2-7.9 8.2-9.7 8.2-11.7 8.2-13.8 8.2-15.8 8.2-18.2 8.2-20.5 8.2-22.9 8.2-25.6" class="s-acc2"/><path d="M50,20l8.2,40.9 8.2,33.6 8.2,26.9 8.2,21 8.2,15.7 8.2,11 8.2,6.9 8.2,3.4 8.2,.4 8.2-2.1 8.2-4.2 8.2-5.8 8.2-6.9 8.2-7.9 8.2-8.2 8.2-8.5 8.2-8.3 8.2-8 8.2-7.3 8.2-6.6 8.2-5.6 8.2-4.5 8.2-3.2 8.2-2 8.2-.7 8.2,.7 8.2,2 8.2,3.2 8.2,4.5 8.2,5.6 8.2,6.6 8.2,7.3 8.2,8 8.2,8.3 8.2,8.5 8.2,8.2 8.2,7.9 8.2,6.9 8.2,5.8 8.2,4.2 8.2,2.1 8.2-.4 8.2-3.4 8.2-6.9 8.2-11 8.2-15.7 8.2-21 8.2-26.9 8.2-33.6 8.2-40.9" class="s-acc" stroke-dasharray="7 4"/><text x="127.9" y="12" class="t-math dim" text-anchor="middle"><tspan font-style="italic">P</tspan><tspan baseline-shift="sub" font-size="72%">0</tspan></text><text x="142.2" y="221.6" class="t-math" text-anchor="middle"><tspan font-style="italic">P</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan></text><text x="255" y="210" class="t-math acc" text-anchor="middle"><tspan font-style="italic">P</tspan><tspan baseline-shift="sub" font-size="72%">2</tspan></text><text x="162.8" y="69.9" class="t-math acc2" text-anchor="middle"><tspan font-style="italic">P</tspan><tspan baseline-shift="sub" font-size="72%">3</tspan></text><text x="255" y="80" class="t-math acc" text-anchor="middle"><tspan font-style="italic">P</tspan><tspan baseline-shift="sub" font-size="72%">4</tspan></text><text x="460" y="282" class="t-dim" style="font-size:14px" text-anchor="end">x</text></svg>
+      <figcaption><b>그림 12-2.</b> 르장드르 다항식 \(P_0\)부터 \(P_4\)까지. 모두 \(x = 1\)에서 1이고, \(x = -1\)에서 \((-1)^l\)이다. \(P_l\)은 \(-1 &lt; x &lt; 1\)에서 \(l\)번 0을 지나며, 그림에서 보듯 구간 안에서 크기가 1을 넘지 않는다(증명은 12.5절의 덧셈 정리 뒤). 곡선은 점화식 <a class="ref" href="#eq-legendre-recurrence"></a>로 계산했다.</figcaption>
+    </figure>
+    <p>\(\lambda = l(l+1)\)일 때 끊기지 않는 다른 사슬도 방정식의 해다. 이것을 적당히 규격화한 것을 <span class="term">제2종 르장드르 함수</span> <span class="en">(Legendre function of the second kind)</span> \(Q_l(x)\)라 하고, 일반해는 \(AP_l + BQ_l\)이다. <a class="ref" href="#thm-legendre-termination"></a>에 따라 \(Q_l\)은 \(x = \pm1\)에서 로그로 발산한다. 10장의 <a href="ch10.html#prob-legendre-second-solution">문제 10.3</a>에서 차수 낮추기로 구한 \(\tfrac{x}{2}\ln\tfrac{1+x}{1-x} - 1\)이 \(Q_1\)이다. 구의 극을 포함하는 문제에서는 \(Q_l\)을 버린다. 극을 뺀 영역(예: 두 원뿔면 사이)이라면 \(Q_l\)도 쓰인다.</p>
+
+    <div class="box ex" id="ex-rigid-rotor-levels"><div class="box-h">회전하는 이원자 분자의 에너지 준위</div>
+      <p>결합 길이가 고정된 이원자 분자를 관성 모멘트 \(I = \mu r^2\)인 <span class="term">강체 회전자</span> <span class="en">(rigid rotor)</span>로 본다(\(\mu\)는 환산 질량). 회전자의 해밀토니안은 각 부분의 라플라시안만으로 이루어진 \(\hat H = -\dfrac{\hbar^2}{2I}\Lambda\)이다. (가) \(\phi\)에 기대지 않는 상태의 에너지를 구하라. (나) 일산화탄소 분자(\(^{12}\)C\(^{16}\)O, 결합 길이 \(r = 0.1131\ \text{nm}\))의 \(l = 1 \to 0\) 전이에서 나오는 빛의 진동수와 파장을 구하라.</p>
+      <p><b>풀이.</b> (가) \(\hat H\psi = E\psi\)는 \(\Lambda\psi = -(2IE/\hbar^2)\psi\)이다. \(\psi\)가 \(\theta\)에만 기대면 \(x = \cos\theta\)로 바꾸어 \(\lambda = 2IE/\hbar^2\)인 르장드르 방정식이 된다. 파동함수는 분자 축이 \(z\)축을 향하는 방향(\(\theta = 0, \pi\))에서도 유한해야 하므로, <a class="ref" href="#thm-legendre-termination"></a>에 따라 \(\lambda = l(l+1)\)이다.</p>
+      <div class="formula" id="eq-rotor-energy">\[ E_l = \frac{\hbar^2}{2I}\,l(l+1) = B\,l(l+1), \quad B = \frac{\hbar^2}{2I} \]</div>
+      <p>파동함수는 \(P_l(\cos\theta)\)이다. \(\phi\)에 기대는 상태도 같은 에너지를 갖는다는 것을 12.5절에서 본다. 이웃한 준위의 간격은 \(E_l - E_{l-1} = 2Bl\)로, \(l\)에 비례해 넓어진다.</p>
+      <p><b>숫자로 보기.</b> (나) 환산 질량은 \(\mu = \dfrac{12.000 \times 15.995}{27.995}\ \text{u} = 6.856\ \text{u} = 1.1385 \times 10^{-26}\ \text{kg}\)이고</p>
+      <div class="formula">\[ \begin{aligned} I &= \mu r^2 = 1.456 \times 10^{-46}\ \text{kg}\cdot\text{m}^2, \\ B &= \frac{\hbar^2}{2I} = 3.818 \times 10^{-23}\ \text{J} = 0.2383\ \text{meV} \end{aligned} \]</div>
+      <p>이다. \(l = 1 \to 0\) 전이의 에너지는 \(E_1 - E_0 = 2B\)이므로 진동수는 \(\nu = 2B/h = 115.2\ \text{GHz}\), 파장은 \(c/\nu = 2.60\ \text{mm}\)이다. 밀리미터파이고, 전파 천문학이 은하의 차가운 분자 구름을 지도로 그릴 때 쓰는 선이 바로 이 전이다(T. M. Dame, D. Hartmann, P. Thaddeus, Astrophys. J. 547, 792 (2001)). \(B/k_B = 2.77\ \text{K}\)이므로 온도가 10 K 안팎인 분자 구름에서도 \(l = 1\) 준위가 충분히 차 있다(<a class="ref" href="#prob-rotor-populations"></a>). 단위 확인: \(\hbar^2/I\)의 단위는 \(\text{J}^2\text{s}^2/(\text{kg}\cdot\text{m}^2) = \text{J}\)이다(\(\text{J} = \text{kg}\cdot\text{m}^2/\text{s}^2\)).</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 12.3 -->
+  <section id="s3">
+    <h2>로드리게스 공식, 생성 함수, 점화식</h2>
+    <p>급수 풀이로 \(P_l\)을 하나씩 만들 수는 있지만, 일반 \(l\)에 대해 계산하려면 더 쓸모 있는 표현이 필요하다. 이 절에서는 세 가지를 세운다. \(P_l\)을 한 줄로 쓰는 로드리게스 공식, 모든 \(P_l\)을 한 함수에 담는 생성 함수, 이웃한 \(P_l\)끼리 잇는 점화식이다. 생성 함수는 점전하의 퍼텐셜 \(1/\lvert\mathbf r - \mathbf r'\rvert\)에서 저절로 나오며, 1장에서 쌍극자와 사중극까지만 했던 전개를 모든 차수로 넓힌다.</p>
+
+    <h3 id="s3-rodrigues">로드리게스 공식</h3>
+    <div class="box thm" id="thm-rodrigues-legendre"><div class="box-h">로드리게스 공식</div>
+      <div class="formula" id="eq-rodrigues-legendre">\[ P_l(x) = \frac{1}{2^l\,l!}\,\frac{d^l}{dx^l}\,(x^2 - 1)^l \]</div>
+    </div>
+    <p>이 식을 <span class="term">로드리게스 공식</span> <span class="en">(Rodrigues' formula)</span>이라 한다. <b>유도.</b> \(u = (x^2 - 1)^l\)로 두자. \(u' = 2lx(x^2 - 1)^{l-1}\)이므로 \(u\)는 1계 방정식</p>
+    <div class="formula">\[ (x^2 - 1)\,u' = 2l\,x\,u \]</div>
+    <p>를 만족한다. 양변을 \(l+1\)번 미분한다. 곱의 \(n\)계 도함수에 대한 라이프니츠 법칙 \((fg)^{(n)} = \sum_k\binom{n}{k}f^{(k)}g^{(n-k)}\)를 쓰면, \(x^2 - 1\)과 \(x\)는 세 번 이상 미분하면 0이므로 각각 처음 몇 항만 남는다.</p>
+    <div class="formula">\[ \begin{aligned} &(x^2 - 1)u^{(l+2)} + 2(l+1)x\,u^{(l+1)} + l(l+1)u^{(l)} \\ &\quad = 2l\,x\,u^{(l+1)} + 2l(l+1)\,u^{(l)} \end{aligned} \]</div>
+    <p>왼쪽은 \((x^2 - 1)\)에 미분이 0, 1, 2번 걸린 항이고(계수 \(\binom{l+1}{1}2x\), \(\binom{l+1}{2}2\)), 오른쪽은 \(x\)에 미분이 0, 1번 걸린 항이다. \(w = u^{(l)}\)로 두고 정리하면</p>
+    <div class="formula">\[ (1 - x^2)\,w'' - 2x\,w' + l(l+1)\,w = 0 \]</div>
+    <p>이다. 곧 \(w\)는 \(\lambda = l(l+1)\)인 르장드르 방정식을 만족하는 \(l\)차 다항식이므로, <a class="ref" href="#thm-legendre-termination"></a>에 따라 \(P_l\)의 상수배다. 상수는 \(x = 1\)의 값으로 정한다. \(u = (x - 1)^l(x + 1)^l\)을 \(l\)번 미분할 때, \(x = 1\)에서 0이 아닌 항은 \(l\)번의 미분이 모두 \((x - 1)^l\)에 걸린 항 \(l!\,(x + 1)^l\)뿐이다. 따라서 \(w(1) = l!\,2^l\)이고, \(P_l = w/(2^l l!)\)이다.</p>
+    <p>확인으로 \(l = 2\)이면 \((x^2 - 1)^2 = x^4 - 2x^2 + 1\)의 2계 도함수가 \(12x^2 - 4\)이고 \(1/(4 \cdot 2) = \tfrac18\)을 곱하면 \(\tfrac12(3x^2 - 1)\)이다. 로드리게스 공식에서 \(P_l\)의 최고차항 계수도 바로 읽힌다. \(x^{2l}\)을 \(l\)번 미분한 \((2l)!/l!\,x^l\)에서</p>
+    <div class="formula" id="eq-legendre-leading">\[ P_l(x) = \frac{(2l)!}{2^l\,(l!)^2}\,x^l + (\text{낮은 차수}) \]</div>
+    <p>이다. \(l = 4\)이면 \(8!/(16 \cdot 576) = 35/8\)로 식 <a class="ref" href="#eq-legendre-table"></a>과 맞다.</p>
+
+    <h3 id="s3-generating">점전하의 퍼텐셜과 생성 함수</h3>
+    <p>점 \(\mathbf r'\)에 놓인 전하 \(q\)가 점 \(\mathbf r\)에 만드는 퍼텐셜은 \(q/(4\pi\varepsilon_0\lvert\mathbf r - \mathbf r'\rvert)\)이다. 두 위치 벡터 사이의 각을 \(\gamma\)라 하면(그림 12-3) 코사인 법칙으로</p>
+    <div class="formula" id="eq-distance-law-of-cosines">\[ \lvert\mathbf r - \mathbf r'\rvert^2 = r^2 - 2rr'\cos\gamma + r'^2 = r_>^2\,(1 - 2xt + t^2) \]<div class="where">\(r_> = \max(r, r')\), \(r_&lt; = \min(r, r')\), \(t = r_&lt;/r_> &lt; 1\), \(x = \cos\gamma\).</div></div>
+    <p>이다. 그래서 \(1/\lvert\mathbf r - \mathbf r'\rvert = r_>^{-1}(1 - 2xt + t^2)^{-1/2}\)이고, 남은 일은 이 함수를 \(t\)의 거듭제곱으로 펼치는 것이다. 1장의 쌍극자 예제(<a href="ch01.html#ex-dipole-far-field">예제 1.10</a>)에서는 이 전개를 \(t^2\)까지 손으로 했고, \(1\), \(\cos\theta\), \(\tfrac12(3\cos^2\theta - 1)\)이 나왔다. 이것이 \(P_0, P_1, P_2\)라는 것이 우연이 아님을 보이자.</p>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 290" role="img" aria-label="원점 O에서 원천 위치 r′과 관측 위치 r로 가는 두 벡터, 그 사이의 각 γ, 그리고 둘을 잇는 거리 |r − r′|"><defs><marker id="f1203-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker></defs><ellipse cx="236" cy="203" rx="62" ry="34" class="f-acc2-soft" style="stroke-width:1;opacity:.85"/><text x="300" y="248" class="t-math acc2" text-anchor="start"><tspan font-style="italic">ρ</tspan>(<tspan font-weight="700">r</tspan>′)</text><line x1="80" y1="240" x2="226" y2="206" class="s-acc2" style="stroke-width:2.2" marker-end="url(#f1203-arr)"/><line x1="80" y1="240" x2="296" y2="64" class="s-line" style="stroke:var(--text);stroke-width:2.2" marker-end="url(#f1203-arr)"/><line x1="230" y1="205" x2="300" y2="60" class="s-acc" stroke-dasharray="6 4"/><circle cx="230" cy="205" r="4" class="f-acc2"/><circle cx="300" cy="60" r="4" class="f-dim"/><path d="M128.7,228.7 A50,50 0 0 0 118.7,208.3" class="s-line"/><text x="140" y="219" class="t-math" text-anchor="start"><tspan font-style="italic">γ</tspan></text><text x="72" y="262" class="t-math dim" text-anchor="middle">O</text><text x="160" y="240" class="t-math acc2" text-anchor="middle"><tspan font-weight="700">r</tspan>′</text><text x="176" y="146" class="t-math" text-anchor="end"><tspan font-weight="700">r</tspan></text><text x="283" y="122" class="t-math acc" text-anchor="start">|<tspan font-weight="700">r</tspan> − <tspan font-weight="700">r</tspan>′|</text><text x="310" y="56" class="t-math" text-anchor="start">P</text></svg></div>
+      <figcaption><b>그림 12-3.</b> 다중극 전개의 기하. 원점 O에서 원천 위치 \(\mathbf r'\)(전하 분포 \(\rho\)의 한 점)과 관측점 P의 위치 \(\mathbf r\)로 가는 두 벡터가 각 \(\gamma\)를 이룬다. 두 점 사이의 거리 \(\lvert\mathbf r - \mathbf r'\rvert\)는 \(r\), \(r'\), \(\cos\gamma\)만으로 정해진다.</figcaption>
+    </figure>
+    <div class="box thm" id="thm-legendre-generating"><div class="box-h">르장드르 다항식의 생성 함수</div>
+      <p>\(-1 \le x \le 1\)이고 \(\lvert t\rvert &lt; 1\)이면</p>
+      <div class="formula" id="eq-legendre-generating">\[ g(x, t) = \frac{1}{\sqrt{1 - 2xt + t^2}} = \sum_{l=0}^{\infty} P_l(x)\,t^l \]</div>
+      <p>이다. 함수 \(g\)를 르장드르 다항식의 <span class="term">생성 함수</span> <span class="en">(generating function)</span>라 한다.</p>
+    </div>
+    <p><b>유도.</b> 네 단계로 보인다.</p>
+    <p><i>(1) 계수는 \(l\)차 이하의 다항식이다.</i> \(s = 2xt - t^2\)으로 두면 \(g = (1 - s)^{-1/2}\)이고, 1장의 이항급수(<a href="ch01.html#eq-binomial-series">식 (1.20)</a>)로 \(g = \sum_k \binom{-1/2}{k}(-s)^k\)이다. \(s^k = t^k(2x - t)^k\)는 \(t^k\)부터 시작하므로, \(t^l\)의 계수에는 \(k \le l\)인 항만 기여하고 각각은 \(x\)의 \(l\)차 이하 다항식이다. 이 계수를 \(f_l(x)\)라 하자.</p>
+    <p><i>(2) \(x = 1\)의 값.</i> \(g(1, t) = (1 - t)^{-1} = \sum t^l\)이므로 모든 \(l\)에서 \(f_l(1) = 1\)이다.</p>
+    <p><i>(3) \(g\)가 만족하는 편미분방정식.</i> \(R = 1 - 2xt + t^2\)으로 두면 \(\partial_x g = tR^{-3/2}\), \(\partial_x^2 g = 3t^2R^{-5/2}\)이고, \(\partial_t R^{-1/2} = (x - t)R^{-3/2}\)를 써서 \(t\,\partial_t^2(tg)\)를 계산하면 다음 항등식이 나온다.</p>
+    <div class="formula" id="eq-generating-pde">\[ (1 - x^2)\frac{\partial^2 g}{\partial x^2} - 2x\frac{\partial g}{\partial x} + t\,\frac{\partial^2}{\partial t^2}\big(t\,g\big) = 0 \]</div>
+    <details class="proof"><summary>계산의 세부</summary>
+      <p>\(\partial_t(tg) = R^{-1/2} + t(x - t)R^{-3/2}\)이고, 한 번 더 미분하면 \(\partial_t R^{-3/2} = 3(x - t)R^{-5/2}\)이므로</p>
+      <div class="formula">\[ \partial_t^2(tg) = (2x - 3t)R^{-3/2} + 3t(x - t)^2R^{-5/2} \]</div>
+      <p>이다. 식 <a class="ref" href="#eq-generating-pde"></a>의 좌변은</p>
+      <div class="formula">\[ \begin{aligned} &3t^2\big[(1 - x^2) + (x - t)^2\big]R^{-5/2} \\ &\quad + (-2xt + 2xt - 3t^2)R^{-3/2} \\ &= 3t^2R\cdot R^{-5/2} - 3t^2R^{-3/2} = 0 \end{aligned} \]</div>
+      <p>이다. 둘째 줄에서 \((1 - x^2) + (x - t)^2 = 1 - 2xt + t^2 = R\)을 썼다.</p>
+    </details>
+    <p><i>(4) 계수 비교.</i> \(g = \sum f_l t^l\)을 넣으면 \(t\,\partial_t^2(t^{l+1}) = l(l+1)t^l\)이므로, \(t^l\)의 계수에서 \((1 - x^2)f_l'' - 2xf_l' + l(l+1)f_l = 0\)을 얻는다. \(f_l\)은 \(\lambda = l(l+1)\)인 르장드르 방정식의 다항식 해이므로 <a class="ref" href="#thm-legendre-termination"></a>에 따라 \(P_l\)의 상수배이고, (2)에서 상수는 1이다. 곧 \(f_l = P_l\)이다.</p>
+    <p>수렴 범위는 \(g\)를 \(t\)의 복소 함수로 볼 때 \(R = 0\)이 되는 \(t = x \pm i\sqrt{1 - x^2}\)이 정한다. \(\lvert x\rvert \le 1\)이면 이 두 점의 절댓값이 1이므로, \(t\)의 멱급수는 \(\lvert t\rvert &lt; 1\)에서 수렴한다(19장에서 증명하는 "가장 가까운 특이점" 규칙).</p>
+    <p>식 <a class="ref" href="#eq-distance-law-of-cosines"></a>과 합치면 이 장에서 가장 많이 쓰일 식을 얻는다.</p>
+    <div class="formula" id="eq-multipole-expansion">\[ \frac{1}{\lvert\mathbf r - \mathbf r'\rvert} = \sum_{l=0}^{\infty}\frac{r_&lt;^l}{r_>^{l+1}}\,P_l(\cos\gamma) \]<div class="where">\(r \ne r'\)이면 수렴한다. \(r > r'\)이면 \(r'^l/r^{l+1}\), \(r &lt; r'\)이면 \(r^l/r'^{l+1}\)이다.</div></div>
+    <p>이것을 <span class="term">다중극 전개</span> <span class="en">(multipole expansion)</span>라 한다. \(\mathbf r'\)을 \(z\)축 위에 두면 \(\gamma = \theta\)이고, 각 항 \(r^{-l-1}P_l(\cos\theta)\)와 \(r^lP_l(\cos\theta)\)는 각각 라플라스 방정식의 해다. 각 부분은 \(\lambda = l(l+1)\)인 르장드르 방정식을 만족하고, 지름 부분 \(r^2R'' + 2rR' - l(l+1)R = 0\)은 \(R = r^l\)과 \(r^{-l-1}\)이 푼다(12.6절의 <a class="ref" href="#ex-euler-radial"></a>).</p>
+
+    <h3 id="s3-recurrence">점화식</h3>
+    <p>생성 함수를 \(t\)로 미분하면 \(\partial_t g = (x - t)g/R\), 곧 \(R\,\partial_t g = (x - t)\,g\)이다. 급수를 넣으면</p>
+    <div class="formula">\[ (1 - 2xt + t^2)\sum_l l\,P_l\,t^{l-1} = (x - t)\sum_l P_l\,t^l \]</div>
+    <p>이고, 양변의 \(t^l\) 계수를 맞추면 \((l+1)P_{l+1} - 2xlP_l + (l-1)P_{l-1} = xP_l - P_{l-1}\)이다. 정리하면 <span class="term">보네 점화식</span> <span class="en">(Bonnet's recursion)</span>을 얻는다.</p>
+    <div class="formula" id="eq-legendre-recurrence">\[ (l+1)\,P_{l+1}(x) = (2l+1)\,x\,P_l(x) - l\,P_{l-1}(x) \]<div class="where">\(l \ge 1\). \(P_0 = 1\), \(P_1 = x\)에서 시작해 모든 \(P_l\)을 차례로 계산한다.</div></div>
+    <p>이번에는 \(x\)로 미분하면 \(R\,\partial_x g = t\,g\)이고, \(t^{l+1}\)의 계수에서</p>
+    <div class="formula" id="eq-legendre-x-recurrence">\[ P_{l+1}' - 2x\,P_l' + P_{l-1}' = P_l \]</div>
+    <p>이다. 식 <a class="ref" href="#eq-legendre-recurrence"></a>를 미분한 \((l+1)P'_{l+1} = (2l+1)P_l + (2l+1)xP_l' - lP'_{l-1}\)에 식 <a class="ref" href="#eq-legendre-x-recurrence"></a>에서 얻은 \(xP_l' = \tfrac12(P'_{l+1} + P'_{l-1} - P_l)\)를 넣으면 \(xP_l'\)이 지워지고</p>
+    <div class="formula" id="eq-legendre-derivative-recurrence">\[ P_{l+1}' - P_{l-1}' = (2l+1)\,P_l \]</div>
+    <p>가 남는다. 이 식을 식 <a class="ref" href="#eq-legendre-x-recurrence"></a>에서 빼면 \(xP_l' - P'_{l-1} = lP_l\)도 얻는다. 식 <a class="ref" href="#eq-legendre-derivative-recurrence"></a>은 \(P_l\)의 적분을 이웃한 다항식으로 바꿔 준다. 예를 들어 \(\int_x^1 P_l\,dx' = [P_{l-1}(x) - P_{l+1}(x)]/(2l+1)\)이다(\(P_{l\pm1}(1) = 1\)이 서로 지워진다).</p>
+    <p>생성 함수에 특별한 \(x\)를 넣으면 특별한 값도 얻는다. \(x = 0\)이면 \(g = (1 + t^2)^{-1/2}\)이고 이항급수로 펼치면</p>
+    <div class="formula" id="eq-legendre-zero-values">\[ P_{2k}(0) = \frac{(-1)^k\,(2k)!}{2^{2k}\,(k!)^2}, \quad P_{2k+1}(0) = 0 \]</div>
+    <p>이다. \(P_2(0) = -\tfrac12\), \(P_4(0) = \tfrac38\), \(P_6(0) = -\tfrac{5}{16}\)이다.</p>
+    <div class="callout tip"><strong>수치 계산에는 점화식을 쓴다</strong><p>\(P_{50}(0.3)\) 같은 값이 필요할 때, 식 <a class="ref" href="#eq-legendre-leading"></a>처럼 큰 계수가 붙은 다항식을 전개해 더하면 큰 수끼리 지워지면서 자릿수를 잃는다. 보네 점화식 <a class="ref" href="#eq-legendre-recurrence"></a>는 \(\lvert x\rvert \le 1\)에서 반올림 오차를 크게 키우지 않으므로, \(P_l\)의 값은 보통 이 점화식으로 계산한다. 그림 12-2의 곡선도 이렇게 그렸다.</p></div>
+
+    <div class="box ex" id="ex-multipole-moments"><div class="box-h">축 위 전하 분포의 다중극 모멘트</div>
+      <p>점전하 \(q_i\)들이 \(z\)축 위 \(z = z_i\)에 놓여 있다. (가) 모든 \(\lvert z_i\rvert\)보다 먼 점의 퍼텐셜을 르장드르 다항식으로 전개하라. (나) 1장의 쌍극자와 선형 사중극이 \(l = 1, 2\) 항임을 확인하라. (다) \(z = \tfrac32d, \tfrac12d, -\tfrac12d, -\tfrac32d\)에 \(q, -3q, 3q, -q\)를 놓은 배치의 먼 퍼텐셜을 구하고, \(q = e\), \(d = 0.10\ \text{nm}\)일 때 축 위 \(r = 1.0\ \text{nm}\)에서 근사값과 정확한 값을 비교하라.</p>
+      <p><b>풀이.</b> (가) \(z_i > 0\)이면 \(\mathbf r\)과 \(z_i\hat{\mathbf z}\) 사이의 각은 \(\theta\)이고, \(z_i &lt; 0\)이면 \(\pi - \theta\)이다. 식 <a class="ref" href="#eq-multipole-expansion"></a>에서 \(r' = \lvert z_i\rvert\)이고, \(z_i &lt; 0\)일 때는 식 <a class="ref" href="#eq-legendre-parity"></a>에 따라 \(\lvert z_i\rvert^lP_l(-\cos\theta) = z_i^lP_l(\cos\theta)\)이다. 따라서 부호에 상관없이</p>
+      <div class="formula" id="eq-axial-multipole">\[ \begin{aligned} V(r, \theta) &= \frac{1}{4\pi\varepsilon_0}\sum_{l=0}^\infty \frac{Q_l}{r^{l+1}}\,P_l(\cos\theta), \\ Q_l &= \sum_i q_i\,z_i^l \end{aligned} \]</div>
+      <p>이다. \(Q_l\)을 \(l\)차 <span class="term">다중극 모멘트</span> <span class="en">(multipole moment)</span>라 한다. 선전하 밀도 \(\lambda(z)\)라면 \(Q_l = \int\lambda(z)\,z^l\,dz\)이다. \(Q_0\)은 전체 전하, \(Q_1\)은 쌍극자 모멘트이고, \(l\)차 항은 \(1/r^{l+1}\)로 준다.</p>
+      <p>(나) \(\pm q\)가 \(z = \pm d/2\)에 있으면 \(Q_0 = 0\), \(Q_1 = qd\)이므로 첫 항은 \(qd\cos\theta/(4\pi\varepsilon_0r^2)\)로 1장의 <a href="ch01.html#eq-dipole-potential">식 (1.31)</a>이다. \(z = \pm d\)에 \(q\), 원점에 \(-2q\)가 있으면 \(Q_0 = Q_1 = 0\), \(Q_2 = 2qd^2\)이므로 \(2qd^2P_2(\cos\theta)/(4\pi\varepsilon_0r^3) = qd^2(3\cos^2\theta - 1)/(4\pi\varepsilon_0r^3)\)으로 <a href="ch01.html#eq-quadrupole-potential">식 (1.32)</a>다. 1장에서 차수마다 따로 했던 계산이 식 <a class="ref" href="#eq-axial-multipole"></a> 하나에 들어 있다.</p>
+      <p>(다) 전하가 이항 계수 \(1, -3, 3, -1\)을 따른다. \(Q_l = qd^l\big[(\tfrac32)^l - 3(\tfrac12)^l + 3(-\tfrac12)^l - (-\tfrac32)^l\big]\)에서 \(Q_0 = Q_1 = Q_2 = 0\)이고 \(Q_3 = 6qd^3\)이다. 짝수 \(l\)에서는 괄호가 언제나 0이고, 다음으로 지워지지 않는 항은 \(Q_5 = 15qd^5\)이다. 따라서 먼 곳의 퍼텐셜은 <span class="term">팔중극</span> <span class="en">(octupole)</span> 항</p>
+      <div class="formula" id="eq-octupole-potential">\[ V \approx \frac{6qd^3}{4\pi\varepsilon_0}\,\frac{P_3(\cos\theta)}{r^4} \]</div>
+      <p>이다. 쌍극자가 전하 한 쌍을, 사중극이 쌍극자 한 쌍을 겹친 것처럼, 이 배치는 사중극 한 쌍을 서로 어긋나게 겹친 것이다. 각 의존성 \(P_3(\cos\theta)\)는 적도면(\(\theta = 90°\))과 \(\cos\theta = \pm\sqrt{3/5}\)인 두 원뿔(\(\theta = 39.2°, 140.8°\))에서 0이다.</p>
+      <p><b>숫자로 보기.</b> \(e/4\pi\varepsilon_0 = 1.440\ \text{V}\cdot\text{nm}\)이고 축 위에서 \(P_3(1) = 1\)이므로</p>
+      <div class="formula">\[ \begin{aligned} V &\approx \frac{6\,(1.440\ \text{V}\cdot\text{nm})(0.10\ \text{nm})^3}{(1.0\ \text{nm})^4} \\ &= 8.64\ \text{mV} \end{aligned} \]</div>
+      <p>이다. 네 전하의 쿨롱 퍼텐셜을 정확히 더하면 \(1.440 \times (\tfrac{1}{0.85} - \tfrac{3}{0.95} + \tfrac{3}{1.05} - \tfrac{1}{1.15})\ \text{mV} = 8.86\ \text{mV}\)이다. 단위 확인: \(\text{V}\cdot\text{nm}\times\text{nm}^3/\text{nm}^4 = \text{V}\)이다.</p>
+      <p><b>다음 항은 몇 차인가.</b> 다음 항은 \(l = 5\)이고 축 위에서 팔중극 항에 대한 비는 \(Q_5/(Q_3r^2) = \tfrac{15}{6}(d/r)^2 = 2.5\%\)이다. 근사와 정확한 값의 차 \(8.86/8.64 - 1 = 2.6\%\)를 거의 다 설명한다. 나머지 약 0.06%는 주로 \(l = 7\) 항이다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 12.4 -->
+  <section id="s4">
+    <h2>직교성과 르장드르 급수</h2>
+    <p>구 위에 주어진 퍼텐셜이나 온도를 \(P_l(\cos\theta)\)의 합으로 펼칠 수 있다면, 각 항은 12.3절에서 본 것처럼 \(r^l\)이나 \(r^{-l-1}\)을 곱하기만 하면 라플라스 방정식의 해가 된다. 펼치려면 계수를 구해야 하고, 계수는 직교성이 있어야 쉽게 구해진다. 9장에서 함수의 내적(<a href="ch09.html#eq-function-inner-product">식 (9.35)</a>)과 정규직교 기저의 전개 계수(<a href="ch09.html#eq-expansion-coefficients">식 (9.11)</a>)를 세웠다. 이 절에서는 \([-1, 1]\)에서 가중 함수 1인 내적에 대해 \(P_l\)들이 직교함을 직접 증명하고, 규격화 상수를 구한다.</p>
+
+    <h3 id="s4-orthogonality">직교성</h3>
+    <div class="box thm" id="thm-legendre-orthogonality"><div class="box-h">르장드르 다항식의 직교성</div>
+      <p>\(l \ne m\)이면</p>
+      <div class="formula" id="eq-legendre-orthogonality">\[ \langle P_l|P_m\rangle = \int_{-1}^{1} P_l(x)\,P_m(x)\,dx = 0 \]</div>
+      <p>이다. 더 강하게, \(P_l\)은 차수가 \(l\)보다 낮은 모든 다항식 \(q(x)\)와 직교한다: \(\int_{-1}^1 q\,P_l\,dx = 0\).</p>
+    </div>
+    <p>두 가지 증명을 모두 보인다. 첫째는 미분방정식만 쓰고, 다른 특수 함수와 16장의 스투름-리우빌 이론으로 그대로 넓어진다. 둘째는 로드리게스 공식을 쓰고, 더 강한 진술을 준다.</p>
+    <p><b>증명 1 (방정식에서).</b> 르장드르 방정식을 \(\big[(1 - x^2)P_l'\big]' = -l(l+1)P_l\)로 쓴다. 이 식에 \(P_m\)을 곱하고, \(l\)과 \(m\)을 바꾼 식에 \(P_l\)을 곱한 것을 뺀다. 왼쪽은 하나의 도함수로 묶인다.</p>
+    <div class="formula" id="eq-legendre-lagrange">\[ \begin{aligned} &P_m\big[(1 - x^2)P_l'\big]' - P_l\big[(1 - x^2)P_m'\big]' \\ &\quad = \frac{d}{dx}\Big[(1 - x^2)\big(P_mP_l' - P_lP_m'\big)\Big] \end{aligned} \]</div>
+    <p>(오른쪽을 미분하면 \((1 - x^2)P_m'P_l'\) 항이 지워진다.) 이것이 \(\big[m(m+1) - l(l+1)\big]P_lP_m\)과 같으므로 \(-1\)에서 1까지 적분하면</p>
+    <div class="formula">\[ \begin{aligned} &\big[m(m+1) - l(l+1)\big]\int_{-1}^1 P_lP_m\,dx \\ &\quad = \Big[(1 - x^2)\big(P_mP_l' - P_lP_m'\big)\Big]_{-1}^{1} = 0 \end{aligned} \]</div>
+    <p>이다. 경계 항은 \(1 - x^2\)이 두 끝에서 0이므로 사라진다. \(l \ne m\)이면(둘 다 0 이상이므로) \(m(m+1) \ne l(l+1)\)이고, 적분이 0이다. 경계 조건을 따로 걸지 않았는데도 경계 항이 사라진 것은 방정식의 계수 \(1 - x^2\) 자체가 끝에서 0이기 때문이다. 9장의 부분 적분 경계 항(<a href="ch09.html#eq-boundary-term">식 (9.48)</a>)이 사라지는 또 하나의 방법이고, 16장에서 이런 경우를 "특이 스투름-리우빌 문제"로 묶는다(<a href="ch16.html#thm-sl-real-orthogonal">16장의 직교성 정리</a>).</p>
+    <p><b>증명 2 (로드리게스 공식에서).</b> \(u = (x^2 - 1)^l\)이고 \(q\)의 차수가 \(l\)보다 낮다고 하자. \(\int q\,u^{(l)}dx\)를 부분 적분하면 \(\big[q\,u^{(l-1)}\big]_{-1}^1 - \int q'u^{(l-1)}dx\)이다. \(u\)는 \(x = \pm1\)에서 \(l\)중 근을 가지므로, \(k &lt; l\)이면 \(u^{(k)}(\pm1) = 0\)이고 경계 항은 사라진다. 이것을 \(l\)번 되풀이하면</p>
+    <div class="formula">\[ \int_{-1}^1 q\,u^{(l)}\,dx = (-1)^l\int_{-1}^1 q^{(l)}\,u\,dx = 0 \]</div>
+    <p>이다. \(q\)는 \(l\)차보다 낮으므로 \(q^{(l)} = 0\)이다. \(m &lt; l\)이면 \(P_m\)도 이런 \(q\)이므로 직교성이 나온다. \(\square\)</p>
+    <p>두 번째 증명은 9장의 그람-슈미트 계산(<a href="ch09.html#ex-legendre-gram-schmidt">예제 9.3</a>)이 왜 르장드르 다항식을 주었는지도 설명한다. \(1, x, x^2, \ldots\)에 그람-슈미트를 적용해 얻은 \(l\)번째 함수는 \(l\)차 다항식이고 낮은 차수의 모든 다항식과 직교한다. 그런 다항식은 상수배를 빼면 하나뿐이므로(두 개가 있으면 최고차항을 맞춰 뺀 차가 낮은 차수이면서 자기 자신과 직교해야 하므로 0이다), \(P_l\)의 상수배다.</p>
+    <p>직교성에서 영점에 대한 사실도 나온다.</p>
+    <div class="box thm" id="thm-legendre-zeros"><div class="box-h">르장드르 다항식의 영점</div>
+      <p>\(P_l\)은 열린 구간 \((-1, 1)\) 안에 서로 다른 단순 영점을 정확히 \(l\)개 갖는다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>\(l \ge 1\)이라 하자. \(P_l\)이 \((-1, 1)\)에서 부호를 바꾸는 점이 \(x_1, \ldots, x_k\)뿐이고 \(k &lt; l\)이라 가정하자. \(q(x) = (x - x_1)\cdots(x - x_k)\)는 같은 점들에서 부호를 바꾸므로 \(qP_l\)은 구간에서 부호가 바뀌지 않고, 0이 아닌 다항식이므로 \(\int_{-1}^1 qP_l\,dx \ne 0\)이다. 그런데 \(q\)의 차수 \(k\)가 \(l\)보다 낮으므로 <a class="ref" href="#thm-legendre-orthogonality"></a>에 따라 이 적분은 0이다. 모순이므로 \(k \ge l\)이다. \(l\)차 다항식은 영점이 많아야 \(l\)개이므로 부호를 바꾸는 점은 정확히 \(l\)개이고, 각각 단순 영점이다.</p>
+      </details>
+    </div>
+
+    <h3 id="s4-norm">규격화</h3>
+    <p>\(\langle P_l|P_l\rangle\)은 생성 함수로 한 번에 구한다. \(g(x, t)^2\)을 \(x\)에 대해 적분하면 직교성 때문에 대각 항만 남는다.</p>
+    <div class="formula">\[ \int_{-1}^1 g^2\,dx = \sum_{l,m}t^{l+m}\int_{-1}^1 P_lP_m\,dx = \sum_l t^{2l}\int_{-1}^1 P_l^2\,dx \]</div>
+    <p>(\(\lvert t\rvert &lt; 1\)이면 급수가 \(x\)에 대해 균등 수렴하므로 항별 적분이 허용된다.) 왼쪽은 직접 적분할 수 있다.</p>
+    <div class="formula">\[ \begin{aligned} \int_{-1}^1\frac{dx}{1 - 2xt + t^2} &= \frac{1}{2t}\ln\frac{(1 + t)^2}{(1 - t)^2} = \frac1t\ln\frac{1 + t}{1 - t} \\ &= \sum_{l=0}^\infty\frac{2\,t^{2l}}{2l+1} \end{aligned} \]</div>
+    <p>마지막 등호는 \(\ln(1 \pm t)\)의 급수(1장의 <a href="ch01.html#eq-log-series">식 (1.14)</a>)에서 나온다. \(t^{2l}\)의 계수를 비교하면</p>
+    <div class="formula" id="eq-legendre-norm">\[ \int_{-1}^{1} P_l(x)^2\,dx = \frac{2}{2l+1} \]</div>
+    <p>이다. 직교성과 합치면 \(\langle P_l|P_m\rangle = \tfrac{2}{2l+1}\delta_{lm}\)이고, 정규직교 기저는 \(\sqrt{(2l+1)/2}\,P_l\)이다(<a href="ch09.html#def-orthonormal-basis">정의 9.6</a>). 9장의 그람-슈미트 계산에서 읽은 \(\lVert P_l\rVert^2 = 2, \tfrac23, \tfrac25\)와 맞는다. 생성 함수를 쓰지 않는 유도는 <a class="ref" href="#prob-legendre-norm-rodrigues"></a>에서 로드리게스 공식과 베타 함수로 한다.</p>
+
+    <h3 id="s4-series">르장드르 급수</h3>
+    <p>함수 \(f(x)\)를 \(\sum c_lP_l\)로 쓸 수 있다고 하고 양변에 \(P_m\)을 곱해 적분하면, 직교성 때문에 \(l = m\)인 항만 남는다.</p>
+    <div class="formula" id="eq-legendre-series">\[ f(x) = \sum_{l=0}^\infty c_l\,P_l(x), \quad c_l = \frac{2l+1}{2}\int_{-1}^1 f(x)\,P_l(x)\,dx \]</div>
+    <p>이것을 \(f\)의 <span class="term">르장드르 급수</span> <span class="en">(Legendre series)</span>라 한다. \(f\)가 \(N\)차 다항식이면 급수는 \(l = N\)에서 끝나고, 계수는 적분 없이 높은 차수부터 맞춰 구해도 된다(예: \(x^2 = \tfrac13P_0 + \tfrac23P_2\)). 일반적인 \(f\)에서 이 급수가 \(f\)로 수렴하는지는 다음 정리가 답한다.</p>
+    <div class="box thm" id="thm-legendre-series-convergence"><div class="box-h">르장드르 급수의 수렴</div>
+      <ol>
+        <li>(평균 제곱 수렴) \(\int_{-1}^1\lvert f\rvert^2dx &lt; \infty\)이면 부분합 \(S_N = \sum_{l=0}^N c_lP_l\)은 \(\int_{-1}^1\lvert f - S_N\rvert^2dx \to 0\)의 뜻에서 \(f\)로 수렴한다. 같은 차수의 다항식 가운데 \(S_N\)이 이 오차를 가장 작게 한다.</li>
+        <li>(점별 수렴) \(f\)와 \(f'\)이 \([-1, 1]\)에서 구간별로 연속이면(구간별로 매끄러우면), 각 \(x \in (-1, 1)\)에서 급수는 \(\tfrac12\big[f(x^+) + f(x^-)\big]\)로 수렴한다. 특히 \(f\)가 연속인 점에서는 \(f(x)\)로 수렴한다.</li>
+      </ol>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>1의 "가장 작게"는 9장의 최선 근사 정리(<a href="ch09.html#thm-best-approximation">정리 9.3</a>)를 \(\{P_l\}\)에 쓴 것이다. 남은 것은 \(\{P_l\}\)이 완비, 곧 \(L^2\)의 모든 함수를 근사할 만큼 많다는 것이다. 연속 함수는 다항식으로 균등하게 근사할 수 있고(바이어슈트라스 정리), 연속 함수는 \(L^2\)에서 조밀하므로 다항식의 공간, 곧 \(P_l\)들의 일차 결합은 \(L^2\)에서 조밀하다. 완비성의 일반론은 16장의 <a href="ch16.html#thm-sl-completeness">완비성 정리</a>에서 다룬다. 2의 점별 수렴은 푸리에 급수의 디리클레 정리와 비슷하게 부분합의 핵을 직접 다루어야 해서 길다. 증명은 레베데프(N. N. Lebedev, <i>Special Functions and Their Applications</i>, Dover 1972) 4장에 있다.</p>
+      </details>
+    </div>
+
+    <div class="box ex" id="ex-legendre-abs"><div class="box-h">\(\lvert x\rvert\)의 르장드르 급수</div>
+      <p>\(f(x) = \lvert x\rvert\)를 르장드르 급수로 전개하고, 부분합이 꺾인 점 \(x = 0\)과 끝점 \(x = 1\)에서 어떻게 다가가는지 보라.</p>
+      <p><b>풀이.</b> \(f\)가 짝함수이므로 홀수 \(l\)의 계수는 0이다. 짝수 \(l\)에서는 \(c_l = (2l+1)\int_0^1 x\,P_l\,dx\)이다.</p>
+      <div class="formula">\[ \begin{aligned} c_0 &= 1\cdot\tfrac12 = \tfrac12, \\ c_2 &= 5\int_0^1\frac{3x^3 - x}{2}dx = \frac58, \\ c_4 &= 9\int_0^1\frac{35x^5 - 30x^3 + 3x}{8}dx \\ &= 9\cdot\Big(-\frac{1}{48}\Big) = -\frac{3}{16} \end{aligned} \]</div>
+      <p>같은 방법으로 \(c_6 = \tfrac{13}{128}\), \(c_8 = -\tfrac{17}{256}\)이다. 따라서</p>
+      <div class="formula" id="eq-abs-legendre-series">\[ \begin{aligned} \lvert x\rvert &= \frac12P_0 + \frac58P_2 - \frac{3}{16}P_4 \\ &\quad + \frac{13}{128}P_6 - \frac{17}{256}P_8 + \cdots \end{aligned} \]</div>
+      <p>이다. \(\lvert x\rvert\)는 연속이고 구간별로 매끄러우므로 <a class="ref" href="#thm-legendre-series-convergence"></a>에 따라 \((-1, 1)\)의 모든 점에서 \(\lvert x\rvert\)로 수렴한다.</p>
+      <p><b>숫자로 보기.</b> \(l = N\)까지의 부분합 \(S_N\)은 \(x = 0\)에서 \(S_2 = 0.188\), \(S_4 = 0.117\), \(S_{10} = 0.056\)으로 0에 느리게 다가가고, \(x = 1\)에서는 \(S_2 = 1.125\), \(S_4 = 0.938\), \(S_{10} = 1.021\)로 1의 양쪽을 오간다(그림 12-4). 계수는 대략 \(l^{-3/2}\)처럼 줄어든다. 꺾인 점이 있는 함수의 계수는 이처럼 거듭제곱으로 천천히 줄고, 모든 도함수가 연속인 매끄러운 함수의 계수는 훨씬 빨리 준다. 14장의 푸리에 급수에서도 같은 관계를 본다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 280" role="img" aria-label="|x|와 그 르장드르 급수의 부분합. 항이 늘수록 부분합이 꺾인 점 x = 0 근처까지 |x|에 다가간다"><line x1="50" y1="217.2" x2="460" y2="217.2" class="s-grid"/><text x="42" y="222.2" class="t-dim" style="font-size:14px" text-anchor="end">0</text><line x1="50" y1="123.3" x2="460" y2="123.3" class="s-grid"/><text x="42" y="128.3" class="t-dim" style="font-size:14px" text-anchor="end">0.5</text><line x1="50" y1="29.4" x2="460" y2="29.4" class="s-grid"/><text x="42" y="34.4" class="t-dim" style="font-size:14px" text-anchor="end">1</text><line x1="50" y1="20" x2="50" y2="236" class="s-grid"/><text x="50" y="256" class="t-dim" style="font-size:14px" text-anchor="middle">−1</text><line x1="152.5" y1="20" x2="152.5" y2="236" class="s-grid"/><text x="152.5" y="256" class="t-dim" style="font-size:14px" text-anchor="middle">−0.5</text><line x1="255" y1="20" x2="255" y2="236" class="s-grid"/><text x="255" y="256" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><line x1="357.5" y1="20" x2="357.5" y2="236" class="s-grid"/><text x="357.5" y="256" class="t-dim" style="font-size:14px" text-anchor="middle">0.5</text><line x1="460" y1="20" x2="460" y2="236" class="s-grid"/><text x="460" y="256" class="t-dim" style="font-size:14px" text-anchor="middle">1</text><path d="M50,29.4l205,187.8 205-187.8" class="s-line" style="stroke:var(--text);stroke-width:2.5"/><path d="M50,5.9l3.4,5.8 3.4,5.8 3.5,5.6 3.4,5.5 3.4,5.4 3.4,5.4 3.4,5.2 3.4,5.1 3.5,5.1 3.4,4.9 3.4,4.9 3.4,4.7 3.4,4.7 3.4,4.5 3.4,4.5 3.5,4.3 3.4,4.3 3.4,4.1 3.4,4.1 3.4,3.9 3.5,3.9 3.4,3.8 3.4,3.6 3.4,3.6 3.4,3.5 3.4,3.4 3.4,3.2 3.5,3.2 3.4,3.1 3.4,3 3.4,2.9 3.4,2.8 3.5,2.6 3.4,2.6 3.4,2.5 3.4,2.4 3.4,2.3 3.4,2.2 3.4,2.1 3.5,2 3.4,1.9 3.4,1.9 3.4,1.7 3.4,1.6 3.5,1.5 3.4,1.4 3.4,1.3 3.4,1.3 3.4,1.1 3.4,1 3.4,.9 3.5,.9 3.4,.7 3.4,.6 3.4,.6 3.4,.4 3.5,.4 3.4,.2 3.4,.2 3.4,0 3.4,0 3.4-.2 3.4-.2 3.5-.4 3.4-.4 3.4-.6 3.4-.6 3.4-.7 3.5-.9 3.4-.9 3.4-1 3.4-1.1 3.4-1.3 3.4-1.3 3.4-1.4 3.5-1.5 3.4-1.6 3.4-1.7 3.4-1.9 3.4-1.9 3.5-2 3.4-2.1 3.4-2.2 3.4-2.3 3.4-2.4 3.4-2.5 3.4-2.6 3.5-2.6 3.4-2.8 3.4-2.9 3.4-3 3.4-3.1 3.5-3.2 3.4-3.2 3.4-3.4 3.4-3.5 3.4-3.6 3.4-3.6 3.4-3.8 3.5-3.9 3.4-3.9 3.4-4.1 3.4-4.1 3.4-4.3 3.5-4.3 3.4-4.5 3.4-4.5 3.4-4.7 3.4-4.7 3.4-4.9 3.4-4.9 3.5-5.1 3.4-5.1 3.4-5.2 3.4-5.4 3.4-5.4 3.5-5.5 3.4-5.6 3.4-5.8 3.4-5.8" class="s-acc2" stroke-dasharray="6 4"/><path d="M50,41.1l3.4,.2 3.4,.5 3.5,.8 3.4,1.1 3.4,1.4 3.4,1.6 3.4,1.9 3.4,2.1 3.5,2.3 3.4,2.5 3.4,2.7 3.4,2.9 3.4,3 3.4,3.2 3.4,3.3 3.5,3.4 3.4,3.6 3.4,3.6 3.4,3.7 3.4,3.8 3.5,3.8 3.4,3.9 3.4,3.9 3.4,3.9 3.4,4 3.4,3.9 3.4,4 3.5,3.9 3.4,3.9 3.4,3.9 3.4,3.8 3.4,3.8 3.5,3.7 3.4,3.7 3.4,3.6 3.4,3.4 3.4,3.5 3.4,3.3 3.4,3.2 3.5,3.1 3.4,3 3.4,2.8 3.4,2.8 3.4,2.6 3.5,2.4 3.4,2.4 3.4,2.2 3.4,2 3.4,1.9 3.4,1.8 3.4,1.6 3.5,1.4 3.4,1.2 3.4,1.1 3.4,1 3.4,.7 3.5,.6 3.4,.5 3.4,.2 3.4,.1 3.4-.1 3.4-.2 3.4-.5 3.5-.6 3.4-.7 3.4-1 3.4-1.1 3.4-1.2 3.5-1.4 3.4-1.6 3.4-1.8 3.4-1.9 3.4-2 3.4-2.2 3.4-2.4 3.5-2.4 3.4-2.6 3.4-2.8 3.4-2.8 3.4-3 3.5-3.1 3.4-3.2 3.4-3.3 3.4-3.5 3.4-3.4 3.4-3.6 3.4-3.7 3.5-3.7 3.4-3.8 3.4-3.8 3.4-3.9 3.4-3.9 3.5-3.9 3.4-4 3.4-3.9 3.4-4 3.4-3.9 3.4-3.9 3.4-3.9 3.5-3.8 3.4-3.8 3.4-3.7 3.4-3.6 3.4-3.6 3.5-3.4 3.4-3.3 3.4-3.2 3.4-3 3.4-2.9 3.4-2.7 3.4-2.5 3.5-2.3 3.4-2.1 3.4-1.9 3.4-1.6 3.4-1.4 3.5-1.1 3.4-.8 3.4-.5 3.4-.2" class="s-acc2"/><path d="M50,25.5l3.4,6.4 3.4,4.8 3.5,3.7 3.4,3 3.4,2.7 3.4,2.4 3.4,2.5 3.4,2.6 3.5,2.8 3.4,2.9 3.4,3.1 3.4,3.3 3.4,3.4 3.4,3.4 3.4,3.6 3.5,3.5 3.4,3.6 3.4,3.4 3.4,3.5 3.4,3.3 3.5,3.3 3.4,3.1 3.4,3 3.4,3 3.4,2.9 3.4,2.8 3.4,2.7 3.5,2.8 3.4,2.7 3.4,2.7 3.4,2.8 3.4,2.8 3.5,2.9 3.4,2.9 3.4,3.1 3.4,3.2 3.4,3.2 3.4,3.4 3.4,3.5 3.5,3.5 3.4,3.6 3.4,3.7 3.4,3.7 3.4,3.8 3.5,3.7 3.4,3.7 3.4,3.6 3.4,3.5 3.4,3.4 3.4,3.2 3.4,3 3.5,2.8 3.4,2.6 3.4,2.2 3.4,2 3.4,1.6 3.5,1.3 3.4,.9 3.4,.6 3.4,.2 3.4-.2 3.4-.6 3.4-.9 3.5-1.3 3.4-1.6 3.4-2 3.4-2.2 3.4-2.6 3.5-2.8 3.4-3 3.4-3.2 3.4-3.4 3.4-3.5 3.4-3.6 3.4-3.7 3.5-3.7 3.4-3.8 3.4-3.7 3.4-3.7 3.4-3.6 3.5-3.5 3.4-3.5 3.4-3.4 3.4-3.2 3.4-3.2 3.4-3.1 3.4-2.9 3.5-2.9 3.4-2.8 3.4-2.8 3.4-2.7 3.4-2.7 3.5-2.8 3.4-2.7 3.4-2.8 3.4-2.9 3.4-3 3.4-3 3.4-3.1 3.5-3.3 3.4-3.3 3.4-3.5 3.4-3.4 3.4-3.6 3.5-3.5 3.4-3.6 3.4-3.4 3.4-3.4 3.4-3.3 3.4-3.1 3.4-2.9 3.5-2.8 3.4-2.6 3.4-2.5 3.4-2.4 3.4-2.7 3.5-3 3.4-3.7 3.4-4.8 3.4-6.4" class="s-acc"/><line x1="209.9" y1="29.4" x2="238.6" y2="29.4" class="s-acc2" stroke-dasharray="6 4"/><text x="244.8" y="34.4" class="t" style="font-size:14px" text-anchor="start">N = 2</text><line x1="209.9" y1="48.2" x2="238.6" y2="48.2" class="s-acc2"/><text x="244.8" y="53.2" class="t" style="font-size:14px" text-anchor="start">N = 4</text><line x1="209.9" y1="67" x2="238.6" y2="67" class="s-acc"/><text x="244.8" y="72" class="t" style="font-size:14px" text-anchor="start">N = 10</text><text x="173" y="95.1" class="t-math" text-anchor="middle">|<tspan font-style="italic">x</tspan>|</text><text x="460" y="274" class="t-dim" style="font-size:14px" text-anchor="end">x</text></svg>
+      <figcaption><b>그림 12-4.</b> \(\lvert x\rvert\)(굵은 선)와 그 르장드르 급수의 부분합 \(S_N\). 위쪽 범례가 \(N = 2, 4, 10\)의 선을 가리킨다. 꺾인 점 \(x = 0\) 근처에서 가장 느리게 다가간다. 계수는 식 <a class="ref" href="#eq-abs-legendre-series"></a>를 일반 \(l\)까지 계산한 값을 썼다.</figcaption>
+    </figure>
+
+    <div class="box ex" id="ex-ring-potential"><div class="box-h">대전된 고리의 퍼텐셜</div>
+      <p>반지름 \(a\)인 가는 고리가 \(xy\)평면에 원점을 중심으로 놓여 있고 전하 \(Q\)가 고르게 퍼져 있다. (가) 축 위의 퍼텐셜에서 출발해 공간 전체의 퍼텐셜을 르장드르 급수로 구하라. (나) \(Q = 1.0\ \text{nC}\), \(a = 10\ \text{cm}\)일 때 \(r = 5.0\ \text{cm}\), \(\theta = 60°\)인 점의 퍼텐셜을 구하라. (다) 먼 곳에서 고리의 사중극 모멘트의 부호는 무엇을 뜻하는가?</p>
+      <p><b>풀이.</b> (가) 축 위의 점 \(z\)에서 고리의 모든 점까지의 거리는 \(\sqrt{z^2 + a^2}\)으로 같으므로</p>
+      <div class="formula" id="eq-ring-axis">\[ V(z) = \frac{Q}{4\pi\varepsilon_0\sqrt{z^2 + a^2}} \]</div>
+      <p>이다. \(\lvert z\rvert &lt; a\)이면 \(1/\sqrt{a^2 + z^2} = a^{-1}(1 + z^2/a^2)^{-1/2}\)이고, 이것은 생성 함수 \(g(0, z/a)\)이므로 식 <a class="ref" href="#eq-legendre-zero-values"></a>의 \(P_{2k}(0)\)이 계수로 나온다. \(\lvert z\rvert > a\)이면 \(a/z\)로 같은 전개를 한다.</p>
+      <div class="formula">\[ \begin{aligned} V(z) &= V_0\sum_{k=0}^\infty P_{2k}(0)\,\Big(\frac{z}{a}\Big)^{2k} \\ V(z) &= V_0\sum_{k=0}^\infty P_{2k}(0)\,\Big(\frac{a}{\lvert z\rvert}\Big)^{2k+1} \end{aligned} \]<div class="where">\(V_0 = Q/(4\pi\varepsilon_0a)\). 첫 줄은 \(\lvert z\rvert &lt; a\), 둘째 줄은 \(\lvert z\rvert > a\)에서 쓴다.</div></div>
+      <p>이제 축을 벗어난다. 12.3절에서 본 것처럼 \(r^lP_l(\cos\theta)\)와 \(r^{-l-1}P_l(\cos\theta)\)는 라플라스 방정식의 해이고, 축 위(\(\theta = 0\))에서는 \(P_l(1) = 1\)이므로 \(r^l\), \(r^{-l-1}\)이 된다. 그래서 축 위 급수의 \(z^l\)을 \(r^lP_l(\cos\theta)\)로 바꾼 함수는 고리 안쪽 공(\(r &lt; a\))에서 라플라스 방정식을 만족하고 축 위에서 올바른 값을 갖는다(\(\theta = \pi\)인 축에서도 짝수 \(l\)만 있으므로 맞다). 축대칭인 조화 함수는 축 위의 값만으로 정해지므로(17장의 <a href="ch17.html#eq-laplace-spherical-general">축대칭 일반해</a>와 <a href="ch17.html#thm-uniqueness-laplace">유일성 정리</a>) 이것이 답이다.</p>
+      <div class="formula" id="eq-ring-potential">\[ \begin{aligned} V &= V_0\sum_{k=0}^\infty P_{2k}(0)\,u^{2k}\,P_{2k}(\cos\theta) \\ V &= V_0\sum_{k=0}^\infty P_{2k}(0)\,u^{-2k-1}P_{2k}(\cos\theta) \end{aligned} \]<div class="where">\(u = r/a\). 첫 줄은 고리 안쪽 공(\(r &lt; a\)), 둘째 줄은 바깥(\(r > a\))이다.</div></div>
+      <p>같은 결과를 12.5절의 덧셈 정리로 직접 확인할 수 있다(<a class="ref" href="#prob-ring-addition"></a>).</p>
+      <p><b>숫자로 보기.</b> (나) \(V_0 = Q/(4\pi\varepsilon_0a) = (8.99 \times 10^9)(1.0 \times 10^{-9})/0.10\ \text{V} = 89.9\ \text{V}\)는 고리 중심의 퍼텐셜이다. \(r/a = \tfrac12\), \(\cos\theta = \tfrac12\)에서 \(P_2(\tfrac12) = -\tfrac18\), \(P_4(\tfrac12) = -0.2891\)이므로 처음 네 항은</p>
+      <div class="formula">\[ \begin{aligned} V &= 89.9\ \text{V}\Big[1 + \frac{1}{64} - 0.006\,78 \\ &\qquad - 0.001\,58 + \cdots\Big] \\ &= (89.9 + 1.40 - 0.61 - 0.14)\ \text{V} \\ &= 90.5\ \text{V} \end{aligned} \]</div>
+      <p>이다. 고리를 잘게 나누어 쿨롱 퍼텐셜을 수치로 더하면 \(90.53\ \text{V}\)로, 유효숫자 안에서 같다. 남은 항의 합은 \(-0.002\ \text{V}\)로, \((r/a)^8 = 0.004\) 정도의 크기가 예상대로다. 단위 확인: \(Q/(\varepsilon_0a)\)는 \(\text{C}/(\text{F/m}\cdot\text{m}) = \text{V}\)이다.</p>
+      <p>(다) \(r > a\)의 급수는 식 <a class="ref" href="#eq-axial-multipole"></a>의 꼴 \(\frac{1}{4\pi\varepsilon_0}\sum_lQ_lP_l(\cos\theta)/r^{l+1}\)이고, 계수를 읽으면 \(Q_0 = Q\), \(Q_2 = QP_2(0)a^2 = -\tfrac12Qa^2\)이다. 축 밖에 퍼진 분포에서 \(Q_l\)이 \(\int\rho\,r'^lP_l(\cos\theta')\,d^3r'\)이라는 것은 12.5절의 <a class="ref" href="#ex-nuclear-quadrupole"></a>에서 밝힌다. 사중극 모멘트가 음수인 것은 전하가 축 방향보다 적도면 쪽으로 퍼진 "납작한" 분포라는 뜻이다. 12.5절에서 원자핵의 모양을 이 부호로 읽는다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 12.5 -->
+  <section id="s5">
+    <h2>연관 르장드르 함수와 구면 조화 함수</h2>
+    <p>지금까지는 \(z\)축 둘레로 대칭인 문제만 다루었다. 원자 오비탈, 원자핵의 변형, 지구 중력장의 요철처럼 방위각 \(\phi\)에도 기대는 문제에서는 구면 위의 함수를 \(\theta\)와 \(\phi\) 둘 다의 함수로 펼쳐야 한다. 이 절에서는 \(\phi\) 의존성을 분리해 연관 르장드르 함수를 얻고, 그것으로 구면 위의 정규직교 기저인 구면 조화 함수를 만든다.</p>
+
+    <h3 id="s5-associated">연관 르장드르 방정식</h3>
+    <p>6장의 각 연산자 \(\Lambda = \frac{1}{\sin\theta}\partial_\theta(\sin\theta\,\partial_\theta) + \frac{1}{\sin^2\theta}\partial_\phi^2\)(<a href="ch06.html#eq-laplacian-angular-split">식 (6.35)</a>)의 고유값 문제 \(\Lambda Y = -\lambda Y\)에서 \(Y = \Theta(\theta)\Phi(\phi)\)로 두자. \(\sin^2\theta/(\Theta\Phi)\)를 곱하면 \(\phi\)에만 기대는 항 \(\Phi''/\Phi\)가 따로 떨어지므로 그것은 상수이고, \(\Phi'' = -m^2\Phi\)에서 \(\Phi = e^{im\phi}\)이다. \(\phi\)와 \(\phi + 2\pi\)는 같은 점이므로 \(e^{2\pi im} = 1\), 곧 \(m\)은 정수다. 남은 \(\Theta\)의 방정식을 \(x = \cos\theta\)로 쓰면</p>
+    <div class="formula" id="eq-associated-legendre-equation">\[ (1 - x^2)\,y'' - 2x\,y' + \Big[\lambda - \frac{m^2}{1 - x^2}\Big]y = 0 \]</div>
+    <p>이다. 이것을 <span class="term">연관 르장드르 방정식</span> <span class="en">(associated Legendre equation)</span>이라 한다. \(m = 0\)이면 르장드르 방정식이다. 이 방정식의 극에서 유한한 해는 르장드르 다항식을 미분해서 만들 수 있다.</p>
+    <p><b>유도.</b> \(\lambda = l(l+1)\)인 르장드르 방정식을 \(m\)번 미분한다. 라이프니츠 법칙으로 \((1 - x^2)y''\)의 \(m\)계 도함수는 \((1 - x^2)y^{(m+2)} - 2mx\,y^{(m+1)} - m(m-1)y^{(m)}\)이고, \(-2xy'\)의 \(m\)계 도함수는 \(-2xy^{(m+1)} - 2my^{(m)}\)이다. 따라서 \(w = P_l^{(m)}\)(\(m\)계 도함수)는</p>
+    <div class="formula" id="eq-legendre-differentiated">\[ \begin{aligned} &(1 - x^2)\,w'' - 2(m+1)\,x\,w' \\ &\quad + (l - m)(l + m + 1)\,w = 0 \end{aligned} \]</div>
+    <p>을 만족한다. \(l(l+1) - m(m-1) - 2m = l(l+1) - m(m+1) = (l - m)(l + m + 1)\)을 썼다. 이제 \(y = (1 - x^2)^{m/2}w\)로 두고 식 <a class="ref" href="#eq-associated-legendre-equation"></a>의 좌변에 넣으면</p>
+    <div class="formula">\[ \begin{aligned} &(1 - x^2)^{m/2}\Big[(1 - x^2)w'' - 2(m+1)xw' \\ &\qquad + \big(\lambda - m(m+1)\big)w\Big] \end{aligned} \]</div>
+    <p>이 되고, \(\lambda = l(l+1)\)이면 대괄호는 식 <a class="ref" href="#eq-legendre-differentiated"></a>의 좌변이라 0이다.</p>
+    <details class="proof"><summary>계산의 세부</summary>
+      <p>\(s = (1 - x^2)^{1/2}\)로 쓰면 \(ds/dx = -x/s\)이다. \(y = s^mw\)에서</p>
+      <div class="formula">\[ \begin{aligned} y' &= s^mw' - mx\,s^{m-2}w, \\ y'' &= s^mw'' - 2mx\,s^{m-2}w' \\ &\quad - m\,s^{m-2}w + m(m-2)x^2s^{m-4}w \end{aligned} \]</div>
+      <p>이다. \((1 - x^2)y'' - 2xy' + \big[\lambda - m^2/s^2\big]y\)에 넣고 \(s^m\)이 붙은 항과 \(s^{m-2}\)가 붙은 항을 나누면, 뒤의 것은 \(s^{m-2}w\big[m(m-2)x^2 + 2mx^2 - m^2\big] = -m^2s^m w\)로 앞의 것에 합쳐진다. 결과가 본문의 식이다.</p>
+    </details>
+    <div class="box def" id="def-associated-legendre"><div class="box-h">연관 르장드르 함수</div>
+      <p>\(l = 0, 1, 2, \ldots\)이고 \(0 \le m \le l\)일 때 <span class="term">연관 르장드르 함수</span> <span class="en">(associated Legendre function)</span>를</p>
+      <div class="formula" id="eq-associated-legendre">\[ P_l^m(x) = (-1)^m\,(1 - x^2)^{m/2}\,\frac{d^m}{dx^m}P_l(x) \]</div>
+      <p>로 정한다. 앞의 \((-1)^m\)을 <span class="term">콘던-쇼틀리 위상</span> <span class="en">(Condon–Shortley phase)</span>이라 한다. 로드리게스 공식을 넣으면</p>
+      <div class="formula" id="eq-associated-rodrigues">\[ P_l^m(x) = \frac{(-1)^m}{2^l\,l!}(1 - x^2)^{m/2}\frac{d^{l+m}}{dx^{l+m}}(x^2 - 1)^l \]</div>
+      <p>이고, 이 식으로 \(-l \le m &lt; 0\)에서도 \(P_l^m\)을 정한다. 그러면</p>
+      <div class="formula" id="eq-associated-negative-m">\[ P_l^{-m}(x) = (-1)^m\,\frac{(l - m)!}{(l + m)!}\,P_l^m(x) \]</div>
+      <p>이다. \(\lvert m\rvert > l\)이면 \(P_l^m = 0\)이다(\(l\)차 다항식을 \(l\)번보다 많이 미분하므로).</p>
+      <details class="proof"><summary>증명</summary>
+        <p>식 <a class="ref" href="#eq-associated-negative-m"></a>를 보이자. \(u = (x - 1)^l(x + 1)^l\)에 라이프니츠 법칙을 쓰면 \(u^{(l+m)}\)은 \(\binom{l+m}{k}\frac{l!}{(l-k)!}\frac{l!}{(k-m)!}(x - 1)^{l-k}(x + 1)^{k-m}\)의 합(\(m \le k \le l\))이고, \(u^{(l-m)}\)은 \(\binom{l-m}{k-m}\frac{l!}{(l-k+m)!}\frac{l!}{k!}(x - 1)^{l-k+m}(x + 1)^{k}\)의 합이다. 항끼리 비교하면 계승이 정리되어 \((x^2 - 1)^m u^{(l+m)} = \frac{(l+m)!}{(l-m)!}u^{(l-m)}\)이다. 이것을 식 <a class="ref" href="#eq-associated-rodrigues"></a>의 \(-m\)인 경우에 넣고 \((1 - x^2)^{-m/2}(x^2 - 1)^m = (-1)^m(1 - x^2)^{m/2}\)을 쓰면 된다.</p>
+      </details>
+    </div>
+    <p>처음 몇 개는 \(x = \cos\theta\), \(\sqrt{1 - x^2} = \sin\theta\)로 쓰면 다음과 같다.</p>
+    <div class="formula" id="eq-associated-table">\[ \begin{aligned} P_1^1 &= -\sin\theta, \quad P_2^1 = -3\cos\theta\sin\theta, \\ P_2^2 &= 3\sin^2\theta \end{aligned} \]</div>
+    <div class="callout warn"><strong>콘던-쇼틀리 위상은 교재마다 자리가 다르다</strong><p>이 책은 \((-1)^m\)을 \(P_l^m\) 안에 넣는다. 아프켄(7판), 잭슨, 그리고 SciPy의 <code>scipy.special.lpmv</code>가 같은 관례다. 수학 교재와 일부 물리 교재는 \(P_l^m = (1 - x^2)^{m/2}P_l^{(m)}\)으로 위상 없이 정의하고, 대신 구면 조화 함수에 \((-1)^m\)을 붙인다. 그러면 \(Y_l^m\)은 같지만 \(P_l^m\)의 부호가 홀수 \(m\)에서 반대다. 둘 다 위상을 빼는 교재도 있는데, 그때는 홀수 \(m\)에서 \(Y_l^m\) 자체의 부호가 달라져, 각운동량 사다리 연산자 공식의 부호가 바뀐다. 다른 교재의 식을 옮길 때는 \(P_1^1\)이 \(-\sin\theta\)인지 \(+\sin\theta\)인지부터 확인하자.</p></div>
+    <p>\(m\)이 같은 연관 르장드르 함수끼리는 직교한다. 증명은 <a class="ref" href="#thm-legendre-orthogonality"></a>의 증명 1과 같다. 식 <a class="ref" href="#eq-associated-legendre-equation"></a>의 \(m^2/(1 - x^2)\) 항은 \(l\)을 바꿔 뺄 때 지워지기 때문이다. 규격화까지 쓰면</p>
+    <div class="formula" id="eq-associated-legendre-norm">\[ \int_{-1}^1 P_l^m(x)\,P_{l'}^m(x)\,dx = \frac{2}{2l+1}\,\frac{(l+m)!}{(l-m)!}\,\delta_{ll'} \]</div>
+    <details class="proof"><summary>규격화 상수의 증명</summary>
+      <p>\(N_m = \int_{-1}^1(1 - x^2)^m\big(P_l^{(m)}\big)^2dx\)로 두면 왼쪽(\(l = l'\))은 \(N_m\)이다. 식 <a class="ref" href="#eq-legendre-differentiated"></a>에 \((1 - x^2)^m\)을 곱하면 \(\big[(1 - x^2)^{m+1}w'\big]' = -(l - m)(l + m + 1)(1 - x^2)^mw\) (\(w = P_l^{(m)}\))이다. 부분 적분하면 경계 항이 \((1 - x^2)^{m+1}\) 때문에 사라져</p>
+      <div class="formula">\[ \begin{aligned} N_{m+1} &= \int(1 - x^2)^{m+1}w'\,w'\,dx \\ &= -\int w\,\big[(1 - x^2)^{m+1}w'\big]'dx \\ &= (l - m)(l + m + 1)\,N_m \end{aligned} \]</div>
+      <p>이다. \(N_0 = 2/(2l+1)\)에서 시작해 되풀이하면 \(\prod_{k=0}^{m-1}(l - k)(l + k + 1) = \frac{l!}{(l-m)!}\cdot\frac{(l+m)!}{l!}\)이 곱해진다.</p>
+    </details>
+
+    <h3 id="s5-ylm">구면 조화 함수</h3>
+    <div class="box def" id="def-spherical-harmonics"><div class="box-h">구면 조화 함수</div>
+      <p>\(l = 0, 1, 2, \ldots\), \(m = -l, \ldots, l\)에 대해 <span class="term">구면 조화 함수</span> <span class="en">(spherical harmonics)</span>를 \(m \ge 0\)일 때</p>
+      <div class="formula" id="eq-spherical-harmonics">\[ Y_l^m(\theta, \phi) = \sqrt{\frac{2l+1}{4\pi}\,\frac{(l-m)!}{(l+m)!}}\;P_l^m(\cos\theta)\,e^{im\phi} \]</div>
+      <p>로, 음의 \(m\)에 대해서는 \(Y_l^{-m} = (-1)^m\,(Y_l^m)^*\)로 정한다. 식 <a class="ref" href="#eq-associated-negative-m"></a> 때문에, 음의 \(m\)에도 식 <a class="ref" href="#eq-spherical-harmonics"></a>를 그대로 쓴 것과 같다.</p>
+    </div>
+    <p>\(l \le 2\)인 것을 적으면 다음과 같다(음의 \(m\)은 정의의 관계로 얻는다).</p>
+    <div class="formula" id="eq-ylm-table">\[ \begin{aligned} Y_0^0 &= \frac{1}{\sqrt{4\pi}}, \quad Y_1^0 = \sqrt{\frac{3}{4\pi}}\cos\theta, \\ Y_1^1 &= -\sqrt{\frac{3}{8\pi}}\sin\theta\,e^{i\phi}, \\ Y_2^0 &= \sqrt{\frac{5}{16\pi}}\,(3\cos^2\theta - 1), \\ Y_2^1 &= -\sqrt{\frac{15}{8\pi}}\sin\theta\cos\theta\,e^{i\phi}, \\ Y_2^2 &= \sqrt{\frac{15}{32\pi}}\sin^2\theta\,e^{2i\phi} \end{aligned} \]</div>
+    <p>구면 조화 함수의 성질은 앞의 결과를 모으면 나온다. 첫째, \(\Lambda\)의 고유함수다. \(e^{im\phi}\)에 \(\partial_\phi^2\)을 걸면 \(-m^2\)이 나오고, 남은 것은 \(P_l^m\)이 만족하는 식 <a class="ref" href="#eq-associated-legendre-equation"></a>이므로</p>
+    <div class="formula" id="eq-ylm-eigen">\[ \Lambda\,Y_l^m = -l(l+1)\,Y_l^m \]</div>
+    <p>이다. 고유값은 \(m\)에 기대지 않으므로 \(l\)마다 \(2l+1\)개의 함수가 같은 고유값을 갖는다. <a class="ref" href="#ex-rigid-rotor-levels"></a>의 회전자 준위 \(E_l\)이 \(2l+1\)겹으로 겹친다(축퇴한다)는 뜻이다. 둘째, 구면 위에서 정규직교한다.</p>
+    <div class="formula" id="eq-ylm-orthonormal">\[ \oint Y_l^{m*}(\theta, \phi)\,Y_{l'}^{m'}(\theta, \phi)\,d\Omega = \delta_{ll'}\,\delta_{mm'} \]<div class="where">\(d\Omega = \sin\theta\,d\theta\,d\phi\)는 입체각 요소(<a href="ch06.html#eq-solid-angle">식 (6.17)</a>)이다.</div></div>
+    <p>\(\phi\) 적분 \(\int_0^{2\pi}e^{i(m'-m)\phi}d\phi = 2\pi\delta_{mm'}\)이 먼저 \(m\)을 맞추고, \(m = m'\)이면 \(\sin\theta\,d\theta = -dx\)로 바꾼 \(\theta\) 적분이 식 <a class="ref" href="#eq-associated-legendre-norm"></a>다. 규격화 상수의 제곱 \(\frac{2l+1}{4\pi}\frac{(l-m)!}{(l+m)!}\)에 \(2\pi\cdot\frac{2}{2l+1}\frac{(l+m)!}{(l-m)!}\)을 곱하면 정확히 1이다. 셋째, 구면 위의 제곱 적분 가능한 함수는 모두</p>
+    <div class="formula" id="eq-ylm-expansion">\[ f(\theta, \phi) = \sum_{l=0}^\infty\sum_{m=-l}^{l}f_{lm}\,Y_l^m(\theta, \phi), \quad f_{lm} = \oint Y_l^{m*}f\,d\Omega \]</div>
+    <p>로 전개된다(완비성, 16장의 <a href="ch16.html#thm-sl-completeness">완비성 정리</a>). 이것은 원 위의 함수를 \(e^{im\phi}\)로 펼치는 푸리에 급수를 구면으로 넓힌 것이다.</p>
+
+    <h3 id="s5-real">실수형 조화 함수와 마디선</h3>
+    <p>화학의 오비탈 그림은 복소수 \(e^{im\phi}\) 대신 실수 함수를 쓴다. \(m > 0\)이면 \(\sqrt2(-1)^m\operatorname{Re}Y_l^m\)과 \(\sqrt2(-1)^m\operatorname{Im}Y_l^m\)이 정규화된 실수 함수이고, 이것은 콘던-쇼틀리 위상을 지운 \((-1)^mP_l^m = (1 - x^2)^{m/2}P_l^{(m)}\) (\(x = \cos\theta\))에 \(\cos m\phi\)나 \(\sin m\phi\)를 곱한 것이다. 예를 들어 \(l = 1\)의 세 실수 함수는 \(\sqrt{3/4\pi}\) 곱하기 \(z/r\), \(x/r\), \(y/r\)로, \(p_z, p_x, p_y\) 오비탈의 각 부분이다.</p>
+    <p>실수형 조화 함수가 0이 되는 곳, 곧 <span class="term">마디선</span> <span class="en">(nodal line)</span>은 두 종류다. \(\cos m\phi = 0\)인 곳은 극을 지나는 대원 \(m\)개이고, \(P_l^m(\cos\theta) = 0\)인 곳은 위도선이다. <a class="ref" href="#thm-legendre-zeros"></a>에서 \(P_l\)은 \((-1, 1)\)에 영점이 \(l\)개 있고, 롤의 정리에 따라 \(P_l'\)은 그 사이마다 영점을 하나씩, 곧 적어도 \(l - 1\)개 갖는다. 되풀이하면 \(P_l^{(m)}\)은 적어도 \(l - m\)개의 영점을 갖고, 차수가 \(l - m\)이므로 정확히 \(l - m\)개다. 그래서 마디 위도선은 \(l - m\)개, 마디 대원은 \(m\)개로 모두 \(l\)개다. 그림 12-5는 \(l \le 2\)인 실수형 조화 함수를 \(xz\)평면으로 자른 모양이다.</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 360" role="img" aria-label="l = 0, 1, 2인 실수형 구면 조화 함수를 xz 평면으로 자른 극좌표 그림. 양의 꽃잎과 음의 꽃잎이 다른 색으로 칠해져 있다"><line x1="8" y1="95" x2="152" y2="95" class="s-grid"/><line x1="80" y1="23" x2="80" y2="167" class="s-grid"/><path d="M80,67.3l2.2,.1 2.1,.2 2.2,.4 2.1,.6 2,.8 2,.9 1.9,1.1 1.8,1.2 1.7,1.3 1.6,1.5 1.5,1.6 1.3,1.7 1.2,1.8 1.1,1.9 .9,2 .8,2 .6,2.1 .4,2.2 .2,2.1 .1,2.2 -.1,2.2 -.2,2.1 -.4,2.2 -.6,2.1 -.8,2 -.9,2 -1.1,1.9 -1.2,1.8 -1.3,1.7 -1.5,1.6 -1.6,1.5 -1.7,1.3 -1.8,1.2 -1.9,1.1 -2,.9 -2,.8 -2.1,.6 -2.2,.4 -2.1,.2 -2.2,.1 -2.2-.1 -2.1-.2 -2.2-.4 -2.1-.6 -2-.8 -2-.9 -1.9-1.1 -1.8-1.2 -1.7-1.3 -1.6-1.5 -1.5-1.6 -1.3-1.7 -1.2-1.8 -1.1-1.9 -.9-2 -.8-2 -.6-2.1 -.4-2.2 -.2-2.1 -.1-2.2 .1-2.2 .2-2.1 .4-2.2 .6-2.1 .8-2 .9-2 1.1-1.9 1.2-1.8 1.3-1.7 1.5-1.6 1.6-1.5 1.7-1.3 1.8-1.2 1.9-1.1 2-.9 2-.8 2.1-.6 2.2-.4 2.1-.2 2.2-.1 Z" class="f-acc-soft" style="stroke-width:1.5"/><text x="80" y="177" class="t-math" text-anchor="middle"><tspan font-style="italic">l</tspan> = 0, <tspan font-style="italic">m</tspan> = 0</text><text x="85" y="33" class="t-dim" style="font-size:13px" text-anchor="start">z</text><text x="152" y="89" class="t-dim" style="font-size:13px" text-anchor="end">x</text><line x1="168" y1="95" x2="312" y2="95" class="s-grid"/><line x1="240" y1="23" x2="240" y2="167" class="s-grid"/><path d="M236.2,94.7l-3.6-.9 -3.5-1.4 -3.2-2 -2.9-2.4 -2.4-2.9 -2-3.2 -1.4-3.5 -.9-3.6 -.3-3.8 .3-3.8 .9-3.6 1.4-3.5 2-3.2 2.4-2.9 2.9-2.4 3.2-2 3.5-1.4 3.6-.9 3.8-.3 3.8,.3 3.6,.9 3.5,1.4 3.2,2 2.9,2.4 2.4,2.9 2,3.2 1.4,3.5 .9,3.6 .3,3.8 -.3,3.8 -.9,3.6 -1.4,3.5 -2,3.2 -2.4,2.9 -2.9,2.4 -3.2,2 -3.5,1.4 -3.6,.9 -3.8,.3 Z" class="f-acc-soft" style="stroke-width:1.5"/><path d="M243.8,95.3l3.6,.9 3.5,1.4 3.2,2 2.9,2.4 2.4,2.9 2,3.2 1.4,3.5 .9,3.6 .3,3.8 -.3,3.8 -.9,3.6 -1.4,3.5 -2,3.2 -2.4,2.9 -2.9,2.4 -3.2,2 -3.5,1.4 -3.6,.9 -3.8,.3 -3.8-.3 -3.6-.9 -3.5-1.4 -3.2-2 -2.9-2.4 -2.4-2.9 -2-3.2 -1.4-3.5 -.9-3.6 -.3-3.8 .3-3.8 .9-3.6 1.4-3.5 2-3.2 2.4-2.9 2.9-2.4 3.2-2 3.5-1.4 3.6-.9 3.8-.3 Z" class="f-acc2-soft" style="stroke-width:1.5"/><text x="240" y="177" class="t-math" text-anchor="middle"><tspan font-style="italic">l</tspan> = 1, <tspan font-style="italic">m</tspan> = 0</text><text x="245" y="33" class="t-dim" style="font-size:13px" text-anchor="start">z</text><text x="312" y="89" class="t-dim" style="font-size:13px" text-anchor="end">x</text><line x1="328" y1="95" x2="472" y2="95" class="s-grid"/><line x1="400" y1="23" x2="400" y2="167" class="s-grid"/><path d="M400,95l.3-3.8 .9-3.6 1.4-3.5 2-3.2 2.4-2.9 2.9-2.4 3.2-2 3.5-1.4 3.6-.9 3.8-.3 3.8,.3 3.6,.9 3.5,1.4 3.2,2 2.9,2.4 2.4,2.9 2,3.2 1.4,3.5 .9,3.6 .3,3.8 -.3,3.8 -.9,3.6 -1.4,3.5 -2,3.2 -2.4,2.9 -2.9,2.4 -3.2,2 -3.5,1.4 -3.6,.9 -3.8,.3 -3.8-.3 -3.6-.9 -3.5-1.4 -3.2-2 -2.9-2.4 -2.4-2.9 -2-3.2 -1.4-3.5 -.9-3.6 -.3-3.8 Z" class="f-acc-soft" style="stroke-width:1.5"/><path d="M399.7,98.8l-.9,3.6 -1.4,3.5 -2,3.2 -2.4,2.9 -2.9,2.4 -3.2,2 -3.5,1.4 -3.6,.9 -3.8,.3 -3.8-.3 -3.6-.9 -3.5-1.4 -3.2-2 -2.9-2.4 -2.4-2.9 -2-3.2 -1.4-3.5 -.9-3.6 -.3-3.8 .3-3.8 .9-3.6 1.4-3.5 2-3.2 2.4-2.9 2.9-2.4 3.2-2 3.5-1.4 3.6-.9 3.8-.3 3.8,.3 3.6,.9 3.5,1.4 3.2,2 2.9,2.4 2.4,2.9 2,3.2 1.4,3.5 .9,3.6 .3,3.8 Z" class="f-acc2-soft" style="stroke-width:1.5"/><text x="400" y="177" class="t-math" text-anchor="middle"><tspan font-style="italic">l</tspan> = 1, <tspan font-style="italic">m</tspan> = 1</text><text x="405" y="33" class="t-dim" style="font-size:13px" text-anchor="start">z</text><text x="472" y="89" class="t-dim" style="font-size:13px" text-anchor="end">x</text><line x1="8" y1="265" x2="152" y2="265" class="s-grid"/><line x1="80" y1="193" x2="80" y2="337" class="s-grid"/><path d="M79.1,264.3l-5.4-4.6 -4.7-5.7 -3.8-6.3 -2.8-6.9 -1.5-7 -.3-7 .9-6.5 2.1-5.8 3.1-4.8 4-3.7 4.5-2.2 4.8-.8 4.8,.8 4.5,2.2 4,3.7 3.1,4.8 2.1,5.8 .9,6.5 -.3,7 -1.5,7 -2.8,6.9 -3.8,6.3 -4.7,5.7 -5.4,4.6 Z" class="f-acc-soft" style="stroke-width:1.5"/><path d="M84.8,262.1l5.7-2.5 5.6-1.2 4.9-.2 4.2,.7 3.2,1.6 1.9,2.1 .7,2.4 -.7,2.4 -1.9,2.1 -3.2,1.6 -4.2,.7 -4.9-.2 -5.6-1.2 -5.7-2.5 Z" class="f-acc2-soft" style="stroke-width:1.5"/><path d="M80.9,265.7l5.4,4.6 4.7,5.7 3.8,6.3 2.8,6.9 1.5,7 .3,7 -.9,6.5 -2.1,5.8 -3.1,4.8 -4,3.7 -4.5,2.2 -4.8,.8 -4.8-.8 -4.5-2.2 -4-3.7 -3.1-4.8 -2.1-5.8 -.9-6.5 .3-7 1.5-7 2.8-6.9 3.8-6.3 4.7-5.7 5.4-4.6 Z" class="f-acc-soft" style="stroke-width:1.5"/><path d="M75.2,267.9l-5.7,2.5 -5.6,1.2 -4.9,.2 -4.2-.7 -3.2-1.6 -1.9-2.1 -.7-2.4 .7-2.4 1.9-2.1 3.2-1.6 4.2-.7 4.9,.2 5.6,1.2 5.7,2.5 Z" class="f-acc2-soft" style="stroke-width:1.5"/><text x="80" y="347" class="t-math" text-anchor="middle"><tspan font-style="italic">l</tspan> = 2, <tspan font-style="italic">m</tspan> = 0</text><text x="85" y="203" class="t-dim" style="font-size:13px" text-anchor="start">z</text><text x="152" y="259" class="t-dim" style="font-size:13px" text-anchor="end">x</text><line x1="168" y1="265" x2="312" y2="265" class="s-grid"/><line x1="240" y1="193" x2="240" y2="337" class="s-grid"/><path d="M240,265l.7-8.4 1.9-8 3.1-7.3 4-6.3 4.8-5.1 5.2-3.6 5.3-2.1 5-.5 4.4,1 3.6,2.3 2.3,3.6 1,4.4 -.5,5 -2.1,5.3 -3.6,5.2 -5.1,4.8 -6.3,4 -7.3,3.1 -8,1.9 -8.4,.7 Z" class="f-acc-soft" style="stroke-width:1.5"/><path d="M248.4,265.7l8,1.9 7.3,3.1 6.3,4 5.1,4.8 3.6,5.2 2.1,5.3 .5,5 -1,4.4 -2.3,3.6 -3.6,2.3 -4.4,1 -5-.5 -5.3-2.1 -5.2-3.6 -4.8-5.1 -4-6.3 -3.1-7.3 -1.9-8 -.7-8.4 Z" class="f-acc2-soft" style="stroke-width:1.5"/><path d="M239.3,273.4l-1.9,8 -3.1,7.3 -4,6.3 -4.8,5.1 -5.2,3.6 -5.3,2.1 -5,.5 -4.4-1 -3.6-2.3 -2.3-3.6 -1-4.4 .5-5 2.1-5.3 3.6-5.2 5.1-4.8 6.3-4 7.3-3.1 8-1.9 8.4-.7 Z" class="f-acc-soft" style="stroke-width:1.5"/><path d="M231.6,264.3l-8-1.9 -7.3-3.1 -6.3-4 -5.1-4.8 -3.6-5.2 -2.1-5.3 -.5-5 1-4.4 2.3-3.6 3.6-2.3 4.4-1 5,.5 5.3,2.1 5.2,3.6 4.8,5.1 4,6.3 3.1,7.3 1.9,8 .7,8.4 Z" class="f-acc2-soft" style="stroke-width:1.5"/><text x="240" y="347" class="t-math" text-anchor="middle"><tspan font-style="italic">l</tspan> = 2, <tspan font-style="italic">m</tspan> = 1</text><text x="245" y="203" class="t-dim" style="font-size:13px" text-anchor="start">z</text><text x="312" y="259" class="t-dim" style="font-size:13px" text-anchor="end">x</text><line x1="328" y1="265" x2="472" y2="265" class="s-grid"/><line x1="400" y1="193" x2="400" y2="337" class="s-grid"/><path d="M400,265l0-.3 .2-1 .5-1.5 .9-2.1 1.4-2.4 2-2.6 2.7-2.6 3.2-2.5 3.8-2.2 4.3-1.8 4.6-1.2 4.8-.4 4.9,.2 4.7,1.1 4.3,1.8 3.9,2.5 3.1,3.2 2.4,3.6 1.5,4 .5,4.2 -.5,4.2 -1.5,4 -2.4,3.6 -3.1,3.2 -3.9,2.5 -4.3,1.8 -4.7,1.1 -4.9,.2 -4.8-.4 -4.6-1.2 -4.3-1.8 -3.8-2.2 -3.2-2.5 -2.7-2.6 -2-2.6 -1.4-2.4 -.9-2.1 -.5-1.5 -.2-1 0-.3 0,.3 -.2,1 -.5,1.5 -.9,2.1 -1.4,2.4 -2,2.6 -2.7,2.6 -3.2,2.5 -3.8,2.2 -4.3,1.8 -4.6,1.2 -4.8,.4 -4.9-.2 -4.7-1.1 -4.3-1.8 -3.9-2.5 -3.1-3.2 -2.4-3.6 -1.5-4 -.5-4.2 .5-4.2 1.5-4 2.4-3.6 3.1-3.2 3.9-2.5 4.3-1.8 4.7-1.1 4.9-.2 4.8,.4 4.6,1.2 4.3,1.8 3.8,2.2 3.2,2.5 2.7,2.6 2,2.6 1.4,2.4 .9,2.1 .5,1.5 .2,1 0,.3 Z" class="f-acc-soft" style="stroke-width:1.5"/><text x="400" y="347" class="t-math" text-anchor="middle"><tspan font-style="italic">l</tspan> = 2, <tspan font-style="italic">m</tspan> = 2</text><text x="405" y="203" class="t-dim" style="font-size:13px" text-anchor="start">z</text><text x="472" y="259" class="t-dim" style="font-size:13px" text-anchor="end">x</text></svg>
+      <figcaption><b>그림 12-5.</b> 실수형 구면 조화 함수(\(m > 0\)이면 \(\cos m\phi\) 꼴)를 \(xz\)평면(\(\phi = 0, \pi\))에서 자른 극좌표 그림. 원점에서 각 방향으로 \(\lvert Y\rvert\)만큼 떨어진 곡선이고, 진한 색이 양의 꽃잎, 다른 색이 음의 꽃잎이다. 모든 그림은 같은 축척이다. \(l = 2, m = 2\)는 \(\sin^2\theta\cos2\phi\)이므로 이 평면에서는 \(x\)축 방향의 양의 꽃잎만 보이고, 음의 꽃잎은 \(y\)축 방향에 있다. 곡선은 식 <a class="ref" href="#eq-ylm-table"></a>으로 계산했다.</figcaption>
+    </figure>
+    <!-- sim: ylm-3d -->
+    <p>수소 원자 오비탈의 각 모양이 바로 이 함수들이다. 6장에서 수소 원자의 라플라시안을 지름 부분과 \(\Lambda\)로 나누었고(<a href="ch06.html#eq-radial-schrodinger">식 (6.37)</a>), 지름 부분은 13장에서 연관 라게르 다항식으로 푼다(<a href="ch13.html#ex-hydrogen-laguerre">13장의 수소 원자 예제</a>). 양자역학 책은 같은 \(Y_l^m\)을 각운동량 사다리 연산자로 다시 얻는데, 그 위상이 이 책의 관례와 같다.</p>
+
+    <h3 id="s5-addition">덧셈 정리</h3>
+    <p>다중극 전개 <a class="ref" href="#eq-multipole-expansion"></a>에는 두 방향 사이의 각 \(\gamma\)가 들어 있다. 원천 분포 전체를 적분하려면 \(P_l(\cos\gamma)\)를 \(\mathbf r\)의 각과 \(\mathbf r'\)의 각으로 나누어야 한다. 그 식이 <span class="term">덧셈 정리</span> <span class="en">(addition theorem)</span>다.</p>
+    <div class="box thm" id="thm-addition-theorem"><div class="box-h">구면 조화 함수의 덧셈 정리</div>
+      <p>두 방향 \((\theta, \phi)\)와 \((\theta', \phi')\) 사이의 각을 \(\gamma\)라 하자. 곧 \(\cos\gamma = \cos\theta\cos\theta' + \sin\theta\sin\theta'\cos(\phi - \phi')\)이다. 그러면</p>
+      <div class="formula" id="eq-addition-theorem">\[ P_l(\cos\gamma) = \frac{4\pi}{2l+1}\sum_{m=-l}^{l}Y_l^{m*}(\theta', \phi')\,Y_l^m(\theta, \phi) \]</div>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>\((\theta', \phi')\)을 고정하고 \(F(\theta, \phi) = P_l(\cos\gamma)\)를 생각하자. \((\theta', \phi')\) 방향을 새 극으로 삼는 회전된 좌표에서 \(F\)는 \(P_l(\cos\theta'')\)이므로 \(\Lambda F = -l(l+1)F\)이다. \(\Lambda\)는 구면 위의 라플라시안이라 좌표축을 돌려도 꼴이 같기 때문이다. 따라서 식 <a class="ref" href="#eq-ylm-expansion"></a>로 펼치면 고유값이 같은 \(Y_l^m\) (\(m = -l, \ldots, l\))만 남는다: \(F = \sum_mA_mY_l^m(\theta, \phi)\). 계수 \(A_m = \oint Y_l^{m*}F\,d\Omega\)를 회전된 좌표에서 계산하면, \(P_l(\cos\theta'')\)에 대해 \(\phi''\)로 평균한 \(Y_l^{m*}\)의 값이 남고, 그것은 \(Y_l^{m*}\)의 극(곧 \((\theta', \phi')\))에서의 값에 \(4\pi/(2l+1)\)을 곱한 것이다. 자세한 계산은 잭슨(J. D. Jackson, <i>Classical Electrodynamics</i>, 3rd ed., Wiley 1999) 3.6절에 있다. 이 장에서는 \(l \le 4\)에 대해 임의의 두 방향에서 양변을 수치로 비교해 확인했다.</p>
+      </details>
+    </div>
+    <p>\(l = 1\)이면 식 <a class="ref" href="#eq-ylm-table"></a>에서 \(m = 0\) 항이 \(\tfrac{3}{4\pi}\cos\theta\cos\theta'\), \(m = \pm1\) 두 항의 합이 \(\tfrac{3}{8\pi}\sin\theta\sin\theta'\big(e^{i(\phi-\phi')} + e^{-i(\phi-\phi')}\big) = \tfrac{3}{4\pi}\sin\theta\sin\theta'\cos(\phi - \phi')\)이다. \(4\pi/3\)을 곱하면 정확히 \(\cos\gamma = \hat{\mathbf r}\cdot\hat{\mathbf r}'\)이다. 또 \(\gamma = 0\)으로 두면 \(\sum_m\lvert Y_l^m\rvert^2 = (2l+1)/4\pi\)로 방향에 기대지 않는다. \(l\)이 같은 \(2l+1\)개의 오비탈을 모두 채운 전자 껍질의 전하 분포가 구대칭인 까닭이다. 또 덧셈 정리의 합에 코시-슈바르츠 부등식(9장의 <a href="ch09.html#thm-cauchy-schwarz">정리 9.1</a>)을 쓰면 \(\lvert P_l(\cos\gamma)\rvert \le \frac{4\pi}{2l+1}\cdot\frac{2l+1}{4\pi} = 1\)이므로, 그림 12-2에서 본 \(\lvert P_l(x)\rvert \le 1\)이 증명된다. 덧셈 정리를 식 <a class="ref" href="#eq-multipole-expansion"></a>에 넣으면</p>
+    <div class="formula" id="eq-multipole-ylm">\[ \frac{1}{\lvert\mathbf r - \mathbf r'\rvert} = \sum_{l=0}^\infty\sum_{m=-l}^{l}\frac{4\pi}{2l+1}\,\frac{r_&lt;^l}{r_>^{l+1}}\,Y_l^{m*}(\theta', \phi')\,Y_l^m(\theta, \phi) \]</div>
+    <p>이다. 원천의 각과 관측점의 각이 곱으로 갈라졌으므로, 원천 분포에 대한 적분을 관측점과 따로 할 수 있다.</p>
+
+    <div class="box ex" id="ex-nuclear-quadrupole"><div class="box-h">전하 분포의 다중극 모멘트와 원자핵의 사중극 모멘트</div>
+      <p>전하 밀도 \(\rho(\mathbf r')\)이 반지름 \(a\)인 공 안에 있다. (가) \(r > a\)에서의 퍼텐셜을 구면 조화 함수로 전개하라. (나) 분포가 \(z\)축 둘레로 대칭이면 <a class="ref" href="#ex-multipole-moments"></a>의 꼴로 줄어듦을 보여라. (다) 원자핵을 전하 \(Ze\)가 고르게 퍼진 회전 타원체(\(z\)방향 반축 \(c\), 나머지 두 반축 \(a\))로 보고 고유 사중극 모멘트 \(Q_{\text{int}} = \frac1e\int\rho\,(3z^2 - r^2)\,d^3r\)을 구하라(핵물리에서는 흔히 \(Q_0\)으로 쓰지만, 여기서는 \(Q_l\)의 \(l = 0\) 성분과 겹치지 않게 \(Q_{\text{int}}\)으로 쓴다). \(^{175}\)Lu(\(Z = 71\), \(A = 175\))를 부피가 \(\tfrac43\pi R^3\) (\(R = 1.2\,A^{1/3}\ \text{fm}\))이고 \(c/a = 1.3\)인 타원체로 보고 숫자를 넣어라.</p>
+      <p><b>풀이.</b> (가) \(V = \frac{1}{4\pi\varepsilon_0}\int\frac{\rho\,d^3r'}{\lvert\mathbf r - \mathbf r'\rvert}\)에 식 <a class="ref" href="#eq-multipole-ylm"></a>을 넣으면(\(r > r'\))</p>
+      <div class="formula" id="eq-multipole-moments-ylm">\[ \begin{aligned} V(\mathbf r) &= \frac{1}{\varepsilon_0}\sum_{l,m}\frac{q_{lm}}{2l+1}\,\frac{Y_l^m(\theta, \phi)}{r^{l+1}}, \\ q_{lm} &= \int\rho(\mathbf r')\,r'^l\,Y_l^{m*}(\theta', \phi')\,d^3r' \end{aligned} \]</div>
+      <p>이다. \(q_{lm}\)을 구면 다중극 모멘트라 한다. 원천의 모양은 모두 \(q_{lm}\)에 들어 있고, 관측점의 의존성은 \(Y_l^m/r^{l+1}\)에 들어 있다.</p>
+      <p>(나) \(\rho\)가 \(\phi'\)에 기대지 않으면 \(\phi'\) 적분이 \(e^{-im\phi'}\)을 지워 \(m = 0\)만 남는다. \(Y_l^0 = \sqrt{(2l+1)/4\pi}\,P_l\)이므로 \(q_{l0} = \sqrt{(2l+1)/4\pi}\,Q_l\)이고</p>
+      <div class="formula">\[ \begin{aligned} V &= \frac{1}{4\pi\varepsilon_0}\sum_l\frac{Q_l\,P_l(\cos\theta)}{r^{l+1}}, \\ Q_l &= \int\rho\,r'^l\,P_l(\cos\theta')\,d^3r' \end{aligned} \]</div>
+      <p>이다. 전하가 축 위에만 있으면 \(\rho\,d^3r'\)이 \(q_i\)나 \(\lambda\,dz\)가 되고 \(r'^lP_l(\cos\theta') = z_i^l\)이므로 식 <a class="ref" href="#eq-axial-multipole"></a>다. 1장의 쌍극자(\(l = 1\))와 선형 사중극(\(l = 2\))이 여기에 모두 들어 있다(<a href="ch01.html#ex-dipole-far-field">예제 1.10</a>).</p>
+      <p>(다) \(r^2P_2(\cos\theta) = \tfrac12(3z^2 - r^2)\)이므로 \(Q_{\text{int}} = 2Q_2/e\)이다. 고른 타원체에서 \(\langle z^2\rangle = c^2/5\), \(\langle x^2\rangle = \langle y^2\rangle = a^2/5\)이다(단위 공의 \(\langle z^2\rangle = \tfrac15\)을 축마다 늘인 것). 따라서</p>
+      <div class="formula" id="eq-nuclear-quadrupole">\[ Q_{\text{int}} = Z\,\big\langle 2z^2 - x^2 - y^2\big\rangle = \frac{2Z}{5}\,\big(c^2 - a^2\big) \]</div>
+      <p>이다. 축 방향으로 길쭉한(장구형) 핵은 \(Q_{\text{int}} > 0\), 납작한(편구형) 핵은 \(Q_{\text{int}} &lt; 0\)이다. <a class="ref" href="#ex-ring-potential"></a>의 고리가 음의 사중극 모멘트를 가진 것과 같은 이유다.</p>
+      <p><b>숫자로 보기.</b> \(R = 1.2 \times 175^{1/3}\ \text{fm} = 6.71\ \text{fm}\)이다(핵 반지름의 경험식, K. S. Krane, <i>Introductory Nuclear Physics</i>, Wiley 1988, 3장). 부피가 같으려면 \(a^2c = R^3\)이고 \(c = 1.3a\)이므로 \(a = R/1.3^{1/3} = 6.15\ \text{fm}\), \(c = 8.00\ \text{fm}\)이다. 그러면</p>
+      <div class="formula">\[ \begin{aligned} Q_{\text{int}} &= \frac{2 \times 71}{5}\,(63.9 - 37.8)\ \text{fm}^2 \\ &= 741\ \text{fm}^2 = 7.4\ \text{b} \end{aligned} \]</div>
+      <p>이다(\(1\ \text{b} = 100\ \text{fm}^2\)). 사중극 모멘트를 넓이 단위 반(barn)으로 재는 까닭이 여기서 보인다. 이 정도로 변형된 무거운 핵의 사중극 모멘트는 반 단위의 크기다. 단위 확인: \(Q_{\text{int}}\)은 \(\int\rho\,r^2d^3r\)을 \(e\)로 나눈 것이므로 넓이다. 모형에서 \(c/a\)를 1로 두면 \(Q_{\text{int}} = 0\)이다. 구대칭 분포에는 \(l \ge 1\)의 모멘트가 없기 때문이다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 12.6 -->
+  <section id="s6">
+    <h2>정칙 특이점과 프로베니우스 방법</h2>
+    <p>12.3절에서 라플라스 방정식의 지름 부분 \(r^2R'' + 2rR' - l(l+1)R = 0\)의 해가 \(r^l\)과 \(r^{-l-1}\)이라고 했다. 두 번째 해는 \(r = 0\)에서 발산하므로 \(r = 0\) 둘레의 멱급수로는 얻을 수 없다. 표준형으로 쓰면 \(p = 2/r\), \(q = -l(l+1)/r^2\)이라 \(r = 0\)이 특이점이기 때문이다. 수소 원자의 지름 방정식, 원통 좌표의 베셀 방정식(13장), \(x = \pm1\)에서의 르장드르 방정식도 같은 처지다. 이 절에서는 이런 특이점 가운데 "순한" 종류에서 해를 \(x^s\) 곱하기 멱급수로 찾는 방법을 세운다.</p>
+
+    <h3 id="s6-regular">정칙 특이점</h3>
+    <div class="box def" id="def-regular-singular-point"><div class="box-h">정칙 특이점</div>
+      <p>\(x_0\)이 식 <a class="ref" href="#eq-ode-standard-form"></a>의 특이점이고, \((x - x_0)\,p(x)\)와 \((x - x_0)^2\,q(x)\)가 모두 \(x_0\)에서 해석적이면 \(x_0\)을 <span class="term">정칙 특이점</span> <span class="en">(regular singular point)</span>이라 한다. 그렇지 않은 특이점을 <span class="term">비정칙 특이점</span> <span class="en">(irregular singular point)</span>이라 한다.</p>
+    </div>
+    <p>곧 \(p\)는 많아야 \(1/(x - x_0)\), \(q\)는 많아야 \(1/(x - x_0)^2\)처럼 발산해야 한다. 지름 방정식의 \(r = 0\)은 \(rp = 2\), \(r^2q = -l(l+1)\)이므로 정칙 특이점이다. 르장드르 방정식의 \(x = 1\)에서는 \((x - 1)p = 2x/(1 + x)\), \((x - 1)^2q = -\lambda(x - 1)/(1 + x)\)가 \(x = 1\)에서 해석적이므로 역시 정칙 특이점이다. 반면 \(y'' + y'/x^2 = 0\)의 \(x = 0\)은 \(xp = 1/x\)가 발산하므로 비정칙 특이점이다.</p>
+
+    <h3 id="s6-method">프로베니우스 급수와 결정 방정식</h3>
+    <p>\(x_0 = 0\)이 정칙 특이점이라 하고 \(xp(x) = \sum_n p_nx^n\), \(x^2q(x) = \sum_n q_nx^n\)으로 쓰자. 0 근처에서 방정식은 대략 \(x^2y'' + p_0xy' + q_0y = 0\)이고, 이 근사 방정식(<span class="term">오일러 방정식</span> <span class="en">(Euler equation)</span>)의 해는 \(x^s\)이다. 그래서 해를</p>
+    <div class="formula" id="eq-frobenius-series">\[ y(x) = x^s\sum_{n=0}^\infty a_nx^n = \sum_{n=0}^\infty a_nx^{n+s}, \quad a_0 \ne 0 \]</div>
+    <p>로 놓는다. 이것을 <span class="term">프로베니우스 급수</span> <span class="en">(Frobenius series)</span>라 한다. \(s\)는 정수가 아니어도 되고, \(a_0 \ne 0\)은 \(s\)를 "가장 낮은 거듭제곱"으로 정한다는 약속이다. 방정식에 \(x^2\)을 곱한 \(x^2y'' + (xp)\,xy' + (x^2q)\,y = 0\)에 넣으면 \(x^2y'' = \sum(n+s)(n+s-1)a_nx^{n+s}\), \(xy' = \sum(n+s)a_nx^{n+s}\)이고, \(x^{n+s}\)의 계수를 모으면</p>
+    <div class="formula">\[ \begin{aligned} &(n+s)(n+s-1)\,a_n \\ &\quad + \sum_{k=0}^{n}\big[(k+s)\,p_{n-k} + q_{n-k}\big]a_k = 0 \end{aligned} \]</div>
+    <p>이다. 합에서 \(k = n\)인 항을 떼어 첫 항과 묶으면, 다항식 \(I(s) = s(s-1) + p_0s + q_0\)을 써서</p>
+    <div class="formula" id="eq-frobenius-recursion">\[ I(s+n)\,a_n = -\sum_{k=0}^{n-1}\big[(k+s)\,p_{n-k} + q_{n-k}\big]a_k \]</div>
+    <p>가 된다. \(n = 0\)이면 오른쪽이 비어 있고 \(a_0 \ne 0\)이므로 \(s\)는 다음을 만족해야 한다.</p>
+    <div class="formula" id="eq-indicial">\[ I(s) = s(s - 1) + p_0\,s + q_0 = 0 \]</div>
+    <p>이것을 <span class="term">결정 방정식</span> <span class="en">(indicial equation)</span>이라 하고, 두 근 \(s_1, s_2\)를 그 점의 지수라 한다. 근을 하나 고르면 \(n \ge 1\)에서 식 <a class="ref" href="#eq-frobenius-recursion"></a>가 \(a_n\)을 차례로 정한다. 단, \(I(s+n) = 0\)이 되는 \(n\)이 있으면 그 단계에서 막힌다. 이것이 두 근의 차가 정수일 때 생기는 문제다.</p>
+    <div class="box thm" id="thm-frobenius"><div class="box-h">푹스 정리 (프로베니우스 급수의 존재)</div>
+      <p>\(x = 0\)이 \(y'' + p(x)y' + q(x)y = 0\)의 정칙 특이점이고, \(xp(x)\)와 \(x^2q(x)\)의 멱급수가 모두 \(\lvert x\rvert &lt; R\)에서 수렴한다고 하자. 결정 방정식 <a class="ref" href="#eq-indicial"></a>의 두 근을 \(s_1, s_2\)라 하고, 실수부가 큰 쪽을 \(s_1\)으로 한다(\(\operatorname{Re}s_1 \ge \operatorname{Re}s_2\)). 그러면 \(0 &lt; x &lt; R\)에서 선형 독립인 두 해가 다음 꼴로 있고, 나타나는 멱급수는 모두 \(\lvert x\rvert &lt; R\)에서 수렴한다.</p>
+      <ol>
+        <li>언제나: \(y_1 = x^{s_1}\sum_{n\ge0}a_nx^n\), \(a_0 = 1\).</li>
+        <li>\(s_1 - s_2\)가 정수가 아니면: \(y_2 = x^{s_2}\sum_{n\ge0}b_nx^n\), \(b_0 = 1\).</li>
+        <li>\(s_1 = s_2\)이면: \(y_2 = y_1\ln x + x^{s_1}\sum_{n\ge1}b_nx^n\).</li>
+        <li>\(s_1 - s_2 = N\)이 양의 정수이면: \(y_2 = C\,y_1\ln x + x^{s_2}\sum_{n\ge0}b_nx^n\), \(b_0 = 1\). 상수 \(C\)는 0일 수도 있다.</li>
+      </ol>
+      <p>\(-R &lt; x &lt; 0\)에서는 \(x^s\)와 \(\ln x\)를 \(\lvert x\rvert^s\)와 \(\ln\lvert x\rvert\)로 바꾼다.</p>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>\(s = s_1\)이면 \(n \ge 1\)에서 \(I(s_1 + n) \ne 0\)이다. \(I(s_1 + n) = 0\)이면 \(s_1 + n\)이 다른 근 \(s_2\)여야 하는데, 그러면 \(\operatorname{Re}s_2 > \operatorname{Re}s_1\)이 되어 근의 순서와 어긋나기 때문이다. 그래서 식 <a class="ref" href="#eq-frobenius-recursion"></a>가 모든 \(a_n\)을 정하고 1이 나온다. \(s_2\)에서도 \(s_1 - s_2\)가 정수가 아니면 \(I(s_2 + n) \ne 0\)이라 2가 나온다. \(s_1 - s_2 = N\)이면 \(n = N\)에서 \(I(s_2 + N) = 0\)이 되어 식 <a class="ref" href="#eq-frobenius-recursion"></a>의 오른쪽이 0이 아닌 한 \(b_N\)을 정할 수 없다. 이때는 10장의 차수 낮추기(<a href="ch10.html#eq-reduction-of-order">식 (10.13)</a>)로 두 번째 해를 만들면 \(W/y_1^2\)에 \(x^{-1}\) 항이 생기고, 그 적분이 \(\ln x\)를 낳는다. 오른쪽이 우연히 0이면 \(b_N\)이 임의가 되어 \(C = 0\)이다. 중근(3)에서는 \(x^{-1}\) 항이 반드시 생긴다. 급수의 수렴은 정상점의 경우처럼 우급수로 보인다. 엄밀한 증명은 코딩턴(앞의 책) 4장에 있다.</p>
+      </details>
+    </div>
+    <p>정리의 조건이 정확히 무엇인지 짚어 두자. 정칙 특이점이라는 조건이 없으면 프로베니우스 급수가 없을 수 있다. 예를 들어 \(x^2y'' + (1 + 2x)y' = 0\)은 \(xp = (1 + 2x)/x\)가 발산하는 비정칙 특이점을 \(x = 0\)에 갖고, \(y = e^{1/x}\)을 해로 갖는다(\(y' = -y/x^2\), \(y'' = (1 + 2x)y/x^4\)). 그런데 이 함수는 \(x \to 0^+\)에서 어떤 \(x^s\)보다 빨리 커지므로 \(x^s\) 곱하기 멱급수로 쓸 수 없다. 또 수렴 반경 \(R\)은 \(xp\)와 \(x^2q\)의 다음 특이점까지의 거리로, 르장드르 방정식의 \(x = 1\) 둘레라면 다른 특이점 \(x = -1\)까지의 거리 2다.</p>
+
+    <div class="box ex" id="ex-euler-radial"><div class="box-h">라플라스 방정식의 지름 부분</div>
+      <p>구면 좌표 라플라스 방정식의 지름 부분 \(r^2R'' + 2rR' - l(l+1)R = 0\)을 \(r = 0\) 둘레의 프로베니우스 방법으로 풀어라. 일반 경계값 문제는 17장에서 한다. 여기서는 한 항짜리 경계값으로 두 지수의 역할만 본다. 반지름 \(a = 5.0\ \text{cm}\)인 구면의 퍼텐셜이 \(V(a, \theta) = V_0\cos\theta\) (\(V_0 = 100\ \text{V}\))로 주어지고 안팎에 전하가 없을 때 구 안의 전기장과 구 밖의 쌍극자 모멘트를 구하라.</p>
+      <p><b>풀이.</b> 표준형에서 \(rp = 2\), \(r^2q = -l(l+1)\)이므로 \(p_0 = 2\), \(q_0 = -l(l+1)\)이고 \(n \ge 1\)인 \(p_n, q_n\)은 모두 0이다. 결정 방정식은</p>
+      <div class="formula" id="eq-euler-indicial">\[ \begin{aligned} &s(s-1) + 2s - l(l+1) \\ &\quad = (s - l)(s + l + 1) = 0 \end{aligned} \]</div>
+      <p>이고 지수는 \(s_1 = l\), \(s_2 = -(l+1)\)이다. 식 <a class="ref" href="#eq-frobenius-recursion"></a>의 오른쪽이 모두 0이므로 \(I(s+n)a_n = 0\), 곧 \(n \ge 1\)에서 \(a_n = 0\)이고 \(y_1 = r^l\)이다. \(s_1 - s_2 = 2l + 1\)은 양의 정수라 <a class="ref" href="#thm-frobenius"></a>의 경우 4다. \(n = 2l+1\)에서 \(I(s_2 + n) = 0\)이지만 오른쪽도 0이므로 \(b_{2l+1}\)은 임의이고(그 부분은 \(y_1\)을 더하는 것일 뿐이다) 로그가 필요 없다. 따라서 \(C = 0\)이고 \(y_2 = r^{-l-1}\)이다.</p>
+      <div class="formula" id="eq-radial-laplace-solutions">\[ R(r) = A\,r^l + \frac{B}{r^{l+1}} \]</div>
+      <p>각 부분 \(P_l(\cos\theta)\)와 곱한 \(r^lP_l\)과 \(r^{-l-1}P_l\)이 12.3절에서 쓴 라플라스 방정식의 해다. 축대칭 일반해 \(\sum_l(A_lr^l + B_lr^{-l-1})P_l(\cos\theta)\)로 경계값 문제를 푸는 일은 17장에서 한다(<a href="ch17.html#eq-laplace-spherical-general">17장의 일반해</a>).</p>
+      <p>구 문제에서 경계의 값은 \(V_0P_1(\cos\theta)\) 한 항뿐이므로 \(l = 1\)만 필요하다. 구 안에서는 \(r = 0\)에서 유한해야 하므로 \(B = 0\)이고 \(V = V_0(r/a)\cos\theta = V_0z/a\)이다. 구 밖에서는 무한히 먼 곳에서 0이어야 하므로 \(A = 0\)이고 \(V = V_0(a/r)^2\cos\theta\)이다. 두 해는 \(r = a\)에서 경계값과 맞고, 해의 유일성(17장의 <a href="ch17.html#thm-uniqueness-laplace">유일성 정리</a>)에 따라 이것이 답이다.</p>
+      <p><b>숫자로 보기.</b> 구 안의 전기장은 \(\mathbf E = -\nabla(V_0z/a) = -(V_0/a)\hat{\mathbf z}\)로 균일하고 크기는 \(100\ \text{V}/0.050\ \text{m} = 2.0 \times 10^3\ \text{V/m}\)이다. 구 밖의 퍼텐셜을 1장의 쌍극자 퍼텐셜 \(p\cos\theta/(4\pi\varepsilon_0r^2)\)(<a href="ch01.html#eq-dipole-potential">식 (1.31)</a>)과 비교하면</p>
+      <div class="formula">\[ \begin{aligned} p &= 4\pi\varepsilon_0a^2V_0 \\ &= 4\pi(8.854 \times 10^{-12})(0.050)^2(100)\ \text{C}\cdot\text{m} \\ &= 2.8 \times 10^{-11}\ \text{C}\cdot\text{m} \end{aligned} \]</div>
+      <p>이다. 단위 확인: \(\varepsilon_0a^2V_0\)은 \((\text{C/(V}\cdot\text{m}))\cdot\text{m}^2\cdot\text{V} = \text{C}\cdot\text{m}\)이다. 지수 \(l\)과 \(-(l+1)\)이 퍼텐셜이 원점과 무한대에서 어떻게 행동하는지를 정하고, 그 행동이 어느 해를 버릴지 정한 것이다.</p>
+    </div>
+
+    <div class="box ex" id="ex-legendre-at-one"><div class="box-h">\(x = 1\)에서 본 르장드르 방정식</div>
+      <p>르장드르 방정식의 \(x = 1\)에서의 지수를 구하고, \(Q_l\)이 왜 로그로 발산하는지 <a class="ref" href="#thm-frobenius"></a>로 설명하라.</p>
+      <p><b>풀이.</b> \(u = x - 1\)로 두면 \((1 - x^2) = -u(2 + u)\)이므로 표준형의 계수는 \(p = 2(1 + u)/\big(u(2 + u)\big)\), \(q = -\lambda/\big(u(2 + u)\big)\)이다. 따라서 \(up = 2(1 + u)/(2 + u) \to 1\), \(u^2q = -\lambda u/(2 + u) \to 0\)이고 \(p_0 = 1\), \(q_0 = 0\)이다. 결정 방정식은</p>
+      <div class="formula">\[ s(s - 1) + s = s^2 = 0 \]</div>
+      <p>으로 중근 \(s_1 = s_2 = 0\)이다. 정리의 경우 3에 따라 한 해는 \(x = 1\)에서 해석적이고(\(P_l\)), 다른 해는 반드시 \(y_1\ln\lvert x - 1\rvert\) 항을 갖는다. 그래서 \(\lambda = l(l+1)\)이든 아니든, \(x = 1\)에서 해석적인 해를 뺀 나머지 해는 \(\ln\lvert 1 - x\rvert\)로 발산한다. 12.2절의 <a class="ref" href="#thm-legendre-termination"></a>에서 급수의 계수로 찾은 로그 발산과 10장의 \(Q_1\)에 붙은 \(\ln(1 - x)\)가 모두 이 중근에서 온다. 수렴 반경은 다음 특이점 \(x = -1\)까지의 거리 2이므로, \(x = 1\) 둘레의 이 급수는 \(-1 &lt; x \le 1\)에서 쓸 수 있다.</p>
+    </div>
+    <p>같은 계산을 13장의 베셀 방정식 \(x^2y'' + xy' + (x^2 - \nu^2)y = 0\)에 하면 \(p_0 = 1\), \(q_0 = -\nu^2\)이고 결정 방정식 \(s^2 - \nu^2 = 0\)에서 지수 \(\pm\nu\)가 나온다. 두 지수의 차 \(2\nu\)가 정수이면 두 번째 해에 로그가 붙을 수 있는데, 실제로 \(\nu\)가 정수이면 붙고(제2종 베셀 함수의 로그 항) \(\nu\)가 반정수이면 \(C = 0\)이라 붙지 않는다(<a href="ch13.html#def-bessel-equation">13장의 베셀 방정식</a>).</p>
+
+    <div class="callout warn"><strong>결정 방정식은 표준형의 계수로 세운다</strong><p>\(p_0\)과 \(q_0\)은 \(y''\)의 계수를 1로 만든 뒤의 \(xp\)와 \(x^2q\)에서 읽는다. 예를 들어 \(4xy'' + 2y' - y = 0\)은 \(4x\)로 나누어 \(p = 1/(2x)\), \(q = -1/(4x)\)이므로 \(p_0 = \tfrac12\), \(q_0 = 0\)이다(\(x^2q = -x/4\)는 0에서 0이다). \(y''\)의 계수를 그대로 둔 채 \(y'\)의 계수 2를 \(p_0\)으로 읽으면 지수가 틀린다. 또 \(s\)가 정수가 아니면 \(x &lt; 0\)에서 \(x^s\)가 실수가 아니므로 \(\lvert x\rvert^s\)로 쓴다.</p></div>
+
+    <div class="callout deep" data-later="qm-grad"><strong>초기하 함수</strong><p>정칙 특이점이 \(x = 0, 1, \infty\) 세 곳뿐인 2계 방정식은 모두 가우스의 <span class="term">초기하 방정식</span> <span class="en">(hypergeometric equation)</span> \(x(1 - x)y'' + [c - (a + b + 1)x]y' - ab\,y = 0\)으로 바꿀 수 있다. \(x = 0\)의 지수는 \(0\)과 \(1 - c\)이고, 지수 0인 프로베니우스 해가 초기하 함수 \({}_2F_1(a, b; c; x) = \sum_n\frac{(a)_n(b)_n}{(c)_n\,n!}x^n\)이다(\((a)_n = a(a+1)\cdots(a+n-1)\)). 르장드르 방정식은 \(x \to (1 - x)/2\)로 특이점 \(\pm1\)을 \(0, 1\)로 옮기면 이 꼴이 되어 \(P_l(x) = {}_2F_1\big(-l, l+1; 1; \tfrac{1 - x}{2}\big)\)이다. \(a = -l\)이 음의 정수라 급수가 끊긴다. 두 특이점이 합쳐져 \(x = \infty\)가 비정칙 특이점이 된 것이 합류 초기하 방정식이고, 그 해가 13장의 에르미트·라게르 다항식과 수소 원자의 파동함수를 모두 포함한다. 이 함수들의 일반론과 산란 문제에의 응용은 대학원 양자역학 책에서 다룬다.</p></div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>표준형 \(y'' + py' + qy = 0\)에서 \(p, q\)가 해석적인 점이 정상점이다. 정상점 둘레의 멱급수 해는 \(a_0, a_1\)을 정하면 점화식으로 모든 계수가 정해지고, 적어도 가장 가까운 특이점까지 수렴한다.</li>
+      <li>르장드르 방정식 \((1 - x^2)y'' - 2xy' + \lambda y = 0\)의 급수 해는 \(a_{n+2} = \frac{n(n+1) - \lambda}{(n+2)(n+1)}a_n\)을 따르고, 끊기지 않으면 \(x = \pm1\)에서 로그로 발산한다. 두 극에서 유한한 해가 있을 조건은 \(\lambda = l(l+1)\)이고, 그 해가 \(P_l(1) = 1\)인 르장드르 다항식이다. 다른 해 \(Q_l\)은 \(x = \pm1\)에서 발산한다.</li>
+      <li>로드리게스 공식 \(P_l = \frac{1}{2^ll!}\frac{d^l}{dx^l}(x^2 - 1)^l\), 생성 함수 \((1 - 2xt + t^2)^{-1/2} = \sum P_l(x)t^l\), 보네 점화식 \((l+1)P_{l+1} = (2l+1)xP_l - lP_{l-1}\)과 \(P'_{l+1} - P'_{l-1} = (2l+1)P_l\). \(P_l(-x) = (-1)^lP_l(x)\).</li>
+      <li>다중극 전개 \(\dfrac{1}{\lvert\mathbf r - \mathbf r'\rvert} = \sum_l\dfrac{r_&lt;^l}{r_>^{l+1}}P_l(\cos\gamma)\). 축대칭 분포의 먼 퍼텐셜은 \(\frac{1}{4\pi\varepsilon_0}\sum_lQ_lP_l(\cos\theta)/r^{l+1}\), \(Q_l = \int\rho\,r^lP_l(\cos\theta)\,d^3r\)이다.</li>
+      <li>직교성과 규격화 \(\int_{-1}^1P_lP_m\,dx = \frac{2}{2l+1}\delta_{lm}\). 경계 항은 계수 \(1 - x^2\)이 끝에서 0이라 사라진다. \(P_l\)은 낮은 차수의 모든 다항식과 직교하고 \((-1, 1)\)에 영점이 정확히 \(l\)개다. 르장드르 급수의 계수는 \(c_l = \frac{2l+1}{2}\int fP_l\,dx\)이다.</li>
+      <li>연관 르장드르 함수 \(P_l^m = (-1)^m(1 - x^2)^{m/2}P_l^{(m)}\) (콘던-쇼틀리 위상 포함), \(P_l^{-m} = (-1)^m\frac{(l-m)!}{(l+m)!}P_l^m\), \(\int P_l^mP_{l'}^m\,dx = \frac{2}{2l+1}\frac{(l+m)!}{(l-m)!}\delta_{ll'}\).</li>
+      <li>구면 조화 함수 \(Y_l^m = \sqrt{\frac{2l+1}{4\pi}\frac{(l-m)!}{(l+m)!}}P_l^m(\cos\theta)e^{im\phi}\), \(Y_l^{-m} = (-1)^m(Y_l^m)^*\)는 구면 위의 정규직교 기저이고 \(\Lambda Y_l^m = -l(l+1)Y_l^m\)이다. 덧셈 정리 \(P_l(\cos\gamma) = \frac{4\pi}{2l+1}\sum_mY_l^{m*}(\hat{\mathbf r}')Y_l^m(\hat{\mathbf r})\).</li>
+      <li>정칙 특이점에서는 \(y = x^s\sum a_nx^n\)으로 두고 결정 방정식 \(s(s-1) + p_0s + q_0 = 0\)에서 지수를 얻는다. 두 지수의 차가 정수가 아니면 두 프로베니우스 해가, 같으면 반드시 로그 항이, 양의 정수이면 로그 항이 있을 수도 있는 해가 나온다(푹스 정리).</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. \(\lambda\)가 아무 실수일 때, 르장드르 방정식의 \(x = 0\) 둘레 멱급수 해가 수렴한다고 <a class="ref" href="#thm-series-ordinary-point"></a>이 보장하는 범위는?</p><div class="opts">
+        <button class="opt">\(\lvert x\rvert &lt; \tfrac12\)</button>
+        <button class="opt" data-correct>\(\lvert x\rvert &lt; 1\)</button>
+        <button class="opt">\(\lvert x\rvert &lt; 2\)</button>
+        <button class="opt">모든 \(x\)</button>
+      </div><div class="quiz-exp">표준형의 \(p = -2x/(1 - x^2)\), \(q = \lambda/(1 - x^2)\)은 \(x = \pm1\)에서 해석적이지 않다. 원점에서 가장 가까운 특이점까지의 거리가 1이다. \(\lambda = l(l+1)\)이면 한 급수는 끊겨 모든 \(x\)에서 쓸 수 있지만, 그것은 정리가 보장하는 하한보다 나은 경우다.</div></div>
+      <div class="quiz-q"><p>2. 구 위의 축대칭 문제에서 각 부분이 북극과 남극 모두에서 유한하려면 분리 상수 \(\lambda\)는?</p><div class="opts">
+        <button class="opt">양수이기만 하면 된다.</button>
+        <button class="opt">\(\lambda = l^2\) (\(l\)은 정수)</button>
+        <button class="opt" data-correct>\(\lambda = l(l+1)\) (\(l = 0, 1, 2, \ldots\))</button>
+        <button class="opt">\(\lambda\)는 짝수여야 한다.</button>
+      </div><div class="quiz-exp">끊기지 않는 급수는 \(c_n = na_n\)이 0이 아닌 값으로 수렴해 \(\ln(1 \mp x)\)처럼 발산한다. 짝 급수와 홀 급수를 섞어도 두 끝을 동시에 살릴 수 없다. 한 급수가 끊기려면 \(n(n+1) - \lambda = 0\)인 \(n\)이 있어야 한다.</div></div>
+      <div class="quiz-q"><p>3. 생성 함수에 \(x = 0\)을 넣은 \((1 + t^2)^{-1/2} = \sum_lP_l(0)t^l\)에서 \(P_4(0)\)은?</p><div class="opts">
+        <button class="opt">\(-\tfrac12\)</button>
+        <button class="opt" data-correct>\(\tfrac38\)</button>
+        <button class="opt">\(-\tfrac{5}{16}\)</button>
+        <button class="opt">\(0\)</button>
+      </div><div class="quiz-exp">\((1 + u)^{-1/2} = 1 - \tfrac12u + \tfrac38u^2 - \cdots\)에 \(u = t^2\)을 넣으면 \(t^4\)의 계수가 \(\tfrac38\)이다. \(-\tfrac12\)은 \(P_2(0)\), \(-\tfrac5{16}\)은 \(P_6(0)\)이다. 식 <a class="ref" href="#eq-legendre-table"></a>의 \(P_4\)에 \(x = 0\)을 넣어도 \(3/8\)이다.</div></div>
+      <div class="quiz-q"><p>4. \(f(x) = x^2\)의 르장드르 급수에서 \(P_2\)의 계수 \(c_2\)는?</p><div class="opts">
+        <button class="opt">\(\tfrac13\)</button>
+        <button class="opt">\(\tfrac12\)</button>
+        <button class="opt" data-correct>\(\tfrac23\)</button>
+        <button class="opt">\(1\)</button>
+      </div><div class="quiz-exp">\(P_2 = \tfrac12(3x^2 - 1)\)이므로 \(x^2 = \tfrac23P_2 + \tfrac13P_0\)이다. 식 <a class="ref" href="#eq-legendre-series"></a>로 계산하면 \(c_2 = \tfrac52\int x^2\tfrac{3x^2 - 1}{2}dx = \tfrac54\big(\tfrac65 - \tfrac23\big) = \tfrac23\)이다.</div></div>
+      <div class="quiz-q"><p>5. \(l = 3\), \(m = 1\)인 실수형 구면 조화 함수(\(\propto P_3^1(\cos\theta)\cos\phi\))의 마디선은?</p><div class="opts">
+        <button class="opt">위도선 3개</button>
+        <button class="opt">위도선 1개, 극을 지나는 대원 2개</button>
+        <button class="opt" data-correct>위도선 2개, 극을 지나는 대원 1개</button>
+        <button class="opt">극을 지나는 대원 3개</button>
+      </div><div class="quiz-exp">\(\cos\phi = 0\)인 \(\phi = \pm90°\)가 극을 지나는 대원 하나를 이룬다(\(\lvert m\rvert = 1\)개). \(P_3^1 \propto \sin\theta\,(5\cos^2\theta - 1)\)은 \((-1, 1)\) 안에서 \(\cos\theta = \pm1/\sqrt5\)일 때 0이므로 위도선이 \(l - \lvert m\rvert = 2\)개다. 극의 \(\sin\theta = 0\)은 선이 아니라 점이다.</div></div>
+      <div class="quiz-q"><p>6. 지름 방정식 \(r^2R'' + 2rR' - l(l+1)R = 0\)의 \(r = 0\)에서의 지수는 \(l\)과 \(-(l+1)\)로, 차가 정수 \(2l+1\)이다. 두 번째 해에 대해 옳은 것은?</p><div class="opts">
+        <button class="opt">반드시 \(r^l\ln r\) 항이 붙는다.</button>
+        <button class="opt" data-correct>로그 항이 없고 \(r^{-l-1}\) 자체가 해다.</button>
+        <button class="opt">두 번째 해는 존재하지 않는다.</button>
+        <button class="opt">지수의 차가 정수이므로 첫 번째 해도 프로베니우스 급수가 아니다.</button>
+      </div><div class="quiz-exp">차가 양의 정수이면 로그 항이 "있을 수도" 있다. 이 방정식은 \(p_n, q_n\) (\(n \ge 1\))이 모두 0이라 막히는 단계에서 점화식의 오른쪽도 0이 되므로 \(C = 0\)이다. 로그가 반드시 붙는 것은 두 지수가 같을 때다.</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-series-gaussian" data-level="1"><p>\(y'' + xy' + y = 0\)을 \(x = 0\) 둘레의 멱급수로 풀어라. (가) 계수의 점화식을 구하라. (나) \(a_0 = 1\), \(a_1 = 0\)인 해가 \(e^{-x^2/2}\)임을 보여라. (다) 급수의 수렴 반경은 얼마인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(y = \sum a_nx^n\)을 넣으면 \(xy' = \sum na_nx^n\)이므로 \(x^n\)의 계수는 \((n+2)(n+1)a_{n+2} + na_n + a_n = 0\)이다. 곧 \(a_{n+2} = -a_n/(n+2)\)이다. 식 <a class="ref" href="#eq-series-recursion"></a>에서 \(p_1 = 1\), \(q_0 = 1\)로 두어도 같다.</p>
+        <p>(나) 짝수 계수는 \(a_2 = -\tfrac12\), \(a_4 = \tfrac{1}{2\cdot4} = \tfrac18\), 일반적으로 \(a_{2k} = (-1)^k/(2\cdot4\cdots2k) = (-1)^k/(2^kk!)\)이다. 따라서 \(y = \sum_k(-x^2/2)^k/k! = e^{-x^2/2}\)이다. 직접 확인: \(y' = -xy\), \(y'' = -y + x^2y\)이므로 \(y'' + xy' + y = -y + x^2y - x^2y + y = 0\)이다.</p>
+        <p>(다) 계수가 다항식이라 특이점이 없으므로 <a class="ref" href="#thm-series-ordinary-point"></a>에 따라 모든 \(x\)에서 수렴한다(\(R = \infty\)). 홀수 해 \(a_{2k+1} = (-1)^k/(3\cdot5\cdots(2k+1))\)도 \(\lvert a_{n+2}/a_n\rvert \to 0\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-legendre-p5" data-level="1"><p>보네 점화식 <a class="ref" href="#eq-legendre-recurrence"></a>와 식 <a class="ref" href="#eq-legendre-table"></a>의 \(P_3, P_4\)로 \(P_5\)를 구하라. \(P_5(1) = 1\), \(P_5'(1) = l(l+1)/2\), 홀함수라는 것을 확인하고, \((-1, 1)\) 안의 영점을 모두 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(l = 4\)로 두면 \(5P_5 = 9xP_4 - 4P_3\)이다.</p>
+        <div class="formula">\[ \begin{aligned} 5P_5 &= \tfrac98(35x^5 - 30x^3 + 3x) \\ &\quad - 2(5x^3 - 3x) \\ &= \tfrac{315}{8}x^5 - \tfrac{350}{8}x^3 + \tfrac{75}{8}x \end{aligned} \]</div>
+        <p>이므로 \(P_5 = \tfrac18(63x^5 - 70x^3 + 15x)\)이다. \(P_5(1) = (63 - 70 + 15)/8 = 1\)이고, \(P_5' = \tfrac18(315x^4 - 210x^2 + 15)\)에서 \(P_5'(1) = 120/8 = 15 = 5\cdot6/2\)이다. 홀수 거듭제곱만 있으므로 홀함수다. 영점은 \(x = 0\)과 \(63x^4 - 70x^2 + 15 = 0\)의 근 \(x^2 = (35 \pm 2\sqrt{70})/63\), 곧 \(x = \pm0.5385\), \(\pm0.9062\)로 모두 5개이다(<a class="ref" href="#thm-legendre-zeros"></a>).</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-legendre-expand-powers" data-level="2"><p>\(x^3\)과 \(x^4\)을 르장드르 다항식으로 전개하라. 이 결과로 구의 표면 온도가 \(T_0\cos^3\theta\)일 때 각 \(P_l(\cos\theta)\) 성분의 계수를 말하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(x^3\)은 홀함수이고 3차이므로 \(P_1\)과 \(P_3\)만 들어간다. 최고차항을 맞추면 \(x^3 = \tfrac25P_3 + (\ldots)\)이고, \(x^3 - \tfrac25\cdot\tfrac12(5x^3 - 3x) = \tfrac35x\)이므로</p>
+        <div class="formula">\[ x^3 = \tfrac35P_1 + \tfrac25P_3 \]</div>
+        <p>이다. 같은 방법으로 \(x^4 = \tfrac{8}{35}P_4 + (\ldots)\)이고, 나머지 \(x^4 - \tfrac{1}{35}(35x^4 - 30x^2 + 3) = \tfrac67x^2 - \tfrac{3}{35}\)에 \(x^2 = \tfrac23P_2 + \tfrac13P_0\)을 넣으면</p>
+        <div class="formula">\[ x^4 = \tfrac15P_0 + \tfrac47P_2 + \tfrac{8}{35}P_4 \]</div>
+        <p>이다. 확인: \(x = 1\)이면 \(\tfrac15 + \tfrac47 + \tfrac8{35} = \tfrac{7 + 20 + 8}{35} = 1\)이다. 표면 온도 \(T_0\cos^3\theta\)는 \(\tfrac35T_0\)의 \(P_1\) 성분과 \(\tfrac25T_0\)의 \(P_3\) 성분으로 이루어진다. 식 <a class="ref" href="#eq-legendre-series"></a>의 적분으로 계산해도 같은 값이 나온다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-legendre-norm-rodrigues" data-level="3"><p>로드리게스 공식으로 \(\int_{-1}^1P_l^2\,dx = 2/(2l+1)\)을 증명하라. (힌트: 한쪽 \(P_l\)에 대해 \(l\)번 부분 적분하고, 남는 \(\int_{-1}^1(1 - x^2)^l\,dx\)를 \(x^2 = t\)로 바꿔 11장의 베타 함수로 계산한다.)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(u = (x^2 - 1)^l\)이면 \(\int P_l^2dx = (2^ll!)^{-2}\int u^{(l)}u^{(l)}dx\)이다. <a class="ref" href="#thm-legendre-orthogonality"></a>의 증명 2처럼 경계 항이 사라지므로 \(l\)번 부분 적분하면 \((-1)^l\int u\,u^{(2l)}dx\)이고, \(u^{(2l)} = (2l)!\)이다. \((-1)^lu = (1 - x^2)^l\)이므로</p>
+        <div class="formula">\[ \int_{-1}^1P_l^2\,dx = \frac{(2l)!}{4^l(l!)^2}\int_{-1}^1(1 - x^2)^l\,dx \]</div>
+        <p>이다. 적분은 짝함수이므로 \(2\int_0^1\)이고, \(x = \sqrt t\), \(dx = dt/(2\sqrt t)\)로 바꾸면 앞의 2와 \(dx\)의 \(\tfrac12\)이 지워져 \(\int_{-1}^1(1 - x^2)^ldx = \int_0^1t^{-1/2}(1 - t)^l\,dt = B(\tfrac12, l+1)\)이다(<a href="ch11.html#eq-beta-def">식 (11.18)</a>). <a href="ch11.html#eq-beta-gamma">식 (11.21)</a>과 \(\Gamma(\tfrac12) = \sqrt\pi\), \(\Gamma(l + \tfrac32) = \frac{(2l+1)!}{2\cdot4^l\,l!}\sqrt\pi\)(<a href="ch11.html#eq-gamma-half-integer">식 (11.11)</a>에서 \((2l+1)!! = (2l+1)!/(2^ll!)\))를 쓰면</p>
+        <div class="formula">\[ B\big(\tfrac12, l+1\big) = \frac{\sqrt\pi\;l!}{\Gamma(l + \tfrac32)} = \frac{2\cdot4^l(l!)^2}{(2l+1)!} \]</div>
+        <p>이다. 따라서 \(\int P_l^2dx = \frac{(2l)!}{4^l(l!)^2}\cdot\frac{2\cdot4^l(l!)^2}{(2l+1)!} = \frac{2}{2l+1}\)이다. \(l = 1\)이면 \(\int x^2dx = \tfrac23\)과 맞다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-legendre-moments" data-level="2"><p>(가) 식 <a class="ref" href="#eq-legendre-at-one"></a>로 \(P_l''(1)\)을 구하고, \(l = 2, 3\)에서 확인하라. (나) 보네 점화식으로 \(\int_{-1}^1x\,P_l\,P_{l'}\,dx\)는 \(l' = l \pm 1\)일 때만 0이 아님을 보이고, \(\int_{-1}^1x\,P_lP_{l+1}\,dx\)를 구하라. 이 결과는 원자가 빛을 흡수하거나 낼 때 \(l\)이 1만 바뀌는 선택 규칙의 각 부분이다.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(k = 1\)이면 \(4P_l''(1) = [l(l+1) - 2]P_l'(1) = (l - 1)(l + 2)\cdot\tfrac{l(l+1)}{2}\)이므로 \(P_l''(1) = \frac{(l-1)l(l+1)(l+2)}{8}\)이다. \(l = 2\): \(P_2'' = 3\)이고 식은 \(1\cdot2\cdot3\cdot4/8 = 3\)이다. \(l = 3\): \(P_3'' = 15x\)에서 15이고 식은 \(2\cdot3\cdot4\cdot5/8 = 15\)이다.</p>
+        <p>(나) 식 <a class="ref" href="#eq-legendre-recurrence"></a>에서 \(xP_l = \frac{(l+1)P_{l+1} + lP_{l-1}}{2l+1}\)이다. \(P_{l'}\)을 곱해 적분하면 직교성 때문에 \(l' = l + 1\)이나 \(l - 1\)일 때만 0이 아니다. \(l' = l + 1\)이면 규격화 식 <a class="ref" href="#eq-legendre-norm"></a>으로</p>
+        <div class="formula">\[ \begin{aligned} &\int_{-1}^1x\,P_lP_{l+1}\,dx \\ &\quad = \frac{l+1}{2l+1}\cdot\frac{2}{2l+3} = \frac{2(l+1)}{(2l+1)(2l+3)} \end{aligned} \]</div>
+        <p>이다. \(l = 0\)이면 \(\int x^2dx = \tfrac23\)과 맞다. 빛과 원자의 상호작용은 전기 쌍극자 \(z = r\cos\theta\)의 행렬 원소에 비례하므로, \(m = 0\)인 상태 사이에서는 각 적분이 바로 이것이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-ring-addition" data-level="2"><p><a class="ref" href="#ex-ring-potential"></a>의 고리 퍼텐셜을 축의 값을 거치지 않고 구하라. 다중극 전개 <a class="ref" href="#eq-multipole-expansion"></a>를 고리 위에서 평균할 때 덧셈 정리 <a class="ref" href="#eq-addition-theorem"></a>으로 \(\frac{1}{2\pi}\int_0^{2\pi}P_l(\cos\gamma)\,d\phi' = P_l(\cos\theta)\,P_l(0)\)임을 보이고, 식 <a class="ref" href="#eq-ring-potential"></a>을 얻어라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>고리의 점은 \(\theta' = \pi/2\), \(r' = a\)이고 전하가 \(\phi'\)에 고르게 퍼져 있으므로 \(V = \frac{Q}{4\pi\varepsilon_0}\sum_l\frac{r_&lt;^l}{r_>^{l+1}}\big\langle P_l(\cos\gamma)\big\rangle_{\phi'}\)이다. 덧셈 정리에서 \(Y_l^{m*}(\pi/2, \phi') \propto e^{-im\phi'}\)이므로 \(\phi'\)로 평균하면 \(m = 0\) 항만 남는다.</p>
+        <div class="formula">\[ \begin{aligned} \big\langle P_l(\cos\gamma)\big\rangle &= \frac{4\pi}{2l+1}Y_l^0(\theta)\,Y_l^0(\tfrac\pi2) \\ &= P_l(\cos\theta)\,P_l(0) \end{aligned} \]</div>
+        <p>\(Y_l^0 = \sqrt{(2l+1)/4\pi}\,P_l(\cos\theta)\)를 썼다. 홀수 \(l\)에서는 \(P_l(0) = 0\)이므로 짝수 \(l = 2k\)만 남고, \(r_&lt;, r_>\)를 \(r\)과 \(a\)로 쓰면 식 <a class="ref" href="#eq-ring-potential"></a>이다. 이 유도에는 축대칭 해의 유일성이 필요 없다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-disk-potential" data-level="2"><p>반지름 \(a\)인 얇은 원판에 전하 \(Q\)가 고르게 퍼져 있다(면전하 밀도 \(\sigma = Q/\pi a^2\)). 축 위 퍼텐셜은 \(V(z) = \frac{\sigma}{2\varepsilon_0}\big(\sqrt{z^2 + a^2} - \lvert z\rvert\big)\)이다. (가) \(r > a\)에서의 퍼텐셜을 르장드르 급수로 \(l = 4\)까지 구하라. (나) 원판의 사중극 모멘트 \(Q_2\)를 같은 반지름의 고리와 비교하라. (다) \(Q = 1.0\ \text{nC}\), \(a = 10\ \text{cm}\)일 때 원판 면 위(\(\theta = 90°\)), \(r = 20\ \text{cm}\)인 점의 퍼텐셜을 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(z > a\)이면 이항급수로 \(\sqrt{z^2 + a^2} - z = z\big[(1 + a^2/z^2)^{1/2} - 1\big] = \frac{a^2}{2z} - \frac{a^4}{8z^3} + \frac{a^6}{16z^5} - \cdots\)이다. \(\sigma/2\varepsilon_0 = Q/(2\pi\varepsilon_0a^2)\)을 곱하면 \(V(z) = \frac{Q}{4\pi\varepsilon_0}\big[\frac1z - \frac{a^2}{4z^3} + \frac{a^4}{8z^5} - \cdots\big]\)이다. <a class="ref" href="#ex-ring-potential"></a>에서처럼 \(z^{-l-1}\)을 \(r^{-l-1}P_l(\cos\theta)\)로 바꾸면</p>
+        <div class="formula">\[ \begin{aligned} V &= \frac{Q}{4\pi\varepsilon_0}\Big[\frac1r - \frac{a^2}{4r^3}P_2(\cos\theta) \\ &\qquad + \frac{a^4}{8r^5}P_4(\cos\theta) - \cdots\Big] \end{aligned} \]</div>
+        <p>이다. 다음 항은 \(-\tfrac{5}{64}a^6P_6/r^7\)이다.</p>
+        <p>(나) 식 <a class="ref" href="#eq-axial-multipole"></a>의 꼴과 계수를 비교하면 \(Q_2 = -Qa^2/4\)이다. 고리는 \(-Qa^2/2\)였다. 원판의 전하는 평균적으로 중심에 더 가까우므로(\(\langle s^2\rangle = a^2/2\)) 사중극 모멘트의 크기가 고리의 절반이다. 둘 다 납작한 분포라 음수다.</p>
+        <p>(다) \(\theta = 90°\)에서 \(P_2(0) = -\tfrac12\), \(P_4(0) = \tfrac38\), \(P_6(0) = -\tfrac5{16}\)이고 \(a/r = \tfrac12\), \(Q/(4\pi\varepsilon_0r) = 44.94\ \text{V}\)이므로</p>
+        <div class="formula">\[ \begin{aligned} V &= 44.94\ \text{V}\Big[1 + \tfrac18\cdot\tfrac14 + \tfrac{3}{64}\cdot\tfrac1{16} \\ &\qquad + \tfrac{25}{1024}\cdot\tfrac1{64}\Big] \\ &= (44.94 + 1.40 + 0.13 + 0.02)\ \text{V} \\ &= 46.49\ \text{V} \end{aligned} \]</div>
+        <p>이다. 원판을 잘게 나누어 수치로 더한 값도 \(46.49\ \text{V}\)이다. 점전하 근사 \(44.94\ \text{V}\)보다 3.5% 크다. 면 위의 점은 전하에 축 위의 같은 거리의 점보다 평균적으로 가깝기 때문이다(축 위 \(z = 20\ \text{cm}\)에서는 \(42.43\ \text{V}\)로 작다).</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-associated-legendre-check" data-level="1"><p>정의 <a class="ref" href="#eq-associated-legendre"></a>으로 \(P_1^1\), \(P_2^1\), \(P_2^2\)를 계산해 식 <a class="ref" href="#eq-associated-table"></a>과 비교하라. \(\int_{-1}^1P_1^1P_2^1\,dx = 0\)과 \(\int_{-1}^1(P_2^1)^2dx\)가 식 <a class="ref" href="#eq-associated-legendre-norm"></a>와 맞는지 확인하고, 식 <a class="ref" href="#eq-associated-negative-m"></a>로 \(P_2^{-1}\)을 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(P_1' = 1\)이므로 \(P_1^1 = -\sqrt{1 - x^2}\). \(P_2' = 3x\), \(P_2'' = 3\)이므로 \(P_2^1 = -3x\sqrt{1 - x^2}\), \(P_2^2 = 3(1 - x^2)\)이다. \(x = \cos\theta\)로 쓰면 표와 같다.</p>
+        <p>\(P_1^1P_2^1 = 3x(1 - x^2)\)은 홀함수이므로 적분이 0이다. \(\int(P_2^1)^2dx = 9\int_{-1}^1x^2(1 - x^2)\,dx = 9\big(\tfrac23 - \tfrac25\big) = \tfrac{12}{5}\)이고, 식 <a class="ref" href="#eq-associated-legendre-norm"></a>는 \(\tfrac25\cdot\tfrac{3!}{1!} = \tfrac{12}{5}\)이다.</p>
+        <p>\(P_2^{-1} = (-1)^1\frac{1!}{3!}P_2^1 = \tfrac12x\sqrt{1 - x^2}\)이다. 식 <a class="ref" href="#eq-associated-rodrigues"></a>에 \(m = -1\)을 넣어도 \(-\tfrac18(1 - x^2)^{-1/2}\frac{d}{dx}(x^2 - 1)^2 = -\tfrac18(1 - x^2)^{-1/2}\cdot4x(x^2 - 1) = \tfrac12x\sqrt{1 - x^2}\)으로 같다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-p-orbital-cone" data-level="2"><p>(가) 수소 원자의 지름 방정식(6장의 <a href="ch06.html#eq-radial-schrodinger">식 (6.37)</a>)을 \(u = rR\)에 대해 쓰면 \(r = 0\)이 정칙 특이점이다. 지수를 구하고, 물리적으로 허용되는 해가 \(R \propto r^l\)로 시작함을 보여라. (나) \(2p\) 오비탈(\(l = 1\), \(m = 0\))의 전자를 \(z\)축에서 \(30°\) 이내(위아래 두 원뿔)에서 찾을 확률을 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 표준형 \(u'' + \big[-\frac{l(l+1)}{r^2} + \frac{2m_e}{\hbar^2}\big(E + \frac{e^2}{4\pi\varepsilon_0r}\big)\big]u = 0\)에서 \(p = 0\)이고 \(r^2q = -l(l+1) + (\text{상수})\,r + (\text{상수})\,r^2\)이다. 쿨롱 항은 \(r^2q\)에서 \(r\)의 1차라 \(q_0\)에 들어가지 않으므로 \(p_0 = 0\), \(q_0 = -l(l+1)\)이다. 결정 방정식 \(s(s - 1) - l(l+1) = 0\)에서 \(s = l + 1\)이나 \(s = -l\)이다. \(s = -l\)이면 \(l \ge 1\)일 때 \(\int\lvert u\rvert^2dr\)이 \(r = 0\)에서 발산해 규격화할 수 없고, \(l = 0\)일 때는 \(u(0) \ne 0\), 곧 \(R \sim 1/r\)인데 \(\nabla^2(1/r) = -4\pi\delta^3(\mathbf r)\)(<a href="ch06.html#eq-laplacian-inverse-r">식 (6.54)</a>)라 원점에 없는 델타 퍼텐셜이 필요해지므로 버린다. 남는 해는 \(u \propto r^{l+1}\), 곧 \(R \propto r^l\)이다.</p>
+        <p>(나) 각 분포는 \(\lvert Y_1^0\rvert^2 = \frac{3}{4\pi}\cos^2\theta\)이다. 북쪽 원뿔의 확률은 \(\int_0^{2\pi}\!\int_0^{30°}\frac{3}{4\pi}\cos^2\theta\sin\theta\,d\theta\,d\phi = \frac32\int_{\cos30°}^1x^2dx = \frac12\big(1 - \cos^330°\big)\)이고, 남쪽도 같다. 합은 \(1 - (\sqrt3/2)^3 = 1 - 0.650 = 0.350\)이다. 두 원뿔이 차지하는 입체각은 구 전체의 \(1 - \cos30° = 13.4\%\)뿐인데 확률은 35%다. \(p_z\) 오비탈이 \(z\)축 방향으로 몰려 있다는 것을 숫자로 본 것이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-rotor-populations" data-level="2"><p><a class="ref" href="#ex-rigid-rotor-levels"></a>의 CO 분자(\(B/k_B = 2.77\ \text{K}\))가 온도 \(T = 10\ \text{K}\)의 분자 구름에서 열평형에 있다. 준위 \(l\)에는 \(2l+1\)개의 상태(\(m = -l, \ldots, l\))가 있으므로 점유 비율은 \(N_l \propto (2l+1)e^{-l(l+1)B/k_BT}\)이다. \(l = 0, 1, 2, 3\)의 점유 비율을 구하고, 가장 많이 점유된 준위를 말하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(B/k_BT = 0.277\)이다. 상대 가중치는 \(l = 0\): 1, \(l = 1\): \(3e^{-0.554} = 1.724\), \(l = 2\): \(5e^{-1.662} = 0.949\), \(l = 3\): \(7e^{-3.324} = 0.252\), \(l = 4\): \(9e^{-5.54} = 0.035\), \(l = 5\): 0.0027이고 합은 3.96이다. 비율은 \(l = 0, 1, 2, 3\)에 대해 25%, 43.5%, 24%, 6.4%이고, \(l = 1\)이 가장 많다. 가중치를 연속 변수 \(l\)의 함수로 보고 미분하면 최댓값은 \(l \approx \sqrt{k_BT/2B} - \tfrac12 = 0.84\) 근처로, 가장 가까운 정수 1과 맞다. 축퇴도 \(2l+1\)이 없다면 \(l = 0\)이 언제나 가장 많을 것이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-frobenius-hyperbolic" data-level="2"><p>\(4xy'' + 2y' - y = 0\)을 프로베니우스 방법으로 풀어라. (가) \(x = 0\)이 정칙 특이점임을 확인하고 지수를 구하라. (나) 두 해를 닫힌 꼴로 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 표준형은 \(y'' + \frac{1}{2x}y' - \frac{1}{4x}y = 0\)이므로 \(xp = \tfrac12\), \(x^2q = -x/4\)로 둘 다 해석적이다. \(p_0 = \tfrac12\), \(q_0 = 0\), \(q_1 = -\tfrac14\)이고 결정 방정식은 \(s(s - 1) + \tfrac12s = s(s - \tfrac12) = 0\), 지수는 \(0\)과 \(\tfrac12\)이다. 차가 정수가 아니므로 <a class="ref" href="#thm-frobenius"></a>의 경우 2이다.</p>
+        <p>(나) 식 <a class="ref" href="#eq-frobenius-recursion"></a>는 \(I(s+n)a_n = \tfrac14a_{n-1}\), 곧 \(a_n = \frac{a_{n-1}}{(2s + 2n)(2s + 2n - 1)}\)이다. \(s = 0\)이면 \(a_n = a_{n-1}/((2n)(2n-1))\)이라 \(a_n = 1/(2n)!\)이고, \(y_1 = \sum x^n/(2n)! = \cosh\sqrt x\)이다. \(s = \tfrac12\)이면 \(a_n = a_{n-1}/((2n+1)(2n))\)이라 \(a_n = 1/(2n+1)!\)이고, \(y_2 = x^{1/2}\sum x^n/(2n+1)! = \sinh\sqrt x\)이다. 확인: \(y = \cosh\sqrt x\)이면 \(2y' = \sinh\sqrt x/\sqrt x\), \(4xy'' = \cosh\sqrt x - \sinh\sqrt x/\sqrt x\)이므로 \(4xy'' + 2y' - y = 0\)이다. \(x &lt; 0\)에서는 \(\cos\sqrt{\lvert x\rvert}\)와 \(\sin\sqrt{\lvert x\rvert}\)가 해다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+</body>
+</html>
