@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>22 텐서 · 수리물리학</title>
+<meta name="description" content="회전 아래의 변환 법칙으로 카르테시안 텐서를 정의하고, 응력·전도도·유사 텐서를 거쳐 계량 텐서, 크리스토펠 기호, 민코프스키 공간의 4-벡터까지 넓힌다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys" data-field="phys" data-chapter="ch22">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">22</span></div>
+    <h1 data-fill="chapter-title">텐서</h1>
+    <p class="lead">결정에 전기장을 걸면 전류가 전기장과 다른 쪽으로 흐를 수 있고, 물속의 작은 면이 받는 힘은 면이 놓인 방향에 따라 정해진다. 이런 관계를 적는 성분은 좌표축을 돌리면 바뀌지만, 물리 법칙은 바뀌지 않아야 한다. 이 장은 "축을 바꿀 때 성분이 어떻게 바뀌는가"라는 한 가지 질문으로 텐서를 정의하고, 그 변환 법칙을 회전에서 비직교 좌표, 곡선 좌표, 민코프스키 시공간까지 넓힌다. 4장의 지수 표기, 6장의 척도 인자, 7장의 회전과 로런츠 행렬, 8장의 관성 텐서가 여기서 한 언어로 모이고, 상대성이론 책이 바로 이 언어에서 시작한다.</p>
+    <ul class="objectives">
+      <li>축을 돌리는 관점의 변환 법칙 \(T'_{ij} = R_{ik}R_{jl}T_{kl}\)로 카르테시안 텐서를 정의하고, 관성·응력·전도도 텐서의 성분을 새 축으로 옮길 수 있다.</li>
+      <li>축약, 텐서곱, 대칭 분해, 몫 정리로 새 텐서를 만들거나 어떤 양이 텐서인지 판정하고, 거울 반사에서 참텐서와 유사 텐서를 구별할 수 있다.</li>
+      <li>비직교 기저에서 쌍대 기저와 계량 텐서를 구하고, 반변 성분과 공변 성분을 지수 내리기·올리기로 오갈 수 있다.</li>
+      <li>계량 텐서에서 크리스토펠 기호를 유도하고, 곡선 좌표의 가속도와 발산 \(\frac{1}{\sqrt g}\partial_i(\sqrt g A^i)\)를 계산할 수 있다.</li>
+      <li>민코프스키 계량 \(\eta_{\mu\nu} = \operatorname{diag}(-1, 1, 1, 1)\)으로 4-벡터의 불변량을 계산하고, 입자 반응의 문턱 에너지와 불변 질량을 구할 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b>4장(지수 표기와 <a href="ch04.html#def-summation-convention">합 규약</a>, \(\delta_{ij}\)와 \(\varepsilon_{ijk}\), <a href="ch04.html#eq-epsilon-delta">식 (4.15)</a>), 6장(<a href="ch06.html#def-scale-factors">척도 인자</a>와 곡선 좌표의 발산), 7장(직교 행렬, 기저 바꾸기, 로런츠 행렬), 8장(<a href="ch08.html#def-inertia-tensor">관성 텐서</a>와 주축). 2장의 빠르기와 21장의 측지선은 링크로만 쓴다.</p>
+  </header>
+
+  <!-- ============================================================ 22.1 -->
+  <section id="s1">
+    <h2>회전 아래의 변환과 카르테시안 텐서</h2>
+    <p>결정의 옴 법칙은 \(\mathbf J = \sigma\mathbf E\)이고, 결정이 등방이 아니면 \(\sigma\)는 수 하나가 아니라 \(3\times3\) 배열이다. 합 규약(4장 <a href="ch04.html#def-summation-convention">정의 4.3</a>)을 쓰면 \(J_i = \sigma_{ij}E_j\)이다. 그런데 아홉 개의 수 \(\sigma_{ij}\)는 결정에 대해 좌표축을 어떻게 잡느냐에 따라 달라진다. 축을 결정의 대칭축에 맞추면 대각 성분만 남고, 비스듬히 잡으면 모든 성분이 0이 아닐 수 있다. 같은 결정을 기술하는 서로 다른 배열들은 어떤 규칙으로 이어지는가? 이 규칙이 텐서의 정의다. 이 절과 다음 세 절에서는 정규직교 축만 쓰고, 합 규약은 4장처럼 아래 첨자끼리 적용한다.</p>
+
+    <h3 id="s1-passive">축을 돌리는 관점</h3>
+    <p>정규직교 기저 \(\hat{\mathbf e}_i\)를 다른 정규직교 기저 \(\hat{\mathbf e}'_i\)로 바꾸자. 벡터 \(\mathbf A\) 자체는 그대로이고, 성분만 바뀐다. \(\mathbf A = A_j\hat{\mathbf e}_j = A'_i\hat{\mathbf e}'_i\)의 양변에 \(\hat{\mathbf e}'_i\)를 내적하면 \(A'_i = (\hat{\mathbf e}'_i\cdot\hat{\mathbf e}_j)A_j\)이다. 그래서</p>
+    <div class="formula" id="eq-rotation-cosines">\[ R_{ij} = \hat{\mathbf e}'_i\cdot\hat{\mathbf e}_j \]<div class="where">새 축 \(i\)와 옛 축 \(j\) 사이 각의 코사인. \(R\)의 \(i\)번째 행은 새 축 \(\hat{\mathbf e}'_i\)를 옛 기저로 적은 성분이다.</div></div>
+    <p>로 두면 벡터의 성분은</p>
+    <div class="formula" id="eq-vector-transformation">\[ A'_i = R_{ij}A_j \]</div>
+    <p>로 바뀐다. 이것이 <span class="term">벡터의 변환 법칙</span> <span class="en">(transformation law)</span>이다. \(\hat{\mathbf e}'_i = R_{ik}\hat{\mathbf e}_k\)이므로 \(\delta_{ij} = \hat{\mathbf e}'_i\cdot\hat{\mathbf e}'_j = R_{ik}R_{jk}\), 곧 \(RR^{\mathsf T} = I\)이다. \(R\)은 7장 <a href="ch07.html#def-orthogonal-matrix">정의 7.7</a>의 직교 행렬이고, 거꾸로 가는 변환은 \(A_j = R_{ij}A'_i\)이다. 위치 벡터도 같은 법칙을 따른다: \(x'_i = R_{ij}x_j\), \(x_j = R_{ij}x'_i\).</p>
+    <div class="callout warn"><strong>이 장의 \(R\)은 7장의 \(R\)을 전치한 것이다</strong><p>7장은 벡터를 돌리는 <b>능동적</b> 관점을 썼다. 평면에서 벡터를 \(\theta\)만큼 돌리는 행렬이 7장 식 <a href="ch07.html#eq-rotation-2d">(7.34)</a>의 \(R(\theta)\)이다. 이 장의 식 <a class="ref" href="#eq-vector-transformation"></a>는 벡터를 그대로 두고 <b>축</b>을 돌리는 <b>수동적</b> 관점이다. 축을 \(\theta\)만큼 시계 반대 방향으로 돌리면 \(\hat{\mathbf e}'_1 = (\cos\theta, \sin\theta)\), \(\hat{\mathbf e}'_2 = (-\sin\theta, \cos\theta)\)이므로 식 <a class="ref" href="#eq-rotation-cosines"></a>에서</p>
+      <div class="formula">\[ R = \begin{pmatrix} \cos\theta & \sin\theta \\ -\sin\theta & \cos\theta \end{pmatrix} = R_{\text{7장}}(\theta)^{\mathsf T} \]</div>
+      <p>이다. 7장 식 <a href="ch07.html#eq-new-basis">(7.26)</a>의 기저 바꾸기 행렬로 말하면 \(S = R^{\mathsf T}\)이고, 식 <a href="ch07.html#eq-change-of-basis">(7.27)</a>의 \(\mathbf v' = S^{-1}\mathbf v\)가 바로 \(\mathbf A' = R\mathbf A\)이다. 8장이 관성 텐서를 옮길 때 쓴 \(I' = R^{\mathsf T}IR\)의 \(R\)도 새 축을 <b>열</b>로 세운 행렬이라 이 장의 \(R^{\mathsf T}\)이다. 7장의 로런츠 행렬 \(\Lambda(\beta)\)(식 <a href="ch07.html#eq-lorentz-matrix">(7.30)</a>)는 처음부터 관측자를 바꾸는 수동 변환이었고, 22.7절도 그것을 그대로 쓴다.</p></div>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 300" role="img" aria-label="같은 벡터 A를 원래 축과 30도 돌린 축에서 본 성분"><defs><marker id="f2201-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker><marker id="f2201-arra" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs><line x1="93.5" y1="250" x2="396" y2="250" class="s-line" marker-end="url(#f2201-arr)"/><line x1="110" y1="266.5" x2="110" y2="24.5" class="s-line" marker-end="url(#f2201-arr)"/><text x="393.2" y="270.9" class="t-math" style="font-size:16px" text-anchor="middle"><tspan font-style="italic">x</tspan><tspan dy="4" font-size="12">1</tspan></text><text x="93.5" y="32.8" class="t-math" style="font-size:16px" text-anchor="end"><tspan font-style="italic">x</tspan><tspan dy="4" font-size="12">2</tspan></text><line x1="110" y1="250" x2="329.1" y2="123.5" class="s-acc" style="stroke-width:2" marker-end="url(#f2201-arra)"/><text x="333.1" y="117.5" class="t-math acc" style="font-size:16px" text-anchor="start"><tspan font-style="italic">x</tspan><tspan dy="4" font-size="12">1</tspan><tspan dy="-4">′</tspan></text><line x1="110" y1="250" x2="2.8" y2="64.2" class="s-acc" style="stroke-width:2" marker-end="url(#f2201-arra)"/><text x="14" y="58" class="t-math acc" style="font-size:16px" text-anchor="start"><tspan font-style="italic">x</tspan><tspan dy="4" font-size="12">2</tspan><tspan dy="-4">′</tspan></text><line x1="220" y1="112.5" x2="220" y2="250" class="s-faint" stroke-dasharray="4 4"/><line x1="220" y1="112.5" x2="110" y2="112.5" class="s-faint" stroke-dasharray="4 4"/><line x1="220" y1="112.5" x2="252" y2="168" class="s-acc" style="stroke-width:1.2" stroke-dasharray="4 4"/><line x1="220" y1="112.5" x2="78" y2="194.5" class="s-acc" style="stroke-width:1.2" stroke-dasharray="4 4"/><line x1="110" y1="250" x2="220" y2="112.5" class="s-line" style="stroke-width:3" marker-end="url(#f2201-arr)"/><text x="228" y="108.5" class="t-math" style="font-size:17px" text-anchor="start"><tspan font-weight="bold">A</tspan></text><text x="220" y="272" class="t-math dim" style="font-size:14px" text-anchor="middle">2</text><text x="96.2" y="118" class="t-math dim" style="font-size:14px" text-anchor="end">2.5</text><circle cx="252" cy="168" r="3.5" class="f-acc"/><text x="260" y="184" class="t-math acc" style="font-size:14px" text-anchor="start">2.98</text><circle cx="78" cy="194.5" r="3.5" class="f-acc"/><text x="70" y="198.5" class="t-math acc" style="font-size:14px" text-anchor="end">1.17</text><path d="M170.5,250 L170.4,247.4 L170.3,244.7 L170,242.1 L169.6,239.5 L169.1,236.9 L168.4,234.3 L167.7,231.8 L166.9,229.3 L165.9,226.8 L164.8,224.4 L163.7,222.1 L162.4,219.8" class="s-line"/><text x="181.7" y="237.4" class="t-math" style="font-size:15px" text-anchor="start"><tspan font-style="italic">θ</tspan></text></svg></div>
+      <figcaption><b>그림 22-1.</b> 같은 벡터 \(\mathbf A\)를 두 축에서 본 성분. 원래 축(\(x_1\), \(x_2\))에서는 \(\mathbf A = (2, 2.5)\)이고, \(\theta = 30^\circ\) 돌린 축(\(x'_1\), \(x'_2\))에서는 식 <a class="ref" href="#eq-vector-transformation"></a>에 따라 \(A'_1 = 2\cos30^\circ + 2.5\sin30^\circ = 2.98\), \(A'_2 = -2\sin30^\circ + 2.5\cos30^\circ = 1.17\)이다. 점선은 각 축에 내린 수선이다. 길이의 제곱은 두 축에서 모두 \(10.25\)이다.</figcaption>
+    </figure>
+    <p>기울기도 벡터처럼 바뀌는지 확인하자. \(x_j = R_{ij}x'_i\)이므로 \(\partial x_j/\partial x'_i = R_{ij}\)이고, 연쇄 법칙으로</p>
+    <div class="formula" id="eq-gradient-transformation">\[ \frac{\partial\phi}{\partial x'_i} = \frac{\partial x_j}{\partial x'_i}\frac{\partial\phi}{\partial x_j} = R_{ij}\frac{\partial\phi}{\partial x_j} \]</div>
+    <p>이다. 기울기는 식 <a class="ref" href="#eq-vector-transformation"></a>를 따른다. 이 계산에서 \(\partial x_j/\partial x'_i\)와 \(\partial x'_i/\partial x_j\)가 둘 다 \(R_{ij}\)인 것은 \(R^{-1} = R^{\mathsf T}\)이기 때문이다. 비직교 좌표에서는 두 미분이 달라지고, 그 차이가 22.5절의 반변·공변 성분이다.</p>
+
+    <h3 id="s1-definition">텐서의 정의</h3>
+    <p>두 벡터의 성분을 곱한 아홉 개의 수 \(T_{ij} = A_iB_j\)는 새 축에서 \(A'_iB'_j = R_{ik}A_kR_{jl}B_l\), 곧 \(T'_{ij} = R_{ik}R_{jl}T_{kl}\)로 바뀐다. 첨자마다 \(R\)이 하나씩 붙는다. 이 규칙을 정의로 삼는다.</p>
+    <div class="box def" id="def-cartesian-tensor"><div class="box-h">카르테시안 텐서</div>
+      <p>정규직교 좌표계마다 \(3^n\)개의 수 \(T_{i_1i_2\cdots i_n}\)이 주어지고, 두 좌표계가 직교 행렬 \(R\)(식 <a class="ref" href="#eq-rotation-cosines"></a>)로 이어질 때 언제나</p>
+      <div class="formula" id="eq-tensor-transformation">\[ T'_{i_1\cdots i_n} = R_{i_1j_1}\cdots R_{i_nj_n}\,T_{j_1\cdots j_n} \]</div>
+      <p>이면, 이 수들을 <span class="term">\(n\)차 카르테시안 텐서</span> <span class="en">(Cartesian tensor of rank \(n\))</span>의 성분이라 한다. 0차 텐서는 스칼라(\(\phi' = \phi\)), 1차 텐서는 벡터다. 2차 텐서를 행렬로 쓰면 \(T' = RTR^{\mathsf T}\)이다.</p>
+    </div>
+    <p>"카르테시안"은 정규직교 축 사이의 변환만 허용한다는 뜻이다. 일반 좌표 변환으로 넓힌 정의는 22.5절에 있다. 여기서 \(R\)은 회전(\(\det R = 1\))과 반사가 섞인 변환(\(\det R = -1\))을 모두 포함한다. 반사에서 다르게 행동하는 양은 22.4절에서 따로 다룬다.</p>
+    <p>세 수를 늘어놓았다고 모두 벡터가 되지는 않는다. \((x^2, y^2, z^2)\)을 보자. \(z\)축 둘레로 축을 \(90^\circ\) 돌리면 \(x' = y\), \(y' = -x\)이므로 새 좌표계에서 계산한 배열은 \((y^2, x^2, z^2)\)이다. 그러나 식 <a class="ref" href="#eq-vector-transformation"></a>가 요구하는 것은 \(R\)을 곱한 \((y^2, -x^2, z^2)\)이다. 둘째 성분의 부호가 다르므로 이 배열은 벡터가 아니다. 반대로 크로네커 델타는 모든 좌표계에서 같은 값을 갖는 2차 텐서다. \(R_{ik}R_{jl}\delta_{kl} = R_{ik}R_{jk} = \delta_{ij}\)이기 때문이다. 이렇게 어느 축에서나 성분이 같은 텐서를 <span class="term">등방 텐서</span> <span class="en">(isotropic tensor)</span>라 한다.</p>
+    <p>2차 텐서의 변환 \(T' = RTR^{\mathsf T} = RTR^{-1}\)은 7장의 닮음 변환이다. 그래서 7장 식 <a href="ch07.html#eq-similarity-invariants">(7.29)</a>에 따라 대각합 \(T_{ii}\)와 행렬식은 축과 상관없는 스칼라이고, 대칭 텐서의 고유값도 그렇다. 다음 예제에서 이 사실로 계산을 검산한다.</p>
+
+    <div class="box ex" id="ex-inertia-transform"><div class="box-h">관성 텐서를 돌린 축으로 옮기기</div>
+      <p>8장 <a href="ch08.html#ex-cube-inertia">예제 8.11</a>은 한 변 \(a\), 질량 \(M\)인 고른 정육면체의 꼭짓점에 대한 관성 텐서가, 모서리를 축으로 잡으면 모든 성분이 1인 행렬 \(J\)로 \(I = Ma^2\big(\tfrac{11}{12}\,I_3 - \tfrac14 J\big)\)임을 구했다(8장 식 <a href="ch08.html#eq-cube-corner-inertia">(8.44)</a>, \(I_3\)은 단위 행렬). (가) 관성 텐서의 정의(8장 식 <a href="ch08.html#eq-inertia-tensor">(8.40)</a>)가 식 <a class="ref" href="#eq-tensor-transformation"></a>를 만족함을 보여라. (나) 축을 \(z\)축 둘레로 \(45^\circ\) 돌린 좌표계의 성분을 구하라. (다) 이어서 새 \(x'_2\)축 둘레로 다시 돌려 관성곱을 모두 없애고, 8장의 주축·주 관성 모멘트와 비교하라. (라) 한 변 10.0 cm인 알루미늄 정육면체(밀도 \(2.70\ \text{g/cm}^3\), \(M = 2.70\ \text{kg}\), \(Ma^2 = 0.0270\ \text{kg}\cdot\text{m}^2\))의 값을 적어라.</p>
+      <p><b>풀이.</b> (가) 질점 하나에 대해 \(r^2\)은 스칼라이고 \(x'_i = R_{ik}x_k\)이므로</p>
+      <div class="formula">\[ \begin{aligned} I'_{ij} &= \textstyle\sum_a m_a\big(r_a^2\delta_{ij} - x'_{a,i}x'_{a,j}\big) \\ &= \textstyle\sum_a m_a\big(r_a^2R_{ik}R_{jl}\delta_{kl} - R_{ik}x_{a,k}R_{jl}x_{a,l}\big) \\ &= R_{ik}R_{jl}I_{kl} \end{aligned} \]</div>
+      <p>이다. 둘째 줄에서 등방 텐서 \(\delta_{ij} = R_{ik}R_{jl}\delta_{kl}\)을 썼다.</p>
+      <p>(나) \(\mathbf u = (1, 1, 1)\)로 두면 \(J = \mathbf u\mathbf u^{\mathsf T}\)이므로 \(RJR^{\mathsf T} = (R\mathbf u)(R\mathbf u)^{\mathsf T}\)이다. 새 축은 \(\hat{\mathbf e}'_1 = (1, 1, 0)/\sqrt2\), \(\hat{\mathbf e}'_2 = (-1, 1, 0)/\sqrt2\), \(\hat{\mathbf e}'_3 = \hat{\mathbf z}\)이고, 이것이 \(R\)의 행이다. \(R\mathbf u = (\sqrt2, 0, 1)\)이므로</p>
+      <div class="formula" id="eq-cube-inertia-45">\[ I' = Ma^2\begin{pmatrix} \tfrac{5}{12} & 0 & -\tfrac{\sqrt2}{4} \\ 0 & \tfrac{11}{12} & 0 \\ -\tfrac{\sqrt2}{4} & 0 & \tfrac23 \end{pmatrix} \]</div>
+      <p>이다. \(x'_2\)축은 대각선 \((1, 1, 1)\)에 수직이므로 이미 주축이고, 관성곱 \(I'_{12}\), \(I'_{23}\)이 사라졌다. 대각합은 \(\tfrac{5}{12} + \tfrac{11}{12} + \tfrac{8}{12} = 2\)로, 원래의 \(3 \times \tfrac23 = 2\)와 같다.</p>
+      <p>(다) 남은 관성곱 \(I'_{13}\)은 \(x'_1x'_3\) 평면 안의 회전으로 없앤다. 그 평면에서 축을 \(\alpha\)만큼 돌리는 행렬은 \(\begin{pmatrix} c & s \\ -s & c \end{pmatrix}\)(\(c = \cos\alpha\), \(s = \sin\alpha\))이고, 식 <a class="ref" href="#eq-tensor-transformation"></a>를 쓰면</p>
+      <div class="formula">\[ I''_{13} = cs\,(I'_{33} - I'_{11}) + (c^2 - s^2)\,I'_{13} \]</div>
+      <p>이다. 이것이 0이 되려면 \(\tan2\alpha = 2I'_{13}/(I'_{11} - I'_{33}) = 2\sqrt2\)이고, \(\tan\alpha = 1/\sqrt2\), \(\alpha = 35.26^\circ\)이다. 그러면 \(\hat{\mathbf e}''_1 = c\,\hat{\mathbf e}'_1 + s\,\hat{\mathbf z} = (1, 1, 1)/\sqrt3\)으로 정육면체의 대각선이다. 이 축에서 \(R''\mathbf u = (\sqrt3, 0, 0)\)이므로</p>
+      <div class="formula">\[ \begin{aligned} I'' &= Ma^2\operatorname{diag}\Big(\frac{11}{12} - \frac34,\ \frac{11}{12},\ \frac{11}{12}\Big) \\ &= Ma^2\operatorname{diag}\Big(\frac16,\ \frac{11}{12},\ \frac{11}{12}\Big) \end{aligned} \]</div>
+      <p>이다. 8장에서 고유값 문제로 얻은 주축(대각선과 그에 수직인 평면)과 주 관성 모멘트가 그대로 나왔다. 8장은 고유벡터를 찾았고 여기서는 축을 두 번 돌렸지만, 같은 일이다. 고유벡터를 행으로 세운 행렬이 곧 주축으로 가는 \(R\)이다.</p>
+      <p><b>숫자로 보기.</b> (라) 식 <a class="ref" href="#eq-cube-inertia-45"></a>의 성분은 \(I'_{11} = 1.125\times10^{-2}\), \(I'_{22} = 2.475\times10^{-2}\), \(I'_{33} = 1.800\times10^{-2}\), \(I'_{13} = -9.55\times10^{-3}\)(모두 \(\text{kg}\cdot\text{m}^2\))이다. 주 관성 모멘트는 \(4.50\times10^{-3}\)과 \(2.475\times10^{-2}\ \text{kg}\cdot\text{m}^2\)(두 번)로 8장과 같다. 세 좌표계의 대각합은 모두 \(2Ma^2 = 0.0540\ \text{kg}\cdot\text{m}^2\)이다. 단위는 질량 × 길이²로 모든 성분이 같다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 22.2 -->
+  <section id="s2">
+    <h2>텐서 대수: 축약, 곱, 대칭성, 몫 정리</h2>
+    <p>텐서를 정의만으로 다루면 성분을 하나하나 변환해 보아야 한다. 실제로는 이미 아는 텐서에서 새 텐서를 만드는 몇 가지 연산과, 어떤 양이 텐서인지 판정하는 정리 하나면 대부분의 일이 끝난다. 같은 차수의 텐서를 더하거나 상수배한 것이 텐서라는 것은 식 <a class="ref" href="#eq-tensor-transformation"></a>가 선형이라 당연하다. 나머지는 곱, 축약, 대칭 분해, 몫 정리다.</p>
+
+    <h3 id="s2-product">곱과 축약</h3>
+    <div class="box def" id="def-tensor-product"><div class="box-h">텐서곱</div>
+      <p>\(m\)차 텐서 \(S\)와 \(n\)차 텐서 \(T\)의 성분을 곱한</p>
+      <div class="formula">\[ (S\otimes T)_{i_1\cdots i_m j_1\cdots j_n} = S_{i_1\cdots i_m}\,T_{j_1\cdots j_n} \]</div>
+      <p>을 \(S\)와 \(T\)의 <span class="term">텐서곱</span> <span class="en">(tensor product, outer product)</span>이라 한다. \(m + n\)차 텐서다. 두 벡터의 텐서곱 \(A_iB_j\)를 <span class="term">다이애드</span> <span class="en">(dyad)</span>라 한다.</p>
+    </div>
+    <p>텐서곱이 텐서라는 것은 \(S\)의 첨자에 붙는 \(R\)들과 \(T\)의 첨자에 붙는 \(R\)들을 그대로 모으면 된다. 차수를 낮추는 연산은 첨자 두 개를 같게 놓고 더하는 것이다.</p>
+    <div class="box def" id="def-tensor-contraction"><div class="box-h">축약</div>
+      <p>\(n\)차 텐서(\(n \ge 2\))의 첨자 두 개를 같은 문자로 놓고 합한 것, 예를 들어 \(T_{iik}\)(첫째와 둘째 첨자)를 <span class="term">축약</span> <span class="en">(contraction)</span>이라 한다. 결과는 \(n - 2\)차 텐서다.</p>
+    </div>
+    <p>3차 텐서로 증명하자. \(T'_{iik} = R_{ia}R_{ib}R_{kc}T_{abc}\)이고, \(R\)이 직교 행렬이라 \(R_{ia}R_{ib} = \delta_{ab}\)이므로</p>
+    <div class="formula" id="eq-contraction-proof">\[ T'_{iik} = \delta_{ab}R_{kc}T_{abc} = R_{kc}T_{aac} \]</div>
+    <p>이다. 남은 첨자 \(k\)에만 \(R\)이 붙으므로 \(T_{aac}\)는 벡터다. 축약할 첨자에 붙은 두 \(R\)이 서로 지워지는 것이 핵심이다. 2차 텐서의 축약은 대각합 \(T_{ii}\)(스칼라)이다. 곱과 축약을 이어 하면 익숙한 연산이 모두 나온다. 다이애드 \(A_iB_j\)를 축약하면 내적 \(A_iB_i\)이고, \(T_{ij}\)와 \(A_k\)의 곱 \(T_{ij}A_k\)에서 \(j = k\)로 축약하면 벡터 \(T_{ij}A_j\)이다. 텐서 방정식은 이렇게 축약으로 첨자를 맞춘 등식이고, 양변의 남은 첨자가 같으면 한 좌표계에서 성립하는 식은 모든 좌표계에서 성립한다.</p>
+
+    <h3 id="s2-symmetry">대칭 텐서와 반대칭 텐서</h3>
+    <div class="box def" id="def-symmetric-tensor"><div class="box-h">대칭 텐서와 반대칭 텐서</div>
+      <p>2차 텐서가 모든 \(i, j\)에 대해 \(S_{ij} = S_{ji}\)이면 <span class="term">대칭 텐서</span> <span class="en">(symmetric tensor)</span>, \(A_{ij} = -A_{ji}\)이면 <span class="term">반대칭 텐서</span> <span class="en">(antisymmetric tensor)</span>라 한다. 차수가 높은 텐서는 지정한 두 첨자에 대해 같은 말을 쓴다.</p>
+    </div>
+    <p>대칭성은 좌표계를 바꿔도 유지된다. \(S'_{ji} = R_{jk}R_{il}S_{kl} = R_{il}R_{jk}S_{lk} = S'_{ij}\)이다(둘째 등호에서 더하는 문자 \(k, l\)의 이름을 바꾸고 \(S_{kl} = S_{lk}\)를 썼다). 그래서 대칭이라는 것은 성분의 우연이 아니라 텐서의 성질이다. 아무 2차 텐서는 세 조각으로 나뉜다.</p>
+    <div class="formula" id="eq-tensor-decomposition">\[ \begin{aligned} T_{ij} &= \tfrac13T_{kk}\,\delta_{ij} \\ &\quad + \Big[\tfrac12(T_{ij} + T_{ji}) - \tfrac13T_{kk}\,\delta_{ij}\Big] \\ &\quad + \tfrac12(T_{ij} - T_{ji}) \end{aligned} \]</div>
+    <p>첫째 조각은 등방 텐서의 스칼라배(독립 성분 1개), 둘째는 대각합이 0인 대칭 텐서(5개), 셋째는 반대칭 텐서(3개)로, \(1 + 5 + 3 = 9\)이다. 각 조각은 따로따로 텐서이므로 회전해도 서로 섞이지 않는다. 3차원의 반대칭 텐서는 독립 성분이 셋이라 벡터 하나와 짝을 이룬다. 4장의 <a href="ch04.html#eq-epsilon-contractions">식 (4.16)</a> \(\varepsilon_{kij}\varepsilon_{mij} = 2\delta_{km}\)을 쓰면</p>
+    <div class="formula" id="eq-antisymmetric-dual">\[ A_{ij} = \varepsilon_{ijk}\,a_k, \qquad a_k = \tfrac12\,\varepsilon_{kij}A_{ij} \]</div>
+    <p>이다. 예를 들어 \(A_{12} = a_3\), \(A_{23} = a_1\), \(A_{31} = a_2\)이다. 이 짝짓기에 \(\varepsilon_{ijk}\)가 들어가서, \(a_k\)는 거울 반사에서 보통 벡터와 다르게 행동한다(22.4절).</p>
+
+    <div class="box ex" id="ex-shear-flow"><div class="box-h">전단 흐름의 변형과 회전</div>
+      <p>두 평행판 사이의 유체가 \(\mathbf v = (\kappa y, 0, 0)\)으로 흐른다(전단율 \(\kappa\)). 속도 기울기 \(G_{ij} = \partial_jv_i\)를 대칭 조각과 반대칭 조각으로 나누고, 작은 유체 덩어리가 무엇을 하는지 읽어라. \(\kappa = 10\ \text{s}^{-1}\)이면 덩어리는 얼마나 빨리 돌고 늘어나는가?</p>
+      <p><b>풀이.</b> \(G_{ij}\)는 벡터 \(\partial_j\)와 벡터 \(v_i\)의 텐서곱이므로 2차 텐서다. 0이 아닌 성분은 \(G_{12} = \partial_yv_x = \kappa\)뿐이다. 대각합 \(G_{ii} = \nabla\cdot\mathbf v = 0\)이므로 첫째 조각은 없고(비압축 흐름),</p>
+      <div class="formula">\[ \begin{aligned} e_{ij} &= \tfrac12(G_{ij} + G_{ji}) = \frac\kappa2\begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix} \\ \Omega_{ij} &= \tfrac12(G_{ij} - G_{ji}) = \frac\kappa2\begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix} \end{aligned} \]</div>
+      <p>이다(\(xy\) 성분만 적었다). 점 \(\mathbf r_0\) 근처에서 \(v_i(\mathbf r_0 + \delta\mathbf r) \approx v_i(\mathbf r_0) + e_{ij}\delta x_j + \Omega_{ij}\delta x_j\)이다. 반대칭 조각을 4장 <a href="ch04.html#eq-epsilon-delta">식 (4.15)</a>로 정리하면 \(\varepsilon_{ijk}(\nabla\times\mathbf v)_k = \varepsilon_{ijk}\varepsilon_{klm}\partial_lv_m = \partial_iv_j - \partial_jv_i\)이므로</p>
+      <div class="formula" id="eq-vorticity-rotation">\[ \Omega_{ij}\,\delta x_j = \Big(\tfrac12(\nabla\times\mathbf v)\times\delta\mathbf r\Big)_i \]</div>
+      <p>이다. 반대칭 조각은 각속도 \(\tfrac12\nabla\times\mathbf v\)의 강체 회전이다. 4장 <a href="ch04.html#ex-rigid-rotation-curl">예제 4.6</a>에서 강체 회전의 회전이 \(2\boldsymbol\omega\)였던 것을 거꾸로 읽은 것이다. 여기서는 \(\nabla\times\mathbf v = (0, 0, -\kappa)\)이므로 덩어리는 \(\kappa/2\)의 각속도로 시계 방향으로 돈다. 대칭 조각 \(e_{ij}\)는 고유값 \(+\kappa/2\)(고유벡터 \((1, 1)/\sqrt2\))와 \(-\kappa/2\)(\((1, -1)/\sqrt2\))를 가지므로, 덩어리를 \(45^\circ\) 방향으로 늘이고 \(-45^\circ\) 방향으로 누른다. 직선으로 흐르는 전단 흐름은 "변형 + 회전"이다.</p>
+      <p><b>숫자로 보기.</b> \(\kappa = 10\ \text{s}^{-1}\)이면 각속도는 \(5\ \text{rad/s}\), \(45^\circ\) 방향의 늘어나는 비율은 \(5\ \text{s}^{-1}\)이다. 1 ms 동안 그 방향의 작은 선분은 \(0.5\%\) 늘어나고 덩어리는 \(0.29^\circ\) 돈다. 단위: \(e_{ij}\)와 \(\Omega_{ij}\)는 모두 속도/길이 \(=\text{s}^{-1}\)이다.</p>
+    </div>
+
+    <h3 id="s2-quotient">몫 정리</h3>
+    <p>8장은 \(\mathbf L = I\boldsymbol\omega\)에서, 이 장 첫머리는 \(\mathbf J = \sigma\mathbf E\)에서 시작했다. 두 벡터를 잇는 계수는 텐서일까? 답은 "어떤 벡터를 넣어도 관계가 성립하면 그렇다"이다.</p>
+    <div class="box thm" id="thm-quotient"><div class="box-h">몫 정리</div>
+      <p>모든 정규직교 좌표계에서 아홉 개의 수 \(A_{ij}\)가 주어져 있고, <b>임의의</b> 벡터 \(B_j\)에 대해 \(C_i = A_{ij}B_j\)가 언제나 벡터라고 하자. 그러면 \(A_{ij}\)는 2차 텐서다. 일반적으로, 어떤 배열과 임의의 \(m\)차 텐서를 축약한 결과가 언제나 \(n\)차 텐서이면 그 배열은 \(n + m\)차 텐서다.</p>
+    </div>
+    <p>증명은 짧다. \(C\)가 벡터이므로 \(C'_i = R_{ik}C_k = R_{ik}A_{kl}B_l\)이고, \(B\)도 벡터이므로 \(B_l = R_{jl}B'_j\)이다. 한편 새 좌표계의 관계는 \(C'_i = A'_{ij}B'_j\)이다. 두 식을 빼면</p>
+    <div class="formula" id="eq-quotient-proof">\[ \big(A'_{ij} - R_{ik}R_{jl}A_{kl}\big)\,B'_j = 0 \]</div>
+    <p>이다. \(B'\)이 임의이므로 \(B' = \hat{\mathbf e}'_1, \hat{\mathbf e}'_2, \hat{\mathbf e}'_3\)을 차례로 넣으면 괄호가 모든 \(i, j\)에 대해 0이다. 곧 \(A'_{ij} = R_{ik}R_{jl}A_{kl}\)이다. "임의의"가 빠지면 정리가 무너진다. 특정한 \(\mathbf B\) 하나에 대해서만 \(A_{ij}B_j\)가 벡터라면, 괄호 안이 \(\mathbf B'\)에 수직인 방향으로는 무엇이든 될 수 있다. 그래서 관성 텐서는 임의의 각속도에, 전도도 텐서는 임의의 전기장에 대해 선형 관계가 성립한다는 물리적 사실에서 텐서가 된다.</p>
+
+    <div class="box ex" id="ex-quadrupole-tensor"><div class="box-h">전기 사중극 모멘트 텐서</div>
+      <p>원점 근처에 점전하 \(q_a\)(위치 \(\mathbf r'_a\))들이 있다. (가) \(1/\lvert\mathbf r - \mathbf r'\rvert\)을 \(\mathbf r'\)의 2차까지 전개해 퍼텐셜의 사중극 항을 텐서로 적어라. (나) 1장에서 다룬 선형 사중극(\(z = \pm d\)에 \(+q\), 원점에 \(-2q\))의 텐서를 구하고 1장의 결과와 비교하라. (다) \(q = e\), \(d = 0.100\ \text{nm}\)이면 축 위 \(r = 1.00\ \text{nm}\)에서 사중극 퍼텐셜은 얼마인가?</p>
+      <p><b>풀이.</b> (가) \(f(\mathbf r) = 1/r\)이면 \(\partial_j(1/r) = -x_j/r^3\), \(\partial_i\partial_j(1/r) = (3x_ix_j - r^2\delta_{ij})/r^5\)이다. 테일러 전개 \(f(\mathbf r - \mathbf r') = f - x'_i\partial_if + \tfrac12x'_ix'_j\partial_i\partial_jf - \cdots\)에 넣으면</p>
+      <div class="formula">\[ \begin{aligned} \frac{1}{\lvert\mathbf r - \mathbf r'\rvert} &= \frac1r + \frac{x_ix'_i}{r^3} \\ &\quad + \frac{x'_ix'_j\,(3x_ix_j - r^2\delta_{ij})}{2r^5} + \cdots \end{aligned} \]</div>
+      <p>이다. 셋째 항의 분자는 \(3(\mathbf r\cdot\mathbf r')^2 - r^2r'^2\)인데, 이것은 \(\mathbf r\)과 \(\mathbf r'\)의 역할을 바꾼 \(x_ix_j(3x'_ix'_j - r'^2\delta_{ij})\)과 같다. 전하에 대해 더하면</p>
+      <div class="formula" id="eq-quadrupole-tensor">\[ \begin{gathered} V_{\text{사중극}} = \frac{1}{4\pi\varepsilon_0}\,\frac{Q_{ij}\,x_ix_j}{2r^5} \\ Q_{ij} = \textstyle\sum_a q_a\big(3x'_{a,i}x'_{a,j} - r_a'^2\delta_{ij}\big) \end{gathered} \]</div>
+      <p>이다. \(Q_{ij}\)는 다이애드와 \(\delta_{ij}\)의 결합이라 2차 텐서이고, 대칭이며, 대각합이 \(\sum_aq_a(3r_a'^2 - 3r_a'^2) = 0\)이다. 식 <a class="ref" href="#eq-tensor-decomposition"></a>의 둘째 조각만 남은 것이므로 독립 성분은 다섯 개다. \(Q_{ij}x_ix_j\)는 두 번 축약한 스칼라라서 퍼텐셜이 좌표계와 상관없다.</p>
+      <p>(나) 원점의 전하는 기여하지 않는다. \(z = \pm d\)의 두 전하는 \(Q_{zz} = 2q(3d^2 - d^2) = 4qd^2\), \(Q_{xx} = Q_{yy} = 2q(0 - d^2) = -2qd^2\)를 주고, 대각선 밖은 0이다. 대각합은 0이다. 퍼텐셜은</p>
+      <div class="formula">\[ \begin{aligned} V &= \frac{1}{4\pi\varepsilon_0}\,\frac{4qd^2z^2 - 2qd^2(x^2 + y^2)}{2r^5} \\ &= \frac{qd^2}{4\pi\varepsilon_0}\,\frac{3\cos^2\theta - 1}{r^3} \end{aligned} \]</div>
+      <p>로, 1장 식 <a href="ch01.html#eq-quadrupole-potential">(1.32)</a>와 같다. 텐서로 적어 두면 축이 단위 벡터 \(\hat{\mathbf n}\) 방향으로 기운 같은 사중극의 텐서도 계산 없이 쓸 수 있다. \(\hat{\mathbf n} = \hat{\mathbf z}\)일 때 \(Q = qd^2(6\hat{\mathbf z}\hat{\mathbf z}^{\mathsf T} - 2\,I_3)\)이므로, 식 <a class="ref" href="#eq-tensor-transformation"></a>에 따라 일반적으로 \(Q_{ij} = qd^2(6n_in_j - 2\delta_{ij})\)이다.</p>
+      <p><b>숫자로 보기.</b> (다) \(e/4\pi\varepsilon_0 = 1.440\ \text{V}\cdot\text{nm}\)이므로 축 위(\(\theta = 0\))에서 \(V = 1.440\ \text{V}\cdot\text{nm} \times (0.0100\ \text{nm}^2)(2)/(1.00\ \text{nm})^3 = 0.0288\ \text{V}\)이다. 축 위의 정확한 값은 \(\tfrac{q}{4\pi\varepsilon_0}\big(\tfrac{1}{r - d} + \tfrac{1}{r + d} - \tfrac2r\big) = \tfrac{q}{4\pi\varepsilon_0}\,\tfrac{2d^2}{r(r^2 - d^2)} = 0.0291\ \text{V}\)로, 차이 1%는 다음 항의 크기 \((d/r)^2\)와 맞는다. 단위: \(\text{V}\cdot\text{nm}\times\text{nm}^2/\text{nm}^3 = \text{V}\).</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 22.3 -->
+  <section id="s3">
+    <h2>물리의 텐서: 관성, 응력, 전도도</h2>
+    <p>물리의 많은 법칙은 한 벡터가 다른 벡터에 선형으로 반응한다는 꼴이다. 각속도와 각운동량(\(L_i = I_{ij}\omega_j\)), 전기장과 전류 밀도(\(J_i = \sigma_{ij}E_j\)), 전기장과 분극(\(P_i = \varepsilon_0\chi_{ij}E_j\)), 면의 방향과 그 면이 받는 힘(\(t_i = \sigma_{ij}n_j\))이 그렇다. 어느 경우든 반응은 모든 입력 벡터에 대해 성립하므로, 몫 정리에 따라 계수는 2차 텐서다. 이 텐서들은 대개 대칭이고, 그러면 8장의 <a href="ch08.html#thm-spectral">스펙트럼 정리</a>(정리 8.3)에 따라 서로 수직인 세 <b>주축</b>이 있어서 그 축에서는 대각 행렬이 된다. 관성 텐서는 22.1절에서 이미 옮겨 보았다. 이 절에서는 연속체의 응력과 결정의 전도도를 다룬다.</p>
+
+    <h3 id="s3-stress">응력 텐서</h3>
+    <p>물체 안에 가상의 작은 면을 잡으면, 면의 한쪽 물질이 다른 쪽에 힘을 준다. 단위 넓이당 이 힘을 <span class="term">견인력</span> <span class="en">(traction)</span> \(\mathbf t\)라 하자. \(\mathbf t\)는 면이 놓인 방향, 곧 바깥 법선 \(\hat{\mathbf n}\)에 따라 다르다. 수직으로 당기는 밧줄 속에서 수평면은 위아래로 당기는 힘을 받지만 수직면은 아무 힘도 받지 않는다. 그렇다면 모든 방향에 대한 \(\mathbf t(\hat{\mathbf n})\)를 알아야 할까? 아홉 개의 수면 충분하다는 것이 다음 논증이다.</p>
+    <p>세 면이 좌표면이고 넷째 면의 바깥 법선이 \(\hat{\mathbf n}\)인 작은 사면체를 잡자. 빗면의 넓이가 \(dA\)이면 \(x_j\)축에 수직인 면의 넓이는 \(n_j\,dA\)이고, 그 면의 바깥 법선은 \(-\hat{\mathbf e}_j\)이다. 사면체에 걸리는 힘은 네 면의 견인력과, 부피 \(\propto h\,dA\)(\(h\)는 사면체의 높이)에 비례하는 중력이나 관성력이다. 운동 방정식을 \(dA\)로 나누고 \(h \to 0\)으로 보내면 부피 항이 사라져서 \(\mathbf t(\hat{\mathbf n}) + \sum_j n_j\,\mathbf t(-\hat{\mathbf e}_j) = 0\)이다. 뉴턴의 제3법칙으로 \(\mathbf t(-\hat{\mathbf e}_j) = -\mathbf t(\hat{\mathbf e}_j)\)이므로 \(t_i(\hat{\mathbf n}) = t_i(\hat{\mathbf e}_j)\,n_j\)이다.</p>
+    <div class="box def" id="def-stress-tensor"><div class="box-h">응력 텐서</div>
+      <p>바깥 법선이 \(\hat{\mathbf e}_j\)인 면이 받는 단위 넓이당 힘의 \(i\) 성분을 \(\sigma_{ij}\)라 하면, 법선이 \(\hat{\mathbf n}\)인 면의 견인력은</p>
+      <div class="formula" id="eq-cauchy-stress">\[ t_i = \sigma_{ij}\,n_j \]</div>
+      <p>이다(코시 관계). \(\sigma_{ij}\)를 <span class="term">응력 텐서</span> <span class="en">(stress tensor)</span>라 한다. 대각 성분은 <span class="term">수직 응력</span> <span class="en">(normal stress)</span>으로 양수가 당김(인장)이고, 대각선 밖 성분은 <span class="term">전단 응력</span> <span class="en">(shear stress)</span>이다. 단위는 \(\text{Pa} = \text{N/m}^2\)이다.</p>
+    </div>
+    <p>식 <a class="ref" href="#eq-cauchy-stress"></a>가 모든 \(\hat{\mathbf n}\)에 대해 성립하고 \(\mathbf t\)와 \(\hat{\mathbf n}\)이 벡터이므로, 몫 정리에 따라 \(\sigma_{ij}\)는 2차 텐서다. 부호 관례에 주의하자. 이 책은 물리와 공학의 관례대로 당김을 양수로 쓴다. 지구과학의 일부 문헌은 누름을 양수로 쓴다.</p>
+    <div class="box thm" id="thm-stress-symmetric"><div class="box-h">응력 텐서의 대칭성</div>
+      <p>부피당 토크(물체 안에 분포한 짝힘)가 없으면 \(\sigma_{ij} = \sigma_{ji}\)이다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>한 변 \(h\)인 작은 정육면체를 중심에 대해 \(z\)축 둘레로 돌리는 토크를 계산한다. \(x = h/2\)인 면은 힘 \(\sigma_{ix}h^2\)를 받고, 그 \(y\) 성분이 팔 \(h/2\)로 토크 \(\tfrac h2\sigma_{yx}h^2\)를 만든다. \(x = -h/2\)인 면은 법선과 힘의 부호가 모두 바뀌어 같은 토크를 준다. \(y = \pm h/2\)인 두 면은 \(x\) 성분 \(\pm\sigma_{xy}h^2\)로 합해서 \(-\sigma_{xy}h^3\)을 준다. 중력처럼 부피에 걸리는 힘의 토크는 \(h^4\)에 비례한다. 따라서 \(\tau_z = (\sigma_{yx} - \sigma_{xy})h^3 + O(h^4)\)이다. 정육면체의 관성 모멘트는 \(\rho h^5/6\)이므로 각가속도는 \(6(\sigma_{yx} - \sigma_{xy})/(\rho h^2)\)이고, \(h \to 0\)에서 유한하려면 \(\sigma_{xy} = \sigma_{yx}\)여야 한다. 다른 성분도 같다.</p>
+      </details>
+    </div>
+
+    <div class="box ex" id="ex-fluid-stress"><div class="box-h">정지 유체의 응력과 파스칼 원리</div>
+      <p>정지한 유체는 전단 응력을 버티지 못한다. 곧 모든 면의 견인력이 그 면의 법선과 나란하다. (가) 이것만으로 \(\sigma_{ij} = -p\,\delta_{ij}\)임을 보여라. (나) 수심 \(10.0\ \text{m}\)의 물속(대기압 \(101.3\ \text{kPa}\))에서 넓이 \(1.00\ \text{cm}^2\)인 면이 받는 힘을 구하라.</p>
+      <p><b>풀이.</b> (가) 조건은 모든 단위 벡터 \(\hat{\mathbf n}\)에 대해 \(\sigma\hat{\mathbf n} = \lambda(\hat{\mathbf n})\,\hat{\mathbf n}\)이라는 것, 곧 모든 방향이 \(\sigma\)의 고유벡터라는 것이다. \(\sigma\hat{\mathbf e}_1 = \lambda_1\hat{\mathbf e}_1\), \(\sigma\hat{\mathbf e}_2 = \lambda_2\hat{\mathbf e}_2\)이면 선형성에서 \(\sigma(\hat{\mathbf e}_1 + \hat{\mathbf e}_2) = \lambda_1\hat{\mathbf e}_1 + \lambda_2\hat{\mathbf e}_2\)이고, 이것이 \(\hat{\mathbf e}_1 + \hat{\mathbf e}_2\)와 나란하려면 \(\lambda_1 = \lambda_2\)여야 한다. 같은 논리로 세 고유값이 모두 같으므로 \(\sigma_{ij} = \lambda\delta_{ij}\)이다. 유체는 면을 밀므로 \(\lambda = -p\)(\(p > 0\))로 쓴다.</p>
+      <div class="formula" id="eq-fluid-stress">\[ \sigma_{ij} = -p\,\delta_{ij}, \qquad \mathbf t = -p\,\hat{\mathbf n} \]</div>
+      <p>\(\delta_{ij}\)는 등방 텐서이므로 어느 축에서 보아도 성분이 같다. 압력이 방향과 상관없는 하나의 수라는 파스칼 원리가 "모든 방향이 고유벡터"라는 선형대수의 사실과 같은 말이다. 흐르는 점성 유체(뉴턴 유체)에서는 여기에 <a class="ref" href="#ex-shear-flow"></a>의 변형 속도가 더해져 \(\sigma_{ij} = -p\delta_{ij} + 2\mu e_{ij}\)가 된다(\(\mu\)는 점성 계수). 같은 예제의 전단 흐름에서 판이 받는 전단 응력은 \(\sigma_{xy} = \mu\kappa\)이다.</p>
+      <p><b>숫자로 보기.</b> (나) \(p = 101.3\ \text{kPa} + (1000\ \text{kg/m}^3)(9.81\ \text{m/s}^2)(10.0\ \text{m}) = 101.3 + 98.1 = 199.4\ \text{kPa}\)이다. 면이 어느 방향을 향하든 힘의 크기는 \(pA = (1.994\times10^5\ \text{Pa})(1.00\times10^{-4}\ \text{m}^2) = 19.9\ \text{N}\)이고, 방향은 면을 누르는 쪽이다. 단위: \(\text{kg}\cdot\text{m}^{-3}\cdot\text{m}\cdot\text{s}^{-2}\cdot\text{m} = \text{N/m}^2\)이다.</p>
+    </div>
+
+    <div class="box ex" id="ex-rod-tension"><div class="box-h">당겨진 막대 속 비스듬한 면의 응력</div>
+      <p>지름 \(10.0\ \text{mm}\)인 강철 막대를 축(\(z\)) 방향으로 \(F = 10.0\ \text{kN}\)으로 당긴다. 법선이 축과 각 \(\theta\)를 이루는 면, \(\hat{\mathbf n} = (0, \sin\theta, \cos\theta)\)의 수직 응력과 전단 응력을 구하라. 전단 응력은 어느 면에서 가장 큰가?</p>
+      <p><b>풀이.</b> 막대 속 응력은 \(\sigma = \operatorname{diag}(0, 0, \sigma_0)\), \(\sigma_0 = F/A\)이다. 코시 관계 <a class="ref" href="#eq-cauchy-stress"></a>에서 \(\mathbf t = \sigma\hat{\mathbf n} = (0, 0, \sigma_0\cos\theta)\)이다. 수직 성분과 면 안의 성분은</p>
+      <div class="formula" id="eq-inclined-stress">\[ \begin{aligned} \sigma_n &= \hat{\mathbf n}\cdot\mathbf t = \sigma_0\cos^2\theta \\ \tau &= \lvert\mathbf t - \sigma_n\hat{\mathbf n}\rvert = \sigma_0\sin\theta\cos\theta \end{aligned} \]</div>
+      <p>이다. 같은 결과를 변환 법칙으로도 얻는다. \(\hat{\mathbf e}'_1 = \hat{\mathbf x}\), \(\hat{\mathbf e}'_2 = (0, \cos\theta, -\sin\theta)\), \(\hat{\mathbf e}'_3 = \hat{\mathbf n}\)으로 축을 잡으면 \(\sigma'_{33} = R_{3k}R_{3l}\sigma_{kl} = \sigma_0\cos^2\theta\), \(\sigma'_{23} = R_{2k}R_{3l}\sigma_{kl} = -\sigma_0\sin\theta\cos\theta\)이다. 새 축에서는 비스듬한 면의 수직 응력과 전단 응력이 바로 성분으로 보인다. \(\tau\)는 \(\theta = 45^\circ\)에서 가장 크고 값은 \(\sigma_0/2\)이다. 대각합 \(\sigma_{kk} = \sigma_0\)은 축과 상관없다.</p>
+      <p><b>숫자로 보기.</b> \(A = \pi(5.00\times10^{-3}\ \text{m})^2 = 7.85\times10^{-5}\ \text{m}^2\)이므로 \(\sigma_0 = 127\ \text{MPa}\)이다. \(45^\circ\) 면에서는 \(\sigma_n = \tau = 63.7\ \text{MPa}\)이다. 축에 수직인 면(\(\theta = 0\))은 전단 응력을 전혀 받지 않지만, 비스듬한 면은 받는다. 연성 금속이 당김에서 축에 기운 면을 따라 미끄러지기 시작하는 것은 이 전단 응력 때문이다.</p>
+    </div>
+
+    <h3 id="s3-conductivity">전도도 텐서</h3>
+    <p>7장 <a href="ch07.html#prob-cubic-conductivity">문제 7.7</a>은 정육면체 대칭을 가진 결정의 전도도 텐서가 \(\sigma_{ij} = \sigma\delta_{ij}\)뿐임을 보였다. 대칭이 낮은 결정에서는 주축마다 전도도가 다르다. 이때 무슨 일이 생기는지 계산해 보자.</p>
+    <div class="box ex" id="ex-anisotropic-conductivity"><div class="box-h">비등방 결정에서 전기장과 어긋나는 전류</div>
+      <p>어떤 결정의 \(xy\) 평면 안 주축이 \(x\)축에서 \(30^\circ\) 기운 \(\hat{\mathbf e}'_1\)과 그에 수직인 \(\hat{\mathbf e}'_2\)이고, 주 전도도가 \(\sigma_1 = 4.0\times10^5\ \text{S/m}\), \(\sigma_2 = 1.0\times10^5\ \text{S/m}\)이다. 실험실 \(x\) 방향으로 \(E = 10\ \text{V/m}\)를 걸었다. (가) 실험실 축의 전도도 텐서를 구하라. (나) 전류 밀도의 크기와 방향, 단위 부피당 줄 열을 구하라.</p>
+      <p><b>풀이.</b> (가) 주축 좌표계에서 \(\sigma' = \operatorname{diag}(\sigma_1, \sigma_2)\)이다. \(R\)은 실험실 축을 주축으로 보내므로 \(\sigma' = R\sigma R^{\mathsf T}\), 거꾸로 \(\sigma = R^{\mathsf T}\sigma'R\)이고, 성분으로는 \(\sigma_{ij} = \sigma_1e'_{1i}e'_{1j} + \sigma_2e'_{2i}e'_{2j}\)이다. \(c = \cos30^\circ\), \(s = \sin30^\circ\)로</p>
+      <div class="formula" id="eq-conductivity-lab">\[ \begin{aligned} \sigma &= \begin{pmatrix} \sigma_1c^2 + \sigma_2s^2 & (\sigma_1 - \sigma_2)cs \\ (\sigma_1 - \sigma_2)cs & \sigma_1s^2 + \sigma_2c^2 \end{pmatrix} \\ &= \begin{pmatrix} 3.25 & 1.30 \\ 1.30 & 1.75 \end{pmatrix}\times10^5\ \text{S/m} \end{aligned} \]</div>
+      <p>이다. 대각합 \(5.0\times10^5\ \text{S/m}\)과 행렬식 \(4.0\times10^{10}\ \text{S}^2/\text{m}^2\)은 \(\sigma_1 + \sigma_2\), \(\sigma_1\sigma_2\)와 같다.</p>
+      <p>(나) \(J_i = \sigma_{ij}E_j\)에서 \(\mathbf J = (\sigma_{xx}, \sigma_{xy})E = (3.25, 1.30)\times10^6\ \text{A/m}^2\)이다. 전류는 전기장에서 \(\arctan(1.30/3.25) = 21.8^\circ\) 기울어 흐른다. 전도도가 큰 주축 쪽으로 끌려간 것이다. 주축 좌표계에서 검산하자. \(\mathbf E' = R\mathbf E = E(c, -s)\)이므로 \(\mathbf J' = E(\sigma_1c, -\sigma_2s)\)이고, \(\hat{\mathbf e}'_1\)에서 잰 각은 \(-\arctan\big(\tfrac{\sigma_2}{\sigma_1}\tan30^\circ\big) = -8.2^\circ\)이다. \(30^\circ - 8.2^\circ = 21.8^\circ\)로 같다. 전기장이 주축과 나란할 때만 전류가 전기장과 나란하다.</p>
+      <p><b>숫자로 보기.</b> \(\lvert\mathbf J\rvert = 3.50\times10^6\ \text{A/m}^2\)이다. 줄 열은 두 벡터를 축약한 스칼라 \(\mathbf J\cdot\mathbf E = \sigma_{ij}E_iE_j = \sigma_{xx}E^2 = 3.25\times10^7\ \text{W/m}^3\)(\(32.5\ \text{W/cm}^3\))이다. 단위: \(\text{S/m}\times\text{V}^2/\text{m}^2 = \text{A}\cdot\text{V}/\text{m}^3 = \text{W/m}^3\)이다. 자기장이 없으면 전도도 텐서는 대칭이다. 이것은 결정의 대칭이 아니라 미시적 가역성에서 나오는 온사거 상반 관계의 결과다(L. Onsager, Phys. Rev. 37, 405 (1931)).</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 320" role="img" aria-label="비등방 전도체에서 단위 전기장의 방향을 한 바퀴 돌릴 때 전류 밀도의 끝이 그리는 타원과, x 방향 전기장에 대한 전류의 방향"><defs><marker id="f2202-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker><marker id="f2202-arra" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs><line x1="19.2" y1="160" x2="460.8" y2="160" class="s-faint"/><line x1="240" y1="304" x2="240" y2="16" class="s-faint"/><text x="458.4" y="176.8" class="t-math dim" style="font-size:15px" text-anchor="middle"><tspan font-style="italic">x</tspan></text><text x="249.6" y="28" class="t-math dim" style="font-size:15px" text-anchor="start"><tspan font-style="italic">y</tspan></text><line x1="48.8" y1="270.4" x2="431.2" y2="49.6" class="s-line" stroke-dasharray="6 4"/><line x1="285.6" y1="239" x2="194.4" y2="81" class="s-line" stroke-dasharray="6 4"/><text x="421.1" y="44.8" class="t-dim" style="font-size:14px" text-anchor="end">σ₁ 축</text><text x="189.6" y="78.6" class="t-dim" style="font-size:14px" text-anchor="end">σ₂ 축</text><path d="M396,97.6 L399,93.3 L401.7,89.2 L403.8,85.3 L405.6,81.5 L406.8,78 L407.6,74.7 L408,71.7 L407.9,68.9 L407.3,66.3 L406.3,64 L404.8,62 L402.9,60.2 L400.5,58.7 L397.7,57.5 L394.4,56.5 L390.7,55.9 L386.6,55.5 L382.1,55.4 L377.3,55.6 L372,56.1 L366.4,56.8 L360.4,57.9 L354.1,59.2 L347.5,60.8 L340.6,62.7 L333.4,64.9 L326,67.3 L318.3,69.9 L310.4,72.9 L302.4,76 L294.1,79.4 L285.7,83 L277.2,86.8 L268.6,90.8 L259.9,95 L251.1,99.4 L242.3,103.9 L233.5,108.6 L224.7,113.5 L216,118.4 L207.3,123.5 L198.8,128.7 L190.3,134 L182,139.3 L173.8,144.7 L165.8,150.1 L158,155.6 L150.4,161.1 L143.1,166.5 L136.1,172 L129.3,177.4 L122.8,182.8 L116.7,188.1 L110.9,193.3 L105.5,198.5 L100.4,203.5 L95.7,208.4 L91.4,213.2 L87.5,217.9 L84,222.4 L81,226.7 L78.3,230.8 L76.2,234.7 L74.4,238.5 L73.2,242 L72.4,245.3 L72,248.3 L72.1,251.1 L72.7,253.7 L73.7,256 L75.2,258 L77.1,259.8 L79.5,261.3 L82.3,262.5 L85.6,263.5 L89.3,264.1 L93.4,264.5 L97.9,264.6 L102.7,264.4 L108,263.9 L113.6,263.2 L119.6,262.1 L125.9,260.8 L132.5,259.2 L139.4,257.3 L146.6,255.1 L154,252.7 L161.7,250.1 L169.6,247.1 L177.6,244 L185.9,240.6 L194.3,237 L202.8,233.2 L211.4,229.2 L220.1,225 L228.9,220.6 L237.7,216.1 L246.5,211.4 L255.3,206.5 L264,201.6 L272.7,196.5 L281.2,191.3 L289.7,186 L298,180.7 L306.2,175.3 L314.2,169.9 L322,164.4 L329.6,158.9 L336.9,153.5 L343.9,148 L350.7,142.6 L357.2,137.2 L363.3,131.9 L369.1,126.7 L374.5,121.5 L379.6,116.5 L384.3,111.6 L388.6,106.8 L392.5,102.1 L396,97.6 Z" class="s-acc" style="stroke-width:1.5"/><line x1="240" y1="160" x2="331.2" y2="160" class="s-line" style="stroke-width:3" marker-end="url(#f2202-arr)"/><text x="331.2" y="181.6" class="t-math" style="font-size:17px" text-anchor="middle"><tspan font-weight="bold">E</tspan></text><line x1="240" y1="160" x2="396" y2="97.6" class="s-acc" style="stroke-width:3" marker-end="url(#f2202-arra)"/><text x="378" y="82" class="t-math acc" style="font-size:17px" text-anchor="middle"><tspan font-weight="bold">J</tspan></text><text x="345.6" y="144.6" class="t-math acc" style="font-size:14px" text-anchor="start">21.8°</text></svg>
+      <figcaption><b>그림 22-2.</b> <a class="ref" href="#ex-anisotropic-conductivity"></a>의 결정. 크기가 같은 전기장의 방향을 한 바퀴 돌리면 전류 밀도 \(\mathbf J = \sigma\mathbf E\)의 끝은 주축(점선)을 장축과 단축으로 하는 타원을 그린다(반지름은 \(\sigma_1\)과 \(\sigma_2\)에 비례). \(x\) 방향의 \(\mathbf E\)에 대한 \(\mathbf J\)는 \(21.8^\circ\) 기울어 있다. \(\mathbf E\) 화살표의 길이는 방향만 나타낸다.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================================================ 22.4 -->
+  <section id="s4">
+    <h2>유사 텐서와 레비치비타 기호</h2>
+    <p>7장 <a href="ch07.html#ex-parity-reflection">예제 7.7</a>에서 공간 반전 \(P = -I\) 아래 위치와 운동량은 부호가 바뀌지만 각운동량 \(\mathbf L = \mathbf r\times\mathbf p\)는 바뀌지 않음을 보았다. 그런데 \(\det P = -1\)인 \(P\)도 직교 행렬이므로, \(\mathbf L\)이 벡터라면 식 <a class="ref" href="#eq-vector-transformation"></a>에 따라 \(\mathbf L' = P\mathbf L = -\mathbf L\)이어야 한다. 모순의 원인은 외적을 만드는 \(\varepsilon_{ijk}\)에 있다.</p>
+
+    <h3 id="s4-epsilon">레비치비타 기호는 어떻게 변하는가</h3>
+    <p>4장 <a href="ch04.html#def-levi-civita">정의 4.5</a>의 \(\varepsilon_{ijk}\)는 <b>모든 좌표계에서 같은 값</b>(\(\varepsilon_{123} = 1\), 짝순열 \(+1\), 홀순열 \(-1\))으로 정한 기호다. 이것이 3차 텐서와 같은 방식으로 바뀌는지 보려면 \(R_{il}R_{jm}R_{kn}\varepsilon_{lmn}\)을 계산하면 된다.</p>
+    <div class="box thm" id="thm-epsilon-transformation"><div class="box-h">레비치비타 기호의 변환</div>
+      <p>모든 \(3\times3\) 행렬 \(R\)에 대해</p>
+      <div class="formula" id="eq-epsilon-transformation">\[ R_{il}R_{jm}R_{kn}\,\varepsilon_{lmn} = (\det R)\,\varepsilon_{ijk} \]</div>
+      <p>이다. 따라서 직교 행렬 \(R\)에 대해 \(\varepsilon_{ijk}\)는 회전(\(\det R = 1\))에서는 3차 텐서처럼 바뀌지만, 반사가 섞이면(\(\det R = -1\)) 텐서 변환과 부호가 다르다.</p>
+    </div>
+    <p>증명. 왼쪽을 \(X_{ijk}\)라 하자. \(i\)와 \(j\)를 바꾸면 \(X_{jik} = R_{jl}R_{im}R_{kn}\varepsilon_{lmn}\)이고, 더하는 문자 \(l, m\)의 이름을 바꾸면 \(R_{im}R_{jl}R_{kn}\varepsilon_{mln} = -X_{ijk}\)이다. 다른 쌍도 마찬가지이므로 \(X_{ijk}\)는 완전 반대칭이고, 그런 3첨자 배열은 \(\varepsilon_{ijk}\)의 상수배뿐이다(두 첨자가 같으면 0이고, 나머지는 \(X_{123}\)과 순열의 부호로 정해진다). 상수는 \(X_{123} = \varepsilon_{lmn}R_{1l}R_{2m}R_{3n} = \det R\)이다(4장 <a href="ch04.html#eq-det3-epsilon">식 (4.14)</a>). ∎</p>
+    <div class="box def" id="def-pseudotensor"><div class="box-h">유사 텐서</div>
+      <p>직교 행렬 \(R\)로 이어진 모든 정규직교 좌표계 사이에서</p>
+      <div class="formula" id="eq-pseudotensor-transformation">\[ T'_{i_1\cdots i_n} = (\det R)\,R_{i_1j_1}\cdots R_{i_nj_n}\,T_{j_1\cdots j_n} \]</div>
+      <p>로 바뀌는 양을 \(n\)차 <span class="term">유사 텐서</span> <span class="en">(pseudotensor)</span>라 한다. 0차는 <span class="term">유사 스칼라</span> <span class="en">(pseudoscalar)</span>, 1차는 <span class="term">유사 벡터</span> <span class="en">(pseudovector, axial vector)</span>이다. 구별할 때는 <a class="ref" href="#def-cartesian-tensor"></a>의 텐서를 <span class="term">참텐서</span> <span class="en">(true tensor)</span>, 참벡터를 <span class="term">극성 벡터</span> <span class="en">(polar vector)</span>라 한다.</p>
+    </div>
+    <p>식 <a class="ref" href="#eq-epsilon-transformation"></a>을 다시 읽으면, 모든 좌표계에서 같은 값을 갖는 \(\varepsilon_{ijk}\)는 식 <a class="ref" href="#eq-pseudotensor-transformation"></a>을 정확히 만족한다(\((\det R)^2 = 1\)). \(\varepsilon_{ijk}\)는 등방 유사 텐서다. 회전만 생각하면 참텐서와 유사 텐서의 구별은 사라지고, 차이는 거울 반사나 공간 반전에서만 드러난다. 외적을 보자. <a class="ref" href="#thm-epsilon-transformation"></a>은 모든 행렬에 대해 성립하므로 \(R^{\mathsf T}\)(역시 직교 행렬이고 \(\det R^{\mathsf T} = \det R\))에 적용하면 \(R_{li}R_{mj}R_{nk}\varepsilon_{lmn} = (\det R)\,\varepsilon_{ijk}\)이다. 양변에 \(R_{pi}\)를 곱해 \(i\)에 대해 더하면 \(R_{pi}R_{li} = \delta_{pl}\)이므로 \(\varepsilon_{pmn}R_{mj}R_{nk} = (\det R)\,R_{pi}\varepsilon_{ijk}\)이고, 문자를 바꿔 쓰면 \(\varepsilon_{ijk}R_{jm}R_{kn} = (\det R)\,R_{ip}\,\varepsilon_{pmn}\)이다. 이것을 쓰면 두 참벡터의 외적은</p>
+    <div class="formula" id="eq-cross-pseudovector">\[ (\mathbf A\times\mathbf B)'_i = \varepsilon_{ijk}R_{jm}A_mR_{kn}B_n = (\det R)\,R_{ip}\,(\mathbf A\times\mathbf B)_p \]</div>
+    <p>로 바뀌는 유사 벡터다. 일반적으로 참과 참, 유사와 유사의 곱이나 축약은 참이고, 참과 유사의 곱은 유사다(\(\det R\)의 개수를 세면 된다). 4장 식 <a href="ch04.html#eq-epsilon-delta">(4.15)</a>의 왼쪽은 유사 텐서 둘의 곱이라 참텐서이고, 오른쪽 \(\delta\delta\)도 참텐서라 앞뒤가 맞는다.</p>
+    <ul>
+      <li>참벡터: 위치 \(\mathbf r\), 속도, 운동량, 힘, 전기장 \(\mathbf E\), 전류 밀도 \(\mathbf J\), 기울기 \(\nabla\phi\)</li>
+      <li>유사 벡터: 각운동량 \(\mathbf L\), 각속도 \(\boldsymbol\omega\), 토크 \(\mathbf r\times\mathbf F\), 자기장 \(\mathbf B\), 자기 모멘트 \(\mathbf m\), 참벡터장의 회전 \(\nabla\times\mathbf E\)</li>
+      <li>유사 스칼라: \(\mathbf E\cdot\mathbf B\), 세 참벡터의 스칼라 삼중곱 \(\mathbf A\cdot(\mathbf B\times\mathbf C)\)(부호 있는 부피). 참스칼라: \(\lvert\mathbf B\rvert^2\), \(-\mathbf m\cdot\mathbf B\)</li>
+    </ul>
+
+    <h3 id="s4-magnetic">자기장은 왜 유사 벡터인가</h3>
+    <p>로런츠 힘 \(\mathbf F = q\mathbf v\times\mathbf B\)에서 \(\mathbf F\)와 \(\mathbf v\)는 참벡터이고 \(\varepsilon_{ijk}\)는 유사 텐서이므로, 식이 모든 좌표계에서 성립하려면 \(\mathbf B\)가 유사 벡터여야 한다. 비오-사바르 법칙 \(d\mathbf B \propto I\,d\mathbf l\times\hat{\mathbf r}/r^2\)도 참벡터 둘의 외적이다. 반대칭 텐서로 보면 더 깔끔하다. 식 <a class="ref" href="#eq-antisymmetric-dual"></a>처럼 \(B_{ij} = \varepsilon_{ijk}B_k\)로 두면 \((\mathbf v\times\mathbf B)_i = \varepsilon_{ijk}v_jB_k = B_{ij}v_j\)이므로</p>
+    <div class="formula" id="eq-lorentz-force-tensor">\[ F_i = q\,B_{ij}\,v_j \]</div>
+    <p>이고, \(\mathbf F\)와 \(\mathbf v\)가 참벡터이므로 몫 정리에 따라 \(B_{ij}\)는 <b>참</b>텐서다. 자기장의 실체는 반대칭 참텐서이고, 3차원에서 독립 성분이 셋이라 \(\varepsilon_{ijk}\)로 유사 벡터처럼 적을 수 있을 뿐이다. 4장 4.2절의 심화 상자가 말한 "외적은 3차원의 특별한 사정"이 이것이다(<a href="ch04.html#eq-cross-index">4장 식 (4.12)</a>).</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 315" role="img" aria-label="수평 전류 고리와 그 거울상. 거울상에서는 전류가 반대로 돌아 자기장이 아래를 향한다"><defs><marker id="f2203-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker><marker id="f2203-arra" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs><line x1="240" y1="20" x2="240" y2="290" class="s-line" style="stroke-width:2" stroke-dasharray="2 4"/><text x="240" y="305" class="t-dim" style="font-size:13px" text-anchor="middle">거울면 (x = 0)</text><ellipse cx="130" cy="170" rx="70" ry="22" class="s-line" style="stroke-width:2.5"/><line x1="112" y1="192" x2="148" y2="192" class="s-line" style="stroke-width:2.5" marker-end="url(#f2203-arr)"/><line x1="148" y1="148" x2="112" y2="148" class="s-line" style="stroke-width:2.5" marker-end="url(#f2203-arr)"/><text x="210" y="196" class="t-math" style="font-size:16px" text-anchor="start"><tspan font-style="italic">I</tspan></text><ellipse cx="350" cy="170" rx="70" ry="22" class="s-line" style="stroke-width:2.5"/><line x1="368" y1="192" x2="332" y2="192" class="s-line" style="stroke-width:2.5" marker-end="url(#f2203-arr)"/><line x1="332" y1="148" x2="368" y2="148" class="s-line" style="stroke-width:2.5" marker-end="url(#f2203-arr)"/><text x="270" y="196" class="t-math" style="font-size:16px" text-anchor="end"><tspan font-style="italic">I</tspan></text><line x1="130" y1="190" x2="130" y2="45" class="s-acc" style="stroke-width:3" marker-end="url(#f2203-arra)"/><text x="140" y="55" class="t-math acc" style="font-size:17px" text-anchor="start"><tspan font-weight="bold">B</tspan></text><line x1="350" y1="150" x2="350" y2="275" class="s-acc" style="stroke-width:3" marker-end="url(#f2203-arra)"/><text x="360" y="270" class="t-math acc" style="font-size:17px" text-anchor="start"><tspan font-weight="bold">B</tspan>′</text><line x1="395" y1="150" x2="395" y2="55" class="s-line" stroke-dasharray="5 4" marker-end="url(#f2203-arr)"/><text x="403" y="70" class="t-dim" style="font-size:13px" text-anchor="start">참벡터였다면</text><text x="130" y="280" class="t" style="font-size:14px" text-anchor="middle">원래 고리</text><text x="350" y="30" class="t" style="font-size:14px" text-anchor="middle">거울상</text></svg>
+      <figcaption><b>그림 22-3.</b> 수평으로 놓인 전류 고리와, \(x = 0\)인 수직 거울면에 비친 그 거울상. 거울상에서는 앞쪽 도선의 전류가 반대로 흘러 고리가 반대로 돈다. 그래서 거울상 고리의 자기장 \(\mathbf B'\)은 아래를 향한다. \(\mathbf B\)가 참벡터였다면 거울면에 나란한 \(z\) 성분은 그대로여야 한다(점선 화살표).</figcaption>
+    </figure>
+    <div class="box ex" id="ex-mirror-magnetic-force"><div class="box-h">거울 속 세계의 로런츠 힘</div>
+      <p>그림 22-3의 고리가 만든 자기장 \(\mathbf B = (0, 0, 0.50)\ \text{T}\) 속을 양성자가 \(\mathbf v = (3.0\times10^5, 0, 0)\ \text{m/s}\)로 지난다. (가) 양성자가 받는 힘을 구하라. (나) 실험 전체를 \(x = 0\) 거울에 비춘 세계(\(M = \operatorname{diag}(-1, 1, 1)\))에서 거울상 고리가 만든 자기장으로 힘을 계산하고, 원래 힘의 거울상과 비교하라. \(\mathbf B\)를 참벡터로 다루면 무엇이 잘못되는가?</p>
+      <p><b>풀이.</b> (가) \(\mathbf F = e\,\mathbf v\times\mathbf B = e(v_yB_z - v_zB_y,\ v_zB_x - v_xB_z,\ v_xB_y - v_yB_x) = (0, -ev_xB_z, 0)\)이다.</p>
+      <p>(나) 거울상 세계에서 속도는 참벡터라 \(\mathbf v' = M\mathbf v = (-3.0\times10^5, 0, 0)\ \text{m/s}\)이다. 거울상 고리는 반대로 돌므로(그림 22-3) \(\mathbf B' = (0, 0, -0.50)\ \text{T}\)이다. 이것은 유사 벡터의 규칙 \(\mathbf B' = (\det M)M\mathbf B = -(0, 0, 0.50)\ \text{T}\)과 같다. 거울상 세계의 법칙으로 계산한 힘은 \(F'_y = -ev'_xB'_z = -e(-3.0\times10^5)(-0.50) = -ev_xB_z\)로, 원래 힘의 거울상 \(M\mathbf F = (0, -ev_xB_z, 0)\)과 같다. 거울에 비친 실험도 같은 물리 법칙을 따른다. 만약 \(\mathbf B\)를 참벡터로 보아 \(B'_z = +0.50\ \text{T}\)로 두면 \(F'_y = +ev_xB_z\)가 되어, 거울상 세계의 양성자가 원래 힘의 거울상과 반대로 휜다. 같은 법칙이 두 세계에서 성립할 수 없게 된다.</p>
+      <p><b>숫자로 보기.</b> \(F_y = -(1.602\times10^{-19}\ \text{C})(3.0\times10^5\ \text{m/s})(0.50\ \text{T}) = -2.4\times10^{-14}\ \text{N}\)이다. 단위: \(\text{C}\cdot\text{m/s}\cdot\text{T} = \text{C}\cdot\text{m/s}\cdot\text{N}/(\text{A}\cdot\text{m}) = \text{N}\)이다. 전자기학은 이렇게 거울 대칭을 지킨다. 약한 상호작용은 지키지 않는다. 편극된 코발트-60 핵의 베타 붕괴에서 전자가 핵스핀(유사 벡터)의 반대쪽으로 더 많이 나온다는 관측은, 유사 스칼라 \(\mathbf J\cdot\mathbf p_e\)의 평균이 0이 아니라는 뜻이다(C. S. Wu et al., Phys. Rev. 105, 1413 (1957)).</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 22.5 -->
+  <section id="s5">
+    <h2>비직교 좌표: 쌍대 기저와 계량 텐서</h2>
+    <p>결정 격자의 자연스러운 축은 서로 수직이 아닌 경우가 많다. 그래핀의 격자점은 \(60^\circ\)를 이루는 두 벡터의 정수 결합이다. 6장의 곡선 좌표도 직교 좌표만 다루었지만, 상대성이론에서는 좌표가 직교한다는 보장이 없고(회전하는 블랙홀의 좌표가 그 예다), 직교하더라도 시간 방향의 계량 부호가 음수라 '단위 벡터와 척도 인자'로는 다룰 수 없다. 기저가 정규직교가 아니면 "벡터의 \(i\) 성분"이라는 말이 두 가지로 갈린다. 평행사변형으로 쪼갠 계수인가, 축에 내린 수선의 길이인가? 정규직교 기저에서는 둘이 같았기 때문에 22.4절까지는 구별할 필요가 없었다.</p>
+    <div class="callout tip"><strong>이 절부터의 첨자 규칙</strong><p>좌표는 위 첨자로 \(u^1, u^2, u^3\)이라 쓴다. 성분에는 위 첨자(\(A^i\))와 아래 첨자(\(A_i\))가 모두 나오고, 합 규약은 <b>위 첨자 하나와 아래 첨자 하나</b>가 같은 문자일 때 적용한다(예: \(A^iB_i\), \(g_{ij}A^j\)). 같은 높이의 첨자가 두 번 나오면 무언가 잘못된 것이다. 이 책에서 첨자를 위아래로 나누는 것은 이 장뿐이다(GUIDE 5-1절). 22.1~22.4절의 식은 정규직교 기저에서는 위아래를 구별하지 않아도 되는 특수한 경우다.</p></div>
+
+    <h3 id="s5-dual">쌍대 기저</h3>
+    <p>선형 독립인 세 벡터 \(\mathbf e_1, \mathbf e_2, \mathbf e_3\)을 기저로 잡자. 길이가 1일 필요도, 서로 수직일 필요도 없다. 벡터는 \(\mathbf A = A^i\mathbf e_i\)로 유일하게 쪼개진다. 이 계수를 구하려면 \(\mathbf e_2\)와 \(\mathbf e_3\)에 수직인 벡터를 \(\mathbf A\)에 내적해야 한다. 그런 벡터들을 미리 모아 둔 것이 쌍대 기저다.</p>
+    <div class="box def" id="def-dual-basis"><div class="box-h">쌍대 기저</div>
+      <p>기저 \(\{\mathbf e_i\}\)에 대해</p>
+      <div class="formula" id="eq-dual-basis">\[ \mathbf e^i\cdot\mathbf e_j = \delta^i{}_j \]</div>
+      <p>를 만족하는 세 벡터 \(\{\mathbf e^i\}\)를 <span class="term">쌍대 기저</span> <span class="en">(dual basis)</span>라 한다. \(\delta^i{}_j\)는 크로네커 델타를 첨자 높이에 맞춰 쓴 것이다. 3차원에서는</p>
+      <div class="formula" id="eq-dual-basis-cross">\[ \mathbf e^1 = \frac{\mathbf e_2\times\mathbf e_3}{V}, \quad \mathbf e^2 = \frac{\mathbf e_3\times\mathbf e_1}{V}, \quad \mathbf e^3 = \frac{\mathbf e_1\times\mathbf e_2}{V} \]<div class="where">\(V = \mathbf e_1\cdot(\mathbf e_2\times\mathbf e_3)\)는 세 기저 벡터가 만드는 평행육면체의 부호 있는 부피다(4장 식 <a href="ch04.html#eq-triple-product">(4.19)</a>).</div></div>
+    </div>
+    <p>식 <a class="ref" href="#eq-dual-basis-cross"></a>이 조건을 만족하는 것은 바로 보인다. \(\mathbf e_2\times\mathbf e_3\)은 \(\mathbf e_2\), \(\mathbf e_3\)에 수직이고, \(\mathbf e_1\)과의 내적은 \(V\)이다. 조건은 아홉 개의 선형 방정식이라 해가 유일하다. 쌍대 기저로 두 종류의 성분을 정의한다.</p>
+    <div class="box def" id="def-contravariant-covariant"><div class="box-h">반변 성분과 공변 성분</div>
+      <p>벡터 \(\mathbf A\)를</p>
+      <div class="formula" id="eq-two-components">\[ \begin{gathered} \mathbf A = A^i\,\mathbf e_i = A_i\,\mathbf e^i \\ A^i = \mathbf e^i\cdot\mathbf A, \quad A_i = \mathbf e_i\cdot\mathbf A \end{gathered} \]</div>
+      <p>로 쓸 때 \(A^i\)를 <span class="term">반변 성분</span> <span class="en">(contravariant components)</span>, \(A_i\)를 <span class="term">공변 성분</span> <span class="en">(covariant components)</span>이라 한다. 반변 성분은 평행사변형으로 쪼갠 계수이고, 공변 성분은 기저 벡터에 내린 수선의 발까지의 길이(\(\mathbf A\)를 \(\mathbf e_i\) 방향으로 정사영한 길이)에 \(\lvert\mathbf e_i\rvert\)를 곱한 것이다. 좌표를 \(u^i \to u'^i\)로 바꾸면 두 성분은</p>
+      <div class="formula" id="eq-contravariant-covariant-law">\[ A'^i = \frac{\partial u'^i}{\partial u^j}\,A^j, \qquad A'_i = \frac{\partial u^j}{\partial u'^i}\,A_j \]</div>
+      <p>로 바뀐다. 이 두 법칙을 따르는 양을 각각 반변 벡터, 공변 벡터라 한다.</p>
+    </div>
+    <p>변환 법칙은 좌표 기저 \(\mathbf e_i = \partial\mathbf r/\partial u^i\)에서 나온다. 변위는 \(d\mathbf r = \mathbf e_j\,du^j\)이고, 새 좌표의 기저는 연쇄 법칙으로 \(\mathbf e'_i = \partial\mathbf r/\partial u'^i = (\partial u^j/\partial u'^i)\,\mathbf e_j\)이다. 그래서 공변 성분 \(A'_i = \mathbf e'_i\cdot\mathbf A\)는 기저 벡터와 같은 행렬로 바뀐다. 반변 성분은 \(du^i\)처럼 바뀐다(\(du'^i = (\partial u'^i/\partial u^j)\,du^j\)). 두 행렬 \(\partial u'^i/\partial u^j\)와 \(\partial u^j/\partial u'^i\)는 서로 역행렬이다. 7장의 경고 "<a href="ch07.html#eq-change-of-basis">기저 벡터와 성분은 반대로 변한다</a>"를 이 장의 말로 하면, 반변 성분은 기저와 반대로(contra) 변하고 공변 성분은 기저와 함께(co) 변한다. 기울기 \(\partial_if = \partial f/\partial u^i\)는 연쇄 법칙에 따라 공변 벡터다. 정규직교 축 사이의 회전에서는 \(\partial u'^i/\partial u^j = R_{ij}\)이고 역행렬이 전치 행렬이라 두 법칙이 식 <a class="ref" href="#eq-vector-transformation"></a> 하나로 합쳐진다. 식 <a class="ref" href="#eq-gradient-transformation"></a>에서 본 일이다.</p>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 300" role="img" aria-label="60도로 비스듬한 기저와 쌍대 기저, 반변 성분과 공변 성분"><defs><marker id="f2204-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker><marker id="f2204-arra" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs><line x1="40" y1="230" x2="430" y2="230" class="s-faint"/><line x1="55" y1="256" x2="185" y2="31" class="s-faint"/><line x1="300" y1="108.8" x2="230" y2="230" class="s-line" stroke-dasharray="5 4"/><line x1="300" y1="108.8" x2="140" y2="108.8" class="s-line" stroke-dasharray="5 4"/><line x1="300" y1="108.8" x2="300" y2="230" class="s-acc" style="stroke-width:1.2" stroke-dasharray="3 3"/><line x1="300" y1="108.8" x2="180" y2="39.5" class="s-acc" style="stroke-width:1.2" stroke-dasharray="3 3"/><circle cx="300" cy="230" r="3.5" class="f-acc"/><circle cx="180" cy="39.5" r="3.5" class="f-acc"/><circle cx="230" cy="230" r="3.5" class="f-dim"/><circle cx="140" cy="108.8" r="3.5" class="f-dim"/><line x1="70" y1="230" x2="170" y2="230" class="s-line" style="stroke-width:2.5" marker-end="url(#f2204-arr)"/><text x="170" y="252" class="t-math" style="font-size:16px" text-anchor="middle"><tspan font-weight="bold">e</tspan><tspan dy="4" font-size="12">1</tspan></text><line x1="70" y1="230" x2="120" y2="143.4" class="s-line" style="stroke-width:2.5" marker-end="url(#f2204-arr)"/><text x="112" y="143.4" class="t-math" style="font-size:16px" text-anchor="end"><tspan font-weight="bold">e</tspan><tspan dy="4" font-size="12">2</tspan></text><line x1="70" y1="230" x2="170" y2="287.7" class="s-acc" style="stroke-width:2.5" marker-end="url(#f2204-arra)"/><text x="178" y="297.7" class="t-math acc" style="font-size:16px" text-anchor="start"><tspan font-weight="bold">e</tspan><tspan dy="-7" font-size="12">1</tspan></text><line x1="70" y1="230" x2="70" y2="114.5" class="s-acc" style="stroke-width:2.5" marker-end="url(#f2204-arra)"/><text x="78" y="118.5" class="t-math acc" style="font-size:16px" text-anchor="start"><tspan font-weight="bold">e</tspan><tspan dy="-7" font-size="12">2</tspan></text><line x1="70" y1="230" x2="300" y2="108.8" class="s-line" style="stroke-width:3.2" marker-end="url(#f2204-arr)"/><text x="308" y="106.8" class="t-math" style="font-size:17px" text-anchor="start"><tspan font-weight="bold">A</tspan></text><text x="230" y="248" class="t-math dim" style="font-size:13px" text-anchor="middle">1.6</text><text x="304" y="248" class="t-math acc" style="font-size:13px" text-anchor="start">2.3</text><text x="132" y="112.8" class="t-math dim" style="font-size:13px" text-anchor="end">1.4</text><text x="172" y="41.5" class="t-math acc" style="font-size:13px" text-anchor="end">2.2</text></svg></div>
+      <figcaption><b>그림 22-4.</b> \(60^\circ\)를 이루는 단위 기저 \(\mathbf e_1, \mathbf e_2\)(검은 화살표)와 쌍대 기저 \(\mathbf e^1, \mathbf e^2\)(강조색 화살표). \(\mathbf e^1\)은 \(\mathbf e_2\)에, \(\mathbf e^2\)는 \(\mathbf e_1\)에 수직이고 길이는 \(2/\sqrt3\)이다. 벡터 \(\mathbf A = 1.6\,\mathbf e_1 + 1.4\,\mathbf e_2\)의 반변 성분 \((1.6, 1.4)\)는 축에 나란한 점선으로 만든 평행사변형에서, 공변 성분 \((2.3, 2.2)\)는 두 축에 내린 수선(강조색 점선)의 발에서 읽는다.</figcaption>
+    </figure>
+
+    <h3 id="s5-metric">계량 텐서</h3>
+    <p>두 종류의 성분을 잇는 것은 기저 벡터끼리의 내적이다.</p>
+    <div class="box def" id="def-metric-tensor"><div class="box-h">계량 텐서</div>
+      <p>기저 \(\{\mathbf e_i\}\)와 쌍대 기저 \(\{\mathbf e^i\}\)에 대해</p>
+      <div class="formula" id="eq-metric-components">\[ g_{ij} = \mathbf e_i\cdot\mathbf e_j, \qquad g^{ij} = \mathbf e^i\cdot\mathbf e^j \]</div>
+      <p>를 <span class="term">계량 텐서</span> <span class="en">(metric tensor)</span>의 공변 성분과 반변 성분이라 한다. 둘 다 대칭이고, 서로 역행렬이다: \(g^{ik}g_{kj} = \delta^i{}_j\). 좌표 변환에서 \(g'_{ij} = \dfrac{\partial u^k}{\partial u'^i}\dfrac{\partial u^l}{\partial u'^j}\,g_{kl}\)로 바뀐다.</p>
+    </div>
+    <p>역행렬 관계를 보이자. \(\mathbf e^i\)를 기저 \(\mathbf e_k\)로 전개해 \(\mathbf e^i = c^{ik}\mathbf e_k\)라 두고 \(\mathbf e^j\)를 내적하면 \(g^{ij} = c^{ik}\delta^j{}_k = c^{ij}\)이다. 곧 \(\mathbf e^i = g^{ij}\mathbf e_j\)이고, 여기에 \(\mathbf e_k\)를 내적하면 \(\delta^i{}_k = g^{ij}g_{jk}\)이다. 같은 방법으로 \(\mathbf e_i = g_{ij}\mathbf e^j\)이다. 이것을 식 <a class="ref" href="#eq-two-components"></a>에 넣으면</p>
+    <div class="formula" id="eq-index-lowering">\[ A_i = g_{ij}\,A^j, \qquad A^i = g^{ij}\,A_j \]</div>
+    <p>이다. \(g_{ij}\)를 곱해 축약하는 것을 <span class="term">지수 내리기</span>, \(g^{ij}\)로 하는 것을 <span class="term">지수 올리기</span> <span class="en">(lowering and raising indices)</span>라 한다. 내적은 어느 쪽으로 써도 같다.</p>
+    <div class="formula" id="eq-metric-dot">\[ \mathbf A\cdot\mathbf B = g_{ij}A^iB^j = A_iB^i = A^iB_i = g^{ij}A_iB_j \]</div>
+    <p>정규직교 기저에서는 \(g_{ij} = \delta_{ij}\)라서 \(A_i = A^i\)이고 \(\mathbf e^i = \mathbf e_i\)이다. 22.1절의 성분은 이 특수한 경우였다.</p>
+    <p>곡선 좌표에서는 기저가 점마다 다르다. 좌표 기저 \(\mathbf e_i = \partial\mathbf r/\partial u^i\)를 쓰면 \(d\mathbf r = \mathbf e_i\,du^i\)이므로 두 이웃한 점 사이 거리의 제곱은</p>
+    <div class="formula" id="eq-metric-line-element">\[ ds^2 = d\mathbf r\cdot d\mathbf r = g_{ij}\,du^i\,du^j \]</div>
+    <p>이다. 직교 곡선 좌표에서는 \(\mathbf e_i = h_i\hat{\mathbf e}_i\)(6장 <a href="ch06.html#def-scale-factors">정의 6.3</a>)이므로 \(g_{ij} = \operatorname{diag}(h_1^2, h_2^2, h_3^2)\)이고, 식 <a class="ref" href="#eq-metric-line-element"></a>은 6장 식 <a href="ch06.html#eq-line-element">(6.11)</a>이 된다. 직교하지 않으면 엇갈린 항 \(2g_{12}\,du^1du^2\) 등이 남는다. 부피 요소도 계량으로 쓴다. 기저 벡터를 열로 세운 행렬을 \(E\)라 하면 \(g_{ij} = (E^{\mathsf T}E)_{ij}\)이므로 \(g \equiv \det g_{ij} = (\det E)^2 = V^2\)이고</p>
+    <div class="formula" id="eq-metric-volume">\[ dV = \sqrt g\;du^1\,du^2\,du^3 \]</div>
+    <p>이다. 직교 좌표에서는 \(\sqrt g = h_1h_2h_3\)으로 6장의 부피 요소와 같다. 계량 텐서 하나가 거리, 각, 넓이, 부피를 모두 정한다. 상대성이론이 중력을 계량으로 적는 것은 이 때문이다.</p>
+
+    <div class="box ex" id="ex-reciprocal-lattice"><div class="box-h">그래핀 격자의 쌍대 기저와 역격자</div>
+      <p>그래핀의 격자점은 \(\mathbf e_1 = a(1, 0)\), \(\mathbf e_2 = a(\tfrac12, \tfrac{\sqrt3}{2})\)의 정수 결합이다(\(a = 0.246\ \text{nm}\)). 7장 <a href="ch07.html#prob-hexagonal-lattice">문제 7.4</a>는 같은 격자를 \(120^\circ\)를 이루는 기저로 적었다. (가) 평면에서 \(g_{ij}\), \(g^{ij}\), 쌍대 기저를 구하라. (나) 단위 세포의 넓이를 구하라. (다) 쌍대 기저에 \(2\pi\)를 곱한 \(\mathbf b^i = 2\pi\mathbf e^i\)를 <span class="term">역격자</span> <span class="en">(reciprocal lattice)</span> 벡터라 한다. \(\lvert\mathbf b^1\rvert\)와, \(\mathbf e_2\) 방향으로 늘어선 격자선 사이의 간격 \(d\)를 구하고, 파장 \(0.154\,06\ \text{nm}\)인 엑스선(구리 \(K\alpha\))이 이 격자선에서 1차 브래그 반사를 하는 각을 구하라.</p>
+      <p><b>풀이.</b> (가) \(\mathbf e_1\cdot\mathbf e_1 = \mathbf e_2\cdot\mathbf e_2 = a^2\), \(\mathbf e_1\cdot\mathbf e_2 = a^2/2\)이므로</p>
+      <div class="formula" id="eq-hexagonal-metric">\[ g_{ij} = a^2\begin{pmatrix} 1 & \tfrac12 \\ \tfrac12 & 1 \end{pmatrix}, \qquad g^{ij} = \frac{4}{3a^2}\begin{pmatrix} 1 & -\tfrac12 \\ -\tfrac12 & 1 \end{pmatrix} \]</div>
+      <p>이다(\(\det g_{ij} = \tfrac34a^4\)). \(\mathbf e^i = g^{ij}\mathbf e_j\)로</p>
+      <div class="formula">\[ \begin{aligned} \mathbf e^1 &= \frac{4}{3a^2}\Big(\mathbf e_1 - \tfrac12\mathbf e_2\Big) = \frac1a\Big(1, -\frac{1}{\sqrt3}\Big) \\ \mathbf e^2 &= \frac{4}{3a^2}\Big(-\tfrac12\mathbf e_1 + \mathbf e_2\Big) = \frac1a\Big(0, \frac{2}{\sqrt3}\Big) \end{aligned} \]</div>
+      <p>이다. 검산: \(\mathbf e^1\cdot\mathbf e_1 = 1\), \(\mathbf e^1\cdot\mathbf e_2 = \tfrac12 - \tfrac12 = 0\), \(\mathbf e^2\cdot\mathbf e_1 = 0\), \(\mathbf e^2\cdot\mathbf e_2 = 1\)이다.</p>
+      <p>(나) 넓이는 \(\sqrt g = \tfrac{\sqrt3}{2}a^2\)이다(식 <a class="ref" href="#eq-metric-volume"></a>의 2차원판).</p>
+      <p>(다) 격자점 \(\mathbf r = n^1\mathbf e_1 + n^2\mathbf e_2\)에 대해 \(\mathbf e^1\cdot\mathbf r = n^1\)이다. 그래서 \(n^1\)이 같은 점들은 \(\mathbf e^1\)에 수직인 한 직선(\(\mathbf e_2\) 방향의 격자선) 위에 있고, 이웃한 두 직선 \(\mathbf e^1\cdot\mathbf r = n\), \(n + 1\) 사이의 거리는 \(d = 1/\lvert\mathbf e^1\rvert = 2\pi/\lvert\mathbf b^1\rvert\)이다. \(\lvert\mathbf e^1\rvert = 2/(\sqrt3a)\)이므로 \(d = \tfrac{\sqrt3}{2}a\)이다. 쌍대 기저 벡터의 방향은 격자선의 법선이고, 길이의 역수는 격자선의 간격이다.</p>
+      <p><b>숫자로 보기.</b> 넓이는 \(\tfrac{\sqrt3}{2}(0.246\ \text{nm})^2 = 0.0524\ \text{nm}^2\), \(\lvert\mathbf b^1\rvert = 4\pi/(\sqrt3a) = 29.5\ \text{nm}^{-1}\), \(d = 0.213\ \text{nm}\)이다. 브래그 조건 \(2d\sin\theta_B = \lambda\)에서 \(\sin\theta_B = 0.154\,06/0.4261 = 0.3616\), \(\theta_B = 21.2^\circ\)(산란각 \(2\theta_B = 42.4^\circ\))이다. 차원: \(\mathbf e^i\)는 길이의 역수이고, \(\mathbf e^i\cdot\mathbf e_j\)는 무차원이다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 22.6 -->
+  <section id="s6">
+    <h2>곡선 좌표의 미분과 크리스토펠 기호</h2>
+    <p>6장에서 극좌표의 가속도를 구할 때 단위 벡터 \(\hat{\mathbf r}\), \(\hat{\boldsymbol\theta}\)를 시간으로 미분해야 했다(<a href="ch06.html#ex-polar-acceleration">예제 6.1</a>). 곡선 좌표에서는 기저가 점마다 바뀌므로, 벡터장을 미분하면 성분의 도함수 말고도 기저의 도함수가 나온다. 기저의 도함수를 다시 기저로 전개한 계수가 크리스토펠 기호이고, 놀랍게도 계량 텐서만으로 계산된다. 이 절에서는 평평한 공간의 곡선 좌표만 다루고, 좌표 기저 \(\mathbf e_i = \partial\mathbf r/\partial u^i\)를 쓴다. 이 기저는 단위 벡터가 아니다. 극좌표 \((r, \theta)\)에서 \(\mathbf e_r = \hat{\mathbf r}\), \(\mathbf e_\theta = r\hat{\boldsymbol\theta}\)이다.</p>
+
+    <h3 id="s6-definition">기저의 도함수</h3>
+    <div class="box def" id="def-christoffel"><div class="box-h">크리스토펠 기호</div>
+      <p>좌표 기저의 도함수를 기저로 전개한 계수</p>
+      <div class="formula" id="eq-christoffel-definition">\[ \frac{\partial\mathbf e_i}{\partial u^j} = \Gamma^k{}_{ij}\,\mathbf e_k, \qquad \Gamma^k{}_{ij} = \mathbf e^k\cdot\frac{\partial\mathbf e_i}{\partial u^j} \]</div>
+      <p>를 <span class="term">크리스토펠 기호</span> <span class="en">(Christoffel symbols)</span>라 한다. 흔히 \(\Gamma^k_{ij}\)로 줄여 쓴다. \(\partial_j\mathbf e_i = \partial_j\partial_i\mathbf r\)이 \(i, j\)에 대해 대칭이므로 \(\Gamma^k{}_{ij} = \Gamma^k{}_{ji}\)이다.</p>
+    </div>
+    <p>크리스토펠 기호는 텐서가 아니다. 직교 좌표에서는 기저가 일정해 모든 \(\Gamma\)가 0인데, 극좌표에서는 아래에서 보듯 0이 아니다. 텐서라면 한 좌표계에서 0인 성분은 식 <a class="ref" href="#eq-contravariant-covariant-law"></a>과 같은 선형 변환으로 다른 좌표계에서도 0이어야 한다. \(\Gamma\)는 텐서의 성질이 아니라 좌표의 성질을 담는다. 그럼에도 계량만 알면 계산할 수 있다.</p>
+    <div class="box thm" id="thm-christoffel-metric"><div class="box-h">계량으로 쓴 크리스토펠 기호</div>
+      <p>계량 \(g_{ij}\)가 연속 미분 가능하면</p>
+      <div class="formula" id="eq-christoffel-metric">\[ \Gamma^k{}_{ij} = \frac12\,g^{kl}\big(\partial_ig_{lj} + \partial_jg_{li} - \partial_lg_{ij}\big) \]</div>
+      <p>이다. 여기서 \(\partial_i = \partial/\partial u^i\)이다.</p>
+    </div>
+    <p>이 장의 중심 유도다. 첨자를 하나씩 따라가자. 계산을 줄이려고 첨자를 하나 내린 \(\Gamma_{l,ij} \equiv g_{lk}\Gamma^k{}_{ij} = \mathbf e_l\cdot\partial_j\mathbf e_i\)를 쓴다. 이것도 \(i, j\)에 대해 대칭이다. 계량을 미분하면 곱의 미분 법칙과 식 <a class="ref" href="#eq-christoffel-definition"></a>에서</p>
+    <div class="formula" id="eq-metric-derivative">\[ \partial_kg_{ij} = \partial_k\mathbf e_i\cdot\mathbf e_j + \mathbf e_i\cdot\partial_k\mathbf e_j = \Gamma_{j,ik} + \Gamma_{i,jk} \]</div>
+    <p>이다. 첨자 \((i, j, k)\)를 돌려 가며 같은 식을 세 번 쓴다.</p>
+    <div class="formula" id="eq-christoffel-cyclic">\[ \begin{aligned} \partial_ig_{jk} &= \Gamma_{k,ji} + \Gamma_{j,ki} \\ \partial_jg_{ki} &= \Gamma_{i,kj} + \Gamma_{k,ij} \\ \partial_kg_{ij} &= \Gamma_{j,ik} + \Gamma_{i,jk} \end{aligned} \]</div>
+    <p>첫째 줄과 둘째 줄을 더하고 셋째 줄을 빼자. 아래 두 첨자의 대칭성으로 \(\Gamma_{j,ki} = \Gamma_{j,ik}\), \(\Gamma_{i,kj} = \Gamma_{i,jk}\)이므로 이 네 항이 지워지고, \(\Gamma_{k,ji} = \Gamma_{k,ij}\) 두 개가 남는다.</p>
+    <div class="formula" id="eq-christoffel-lowered">\[ \Gamma_{k,ij} = \frac12\big(\partial_ig_{jk} + \partial_jg_{ki} - \partial_kg_{ij}\big) \]</div>
+    <p>마지막으로 \(g^{lk}\)를 곱해 첫 첨자를 올리고(\(g^{lk}g_{km} = \delta^l{}_m\)), 문자 이름을 정리하면 식 <a class="ref" href="#eq-christoffel-metric"></a>이다. 괄호 안의 부호 배치는 "더할 두 항은 바깥 첨자 \(l\)이 \(g\)에 들어가고, 뺄 항은 미분에 들어간다"로 기억한다. 직교 좌표에서는 \(g_{ij}\)가 상수라 모든 항이 0이다. ∎</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 300" role="img" aria-label="직선 x=1 위의 세 점에서 극좌표 기저 벡터. e_theta의 길이는 r이고 방향이 점마다 다르다"><defs><marker id="f2205-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker><marker id="f2205-arra" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker><clipPath id="f2205-clip"><rect x="0" y="0" width="480" height="300"/></clipPath></defs><path d="M150,265 L149.9,261.9 L149.8,258.7 L149.4,255.6 L149,252.5 L148.5,249.4 L147.8,246.3 L147,243.3 L146.1,240.3 L145.1,237.3 L143.9,234.4 L142.7,231.5 L141.3,228.7 L139.8,225.9 L138.2,223.2 L136.5,220.6 L134.7,218 L132.8,215.5 L130.8,213 L128.7,210.7 L126.6,208.4 L124.3,206.3 L122,204.2 L119.5,202.2 L117,200.3 L114.4,198.5 L111.8,196.8 L109.1,195.2 L106.3,193.7 L103.5,192.3 L100.6,191.1 L97.7,189.9 L94.7,188.9 L91.7,188 L88.7,187.2 L85.6,186.5 L82.5,186 L79.4,185.6 L76.3,185.2 L73.1,185.1 L70,185" class="s-faint" clip-path="url(#f2205-clip)"/><text x="150" y="282" class="t-math dim" style="font-size:13px" text-anchor="middle">1</text><path d="M230,265 L229.9,258.7 L229.5,252.4 L228.9,246.2 L228,240 L226.9,233.8 L225.6,227.6 L224,221.6 L222.2,215.6 L220.1,209.6 L217.8,203.8 L215.3,198 L212.6,192.4 L209.6,186.8 L206.4,181.4 L203,176.1 L199.4,171 L195.7,165.9 L191.7,161.1 L187.5,156.4 L183.1,151.9 L178.6,147.5 L173.9,143.3 L169.1,139.3 L164,135.6 L158.9,132 L153.6,128.6 L148.2,125.4 L142.6,122.4 L137,119.7 L131.2,117.2 L125.4,114.9 L119.4,112.8 L113.4,111 L107.4,109.4 L101.2,108.1 L95,107 L88.8,106.1 L82.6,105.5 L76.3,105.1 L70,105" class="s-faint" clip-path="url(#f2205-clip)"/><text x="230" y="282" class="t-math dim" style="font-size:13px" text-anchor="middle">2</text><path d="M310,265 L309.8,255.6 L309.3,246.2 L308.3,236.8 L307,227.5 L305.4,218.2 L303.4,209 L301,199.9 L298.3,190.8 L295.2,181.9 L291.7,173.2 L288,164.5 L283.8,156 L279.4,147.7 L274.6,139.6 L269.6,131.7 L264.2,123.9 L258.5,116.4 L252.5,109.1 L246.2,102.1 L239.7,95.3 L232.9,88.8 L225.9,82.5 L218.6,76.5 L211.1,70.8 L203.3,65.4 L195.4,60.4 L187.3,55.6 L179,51.2 L170.5,47 L161.8,43.3 L153.1,39.8 L144.2,36.7 L135.1,34 L126,31.6 L116.8,29.6 L107.5,28 L98.2,26.7 L88.8,25.7 L79.4,25.2 L70,25" class="s-faint" clip-path="url(#f2205-clip)"/><text x="310" y="282" class="t-math dim" style="font-size:13px" text-anchor="middle">3</text><line x1="54" y1="265" x2="462" y2="265" class="s-faint"/><line x1="70" y1="281" x2="70" y2="9" class="s-faint"/><line x1="150" y1="277" x2="150" y2="9" class="s-line" style="stroke-width:2"/><text x="156.4" y="21" class="t-math dim" style="font-size:14px" text-anchor="start"><tspan font-style="italic">x</tspan> = 1</text><circle cx="150" cy="265" r="4" class="f-dim"/><line x1="150" y1="265" x2="194" y2="265" class="s-line" style="stroke-width:2.5" marker-end="url(#f2205-arr)"/><line x1="150" y1="265" x2="150" y2="221" class="s-acc" style="stroke-width:2.5" marker-end="url(#f2205-arra)"/><text x="200" y="269" class="t-math" style="font-size:15px" text-anchor="start"><tspan font-weight="bold">e</tspan><tspan dy="4" font-size="12"><tspan font-style="italic">r</tspan></tspan></text><text x="146" y="215" class="t-math acc" style="font-size:15px" text-anchor="end"><tspan font-weight="bold">e</tspan><tspan dy="4" font-size="12"><tspan font-style="italic">θ</tspan></tspan></text><circle cx="150" cy="185" r="4" class="f-dim"/><line x1="150" y1="185" x2="181.1" y2="153.9" class="s-line" style="stroke-width:2.5" marker-end="url(#f2205-arr)"/><line x1="150" y1="185" x2="106" y2="141" class="s-acc" style="stroke-width:2.5" marker-end="url(#f2205-arra)"/><text x="187.1" y="157.9" class="t-math" style="font-size:15px" text-anchor="start"><tspan font-weight="bold">e</tspan><tspan dy="4" font-size="12"><tspan font-style="italic">r</tspan></tspan></text><text x="102" y="135" class="t-math acc" style="font-size:15px" text-anchor="end"><tspan font-weight="bold">e</tspan><tspan dy="4" font-size="12"><tspan font-style="italic">θ</tspan></tspan></text><circle cx="150" cy="105" r="4" class="f-dim"/><line x1="150" y1="105" x2="169.7" y2="65.6" class="s-line" style="stroke-width:2.5" marker-end="url(#f2205-arr)"/><line x1="150" y1="105" x2="62" y2="61" class="s-acc" style="stroke-width:2.5" marker-end="url(#f2205-arra)"/><text x="175.7" y="69.6" class="t-math" style="font-size:15px" text-anchor="start"><tspan font-weight="bold">e</tspan><tspan dy="4" font-size="12"><tspan font-style="italic">r</tspan></tspan></text><text x="58" y="55" class="t-math acc" style="font-size:15px" text-anchor="end"><tspan font-weight="bold">e</tspan><tspan dy="4" font-size="12"><tspan font-style="italic">θ</tspan></tspan></text></svg>
+      <figcaption><b>그림 22-5.</b> 직선 \(x = 1\) 위의 세 점에서 그린 극좌표 기저 \(\mathbf e_r = \hat{\mathbf r}\)(검은 화살표)와 \(\mathbf e_\theta = r\hat{\boldsymbol\theta}\)(강조색 화살표). 두 화살표 모두 같은 비율로 줄여 그렸다. \(\mathbf e_\theta\)는 원점에서 멀수록 길어지고, 두 기저의 방향은 점마다 다르다. 직선을 따라 일정한 속도로 움직이는 입자의 성분 \(\dot r\), \(\dot\theta\)가 시간에 따라 바뀌는 것은 이 기저의 변화 때문이다(<a class="ref" href="#ex-polar-christoffel"></a>).</figcaption>
+    </figure>
+
+    <div class="box ex" id="ex-polar-christoffel"><div class="box-h">극좌표의 크리스토펠 기호와 자유 입자</div>
+      <p>(가) 평면 극좌표 \((u^1, u^2) = (r, \theta)\)의 계량과 크리스토펠 기호를 구하라. (나) 곡선 \(u^i(t)\)를 따라 움직이는 입자의 가속도를 크리스토펠 기호로 적고, 6장의 가속도 식과 비교하라. (다) 힘을 받지 않는 입자가 \(x = b\), \(y = vt\)로 움직인다(\(b = 1.0\ \text{m}\), \(v = 1.0\ \text{m/s}\)). \(t = 1.0\ \text{s}\)에서 극좌표 운동 방정식이 성립하는지 숫자로 확인하라.</p>
+      <p><b>풀이.</b> (가) \(ds^2 = dr^2 + r^2d\theta^2\)이므로 \(g_{rr} = 1\), \(g_{\theta\theta} = r^2\), \(g_{r\theta} = 0\)이고 \(g^{rr} = 1\), \(g^{\theta\theta} = 1/r^2\)이다. 0이 아닌 도함수는 \(\partial_rg_{\theta\theta} = 2r\) 하나뿐이다. 식 <a class="ref" href="#eq-christoffel-metric"></a>에서</p>
+      <div class="formula" id="eq-polar-christoffel">\[ \begin{gathered} \Gamma^r{}_{\theta\theta} = \tfrac12g^{rr}\big(-\partial_rg_{\theta\theta}\big) = -r \\ \Gamma^\theta{}_{r\theta} = \Gamma^\theta{}_{\theta r} = \tfrac12g^{\theta\theta}\,\partial_rg_{\theta\theta} = \frac1r \end{gathered} \]</div>
+      <p>이고 나머지(\(\Gamma^r{}_{rr}\), \(\Gamma^r{}_{r\theta}\), \(\Gamma^\theta{}_{rr}\), \(\Gamma^\theta{}_{\theta\theta}\))는 0이다. 정의로 검산하자. \(\mathbf e_r = (\cos\theta, \sin\theta)\), \(\mathbf e_\theta = (-r\sin\theta, r\cos\theta)\)이므로 \(\partial_\theta\mathbf e_\theta = -r\,\mathbf e_r\), \(\partial_r\mathbf e_\theta = \partial_\theta\mathbf e_r = \mathbf e_\theta/r\), \(\partial_r\mathbf e_r = 0\)이다. 계수가 위와 같다.</p>
+      <p>(나) 속도는 \(\mathbf v = \dot u^i\mathbf e_i\)이다. 한 번 더 미분하면 \(\dot{\mathbf e}_i = \partial_j\mathbf e_i\,\dot u^j = \Gamma^k{}_{ij}\dot u^j\mathbf e_k\)이므로</p>
+      <div class="formula" id="eq-acceleration-christoffel">\[ \mathbf a = \big(\ddot u^k + \Gamma^k{}_{ij}\,\dot u^i\dot u^j\big)\,\mathbf e_k \]</div>
+      <p>이다. 극좌표에서는 \(\Gamma^\theta{}_{r\theta}\)와 \(\Gamma^\theta{}_{\theta r}\)이 둘 다 들어가 \(2\dot r\dot\theta/r\)이 되므로</p>
+      <div class="formula">\[ a^r = \ddot r - r\dot\theta^2, \qquad a^\theta = \ddot\theta + \frac2r\,\dot r\dot\theta \]</div>
+      <p>이다. 이것은 반변 성분이다. \(\mathbf e_\theta = r\hat{\boldsymbol\theta}\)이므로 단위 벡터 방향의 성분은 \(r a^\theta = r\ddot\theta + 2\dot r\dot\theta\)이고, 6장 식 <a href="ch06.html#eq-polar-acceleration">(6.9)</a>와 같다. 6장은 단위 벡터를 시간으로 미분했고, 여기서는 계량을 \(r\)로 한 번 미분했을 뿐이다.</p>
+      <p>(다) 힘이 없으면 \(\mathbf a = 0\)이므로 \(\ddot r = r\dot\theta^2\), \(\ddot\theta = -2\dot r\dot\theta/r\)이어야 한다. \(r = \sqrt{b^2 + v^2t^2}\), \(\theta = \arctan(vt/b)\)를 미분하면 \(\dot r = v^2t/r\), \(\dot\theta = bv/r^2\), \(\ddot r = b^2v^2/r^3\), \(\ddot\theta = -2bv^3t/r^4\)이다.</p>
+      <p><b>숫자로 보기.</b> \(t = 1.0\ \text{s}\)에서 \(r = \sqrt2\ \text{m} = 1.414\ \text{m}\), \(\theta = 45^\circ\), \(\dot r = 0.707\ \text{m/s}\), \(\dot\theta = 0.500\ \text{s}^{-1}\)이다. \(\ddot r = 1/(2\sqrt2) = 0.354\ \text{m/s}^2\)이고 \(r\dot\theta^2 = 1.414 \times 0.250 = 0.354\ \text{m/s}^2\)으로 같다. \(\ddot\theta = -2/4 = -0.500\ \text{s}^{-2}\)이고 \(-2\dot r\dot\theta/r = -2(0.707)(0.500)/1.414 = -0.500\ \text{s}^{-2}\)으로 같다. 직선 운동인데도 \(\ddot r\)과 \(\ddot\theta\)가 0이 아닌 것은 크리스토펠 기호가 기저의 변화를 상쇄하기 때문이다. 단위: \(\Gamma^r{}_{\theta\theta}\dot\theta^2\)은 \(\text{m}\cdot\text{s}^{-2}\)로 \(\ddot r\)과 같다.</p>
+    </div>
+    <div class="callout deep" data-later="relativity"><strong>측지선 방정식과 곡률</strong><p>식 <a class="ref" href="#eq-acceleration-christoffel"></a>에서 \(\mathbf a = 0\)으로 둔 \(\ddot u^k + \Gamma^k{}_{ij}\dot u^i\dot u^j = 0\)은 평평한 공간에서 곧은 선을 곡선 좌표로 적은 것이다. 21장의 측지선 상자가 변분법으로 얻은 측지선 방정식이 바로 이 꼴이고, 계량이 일반적인 곡면(예: <a href="ch21.html#ex-sphere-geodesic">21장 예제 21.4</a>의 구면)이어도 같은 식이 "가장 곧은 선"을 정한다(곡면에서는 기저의 도함수 가운데 곡면에 접하는 부분만 \(\Gamma\)로 적는다). 평평한 공간에서는 좌표를 직교 좌표로 바꾸면 모든 \(\Gamma\)를 한꺼번에 0으로 만들 수 있다. 구면에서는 어떤 좌표를 잡아도 그럴 수 없고, 그 차이를 재는 양이 \(\Gamma\)와 그 도함수로 만든 리만 곡률 텐서다. 벡터장의 도함수 \(\partial_j\mathbf A = (\partial_jA^i + \Gamma^i{}_{jk}A^k)\,\mathbf e_i\)의 괄호, 곧 공변 미분 \(\nabla_jA^i\)의 일반론, 평행 이동, 곡률, 아인슈타인 방정식은 상대성이론 책에서 다룬다.</p></div>
+
+    <h3 id="s6-divergence">곡선 좌표의 발산</h3>
+    <p>6장은 직교 곡선 좌표의 발산을 작은 상자의 플럭스로 구했다. 이제 비직교 좌표에서도 통하는 한 줄짜리 공식을 크리스토펠 기호로 얻는다. 먼저 기울기 연산자를 쓰자. \(df = \partial_jf\,du^j\)가 \(\nabla f\cdot d\mathbf r = \nabla f\cdot\mathbf e_i\,du^i\)와 같아야 하므로 \(\nabla f = \mathbf e^j\partial_jf\), 곧 \(\nabla = \mathbf e^j\partial_j\)이다. 그러면</p>
+    <div class="formula" id="eq-divergence-christoffel">\[ \nabla\cdot\mathbf A = \mathbf e^j\cdot\partial_j\big(A^i\mathbf e_i\big) = \partial_jA^j + \Gamma^j{}_{ij}A^i \]</div>
+    <p>이다. 축약된 크리스토펠 기호 \(\Gamma^j{}_{ij}\)를 식 <a class="ref" href="#eq-christoffel-metric"></a>로 계산하면, 괄호의 둘째 항과 셋째 항은 \(g^{jl}\partial_jg_{li} - g^{jl}\partial_lg_{ij}\)인데 더하는 문자 \(j, l\)을 바꾸고 \(g\)의 대칭성을 쓰면 서로 같으므로 지워진다. 남는 것은 \(\Gamma^j{}_{ij} = \tfrac12g^{jl}\partial_ig_{lj}\)이다. 이것은 행렬식의 로그 도함수다. 작은 변화 \(\delta g\)에 대해 \(\det(g + \delta g) = \det g\,\det(I + g^{-1}\delta g)\)이고, 8장 식 <a href="ch08.html#eq-det-exp-trace">(8.49)</a> \(\det e^X = e^{\operatorname{tr}X}\)에서 \(\det(I + X) = 1 + \operatorname{tr}X + O(X^2)\)이므로 \(\partial_i\ln g = g^{jl}\partial_ig_{lj}\)이다. 따라서 \(\Gamma^j{}_{ij} = \partial_i\ln\sqrt g\)이다.</p>
+    <div class="box thm" id="thm-covariant-divergence"><div class="box-h">계량으로 쓴 발산과 라플라시안</div>
+      <p>\(g = \det g_{ij} > 0\)이고 \(\mathbf A = A^i\mathbf e_i\)가 연속 미분 가능하면</p>
+      <div class="formula" id="eq-covariant-divergence">\[ \nabla\cdot\mathbf A = \frac{1}{\sqrt g}\,\partial_i\big(\sqrt g\,A^i\big) \]</div>
+      <p>이다. \(\nabla f\)의 반변 성분이 \(g^{ij}\partial_jf\)이므로 라플라시안은</p>
+      <div class="formula" id="eq-laplacian-metric">\[ \nabla^2f = \frac{1}{\sqrt g}\,\partial_i\big(\sqrt g\,g^{ij}\,\partial_jf\big) \]</div>
+    </div>
+    <p>증명은 위의 계산을 모으는 것이다: \(\partial_iA^i + A^i\partial_i\ln\sqrt g = \frac{1}{\sqrt g}\partial_i(\sqrt gA^i)\). 직교 곡선 좌표에서 확인하자. \(\sqrt g = h_1h_2h_3\)이고, 단위 벡터 성분 \(F_i = \mathbf A\cdot\hat{\mathbf e}_i\)와 반변 성분은 \(\mathbf A = A^i\mathbf e_i = A^ih_i\hat{\mathbf e}_i\)에서 \(A^i = F_i/h_i\)(같은 \(i\)에 대해 더하지 않음)로 이어진다. 넣으면 \(\frac{1}{h_1h_2h_3}\partial_1(h_2h_3F_1) + \cdots\)로 6장 식 <a href="ch06.html#eq-div-curvilinear">(6.22)</a>이다. 라플라시안도 \(g^{ii} = 1/h_i^2\)을 넣으면 6장의 식이 나온다. 구면 좌표(\(\sqrt g = r^2\sin\theta\))에서 6장 식 <a href="ch06.html#eq-laplacian-spherical">(6.33)</a>을 다시 얻는 것은 <a class="ref" href="#prob-spherical-christoffel"></a>에서 한다. 6장은 직교성을 써서 상자의 면마다 플럭스를 셌지만, 식 <a class="ref" href="#eq-covariant-divergence"></a>은 직교성을 쓰지 않았다. 곡선 좌표의 연산자는 결국 계량 하나에 담겨 있다.</p>
+  </section>
+
+  <!-- ============================================================ 22.7 -->
+  <section id="s7">
+    <h2>민코프스키 공간과 4-벡터</h2>
+    <p>2장 식 <a href="ch02.html#eq-lorentz-hyperbolic">(2.54)</a>와 7장 <a href="ch07.html#ex-lorentz-matrix">예제 7.5</a>의 로런츠 변환은 \(x^2 + (ct)^2\)이 아니라 \(-(ct)^2 + x^2\)을 보존했고, 그 조건을 \(\Lambda^{\mathsf T}\eta\Lambda = \eta\)로 적었다(7장 <a href="ch07.html#prob-lorentz-rapidity">문제 7.5</a>). 직교 행렬의 조건 \(R^{\mathsf T}IR = I\)에서 \(I\)를 \(\eta\)로 바꾼 것이다. 22.5절의 말로 하면 \(\eta\)는 시공간의 계량이다. 계량의 대각 성분 하나가 음수라는 점만 빼면, 앞 절들의 기계(위아래 첨자, 지수 내리기, 축약)를 그대로 쓸 수 있다.</p>
+
+    <h3 id="s7-metric">민코프스키 계량</h3>
+    <div class="box def" id="def-minkowski-metric"><div class="box-h">민코프스키 계량</div>
+      <p>사건의 좌표를 \(x^\mu = (x^0, x^1, x^2, x^3) = (ct, x, y, z)\)로 쓰고, 그리스 첨자 \(\mu, \nu, \ldots\)는 0부터 3까지 돈다. <span class="term">민코프스키 계량</span> <span class="en">(Minkowski metric)</span>은</p>
+      <div class="formula" id="eq-minkowski-metric">\[ \begin{gathered} \eta_{\mu\nu} = \operatorname{diag}(-1, +1, +1, +1) \\ \eta^{\mu\nu} = \operatorname{diag}(-1, +1, +1, +1) \end{gathered} \]</div>
+      <p>이다. \(\eta^{\mu\rho}\eta_{\rho\nu} = \delta^\mu{}_\nu\)이고, 두 4-벡터의 내적은 \(A\cdot B = \eta_{\mu\nu}A^\mu B^\nu = -A^0B^0 + A^1B^1 + A^2B^2 + A^3B^3\)이다.</p>
+    </div>
+    <p>두 사건 사이의 간격은 계량으로 잰 "거리의 제곱"이다.</p>
+    <div class="formula" id="eq-invariant-interval">\[ \Delta s^2 = \eta_{\mu\nu}\,\Delta x^\mu\Delta x^\nu = -c^2\Delta t^2 + \Delta x^2 + \Delta y^2 + \Delta z^2 \]</div>
+    <p>\(\Delta s^2\)은 양수, 0, 음수가 모두 될 수 있다. 음수이면 <span class="term">시간꼴</span> <span class="en">(timelike)</span>로, 빛보다 느린 신호로 두 사건을 이을 수 있다. 0이면 <span class="term">빛꼴</span> <span class="en">(null)</span>, 양수이면 <span class="term">공간꼴</span> <span class="en">(spacelike)</span>이다. 시간꼴 간격에 대해 \(d\tau = \sqrt{-ds^2}/c\)를 <span class="term">고유 시간</span> <span class="en">(proper time)</span>이라 한다. 함께 움직이는 시계가 재는 시간이다.</p>
+    <p>관성계를 바꾸는 변환 \(x'^\mu = \Lambda^\mu{}_\nu x^\nu\)가 모든 간격을 보존하려면 \(\eta_{\rho\sigma}\Lambda^\rho{}_\mu\Lambda^\sigma{}_\nu\,\Delta x^\mu\Delta x^\nu = \eta_{\mu\nu}\Delta x^\mu\Delta x^\nu\)가 모든 \(\Delta x\)에 대해 성립해야 하고, 양변이 \(\mu\nu\)에 대해 대칭인 계수이므로</p>
+    <div class="formula" id="eq-lorentz-condition">\[ \eta_{\rho\sigma}\,\Lambda^\rho{}_\mu\,\Lambda^\sigma{}_\nu = \eta_{\mu\nu} \]</div>
+    <p>이다. 이것을 만족하는 \(\Lambda\)가 <span class="term">로런츠 변환</span> <span class="en">(Lorentz transformation)</span>이다. 회전(공간 성분만 섞는 직교 행렬)도 여기 들어간다. \(x\) 방향으로 속력 \(\beta c\)로 움직이는 관성계로 옮기는 변환은 7장의 \(\Lambda(\beta)\)와 같은 수동 변환이다.</p>
+    <div class="formula" id="eq-lorentz-boost-tensor">\[ \begin{aligned} \Lambda^\mu{}_\nu &= \begin{pmatrix} \gamma & -\gamma\beta & 0 & 0 \\ -\gamma\beta & \gamma & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix} \\ &= \begin{pmatrix} \cosh\zeta & -\sinh\zeta & 0 & 0 \\ -\sinh\zeta & \cosh\zeta & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{pmatrix} \end{aligned} \]<div class="where">\(\mu\)가 행, \(\nu\)가 열이다. \(\gamma = 1/\sqrt{1 - \beta^2}\)는 로런츠 인자다. 둘째 꼴은 빠르기 \(\zeta\)(\(\beta = \tanh\zeta\))로 쓴 것으로, 2장 식 <a href="ch02.html#eq-lorentz-hyperbolic">(2.54)</a>와 <a href="ch02.html#ex-rapidity">예제 2.11</a>에서 세웠다.</div></div>
+    <p>식 <a class="ref" href="#eq-lorentz-condition"></a>의 \(\mu = \nu = 0\) 성분을 확인하면 \(-\gamma^2 + \gamma^2\beta^2 = -1\), \(\mu = 0, \nu = 1\)이면 \(-\gamma(-\gamma\beta) + (-\gamma\beta)\gamma = 0\)이다. 같은 방향의 두 부스트를 곱하면 빠르기가 더해지는 것은 7장 예제 7.5에서 보았다.</p>
+
+    <h3 id="s7-lowering">지수 내리기와 공변 벡터</h3>
+    <p>식 <a class="ref" href="#eq-index-lowering"></a>처럼 \(A_\mu = \eta_{\mu\nu}A^\nu\)로 지수를 내리면 \(A_\mu = (-A^0, A^1, A^2, A^3)\)이다. 시간 성분의 부호만 바뀐다. 내적은 \(A\cdot B = A_\mu B^\mu\)이다. 공변 성분의 변환을 구하자. 식 <a class="ref" href="#eq-lorentz-condition"></a>를 행렬로 쓰면 \(\Lambda^{\mathsf T}\eta\Lambda = \eta\)이므로 \(\Lambda^{-1} = \eta\Lambda^{\mathsf T}\eta\)이고</p>
+    <div class="formula" id="eq-covariant-lorentz">\[ A'_\mu = \eta_{\mu\alpha}\Lambda^\alpha{}_\nu\,\eta^{\nu\beta}A_\beta = (\Lambda^{-1})^\beta{}_\mu\,A_\beta \]</div>
+    <p>이다. 공변 성분은 역변환의 전치로 바뀐다. 22.5절에서 공변 성분이 \(\partial u^j/\partial u'^i\)로 바뀐 것과 같다(여기서 \(\partial x^\beta/\partial x'^\mu = (\Lambda^{-1})^\beta{}_\mu\)). \(x\) 방향 부스트라면 \(\Lambda^{-1} = \Lambda(-\beta)\)이므로 \(A'_0 = \gamma(A_0 + \beta A_1)\)이다. 기울기 \(\partial_\mu = \partial/\partial x^\mu = \big(\tfrac1c\partial_t, \nabla\big)\)는 연쇄 법칙에 따라 공변 벡터다. 그래서 축약 \(\partial^\mu\partial_\mu = \eta^{\mu\nu}\partial_\mu\partial_\nu = -\tfrac{1}{c^2}\partial_t^2 + \nabla^2\)은 모든 관성계에서 같은 연산자이고, 파동 방정식 \(\partial^\mu\partial_\mu\phi = 0\)이 로런츠 변환에서 꼴을 바꾸지 않는다.</p>
+    <div class="box def" id="def-four-vector"><div class="box-h">4-벡터</div>
+      <p>모든 관성계에서 네 개의 수 \(A^\mu\)가 주어지고, 로런츠 변환에서 좌표의 차 \(\Delta x^\mu\)처럼</p>
+      <div class="formula" id="eq-four-vector-law">\[ A'^\mu = \Lambda^\mu{}_\nu\,A^\nu \]</div>
+      <p>로 바뀌면 \(A^\mu\)를 <span class="term">4-벡터</span> <span class="en">(four-vector)</span>라 한다. 두 4-벡터의 내적 \(A_\mu B^\mu\)는 모든 관성계에서 같은 값(로런츠 스칼라)이다.</p>
+    </div>
+    <p>고유 시간 \(\tau\)는 스칼라이므로 \(dx^\mu/d\tau\)는 4-벡터다. \(dt = \gamma\,d\tau\)에서</p>
+    <div class="formula" id="eq-four-velocity">\[ U^\mu = \frac{dx^\mu}{d\tau} = \gamma\,(c, \mathbf v), \qquad U_\mu U^\mu = \gamma^2(-c^2 + v^2) = -c^2 \]</div>
+    <p>이다. 질량 \(m\)을 곱한 <span class="term">4-운동량</span> <span class="en">(four-momentum)</span> \(p^\mu = mU^\mu = (E/c, \mathbf p)\)(\(E = \gamma mc^2\), \(\mathbf p = \gamma m\mathbf v\))의 크기는</p>
+    <div class="formula" id="eq-energy-momentum">\[ \begin{gathered} p_\mu p^\mu = -\frac{E^2}{c^2} + \lvert\mathbf p\rvert^2 = -m^2c^2 \\ E^2 = (\lvert\mathbf p\rvert c)^2 + (mc^2)^2 \end{gathered} \]</div>
+    <p>이다. 빛은 \(p_\mu p^\mu = 0\)이라 \(E = \lvert\mathbf p\rvert c\)이다. 평면파 \(e^{i(\mathbf k\cdot\mathbf r - \omega t)}\)의 위상 \(\mathbf k\cdot\mathbf r - \omega t = k_\mu x^\mu\)도 스칼라여서, \(k^\mu = (\omega/c, \mathbf k)\)는 4-벡터다(<a class="ref" href="#prob-doppler-four-vector"></a>).</p>
+    <div class="callout warn"><strong>계량의 부호 관례</strong><p>이 책은 상대성이론과 블랙홀 교재에서 흔한 \((-, +, +, +)\)를 쓴다. 입자물리와 양자장론 교재 다수는 \(\eta_{\mu\nu} = \operatorname{diag}(+1, -1, -1, -1)\)을 쓰고, 그러면 \(p_\mu p^\mu = +m^2c^2\), \(U_\mu U^\mu = +c^2\)이고 시간꼴 간격이 양수다. 위 첨자 성분 \(x^\mu = (ct, \mathbf x)\), \(p^\mu = (E/c, \mathbf p)\)는 두 관례에서 같고, 아래 첨자 성분과 모든 축약의 부호가 뒤집힌다. 다른 책의 식을 옮길 때는 \(\eta \to -\eta\)로 바꾸고 축약마다 부호를 확인한다. 오래된 교재는 \(x^4 = ict\)로 계량을 단위 행렬처럼 보이게 하는데, 이 책은 쓰지 않는다.</p></div>
+
+    <div class="box ex" id="ex-four-momentum"><div class="box-h">불변 질량과 문턱 에너지</div>
+      <p>입자의 질량 에너지는 \(m_pc^2 = 938.272\ \text{MeV}\)(양성자), \(m_\pi c^2 = 134.977\ \text{MeV}\)(\(\pi^0\))이다. (가) 정지한 양성자에 광자(\(\gamma\))를 쏘아 \(\gamma + p \to p + \pi^0\)를 일으키는 데 필요한 최소 광자 에너지를 구하라. (나) 우주 공간의 고에너지 양성자가 우주 배경 복사의 광자와 정면으로 부딪혀 같은 반응을 일으키는 양성자 에너지의 문턱을 어림하라. 배경 복사의 온도는 \(T = 2.7255\ \text{K}\)이고(D. J. Fixsen, Astrophys. J. 707, 916 (2009)), 광자의 평균 에너지는 \(2.701\,k_BT\)이다. (다) 에너지가 각각 \(1.00\ \text{GeV}\)인 두 광자로 붕괴한 \(\pi^0\)의 경우, 두 광자 사이의 각을 구하라.</p>
+      <p><b>풀이.</b> 여러 입자의 4-운동량의 합 \(P^\mu\)은 반응 전후에 보존되고, \(s \equiv -P_\mu P^\mu c^2\)은 모든 관성계에서 같다. 전체 운동량이 0인 관성계(질량 중심계)에서는 \(s = E_{\text{전체}}^2\)이므로 \(\sqrt s\)를 <span class="term">불변 질량</span> <span class="en">(invariant mass)</span>의 에너지라 한다. 반응이 겨우 일어나는 문턱에서는 질량 중심계에서 생성물이 모두 정지해 있으므로</p>
+      <div class="formula" id="eq-threshold-condition">\[ \sqrt s = (m_p + m_\pi)\,c^2 \]</div>
+      <p>이다. 문턱 조건을 스칼라로 적었으므로, 계산은 아무 관성계에서나 해도 된다.</p>
+      <p>(가) 실험실계에서 광자는 \(p_\gamma^\mu = (E_\gamma/c)(1, \hat{\mathbf n})\), 양성자는 \(p_p^\mu = (m_pc, \mathbf 0)\)이다. \(p_\gamma\cdot p_\gamma = 0\), \(p_p\cdot p_p = -m_p^2c^2\), \(p_\gamma\cdot p_p = -E_\gamma m_p\)이므로</p>
+      <div class="formula">\[ s = -(p_\gamma + p_p)^2c^2 = m_p^2c^4 + 2E_\gamma m_pc^2 \]</div>
+      <p>이다. 식 <a class="ref" href="#eq-threshold-condition"></a>과 같게 놓으면</p>
+      <div class="formula" id="eq-photopion-threshold">\[ \begin{aligned} E_\gamma^{\text{문턱}} &= \frac{(m_p + m_\pi)^2 - m_p^2}{2m_p}\,c^2 \\ &= m_\pi c^2\Big(1 + \frac{m_\pi}{2m_p}\Big) \end{aligned} \]</div>
+      <p>이다. 생성물의 질량 \(m_\pi c^2\)보다 조금 더 필요하다. 운동량 보존 때문에 생성물이 움직여야 하고, 그 운동 에너지만큼 더 들기 때문이다.</p>
+      <p>(나) 양성자가 \(+x\), 광자가 \(-x\)로 움직이고 양성자가 극단적 상대론적(\(E_p \approx \lvert\mathbf p_p\rvert c\))이면 \(p_\gamma\cdot p_p = -\tfrac{E_\gamma E_p}{c^2}(1 + \beta_p) \approx -2E_\gamma E_p/c^2\)이므로 \(s \approx m_p^2c^4 + 4E_\gamma E_p\)이다. 따라서 \(E_p^{\text{문턱}} \approx m_\pi(2m_p + m_\pi)c^4/(4E_\gamma)\)이다.</p>
+      <p>(다) 두 광자는 \(p_i\cdot p_i = 0\)이므로 \(-(p_1 + p_2)^2c^2 = -2p_1\cdot p_2c^2 = 2E_1E_2(1 - \cos\theta)\)이고, 이것이 \(m_\pi^2c^4\)과 같다.</p>
+      <p><b>숫자로 보기.</b> (가) \(E_\gamma^{\text{문턱}} = 134.977\ \text{MeV}\times(1 + 0.0719) = 144.7\ \text{MeV}\)이다. 검산: \(s = 938.272^2 + 2(144.686)(938.272) = 1073.249^2\ \text{MeV}^2\)이고 \(m_p + m_\pi = 1073.249\ \text{MeV}\)이다. (나) \(k_BT = 2.349\times10^{-4}\ \text{eV}\), \(E_\gamma = 6.34\times10^{-4}\ \text{eV}\)이고 \(m_\pi(2m_p + m_\pi)c^4 = 2.715\times10^{17}\ \text{eV}^2\)이므로 \(E_p^{\text{문턱}} \approx 1.1\times10^{20}\ \text{eV}\)이다. 양성자의 로런츠 인자는 \(10^{11}\) 정도다. 이 반응이 우주선 양성자의 에너지 스펙트럼에 끝을 만든다는 예측이 그라이젠, 자체핀과 쿠즈민의 것이다(K. Greisen, Phys. Rev. Lett. 16, 748 (1966); G. T. Zatsepin and V. A. Kuz'min, JETP Lett. 4, 78 (1966)). 배경 복사에는 평균보다 에너지가 큰 광자도 있으므로 실제로는 이 어림보다 낮은 에너지에서부터 반응이 일어난다. (다) \(1 - \cos\theta = (134.977)^2/(2 \times 1000 \times 1000) = 0.009\,11\)이므로 \(\theta = 0.135\ \text{rad} = 7.74^\circ\)이다. 빠른 \(\pi^0\)(로런츠 인자 14.8)의 두 광자는 거의 같은 방향으로 날아간다. 단위: 모든 식에서 \(s\)는 \(\text{MeV}^2\)이다.</p>
+    </div>
+    <div class="callout deep" data-later="em-grad"><strong>장 세기 텐서</strong><p>22.4절에서 자기장은 반대칭 텐서 \(B_{ij}\)였다. 시공간에서는 전기장과 자기장이 하나의 반대칭 4차원 텐서 \(F^{\mu\nu}\)(장 세기 텐서)로 묶이고, 공간 성분 \(F^{ij}\)가 \(B_{ij}\), 시간 성분 \(F^{0i}\)가 \(\mathbf E/c\)(부호는 관례에 따라 다르다)이다. 로런츠 힘은 \(dp^\mu/d\tau = qF^\mu{}_\nu U^\nu\) 한 줄이 되고, 부스트에서 \(\mathbf E\)와 \(\mathbf B\)가 서로 섞이는 이유가 여기서 나온다. 대학원 전자기학 책에서 다룬다.</p></div>
+    <div class="callout deep" data-later="qft"><strong>텐서가 아닌 것: 스피너</strong><p>로런츠 변환 아래에서 텐서처럼 첨자마다 \(\Lambda\)를 하나씩 곱해 바뀌지 않는 양도 있다. 전자의 상태를 적는 스피너는 \(360^\circ\) 회전에서 부호가 바뀐다(8장 식 <a href="ch08.html#eq-spin-2pi">(8.51)</a>). 스피너와 디랙 방정식은 양자장론 책에서 다룬다.</p></div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>축을 돌리는(수동적) 관점에서 \(R_{ij} = \hat{\mathbf e}'_i\cdot\hat{\mathbf e}_j\)이고 벡터는 \(A'_i = R_{ij}A_j\)로 바뀐다. 이 \(R\)은 7장의 능동 회전 행렬의 전치다. \(n\)차 카르테시안 텐서는 첨자마다 \(R\)을 하나씩 곱해 바뀌는 \(3^n\)개의 수이고, 2차 텐서는 \(T' = RTR^{\mathsf T}\)이다.</li>
+      <li>텐서곱은 차수를 더하고, 축약은 차수를 2 낮춘다(\(R_{ia}R_{ib} = \delta_{ab}\)). 2차 텐서는 대각합, 대각합이 0인 대칭 부분, 반대칭 부분(\(A_{ij} = \varepsilon_{ijk}a_k\))으로 나뉘고(\(9 = 1 + 5 + 3\)), 각 부분은 회전에서 섞이지 않는다.</li>
+      <li>몫 정리: <b>임의의</b> 벡터 \(B\)에 대해 \(A_{ij}B_j\)가 벡터이면 \(A_{ij}\)는 2차 텐서다. 그래서 관성 \(L_i = I_{ij}\omega_j\), 전도도 \(J_i = \sigma_{ij}E_j\), 응력 \(t_i = \sigma_{ij}n_j\)의 계수는 텐서이고, 대칭이면 주축이 있다. 정지 유체는 \(\sigma_{ij} = -p\delta_{ij}\)이다.</li>
+      <li>\(R_{il}R_{jm}R_{kn}\varepsilon_{lmn} = (\det R)\varepsilon_{ijk}\)이므로 \(\varepsilon_{ijk}\)는 유사 텐서이고, 참벡터의 외적은 유사 벡터다. \(\mathbf L\), \(\boldsymbol\omega\), \(\mathbf B\)는 유사 벡터, \(\mathbf E\cdot\mathbf B\)는 유사 스칼라다. 자기장의 실체는 반대칭 참텐서 \(B_{ij} = \varepsilon_{ijk}B_k\)이다.</li>
+      <li>비직교 기저에서는 쌍대 기저 \(\mathbf e^i\cdot\mathbf e_j = \delta^i{}_j\)로 반변 성분 \(A^i = \mathbf e^i\cdot\mathbf A\)와 공변 성분 \(A_i = \mathbf e_i\cdot\mathbf A\)를 정한다. 계량 \(g_{ij} = \mathbf e_i\cdot\mathbf e_j\)가 지수를 내린다: \(A_i = g_{ij}A^j\). \(ds^2 = g_{ij}du^idu^j\), \(dV = \sqrt g\,d^3u\)이다.</li>
+      <li>크리스토펠 기호 \(\partial_j\mathbf e_i = \Gamma^k{}_{ij}\mathbf e_k\)는 텐서가 아니고, \(\Gamma^k{}_{ij} = \tfrac12g^{kl}(\partial_ig_{lj} + \partial_jg_{li} - \partial_lg_{ij})\)이다. 극좌표에서 \(\Gamma^r{}_{\theta\theta} = -r\), \(\Gamma^\theta{}_{r\theta} = 1/r\)이고, 가속도는 \(\mathbf a = (\ddot u^k + \Gamma^k{}_{ij}\dot u^i\dot u^j)\mathbf e_k\)이다.</li>
+      <li>발산은 \(\nabla\cdot\mathbf A = \frac{1}{\sqrt g}\partial_i(\sqrt gA^i)\), 라플라시안은 \(\frac{1}{\sqrt g}\partial_i(\sqrt g\,g^{ij}\partial_jf)\)이며, 직교 좌표에서는 6장의 식이 된다.</li>
+      <li>민코프스키 계량 \(\eta_{\mu\nu} = \operatorname{diag}(-1, 1, 1, 1)\)에서 간격 \(\Delta s^2 = -c^2\Delta t^2 + \lvert\Delta\mathbf x\rvert^2\)이 불변이고, 로런츠 변환은 \(\eta_{\rho\sigma}\Lambda^\rho{}_\mu\Lambda^\sigma{}_\nu = \eta_{\mu\nu}\)를 만족한다. 4-운동량은 \(p_\mu p^\mu = -m^2c^2\)이고, 반응의 문턱은 불변 질량 \(\sqrt s\)가 생성물의 질량 합과 같아지는 곳이다(\(\gamma p \to p\pi^0\): \(144.7\ \text{MeV}\)).</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. 벡터 \(\mathbf A = (1, 0, 0)\)은 그대로 두고 좌표축을 \(z\)축 둘레로 \(+90^\circ\)(\(x\)축을 \(y\)축 쪽으로) 돌렸다. 새 축에서 \(\mathbf A\)의 성분은?</p><div class="opts">
+        <button class="opt">\((0, 1, 0)\)</button>
+        <button class="opt" data-correct>\((0, -1, 0)\)</button>
+        <button class="opt">\((1, 0, 0)\)</button>
+        <button class="opt">\((-1, 0, 0)\)</button>
+      </div><div class="quiz-exp">새 축은 \(\hat{\mathbf e}'_1 = \hat{\mathbf y}\), \(\hat{\mathbf e}'_2 = -\hat{\mathbf x}\)이므로 \(A'_1 = \hat{\mathbf y}\cdot\mathbf A = 0\), \(A'_2 = -\hat{\mathbf x}\cdot\mathbf A = -1\)이다. 축이 \(+90^\circ\) 돌면 벡터는 \(-90^\circ\) 돈 것처럼 보인다. \((0, 1, 0)\)은 벡터를 돌리는 능동적 관점(7장)의 답이다.</div></div>
+      <div class="quiz-q"><p>2. 어떤 배열 \(A_{ij}\)와 <b>특정한</b> 벡터 \(\mathbf B_0\)에 대해 \(A_{ij}B_{0j}\)가 모든 좌표계에서 벡터임을 확인했다. 결론으로 옳은 것은?</p><div class="opts">
+        <button class="opt">몫 정리에 따라 \(A_{ij}\)는 2차 텐서다.</button>
+        <button class="opt">\(A_{ij}\)는 대칭 텐서다.</button>
+        <button class="opt" data-correct>이것만으로는 \(A_{ij}\)가 텐서인지 알 수 없다.</button>
+        <button class="opt">\(A_{ij}\)는 텐서가 아니다.</button>
+      </div><div class="quiz-exp">몫 정리는 <b>임의의</b> \(\mathbf B\)에 대해 성립할 것을 요구한다. 식 <a class="ref" href="#eq-quotient-proof"></a>에서 괄호 안의 양은 \(\mathbf B_0\)에 수직인 방향으로 아무 값이나 가질 수 있다.</div></div>
+      <div class="quiz-q"><p>3. 공간 반전 \(\mathbf r \to -\mathbf r\)에서 부호가 바뀌지 <b>않는</b> 것은?</p><div class="opts">
+        <button class="opt">전기장 \(\mathbf E\)</button>
+        <button class="opt">운동량 \(\mathbf p\)</button>
+        <button class="opt" data-correct>자기장 \(\mathbf B\)</button>
+        <button class="opt">\(\mathbf E\cdot\mathbf B\)</button>
+      </div><div class="quiz-exp">\(P = -I\)는 \(\det P = -1\)이므로 유사 벡터는 \(\mathbf B' = (\det P)P\mathbf B = \mathbf B\)이다. \(\mathbf E\), \(\mathbf p\)는 참벡터라 부호가 바뀌고, \(\mathbf E\cdot\mathbf B\)는 참과 유사의 곱인 유사 스칼라라 부호가 바뀐다.</div></div>
+      <div class="quiz-q"><p>4. 비직교 기저 \(\mathbf e_1, \mathbf e_2\)에서 벡터를 \(\mathbf A = A^1\mathbf e_1 + A^2\mathbf e_2\)로 쪼갰다. \(\mathbf e_1\cdot\mathbf A\)는 무엇인가?</p><div class="opts">
+        <button class="opt">\(A^1\)</button>
+        <button class="opt" data-correct>\(g_{11}A^1 + g_{12}A^2\)</button>
+        <button class="opt">\(g^{11}A^1 + g^{12}A^2\)</button>
+        <button class="opt">\(\lvert\mathbf e_1\rvert A^1\)</button>
+      </div><div class="quiz-exp">\(\mathbf e_1\cdot\mathbf A = A^j\,\mathbf e_1\cdot\mathbf e_j = g_{1j}A^j = A_1\)로 공변 성분이다. 기저가 정규직교일 때만 \(A^1\)과 같다. 반변 성분 \(A^1\)을 얻으려면 쌍대 기저 \(\mathbf e^1\)과 내적해야 한다.</div></div>
+      <div class="quiz-q"><p>5. 평면 극좌표 \((r, \theta)\)에서 \(\Gamma^r{}_{\theta\theta}\)는?</p><div class="opts">
+        <button class="opt">\(0\)</button>
+        <button class="opt">\(1/r\)</button>
+        <button class="opt" data-correct>\(-r\)</button>
+        <button class="opt">\(-1/r\)</button>
+      </div><div class="quiz-exp">\(\Gamma^r{}_{\theta\theta} = \tfrac12g^{rr}(-\partial_rg_{\theta\theta}) = -\tfrac12(2r) = -r\)이다. 기하로는 \(\partial_\theta\mathbf e_\theta = -r\,\mathbf e_r\)로, 둘레 방향 기저가 돌면서 원점을 향하는 성분이 생긴다. 가속도의 구심 항 \(-r\dot\theta^2\)이 여기서 나온다.</div></div>
+      <div class="quiz-q"><p>6. 계량 \(\eta = \operatorname{diag}(-1, 1, 1, 1)\)에서 질량 \(m\)인 입자의 4-운동량에 대해 \(p_\mu p^\mu\)는?</p><div class="opts">
+        <button class="opt">\(E^2/c^2\)</button>
+        <button class="opt">\(+m^2c^2\)</button>
+        <button class="opt" data-correct>\(-m^2c^2\)</button>
+        <button class="opt">관성계에 따라 다르다.</button>
+      </div><div class="quiz-exp">\(p_\mu p^\mu = -E^2/c^2 + \lvert\mathbf p\rvert^2 = -m^2c^2\)이고, 로런츠 스칼라라 모든 관성계에서 같다. \(+m^2c^2\)은 \((+, -, -, -)\) 관례의 답이다.</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-rotated-tensor" data-level="1"><p>평면에서 2차 텐서와 벡터가 \(T = \begin{pmatrix} 3 & 1 \\ 1 & 3 \end{pmatrix}\), \(\mathbf A = (1, 1)\)이다. 좌표축을 \(45^\circ\) 돌린 좌표계에서 \(T'\)과 \(\mathbf A'\)을 구하고, \(\operatorname{tr}T\), \(\det T\), \(T_{ij}A_iA_j\)가 바뀌지 않음을 확인하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>식 <a class="ref" href="#eq-rotation-cosines"></a>에서 \(R = \tfrac{1}{\sqrt2}\begin{pmatrix} 1 & 1 \\ -1 & 1 \end{pmatrix}\)이다. \(\mathbf A' = R\mathbf A = (\sqrt2, 0)\)이고, \(RT = \tfrac{1}{\sqrt2}\begin{pmatrix} 4 & 4 \\ -2 & 2 \end{pmatrix}\)에 \(R^{\mathsf T}\)를 곱하면</p>
+        <div class="formula">\[ T' = RTR^{\mathsf T} = \begin{pmatrix} 4 & 0 \\ 0 & 2 \end{pmatrix} \]</div>
+        <p>이다. 새 축이 \(T\)의 주축이다. 대각합 \(6\), 행렬식 \(8\)은 두 좌표계에서 같다. \(T_{ij}A_iA_j\)는 원래 \(3 + 1 + 1 + 3 = 8\), 새 축에서 \(4 \times 2 = 8\)이다. \(\mathbf A\)가 주축 \(\hat{\mathbf e}'_1\) 방향이라 \(T\mathbf A = 4\mathbf A\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-tensor-invariants" data-level="2"><p>(가) 2차 텐서 \(T\)에 대해 \(T_{ii}\), \(T_{ij}T_{ji}\), \(T_{ij}T_{jk}T_{ki}\)가 스칼라임을 축약으로 보여라. (나) \(T\)가 대칭이고 고유값이 \(\lambda_1, \lambda_2, \lambda_3\)이면 세 양은 무엇인가? (다) \(\det T = \tfrac16\varepsilon_{ijk}\varepsilon_{lmn}T_{il}T_{jm}T_{kn}\)을 보이고, 이것이 반사를 포함한 모든 직교 변환에서 참스칼라임을 설명하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 세 양은 각각 \(T\), \(T\otimes T\), \(T\otimes T\otimes T\)의 첨자를 모두 짝지어 축약한 것이다. 축약할 때마다 \(R\) 두 개가 \(\delta\)로 지워지므로(식 <a class="ref" href="#eq-contraction-proof"></a>) 남는 \(R\)이 없다. 행렬로는 \(\operatorname{tr}T\), \(\operatorname{tr}T^2\), \(\operatorname{tr}T^3\)이고 \(\operatorname{tr}(RT^nR^{\mathsf T}) = \operatorname{tr}T^n\)이다.</p>
+        <p>(나) 주축에서 \(T = \operatorname{diag}(\lambda_1, \lambda_2, \lambda_3)\)이므로 \(\sum\lambda_k\), \(\sum\lambda_k^2\), \(\sum\lambda_k^3\)이다.</p>
+        <p>(다) 4장 식 <a href="ch04.html#eq-det3-epsilon">(4.14)</a>를 일반화하면 \(\varepsilon_{lmn}T_{il}T_{jm}T_{kn} = \det T\,\varepsilon_{ijk}\)이다(식 <a class="ref" href="#eq-epsilon-transformation"></a>의 증명과 같다). 양변에 \(\varepsilon_{ijk}\)를 곱해 더하면 \(\varepsilon_{ijk}\varepsilon_{ijk} = 6\)이므로 주어진 식이 나온다. 오른쪽은 유사 텐서 \(\varepsilon\) 두 개와 참텐서 \(T\) 세 개를 모두 축약한 것이라 \((\det R)^2 = 1\)이 붙어 참스칼라다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-quadratic-quotient" data-level="2"><p>모든 정규직교 좌표계에서 아홉 개의 수 \(T_{ij}\)가 주어져 있고, 임의의 벡터 \(\mathbf x\)에 대해 \(T_{ij}x_ix_j\)가 스칼라라고 하자. (가) \(T\)의 대칭 부분 \(S_{ij} = \tfrac12(T_{ij} + T_{ji})\)가 2차 텐서임을 보여라. (나) 반대칭 부분에 대해서는 아무것도 말할 수 없음을 예로 보여라. (다) 운동 에너지 \(\tfrac12\omega_iI_{ij}\omega_j\)에서 관성 텐서를 정의하면 무엇을 알 수 있는가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(T_{ij}x_ix_j = S_{ij}x_ix_j\)이다(반대칭 부분은 대칭인 \(x_ix_j\)와 축약하면 0). \(\mathbf x\) 대신 \(\mathbf x + \mathbf y\)를 넣고 \(\mathbf x\), \(\mathbf y\) 각각의 값을 빼면 \(2S_{ij}x_iy_j\)가 스칼라다. 이제 \(S_{ij}x_i\)를 벡터 \(\mathbf y\)와의 축약으로 보면, 임의의 \(\mathbf y\)에 대해 스칼라이므로 몫 정리로 \(S_{ij}x_i\)는 벡터이고, 다시 임의의 \(\mathbf x\)에 대해 벡터이므로 \(S_{ij}\)는 2차 텐서다.</p>
+        <p>(나) 한 좌표계에서는 \(T_{12} = -T_{21} = 1\), 다른 좌표계에서는 모두 0으로 정해도 \(T_{ij}x_ix_j\)는 늘 \(S_{ij}x_ix_j\)와 같다. 반대칭 부분은 이차 형식에 나타나지 않으므로 자유롭게 바꿀 수 있다.</p>
+        <p>(다) 운동 에너지만으로는 \(I_{ij}\)의 대칭 부분만 정해진다. 관성 텐서는 정의(8장 식 <a href="ch08.html#eq-inertia-tensor">(8.40)</a>)부터 대칭이므로 그것으로 충분하다. 반면 \(L_i = I_{ij}\omega_j\)에서 정의하면 몫 정리로 아홉 성분 전체가 텐서임을 얻는다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-stress-plane" data-level="2"><p>어떤 점의 응력 텐서가 MPa 단위로 \(\sigma = \begin{pmatrix} 50 & 30 & 0 \\ 30 & -20 & 0 \\ 0 & 0 & 10 \end{pmatrix}\)이다. (가) 법선 \(\hat{\mathbf n} = (1, 1, 0)/\sqrt2\)인 면의 견인력, 수직 응력, 전단 응력의 크기를 구하라. (나) 주 응력과, \(xy\) 평면 안 주축의 방향을 구하라. (다) 이 점에서 전단 응력의 최댓값은 얼마인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 식 <a class="ref" href="#eq-cauchy-stress"></a>에서 \(\mathbf t = \sigma\hat{\mathbf n} = (80, 10, 0)/\sqrt2 = (56.6, 7.1, 0)\ \text{MPa}\)이다. 수직 응력은 \(\sigma_n = \hat{\mathbf n}\cdot\mathbf t = (80 + 10)/2 = 45\ \text{MPa}\)(당김)이고, 전단 성분은 \(\mathbf t - 45\hat{\mathbf n} = (24.7, -24.7, 0)\)이므로 크기 \(35.0\ \text{MPa}\)이다. 검산: \(\lvert\mathbf t\rvert^2 = 3250 = 45^2 + 35^2\).</p>
+        <p>(나) \(z\) 방향은 이미 주축(\(10\ \text{MPa}\))이다. \(xy\) 블록의 고유값은 평균 \(15\)와 반지름 \(\sqrt{35^2 + 30^2} = 46.1\)에서 \(61.1\)과 \(-31.1\ \text{MPa}\)이다. 주축은 \(\tan2\phi = 2\sigma_{xy}/(\sigma_{xx} - \sigma_{yy}) = 60/70\)에서 \(\phi = 20.3^\circ\)(최대 주 응력 방향)와 그에 수직인 방향이다. 대각합 \(61.1 - 31.1 + 10 = 40\)이 원래 대각합 \(50 - 20 + 10\)과 같다.</p>
+        <p>(다) 주축 좌표계에서 두 주축 사이 \(45^\circ\) 면의 전단 응력은 <a class="ref" href="#ex-rod-tension"></a>처럼 주 응력 차의 절반이다. 가장 큰 차는 \(61.1 - (-31.1)\)이므로 최대 전단 응력은 \(46.1\ \text{MPa}\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-parity-classify" data-level="2"><p>다음 양이 참스칼라, 유사 스칼라, 참벡터, 유사 벡터 가운데 무엇인지 \(\det R\)의 개수를 세어 판정하라. (가) 토크 \(\mathbf r\times\mathbf F\) (나) 자기 플럭스 \(\int\mathbf B\cdot d\mathbf a\) (넓이 요소 \(d\mathbf a = \partial_u\mathbf r\times\partial_v\mathbf r\,du\,dv\)) (다) 자기 쌍극자의 에너지 \(-\mathbf m\cdot\mathbf B\) (라) 전기장과 자기장의 곱 \(\mathbf E\times\mathbf B\) (마) 원형 편광한 빛에서 \(\mathbf E\)와 \(d\mathbf E/dt\)로 만든 \(\mathbf k\cdot(\mathbf E\times\dot{\mathbf E})\). 각 결과가 물리적으로 그럴듯한지 한 줄로 설명하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 참 × 참의 외적: 유사 벡터. 각운동량의 시간 도함수이므로 \(\mathbf L\)과 같아야 한다.</p>
+        <p>(나) \(d\mathbf a\)는 참벡터 둘의 외적이라 유사 벡터이고, \(\mathbf B\)도 유사 벡터이므로 플럭스는 참스칼라다. 패러데이 법칙의 기전력 \(\oint\mathbf E\cdot d\mathbf l\)(참스칼라)과 같아야 하므로 맞다.</p>
+        <p>(다) 유사 · 유사: 참스칼라. 에너지는 거울에 비춰도 같아야 한다.</p>
+        <p>(라) 외적은 \(\varepsilon\) 하나(\(\det R\) 하나)에 참 \(\mathbf E\)와 유사 \(\mathbf B\)(\(\det R\) 하나)이므로 \(\det R\)이 두 번, 곧 참벡터다. 포인팅 벡터 \(\mathbf E\times\mathbf B/\mu_0\)은 에너지가 흐르는 방향이므로 참벡터여야 한다.</p>
+        <p>(마) \(\mathbf E\times\dot{\mathbf E}\)는 참 × 참이라 유사 벡터이고, 참벡터 \(\mathbf k\)와의 내적은 유사 스칼라다. 이 부호가 편광의 회전 방향(나선성)이고, 거울에 비추면 왼쪽 원편광과 오른쪽 원편광이 바뀐다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-oblique-components" data-level="1"><p>평면의 기저 \(\mathbf e_1 = (1, 0)\), \(\mathbf e_2 = (1, 1)\)과 벡터 \(\mathbf A = (3, 2)\)(직교 좌표 성분)가 있다. (가) \(g_{ij}\), \(g^{ij}\), 쌍대 기저를 구하라. (나) \(\mathbf A\)의 반변 성분과 공변 성분을 구하고, 식 <a class="ref" href="#eq-index-lowering"></a>로 서로 이어짐을 확인하라. (다) \(A_iA^i = \lvert\mathbf A\rvert^2\)을 확인하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(g_{ij} = \begin{pmatrix} 1 & 1 \\ 1 & 2 \end{pmatrix}\), \(\det g = 1\), \(g^{ij} = \begin{pmatrix} 2 & -1 \\ -1 & 1 \end{pmatrix}\)이다. \(\mathbf e^1 = 2\mathbf e_1 - \mathbf e_2 = (1, -1)\), \(\mathbf e^2 = -\mathbf e_1 + \mathbf e_2 = (0, 1)\)이고, \(\mathbf e^1\cdot\mathbf e_2 = 0\), \(\mathbf e^2\cdot\mathbf e_1 = 0\), \(\mathbf e^1\cdot\mathbf e_1 = \mathbf e^2\cdot\mathbf e_2 = 1\)이다.</p>
+        <p>(나) \(A^1 = \mathbf e^1\cdot\mathbf A = 1\), \(A^2 = \mathbf e^2\cdot\mathbf A = 2\)이고, 실제로 \(1\cdot(1, 0) + 2\cdot(1, 1) = (3, 2)\)이다. \(A_1 = \mathbf e_1\cdot\mathbf A = 3\), \(A_2 = \mathbf e_2\cdot\mathbf A = 5\)이다. \(g_{ij}A^j = (1 + 2, 1 + 4) = (3, 5)\)이고, \(g^{ij}A_j = (6 - 5, -3 + 5) = (1, 2)\)이다.</p>
+        <p>(다) \(A_iA^i = 3 \cdot 1 + 5 \cdot 2 = 13 = 3^2 + 2^2\)이다. 반변 성분끼리의 제곱합 \(1 + 4 = 5\)나 공변 성분끼리의 제곱합 \(34\)는 길이와 상관없다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-spherical-christoffel" data-level="2"><p>구면 좌표 \((r, \theta, \phi)\)의 계량은 \(g_{ij} = \operatorname{diag}(1, r^2, r^2\sin^2\theta)\)이다. (가) 0이 아닌 크리스토펠 기호를 모두 구하라. (나) \(\Gamma^j{}_{ij} = \partial_i\ln\sqrt g\)를 \(i = r, \theta\)에 대해 확인하라. (다) 식 <a class="ref" href="#eq-laplacian-metric"></a>로 라플라시안을 적어 6장 식 (6.33)과 비교하고, 식 <a class="ref" href="#eq-covariant-divergence"></a>로 \(r \ne 0\)에서 \(\nabla\cdot(\hat{\mathbf r}/r^2) = 0\)을 확인하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 0이 아닌 도함수는 \(\partial_rg_{\theta\theta} = 2r\), \(\partial_rg_{\phi\phi} = 2r\sin^2\theta\), \(\partial_\theta g_{\phi\phi} = 2r^2\sin\theta\cos\theta\)이다. 식 <a class="ref" href="#eq-christoffel-metric"></a>에서</p>
+        <div class="formula">\[ \begin{gathered} \Gamma^r{}_{\theta\theta} = -r, \quad \Gamma^r{}_{\phi\phi} = -r\sin^2\theta \\ \Gamma^\theta{}_{\phi\phi} = -\sin\theta\cos\theta \\ \Gamma^\theta{}_{r\theta} = \Gamma^\phi{}_{r\phi} = \frac1r, \quad \Gamma^\phi{}_{\theta\phi} = \cot\theta \end{gathered} \]</div>
+        <p>이다(아래 첨자를 바꾼 것은 같다).</p>
+        <p>(나) \(\sqrt g = r^2\sin\theta\)이다. \(\Gamma^j{}_{rj} = \Gamma^\theta{}_{r\theta} + \Gamma^\phi{}_{r\phi} = 2/r = \partial_r\ln(r^2\sin\theta)\), \(\Gamma^j{}_{\theta j} = \Gamma^\phi{}_{\theta\phi} = \cot\theta = \partial_\theta\ln(r^2\sin\theta)\)이다.</p>
+        <p>(다) \(g^{ij} = \operatorname{diag}(1, r^{-2}, r^{-2}\sin^{-2}\theta)\)이므로</p>
+        <div class="formula">\[ \begin{aligned} \nabla^2f &= \frac{1}{r^2}\partial_r(r^2\partial_rf) \\ &\quad + \frac{1}{r^2\sin\theta}\partial_\theta(\sin\theta\,\partial_\theta f) \\ &\quad + \frac{1}{r^2\sin^2\theta}\partial_\phi^2f \end{aligned} \]</div>
+        <p>로 6장 식 <a href="ch06.html#eq-laplacian-spherical">(6.33)</a>과 같다. \(\hat{\mathbf r}/r^2\)은 \(\mathbf e_r = \hat{\mathbf r}\)이므로 \(A^r = 1/r^2\)이고, \(\nabla\cdot\mathbf A = \frac{1}{r^2\sin\theta}\partial_r(r^2\sin\theta\cdot r^{-2}) = 0\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-sphere-latitude" data-level="3"><p>반지름 \(R\)인 구면 위에서 \((\theta, \phi)\)를 좌표로 쓰면 \(ds^2 = R^2(d\theta^2 + \sin^2\theta\,d\phi^2)\)이다. (가) 크리스토펠 기호를 구하라. (나) 구면 위에서는 \(\partial_j\mathbf e_i\)에 구면에 수직인 성분도 생긴다. 2차원 계량으로 계산한 \(\Gamma\)는 접평면 성분만 적으므로, 식 <a class="ref" href="#eq-acceleration-christoffel"></a>은 가속도 가운데 <b>구면에 접하는 성분</b>을 준다(수직 성분은 구면이 입자를 붙잡는 힘이 댄다). 이 접하는 성분이 0이라는 조건, 곧 22.6절 심화 상자의 측지선 방정식을 \(\theta\), \(\phi\)로 적어라. 적도 \(\theta = \pi/2\)를 일정한 \(\dot\phi\)로 도는 운동이 이것을 만족함을 보이고, 위도선 \(\theta = \theta_0 \ne \pi/2\)를 일정한 \(\dot\phi\)로 도는 운동은 만족하지 않음을 보여라. (다) 비행기가 북위 \(37.5^\circ\)의 위도선을 따라 속력 \(250\ \text{m/s}\)로 날 때, 측지선에서 벗어나기 위해 필요한 옆 방향 가속도(구면에 접하는 성분)의 크기를 구하라(\(R = 6371\ \text{km}\)). 21장 <a href="ch21.html#ex-sphere-geodesic">예제 21.4</a>의 대원과 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) <a class="ref" href="#prob-spherical-christoffel"></a>의 \(r = R\)인 단면이다. \(R^2\)은 상수 인자라 식 <a class="ref" href="#eq-christoffel-metric"></a>에서 지워지고, \(\Gamma^\theta{}_{\phi\phi} = -\sin\theta\cos\theta\), \(\Gamma^\phi{}_{\theta\phi} = \Gamma^\phi{}_{\phi\theta} = \cot\theta\)만 0이 아니다.</p>
+        <p>(나) 접하는 가속도의 반변 성분은 \(a^\theta = \ddot\theta - \sin\theta\cos\theta\,\dot\phi^2\), \(a^\phi = \ddot\phi + 2\cot\theta\,\dot\theta\dot\phi\)이고, 측지선은 둘 다 0이다. 적도에서는 \(\cos\theta = 0\), \(\dot\theta = 0\)이고 \(\ddot\phi = 0\)이므로 만족한다. 위도선 \(\theta_0\)에서는 \(a^\phi = 0\)이지만 \(a^\theta = -\sin\theta_0\cos\theta_0\,\dot\phi^2 \ne 0\)이다. 적도가 아닌 위도선은 측지선이 아니다. 측지선은 대원뿐이다(21장 예제 21.4).</p>
+        <p>(다) \(\mathbf e_\theta\)의 길이가 \(R\)이므로 물리 성분은 \(\lvert Ra^\theta\rvert = R\sin\theta_0\cos\theta_0\,\dot\phi^2\)이다. 속력 \(V = R\sin\theta_0\,\dot\phi\)로 쓰면 \(\lvert Ra^\theta\rvert = (V^2/R)\cot\theta_0\)이다. 북위 \(37.5^\circ\)는 \(\theta_0 = 52.5^\circ\)이고, \(V^2/R = 9.81\times10^{-3}\ \text{m/s}^2\), \(\cot52.5^\circ = 0.767\)이므로 \(7.5\times10^{-3}\ \text{m/s}^2\)이다. 부호(\(a^\theta &lt; 0\))는 가속도가 북쪽, 곧 극 쪽을 향한다는 뜻이다. 위도선을 따라가려면 비행기가 극 쪽으로 계속 조금씩 방향을 틀어야 하고, 그러지 않으면 대원을 따라 적도 쪽으로 벗어난다. 단위: \(\text{m}^2\text{s}^{-2}/\text{m} = \text{m/s}^2\).</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-minkowski-lowering" data-level="1"><p>4-벡터 \(A^\mu = (5, 3, 0, 4)\)가 있다. (가) \(A_\mu\)와 \(A_\mu A^\mu\)를 구하라. 이 벡터는 시간꼴, 빛꼴, 공간꼴 가운데 무엇인가? (나) \(\beta = 0.6\)인 \(x\) 방향 부스트 <a class="ref" href="#eq-lorentz-boost-tensor"></a>으로 \(A'^\mu\)를 구하고, 내적이 그대로임을 확인하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(A_\mu = (-5, 3, 0, 4)\), \(A_\mu A^\mu = -25 + 9 + 0 + 16 = 0\)이므로 빛꼴이다.</p>
+        <p>(나) \(\gamma = 1.25\), \(\gamma\beta = 0.75\)이다. \(A'^0 = 1.25 \times 5 - 0.75 \times 3 = 4\), \(A'^1 = -0.75 \times 5 + 1.25 \times 3 = 0\), \(A'^2 = 0\), \(A'^3 = 4\)이다. \(A'_\mu A'^\mu = -16 + 0 + 0 + 16 = 0\)으로 같다. 빛꼴 벡터는 어느 관성계에서도 빛꼴이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-doppler-four-vector" data-level="2"><p>관성계 S에서 \(+x\) 방향으로 진행하는 빛의 파동 4-벡터는 \(k^\mu = (\omega/c, \omega/c, 0, 0)\)이다. (가) S에 대해 \(+x\) 방향으로 \(\beta c\)로 움직이는 관성계 S′에서 진동수를 구하라. (나) 이것으로, 관측자에게서 \(\beta c\)로 멀어지는 광원이 내는 빛의 파장이 \(\lambda_{\text{관측}} = \lambda_0\sqrt{(1 + \beta)/(1 - \beta)}\)임을 보여라. (다) \(\beta = 0.100\)으로 멀어지는 은하가 낸 수소 \(H\alpha\)선(\(\lambda_0 = 656.3\ \text{nm}\))은 몇 nm로 관측되는가? (라) S에서 \(y\) 방향으로 진행하는 빛이라면 S′의 진동수는 얼마인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 식 <a class="ref" href="#eq-four-vector-law"></a>에서 \(\omega'/c = \gamma(\omega/c - \beta\,\omega/c)\)이므로 \(\omega' = \gamma(1 - \beta)\,\omega = \sqrt{\tfrac{1 - \beta}{1 + \beta}}\,\omega\)이다. \(k'_\mu k'^\mu = 0\)도 그대로다.</p>
+        <p>(나) 광원이 정지한 관성계를 S로 잡고 관측자를 광원의 \(+x\) 쪽에 두자. 빛은 \(+x\)로 진행하고, 멀어지는 관측자의 관성계는 \(+x\)로 \(\beta c\)로 움직이는 S′이다. 이것이 (가)의 배치이고, 관측자가 빛과 같은 방향으로 달아나므로 \(\omega' = \omega_0\sqrt{(1 - \beta)/(1 + \beta)}\)이고, 파장은 \(\lambda = 2\pi c/\omega\)이므로 \(\lambda_{\text{관측}} = \lambda_0\sqrt{(1 + \beta)/(1 - \beta)}\)이다.</p>
+        <p>(다) \(\sqrt{1.1/0.9} = 1.1055\)이므로 \(725.6\ \text{nm}\)로, 적외선 쪽으로 \(69.3\ \text{nm}\) 옮겨 간다. 1차 근사 \(\lambda_0(1 + \beta) = 721.9\ \text{nm}\)와의 차이는 \(\beta^2\) 차수다.</p>
+        <p>(라) \(k^\mu = (\omega/c, 0, \omega/c, 0)\)이면 \(\omega' = \gamma\omega\)이다. 고전적인 도플러 효과로는 설명되지 않는 이 "가로 도플러 효과"는 시간 지연을 나타낸다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-compton-four-momentum" data-level="3"><p>에너지 \(E\)인 광자가 정지한 전자에 부딪혀 각 \(\theta\)로 산란되고 에너지가 \(E'\)이 된다. (가) 4-운동량 보존 \(p_\gamma + p_e = p'_\gamma + p'_e\)에서 \(p'_e\)를 한쪽에 남기고 제곱해, \(\dfrac{1}{E'} - \dfrac1E = \dfrac{1 - \cos\theta}{m_ec^2}\)을 유도하라. (나) 이것이 파장으로 \(\lambda' - \lambda = \dfrac{h}{m_ec}(1 - \cos\theta)\)임을 보이고 \(h/m_ec\)의 값을 구하라. (다) 세슘-137의 감마선(\(E = 661.7\ \text{keV}\))이 \(180^\circ\)로 되튕길 때 광자와 전자의 에너지를 구하라(\(m_ec^2 = 511.0\ \text{keV}\)).</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(p'_e = p_\gamma + p_e - p'_\gamma\)를 제곱하면, \(p_\gamma^2 = p_\gamma'^2 = 0\), \(p_e^2 = p_e'^2 = -m_e^2c^2\)이므로</p>
+        <div class="formula">\[ 0 = 2p_\gamma\cdot p_e - 2p_\gamma\cdot p'_\gamma - 2p_e\cdot p'_\gamma \]</div>
+        <p>이다. 실험실계에서 \(p_\gamma\cdot p_e = -Em_e\), \(p_e\cdot p'_\gamma = -E'm_e\), \(p_\gamma\cdot p'_\gamma = -\tfrac{EE'}{c^2}(1 - \cos\theta)\)이다(광자의 운동량 크기는 \(E/c\)). 넣으면 \(-Em_e + \tfrac{EE'}{c^2}(1 - \cos\theta) + E'm_e = 0\)이고, \(EE'm_e\)로 나누면 주어진 식이다.</p>
+        <p>(나) \(E = hc/\lambda\)를 넣고 \(hc\)를 곱하면 된다. \(h/m_ec = (6.626\times10^{-34})/(9.109\times10^{-31} \times 2.998\times10^8)\ \text{m} = 2.426\ \text{pm}\)이다.</p>
+        <p>(다) \(1 - \cos180^\circ = 2\)이므로 \(E' = E/(1 + 2E/m_ec^2) = 661.7/(1 + 2.590)\ \text{keV} = 184.3\ \text{keV}\)이고, 전자는 나머지 \(477.4\ \text{keV}\)를 운동 에너지로 받는다. 감마선 분광기에서 이 두 값은 각각 되튕김 봉우리와 콤프턴 가장자리의 위치다. 단위: 모든 항이 에너지의 역수다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+</body>
+</html>
