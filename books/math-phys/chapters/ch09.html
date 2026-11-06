@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>09 벡터 공간과 함수 공간 · 수리물리학</title>
+<meta name="description" content="추상 벡터 공간과 복소 내적, 그람-슈미트 과정, 디랙 표기와 완비성 관계, L² 함수 공간, 선형 연산자의 수반과 경계 항으로 양자역학의 수학 언어를 세운다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys" data-field="phys" data-chapter="ch09">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">09</span></div>
+    <h1 data-fill="chapter-title">벡터 공간과 함수 공간</h1>
+    <p class="lead">8장에서 에르미트 행렬의 고유벡터가 정규직교 기저를 이룬다는 것을 보았다. 그런데 물리에서 더하고 늘일 수 있는 대상은 화살표나 열벡터만이 아니다. 진동자의 운동, 빛의 편광, 줄의 모양, 양자 상태도 그렇다. 이 장에서는 벡터에서 더하기와 스칼라 곱만 남겨 개념을 넓힌 뒤, 복소 내적으로 길이와 직교를 정하고, 디랙 표기와 완비성 관계로 계산을 정리한다. 마지막으로 함수를 무한 차원 공간의 벡터로, 미분 연산자를 그 공간의 행렬로 본다. 여기서 세운 언어를 14장의 푸리에 급수, 16장의 스투름-리우빌 이론, 그리고 양자역학이 함께 쓴다.</p>
+    <ul class="objectives">
+      <li>벡터 공간의 공리로 주어진 집합이 벡터 공간인지 판정하고, 선형 독립, 기저, 차원을 다룰 수 있다.</li>
+      <li>왼쪽 자리에 켤레 선형인 복소 내적과 노름을 계산하고, 코시-슈바르츠 부등식과 삼각 부등식을 쓸 수 있다.</li>
+      <li>그람-슈미트 과정으로 정규직교 기저를 만들고, 전개 계수를 내적으로 구할 수 있다.</li>
+      <li>디랙 표기로 완비성 관계와 투영 연산자를 쓰고, 이것으로 행렬 원소, 기저 바꾸기, 스펙트럼 분해를 나타낼 수 있다.</li>
+      <li>함수의 내적으로 직교 함수 전개를 하고, 부분 적분의 경계 항으로 미분 연산자의 수반과 에르미트성을 판정할 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b>8장(에르미트 행렬, 유니타리 행렬, 스펙트럼 정리, 파울리 행렬), 7장(선형 사상, 기저 바꾸기), 2장(복소수의 켤레, 오일러 공식), 1장(테일러 급수). 9.6절의 양자역학 예는 운동량 연산자 \(\hat p = -i\hbar\,d/dx\)와 에너지 \(p^2/2m\)의 모양만 쓴다.</p>
+  </header>
+
+  <!-- ============================================================ 9.1 -->
+  <section id="s1">
+    <h2>벡터 공간</h2>
+    <p>줄 위의 정상파 두 개를 겹치면 또 하나의 가능한 운동이 된다. 진동자의 운동 방정식 \(\ddot x + \omega^2x = 0\)의 두 해를 더해도 해이고, 슈뢰딩거 방정식의 두 해를 더해도 해다. 이것을 <span class="term">중첩 원리</span> <span class="en">(superposition principle)</span>라 한다(<a href="ch10.html#thm-ode-superposition">10장의 정리 10.1</a>). 이때 해들은 화살표가 아닌데도 화살표처럼 더하고 늘일 수 있다. 4장의 3차원 벡터와 7장의 열벡터에서 쓴 도구(선형 결합, 기저, 성분)를 이런 대상에도 쓰려면, 그 도구가 실제로 기대는 성질이 무엇인지 골라내야 한다. 이 절에서 고르는 성질은 두 가지, 더하기와 스칼라 곱이다.</p>
+
+    <h3 id="s1-axioms">더하기와 스칼라 곱</h3>
+    <p>스칼라는 실수 전체 \(\mathbb R\)이거나 복소수 전체 \(\mathbb C\)이다. 이 둘을 함께 가리킬 때 \(\mathbb F\)라 쓴다. 이 장부터는 추상적인 벡터를 \(|v\rangle\)처럼 쓴다. 이 기호를 <span class="term">켓</span> <span class="en">(ket)</span>이라 하는데, 이름의 뜻은 9.4절에서 밝힌다. 지금은 꺾쇠 안의 글자가 벡터의 이름이라고만 보면 된다. 기하적인 3차원 벡터는 지금처럼 굵은 글씨 \(\mathbf A\)로 쓴다.</p>
+    <div class="box def" id="def-vector-space"><div class="box-h">벡터 공간</div>
+      <p>집합 \(V\)의 임의의 두 원소 \(|u\rangle, |v\rangle\)에 합 \(|u\rangle + |v\rangle \in V\)가, 임의의 스칼라 \(a \in \mathbb F\)와 \(|v\rangle\)에 스칼라 곱 \(a|v\rangle \in V\)가 정해져 있고, 모든 \(|u\rangle, |v\rangle, |w\rangle \in V\)와 \(a, b \in \mathbb F\)에 대해 다음이 성립하면 \(V\)를 \(\mathbb F\) 위의 <span class="term">벡터 공간</span> <span class="en">(vector space)</span>이라 한다. 원소는 <span class="term">벡터</span>라 부른다.</p>
+      <ol>
+        <li>\(|u\rangle + |v\rangle = |v\rangle + |u\rangle\), \(\;(|u\rangle + |v\rangle) + |w\rangle = |u\rangle + (|v\rangle + |w\rangle)\)</li>
+        <li><span class="term">영벡터</span> <span class="en">(zero vector)</span> \(0\)이 있어서 \(|v\rangle + 0 = |v\rangle\)이고, 각 \(|v\rangle\)마다 \(|v\rangle + (-|v\rangle) = 0\)인 \(-|v\rangle\)가 있다.</li>
+        <li>\(a(|u\rangle + |v\rangle) = a|u\rangle + a|v\rangle\), \(\;(a + b)|v\rangle = a|v\rangle + b|v\rangle\)</li>
+        <li>\(a(b|v\rangle) = (ab)|v\rangle\), \(\;1|v\rangle = |v\rangle\)</li>
+      </ol>
+      <p>\(\mathbb F = \mathbb R\)이면 <span class="term">실수 벡터 공간</span>, \(\mathbb F = \mathbb C\)이면 <span class="term">복소 벡터 공간</span>이다. \(V\)의 부분 집합 \(W\)가 같은 더하기와 스칼라 곱에 대해 닫혀 있으면(\(W\) 안의 원소끼리 더하거나 스칼라를 곱해도 \(W\) 안에 있으면) \(W\)도 벡터 공간이고, 이것을 <span class="term">부분 공간</span> <span class="en">(subspace)</span>이라 한다.</p>
+    </div>
+    <p>공리 1~4는 3차원 벡터가 원래 갖던 계산 규칙을 그대로 적은 것이다. 새로운 것은 "닫혀 있다"는 요구, 곧 합과 스칼라 곱이 다시 \(V\) 안에 있어야 한다는 조건이다. 실제로 어떤 집합이 벡터 공간인지 판정할 때 걸리는 곳은 거의 언제나 여기다. 공리에서 나오는 작은 결과도 몇 가지 적어 두자. \(0|v\rangle = 0\)이고(공리 3에서 \(0|v\rangle = (0 + 0)|v\rangle = 0|v\rangle + 0|v\rangle\)이므로), \((-1)|v\rangle = -|v\rangle\)이다. 따라서 부분 공간은 반드시 영벡터를 포함한다. 영벡터가 없는 집합은 그것만으로 벡터 공간이 아니다.</p>
+
+    <h3 id="s1-examples">예와 반례</h3>
+    <p>물리에서 만나는 벡터 공간을 몇 개 늘어놓자.</p>
+    <ul>
+      <li><b>\(\mathbb C^n\).</b> 복소수 \(n\)개를 세운 열벡터. 8장의 상태 벡터와 존스 벡터(9.2절)가 여기에 산다. 실수만 쓰면 \(\mathbb R^n\)이다.</li>
+      <li><b>다항식.</b> 차수가 \(n\) 이하인 다항식 전체 \(\mathcal P_n\). 두 다항식의 합과 상수배는 차수가 \(n\)을 넘지 않는 다항식이다.</li>
+      <li><b>함수.</b> 구간 \([a, b]\)에서 정의된 연속 함수 전체. 합 \((f + g)(x) = f(x) + g(x)\)와 상수배 \((af)(x) = af(x)\)를 점마다 정한다. 9.5절의 중심 대상이다.</li>
+      <li><b>선형 동차 미분방정식의 해.</b> 중첩 원리가 바로 "해 집합이 더하기와 상수배에 닫혀 있다"는 말이다. 경계 조건 \(y(0) = y(L) = 0\)을 만족하는 함수들도 부분 공간을 이룬다.</li>
+      <li><b>\(2 \times 2\) 에르미트 행렬.</b> 두 에르미트 행렬의 합과 <i>실수</i>배는 에르미트 행렬이다. 그러나 \(i\sigma_x\)는 \((i\sigma_x)^\dagger = -i\sigma_x\)이므로 에르미트가 아니다. 그래서 에르미트 행렬 전체는 실수 벡터 공간이지만 복소 벡터 공간은 아니다. 스칼라가 무엇인지가 정의의 일부인 이유다.</li>
+    </ul>
+    <p>반대로 다음은 벡터 공간이 아니다. 비동차 방정식 \(\ddot x + \omega^2x = F_0\)의 해 둘을 더하면 \(\ddot x + \omega^2x = 2F_0\)의 해가 되고, 영 함수는 해가 아니다. 진자의 방정식 \(\ddot\theta + (g/L)\sin\theta = 0\)의 해 둘을 더한 것은 \(\sin(\theta_1 + \theta_2) \ne \sin\theta_1 + \sin\theta_2\)이므로 일반적으로 해가 아니다. \(y(0) = 1\)을 만족하는 함수의 집합도 합이 \(y(0) = 2\)가 되므로 닫혀 있지 않다. 길이가 1인 벡터만 모은 집합도 더하기에 닫혀 있지 않다. 양자역학의 상태는 보통 길이 1로 맞춰 쓰지만, 길이를 맞추는 일은 마지막에 하면 되므로 상태 공간 자체는 모든 선형 결합을 담은 벡터 공간으로 잡는다.</p>
+    <div class="callout warn"><strong>영벡터 \(0\)과 켓 \(|0\rangle\)은 다르다</strong><p>이 책은 영벡터를 그냥 \(0\)으로 쓴다. 양자역학 책에서 \(|0\rangle\)은 대개 "이름이 0인 상태", 예를 들어 조화 진동자의 바닥 상태를 가리키고, 이것은 길이가 1인 벡터이지 영벡터가 아니다. \(a|0\rangle = 0\) 같은 식에서 왼쪽의 \(|0\rangle\)과 오른쪽의 \(0\)은 전혀 다른 대상이다.</p></div>
+
+    <h3 id="s1-basis">선형 독립과 기저</h3>
+    <p>7.3절에서 열벡터에 대해 선형 독립을 정했다. 정의는 더하기와 스칼라 곱만 쓰므로 그대로 옮길 수 있다.</p>
+    <div class="box def" id="def-linear-independence"><div class="box-h">선형 독립</div>
+      <p>벡터 \(|v_1\rangle, \ldots, |v_k\rangle\)에 대해</p>
+      <div class="formula" id="eq-linear-independence">\[ c_1|v_1\rangle + c_2|v_2\rangle + \cdots + c_k|v_k\rangle = 0 \]</div>
+      <p>을 만족하는 스칼라가 \(c_1 = c_2 = \cdots = c_k = 0\)뿐이면 이 벡터들이 <span class="term">선형 독립</span> <span class="en">(linearly independent)</span>이라 한다. 그렇지 않으면 <span class="term">선형 종속</span> <span class="en">(linearly dependent)</span>이다. 무한히 많은 벡터의 모임은 그 가운데 유한 개를 어떻게 골라도 선형 독립일 때 선형 독립이라 한다.</p>
+    </div>
+    <p>선형 종속이면 0이 아닌 계수 \(c_j\)가 있으므로 \(|v_j\rangle\)를 나머지의 선형 결합으로 쓸 수 있다. 선형 독립이라는 것은 어느 벡터도 다른 벡터들로 만들어 낼 수 없다는 뜻이다. 예를 들어 \(1, x, x^2, x^3, \ldots\)은 선형 독립이다. \(c_0 + c_1x + \cdots + c_nx^n\)이 구간의 모든 \(x\)에서 0이면, 0이 아닌 다항식은 근을 많아야 \(n\)개 가지므로 모든 계수가 0이어야 한다.</p>
+    <div class="box def" id="def-basis-dimension"><div class="box-h">기저와 차원</div>
+      <p>\(V\)의 벡터 \(|b_1\rangle, \ldots, |b_n\rangle\)이 선형 독립이고, \(V\)의 모든 벡터를 이들의 선형 결합으로 쓸 수 있으면(\(V\)를 <span class="term">생성한다</span> <span class="en">(span)</span>) 이 벡터들을 \(V\)의 <span class="term">기저</span> <span class="en">(basis)</span>라 한다. 그러면 모든 \(|v\rangle\)는</p>
+      <div class="formula" id="eq-basis-expansion">\[ |v\rangle = \sum_{i=1}^{n} v_i\,|b_i\rangle \]</div>
+      <p>로 오직 한 가지로 쓰이고, 스칼라 \(v_i\)를 이 기저에 대한 <span class="term">성분</span> 또는 좌표라 한다. 한 벡터 공간의 기저는 모두 원소 수가 같고, 그 수 \(n\)을 \(V\)의 <span class="term">차원</span> <span class="en">(dimension)</span> \(\dim V\)라 한다. 유한 개의 벡터로 생성되지 않는 공간은 <span class="term">무한 차원</span>이라 한다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p><b>한 가지로 쓰인다.</b> \(\sum v_i|b_i\rangle = \sum v'_i|b_i\rangle\)이면 \(\sum(v_i - v'_i)|b_i\rangle = 0\)이고, 선형 독립이므로 \(v_i = v'_i\)이다.</p>
+        <p><b>기저의 원소 수는 같다.</b> \(|b_1\rangle, \ldots, |b_n\rangle\)이 \(V\)를 생성할 때, \(m > n\)개의 벡터 \(|u_1\rangle, \ldots, |u_m\rangle\)은 반드시 선형 종속임을 보이면 된다(그러면 두 기저 가운데 어느 쪽도 다른 쪽보다 많을 수 없다). \(|u_j\rangle = \sum_i A_{ij}|b_i\rangle\)로 쓰면 \(\sum_j c_j|u_j\rangle = \sum_i\big(\sum_j A_{ij}c_j\big)|b_i\rangle\)이다. 미지수 \(c_j\)가 \(m\)개, 식 \(\sum_j A_{ij}c_j = 0\)이 \(n\)개인 동차 연립 방정식은 \(m > n\)이면 0이 아닌 해를 갖는다(<a href="ch07.html#thm-rank-solvability">7장의 정리 7.5</a>에서 랭크가 \(n\) 이하이므로 자유 변수가 남는다). 그 해가 \(\sum_j c_j|u_j\rangle = 0\)을 만든다.</p>
+      </details>
+    </div>
+    <p>차원이 \(n\)인 벡터 공간에 기저를 하나 고르면, 벡터 \(|v\rangle\)와 성분의 열 \((v_1, \ldots, v_n)^{\mathsf T}\)이 일대일로 대응하고 더하기와 스칼라 곱도 성분끼리의 계산이 된다. 그래서 유한 차원 공간의 계산은 모두 \(\mathbb F^n\)의 행렬 계산으로 바꿀 수 있다. 다만 성분은 기저를 바꾸면 바뀐다. 바뀌는 규칙은 <a href="ch07.html#eq-change-of-basis">7장 식 (7.27)</a>이다. 벡터 자체는 기저와 상관없는 대상이고, 성분은 그것을 특정한 기저로 적은 기록일 뿐이다.</p>
+    <p>차원의 예를 보자. \(\dim\mathbb C^n = n\)이고 기저는 \(\hat{\mathbf e}_1, \ldots, \hat{\mathbf e}_n\)이다. \(\dim\mathcal P_n = n + 1\)이고 기저는 \(1, x, \ldots, x^n\)이다. \(2 \times 2\) 에르미트 행렬은 실수 공간으로서 \(I, \sigma_x, \sigma_y, \sigma_z\)를 기저로 갖는 4차원 공간이다(<a href="ch08.html#eq-hermitian-pauli">8장 식 (8.14)</a>). 모든 차수의 다항식 전체와 함수 공간은 \(1, x, x^2, \ldots\)이 무한히 선형 독립이므로 무한 차원이다.</p>
+
+    <div class="box ex" id="ex-oscillator-solution-space"><div class="box-h">진동자의 해 공간과 두 가지 기저</div>
+      <p>단진동 방정식 \(\ddot x + \omega^2x = 0\)의 실수 해 전체를 \(V\)라 하자. (가) \(V\)가 실수 벡터 공간이고 \(\cos\omega t\), \(\sin\omega t\)가 기저임을 보여라. (나) \(\omega = 2.0\ \text{s}^{-1}\), \(x(0) = 0.30\ \text{m}\), \(\dot x(0) = 0.80\ \text{m/s}\)인 운동의 성분을 구하고 진폭을 구하라. (다) 복소 지수 \(e^{-i\omega t}\), \(e^{i\omega t}\)를 기저로 쓰면 성분이 어떻게 되는가?</p>
+      <p><b>풀이.</b> (가) 방정식이 선형이고 동차이므로 해 둘의 합과 실수배는 다시 해다. 영 함수도 해다. 따라서 \(V\)는 실수 벡터 공간이다. \(c_1\cos\omega t + c_2\sin\omega t = 0\)이 모든 \(t\)에서 성립하면 \(t = 0\)에서 \(c_1 = 0\), \(t = \pi/2\omega\)에서 \(c_2 = 0\)이므로 둘은 선형 독립이다. 또 어떤 해 \(x(t)\)든 처음 조건 \(x(0)\), \(\dot x(0)\)이 같은 \(x(0)\cos\omega t + (\dot x(0)/\omega)\sin\omega t\)와 일치한다(처음 조건이 같은 해는 하나뿐이다. <a href="ch10.html#thm-wronskian-independence">10장의 정리 10.2</a>). 따라서 두 함수가 \(V\)를 생성하고, \(\dim V = 2\)이다.</p>
+      <p><b>숫자로 보기.</b> (나) 위의 식에서 성분은 \(a = x(0)\), \(b = \dot x(0)/\omega\)이다.</p>
+      <div class="formula" id="eq-oscillator-components">\[ \begin{aligned} x(t) &= a\cos\omega t + b\sin\omega t, \\ a &= 0.30\ \text{m}, \quad b = \frac{0.80\ \text{m/s}}{2.0\ \text{s}^{-1}} = 0.40\ \text{m} \end{aligned} \]</div>
+      <p>이다(그림 9-1). 진폭은 \(A = \sqrt{a^2 + b^2} = 0.50\ \text{m}\)이고 \(x(t) = A\cos(\omega t - \beta_0)\), \(\tan\beta_0 = b/a = 4/3\), 곧 \(\beta_0 = 0.927\ \text{rad} = 53.1°\)이다.</p>
+      <p>(다) 오일러 공식(<a href="ch02.html#eq-euler-formula">2장 식 (2.10)</a>)으로 \(\cos\omega t = (e^{i\omega t} + e^{-i\omega t})/2\), \(\sin\omega t = (e^{i\omega t} - e^{-i\omega t})/2i\)이므로</p>
+      <div class="formula">\[ \begin{aligned} x(t) &= c_-e^{-i\omega t} + c_+e^{i\omega t}, \\ c_\mp &= \frac{a \pm ib}{2} = (0.15 \pm 0.20i)\ \text{m} \end{aligned} \]</div>
+      <p>이다. 기저가 바뀌면 성분은 \((c_-, c_+)^{\mathsf T} = S(a, b)^{\mathsf T}\), \(S = \tfrac12\begin{pmatrix} 1 & i \\ 1 & -i \end{pmatrix}\)로 바뀐다. 이번에는 성분이 복소수다. 복소 해까지 모두 넣으면 해 공간은 \(\mathbb C\) 위의 2차원 공간이고, 실수 해는 그 가운데 \(c_+ = c_-^*\)인 것들이다. 확인: \(\lvert c_\pm\rvert = 0.25\ \text{m} = A/2\)이고, \(x(0) = c_- + c_+ = 0.30\ \text{m}\)이다. 성분 \(a\), \(b\), \(c_\pm\)는 모두 길이의 차원을 갖고, 기저 함수 \(\cos\omega t\), \(e^{\pm i\omega t}\)는 차원이 없다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 270" role="img" aria-label="진동자의 해 x(t) = 0.30 cos 2t + 0.40 sin 2t가 두 기저 함수의 선형 결합임을 보이는 그래프"><line x1="50" y1="207.3" x2="460" y2="207.3" class="s-grid"/><text x="42" y="212.3" class="t-dim" style="font-size:14px" text-anchor="end">−0.5</text><line x1="50" y1="134.0" x2="460" y2="134.0" class="s-grid"/><text x="42" y="139.0" class="t-dim" style="font-size:14px" text-anchor="end">0.0</text><line x1="50" y1="60.7" x2="460" y2="60.7" class="s-grid"/><text x="42" y="65.7" class="t-dim" style="font-size:14px" text-anchor="end">0.5</text><line x1="50.0" y1="46" x2="50.0" y2="222" class="s-grid"/><text x="50.0" y="242" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><line x1="152.5" y1="46" x2="152.5" y2="222" class="s-grid"/><text x="152.5" y="242" class="t-dim" style="font-size:14px" text-anchor="middle">1</text><line x1="255.0" y1="46" x2="255.0" y2="222" class="s-grid"/><text x="255.0" y="242" class="t-dim" style="font-size:14px" text-anchor="middle">2</text><line x1="357.5" y1="46" x2="357.5" y2="222" class="s-grid"/><text x="357.5" y="242" class="t-dim" style="font-size:14px" text-anchor="middle">3</text><line x1="460.0" y1="46" x2="460.0" y2="222" class="s-grid"/><text x="460.0" y="242" class="t-dim" style="font-size:14px" text-anchor="middle">4</text><line x1="50" y1="134.0" x2="460" y2="134.0" class="s-line"/><path d="M50.0,90.0 L60.2,90.9 L70.5,93.5 L80.8,97.7 L91.0,103.3 L101.2,110.2 L111.5,118.1 L121.8,126.5 L132.0,135.3 L142.2,144.0 L152.5,152.3 L162.8,159.9 L173.0,166.4 L183.2,171.7 L193.5,175.5 L203.8,177.6 L214.0,177.9 L224.2,176.5 L234.5,173.5 L244.8,168.8 L255.0,162.8 L265.2,155.6 L275.5,147.5 L285.8,138.9 L296.0,130.2 L306.2,121.5 L316.5,113.4 L326.8,106.1 L337.0,99.9 L347.2,95.0 L357.5,91.8 L367.8,90.2 L378.0,90.3 L388.2,92.2 L398.5,95.7 L408.8,100.8 L419.0,107.2 L429.2,114.7 L439.5,122.9 L449.8,131.6 L460.0,140.4" class="s-line" stroke-dasharray="7 4" style="stroke-width:2"/><path d="M50.0,134.0 L60.2,122.3 L70.5,111.2 L80.8,100.9 L91.0,91.9 L101.2,84.6 L111.5,79.3 L121.8,76.2 L132.0,75.4 L142.2,76.9 L152.5,80.7 L162.8,86.6 L173.0,94.4 L183.2,103.8 L193.5,114.3 L203.8,125.7 L214.0,137.4 L224.2,149.0 L234.5,160.0 L244.8,169.9 L255.0,178.4 L265.2,185.1 L275.5,189.8 L285.8,192.3 L296.0,192.4 L306.2,190.3 L316.5,185.8 L326.8,179.3 L337.0,171.0 L347.2,161.3 L357.5,150.4 L367.8,138.9 L378.0,127.2 L388.2,115.7 L398.5,105.0 L408.8,95.5 L419.0,87.4 L429.2,81.3 L439.5,77.2 L449.8,75.4 L460.0,76.0" class="s-acc2" stroke-dasharray="2 4" style="stroke-width:2.6"/><path d="M50.0,90.0 L60.2,79.2 L70.5,70.6 L80.8,64.6 L91.0,61.3 L101.2,60.9 L111.5,63.4 L121.8,68.7 L132.0,76.6 L142.2,86.9 L152.5,99.0 L162.8,112.5 L173.0,126.8 L183.2,141.5 L193.5,155.8 L203.8,169.3 L214.0,181.3 L224.2,191.5 L234.5,199.4 L244.8,204.7 L255.0,207.2 L265.2,206.7 L275.5,203.3 L285.8,197.2 L296.0,188.6 L306.2,177.8 L316.5,165.2 L326.8,151.4 L337.0,136.9 L347.2,122.3 L357.5,108.1 L367.8,95.0 L378.0,83.5 L388.2,73.9 L398.5,66.8 L408.8,62.3 L419.0,60.7 L429.2,62.0 L439.5,66.2 L449.8,73.0 L460.0,82.4" class="s-acc" style="stroke-width:2.8"/><line x1="56" y1="16" x2="84" y2="16" class="s-acc" style="stroke-width:2.8"/><text x="90" y="21" class="t" style="font-size:14px">x(t)</text><line x1="150" y1="16" x2="178" y2="16" class="s-line" stroke-dasharray="7 4" style="stroke-width:2"/><text x="184" y="21" class="t" style="font-size:14px">0.30 cos 2t</text><line x1="290" y1="16" x2="318" y2="16" class="s-acc2" stroke-dasharray="2 4" style="stroke-width:2.6"/><text x="324" y="21" class="t" style="font-size:14px">0.40 sin 2t</text><text x="460" y="264" class="t-dim" style="font-size:14px" text-anchor="end">시간 t (s)</text><text x="4" y="38" class="t-dim" style="font-size:14px">변위 (m)</text></svg>
+      <figcaption><b>그림 9-1.</b> 진동자의 해 \(x(t) = 0.30\cos 2t + 0.40\sin 2t\) (단위 m, \(t\)는 s)는 해 공간의 기저 함수 \(\cos 2t\), \(\sin 2t\)의 선형 결합이다. 실선 \(x(t)\)는 파선 \(0.30\cos 2t\)와 점선 \(0.40\sin 2t\)를 점마다 더한 것이고, 진폭은 \(\sqrt{0.30^2 + 0.40^2} = 0.50\ \text{m}\)이다. \(\cos 2t = 0\)인 순간마다 실선이 점선과 만난다.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================================================ 9.2 -->
+  <section id="s2">
+    <h2>복소 내적과 노름</h2>
+    <p>기저와 성분만으로는 길이도 각도도 말할 수 없다. 그런데 물리에서 묻는 질문은 대개 "얼마나 큰가"와 "얼마나 닮았는가"다. 두 빛살의 편광이 얼마나 같아야 간섭 무늬가 생기는가? 줄의 모양에 기본 모드가 얼마나 들어 있는가? 이런 질문에 답하려면 두 벡터에서 수 하나를 만드는 규칙, 곧 내적이 필요하다. 8.3절에서 \(\mathbb C^n\)에 \(\mathbf u^\dagger\mathbf v = \sum u_i^*v_i\)(<a href="ch08.html#eq-complex-dot">8장 식 (8.10)</a>)를 썼다. 이 식이 가진 성질 가운데 꼭 필요한 셋만 골라 정의로 삼는다.</p>
+
+    <h3 id="s2-definition">내적의 정의</h3>
+    <div class="box def" id="def-inner-product"><div class="box-h">내적 (물리 관례)</div>
+      <p>복소 벡터 공간 \(V\)의 두 벡터 \(|u\rangle, |v\rangle\)에 복소수 \(\langle u|v\rangle\)를 대응시키는 규칙이 모든 \(|u\rangle, |v\rangle, |w\rangle\)와 \(a, b \in \mathbb C\)에 대해 다음을 만족하면 이것을 <span class="term">내적</span> <span class="en">(inner product)</span>이라 하고, 내적이 정해진 벡터 공간을 <span class="term">내적 공간</span> <span class="en">(inner product space)</span>이라 한다.</p>
+      <ol>
+        <li><b>켤레 대칭:</b> \(\langle u|v\rangle = \langle v|u\rangle^*\)</li>
+        <li><b>오른쪽 자리에 선형:</b> \(|v\rangle\) 자리에 \(a|v\rangle + b|w\rangle\)를 넣으면 \(a\langle u|v\rangle + b\langle u|w\rangle\)</li>
+        <li><b>양의 정부호:</b> \(\langle v|v\rangle \ge 0\)이고, \(\langle v|v\rangle = 0\)은 \(|v\rangle = 0\)일 때뿐이다.</li>
+      </ol>
+      <p>실수 벡터 공간에서는 \(\langle u|v\rangle\)가 실수이고, 1은 대칭 \(\langle u|v\rangle = \langle v|u\rangle\)가 된다.</p>
+    </div>
+    <p>1에서 \(\langle v|v\rangle = \langle v|v\rangle^*\)이므로 \(\langle v|v\rangle\)는 늘 실수이고, 3이 그 부호를 정한다. 1과 2를 합치면 왼쪽 자리의 성질이 나온다. \(a|u\rangle + b|w\rangle\)를 줄여 \(|au + bw\rangle\)로 쓰면</p>
+    <div class="formula" id="eq-conjugate-linear">\[ \begin{aligned} \langle au + bw|v\rangle &= \langle v|au + bw\rangle^* \\ &= a^*\langle u|v\rangle + b^*\langle w|v\rangle \end{aligned} \]</div>
+    <p>이다. 스칼라가 왼쪽 자리에서 빠져나올 때는 켤레가 붙는다. 이것을 <span class="term">켤레 선형</span> <span class="en">(conjugate linear, antilinear)</span>이라 한다. 특히 \(\langle au|av\rangle = a^*a\langle u|v\rangle = \lvert a\rvert^2\langle u|v\rangle\)이므로, 벡터에 위상 \(e^{i\alpha}\)를 곱해도 자기 자신과의 내적은 바뀌지 않는다.</p>
+    <div class="callout warn"><strong>수학 교재는 켤레를 반대쪽에 둔다</strong><p>이 책과 양자역학 책은 <b>왼쪽 자리에 켤레 선형, 오른쪽 자리에 선형</b>인 관례를 쓴다. \(\mathbb C^n\)에서 \(\langle u|v\rangle = \sum_i u_i^*v_i\)이다. 많은 수학 교재(선형대수, 함수 해석학)는 \((u, v) = \sum_i u_iv_i^*\)로 첫째 자리에 선형이고 둘째 자리에 켤레 선형이다. 두 관례는 \((u, v) = \langle v|u\rangle\)로 이어진다. 수학 교재의 식을 옮길 때, 특히 투영 계수(9.3절)와 수반의 정의(9.6절)를 옮길 때 내적의 두 자리를 바꿔 써야 한다.</p></div>
+
+    <h3 id="s2-examples">내적의 예</h3>
+    <ul>
+      <li><b>\(\mathbb C^n\)의 표준 내적.</b> \(\langle u|v\rangle = \sum_i u_i^*v_i = \mathbf u^\dagger\mathbf v\). \(\langle v|v\rangle = \sum\lvert v_i\rvert^2\)이므로 3을 만족한다.</li>
+      <li><b>가중 내적.</b> 양수 \(m_1, \ldots, m_n\)으로 \(\langle u|v\rangle_M = \sum_i m_iu_i^*v_i = \mathbf u^\dagger M\mathbf v\) (\(M = \operatorname{diag}(m_i)\)). 질량이 다른 입자들의 속도 벡터에 쓰면 \(\tfrac12\langle\dot x|\dot x\rangle_M\)이 운동 에너지다. 8.5절의 정규 모드가 보통의 내적이 아니라 이 내적으로 직교하는 이유가 여기 있다(<a href="ch08.html#thm-generalized-eigen">8장의 정리 8.4</a>, <a class="ref" href="#prob-weighted-adjoint"></a>).</li>
+      <li><b>함수의 내적.</b> 구간 \([-1, 1]\)의 연속 함수에 \(\langle f|g\rangle = \int_{-1}^{1}f^*(x)\,g(x)\,dx\). 연속 함수 \(\lvert f\rvert^2 \ge 0\)의 적분이 0이면 \(f\)가 모든 점에서 0이어야 하므로 3을 만족한다. 9.5절에서 일반적인 구간과 가중 함수로 넓힌다.</li>
+      <li><b>행렬의 내적.</b> \(n \times n\) 복소 행렬에 \(\langle A|B\rangle = \operatorname{tr}(A^\dagger B) = \sum_{i,j}A_{ij}^*B_{ij}\). 행렬의 성분 \(n^2\)개를 한 줄로 늘어놓은 \(\mathbb C^{n^2}\)의 표준 내적과 같다. 파울리 행렬은 <a href="ch08.html#eq-pauli-product">8장 식 (8.13)</a>에서 \(\operatorname{tr}(\sigma_i\sigma_j) = 2\delta_{ij}\)이므로 이 내적으로 서로 직교한다(<a class="ref" href="#prob-pauli-expansion"></a>).</li>
+    </ul>
+
+    <h3 id="s2-norm">노름과 코시-슈바르츠 부등식</h3>
+    <div class="box def" id="def-norm"><div class="box-h">노름</div>
+      <p>내적 공간의 벡터 \(|v\rangle\)의 <span class="term">노름</span> <span class="en">(norm)</span>을 \(\lVert v\rVert = \sqrt{\langle v|v\rangle}\)로 정한다. \(\lVert v\rVert = 1\)인 벡터를 <span class="term">단위 벡터</span>라 하고, 0이 아닌 벡터를 \(|v\rangle/\lVert v\rVert\)로 바꾸는 것을 <span class="term">규격화</span> <span class="en">(normalization)</span>라 한다. \(\langle u|v\rangle = 0\)이면 두 벡터가 <span class="term">직교한다</span>고 한다. 두 벡터의 거리는 \(\lVert u - v\rVert\)이다.</p>
+    </div>
+    <p>노름은 \(\lVert av\rVert = \lvert a\rvert\,\lVert v\rVert\)를 만족하고, \(\lVert v\rVert = 0\)은 \(|v\rangle = 0\)일 때뿐이다. 두 벡터의 합의 노름을 펼치면 내적 하나가 남는다. \(\langle v|u\rangle = \langle u|v\rangle^*\)이므로 두 교차항의 합은 \(2\operatorname{Re}\langle u|v\rangle\)이다.</p>
+    <div class="formula" id="eq-norm-sum">\[ \lVert u + v\rVert^2 = \lVert u\rVert^2 + \lVert v\rVert^2 + 2\operatorname{Re}\langle u|v\rangle \]</div>
+    <p>직교하는 두 벡터에서는 마지막 항이 사라져 피타고라스 정리 \(\lVert u + v\rVert^2 = \lVert u\rVert^2 + \lVert v\rVert^2\)가 된다. 마지막 항이 물리에서 <span class="term">간섭항</span>이다. 간섭항이 얼마나 클 수 있는지를 정하는 것이 다음 부등식이다.</p>
+    <div class="box thm" id="thm-cauchy-schwarz"><div class="box-h">코시-슈바르츠 부등식</div>
+      <p>내적 공간의 모든 \(|u\rangle, |v\rangle\)에 대해</p>
+      <div class="formula" id="eq-cauchy-schwarz">\[ \lvert\langle u|v\rangle\rvert \le \lVert u\rVert\,\lVert v\rVert \]</div>
+      <p>이다. 등호는 \(|u\rangle\)와 \(|v\rangle\)가 선형 종속일 때(한쪽이 다른 쪽의 스칼라배일 때)만 성립한다.</p>
+    </div>
+    <p><b>증명.</b> \(|v\rangle = 0\)이면 양변이 0이다. \(|v\rangle \ne 0\)이면 \(|u\rangle\)를 \(|v\rangle\) 방향 성분과 나머지로 나눈다.</p>
+    <div class="formula" id="eq-cs-split">\[ |u\rangle = \lambda|v\rangle + |w\rangle, \quad \lambda = \frac{\langle v|u\rangle}{\langle v|v\rangle} \]</div>
+    <p>그러면 \(\langle v|w\rangle = \langle v|u\rangle - \lambda\langle v|v\rangle = 0\)이므로 \(|w\rangle\)는 \(|v\rangle\)에 직교한다. 피타고라스 정리로</p>
+    <div class="formula">\[ \lVert u\rVert^2 = \lvert\lambda\rvert^2\lVert v\rVert^2 + \lVert w\rVert^2 \ge \frac{\lvert\langle v|u\rangle\rvert^2}{\lVert v\rVert^2} \]</div>
+    <p>이고, 양변에 \(\lVert v\rVert^2\)를 곱하고 제곱근을 취하면 식 <a class="ref" href="#eq-cauchy-schwarz"></a>이다(\(\lvert\langle v|u\rangle\rvert = \lvert\langle u|v\rangle\rvert\)). 등호는 \(\lVert w\rVert = 0\), 곧 \(|u\rangle = \lambda|v\rangle\)일 때만 성립한다. ∎</p>
+    <p>증명의 생각은 그림으로 보면 단순하다. \(|u\rangle\)의 \(|v\rangle\) 방향 성분은 \(|u\rangle\) 자신보다 길 수 없다. 이 "성분 떼어 내기"는 9.3절의 투영과 그람-슈미트 과정에서 다시 나온다. 실수 공간에서는 부등식이 \(-1 \le \langle u|v\rangle/(\lVert u\rVert\lVert v\rVert) \le 1\)이 되므로 이 비를 두 벡터 사이 각의 코사인으로 정할 수 있다. 복소 공간에서는 비의 절댓값 \(\lvert\langle u|v\rangle\rvert/(\lVert u\rVert\lVert v\rVert) \in [0, 1]\)을 두 벡터의 <span class="term">겹침</span> <span class="en">(overlap)</span>으로 쓴다. 1이면 같은 방향(위상만 다름), 0이면 직교다.</p>
+    <div class="box thm" id="thm-triangle-inequality"><div class="box-h">삼각 부등식</div>
+      <p>모든 \(|u\rangle, |v\rangle\)에 대해 \(\lVert u + v\rVert \le \lVert u\rVert + \lVert v\rVert\)이다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>\(\operatorname{Re}\langle u|v\rangle \le \lvert\langle u|v\rangle\rvert \le \lVert u\rVert\lVert v\rVert\)(코시-슈바르츠)를 식 <a class="ref" href="#eq-norm-sum"></a>에 넣으면 \(\lVert u + v\rVert^2 \le \lVert u\rVert^2 + \lVert v\rVert^2 + 2\lVert u\rVert\lVert v\rVert = (\lVert u\rVert + \lVert v\rVert)^2\)이다. 양변이 0 이상이므로 제곱근을 취한다.</p>
+      </details>
+    </div>
+    <p>삼각 부등식 덕분에 \(\lVert u - v\rVert\)를 거리로 쓸 수 있다. 9.5절에서 함수의 근사가 "얼마나 가까운가"를 이 거리로 잰다.</p>
+
+    <div class="box ex" id="ex-polarization-interference"><div class="box-h">편광이 다른 두 빛살의 간섭</div>
+      <p>\(z\)축으로 진행하는 단색 평면파의 전기장을 \(\mathbf E = \operatorname{Re}\big[E_0\,\boldsymbol\varepsilon\,e^{i(kz - \omega t)}\big]\)로 쓰면, 편광은 \(\mathbb C^2\)의 단위 벡터 \(\boldsymbol\varepsilon\)(<span class="term">존스 벡터</span> <span class="en">(Jones vector)</span>)가 정한다. 수평 편광은 \(|H\rangle = (1, 0)\), 수직 편광은 \(|V\rangle = (0, 1)\), \(x\)축에서 \(\alpha\)만큼 기운 선편광은 \((\cos\alpha, \sin\alpha)\), 원편광은 \(|{+}\rangle = (1, i)/\sqrt2\)이다. \(|{+}\rangle\)는 전기장이 \(z\)축 둘레로 시계 반대 방향으로(<a href="ch08.html#ex-rotation-eigen">8장 예제 8.3</a>), 곧 진행 방향 \(+z\)를 엄지로 둔 오른손의 손가락 방향으로 돌며, 이름은 <span class="term">헬리시티</span> <span class="en">(helicity)</span> \(+1\)에서 따왔다. 세기 \(I_1\), \(I_2\)이고 편광이 \(\boldsymbol\varepsilon_1\), \(\boldsymbol\varepsilon_2\)인 두 빛살을 경로차가 만드는 위상 \(\delta\)를 두고 겹친다. (가) 겹친 빛의 세기를 구하라. (나) 간섭 무늬의 가시도 \(\mathcal V = (I_{\max} - I_{\min})/(I_{\max} + I_{\min})\)가 1을 넘지 않음을 보여라. (다) \(I_2 = I_1/4\)이고 \(\boldsymbol\varepsilon_1 = |H\rangle\)일 때, \(\boldsymbol\varepsilon_2\)가 \(|H\rangle\), \(60°\) 선편광, \(|{+}\rangle\), \(|V\rangle\)이면 가시도는 각각 얼마인가?</p>
+      <p><b>풀이.</b> (가) 세기는 시간 평균한 \(\lvert\mathbf E\rvert^2\)에 비례한다. 비례 상수를 1로 두는 단위를 쓰면 한 빛살의 세기가 \(\lVert E_0\boldsymbol\varepsilon\rVert^2 = \lvert E_0\rvert^2\)이다. 겹친 복소 진폭은 \(\sqrt{I_1}\,\boldsymbol\varepsilon_1 + \sqrt{I_2}\,e^{i\delta}\boldsymbol\varepsilon_2\)이므로 식 <a class="ref" href="#eq-norm-sum"></a>에서</p>
+      <div class="formula" id="eq-two-beam-intensity">\[ I = I_1 + I_2 + 2\sqrt{I_1I_2}\,\operatorname{Re}\big(e^{i\delta}\langle\varepsilon_1|\varepsilon_2\rangle\big) \]</div>
+      <p>이다. \(\langle\varepsilon_1|\varepsilon_2\rangle = \mu\,e^{i\beta}\) (\(\mu \ge 0\))로 쓰면 간섭항은 \(2\sqrt{I_1I_2}\,\mu\cos(\delta + \beta)\)이다. 겹침 \(\mu\)가 무늬의 깊이를, \(\beta\)가 무늬의 위치를 정한다.</p>
+      <p>(나) \(\delta\)를 바꾸면 \(I_{\max,\min} = I_1 + I_2 \pm 2\sqrt{I_1I_2}\,\mu\)이므로</p>
+      <div class="formula" id="eq-visibility">\[ \mathcal V = \frac{2\sqrt{I_1I_2}}{I_1 + I_2}\,\lvert\langle\varepsilon_1|\varepsilon_2\rangle\rvert \]</div>
+      <p>이다. 단위 벡터에 대한 코시-슈바르츠 부등식으로 \(\lvert\langle\varepsilon_1|\varepsilon_2\rangle\rvert \le 1\)이고, 산술-기하 평균 부등식으로 \(2\sqrt{I_1I_2} \le I_1 + I_2\)이므로 \(\mathcal V \le 1\)이다. 가시도가 1이 되려면 두 빛살의 세기와 편광이 모두 같아야 한다.</p>
+      <p>(다) 앞의 인자는 \(2\sqrt{1/4}/(1 + 1/4) = 0.80\)이다. 겹침은 \(\langle H|H\rangle = 1\), \(\langle H|60°\rangle = \cos 60° = 0.50\), \(\langle H|{+}\rangle = 1/\sqrt2 = 0.707\), \(\langle H|V\rangle = 0\)이다.</p>
+      <p><b>숫자로 보기.</b> 가시도는 차례로 \(0.80\), \(0.40\), \(0.57\), \(0\)이다. 서로 직교하는 편광은 세기가 아무리 커도 간섭하지 않는다. 이 규칙을 <span class="term">프레넬-아라고 법칙</span> <span class="en">(Fresnel–Arago laws)</span>의 하나로 부른다. 원편광과 수평 편광은 수직이 아닌데도 겹침이 \(1/\sqrt2\)다. 원편광에는 수평 성분이 절반 들어 있기 때문이다. 켤레를 빼먹고 \(\sum u_iv_i\)로 계산하면 \(|{+}\rangle\)와 자기 자신의 "내적"이 \((1 + i^2)/2 = 0\)이 되어, 원편광끼리 간섭하지 않는다는 틀린 결론이 나온다. 확인: 가시도는 세기의 비이므로 차원이 없다.</p>
+    </div>
+    <div class="callout warn"><strong>원편광의 이름은 교재마다 다르다</strong><p>이 책은 원편광을 헬리시티로 \(|{\pm}\rangle = (1, \pm i)/\sqrt2\)라 부른다. 광학 교재는 마주 오는 빛을 보는 관찰자를 기준으로 \((1, i)/\sqrt2\)를 왼원편광이라 부르기도 한다(J. D. Jackson, <i>Classical Electrodynamics</i>, 3rd ed., Wiley 1999). 다른 책의 \(R\), \(L\)은 회전 방향으로 확인한다.</p></div>
+  </section>
+
+  <!-- ============================================================ 9.3 -->
+  <section id="s3">
+    <h2>정규직교 기저와 그람-슈미트</h2>
+    <p>3차원에서 벡터의 \(x\) 성분은 \(\hat{\mathbf x}\cdot\mathbf A\)로 바로 나온다. 기저가 서로 수직인 단위 벡터이기 때문이다. 기울어진 기저에서 성분을 구하려면 연립 방정식을 풀어야 한다. 양자 화학에서 원자 오비탈을 기저로 쓰면 이웃한 원자의 오비탈이 겹치므로 늘 이 문제를 만난다. 이 절에서는 직교 기저가 왜 편한지 보고, 아무 기저에서 직교 기저를 만드는 방법을 세운다.</p>
+
+    <h3 id="s3-orthonormal">정규직교 기저와 전개 계수</h3>
+    <div class="box def" id="def-orthonormal-basis"><div class="box-h">정규직교 기저</div>
+      <p>벡터들 \(|e_1\rangle, |e_2\rangle, \ldots\)이</p>
+      <div class="formula" id="eq-orthonormality">\[ \langle e_i|e_j\rangle = \delta_{ij} \]</div>
+      <p>을 만족하면 <span class="term">정규직교</span> <span class="en">(orthonormal)</span>한다고 한다. 정규직교하는 벡터들이 기저를 이루면 <span class="term">정규직교 기저</span> <span class="en">(orthonormal basis)</span>라 한다.</p>
+    </div>
+    <p>0이 아닌 벡터들이 서로 직교하면 저절로 선형 독립이다. \(\sum_j c_j|e_j\rangle = 0\)에 \(\langle e_i|\)를 내적하면(왼쪽 자리에 \(|e_i\rangle\)를 놓으면) \(\sum_j c_j\langle e_i|e_j\rangle = c_i\lVert e_i\rVert^2 = 0\)이므로 \(c_i = 0\)이다. 따라서 \(n\)차원 공간에서 정규직교하는 벡터 \(n\)개는 언제나 기저다.</p>
+    <p>정규직교 기저에서 \(|v\rangle = \sum_i c_i|e_i\rangle\)의 계수를 구하자. 양변과 \(|e_j\rangle\)의 내적을 \(|e_j\rangle\)를 왼쪽 자리에 두고 계산하면, 오른쪽 자리의 선형성으로 \(\langle e_j|v\rangle = \sum_i c_i\langle e_j|e_i\rangle = \sum_i c_i\delta_{ji} = c_j\)이다.</p>
+    <div class="formula" id="eq-expansion-coefficients">\[ |v\rangle = \sum_i c_i\,|e_i\rangle, \quad c_i = \langle e_i|v\rangle \]</div>
+    <p>성분 하나를 구하는 데 내적 하나면 되고, 다른 기저 벡터는 상관이 없다. 순서에 주의하자. \(\langle v|e_i\rangle\)는 \(c_i^*\)이다. 두 벡터 \(|u\rangle = \sum a_i|e_i\rangle\), \(|v\rangle = \sum c_i|e_i\rangle\)의 내적과 노름도 성분으로 쓸 수 있다. 왼쪽 자리의 켤레 선형성과 오른쪽 자리의 선형성으로 \(\langle u|v\rangle = \sum_{i,j}a_i^*c_j\langle e_i|e_j\rangle\)이므로</p>
+    <div class="formula" id="eq-inner-product-components">\[ \begin{aligned} \langle u|v\rangle &= \sum_i a_i^*c_i, \\ \lVert v\rVert^2 &= \sum_i \lvert c_i\rvert^2 \end{aligned} \]</div>
+    <p>이다. 정규직교 기저를 고르면 어떤 \(n\)차원 복소 내적 공간이든 \(\mathbb C^n\)의 표준 내적과 똑같이 계산된다. 이것이 정규직교 기저를 쓰는 이유다.</p>
+    <p>기저가 직교하지 않으면 사정이 다르다. \(|v\rangle = \sum_j v_j|b_j\rangle\)에 \(\langle b_i|\)를 내적하면 \(\langle b_i|v\rangle = \sum_j G_{ij}v_j\)이고, \(G_{ij} = \langle b_i|b_j\rangle\)를 <span class="term">그람 행렬</span> <span class="en">(Gram matrix)</span>이라 한다. 성분을 얻으려면 이 연립 방정식을 풀어야 한다. 정규직교 기저는 \(G = I\)인 경우다.</p>
+
+    <h3 id="s3-projection">투영과 가장 가까운 벡터</h3>
+    <p>정규직교하는 벡터 \(|e_1\rangle, \ldots, |e_m\rangle\)이 공간 전체가 아니라 부분 공간 \(W\)만 생성하는 경우도 중요하다. 함수 공간에서는 무한히 많은 기저 함수 가운데 처음 몇 개만 쓰는 일이 늘 생긴다. 이때 식 <a class="ref" href="#eq-expansion-coefficients"></a>의 합을 \(m\)개에서 끊은</p>
+    <div class="formula" id="eq-projection-sum">\[ |v_W\rangle = \sum_{i=1}^{m}\langle e_i|v\rangle\,|e_i\rangle \]</div>
+    <p>를 \(|v\rangle\)의 \(W\)로의 <span class="term">투영</span> <span class="en">(projection)</span>이라 한다. 나머지 \(|v\rangle - |v_W\rangle\)는 모든 \(|e_j\rangle\) (\(j \le m\))에 직교한다. \(\langle e_j|v\rangle - \sum_i\langle e_i|v\rangle\delta_{ji} = 0\)이기 때문이다.</p>
+    <div class="box thm" id="thm-best-approximation"><div class="box-h">투영은 가장 가까운 근사다</div>
+      <p>\(|e_1\rangle, \ldots, |e_m\rangle\)이 정규직교하고 \(W\)가 이들이 생성하는 부분 공간이면, \(W\)의 모든 벡터 \(|w\rangle\)에 대해</p>
+      <div class="formula" id="eq-best-approximation">\[ \lVert v - w\rVert \ge \lVert v - v_W\rVert \]</div>
+      <p>이고 등호는 \(|w\rangle = |v_W\rangle\)일 때뿐이다. 또 투영 계수는 <span class="term">베셀 부등식</span> <span class="en">(Bessel's inequality)</span>을 만족한다.</p>
+      <div class="formula" id="eq-bessel-inequality">\[ \sum_{i=1}^{m}\lvert\langle e_i|v\rangle\rvert^2 \le \lVert v\rVert^2 \]</div>
+      <details class="proof"><summary>증명</summary>
+        <p>\(|v\rangle - |w\rangle = (|v\rangle - |v_W\rangle) + (|v_W\rangle - |w\rangle)\)이다. 첫째 괄호는 \(W\)에 직교하고 둘째 괄호는 \(W\) 안에 있으므로 두 벡터는 직교한다. 피타고라스 정리로 \(\lVert v - w\rVert^2 = \lVert v - v_W\rVert^2 + \lVert v_W - w\rVert^2 \ge \lVert v - v_W\rVert^2\)이고, 등호는 \(\lVert v_W - w\rVert = 0\)일 때뿐이다. 같은 방법으로 \(\lVert v\rVert^2 = \lVert v_W\rVert^2 + \lVert v - v_W\rVert^2 \ge \lVert v_W\rVert^2\)이고, 식 <a class="ref" href="#eq-inner-product-components"></a>에서 \(\lVert v_W\rVert^2 = \sum_{i \le m}\lvert\langle e_i|v\rangle\rvert^2\)이다.</p>
+      </details>
+    </div>
+    <p>이 정리는 두 가지를 말한다. 첫째, \(W\) 안에서 \(|v\rangle\)를 가장 잘 흉내 내는 벡터를 찾을 때 연립 방정식이나 최소화 계산이 필요 없고 내적만 계산하면 된다. 둘째, 기저 벡터를 하나 더 넣어 \(m\)을 늘려도 이미 구한 계수는 바뀌지 않는다. 직교하지 않는 기저에서는 벡터 하나를 더하면 그람 행렬이 바뀌어 모든 계수를 다시 풀어야 한다. 9.5절에서 함수를 무한히 많은 기저 함수로 전개할 때 이 둘째 성질이 결정적이다.</p>
+
+    <h3 id="s3-gram-schmidt">그람-슈미트 과정</h3>
+    <p>정규직교 기저가 이렇게 편하다면, 아무 기저에서나 그것을 만들 수 있어야 한다. 방법은 코시-슈바르츠 부등식의 증명에서 쓴 "성분 떼어 내기"를 되풀이하는 것이다. 선형 독립인 \(|v_1\rangle, |v_2\rangle, \ldots\)이 주어졌다고 하자. 첫 벡터는 길이만 맞춘다. 둘째 벡터에서는 첫 방향의 성분을 빼서 수직인 부분만 남긴 뒤 길이를 맞춘다(그림 9-2). 셋째 벡터에서는 앞의 두 방향 성분을 뺀다. 일반적으로 \(k = 1, 2, \ldots\)에 대해</p>
+    <div class="formula" id="eq-gram-schmidt">\[ \begin{aligned} |w_k\rangle &= |v_k\rangle - \sum_{j=1}^{k-1}\langle e_j|v_k\rangle\,|e_j\rangle, \\ |e_k\rangle &= \frac{|w_k\rangle}{\lVert w_k\rVert} \end{aligned} \]</div>
+    <p>이다. 이것을 <span class="term">그람-슈미트 과정</span> <span class="en">(Gram–Schmidt process)</span>이라 한다. 빼는 합은 \(|v_k\rangle\)를 앞에서 만든 \(|e_1\rangle, \ldots, |e_{k-1}\rangle\)이 생성하는 부분 공간에 투영한 것(식 <a class="ref" href="#eq-projection-sum"></a>)이므로 \(|w_k\rangle\)는 앞의 모든 \(|e_j\rangle\)에 직교한다. \(|v_k\rangle\)가 앞의 벡터들과 선형 독립이므로 \(|w_k\rangle \ne 0\)이고 나눗셈을 할 수 있다. 각 단계에서 \(|e_1\rangle, \ldots, |e_k\rangle\)이 생성하는 공간은 \(|v_1\rangle, \ldots, |v_k\rangle\)이 생성하는 공간과 같다. 처음 벡터들이 선형 종속이면 어느 단계에서 \(|w_k\rangle = 0\)이 나오는데, 그 벡터를 버리고 다음으로 넘어가면 된다(8.4절의 스펙트럼 정리 증명이 이렇게 썼다).</p>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 300" role="img" aria-label="그람-슈미트 과정의 둘째 단계. v2에서 e1 방향 성분을 빼면 e1에 수직인 w2가 남고, 이것을 길이 1로 맞춘 것이 e2다"><defs><marker id="f0902-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker><marker id="f0902-arra" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker><marker id="f0902-arrb" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc2"/></marker></defs><line x1="228.3" y1="232.0" x2="203.5" y2="55.3" class="s-line" stroke-dasharray="2 3"/><path d="M214.8,233.9 L212.9,220.3 L226.4,218.4" class="s-line"/><line x1="100.0" y1="250.0" x2="401.5" y2="207.6" class="s-line" marker-end="url(#f0902-arr)" style="stroke-width:1.8"/><line x1="100.0" y1="250.0" x2="203.5" y2="55.3" class="s-line" marker-end="url(#f0902-arr)" style="stroke-width:1.8"/><line x1="101.1" y1="257.9" x2="229.5" y2="239.9" class="s-acc2" marker-end="url(#f0902-arrb)" style="stroke-width:4"/><line x1="100.0" y1="250.0" x2="75.2" y2="73.3" class="s-acc" marker-end="url(#f0902-arra)" style="stroke-width:1.8" stroke-dasharray="6 4"/><line x1="100.0" y1="250.0" x2="204.0" y2="235.4" class="s-acc" marker-end="url(#f0902-arra)" style="stroke-width:3"/><line x1="100.0" y1="250.0" x2="85.4" y2="146.0" class="s-acc" marker-end="url(#f0902-arra)" style="stroke-width:3"/><text x="397.5" y="231.6" class="t-math" text-anchor="end">|v<tspan baseline-shift="sub" font-size="11">1</tspan>⟩</text><text x="211.5" y="55.3" class="t-math" text-anchor="start">|v<tspan baseline-shift="sub" font-size="11">2</tspan>⟩</text><text x="200.0" y="261.4" class="t-math acc" text-anchor="end">|e<tspan baseline-shift="sub" font-size="11">1</tspan>⟩</text><text x="75.4" y="150.0" class="t-math acc" text-anchor="end">|e<tspan baseline-shift="sub" font-size="11">2</tspan>⟩</text><text x="65.2" y="77.3" class="t-math acc" text-anchor="end">|w<tspan baseline-shift="sub" font-size="11">2</tspan>⟩</text><text x="234.3" y="266.0" class="t-math acc2" text-anchor="start">⟨e<tspan baseline-shift="sub" font-size="11">1</tspan>|v<tspan baseline-shift="sub" font-size="11">2</tspan>⟩ |e<tspan baseline-shift="sub" font-size="11">1</tspan>⟩</text></svg></div>
+      <figcaption><b>그림 9-2.</b> 그람-슈미트 과정의 둘째 단계. \(|v_1\rangle\)을 규격화해 \(|e_1\rangle\)을 얻고, \(|v_2\rangle\)에서 \(|e_1\rangle\) 방향 성분 \(\langle e_1|v_2\rangle|e_1\rangle\)(굵은 선)을 빼면 \(|e_1\rangle\)에 수직인 \(|w_2\rangle\)(파선 화살표)가 남는다. 이것을 규격화한 것이 \(|e_2\rangle\)이다. 점선은 \(|v_2\rangle\)의 끝에서 \(|e_1\rangle\) 방향 직선으로 내린 수선이다.</figcaption>
+    </figure>
+    <div class="callout warn"><strong>계수의 자리와 처음 벡터의 순서</strong><p>식 <a class="ref" href="#eq-gram-schmidt"></a>의 계수는 \(\langle e_j|v_k\rangle\)이고 \(\langle v_k|e_j\rangle\)가 아니다. 복소 공간에서 둘을 바꾸면 \(|w_k\rangle\)가 직교하지 않는다. 수학 교재의 공식 \(v_k - \sum (v_k, e_j)e_j\)는 그쪽 관례(9.2절)로 같은 식이다. 또 결과는 처음 벡터의 순서에 따라 달라진다. \(|v_1\rangle\)의 방향은 그대로 남고, 뒤의 벡터일수록 많이 깎인다. 아래 오비탈 예제에서 이 비대칭이 눈에 보인다.</p></div>
+
+    <div class="box ex" id="ex-legendre-gram-schmidt"><div class="box-h">\(1, x, x^2\)에서 르장드르 다항식으로</div>
+      <p>구간 \([-1, 1]\)의 실수 다항식에 내적 \(\langle f|g\rangle = \int_{-1}^{1}f(x)\,g(x)\,dx\)를 쓴다. \(1, x, x^2\)에 그람-슈미트 과정을 적용하고, 결과를 \(x = 1\)에서 값이 1이 되도록 다시 맞춰라.</p>
+      <p><b>풀이.</b> 필요한 적분은 \(\int_{-1}^{1}x^k\,dx\)뿐이다. \(k\)가 홀수이면 0, 짝수이면 \(2/(k+1)\)이다.</p>
+      <p><i>1단계.</i> \(\lVert 1\rVert^2 = 2\)이므로 \(e_0 = 1/\sqrt2\).</p>
+      <p><i>2단계.</i> \(\langle e_0|x\rangle = \tfrac{1}{\sqrt2}\int x\,dx = 0\)이므로 뺄 것이 없어 \(w_1 = x\)이다. \(\lVert x\rVert^2 = 2/3\)이므로 \(e_1 = \sqrt{3/2}\,x\).</p>
+      <p><i>3단계.</i> \(\langle e_0|x^2\rangle = \tfrac{1}{\sqrt2}\cdot\tfrac23\), \(\langle e_1|x^2\rangle = \sqrt{3/2}\int x^3\,dx = 0\)이다. 따라서</p>
+      <div class="formula">\[ w_2 = x^2 - \frac{1}{\sqrt2}\cdot\frac23\cdot\frac{1}{\sqrt2} = x^2 - \frac13 \]</div>
+      <p>이고 \(\lVert w_2\rVert^2 = \int(x^4 - \tfrac23x^2 + \tfrac19)\,dx = \tfrac25 - \tfrac49 + \tfrac29 = \tfrac{8}{45}\)이므로 \(e_2 = \sqrt{45/8}\,(x^2 - \tfrac13) = \sqrt{5/8}\,(3x^2 - 1)\)이다.</p>
+      <p>세 함수를 \(x = 1\)에서 1이 되게 상수배하면</p>
+      <div class="formula" id="eq-legendre-from-gs">\[ P_0 = 1, \quad P_1 = x, \quad P_2 = \frac{3x^2 - 1}{2} \]</div>
+      <p>이다. 이것이 12장의 <a href="ch12.html#def-legendre-polynomial">르장드르 다항식</a>의 처음 세 개다. 규격화 상수에서 \(\lVert P_l\rVert^2\)를 읽으면 \(2, \tfrac23, \tfrac25\)이고, 이것은 \(2/(2l + 1)\)과 맞는다(12장의 <a href="ch12.html#eq-legendre-norm">규격화 식</a>). 한 단계 더 가면 \(x^3 - \tfrac35x\)에서 \(P_3 = (5x^3 - 3x)/2\)가 나온다. 확인: \(\langle P_0|P_2\rangle = \int\tfrac{3x^2 - 1}{2}\,dx = \tfrac12(2 - 2) = 0\)이다.</p>
+      <p>짝함수와 홀함수의 곱은 대칭 구간에서 적분이 0이므로, 짝수 차수와 홀수 차수는 처음부터 직교한다. 그래서 각 단계에서 뺄 성분이 반만 남는다. 12장에서는 같은 다항식이 르장드르 미분방정식의 해로 나오고, 1장의 쌍극자·사중극 퍼텐셜(<a href="ch01.html#ex-dipole-far-field">1장 예제 1.10</a>, <a href="ch01.html#eq-quadrupole-potential">식 (1.32)</a>)의 각도 인자 \(\cos\theta = P_1\), \((3\cos^2\theta - 1)/2 = P_2\)가 바로 이 다항식이다. 구간이나 가중 함수를 바꾸면 같은 과정에서 다른 직교 다항식이 나온다(<a class="ref" href="#prob-laguerre-gram-schmidt"></a>, 13장의 <a href="ch13.html#eq-orthopoly-table">직교 다항식 표</a>).</p>
+    </div>
+
+    <div class="box ex" id="ex-overlapping-orbitals"><div class="box-h">수소 분자 이온의 겹치는 두 오비탈</div>
+      <p>양성자 A, B가 거리 \(R\)만큼 떨어져 있고 전자가 하나 있다(H₂⁺). 각 양성자에 붙은 수소 원자의 바닥 상태 \(\phi_A(\mathbf r) = e^{-\lvert\mathbf r - \mathbf r_A\rvert/a_0}/\sqrt{\pi a_0^3}\)와 \(\phi_B\)를 기저로 쓰려 한다(\(a_0\)는 보어 반지름). 둘은 각각 규격화되어 있고, 겹침 적분은</p>
+      <div class="formula" id="eq-overlap-integral">\[ S = \langle\phi_A|\phi_B\rangle = e^{-\rho}\Big(1 + \rho + \frac{\rho^2}{3}\Big) \]</div>
+      <p>이다. 여기서 \(\rho = R/a_0\)이다. 타원 좌표 \(\mu = (r_A + r_B)/R\), \(\nu = (r_A - r_B)/R\)에서 \(d^3r = (R/2)^3(\mu^2 - \nu^2)\,d\mu\,d\nu\,d\phi\)이므로 \(S = \tfrac{\rho^3}{2}\int_1^\infty(\mu^2 - \tfrac13)e^{-\rho\mu}\,d\mu\)이고, 부분 적분하면 이 꼴이 된다. (가) \(R = 2.00\,a_0\)에서 \(S\)를 구하라. (나) \(\phi_A, \phi_B\)에 그람-슈미트 과정을 적용하고, \(\phi_B\)의 새 기저 성분을 구하라. (다) 결합 오비탈 \(\phi_A + \phi_B\)와 반결합 오비탈 \(\phi_A - \phi_B\)의 규격화 상수를 구하라.</p>
+      <p><b>풀이.</b> (가) \(\rho = 2\)이면 \(S = e^{-2}(1 + 2 + \tfrac43) = 0.13534 \times 4.3333 = 0.5865\)이다. 두 오비탈은 직교와 거리가 멀다. 겹침이 \(0.5865\)라는 것은 두 단위 벡터 사이 각이 \(\arccos 0.5865 = 54°\)라는 뜻이다(\(S\)는 실수).</p>
+      <p>(나) \(e_1 = \phi_A\)로 둔다. 식 <a class="ref" href="#eq-gram-schmidt"></a>에서 \(w_2 = \phi_B - \langle\phi_A|\phi_B\rangle\phi_A = \phi_B - S\phi_A\)이고 \(\lVert w_2\rVert^2 = 1 - 2S^2 + S^2 = 1 - S^2\)이므로</p>
+      <div class="formula" id="eq-orbital-gram-schmidt">\[ e_2 = \frac{\phi_B - S\phi_A}{\sqrt{1 - S^2}} = \frac{\phi_B - 0.5865\,\phi_A}{0.8100} \]</div>
+      <p>이다. \(\phi_B\)의 성분은 \(\langle e_1|\phi_B\rangle = S = 0.5865\), \(\langle e_2|\phi_B\rangle = (1 - S^2)/\sqrt{1 - S^2} = \sqrt{1 - S^2} = 0.8100\)이다. 확인: \(0.5865^2 + 0.8100^2 = 1.000\)이므로 식 <a class="ref" href="#eq-inner-product-components"></a>와 맞는다. 새 기저는 A 쪽 오비탈을 그대로 두고 B 쪽 오비탈만 깎았다. 두 원자가 같은데도 결과가 대칭이 아닌 것은 순서를 정한 그람-슈미트 과정의 성질이다.</p>
+      <p>(다) \(\lVert\phi_A \pm \phi_B\rVert^2 = 1 + 1 \pm 2S = 2(1 \pm S)\)이므로 규격화한 오비탈은</p>
+      <div class="formula" id="eq-bonding-normalization">\[ \psi_\pm = \frac{\phi_A \pm \phi_B}{\sqrt{2(1 \pm S)}} \]</div>
+      <p>이다. 두 오비탈은 \(\langle\phi_A + \phi_B|\phi_A - \phi_B\rangle = 1 - S + S - 1 = 0\)으로 서로 직교하고, A와 B를 똑같이 다룬다. 그람-슈미트와 다른 방식으로 얻은 대칭적인 정규직교 기저다.</p>
+      <p><b>숫자로 보기.</b> \(R = 2.00\,a_0 = 0.106\ \text{nm}\)에서 \(2(1 + S) = 3.17\), \(2(1 - S) = 0.827\)이므로 규격화 상수는 \(0.561\)과 \(1.100\)이다. 겹침을 무시하고 \(1/\sqrt2 = 0.707\)을 쓰면 결합 오비탈의 \(\lVert\psi_+\rVert^2\)가 \(3.17/2 = 1.59\)가 되어, 전자를 하나가 아니라 1.59개로 세는 셈이다. 핵이 멀어지면 겹침은 빠르게 준다. \(R = 6\,a_0\)에서 \(S = 19e^{-6} = 0.047\)이다. 확인: \(\phi\)는 \(a_0^{-3/2}\)의 차원을 갖고, \(\lvert\phi\rvert^2\)를 부피로 적분한 \(S\)는 차원이 없다. 세 기저 \(\{\phi_A, \phi_B\}\), \(\{e_1, e_2\}\), \(\{\psi_+, \psi_-\}\)는 같은 2차원 공간을 생성하므로, 이 공간에서 계산한 물리량은 어느 기저로 계산해도 같다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 9.4 -->
+  <section id="s4">
+    <h2>디랙 표기와 완비성 관계</h2>
+    <p>8장의 스펙트럼 분해 \(A = \sum\lambda_i\mathbf u_i\mathbf u_i^\dagger\)(<a href="ch08.html#eq-spectral-decomposition">8장 식 (8.21)</a>)에는 열벡터 \(\mathbf u_i\)와 행벡터 \(\mathbf u_i^\dagger\)가 함께 나온다. 행벡터 \(\mathbf u^\dagger\)는 열벡터 \(\mathbf v\)를 받아 수 \(\mathbf u^\dagger\mathbf v\)를 내놓는 장치다. 함수 공간처럼 "행"과 "열"이 없는 곳에서도 이런 장치를 쓰려면 행벡터를 다른 말로 정의해야 한다. 디랙의 표기는 바로 이것을 한다. 내적 \(\langle u|v\rangle\)를 두 조각으로 잘라 왼쪽 조각 \(\langle u|\)에 독립된 뜻을 준다.</p>
+
+    <h3 id="s4-bra">브라와 켓</h3>
+    <div class="box def" id="def-ket-bra"><div class="box-h">브라와 켓</div>
+      <p>내적 공간 \(V\)의 벡터 \(|v\rangle\)를 <span class="term">켓</span> <span class="en">(ket)</span>이라 한다. 각 켓 \(|u\rangle\)는 \(V\)에서 \(\mathbb C\)로 가는 선형 사상</p>
+      <div class="formula" id="eq-bra-definition">\[ \langle u| : \; |v\rangle \;\longmapsto\; \langle u|v\rangle \]</div>
+      <p>를 정한다. 이 사상을 <span class="term">브라</span> <span class="en">(bra)</span>라 하고 \(\langle u|\)로 쓴다. 브라 \(\langle u|\)를 켓 \(|v\rangle\)에 작용시킨 값이 내적이고, 둘을 이어 쓴 \(\langle u|v\rangle\)를 <span class="term">브래킷</span> <span class="en">(bracket)</span>이라 한다. 켓에서 브라로 가는 대응은 켤레 선형이다.</p>
+      <div class="formula" id="eq-bra-ket-dual">\[ a|u\rangle + b|w\rangle \;\longleftrightarrow\; a^*\langle u| + b^*\langle w| \]</div>
+      <p>이 대응을 \(\dagger\)로 쓴다: \((|u\rangle)^\dagger = \langle u|\), \((\langle u|)^\dagger = |u\rangle\).</p>
+    </div>
+    <p>브라가 선형 사상인 것은 내적이 오른쪽 자리에 선형이기 때문이고, 대응이 켤레 선형인 것은 식 <a class="ref" href="#eq-conjugate-linear"></a> 때문이다. 브라끼리의 합과 스칼라 곱은 사상의 합과 스칼라 곱 \((\alpha\langle u| + \beta\langle w|)|v\rangle = \alpha\langle u|v\rangle + \beta\langle w|v\rangle\)로 정한다. \(\mathbb C^n\)에서는 켓이 열벡터, 브라가 그 켤레 전치인 행벡터이고, 브래킷은 행렬 곱이다.</p>
+    <div class="formula" id="eq-ket-bra-columns">\[ |v\rangle = \begin{pmatrix} v_1 \\ \vdots \\ v_n \end{pmatrix}, \quad \langle u| = \begin{pmatrix} u_1^* & \cdots & u_n^* \end{pmatrix} \]</div>
+    <p>유한 차원에서는 거꾸로 모든 선형 사상 \(f : V \to \mathbb C\)가 어떤 브라다. 정규직교 기저로 \(|u_f\rangle = \sum_i f(|e_i\rangle)^*|e_i\rangle\)라 두면 \(\langle u_f|v\rangle = \sum_i f(|e_i\rangle)\,c_i = f\big(\sum_i c_i|e_i\rangle\big) = f(|v\rangle)\)이기 때문이다. 그래서 브라와 켓은 같은 정보를 두 가지 모양으로 담는다. 무한 차원에서는 연속인 선형 사상만 브라가 된다. 점에서의 값을 읽는 \(f \mapsto f(x_0)\)는 브라가 아니고, 9.5절 심화의 \(\langle x|\)가 바로 이것이다.</p>
+    <p>켓과 브라를 반대 순서로 붙인 \(|u\rangle\langle w|\)는 수가 아니라 연산자다. 켓 \(|v\rangle\)에 작용하면</p>
+    <div class="formula" id="eq-outer-product">\[ \big(|u\rangle\langle w|\big)|v\rangle = |u\rangle\,\langle w|v\rangle \]</div>
+    <p>로 \(|u\rangle\) 방향의 벡터를 내놓는다. 이것을 <span class="term">외적</span> <span class="en">(outer product)</span>이라 한다. \(\mathbb C^n\)에서는 열벡터 곱하기 행벡터 \(\mathbf u\mathbf w^\dagger\)이고 \(n \times n\) 행렬이다. 디랙 표기의 힘은 이 식처럼 괄호를 어떻게 묶어도 뜻이 같다는 데 있다. \(|u\rangle\langle w|v\rangle\)는 "연산자 \(|u\rangle\langle w|\)를 \(|v\rangle\)에 작용"으로 읽어도, "수 \(\langle w|v\rangle\) 곱하기 \(|u\rangle\)"로 읽어도 된다.</p>
+
+    <h3 id="s4-completeness">완비성 관계</h3>
+    <p>정규직교 기저 \(\{|e_i\rangle\}\)에서 식 <a class="ref" href="#eq-expansion-coefficients"></a>을 디랙 표기로 다시 쓰면, 수 \(c_i = \langle e_i|v\rangle\)를 켓 뒤로 옮겨</p>
+    <div class="formula">\[ |v\rangle = \sum_i |e_i\rangle\langle e_i|v\rangle = \Big(\sum_i |e_i\rangle\langle e_i|\Big)|v\rangle \]</div>
+    <p>이다. 괄호 안의 연산자는 모든 \(|v\rangle\)를 자기 자신으로 보낸다. 따라서</p>
+    <div class="formula" id="eq-completeness">\[ \sum_i |e_i\rangle\langle e_i| = I \]</div>
+    <p>이다. 이것을 <span class="term">완비성 관계</span> <span class="en">(completeness relation)</span> 또는 항등 연산자의 분해라 한다. 8장의 <a href="ch08.html#eq-completeness-matrix">식 (8.22)</a> \(\sum\mathbf u_i\mathbf u_i^\dagger = I\)를 기저와 상관없는 말로 옮긴 것이다. 기저에서 벡터 하나라도 빠지면 합은 \(I\)가 되지 않는다. 빠진 방향의 벡터를 0으로 보내기 때문이다. "완비"라는 이름이 여기서 왔다.</p>
+    <p>완비성 관계는 계산에서 "\(I\)를 끼워 넣는" 도구로 쓰인다. 아무 곳에나 \(I\)를 넣고 식 <a class="ref" href="#eq-completeness"></a>로 바꾸면 추상적인 식이 성분의 식이 된다. 예를 들어 연산자 \(A\)(9.6절에서 정의하는 선형 연산자)의 <span class="term">행렬 원소</span> <span class="en">(matrix element)</span>를 \(A_{ij} = \langle e_i|A|e_j\rangle\)라 하면</p>
+    <div class="formula" id="eq-matrix-elements">\[ \begin{aligned} \langle e_i|A|v\rangle &= \sum_j \langle e_i|A|e_j\rangle\langle e_j|v\rangle = \sum_j A_{ij}c_j, \\ \langle e_i|AB|e_k\rangle &= \sum_j \langle e_i|A|e_j\rangle\langle e_j|B|e_k\rangle \end{aligned} \]</div>
+    <p>이다. 첫 줄은 "\(A|v\rangle\)의 성분은 행렬 곱하기 성분의 열"이라는 말이고, 둘째 줄은 행렬 곱의 규칙(<a href="ch07.html#eq-matrix-product">7장 식 (7.3)</a>)이다. 8장의 스펙트럼 분해와 행렬의 함수(<a href="ch08.html#eq-spectral-function">식 (8.23)</a>)도 디랙 표기로 쓰면 다음과 같다. 에르미트 연산자 \(A\)의 정규직교 고유벡터를 \(|u_i\rangle\) (\(A|u_i\rangle = \lambda_i|u_i\rangle\))라 하면, 완비성 관계 \(I = \sum_i|u_i\rangle\langle u_i|\)에 왼쪽에서 \(A\)를 곱해</p>
+    <div class="formula" id="eq-spectral-dirac">\[ \begin{aligned} A &= A\sum_i|u_i\rangle\langle u_i| = \sum_i\lambda_i|u_i\rangle\langle u_i|, \\ f(A) &= \sum_i f(\lambda_i)\,|u_i\rangle\langle u_i| \end{aligned} \]</div>
+    <p>이다.</p>
+
+    <h3 id="s4-change-basis">기저 바꾸기</h3>
+    <p>정규직교 기저가 둘, \(\{|e_i\rangle\}\)와 \(\{|f_j\rangle\}\) 있다고 하자. 같은 벡터의 두 성분 \(c_i = \langle e_i|v\rangle\)와 \(c'_j = \langle f_j|v\rangle\)는 \(I = \sum_j|f_j\rangle\langle f_j|\)를 끼워 넣으면 이어진다.</p>
+    <div class="formula" id="eq-unitary-change">\[ \begin{aligned} c_i &= \sum_j \langle e_i|f_j\rangle\,c'_j = \sum_j U_{ij}\,c'_j, \\ U_{ij} &= \langle e_i|f_j\rangle \end{aligned} \]</div>
+    <p>\(U\)의 \(j\)째 열은 새 기저 벡터 \(|f_j\rangle\)의 옛 성분이다. 이 행렬은 유니타리다. 완비성 관계를 한 번 더 쓰면 \((U^\dagger U)_{jk} = \sum_i\langle e_i|f_j\rangle^*\langle e_i|f_k\rangle = \sum_i\langle f_j|e_i\rangle\langle e_i|f_k\rangle = \langle f_j|f_k\rangle = \delta_{jk}\)이기 때문이다. 정규직교 기저 사이의 기저 바꾸기는 언제나 유니타리 행렬(<a href="ch08.html#def-unitary-matrix">8장의 정의 8.3</a>)이고, 그래서 <a href="ch07.html#eq-change-of-basis">7장 식 (7.27)</a>의 역행렬이 수반 \(U^{-1} = U^\dagger\)로 바뀐다. <a class="ref" href="#ex-oscillator-solution-space"></a>의 행렬 \(S\)는 유니타리가 아니었다. 한 주기 평균 내적 \(\langle f|g\rangle = \tfrac1T\int_0^T f^*g\,dt\)로 재면 두 기저는 모두 직교하지만, \(e^{\pm i\omega t}\)의 노름은 1이고 \(\cos\omega t\), \(\sin\omega t\)의 노름은 \(1/\sqrt2\)이다. 그래서 \(S\)는 유니타리 행렬의 \(1/\sqrt2\)배다(\(S^\dagger S = \tfrac12I\)).</p>
+
+    <h3 id="s4-projector">투영 연산자</h3>
+    <p>식 <a class="ref" href="#eq-projection-sum"></a>의 투영도 외적으로 쓰면 연산자가 된다.</p>
+    <div class="box def" id="def-projector"><div class="box-h">투영 연산자</div>
+      <p>정규직교하는 \(|e_1\rangle, \ldots, |e_m\rangle\)이 생성하는 부분 공간 \(W\)에 대해</p>
+      <div class="formula" id="eq-projector">\[ P_W = \sum_{i=1}^{m}|e_i\rangle\langle e_i| \]</div>
+      <p>를 \(W\)로의 <span class="term">투영 연산자</span> <span class="en">(projection operator, projector)</span>라 한다. 0이 아닌 벡터 하나의 방향으로의 투영은 \(P_u = |u\rangle\langle u|/\langle u|u\rangle\)이다.</p>
+    </div>
+    <p>투영 연산자는 다음 성질을 갖는다.</p>
+    <ul>
+      <li>\(P_W^2 = P_W\). 이미 \(W\)에 있는 벡터를 다시 투영해도 바뀌지 않는다. 계산으로는 \(P_W^2 = \sum_{i,j}|e_i\rangle\langle e_i|e_j\rangle\langle e_j| = \sum_i|e_i\rangle\langle e_i|\)이다.</li>
+      <li>\(|P_Wv\rangle = P_W|v\rangle\)로 쓰면 \(\langle u|P_Wv\rangle = \sum_i\langle u|e_i\rangle\langle e_i|v\rangle = \langle P_Wu|v\rangle\). 투영은 내적의 어느 자리에 있어도 같다. 9.6절의 말로 \(P_W\)는 에르미트다.</li>
+      <li>\(I - P_W\)는 \(W\)의 <span class="term">직교 여공간</span> <span class="en">(orthogonal complement)</span> \(W^\perp\)(\(W\)의 모든 벡터에 직교하는 벡터들)로의 투영이고, \(P_W(I - P_W) = 0\)이다. 완비성 관계는 \(I = P_W + P_{W^\perp}\)로 공간을 두 조각으로 나눈다.</li>
+      <li>고유값은 0과 1뿐이다. \(P|v\rangle = \lambda|v\rangle\)이면 \(\lambda|v\rangle = P^2|v\rangle = \lambda^2|v\rangle\)이므로 \(\lambda^2 = \lambda\)이다. \(\operatorname{tr}P_W = \sum_i\langle e_i|e_i\rangle = m = \dim W\)이다.</li>
+    </ul>
+    <p>거꾸로 \(P^2 = P\)이고 에르미트인 연산자는 모두 어떤 부분 공간으로의 투영 연산자다. 스펙트럼 정리로 대각화하면 고유값이 0과 1뿐이고, 고유값 1의 고유 공간이 \(W\)다. 두 투영의 곱은 일반적으로 투영이 아니다. 아래 예제에서 보듯 \(P_1P_2 \ne P_2P_1\)일 수 있고, 그 차이는 측정할 수 있는 효과를 낸다.</p>
+
+    <div class="box ex" id="ex-jones-polarization"><div class="box-h">편광판은 투영 연산자다</div>
+      <p>투과축이 \(x\)축에서 각 \(\theta\)만큼 기운 이상적인 선형 편광판은 그 방향의 전기장 성분만 통과시킨다. (가) 편광판의 존스 행렬을 구하고 말뤼스 법칙을 유도하라. (나) 출력 \(\Phi_0 = 8.0\ \text{mW}\)인 수평 편광 레이저 빛을 수직 편광판에 보낸다. 그 사이에 \(45°\) 편광판을 넣으면 얼마가 나오는가? (다) 사이에 편광판을 \(N - 1\)장 넣어 투과축을 \(90°/N\)씩 돌리면 나오는 출력은 얼마이고, \(N \to \infty\)에서 어떻게 되는가? (라) 원편광 \(|{+}\rangle\)를 선형 편광판에 보내면 얼마가 통과하는가?</p>
+      <p><b>풀이.</b> (가) 투과축 방향의 단위 벡터를 \(|\theta\rangle = (\cos\theta, \sin\theta)\)라 하면, 편광판은 \(|\theta\rangle\) 방향 성분 \(\langle\theta|\varepsilon\rangle|\theta\rangle\)만 남기므로 \(P_\theta = |\theta\rangle\langle\theta|\)이다.</p>
+      <div class="formula" id="eq-polarizer-matrix">\[ P_\theta = \begin{pmatrix} \cos^2\theta & \cos\theta\sin\theta \\ \cos\theta\sin\theta & \sin^2\theta \end{pmatrix} \]</div>
+      <p>대각합이 1이고 행렬식이 0이므로 고유값은 1(투과축)과 0(수직 방향)이다. 수평 편광 \(|H\rangle\)을 넣으면 나오는 진폭은 \(\langle\theta|H\rangle = \cos\theta\)이고 출력은 그 제곱에 비례한다.</p>
+      <div class="formula" id="eq-malus-law">\[ \Phi_{\text{out}} = \Phi_0\,\lvert\langle\theta|H\rangle\rvert^2 = \Phi_0\cos^2\theta \]</div>
+      <p>이것이 <span class="term">말뤼스 법칙</span> <span class="en">(Malus's law)</span>이다.</p>
+      <p>(나) 수평에서 바로 수직 편광판으로 가면 \(P_{90°}|H\rangle = |V\rangle\langle V|H\rangle = 0\)이므로 아무것도 나오지 않는다. \(45°\) 편광판을 넣으면 연산자의 곱은</p>
+      <div class="formula">\[ P_{90°}P_{45°}|H\rangle = |V\rangle\langle V|45°\rangle\langle 45°|H\rangle = \tfrac12|V\rangle \]</div>
+      <p>이다. 진폭이 \(\tfrac12\)이므로 출력은 \(\Phi_0/4 = 2.0\ \text{mW}\)이다(그림 9-3). 편광판을 하나 더 넣었는데 빛이 더 많이 나온다. 투영 연산자는 서로 교환하지 않기 때문이다. \(P_{45°}P_{90°}\)와 \(P_{90°}P_{45°}\)는 다른 연산자이고, 편광판의 순서를 바꾸면 결과가 바뀐다.</p>
+      <p>(다) 각 단계에서 진폭이 \(\cos(\pi/2N)\)배가 되고 \(N\)번 투영하므로</p>
+      <div class="formula" id="eq-polarizer-chain">\[ \Phi_N = \Phi_0\cos^{2N}\!\Big(\frac{\pi}{2N}\Big) \approx \Phi_0\exp\!\Big(-\frac{\pi^2}{4N}\Big) \]</div>
+      <p>이다. 근사는 \(\ln\cos u \approx -u^2/2\)(<a href="ch01.html#eq-standard-series">1장 식 (1.21)</a>에서 \(\cos u\)와 \(\ln(1 + x)\)의 전개)에서 \(2N\ln\cos(\pi/2N) \approx -\pi^2/4N\)이다.</p>
+      <p><b>숫자로 보기.</b> \(N = 2\)이면 \(2.0\ \text{mW}\), \(N = 3\)이면 \(8.0 \times 0.75^3 = 3.4\ \text{mW}\), \(N = 6\)이면 \(5.3\ \text{mW}\), \(N = 30\)이면 \(7.4\ \text{mW}\)이다. \(N \to \infty\)이면 \(\Phi_N \to \Phi_0\)이다. 아주 작은 각씩 여러 번 투영하면 빛을 거의 잃지 않고 편광 방향을 \(90°\) 돌릴 수 있다. 투영 하나에서 잃는 몫이 각의 제곱에 비례하므로, 각을 \(1/N\)로 줄이면 한 번에 잃는 몫은 \(1/N^2\)로 줄고 \(N\)번 합쳐도 \(1/N\)이다.</p>
+      <p><b>다음 항은 몇 차인가.</b> \(\ln\cos u = -u^2/2 - u^4/12 - \cdots\)이므로 지수에 \(-\pi^4/(96N^3)\)이 더해진다. \(N = 30\)에서 이 항은 \(3.8 \times 10^{-5}\)이고, 근사값 \(7.3684\ \text{mW}\)가 정확한 값 \(7.3681\ \text{mW}\)와 이만큼 다르다.</p>
+      <p>(라) \(\langle\theta|{+}\rangle = (\cos\theta + i\sin\theta)/\sqrt2 = e^{i\theta}/\sqrt2\)이므로 \(\lvert\langle\theta|{+}\rangle\rvert^2 = \tfrac12\)이다. 원편광은 투과축이 어느 방향이든 정확히 절반이 통과한다. 원편광과 편광하지 않은 빛을 편광판 하나로는 구별할 수 없는 이유다. 단위 확인: \(\lvert\langle\theta|\varepsilon\rangle\rvert^2\)은 차원이 없으므로 \(\Phi_{\text{out}}\)은 \(\Phi_0\)와 같은 단위(mW)다.</p>
+    </div>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 300" role="img" aria-label="수평 편광을 45도 편광판과 수직 편광판에 차례로 투영하면 진폭이 1에서 1/√2, 1/2로 줄어든다"><defs><marker id="f0903-arra" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker><marker id="f0903-arrb" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc2"/></marker><marker id="f0903-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker></defs><line x1="70.0" y1="262.0" x2="400.0" y2="262.0" class="s-grid" style="stroke-width:6"/><line x1="70.0" y1="262.0" x2="70.0" y2="24.4" class="s-grid" style="stroke-width:6"/><line x1="70.0" y1="262.0" x2="290.0" y2="42.0" class="s-grid" style="stroke-width:6"/><text x="400.0" y="284.0" class="t-dim" text-anchor="end" style="font-size:14px">0°</text><text x="296.0" y="46.0" class="t-dim" text-anchor="start" style="font-size:14px">45°</text><text x="78.0" y="36.4" class="t-dim" text-anchor="start" style="font-size:14px">90°</text><line x1="290.0" y1="262.0" x2="180.0" y2="152.0" class="s-line" stroke-dasharray="5 4"/><line x1="180.0" y1="152.0" x2="70.0" y2="152.0" class="s-line" stroke-dasharray="5 4"/><line x1="70.0" y1="262.0" x2="290.0" y2="262.0" class="s-line" marker-end="url(#f0903-arr)" style="stroke-width:3;stroke:var(--text)"/><line x1="70.0" y1="262.0" x2="180.0" y2="152.0" class="s-acc" marker-end="url(#f0903-arra)" style="stroke-width:3"/><line x1="70.0" y1="262.0" x2="70.0" y2="152.0" class="s-acc2" marker-end="url(#f0903-arrb)" style="stroke-width:3"/><text x="290.0" y="284.0" class="t" text-anchor="middle" style="font-size:14px">진폭 1, 세기 1</text><text x="190.0" y="164.0" class="t-acc" text-anchor="start" style="font-size:14px">진폭 1/√2, 세기 1/2</text><text x="62.0" y="148.0" class="t" text-anchor="end" style="font-size:14px;fill:var(--accent-2);font-weight:700">진폭 1/2</text><text x="62.0" y="166.0" class="t" text-anchor="end" style="font-size:14px;fill:var(--accent-2);font-weight:700">세기 1/4</text></svg></div>
+      <figcaption><b>그림 9-3.</b> 편광판 세 장(투과축 \(0°\), \(45°\), \(90°\))을 지나는 빛의 존스 벡터. 회색 선이 투과축이다. 수평 편광(진폭 1)을 \(45°\) 축에 투영하면 진폭 \(1/\sqrt2\)가 남고(파선은 수선), 이것을 다시 \(90°\) 축에 투영하면 진폭 \(1/2\), 세기 \(1/4\)가 남는다. \(45°\) 편광판이 없으면 \(0°\)에서 \(90°\)로 바로 투영되어 0이다.</figcaption>
+    </figure>
+    <div class="callout deep" data-later="qm"><strong>스핀과 광자 하나의 편광</strong><p>같은 수학이 스핀 1/2에도 그대로 쓰인다. <a href="ch08.html#eq-spinor-eigen">8장 식 (8.17)</a>의 \(\hat{\mathbf n}\) 방향 스핀 상태 \(|{+}\hat{\mathbf n}\rangle\)에 대해 \(\lvert\langle{+}\hat{\mathbf z}|{+}\hat{\mathbf n}\rangle\rvert^2 = \cos^2(\theta/2)\)이고, 투영 연산자 \(|{+}\hat{\mathbf n}\rangle\langle{+}\hat{\mathbf n}|\)은 \((I + \hat{\mathbf n}\cdot\boldsymbol\sigma)/2\)이다(<a class="ref" href="#prob-spin-projector"></a>). 빛이 광자 하나일 때 \(\lvert\langle\theta|\varepsilon\rangle\rvert^2\)을 "편광판을 통과할 확률"로 읽는 것, 그리고 투영 연산자를 측정과 연결하는 것은 양자역학의 공준이 하는 일이고 양자역학 책에서 다룬다. 이 책은 투영 연산자의 수학적 성질까지만 세운다.</p></div>
+  </section>
+
+  <!-- ============================================================ 9.5 -->
+  <section id="s5">
+    <h2>함수 공간과 함수의 내적</h2>
+    <p>길이 \(L\)인 줄이 양 끝에 고정되어 있다. 줄의 모양 \(y(x)\)를 기록하는 가장 단순한 방법은 간격 \(\Delta x = L/(N + 1)\)인 점 \(x_j = j\,\Delta x\) (\(j = 1, \ldots, N\))에서 높이를 재어 \((y_1, \ldots, y_N)\)을 적는 것이다. 이것은 \(\mathbb R^N\)의 벡터다. 실제로 질량 \(N\)개를 용수철로 이은 구슬 줄의 정규 모드는 \(N \times N\) 행렬의 고유벡터이고(8.5절), 구슬을 촘촘하게 하면 정규 모드가 \(\sin(n\pi x/L)\) 모양으로 다가간다. 그렇다면 연속인 줄의 모양 \(y(x)\)는 점 \(x\)마다 성분이 하나씩 있는, 성분이 연속적으로 무한히 많은 벡터로 볼 수 있다. 성분의 이름이 \(j\)에서 \(x\)로 바뀐 것이다.</p>
+    <p>내적도 같은 방식으로 옮긴다. \(\mathbb C^N\)의 내적 \(\sum_j y_j^*z_j\)는 \(N\)이 커지면 한없이 커지므로, 간격 \(\Delta x\)를 곱해 둔다. 그러면 합이 리만 합이 되어</p>
+    <div class="formula" id="eq-discrete-to-integral">\[ \sum_{j=1}^{N} y^*(x_j)\,z(x_j)\,\Delta x \;\longrightarrow\; \int_0^L y^*(x)\,z(x)\,dx \]</div>
+    <p>로 다가간다. 함수의 내적은 성분끼리 곱해 더하는 \(\mathbb C^n\)의 내적을 그대로 연속으로 옮긴 것이다.</p>
+
+    <h3 id="s5-l2">제곱 적분 가능 함수</h3>
+    <p>함수의 내적이 유한하려면 함수가 너무 크면 안 된다. 노름 \(\lVert f\rVert^2 = \int\lvert f\rvert^2\,dx\)가 유한한 함수만 모으면 된다.</p>
+    <div class="box def" id="def-l2"><div class="box-h">제곱 적분 가능 함수와 \(L^2\)</div>
+      <p>구간 \((a, b)\)(무한 구간이어도 된다)에서 양의 함수 \(w(x) > 0\)를 하나 정한다. 복소 함수 \(f\)가</p>
+      <div class="formula" id="eq-l2-condition">\[ \int_a^b \lvert f(x)\rvert^2\,w(x)\,dx &lt; \infty \]</div>
+      <p>를 만족하면 <span class="term">제곱 적분 가능</span> <span class="en">(square integrable)</span>하다고 하고, 이런 함수 전체를 \(L^2_w(a, b)\)로 쓴다. \(w\)를 <span class="term">가중 함수</span> <span class="en">(weight function)</span>라 하고, \(w = 1\)이면 \(L^2(a, b)\)로 쓴다. 이 공간의 내적은 다음과 같다.</p>
+      <div class="formula" id="eq-function-inner-product">\[ \langle f|g\rangle = \int_a^b f^*(x)\,g(x)\,w(x)\,dx \]</div>
+    </div>
+    <p>\(L^2_w\)가 벡터 공간인지 확인하자. 상수배에 닫혀 있는 것은 분명하다. 합에 대해서는 \(0 \le (\lvert f\rvert - \lvert g\rvert)^2\)에서 \(2\lvert f\rvert\lvert g\rvert \le \lvert f\rvert^2 + \lvert g\rvert^2\)이므로 \(\lvert f + g\rvert^2 \le \lvert f\rvert^2 + 2\lvert f\rvert\lvert g\rvert + \lvert g\rvert^2 \le 2\lvert f\rvert^2 + 2\lvert g\rvert^2\)이고, 오른쪽의 적분이 유한하므로 왼쪽도 유한하다. 같은 부등식 \(\lvert f^*g\rvert \le (\lvert f\rvert^2 + \lvert g\rvert^2)/2\)에서 식 <a class="ref" href="#eq-function-inner-product"></a>의 적분도 유한하다. 내적의 세 성질은 적분의 선형성과 \(\lvert f\rvert^2 \ge 0\)에서 나온다. 코시-슈바르츠 부등식을 함수로 적으면</p>
+    <div class="formula" id="eq-cs-functions">\[ \Big\lvert\int_a^b f^*g\,w\,dx\Big\rvert^2 \le \int_a^b\lvert f\rvert^2w\,dx\int_a^b\lvert g\rvert^2w\,dx \]</div>
+    <p>이다. 이 부등식은 9.2절의 공리만으로 증명했으므로 함수에도 그대로 성립한다. 직접 적분으로 증명하려면 훨씬 번거롭다.</p>
+    <p>어떤 함수가 \(L^2\)에 드는지 몇 가지 보자. \((0, 1)\)에서 \(x^{-1/4}\)은 \(\int_0^1 x^{-1/2}\,dx = 2\)이므로 \(L^2\)에 들지만, \(x^{-1/2}\)은 \(\int_0^1 x^{-1}\,dx\)가 발산하므로 들지 않는다. \(x^{-1/2}\) 자체의 적분은 유한한데도 그렇다. 실수축 전체에서 \(1/\sqrt{1 + x^2}\)은 \(\int dx/(1 + x^2) = \pi\)이므로 \(L^2(\mathbb R)\)에 들지만, 그 적분 \(\int dx/\sqrt{1 + x^2}\)은 발산한다. 가우스 함수 \(e^{-x^2/2}\)는 \(L^2(\mathbb R)\)에 들고, 평면파 \(e^{ikx}\)는 \(\lvert e^{ikx}\rvert^2 = 1\)이라 들지 않는다. 양자역학의 묶인 상태는 \(L^2\)의 원소이고, 평면파는 그렇지 않다. 가중 함수는 이 경계를 옮긴다. 다항식은 \(L^2(\mathbb R)\)에 들지 않지만 \(w = e^{-x^2}\)이면 모든 다항식이 \(L^2_w(\mathbb R)\)에 든다. 13장의 <a href="ch13.html#def-hermite">에르미트 다항식</a>이 이 공간의 직교 다항식이다.</p>
+    <div class="callout deep"><strong>이 책이 줄인 엄밀성</strong><p>두 함수가 한 점에서만 다르면 차이의 노름은 0이다. 그래서 \(L^2\)의 "벡터"는 엄밀하게는 함수 하나가 아니라, 노름이 0인 차이를 무시한 함수들의 묶음이고, 내적의 성질 3(\(\langle f|f\rangle = 0\)이면 \(f = 0\))도 이 뜻에서 성립한다. 또 적분은 리만 적분보다 넓은 르베그 적분으로 정의해야 공간이 <span class="term">완비</span> <span class="en">(complete)</span>해진다. 곧 \(\lVert f_m - f_n\rVert \to 0\)인 함수열(코시 수열)이 언제나 \(L^2\) 안의 극한을 갖는다(리스-피셔 정리). 완비한 내적 공간을 <span class="term">힐베르트 공간</span> <span class="en">(Hilbert space)</span>이라 한다. 이 책은 구간별로 연속인 함수를 다루는 물리학자의 수준에서 멈추고, 이 내용은 함수 해석학 교재(예: E. Kreyszig, <i>Introductory Functional Analysis with Applications</i>, Wiley 1978의 1~3장)에 맡긴다. 공간의 "완비"는 아래에서 말할 함수 집합의 "완비"(완비성 관계)와 다른 개념이다.</p></div>
+
+    <h3 id="s5-expansion">직교 함수와 전개</h3>
+    <p>함수 공간에서도 정규직교 기저가 모든 계산을 단순하게 한다. 가장 중요한 예는 고정된 줄의 정상파 모양이다. \([0, L]\)에서 \(u_n(x) = \sqrt{2/L}\,\sin(n\pi x/L)\) (\(n = 1, 2, \ldots\))로 두자. 곱을 합으로 바꾸는 공식 \(\sin\alpha\sin\beta = \tfrac12[\cos(\alpha - \beta) - \cos(\alpha + \beta)]\)를 쓰고 \(k_\pm = (m \pm n)\pi/L\)로 두면 \(m \ne n\)일 때</p>
+    <div class="formula" id="eq-sine-orthogonality">\[ \langle u_m|u_n\rangle = \frac1L\int_0^L\big(\cos k_-x - \cos k_+x\big)\,dx = 0 \]</div>
+    <p>이다. \(k_\pm L\)이 0이 아닌 \(\pi\)의 정수배라서 두 코사인의 적분이 각각 \(\sin(k_\pm L)/k_\pm = 0\)이다. \(m = n\)이면 첫 항이 1이 되어 \(\langle u_n|u_n\rangle = 1\)이다. 따라서 \(\{u_n\}\)은 정규직교한다. 그림 9-4(가)는 \(m = 1, n = 2\)에서 곱의 양의 넓이와 음의 넓이가 정확히 상쇄하는 모습이다. 대칭 구간 \((-L, L)\)에서는 복소 지수 \(u_n(x) = e^{in\pi x/L}/\sqrt{2L}\) (\(n \in \mathbb Z\))가 정규직교한다. 켤레가 지수의 부호를 바꾸므로 \(\langle u_m|u_n\rangle = \tfrac{1}{2L}\int_{-L}^{L}e^{i(n - m)\pi x/L}\,dx = \delta_{mn}\)이다. 켤레를 빼먹으면 지수가 \(n + m\)이 되어 \(m = -n\)에서 틀린 값이 나온다. 이 두 집합이 14장 <a href="ch14.html#def-fourier-series">푸리에 급수</a>의 기저다.</p>
+    <p>정규직교 함수 \(\{u_n\}\)이 주어지면 식 <a class="ref" href="#eq-expansion-coefficients"></a>을 그대로 옮겨 함수를 전개한다.</p>
+    <div class="formula" id="eq-function-expansion">\[ \begin{aligned} f(x) &= \sum_n c_n\,u_n(x), \\ c_n &= \langle u_n|f\rangle = \int_a^b u_n^*(x)\,f(x)\,w(x)\,dx \end{aligned} \]</div>
+    <p>무한급수에서는 "같다"의 뜻을 정해야 한다. <a class="ref" href="#thm-best-approximation"></a>은 함수 공간에서도 그대로 성립하므로, 처음 \(N\)개 항의 합 \(S_N = \sum_{n \le N}c_nu_n\)은 \(u_1, \ldots, u_N\)의 선형 결합 가운데 평균 제곱 오차 \(\lVert f - S_N\rVert^2 = \int\lvert f - S_N\rvert^2w\,dx\)가 가장 작은 것이다. 베셀 부등식은 \(\sum_{n \le N}\lvert c_n\rvert^2 \le \lVert f\rVert^2\)이다. \(N\)을 늘리면 왼쪽은 줄어들지 않으면서 위로 유계이므로 수렴한다. 모든 \(f \in L^2_w\)에 대해 등호</p>
+    <div class="formula" id="eq-parseval-general">\[ \sum_n \lvert c_n\rvert^2 = \lVert f\rVert^2 \]</div>
+    <p>가 성립하면, 곧 \(\lVert f - S_N\rVert \to 0\)이면 함수 집합 \(\{u_n\}\)을 <span class="term">완비</span> <span class="en">(complete)</span>하다고 하고, 이 등식을 <span class="term">파르스발 등식</span> <span class="en">(Parseval's identity)</span>이라 한다. 이때 식 <a class="ref" href="#eq-function-expansion"></a>의 등호는 "평균 제곱 오차가 0으로 간다"는 뜻이다. 점마다 수렴하는지는 다른 문제이고, 불연속점에서 생기는 일은 14장의 <a href="ch14.html#thm-dirichlet">디리클레 정리</a>가 다룬다.</p>
+    <p>완비성은 유한 차원에서는 거저 얻었지만 무한 차원에서는 증명해야 하는 성질이다. 정규직교 함수가 무한히 많다고 완비한 것도 아니다. \(\{\sqrt{2/L}\sin(2n\pi x/L)\}\)처럼 짝수 번째만 모아도 무한히 많고 정규직교하지만, \(\sin(\pi x/L)\)은 이들 모두와 직교하므로 이 집합으로는 전개할 수 없다. 삼각 함수와 특수 함수 집합의 완비성은 16장의 <a href="ch16.html#thm-sl-completeness">완비성 정리</a>가 한꺼번에 보장한다. 사인 급수의 파르스발 등식은 14장의 <a href="ch14.html#thm-parseval-series">파르스발 정리</a>다.</p>
+    <p>완비성 관계 식 <a class="ref" href="#eq-completeness"></a>도 함수로 옮길 수 있다. 계수를 대입하고 합과 적분의 순서를 바꾸면(물리학자의 계산이다)</p>
+    <div class="formula">\[ \begin{aligned} f(x) &= \sum_n u_n(x)\int_a^b u_n^*(x')f(x')w(x')\,dx' \\ &= \int_a^b\Big[\sum_n u_n(x)u_n^*(x')w(x')\Big]f(x')\,dx' \end{aligned} \]</div>
+    <p>이다. 모든 \(f\)에 대해 이것이 성립하려면 괄호 안이 6장의 <a href="ch06.html#def-dirac-delta">디랙 델타</a>여야 한다.</p>
+    <div class="formula" id="eq-completeness-delta">\[ \sum_n u_n(x)\,u_n^*(x')\,w(x') = \delta(x - x') \]</div>
+    <p>16장에서 스투름-리우빌 고유함수에 대해 <a href="ch16.html#eq-sl-delta-completeness">같은 꼴</a>을 다시 쓰고, 20장에서 그린 함수를 고유함수로 전개할 때 이 식을 쓴다.</p>
+    <div class="callout deep" data-later="qm"><strong>위치 "기저" \(|x\rangle\)</strong><p>식 <a class="ref" href="#eq-completeness-delta"></a>은 \(\sum_n|u_n\rangle\langle u_n| = I\)를 "\(x\) 성분"으로 적은 것이다. 물리학자는 여기서 한 걸음 더 가서, 점 \(x\)에 몰린 상태 \(|x\rangle\)를 도입하고 \(f(x) = \langle x|f\rangle\), \(\langle x|x'\rangle = \delta(x - x')\), \(\int|x\rangle\langle x|\,dx = I\)로 쓴다. 함수 \(f(x)\)는 벡터 \(|f\rangle\)의 \(x\) 성분이라는 9.5절 첫머리의 그림을 문자 그대로 받아들인 것이다. 그러나 \(\lVert x\rVert^2 = \delta(0)\)은 무한대이므로 \(|x\rangle\)는 \(L^2\)의 원소가 아니고, 평면파 \(e^{ikx}\)도 그렇다. 이런 대상을 엄밀하게 다루는 틀(겔판트 삼중항 <span class="en">(Gelfand triple)</span>, 리그드 힐베르트 공간 <span class="en">(rigged Hilbert space)</span>)은 이 책의 범위 밖이다. 15장의 <a href="ch15.html#eq-delta-fourier">\(\int e^{ikx}dk = 2\pi\delta(x)\)</a>가 평면파의 "완비성 관계"이고, 양자역학 책이 위치와 운동량 표현을 이 표기로 쓴다.</p></div>
+
+    <div class="box ex" id="ex-string-mode-orthogonality"><div class="box-h">줄의 정상파 모드로 처음 모양 전개하기</div>
+      <p>양 끝이 고정된 길이 \(L\)인 줄을 가운데 높이가 \(h\)인 포물선 \(y_0(x) = 4h\,x(L - x)/L^2\) 모양으로 당겼다가 가만히 놓는다. 줄의 운동은 각 정상파 모드가 제 진동수로 진동하는 것의 합이므로(17장의 <a href="ch17.html#eq-string-modes">현의 정상 모드</a>), 처음 모양을 모드로 전개하면 운동이 정해진다. (가) \(y_0 = \sum_n b_n\sin(n\pi x/L)\)의 계수 \(b_n\)을 구하라. (나) \(\lVert y_0\rVert^2\) 가운데 기본 모드(\(n = 1\))가 차지하는 몫을 구하라. (다) 기타 줄 \(L = 0.650\ \text{m}\), \(h = 2.0\ \text{mm}\)에서 \(b_1, b_3, b_5\)를 구하라.</p>
+      <p><b>풀이.</b> (가) 정규직교 기저 \(u_n = \sqrt{2/L}\sin(n\pi x/L)\)로 \(y_0 = \sum c_nu_n\)이면 \(b_n = \sqrt{2/L}\,c_n\)이고 식 <a class="ref" href="#eq-function-expansion"></a>에서</p>
+      <div class="formula">\[ \begin{aligned} b_n &= \frac{2}{L}\int_0^L y_0(x)\sin\frac{n\pi x}{L}\,dx \\ &= \frac{8h}{L^3}\int_0^L x(L - x)\sin\frac{n\pi x}{L}\,dx \end{aligned} \]</div>
+      <p>이다. \(k = n\pi/L\)로 두고 부분 적분을 두 번 하자. \(x(L - x)\)는 양 끝에서 0이므로 첫 경계 항이 사라지고 \(\int_0^L x(L - x)\sin kx\,dx = \tfrac1k\int_0^L(L - 2x)\cos kx\,dx\)이다. 다시 부분 적분하면 \(\sin kx\)가 양 끝에서 0이라 경계 항이 사라지고 \(\tfrac{2}{k^2}\int_0^L\sin kx\,dx = \tfrac{2}{k^3}(1 - \cos n\pi)\)이다. 따라서</p>
+      <div class="formula" id="eq-parabola-coefficients">\[ b_n = \frac{16h\,(1 - (-1)^n)}{n^3\pi^3} = \begin{cases} \dfrac{32h}{n^3\pi^3} & (n \text{ 홀수}) \\[4pt] 0 & (n \text{ 짝수}) \end{cases} \]</div>
+      <p>이다. 짝수 모드가 빠지는 것은 대칭으로 설명된다. \(y_0\)는 \(x = L/2\)에 대해 대칭이고, 짝수 \(n\)의 모드는 반대칭이라 곱의 적분이 0이다.</p>
+      <p>(나) \(\lVert y_0\rVert^2 = \tfrac{16h^2}{L^4}\int_0^L x^2(L - x)^2\,dx = \tfrac{16h^2}{L^4}\cdot\tfrac{L^5}{30} = \tfrac{8h^2L}{15}\)이다. 기본 모드의 계수는 \(c_1 = \sqrt{L/2}\,b_1\)이므로</p>
+      <div class="formula" id="eq-fundamental-share">\[ \frac{\lvert c_1\rvert^2}{\lVert y_0\rVert^2} = \frac{(L/2)(32h/\pi^3)^2}{8h^2L/15} = \frac{960}{\pi^6} = 0.9986 \]</div>
+      <p>이다. 포물선 모양의 99.86%가 기본 모드다(그림 9-4(나)). \(n = 3\)까지 넣으면 베셀 부등식의 왼쪽이 \(0.99992\)가 되어 1에 더 다가간다. 사인 함수 집합이 완비하므로 모든 홀수 모드를 더하면 정확히 1이다.</p>
+      <p><b>숫자로 보기.</b> (다) \(b_1 = 32(2.0\ \text{mm})/\pi^3 = 2.06\ \text{mm}\), \(b_3 = b_1/27 = 0.076\ \text{mm}\), \(b_5 = b_1/125 = 0.017\ \text{mm}\)이다. \(L\)은 답에 들어가지 않는다. 모양이 \(x/L\)만의 함수이기 때문이다. 기본 모드 하나만 쓰면 오차가 가장 큰 곳(\(x \approx 0.13L\))에서 \(0.085\ \text{mm}\), 곧 \(h\)의 4.3%이다. 앞의 0.14%는 노름 <i>제곱</i>의 비이고, 노름 자체의 비는 \(\sqrt{0.0014} = 3.8\%\)로 가장 큰 오차와 크기가 비슷하다. 제곱의 비로 적으면 작은 오차가 더 작아 보인다. \(b_n\)이 \(1/n^3\)으로 빨리 주는 것은 처음 모양이 매끄럽기 때문이고(뾰족하게 뜯은 줄은 \(1/n^2\)로 준다), 이 관계는 14장의 <a href="ch14.html#eq-coefficient-decay">계수가 줄어드는 빠르기</a>에서 일반적으로 세운다. 확인: \(b_n\)은 \(h\)와 같은 길이의 차원이다.</p>
+    </div>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 250" role="img" aria-label="두 모드의 곱은 왼쪽 절반에서 양수, 오른쪽 절반에서 음수이고 두 넓이가 같아 적분이 0이다"><line x1="40" y1="200.5" x2="365" y2="200.5" class="s-grid"/><text x="34" y="205.5" class="t-dim" style="font-size:14px" text-anchor="end">−1</text><line x1="40" y1="124.0" x2="365" y2="124.0" class="s-grid"/><text x="34" y="129.0" class="t-dim" style="font-size:14px" text-anchor="end">0</text><line x1="40" y1="47.5" x2="365" y2="47.5" class="s-grid"/><text x="34" y="52.5" class="t-dim" style="font-size:14px" text-anchor="end">1</text><text x="40.0" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="202.5" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">L/2</text><text x="365.0" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">L</text><line x1="40" y1="124.0" x2="365" y2="124.0" class="s-line"/><path d="M40.0,124.0 L40.0,124.0 L50.2,122.5 L60.3,118.3 L70.5,111.7 L80.6,103.3 L90.8,94.0 L100.9,84.7 L111.1,76.4 L121.2,69.9 L131.4,66.0 L141.6,65.2 L151.7,67.9 L161.9,74.0 L172.0,83.3 L182.2,95.3 L192.3,109.1 L202.5,124.0 L202.5,124.0 Z" class="f-acc-soft" style="stroke-width:1"/><path d="M202.5,124.0 L202.5,124.0 L212.7,138.9 L222.8,152.7 L233.0,164.7 L243.1,174.0 L253.3,180.1 L263.4,182.8 L273.6,182.0 L283.8,178.1 L293.9,171.6 L304.1,163.3 L314.2,154.0 L324.4,144.7 L334.5,136.3 L344.7,129.7 L354.8,125.5 L365.0,124.0 L365.0,124.0 Z" class="f-acc2-soft" style="stroke-width:1"/><path d="M40.0,124.0 L50.2,116.5 L60.3,109.1 L70.5,101.8 L80.6,94.7 L90.8,87.9 L100.9,81.5 L111.1,75.5 L121.2,69.9 L131.4,64.8 L141.6,60.4 L151.7,56.5 L161.9,53.3 L172.0,50.8 L182.2,48.9 L192.3,47.8 L202.5,47.5 L212.7,47.8 L222.8,48.9 L233.0,50.8 L243.1,53.3 L253.3,56.5 L263.4,60.4 L273.6,64.8 L283.8,69.9 L293.9,75.5 L304.1,81.5 L314.2,87.9 L324.4,94.7 L334.5,101.8 L344.7,109.1 L354.8,116.5 L365.0,124.0" class="s-line" stroke-dasharray="6 4" style="stroke-width:1.8"/><path d="M40.0,124.0 L50.2,109.1 L60.3,94.7 L70.5,81.5 L80.6,69.9 L90.8,60.4 L100.9,53.3 L111.1,48.9 L121.2,47.5 L131.4,48.9 L141.6,53.3 L151.7,60.4 L161.9,69.9 L172.0,81.5 L182.2,94.7 L192.3,109.1 L202.5,124.0 L212.7,138.9 L222.8,153.3 L233.0,166.5 L243.1,178.1 L253.3,187.6 L263.4,194.7 L273.6,199.1 L283.8,200.5 L293.9,199.1 L304.1,194.7 L314.2,187.6 L324.4,178.1 L334.5,166.5 L344.7,153.3 L354.8,138.9 L365.0,124.0" class="s-line" stroke-dasharray="2 3" style="stroke-width:1.8"/><text x="131.0" y="101.0" class="t-acc" style="font-size:16px" text-anchor="middle">+</text><text x="274.0" y="140.8" class="t" style="font-size:18px;fill:var(--accent-2);font-weight:700" text-anchor="middle">−</text><text x="10" y="20" class="t" style="font-size:14px">(가) 곱 u₁u₂의 넓이: + 와 − 가 상쇄</text><text x="202.5" y="41.5" class="t-dim" style="font-size:13px" text-anchor="middle">u₁</text><text x="121.2" y="41.5" class="t-dim" style="font-size:13px" text-anchor="middle">u₂</text></svg><svg viewBox="0 0 380 250" role="img" aria-label="포물선 모양과 그 기본 모드 성분은 거의 겹치고, 차이를 10배 키워도 진폭의 절반이 안 된다"><line x1="40" y1="212.0" x2="365" y2="212.0" class="s-grid"/><text x="34" y="217.0" class="t-dim" style="font-size:14px" text-anchor="end">−0.5</text><line x1="40" y1="158.7" x2="365" y2="158.7" class="s-grid"/><text x="34" y="163.7" class="t-dim" style="font-size:14px" text-anchor="end">0</text><line x1="40" y1="105.3" x2="365" y2="105.3" class="s-grid"/><text x="34" y="110.3" class="t-dim" style="font-size:14px" text-anchor="end">0.5</text><line x1="40" y1="52.0" x2="365" y2="52.0" class="s-grid"/><text x="34" y="57.0" class="t-dim" style="font-size:14px" text-anchor="end">1</text><text x="40.0" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="202.5" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">L/2</text><text x="365.0" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">L</text><line x1="40" y1="158.7" x2="365" y2="158.7" class="s-line"/><path d="M40.0,158.7 L50.2,145.8 L60.3,133.7 L70.5,122.4 L80.6,112.0 L90.8,102.4 L100.9,93.7 L111.1,85.7 L121.2,78.7 L131.4,72.4 L141.6,67.0 L151.7,62.4 L161.9,58.7 L172.0,55.8 L182.2,53.7 L192.3,52.4 L202.5,52.0 L212.7,52.4 L222.8,53.7 L233.0,55.8 L243.1,58.7 L253.3,62.4 L263.4,67.0 L273.6,72.4 L283.8,78.7 L293.9,85.7 L304.1,93.7 L314.2,102.4 L324.4,112.0 L334.5,122.4 L344.7,133.7 L354.8,145.8 L365.0,158.7" class="s-line" style="stroke-width:2.6;stroke:var(--text)"/><path d="M40.0,158.7 L50.2,147.9 L60.3,137.2 L70.5,126.7 L80.6,116.5 L90.8,106.8 L100.9,97.5 L111.1,88.8 L121.2,80.8 L131.4,73.6 L141.6,67.1 L151.7,61.6 L161.9,57.0 L172.0,53.3 L182.2,50.7 L192.3,49.1 L202.5,48.6 L212.7,49.1 L222.8,50.7 L233.0,53.3 L243.1,57.0 L253.3,61.6 L263.4,67.1 L273.6,73.6 L283.8,80.8 L293.9,88.8 L304.1,97.5 L314.2,106.8 L324.4,116.5 L334.5,126.7 L344.7,137.2 L354.8,147.9 L365.0,158.7" class="s-acc" stroke-dasharray="6 4" style="stroke-width:2.4"/><path d="M40.0,158.7 L50.2,137.4 L60.3,123.4 L70.5,115.7 L80.6,113.3 L90.8,115.1 L100.9,120.3 L111.1,127.9 L121.2,137.1 L131.4,147.1 L141.6,157.3 L151.7,167.0 L161.9,175.7 L172.0,183.0 L182.2,188.4 L192.3,191.7 L202.5,192.9 L212.7,191.7 L222.8,188.4 L233.0,183.0 L243.1,175.7 L253.3,167.0 L263.4,157.3 L273.6,147.1 L283.8,137.1 L293.9,127.9 L304.1,120.3 L314.2,115.1 L324.4,113.3 L334.5,115.7 L344.7,123.4 L354.8,137.4 L365.0,158.7" class="s-acc2" stroke-dasharray="2 3" style="stroke-width:2.2"/><text x="10" y="20" class="t" style="font-size:14px">(나) 포물선과 기본 모드 성분</text><text x="202.5" y="70.0" class="t" style="font-size:13px" text-anchor="middle">y₀</text><text x="235.0" y="43.7" class="t-acc" style="font-size:13px" text-anchor="start">b₁ sin(πx/L)</text><text x="202.5" y="212.8" class="t" style="font-size:13px;fill:var(--accent-2)" text-anchor="middle">10 × 차이</text></svg></div>
+      <figcaption><b>그림 9-4.</b> (가) 줄의 두 모드 \(u_1 \propto \sin(\pi x/L)\)(긴 파선)과 \(u_2 \propto \sin(2\pi x/L)\)(짧은 파선), 그리고 그 곱. 곱은 왼쪽 절반에서 양수, 오른쪽 절반에서 음수이고 두 넓이가 같아 내적이 0이다. (나) 포물선 처음 모양 \(y_0\)(실선, \(h = 1\))과 그 기본 모드 성분 \(b_1\sin(\pi x/L)\) (\(b_1 = 32/\pi^3 = 1.032\), 파선)은 거의 겹친다. 점선은 둘의 차이를 10배 키운 것으로, 가장 큰 곳에서도 \(0.43\)(차이 \(0.043h\))이다.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================================================ 9.6 -->
+  <section id="s6">
+    <h2>선형 연산자와 수반</h2>
+    <p>양자역학에서 운동량은 \(\hat p = -i\hbar\,d/dx\)이고 에너지는 \(\hat H = -(\hbar^2/2m)\,d^2/dx^2 + V(x)\)이다. 이 연산자들은 함수를 받아 함수를 내놓는다. 행렬이 열벡터에 하는 일을 함수 공간에서 하는 것이다. 8장은 에르미트 행렬의 고유값이 실수이고 고유벡터가 직교함을 보였다. 측정값이 실수여야 하는 양자역학은 미분 연산자에도 같은 성질이 필요하다. 그러면 미분 연산자가 "에르미트"라는 것은 무슨 뜻이고, 언제 그런가? 답은 부분 적분의 경계 항에 있다.</p>
+
+    <h3 id="s6-operators">선형 연산자</h3>
+    <p>벡터 공간 \(V\)에서 \(V\)로 가는 <a href="ch07.html#def-linear-map">선형 사상</a>을 <span class="term">선형 연산자</span> <span class="en">(linear operator)</span>라 한다. \(A(a|u\rangle + b|v\rangle) = aA|u\rangle + bA|v\rangle\)이다. 연산자 \(A\)가 \(|v\rangle\)에 작용한 결과 \(A|v\rangle\)를 \(|Av\rangle\)로도 쓴다. 함수 공간의 예로는 미분 \(D = d/dx\), 곱하기 연산자 \((Xf)(x) = xf(x)\), 2계 미분 \(D^2\), 평행 이동 \((T_af)(x) = f(x + a)\), 9.4절의 투영 연산자가 있다. 모두 선형이다.</p>
+    <p>무한 차원에서는 한 가지 조심할 것이 있다. \(D\)는 미분할 수 없는 함수에 작용할 수 없고, \(L^2\)의 함수를 미분한 것이 \(L^2\)에 든다는 보장도 없다. 그래서 미분 연산자는 \(L^2\) 전체가 아니라 충분히 매끄러운 함수의 부분 공간에서 정의하고, 이 부분 공간을 연산자의 <span class="term">정의역</span> <span class="en">(domain)</span>이라 한다. 물리에서는 경계 조건이 정의역을 정한다. \(D^2\)를 "양 끝에서 0인 함수"에 작용시키는 연산자와 "주기 함수"에 작용시키는 연산자는, 같은 \(d^2/dx^2\)라도 다른 연산자다.</p>
+    <p>정규직교 기저를 고르면 연산자는 행렬 원소가 \(A_{ij} = \langle e_i|A|e_j\rangle\)인 행렬이 된다(식 <a class="ref" href="#eq-matrix-elements"></a>). 기저가 정규직교하지 않아도 7장의 방식대로 \(A|b_j\rangle\)의 성분을 \(j\)째 열에 적으면 된다. 예를 들어 \(\mathcal P_2\)의 기저 \(1, x, x^2\)에서 \(D1 = 0\), \(Dx = 1\), \(Dx^2 = 2x\)이므로</p>
+    <div class="formula" id="eq-derivative-matrix">\[ D = \begin{pmatrix} 0 & 1 & 0 \\ 0 & 0 & 2 \\ 0 & 0 & 0 \end{pmatrix} \]</div>
+    <p>이다. \(D^3 = 0\)이고 고유값은 0뿐이며 고유벡터는 상수 하나뿐이라, 이 행렬은 대각화되지 않는다(<a href="ch08.html#thm-diagonalization">8장의 정리 8.1</a>). 미분 연산자가 언제나 좋은 고유함수를 갖는 것은 아니라는 첫 신호다.</p>
+    <p>연산자는 곱의 순서를 바꾸면 결과가 달라질 수 있다. <span class="term">교환자</span> \([A, B] = AB - BA\)로 그 차이를 잰다. \(X\)와 \(D\)를 함수 \(f\)에 작용시키면 \([X, D]f = xf' - (xf)' = xf' - f - xf' = -f\)이므로 \([X, D] = -I\)이다. \(\hat p = -i\hbar D\)로 쓰면</p>
+    <div class="formula" id="eq-canonical-commutator">\[ [X, \hat p] = i\hbar\,I \]</div>
+    <p>이다. 이 관계는 유한 차원 행렬로는 결코 만들 수 없다(<a class="ref" href="#prob-ccr-trace"></a>). 양자역학에 무한 차원 공간이 필요한 이유 가운데 하나다.</p>
+
+    <h3 id="s6-adjoint">수반 연산자</h3>
+    <p>8장에서 행렬을 내적의 오른쪽 자리에서 왼쪽 자리로 옮기면 \(A^\dagger\)가 된다는 것을 보았다(<a href="ch08.html#eq-dagger-move">8장 식 (8.11)</a>). 성분을 쓰지 않는 이 성질을 정의로 삼는다.</p>
+    <div class="box def" id="def-adjoint"><div class="box-h">수반 연산자</div>
+      <p>내적 공간의 연산자 \(A\)에 대해, \(A\)의 정의역의 모든 \(|v\rangle\)와 \(A^\dagger\)의 정의역의 모든 \(|u\rangle\)에서</p>
+      <div class="formula" id="eq-adjoint-definition">\[ \langle u|Av\rangle = \langle A^\dagger u|v\rangle \]</div>
+      <p>를 만족하는 연산자 \(A^\dagger\)를 \(A\)의 <span class="term">수반 연산자</span> <span class="en">(adjoint operator)</span>라 한다. 켤레 대칭으로 다시 쓰면 \(\langle u|A|v\rangle = \langle v|A^\dagger|u\rangle^*\)이다. 유한 차원에서는 두 정의역이 모두 공간 전체다. 무한 차원에서는 \(A^\dagger\)의 정의역이 \(A\)의 것보다 넓을 수 있고, 그 뜻은 9.6절 끝의 심화에서 본다.</p>
+    </div>
+    <p>정규직교 기저에서 \(A^\dagger\)의 행렬 원소는 \((A^\dagger)_{ij} = \langle e_i|A^\dagger|e_j\rangle = \langle e_j|A|e_i\rangle^* = A_{ji}^*\)이다. 유한 차원에서는 수반이 곧 켤레 전치이고, 8장의 \(A^\dagger\)와 같다. 다만 이것은 기저가 정규직교일 때의 이야기다. 내적이 \(\langle u|v\rangle_M = \mathbf u^\dagger M\mathbf v\)로 바뀌면 같은 행렬의 수반이 \(M^{-1}A^\dagger M\)이 된다(<a class="ref" href="#prob-weighted-adjoint"></a>). 수반은 내적에 따라 정해지는 개념이다.</p>
+    <p>정의에서 바로 다음 성질이 나온다. \((A^\dagger)^\dagger = A\), \((cA)^\dagger = c^*A^\dagger\), \((A + B)^\dagger = A^\dagger + B^\dagger\), 그리고</p>
+    <div class="formula" id="eq-adjoint-product">\[ \begin{aligned} (AB)^\dagger &= B^\dagger A^\dagger, \\ \big(|u\rangle\langle w|\big)^\dagger &= |w\rangle\langle u| \end{aligned} \]</div>
+    <p>첫째는 \(\langle u|ABv\rangle = \langle A^\dagger u|Bv\rangle = \langle B^\dagger A^\dagger u|v\rangle\)에서, 둘째는 \(\langle v|\big(|u\rangle\langle w|\big)|v'\rangle = \langle v|u\rangle\langle w|v'\rangle\)의 켤레가 \(\langle v'|w\rangle\langle u|v\rangle\)인 것에서 나온다. 디랙 표기에서 \(\dagger\)는 "순서를 뒤집고, 켓과 브라를 맞바꾸고, 수에는 켤레를 씌운다"는 규칙 하나로 기억하면 된다.</p>
+    <div class="box def" id="def-hermitian-operator"><div class="box-h">에르미트(자기수반) 연산자</div>
+      <p>정의역의 모든 \(|u\rangle, |v\rangle\)에서</p>
+      <div class="formula" id="eq-hermitian-operator">\[ \langle u|Av\rangle = \langle Au|v\rangle \]</div>
+      <p>인 연산자를 <span class="term">에르미트 연산자</span> <span class="en">(Hermitian operator)</span> 또는 <span class="term">자기수반 연산자</span> <span class="en">(self-adjoint operator)</span>라 한다. 유한 차원에서는 \(A^\dagger = A\)와 같은 말이고, 무한 차원에서 두 말의 차이는 9.6절 끝의 심화에서 본다. \(A^\dagger = -A\)이면 <span class="term">반에르미트</span> <span class="en">(anti-Hermitian)</span>, \(U^\dagger U = UU^\dagger = I\)이면 <span class="term">유니타리</span>라 한다.</p>
+    </div>
+    <div class="box thm" id="thm-hermitian-operator-eigen"><div class="box-h">에르미트 연산자의 고유값과 고유벡터</div>
+      <p>\(A\)가 에르미트이면 \(\langle v|A|v\rangle\)는 모든 \(|v\rangle\)에서 실수이고, 고유값은 모두 실수이며, 서로 다른 고유값에 속하는 고유벡터는 직교한다. \(U\)가 유니타리이면 \(\langle Uu|Uv\rangle = \langle u|v\rangle\)이고 고유값은 \(\lvert\lambda\rvert = 1\)이다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>\(\langle v|Av\rangle = \langle Av|v\rangle = \langle v|Av\rangle^*\)이므로 실수다. \(A|v\rangle = \lambda|v\rangle\), \(|v\rangle \ne 0\)이면 \(\lambda = \langle v|Av\rangle/\langle v|v\rangle\)이므로 실수다. \(A|u\rangle = \mu|u\rangle\)이면 \(\langle u|Av\rangle\)를 두 가지로 계산해 \(\lambda\langle u|v\rangle = \langle Au|v\rangle = \mu^*\langle u|v\rangle = \mu\langle u|v\rangle\)이고, \(\lambda \ne \mu\)이면 \(\langle u|v\rangle = 0\)이다. 유니타리: \(\langle Uu|Uv\rangle = \langle u|U^\dagger Uv\rangle = \langle u|v\rangle\)이고, \(U|v\rangle = \lambda|v\rangle\)이면 \(\lVert v\rVert^2 = \lVert Uv\rVert^2 = \lvert\lambda\rvert^2\lVert v\rVert^2\)이다. 증명의 단계는 <a href="ch08.html#thm-hermitian-real-eigen">8장의 정리 8.2</a>와 같고, 기호만 \(\mathbf u^\dagger\mathbf v\)에서 \(\langle u|v\rangle\)로 바뀌었다. 그 증명은 내적의 성질만 썼기 때문이다.</p>
+      </details>
+    </div>
+    <p>이 정리가 무한 차원에서 말하지 않는 것도 있다. 유한 차원에서는 에르미트 행렬이 언제나 고유벡터의 정규직교 기저를 가졌다(<a href="ch08.html#thm-spectral">8장의 정리 8.3</a>). 무한 차원에서는 고유벡터가 아예 없을 수도 있고(아래 예제의 (나). 그 이유는 이 연산자가 자기수반이 아니라는 데 있다), 고유값 대신 연속적인 값의 띠가 나올 수도 있다(실수축 전체의 \(\hat p\)). 고유함수가 완비한 기저를 이룬다는 것은 16장의 <a href="ch16.html#thm-sl-completeness">스투름-리우빌 완비성 정리</a>처럼 따로 증명해야 한다.</p>
+
+    <h3 id="s6-boundary">미분 연산자의 수반과 경계 항</h3>
+    <p>\(L^2(a, b)\) (\(w = 1\))에서 \(D = d/dx\)의 수반을 구하자. 부분 적분 한 번으로</p>
+    <div class="formula" id="eq-boundary-term">\[ \langle f|Dg\rangle = \int_a^b f^*g'\,dx = \Big[f^*g\Big]_a^b - \langle Df|g\rangle \]</div>
+    <p>이다. 경계 항 \([f^*g]_a^b = f^*(b)g(b) - f^*(a)g(a)\)가 정의역의 모든 \(f, g\)에서 0이면 \(\langle f|Dg\rangle = \langle -Df|g\rangle\), 곧 \(D^\dagger = -D\)이고 \(D\)는 반에르미트다. 8장의 반대칭 행렬 생성자(7장의 \(L_i\))에 \(i\)를 곱해 에르미트로 만들었듯이(8.3절), \(\hat p = -i\hbar D\)는 에르미트가 된다. 경계 항까지 남겨 쓰면</p>
+    <div class="formula" id="eq-momentum-boundary">\[ \langle f|\hat pg\rangle - \langle\hat pf|g\rangle = -i\hbar\Big[f^*g\Big]_a^b \]</div>
+    <p>이다. 왼쪽 자리의 \(\hat p\)는 켤레를 거치며 \((-i\hbar)^* = i\hbar\)가 되므로, \(i\)가 있어야 부분 적분의 마이너스 부호가 상쇄된다. 2계 미분은 부분 적분을 두 번 하면 된다.</p>
+    <div class="formula" id="eq-second-derivative-boundary">\[ \langle f|D^2g\rangle - \langle D^2f|g\rangle = \Big[f^*g' - f^{*\prime}g\Big]_a^b \]</div>
+    <p>여기서 \(f^{*\prime}\)은 \(f^*\)의 도함수다. 이번에는 \(i\) 없이도 부호가 맞는다. 마이너스 부호가 두 번 나와 서로 지우기 때문이다. 경계 항은 다음 조건에서 사라지므로, 이때 \(-d^2/dx^2\)와 에너지 연산자 \(-(\hbar^2/2m)\,d^2/dx^2\)는 에르미트다.</p>
+    <ul>
+      <li><b>디리클레 조건</b> \(f(a) = f(b) = 0\): 각 끝에서 \(f^*\)와 \(g\)가 0이다.</li>
+      <li><b>노이만 조건</b> \(f'(a) = f'(b) = 0\): 각 끝에서 \(g'\)과 \(f^{*\prime}\)이 0이다.</li>
+      <li><b>로빈 조건</b> \(f'(a) = \kappa_af(a)\), \(f'(b) = \kappa_bf(b)\) (\(\kappa\)는 실수): 각 끝에서 \(f^*(\kappa g) - (\kappa f)^*g = (\kappa - \kappa^*)f^*g\)이므로 \(\kappa\)가 실수일 때 0이다.</li>
+      <li><b>주기 조건</b> \(f(a) = f(b)\), \(f'(a) = f'(b)\): 두 끝의 항이 같아서 차가 0이다.</li>
+    </ul>
+    <p>9.5절의 사인 함수 \(\sin(n\pi x/L)\)는 디리클레 조건에서 \(-D^2\)의 고유함수이고 고유값은 \((n\pi/L)^2\)로 서로 다르다. 그러니 <a class="ref" href="#thm-hermitian-operator-eigen"></a>에 따라 직교해야 한다. 식 <a class="ref" href="#eq-sine-orthogonality"></a>에서 적분으로 확인한 직교성이, 적분을 하나도 하지 않고 경계 조건에서 나온 것이다. 이 생각을 일반적인 2계 미분 연산자 \((py')' - qy\)로 넓힌 것이 16장의 <a href="ch16.html#def-self-adjoint-bc">자기수반 경계 조건</a>과 <a href="ch16.html#eq-lagrange-identity">라그랑주 항등식</a>이고, 르장드르·베셀·에르미트 함수의 직교성이 모두 거기서 한꺼번에 나온다.</p>
+
+    <div class="box ex" id="ex-momentum-hermitian"><div class="box-h">운동량 연산자와 경계 조건</div>
+      <p>구간 \([0, L]\)의 함수에 \(\hat p = -i\hbar\,d/dx\)를 생각한다. (가) 주기 조건 \(\psi(L) = \psi(0)\)(길이 \(L\)인 고리 위의 입자)에서 \(\hat p\)가 에르미트임을 보이고 고유값과 고유함수를 구하라. (나) 고정 끝 조건 \(\psi(0) = \psi(L) = 0\)(무한 우물 속 입자)에서는 어떻게 되는가? 길이 \(L = 1.00\ \text{nm}\)인 우물 속 전자의 바닥 상태에서 \(\langle\hat p\rangle\), \(\langle\hat p^2\rangle\)과 에너지를 구하라. (다) \(\psi(L) = e^{i\theta}\psi(0)\) (\(\theta\)는 실수)이면 어떤가?</p>
+      <p><b>풀이.</b> (가) \(f, g\)가 모두 주기 조건을 만족하면 경계 항은 \(f^*(L)g(L) - f^*(0)g(0) = f^*(0)g(0) - f^*(0)g(0) = 0\)이므로 식 <a class="ref" href="#eq-momentum-boundary"></a>에서 \(\hat p\)는 에르미트다. 거꾸로, 주기 조건을 만족하는 모든 \(g\)에 대해 경계 항 \(\big(f^*(L) - f^*(0)\big)g(0)\)이 0이려면 \(f(L) = f(0)\)이어야 한다. 곧 \(\hat p^\dagger\)의 정의역도 주기 함수이고, 정의역까지 같은 뜻에서 \(\hat p = \hat p^\dagger\)이다. (나)와 갈리는 곳이 여기다. 고유값 방정식 \(-i\hbar\psi' = p\psi\)의 해는 \(\psi = Ce^{ipx/\hbar}\)이고, 주기 조건 \(e^{ipL/\hbar} = 1\)에서</p>
+      <div class="formula" id="eq-ring-momentum">\[ p_n = \frac{2\pi\hbar n}{L}, \quad \psi_n(x) = \frac{e^{2\pi inx/L}}{\sqrt L} \]</div>
+      <p>이다(\(n \in \mathbb Z\)). 고유값은 실수이고, \(\langle\psi_m|\psi_n\rangle = \tfrac1L\int_0^L e^{2\pi i(n - m)x/L}\,dx = \delta_{mn}\)으로 고유함수는 정규직교한다. 정리가 말한 그대로다. \(\pm n\)은 고리를 반대 방향으로 도는 두 상태이고 운동 에너지 \(p_n^2/2m\)이 같다.</p>
+      <p>(나) 이번에는 \(g\)만 고정 끝 조건을 만족해도 경계 항 \(f^*(L)g(L) - f^*(0)g(0)\)이 0이다. 그래서 정의역의 모든 \(f, g\)에서 \(\langle f|\hat pg\rangle = \langle\hat pf|g\rangle\)이 성립하고 \(\langle\psi|\hat p|\psi\rangle\)도 실수다. 그런데 고유값 방정식의 해 \(Ce^{ipx/\hbar}\)는 절댓값이 일정해서 \(x = 0\)과 \(x = L\)에서 함께 0이 될 수 없다. <b>이 정의역에서 \(\hat p\)는 고유함수가 하나도 없다.</b> 무한 우물 속 입자는 운동량이 정해진 상태를 가질 수 없다는 뜻이다. 실제로 바닥 상태 \(\psi_1 = \sqrt{2/L}\sin(\pi x/L)\)는 \(e^{\pm i\pi x/L}\)의 중첩이고</p>
+      <div class="formula" id="eq-well-momentum">\[ \begin{aligned} \langle\hat p\rangle &= -i\hbar\int_0^L\psi_1\psi_1'\,dx = -\frac{i\hbar}{2}\Big[\psi_1^2\Big]_0^L = 0, \\ \langle\hat p^2\rangle &= \lVert\hat p\psi_1\rVert^2 = \hbar^2\lVert\psi_1'\rVert^2 = \Big(\frac{\pi\hbar}{L}\Big)^2 \end{aligned} \]</div>
+      <p>이다. 둘째 줄의 첫 등호는 \(\langle\psi_1|\hat p\hat p\psi_1\rangle = \langle\hat p\psi_1|\hat p\psi_1\rangle\)이고, 이것은 \(\hat p\psi_1\)이 정의역에 들지 않아도(\(\psi_1'\)은 끝에서 0이 아니다) 정의역에 든 \(\psi_1\)에 대해서는 경계 항이 사라져 성립한다. 마지막 등호는 \(\lVert\psi_1'\rVert^2 = (\pi/L)^2\lVert\sqrt{2/L}\cos(\pi x/L)\rVert^2 = (\pi/L)^2\)이다. 에너지 연산자 \(-(\hbar^2/2m)D^2\)는 디리클레 조건에서 에르미트이고 \(\psi_1\)이 그 고유함수이므로 \(E_1 = \langle\hat p^2\rangle/2m = \pi^2\hbar^2/(2mL^2)\)이다.</p>
+      <p><b>숫자로 보기.</b> \(\hbar c = 197.3\ \text{eV}\cdot\text{nm}\), \(m_ec^2 = 511.0\ \text{keV}\)를 쓰면 \(\pi\hbar c/L = 620\ \text{eV}\)이므로 \(\sqrt{\langle\hat p^2\rangle} = 620\ \text{eV}/c\)이고</p>
+      <div class="formula">\[ \begin{aligned} E_1 &= \frac{(\pi\hbar c/L)^2}{2m_ec^2} = \frac{(620\ \text{eV})^2}{1.022 \times 10^6\ \text{eV}} \\ &= 0.376\ \text{eV} \end{aligned} \]</div>
+      <p>이다. 단위 확인: \((\text{eV})^2/\text{eV} = \text{eV}\). 운동량의 평균은 0이지만 크기는 0이 아니다. 왼쪽과 오른쪽으로 움직이는 성분이 같은 비율로 섞여 있기 때문이다.</p>
+      <p>(다) \(f, g\)가 모두 \(\psi(L) = e^{i\theta}\psi(0)\)을 만족하면 경계 항은 \(f^*(0)g(0)(e^{-i\theta}e^{i\theta} - 1) = 0\)이므로 \(\hat p\)는 에르미트이고, 고유값 조건 \(e^{ipL/\hbar} = e^{i\theta}\)에서 \(p_n = \hbar(2\pi n + \theta)/L\)이다. 실수 \(\theta\)마다 고유값이 다른 운동량 연산자가 하나씩 있다. 경계 조건을 정하는 것이 연산자를 정하는 일의 일부라는 뜻이다. \(\theta = 0\)이 (가)이다. 결정 속 전자의 블로흐 상태에서 한 단위 칸을 지날 때 붙는 위상이 이 \(\theta\)이고, 같은 조건에서 해밀토니안의 고유값을 \(\theta\)의 함수로 그린 것이 에너지 띠다(<a class="ref" href="#prob-translation-operator"></a>).</p>
+    </div>
+    <div class="callout deep" data-later="qm"><strong>"에르미트"와 "자기수반"의 차이</strong><p>(나)의 \(\hat p\)는 정의역 안의 모든 함수에서 \(\langle f|\hat pg\rangle = \langle\hat pf|g\rangle\)를 만족한다. 그러나 이 식은 \(f\)가 끝에서 0이 아니어도 성립하므로, 정의 식 <a class="ref" href="#eq-adjoint-definition"></a>로 정한 \(\hat p^\dagger\)는 경계 조건이 없는 더 넓은 정의역에서 작용한다. 식으로는 같은 \(-i\hbar\,d/dx\)인데 정의역이 다르다. 수학에서는 정의역까지 같을 때만 <span class="term">자기수반</span>이라 하고, (나)처럼 식만 같은 것은 <span class="term">대칭</span> 연산자 <span class="en">(symmetric operator)</span>라 불러 구별한다. 대칭 연산자 가운데 스펙트럼 정리(실수 스펙트럼과 고유함수 전개)가 성립하는 것은 자기수반인 것뿐이다. (나)에 고유함수가 하나도 없는 것은 이 연산자가 자기수반이 아니기 때문이다. 자기수반으로 넓힌 (다)의 연산자들은 모두 고유함수의 정규직교 기저 \(e^{i(2\pi n + \theta)x/L}/\sqrt L\)을 갖는다. 상자의 에너지 연산자는 디리클레 조건에서 자기수반이고, (나)의 \(\hat p\)로 쓰면 \(\hat p^\dagger\hat p/2m\)이다. 그래서 (나)에서 \(\langle\hat p^2\rangle = \lVert\hat p\psi_1\rVert^2\)로 계산한 것이 맞았다. (다)의 \(\theta\)는 (나)의 연산자를 자기수반으로 넓히는 방법들에 붙은 이름표다. 물리학자는 보통 이 구별 없이 "에르미트"라 쓰고, 이 책도 그렇게 한다. 자세한 내용은 M. Reed, B. Simon, <i>Methods of Modern Mathematical Physics</i>, Vol. I, Academic Press 1980의 8장과, 교육용 해설 G. Bonneau, J. Faraut, G. Valent, Am. J. Phys. 69, 322 (2001)에 있다.</p></div>
+    <p>에르미트 연산자와 유니타리 연산자는 8장에서처럼 행렬 지수로 이어진다. \(\hat H\)가 에르미트이면 \(U(t) = e^{-i\hat Ht/\hbar}\)는 \(U^\dagger = e^{i\hat Ht/\hbar} = U^{-1}\)이므로 유니타리이고, 시간이 지나도 상태의 노름과 두 상태의 내적이 바뀌지 않는다. 같은 방식으로 운동량은 평행 이동을, 각운동량은 회전(<a href="ch07.html#eq-rotation-exponential">7장 식 (7.48)</a>)을 만든다(<a class="ref" href="#prob-translation-operator"></a>). 이 연결을 써서 상태가 어떻게 변하는지 따지는 것은 양자역학 책의 몫이다.</p>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>벡터 공간은 더하기와 스칼라 곱에 닫혀 있고 여덟 가지 계산 규칙을 따르는 집합이다. 선형 동차 방정식의 해, 다항식, 함수, \(\mathbb C^n\)이 모두 벡터 공간이고, 에르미트 행렬 전체는 실수 벡터 공간이다. 선형 독립인 생성 집합이 기저이고 그 원소 수가 차원이다. 성분은 기저에 따라 바뀌지만 벡터는 바뀌지 않는다.</li>
+      <li>내적은 켤레 대칭 \(\langle u|v\rangle = \langle v|u\rangle^*\)이고 <b>오른쪽 자리에 선형, 왼쪽 자리에 켤레 선형</b>이며 양의 정부호다. \(\mathbb C^n\)에서 \(\langle u|v\rangle = \sum u_i^*v_i\), 함수에서 \(\langle f|g\rangle = \int_a^b f^*g\,w\,dx\)이다. 수학 교재 다수는 켤레를 반대쪽 자리에 둔다.</li>
+      <li>노름 \(\lVert v\rVert = \sqrt{\langle v|v\rangle}\)에 대해 \(\lVert u + v\rVert^2 = \lVert u\rVert^2 + \lVert v\rVert^2 + 2\operatorname{Re}\langle u|v\rangle\), 코시-슈바르츠 부등식 \(\lvert\langle u|v\rangle\rvert \le \lVert u\rVert\lVert v\rVert\), 삼각 부등식이 성립한다. 간섭항의 크기와 간섭 무늬의 가시도 \(\mathcal V \le 1\)이 여기서 나온다.</li>
+      <li>정규직교 기저에서 전개 계수는 \(c_i = \langle e_i|v\rangle\)이고 \(\langle u|v\rangle = \sum a_i^*c_i\), \(\lVert v\rVert^2 = \sum\lvert c_i\rvert^2\)이다. 부분 공간으로의 투영은 가장 가까운 근사이고 베셀 부등식 \(\sum\lvert c_i\rvert^2 \le \lVert v\rVert^2\)을 만족한다. 그람-슈미트 과정 \(|w_k\rangle = |v_k\rangle - \sum_{j&lt;k}\langle e_j|v_k\rangle|e_j\rangle\)은 아무 기저를 정규직교 기저로 바꾼다. \([-1, 1]\)에서 \(1, x, x^2\)은 르장드르 다항식이 된다.</li>
+      <li>브라 \(\langle u|\)는 켓을 받아 수를 내놓는 선형 사상이고, 켓에서 브라로의 대응은 켤레 선형이다. 완비성 관계 \(\sum_i|e_i\rangle\langle e_i| = I\)를 끼워 넣으면 행렬 원소, 행렬 곱, 유니타리 기저 바꾸기 \(U_{ij} = \langle e_i|f_j\rangle\), 스펙트럼 분해 \(A = \sum\lambda_i|u_i\rangle\langle u_i|\)가 나온다.</li>
+      <li>투영 연산자 \(P_W = \sum_{i=1}^{m}|e_i\rangle\langle e_i|\)는 \(P^2 = P\)이고 에르미트이며 고유값이 0과 1이다. 편광판은 \(|\theta\rangle\langle\theta|\)이고, 투영은 서로 교환하지 않아서 교차한 편광판 사이에 \(45°\) 편광판을 넣으면 빛이 \(1/4\) 나온다.</li>
+      <li>\(L^2_w(a, b)\)는 \(\int\lvert f\rvert^2w\,dx &lt; \infty\)인 함수의 공간이다. 정규직교 함수로 \(f = \sum c_nu_n\), \(c_n = \langle u_n|f\rangle\)으로 전개하면 부분합은 평균 제곱 오차를 최소로 한다. 함수 집합이 완비하면 \(\sum\lvert c_n\rvert^2 = \lVert f\rVert^2\)이고 \(\sum_n u_n(x)u_n^*(x')w(x') = \delta(x - x')\)이다. 완비성은 무한 차원에서 따로 증명해야 한다(16장).</li>
+      <li>수반은 \(\langle u|Av\rangle = \langle A^\dagger u|v\rangle\)로 정의하고, 정규직교 기저에서 켤레 전치다. 에르미트 연산자의 고유값은 실수이고 고유벡터는 직교한다. 미분 연산자의 에르미트성은 경계 항이 정한다: \(\langle f|\hat pg\rangle - \langle\hat pf|g\rangle = -i\hbar[f^*g]_a^b\), \(\langle f|D^2g\rangle - \langle D^2f|g\rangle = [f^*g' - f^{*\prime}g]_a^b\). \(-d^2/dx^2\)는 디리클레, 노이만, 실수 로빈, 주기 조건에서 에르미트이고, 고정 끝 상자에서 \(\hat p\)는 고유함수가 없다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. 이 책의 내적 관례에서 \(\langle 2iu|3v\rangle\)는? (\(|2iu\rangle = 2i|u\rangle\), \(|3v\rangle = 3|v\rangle\))</p><div class="opts">
+        <button class="opt">\(6i\langle u|v\rangle\)</button>
+        <button class="opt" data-correct>\(-6i\langle u|v\rangle\)</button>
+        <button class="opt">\(6\langle u|v\rangle\)</button>
+        <button class="opt">\(-6\langle u|v\rangle\)</button>
+      </div><div class="quiz-exp">오른쪽 자리의 3은 그대로 나오고, 왼쪽 자리의 \(2i\)는 켤레 \(-2i\)가 되어 나온다(식 <a class="ref" href="#eq-conjugate-linear"></a>). 따라서 \((-2i)(3)\langle u|v\rangle = -6i\langle u|v\rangle\)이다. 수학 교재의 관례 \((au, bv) = ab^*(u, v)\)로 계산하면 \(6i\,(u, v)\)가 나온다. 어느 자리에 켤레가 붙는지 먼저 확인해야 한다.</div></div>
+      <div class="quiz-q"><p>2. 다음 가운데 (실수 스칼라에 대해) 벡터 공간인 것은?</p><div class="opts">
+        <button class="opt" data-correct>\(y'' + 4y = 0\)이고 \(y(0) = 0\)인 함수 전체</button>
+        <button class="opt">\(y'' + 4y = 1\)인 함수 전체</button>
+        <button class="opt">\(y'' + 4y^2 = 0\)인 함수 전체</button>
+        <button class="opt">\(y(0) = 1\)인 연속 함수 전체</button>
+      </div><div class="quiz-exp">선형 동차 방정식과 동차 조건 \(y(0) = 0\)은 합과 상수배에 닫혀 있다. 이 공간은 \(\sin 2x\)가 생성하는 1차원 공간이다. 비동차 방정식과 \(y(0) = 1\)은 영 함수를 포함하지 않고, \(y^2\)이 있는 방정식은 해의 합이 해가 아니다.</div></div>
+      <div class="quiz-q"><p>3. \(\mathbb C^2\)의 정규직교 기저 \(|e_1\rangle = (1, i)/\sqrt2\), \(|e_2\rangle = (1, -i)/\sqrt2\)로 \(|v\rangle = (0, 1)\)을 전개할 때 \(|e_1\rangle\)의 계수는?</p><div class="opts">
+        <button class="opt">\(i/\sqrt2\)</button>
+        <button class="opt" data-correct>\(-i/\sqrt2\)</button>
+        <button class="opt">\(1/\sqrt2\)</button>
+        <button class="opt">\(-1/\sqrt2\)</button>
+      </div><div class="quiz-exp">\(c_1 = \langle e_1|v\rangle = (1^* \cdot 0 + i^* \cdot 1)/\sqrt2 = -i/\sqrt2\)이다. 같은 방법으로 \(c_2 = i/\sqrt2\)이고, \(c_1|e_1\rangle + c_2|e_2\rangle = (-\tfrac i2 + \tfrac i2,\ \tfrac12 + \tfrac12) = (0, 1)\)로 확인된다. \(\langle v|e_1\rangle = i/\sqrt2\)를 쓰면 켤레가 잘못 붙는다.</div></div>
+      <div class="quiz-q"><p>4. \(\mathbb C^4\)의 에르미트 연산자 \(P\)가 \(P^2 = P\), \(\operatorname{tr}P = 2\)를 만족한다. 옳은 것은?</p><div class="opts">
+        <button class="opt">\(P\)는 역연산자를 갖는다.</button>
+        <button class="opt">\(\det P = 1\)이다.</button>
+        <button class="opt" data-correct>고유값은 \(1, 1, 0, 0\)이다.</button>
+        <button class="opt">\(P = I/2\)이다.</button>
+      </div><div class="quiz-exp">\(P^2 = P\)에서 고유값은 0이나 1이고, 대각합 2가 1의 개수를 정한다. 따라서 \(P\)는 2차원 부분 공간으로의 투영이고 \(\det P = 0\)이라 역연산자가 없다. \(I/2\)는 \((I/2)^2 = I/4 \ne I/2\)이므로 투영이 아니다.</div></div>
+      <div class="quiz-q"><p>5. 다음 가운데 \(L^2(0, \infty)\)에 드는 함수는?</p><div class="opts">
+        <button class="opt">\(x^{-1/2}e^{-x}\)</button>
+        <button class="opt" data-correct>\(x^{-1/3}e^{-x}\)</button>
+        <button class="opt">\(1/\sqrt{1 + x}\)</button>
+        <button class="opt">\(1\)</button>
+      </div><div class="quiz-exp">제곱을 보아야 한다. \(x^{-2/3}e^{-2x}\)는 0 근처에서 \(\int x^{-2/3}dx\)가 수렴하고 무한대에서 지수적으로 줄어 적분이 유한하다. \(x^{-1}e^{-2x}\)는 0 근처에서 \(\int dx/x\)처럼 발산하고, \(1/(1 + x)\)와 1은 무한대에서 발산한다.</div></div>
+      <div class="quiz-q"><p>6. 구간 \([0, L]\)에서 경계 조건 \(\psi(L) = -\psi(0)\)을 주면 \(\hat p = -i\hbar\,d/dx\)는?</p><div class="opts">
+        <button class="opt">경계에서 부호가 바뀌므로 에르미트가 아니다.</button>
+        <button class="opt">에르미트이고 고유값은 \(2\pi n\hbar/L\)이다.</button>
+        <button class="opt" data-correct>에르미트이고 고유값은 \((2n + 1)\pi\hbar/L\)이다.</button>
+        <button class="opt">에르미트이지만 고유함수가 없다.</button>
+      </div><div class="quiz-exp">\(e^{i\theta} = -1\), 곧 \(\theta = \pi\)인 경우다. 경계 항은 \(f^*(0)g(0)(\lvert -1\rvert^2 - 1) = 0\)이므로 에르미트이고, \(e^{ipL/\hbar} = -1\)에서 \(p = (2n + 1)\pi\hbar/L\) (\(n \in \mathbb Z\))이다(<a class="ref" href="#ex-momentum-hermitian"></a>의 (다)). 이런 조건을 반주기 조건 <span class="en">(antiperiodic condition)</span>이라 한다.</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-subspace-check" data-level="1"><p>다음 집합이 주어진 스칼라에 대해 벡터 공간인지 판정하라. 벡터 공간이면 차원과 기저 하나를 들어라. (가) \(3 \times 3\) 실수 반대칭 행렬, \(\mathbb R\) (나) \(2 \times 2\) 에르미트 행렬, \(\mathbb C\) (다) 대각합이 0인 \(2 \times 2\) 복소 행렬, \(\mathbb C\) (라) \([0, L]\)의 연속 함수 가운데 \(f(0) = 1\)인 것, \(\mathbb R\) (마) 차수가 3 이하인 실수 다항식 가운데 \(p(1) = 0\)인 것, \(\mathbb R\)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 벡터 공간이다. \(A^{\mathsf T} = -A\)인 두 행렬의 합과 실수배도 반대칭이다. 대각 성분은 0이고 \(A_{12}, A_{13}, A_{23}\)만 자유로우므로 3차원이고, 기저로 7장의 회전 생성자 \(L_x, L_y, L_z\)(<a href="ch07.html#eq-rotation-generators">7장 식 (7.45)</a>)를 쓸 수 있다.</p>
+        <p>(나) \(\mathbb C\) 위의 벡터 공간이 아니다. \(\sigma_x\)는 에르미트이지만 \(i\sigma_x\)는 반에르미트다. \(\mathbb R\) 위에서는 \(I, \sigma_x, \sigma_y, \sigma_z\)를 기저로 하는 4차원 공간이다.</p>
+        <p>(다) 벡터 공간이다. 대각합은 선형이라 \(\operatorname{tr}(sA + tB) = 0\)이다. \(\begin{pmatrix} a & b \\ c & -a \end{pmatrix} = a\sigma_z + \tfrac{b + c}{2}\sigma_x + \tfrac{i(b - c)}{2}\sigma_y\)이므로 \(\sigma_x, \sigma_y, \sigma_z\)가 기저이고 3차원이다. (나)와 달리 복소 계수가 허용된다.</p>
+        <p>(라) 아니다. 두 함수의 합은 \(f(0) = 2\)이고, 영 함수가 들어 있지 않다.</p>
+        <p>(마) 벡터 공간이다. \(p(1) = q(1) = 0\)이면 \((ap + bq)(1) = 0\)이다. \(p(1) = 0\)이면 \(p(x) = (x - 1)r(x)\)이고 \(r\)는 2차 이하이므로, \(x - 1\), \(x(x - 1)\), \(x^2(x - 1)\)이 기저이고 3차원이다. 조건 하나가 \(\dim\mathcal P_3 = 4\)에서 차원을 하나 줄였다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-trig-independence" data-level="1"><p>(가) 함수 \(1, \cos^2x, \sin^2x, \cos 2x, \sin 2x\)가 생성하는 공간의 차원과 기저를 구하라. (나) \(e^x, e^{-x}, \cosh x\)는 선형 독립인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\cos^2x = \tfrac12(1 + \cos 2x)\), \(\sin^2x = \tfrac12(1 - \cos 2x)\)이므로 다섯 함수는 모두 \(1, \cos 2x, \sin 2x\)의 선형 결합이다. 이 셋이 선형 독립인지 보자. \(c_0 + c_1\cos 2x + c_2\sin 2x = 0\)이 모든 \(x\)에서 성립하면 \(x = 0\)에서 \(c_0 + c_1 = 0\), \(x = \pi/2\)에서 \(c_0 - c_1 = 0\), \(x = \pi/4\)에서 \(c_0 + c_2 = 0\)이므로 \(c_0 = c_1 = c_2 = 0\)이다. 따라서 차원은 3이고 \(\{1, \cos 2x, \sin 2x\}\)가 기저다.</p>
+        <p>(나) 선형 종속이다. \(e^x + e^{-x} - 2\cosh x = 0\)이다(<a href="ch02.html#eq-hyperbolic-def">2장 식 (2.45)</a>).</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-pauli-expansion" data-level="1"><p>\(2 \times 2\) 복소 행렬에 \(\langle A|B\rangle = \operatorname{tr}(A^\dagger B)\)를 쓴다. (가) 이것이 내적의 세 성질을 만족함을 보여라. (나) \(\{I, \sigma_x, \sigma_y, \sigma_z\}/\sqrt2\)가 정규직교 기저임을 보여라. (다) \(M = \begin{pmatrix} 2 & 1 - i \\ 1 + i & 0 \end{pmatrix}\)를 이 기저로 전개하고, 그 결과로 \(M\)의 고유값을 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\operatorname{tr}(A^\dagger B) = \sum_{i,j}A_{ij}^*B_{ij}\)는 성분 네 개를 늘어놓은 \(\mathbb C^4\)의 표준 내적이다. 따라서 켤레 대칭, 오른쪽 자리의 선형성, \(\langle A|A\rangle = \sum\lvert A_{ij}\rvert^2 \ge 0\)(0은 \(A = 0\)일 때만)을 모두 만족한다.</p>
+        <p>(나) 파울리 행렬은 에르미트이므로 \(\langle\sigma_i|\sigma_j\rangle = \operatorname{tr}(\sigma_i\sigma_j) = \operatorname{tr}(\delta_{ij}I + i\varepsilon_{ijk}\sigma_k) = 2\delta_{ij}\)이다(<a href="ch08.html#eq-pauli-product">8장 식 (8.13)</a>, \(\operatorname{tr}\sigma_k = 0\)). 또 \(\langle I|\sigma_i\rangle = \operatorname{tr}\sigma_i = 0\), \(\langle I|I\rangle = 2\)이다. \(\sqrt2\)로 나누면 정규직교이고, 4차원 공간의 정규직교 벡터 4개이므로 기저다.</p>
+        <p>(다) 계수는 \(\langle\sigma_k/\sqrt2|M\rangle\)이고, \(M = a_0I + \mathbf a\cdot\boldsymbol\sigma\)로 쓰면 \(a_k = \tfrac12\operatorname{tr}(\sigma_kM)\)이다. \(a_0 = \tfrac12\operatorname{tr}M = 1\), \(a_x = \tfrac12(M_{12} + M_{21}) = 1\), \(a_y = \tfrac12\operatorname{tr}(\sigma_yM) = \tfrac12\big(-i(1 + i) + i(1 - i)\big) = 1\), \(a_z = \tfrac12(M_{11} - M_{22}) = 1\)이다. 따라서 \(M = I + \sigma_x + \sigma_y + \sigma_z\)이다. 확인: \(\sigma_x + \sigma_y\)의 위 오른쪽 성분은 \(1 - i\), 아래 왼쪽은 \(1 + i\)이다. 8장의 결과(<a href="ch08.html#ex-two-level">예제 8.5</a>)에서 \(a_0I + \mathbf a\cdot\boldsymbol\sigma\)의 고유값은 \(a_0 \pm \lvert\mathbf a\rvert = 1 \pm \sqrt3\)이다. 확인: 합 \(2 = \operatorname{tr}M\), 곱 \(1 - 3 = -2 = \det M = 0 - (1 - i)(1 + i)\).</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-rms-mean" data-level="2"><p>(가) 함수 공간 \(L^2(0, T)\)에서 \(g = 1\)과 코시-슈바르츠 부등식을 써서, 실수 함수 \(f(t)\)의 평균 \(\bar f = \tfrac1T\int_0^T f\,dt\)와 제곱 평균 제곱근 \(f_{\text{rms}} = \big(\tfrac1T\int_0^T f^2\,dt\big)^{1/2}\)이 \(\lvert\bar f\rvert \le f_{\text{rms}}\)을 만족함을 보여라. 등호는 언제 성립하는가? (나) 반파 정류된 전류 \(I(t) = I_0\max(\sin\omega t, 0)\)의 한 주기 평균과 rms 값을 구하고, \(I_0 = 2.0\ \text{A}\)일 때 \(10\ \Omega\) 저항에서 나는 평균 전력을 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\lvert\langle 1|f\rangle\rvert^2 \le \lVert 1\rVert^2\lVert f\rVert^2\)에서 \(\big(\int_0^T f\,dt\big)^2 \le T\int_0^T f^2\,dt\)이다. 양변을 \(T^2\)로 나누면 \(\bar f^2 \le f_{\text{rms}}^2\)이다. 등호는 \(f\)가 \(1\)의 상수배, 곧 상수일 때만 성립한다. 값이 변하는 신호는 언제나 rms 값이 평균의 절댓값보다 크다.</p>
+        <p>(나) 주기 \(T = 2\pi/\omega\)의 앞 절반에서만 \(I = I_0\sin\omega t\)이다. \(\bar I = \tfrac{1}{T}\int_0^{T/2}I_0\sin\omega t\,dt = \tfrac{I_0}{T}\cdot\tfrac{2}{\omega} = I_0/\pi = 0.318\,I_0\)이다. \(\tfrac1T\int_0^{T/2}I_0^2\sin^2\omega t\,dt = \tfrac{I_0^2}{T}\cdot\tfrac{T}{4} = I_0^2/4\)이므로 \(I_{\text{rms}} = I_0/2\)이다. 비는 \(I_{\text{rms}}/\bar I = \pi/2 = 1.57 > 1\)로 (가)와 맞는다. \(I_0 = 2.0\ \text{A}\)이면 \(\bar I = 0.64\ \text{A}\), \(I_{\text{rms}} = 1.00\ \text{A}\)이고, 저항의 평균 전력은 \(\overline{I^2}R = I_{\text{rms}}^2R = 10\ \text{W}\)이다. 평균 전류로 계산한 \(\bar I^2R = 4.1\ \text{W}\)는 절반에도 못 미친다. 전력은 전류의 제곱을 평균한 것이기 때문이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-laguerre-gram-schmidt" data-level="2"><p>구간 \([0, \infty)\)에서 가중 함수 \(w = e^{-x}\)인 내적 \(\langle f|g\rangle = \int_0^\infty f(x)g(x)e^{-x}\,dx\)를 쓴다. \(\int_0^\infty x^ke^{-x}\,dx = k!\)(11장의 <a href="ch11.html#def-gamma">감마 함수</a>)을 써서 \(1, x, x^2\)에 그람-슈미트 과정을 적용하고, 결과를 13장의 <a href="ch13.html#def-laguerre">라게르 다항식</a> \(L_0 = 1\), \(L_1 = 1 - x\), \(L_2 = 1 - 2x + x^2/2\)과 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(\langle x^m|x^n\rangle = (m + n)!\)이다. \(\lVert 1\rVert^2 = 0! = 1\)이므로 \(e_0 = 1\)이다. \(\langle e_0|x\rangle = 1\)이므로 \(w_1 = x - 1\), \(\lVert w_1\rVert^2 = 2! - 2\cdot1! + 0! = 1\)이고 \(e_1 = x - 1\)이다. \(\langle e_0|x^2\rangle = 2\), \(\langle e_1|x^2\rangle = 3! - 2! = 4\)이므로</p>
+        <div class="formula">\[ w_2 = x^2 - 2 - 4(x - 1) = x^2 - 4x + 2 \]</div>
+        <p>이다. \(\lVert w_2\rVert^2 = \langle x^4\rangle - 8\langle x^3\rangle + (16 + 4)\langle x^2\rangle - 16\langle x\rangle + 4 = 24 - 48 + 40 - 16 + 4 = 4\)이므로 \(e_2 = (x^2 - 4x + 2)/2\)이다(\(\langle x^k\rangle\)는 \(\langle 1|x^k\rangle = k!\)). 비교하면 \(e_0 = L_0\), \(e_1 = -L_1\), \(e_2 = L_2\)이다. 그람-슈미트는 최고차항의 계수가 양수이도록 만들고, 라게르 다항식은 \(L_n(0) = 1\)이 되도록 부호를 정하므로 홀수 차에서 부호가 다르다. 크기는 같다. 가중 함수가 \(e^{-x}\)라서 다항식이 \([0, \infty)\)에서 제곱 적분 가능해진 것에 주목하자.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-spin-projector" data-level="2"><p>단위 벡터 \(\hat{\mathbf n} = (\sin\theta\cos\phi, \sin\theta\sin\phi, \cos\theta)\)에 대해 \(P_{\hat{\mathbf n}} = \tfrac12(I + \hat{\mathbf n}\cdot\boldsymbol\sigma)\)라 하자. (가) \(P_{\hat{\mathbf n}}\)이 1차원 부분 공간으로의 투영 연산자임을 보여라. (나) \(P_{\hat{\mathbf n}} = |{+}\hat{\mathbf n}\rangle\langle{+}\hat{\mathbf n}|\)임을 보여라. 여기서 \(|{+}\hat{\mathbf n}\rangle\)은 <a href="ch08.html#eq-spinor-eigen">8장 식 (8.17)</a>의 고유벡터다. (다) \(\lvert\langle{+}\hat{\mathbf z}|{+}\hat{\mathbf n}\rangle\rvert^2\)을 투영 연산자로 계산하고 \(\theta = 60°\)에서 값을 구하라. (라) \(P_{\hat{\mathbf n}} + P_{-\hat{\mathbf n}} = I\)의 뜻을 설명하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \((\hat{\mathbf n}\cdot\boldsymbol\sigma)^2 = I\)(8.3절)이므로 \(P^2 = \tfrac14(I + 2\hat{\mathbf n}\cdot\boldsymbol\sigma + I) = P\)이다. 파울리 행렬이 에르미트이고 \(\hat{\mathbf n}\)이 실수이므로 \(P^\dagger = P\)이다. \(\operatorname{tr}P = \tfrac12(2 + 0) = 1\)이므로 고유값은 1과 0이 하나씩이고, 1차원 부분 공간으로의 투영이다.</p>
+        <p>(나) \(\hat{\mathbf n}\cdot\boldsymbol\sigma|{\pm}\hat{\mathbf n}\rangle = \pm|{\pm}\hat{\mathbf n}\rangle\)이므로 \(P|{+}\hat{\mathbf n}\rangle = |{+}\hat{\mathbf n}\rangle\), \(P|{-}\hat{\mathbf n}\rangle = 0\)이다. 두 고유벡터가 정규직교 기저이므로 스펙트럼 분해(식 <a class="ref" href="#eq-spectral-dirac"></a>)에서 \(P = 1\cdot|{+}\hat{\mathbf n}\rangle\langle{+}\hat{\mathbf n}| + 0\cdot|{-}\hat{\mathbf n}\rangle\langle{-}\hat{\mathbf n}|\)이다.</p>
+        <p>(다) \(\lvert\langle{+}\hat{\mathbf z}|{+}\hat{\mathbf n}\rangle\rvert^2 = \langle{+}\hat{\mathbf z}|P_{\hat{\mathbf n}}|{+}\hat{\mathbf z}\rangle = \tfrac12\big(1 + \langle{+}\hat{\mathbf z}|\hat{\mathbf n}\cdot\boldsymbol\sigma|{+}\hat{\mathbf z}\rangle\big)\)이다. \(|{+}\hat{\mathbf z}\rangle = (1, 0)\)에서 \(\sigma_x, \sigma_y\)의 대각 성분은 0이고 \(\sigma_z\)는 1이므로 값은 \(\tfrac12(1 + \cos\theta) = \cos^2(\theta/2)\)이다. 식 (8.17)의 첫 성분 \(\cos(\theta/2)\)의 제곱과 맞는다. \(\theta = 60°\)이면 \(0.75\)이다.</p>
+        <p>(라) \(P_{-\hat{\mathbf n}} = \tfrac12(I - \hat{\mathbf n}\cdot\boldsymbol\sigma)\)이므로 합은 \(I\)이다. 두 상태 \(|{\pm}\hat{\mathbf n}\rangle\)에 대한 완비성 관계 식 <a class="ref" href="#eq-completeness"></a>다. 어느 방향 \(\hat{\mathbf n}\)을 골라도 스핀 공간은 "\(+\hat{\mathbf n}\)"과 "\(-\hat{\mathbf n}\)" 두 조각으로 빠짐없이 나뉜다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-weighted-adjoint" data-level="3"><p>\(M\)이 양의 정부호인 에르미트 행렬일 때 \(\mathbb C^n\)에 \(\langle u|v\rangle_M = \mathbf u^\dagger M\mathbf v\)를 쓴다. (가) 이것이 내적임을 보여라. (나) 이 내적에 대한 행렬 \(A\)의 수반이 \(A^\ddagger = M^{-1}A^\dagger M\)임을 보여라(\(A^\dagger\)는 보통의 켤레 전치). (다) \(K\), \(M\)이 실수 대칭이면 \(A = M^{-1}K\)가 이 내적에 대해 에르미트임을 보이고, 8장의 일반화된 고유값 문제 \(K\mathbf x = \omega^2M\mathbf x\)(<a href="ch08.html#eq-generalized-eigen">8장 식 (8.28)</a>)의 고유벡터가 \(M\)-직교하는 이유를 설명하라. (라) 벽-\(k\)-\(m\)-\(2k\)-\(2m\)-\(2k\)-벽으로 이은 두 물체(\(K = k\begin{pmatrix} 3 & -2 \\ -2 & 4 \end{pmatrix}\), \(M = m\begin{pmatrix} 1 & 0 \\ 0 & 2 \end{pmatrix}\))의 정규 모드를 구하고 (다)를 확인하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \((\mathbf u^\dagger M\mathbf v)^* = \mathbf v^\dagger M^\dagger\mathbf u = \mathbf v^\dagger M\mathbf u\)이므로 켤레 대칭이다. \(\mathbf v\)에 대해 선형인 것은 분명하다. 양의 정부호인 \(M\)은 정의상 \(\mathbf v \ne 0\)이면 \(\mathbf v^\dagger M\mathbf v > 0\)이다(고유값이 모두 양수인 에르미트 행렬).</p>
+        <p>(나) \(\langle A^\ddagger u|v\rangle_M = (M^{-1}A^\dagger M\mathbf u)^\dagger M\mathbf v = \mathbf u^\dagger M A (M^{-1})^\dagger M\mathbf v\)이다. \(M\)이 에르미트이므로 \((M^{-1})^\dagger = M^{-1}\)이고, 결과는 \(\mathbf u^\dagger MA\mathbf v = \langle u|Av\rangle_M\)이다. 따라서 \(M^{-1}A^\dagger M\)이 수반이다. \(M = I\)이면 보통의 켤레 전치로 돌아간다.</p>
+        <p>(다) \(A^\ddagger = M^{-1}(M^{-1}K)^\dagger M = M^{-1}KM^{-1}M = M^{-1}K = A\)이다(\(K^\dagger = K\), \((M^{-1})^\dagger = M^{-1}\)). \(K\mathbf x = \omega^2M\mathbf x\)는 \(A\mathbf x = \omega^2\mathbf x\)이므로, <a class="ref" href="#thm-hermitian-operator-eigen"></a>를 \(M\)-내적에 쓰면 \(\omega^2\)은 실수이고 서로 다른 \(\omega^2\)의 고유벡터는 \(\langle x_1|x_2\rangle_M = 0\)이다. \(A\) 자체는 대칭 행렬이 아니므로 보통의 내적으로는 직교하지 않는다. 운동 에너지가 정하는 내적에서 에르미트인 것이다.</p>
+        <p>(라) \(\det(K - \lambda M) = (3 - \lambda)(4 - 2\lambda) - 4 = 2(\lambda^2 - 5\lambda + 4) = 2(\lambda - 1)(\lambda - 4)\) (\(\lambda = \omega^2m/k\))이므로 \(\omega^2 = k/m\), \(4k/m\)이다. \(\lambda = 1\): \((K - M)\mathbf x = 0\)에서 \(2x_1 - 2x_2 = 0\), \(\mathbf x_1 = (1, 1)\). \(\lambda = 4\): \(-x_1 - 2x_2 = 0\), \(\mathbf x_2 = (2, -1)\). 보통의 내적은 \(\mathbf x_1^{\mathsf T}\mathbf x_2 = 2 - 1 = 1 \ne 0\)이지만 \(\mathbf x_1^{\mathsf T}M\mathbf x_2 = m(1\cdot2 + 2\cdot1\cdot(-1)) = 0\)이다. 진동수는 \(\omega = \sqrt{k/m}\)와 \(2\sqrt{k/m}\)로 정확히 두 배다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-second-derivative-bc" data-level="2"><p>구간 \([0, 1]\)에서 \(\mathcal L = -d^2/dx^2\)를 생각한다. 정의역의 경계 조건이 다음과 같을 때 \(\mathcal L\)이 에르미트인지 식 <a class="ref" href="#eq-second-derivative-boundary"></a>으로 판정하라. 에르미트가 아니면 반례를 들어라. (가) \(f(0) = 0\), \(f'(1) = 0\) (나) \(f(0) = 0\), \(f'(1) + 2f(1) = 0\) (다) \(f(0) = f'(0) = 0\) (\(x = 1\)에서는 조건 없음) (라) \(f(1) = 2f(0)\), \(f'(1) = \tfrac12f'(0)\). (가)의 고유값도 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>경계 항 \(B = [f^*g' - f^{*\prime}g]_0^1\)이 정의역의 모든 \(f, g\)에서 0인지 본다.</p>
+        <p>(가) 에르미트. \(x = 0\)에서 \(f^* = g = 0\), \(x = 1\)에서 \(g' = f^{*\prime} = 0\)이다. 고유값 문제 \(-y'' = \lambda y\), \(y(0) = 0\)의 해는 \(\sin(\sqrt\lambda x)\)이고 \(y'(1) = 0\)에서 \(\cos\sqrt\lambda = 0\), 곧 \(\lambda_n = \big((n - \tfrac12)\pi\big)^2\) (\(n = 1, 2, \ldots\))이다. 모두 실수이고 서로 다르다.</p>
+        <p>(나) 에르미트. \(x = 1\)에서 \(f^*(-2g) - (-2f)^*g = -2f^*g + 2f^*g = 0\)이다(계수 2가 실수라서). \(x = 0\)은 (가)와 같다.</p>
+        <p>(다) 에르미트가 아니다. \(x = 0\)의 항은 사라지지만 \(x = 1\)에는 조건이 없다. \(f = x^2\), \(g = x^3\)은 조건을 만족하고, \(\langle f|\mathcal Lg\rangle = -\int_0^1 6x^3\,dx = -\tfrac32\), \(\langle\mathcal Lf|g\rangle = -\int_0^1 2x^3\,dx = -\tfrac12\)이다. 차 \(-1\)은 \(-B = -(fg' - f'g)|_{x=1} = -(3 - 2)\)와 맞는다. 초기값 문제의 조건은 경계값 문제의 에르미트성을 주지 않는다.</p>
+        <p>(라) 에르미트. \(x = 1\)의 항은 \(f^*(1)g'(1) - f^{*\prime}(1)g(1) = 2f^*(0)\cdot\tfrac12g'(0) - \tfrac12f^{*\prime}(0)\cdot2g(0) = f^*(0)g'(0) - f^{*\prime}(0)g(0)\)으로 \(x = 0\)의 항과 같으므로 \(B = 0\)이다. 일반적으로 \(f(1) = \alpha f(0)\), \(f'(1) = \beta f'(0)\)이면 \(\alpha^*\beta = 1\)일 때 에르미트이다. 주기 조건은 \(\alpha = \beta = 1\)인 경우다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-ccr-trace" data-level="2"><p>(가) \(XP - PX = i\hbar I\)를 만족하는 \(n \times n\) 행렬 \(X, P\)는 없음을 대각합으로 보여라. (나) 함수에 작용하는 \(X = x\), \(\hat p = -i\hbar\,d/dx\)는 \([X, \hat p] = i\hbar\)를 만족함을 확인하라. (다) (가)와 (나)가 모순이 아닌 이유를 한 문장으로 설명하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\operatorname{tr}(XP) = \sum_{i,j}X_{ij}P_{ji} = \operatorname{tr}(PX)\)이므로 왼쪽의 대각합은 0이다. 오른쪽의 대각합은 \(i\hbar n \ne 0\)이다. 따라서 그런 행렬은 없다.</p>
+        <p>(나) \([X, \hat p]f = x(-i\hbar f') - (-i\hbar)(xf)' = -i\hbar xf' + i\hbar(f + xf') = i\hbar f\)이다.</p>
+        <p>(다) 무한 차원에서는 \(X\)와 \(\hat p\)의 "대각합"이 정의되지 않으므로(대각 원소의 합이 수렴하지 않는다) \(\operatorname{tr}(XP) = \operatorname{tr}(PX)\)라는 논증을 쓸 수 없다. 정준 교환 관계를 따르는 양자역학이 무한 차원 공간을 필요로 하는 이유다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-string-mode-energy" data-level="2"><p><a class="ref" href="#ex-string-mode-orthogonality"></a>의 줄(장력 \(T\))을 놓는 순간의 에너지는 퍼텐셜 에너지 \(E = \tfrac T2\int_0^L y_0'(x)^2\,dx\)이다. (가) \(y_0 = \sum b_n\sin(n\pi x/L)\)이면 \(E = \sum_n E_n\), \(E_n = \tfrac{TL}{4}\big(\tfrac{n\pi}{L}\big)^2b_n^2\)임을 보여라. (나) 기본 모드가 에너지에서 차지하는 몫을 구하라. \(\sum_{n\,\text{홀수}}n^{-4} = \pi^4/96\)을 써도 좋다. (다) \(T = 70\ \text{N}\), \(L = 0.650\ \text{m}\), \(h = 2.0\ \text{mm}\)에서 \(E\), \(E_1\), \(E_3\)을 구하라. (라) 거꾸로, \(E\)를 직접 계산한 값과 \(\sum E_n\)이 같다는 것에서 \(\sum_{n\,\text{홀수}}n^{-4} = \pi^4/96\)을 얻을 수 있음을 보여라. 여기서 무엇을 가정했는가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(y_0' = \sum_n b_n(n\pi/L)\cos(n\pi x/L)\)이다. \(\int_0^L\cos(m\pi x/L)\cos(n\pi x/L)\,dx = (L/2)\delta_{mn}\) (\(m, n \ge 1\))이므로 \(y_0'^2\)을 적분하면 교차항이 사라지고 \(E = \tfrac T2\sum_n b_n^2(n\pi/L)^2\tfrac L2\)이다. 코사인 함수도 \(-D^2\)의 고유함수(노이만 조건)라 서로 직교한다.</p>
+        <p>(나) 식 <a class="ref" href="#eq-parabola-coefficients"></a>에서 \(E_n \propto n^2b_n^2 \propto n^{-4}\) (홀수 \(n\))이므로 \(E_1/E = 1/\sum_{\text{홀수}}n^{-4} = 96/\pi^4 = 0.9855\)이다. 모양의 노름에서는 기본 모드가 99.86%였는데 에너지에서는 98.55%다. 에너지는 기울기의 제곱이라 높은 모드에 \(n^2\)의 무게를 더 준다.</p>
+        <p>(다) \(y_0' = 4h(L - 2x)/L^2\)이므로 \(\int_0^L y_0'^2\,dx = \tfrac{16h^2}{L^4}\cdot\tfrac{L^3}{3}\)이고 \(E = \tfrac{8Th^2}{3L} = \tfrac{8(70)(2.0 \times 10^{-3})^2}{3(0.650)}\ \text{J} = 1.15\ \text{mJ}\)이다. \(E_1 = 0.9855E = 1.13\ \text{mJ}\), \(E_3 = E_1\cdot 3^2/3^6 = E_1/81 = 0.014\ \text{mJ}\)이다. 단위: \(\text{N}\cdot\text{m}^2/\text{m} = \text{J}\).</p>
+        <p>(라) \(\sum E_n = \tfrac{TL}{4}\cdot\tfrac{\pi^2}{L^2}\sum_{\text{홀수}}n^2\big(\tfrac{32h}{n^3\pi^3}\big)^2 = \tfrac{256Th^2}{\pi^4L}\sum_{\text{홀수}}n^{-4}\)이다. 이것을 \(8Th^2/3L\)과 같게 두면 \(\sum_{\text{홀수}}n^{-4} = 8\pi^4/(3 \cdot 256) = \pi^4/96\)이다. 가정한 것은 \(E = \sum E_n\), 곧 \(\{1, \cos(n\pi x/L)\}\)이 완비해서(상수항의 계수는 \(\int_0^L y_0'\,dx = y_0(L) - y_0(0) = 0\)이라 빠진다) 베셀 부등식이 등식(파르스발 등식)이 된다는 것이다. 이 방법으로 급수의 합을 구하는 것을 14장의 <a href="ch14.html#ex-basel-parseval">파르스발 정리 예제</a>가 다시 쓴다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-translation-operator" data-level="3"><p>평행 이동 연산자를 \(T_a = e^{aD} = \sum_{n=0}^\infty\dfrac{a^n}{n!}\dfrac{d^n}{dx^n}\)로 정의한다. (가) 테일러 급수(<a href="ch01.html#eq-taylor-series">1장 식 (1.19)</a>)로 \(T_af(x) = f(x + a)\)임을 보이고, \(T_a = e^{ia\hat p/\hbar}\)로 쓸 수 있음을 보여라. (나) \(T_a\)가 \(L^2(\mathbb R)\)에서 유니타리이고 \(T_a^\dagger = T_{-a}\)임을 보이고, 이것이 \(\hat p\)의 에르미트성과 맞음을 설명하라. (다) 퍼텐셜이 \(V(x + a) = V(x)\)인 결정에서 \(\hat H = \hat p^2/2m + V\)가 \(T_a\)와 교환함을 보이고, \(\hat H\)의 고유함수를 \(T_a\)의 고유함수로 고를 수 있다면 \(\psi(x + a) = e^{i\theta}\psi(x)\) (\(\theta\) 실수)꼴임을 보여라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(T_af(x) = \sum_n a^nf^{(n)}(x)/n!\)는 \(f\)의 \(x\)를 중심으로 한 테일러 급수를 \(x + a\)에서 계산한 것이므로, 급수가 수렴하는 해석 함수에서 \(f(x + a)\)이다. \(D = i\hat p/\hbar\)이므로 \(aD = ia\hat p/\hbar\)이다. 무한소 \(a\)에서 \(T_a \approx I + ia\hat p/\hbar\)이고, 7장의 회전 생성자처럼 \(\hat p/\hbar\)가 평행 이동의 생성자다. 이 장은 함수를 \(f(x) \mapsto f(x + a)\)로 옮기는 관례를 쓴다. 양자역학 책은 흔히 \(\psi(x) \mapsto \psi(x - a)\)를 평행 이동이라 하여 \(e^{-ia\hat p/\hbar}\)로 쓰므로 부호가 반대다.</p>
+        <p>(나) \(\langle T_af|T_ag\rangle = \int f^*(x + a)g(x + a)\,dx = \int f^*(y)g(y)\,dy = \langle f|g\rangle\)이므로(\(y = x + a\)) 내적을 보존하고, 역연산자 \(T_{-a}\)가 있으므로 유니타리다. 따라서 \(T_a^\dagger = T_a^{-1} = T_{-a}\)이다. 한편 \(\hat p^\dagger = \hat p\)(정의역의 함수는 \(f\)와 \(f'\)이 모두 \(L^2\)이다. 그러면 \(\lvert f\rvert^2\)의 도함수 \(2\operatorname{Re}(f^*f')\)가 적분 가능해서 \(\lvert f\rvert^2\)가 무한대에서 0으로 가고, 경계 항이 사라진다. \(L^2\)에 든다는 것만으로는 이 보장이 없다)이면 \((e^{ia\hat p/\hbar})^\dagger = e^{-ia\hat p^\dagger/\hbar} = e^{-ia\hat p/\hbar} = T_{-a}\)로 같은 결과가 나온다. 에르미트 연산자에 \(i\)와 실수를 곱해 지수에 올리면 유니타리 연산자가 된다(8.7절과 같은 구조).</p>
+        <p>(다) \(T_a(\hat H\psi)(x) = -\tfrac{\hbar^2}{2m}\psi''(x + a) + V(x + a)\psi(x + a) = -\tfrac{\hbar^2}{2m}(T_a\psi)'' + V(x)(T_a\psi)\)이므로 \(T_a\hat H = \hat HT_a\)이다. \(T_a\psi = \lambda\psi\)이면 \(\psi(x + Na) = \lambda^N\psi(x)\)이다. 이런 \(\psi\)는 평면파처럼 \(L^2(\mathbb R)\)에 들지 않으므로 <a class="ref" href="#thm-hermitian-operator-eigen"></a>를 바로 쓸 수는 없다. 대신 \(\psi\)가 \(x \to \pm\infty\)에서 한없이 커지지 않는다는 물리적 요구를 쓰면, \(N \to +\infty\)에서 \(\lvert\lambda\rvert \le 1\), \(N \to -\infty\)에서 \(\lvert\lambda\rvert \ge 1\)이므로 \(\lvert\lambda\rvert = 1\), 곧 \(\lambda = e^{i\theta}\)이다. 따라서 \(\psi(x + a) = e^{i\theta}\psi(x)\)이다. 이것이 블로흐 정리다. 미분하면 \(\psi'(x + a) = e^{i\theta}\psi'(x)\)도 성립하므로, 한 단위 칸 \([0, a]\)에서는 <a class="ref" href="#ex-momentum-hermitian"></a> (다)의 조건에 도함수의 조건이 더해진다. 이것은 <a class="ref" href="#prob-second-derivative-bc"></a> (라)에서 \(\alpha = \beta = e^{i\theta}\) (\(\alpha^*\beta = 1\))인 경우라 \(\hat H\)가 에르미트가 된다. 두 연산자를 동시에 대각화하는 것은 <a href="ch08.html#thm-simultaneous-diag">8장의 정리 8.6</a>를 무한 차원으로 옮긴 것이고, 여기서는 그것을 가정했다. 예를 들어 \(a = 0.40\ \text{nm}\)에서 \(\theta = \pi/2\)이면 \(\psi\)는 칸마다 위상이 \(90°\)씩 돌고, \(e^{ikx}\)꼴로 쓰면 \(k = \theta/a = 3.9\ \text{nm}^{-1}\)이다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>
