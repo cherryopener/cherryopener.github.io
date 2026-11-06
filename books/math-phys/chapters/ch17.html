@@ -1,0 +1,589 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>17 편미분방정식과 변수 분리 · 수리물리학</title>
+<meta name="description" content="보존 법칙에서 라플라스·확산·파동 방정식을 세우고, 직교·원통·구면 좌표의 변수 분리로 상자 속 퍼텐셜, 현의 운동, 막대의 냉각, 원형 북의 모드, 구 속의 정상 온도를 푼다. 해의 유일성과 평균값 성질을 증명한다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys" data-field="phys" data-chapter="ch17">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">17</span></div>
+    <h1 data-fill="chapter-title">편미분방정식과 변수 분리</h1>
+    <p class="lead">줄의 변위는 위치와 시간에, 방 안의 온도는 세 좌표와 시간에 함께 기댄다. 이런 양이 따르는 법칙은 편도함수 사이의 관계, 곧 편미분방정식이다. 이 장에서는 물리에 가장 자주 나오는 라플라스·확산·파동 방정식을 보존 법칙에서 세우고, 변수 분리로 그것들을 상미분방정식의 고유값 문제로 바꾸어 푼다. 좌표계에 따라 고유함수가 사인, 베셀 함수, 르장드르 함수로 바뀔 뿐 방법은 하나이고, 12~14장에서 만든 급수가 모두 여기서 쓰인다. 끝으로 이렇게 찾은 해가 유일하다는 것과 조화 함수의 평균값 성질을 증명한다.</p>
+    <ul class="objectives">
+      <li>보존 법칙에서 확산·파동·라플라스 방정식을 세우고, 방정식의 유형과 경계 조건(디리클레, 노이만, 로빈)·초기 조건을 구별할 수 있다.</li>
+      <li>변수 분리로 편미분방정식을 상미분방정식의 고유값 문제로 바꾸고, 동차 경계 조건으로 분리 상수를 정한 뒤 남은 조건을 고유함수 급수로 맞출 수 있다.</li>
+      <li>현의 운동을 정상 모드의 합과 달랑베르 해로 풀고, 확산 모드의 감쇠 시간과 랜덤 워크의 퍼짐 폭 \(\sqrt{2Dt}\)를 계산할 수 있다.</li>
+      <li>원통·구면 좌표에서 베셀 함수와 르장드르 함수로 막의 진동 모드와 구 내부의 정상 상태를 구할 수 있다.</li>
+      <li>라플라스 방정식 해의 유일성과 평균값 성질을 증명하고, 그것으로 최대 원리와 언쇼 정리를 끌어낼 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b>6장 (원통·구면 좌표의 라플라시안), 12장 (르장드르 급수, 구면 조화 함수), 13장 (베셀 함수와 그 영점), 14장 (사인·코사인 반구간 급수). 5장의 그린 제1 항등식과 16장의 완비성 정리는 쓰는 자리에서 다시 적는다.</p>
+  </header>
+
+  <!-- ============================================================ 17.1 -->
+  <section id="s1">
+    <h2>물리의 편미분방정식과 경계 조건</h2>
+    <p>뜨거운 쇠막대의 한쪽 끝을 얼음물에 담그면 온도는 막대를 따라 어떻게 바뀌어 갈까? 막대 속 온도 \(u(x, t)\)는 위치와 시간의 함수이고, 한 점의 온도가 바뀌는 빠르기는 그 이웃의 온도에 달려 있다. 이런 관계를 식으로 쓰면 편도함수가 여러 개 들어간 방정식, 곧 <span class="term">편미분방정식</span> <span class="en">(partial differential equation)</span>이 된다. 물리의 편미분방정식은 대부분 두 가지 재료로 만든다. 하나는 보존 법칙(에너지, 질량, 운동량)이고, 다른 하나는 흐름이 무엇에 비례하는지 정하는 물질의 법칙이다. 이 절에서는 이 재료로 세 가지 기본 방정식을 세우고, 해를 하나로 정하려면 무엇을 더 주어야 하는지 정리한다.</p>
+
+    <h3 id="s1-diffusion">확산 방정식</h3>
+    <p>밀도 \(\rho\), 비열 \(c_p\)인 물체의 온도를 \(u(\mathbf r, t)\)라 하자. 단위 부피의 열에너지는 \(\rho c_p u\)이고, 열흐름 밀도(단위 시간에 단위 넓이를 지나는 열)를 \(\mathbf J\)라 하면 에너지 보존은 5장의 연속 방정식(<a href="ch05.html#eq-continuity">식 (5.41)</a>) \(\partial_t(\rho c_p u) + \nabla\cdot\mathbf J = 0\)이다. 물질의 법칙은 푸리에의 열전도 법칙이다. 열은 온도가 낮아지는 쪽으로, 기울기에 비례해서 흐른다.</p>
+    <div class="formula" id="eq-fourier-law">\[ \mathbf J = -k\,\nabla u \]<div class="where">\(k\)는 열전도도(W/(m·K))이다.</div></div>
+    <p>연속 방정식에 넣고 \(\rho\), \(c_p\), \(k\)가 위치에 따라 바뀌지 않는다고 하면 다음 식을 얻는다.</p>
+    <div class="formula" id="eq-diffusion-equation">\[ \frac{\partial u}{\partial t} = D\,\nabla^2 u \]<div class="where">\(D = k/\rho c_p\)는 열확산도(m²/s)이다. 물속 잉크의 농도처럼 입자가 퍼지는 경우에도 흐름이 농도 기울기에 비례하면(픽의 법칙) 같은 꼴이 되고, 그때 \(D\)는 확산 계수다.</div></div>
+    <p>이 식을 <span class="term">확산 방정식</span> <span class="en">(diffusion equation)</span> 또는 열 방정식이라 한다. 4장에서 본 대로 \(\nabla^2u\)는 "그 점의 값이 이웃의 평균과 얼마나 다른가"이므로(<a href="ch04.html#eq-laplacian-average">식 (4.41)</a>), 확산 방정식은 "이웃보다 차가운 점은 데워지고 뜨거운 점은 식는다"는 말이다. 차원을 보면 \(D\)가 길이의 제곱을 시간으로 나눈 것이므로, 크기 \(L\)인 물체의 온도가 고르게 되는 데 걸리는 시간은 \(L^2/D\) 정도다.</p>
+
+    <h3 id="s1-laplace">라플라스 방정식과 푸아송 방정식</h3>
+    <p>충분히 오래 지나 온도가 더 바뀌지 않으면 \(\partial_tu = 0\)이고, 확산 방정식은</p>
+    <div class="formula" id="eq-laplace-equation">\[ \nabla^2 u = 0 \]</div>
+    <p>이 된다. 이것이 <span class="term">라플라스 방정식</span> <span class="en">(Laplace equation)</span>이고, 그 해를 <span class="term">조화 함수</span> <span class="en">(harmonic function)</span>라 한다(2차원에서는 18장의 <a href="ch18.html#def-harmonic-function">정의 18.5</a>). 물체 안에 열원이 있어 단위 부피에서 단위 시간에 \(s(\mathbf r)\)만큼 열이 나면 정상 상태의 식은 \(\nabla^2u = -s/k\)이다. 원천이 있는 이런 꼴을 <span class="term">푸아송 방정식</span> <span class="en">(Poisson equation)</span>이라 한다.</p>
+    <div class="formula" id="eq-poisson-equation">\[ \nabla^2 u = -f(\mathbf r) \]<div class="where">정전기학에서는 \(u = V\), \(f = \rho/\varepsilon_0\)이다(<a href="ch04.html#eq-poisson-electrostatic">4장 식 (4.42)</a>). 전하가 없는 곳의 퍼텐셜은 라플라스 방정식을 따른다.</div></div>
+    <p>같은 방정식이 정상 상태의 온도, 전하가 없는 곳의 정전 퍼텐셜, 소용돌이 없는 비압축성 흐름의 속도 퍼텐셜, 테두리가 조금 휜 철사 틀에 걸린 비누막의 높이(<a href="ch21.html#eq-field-euler-lagrange">21장 식 (21.44)</a>)에 함께 나온다. 그래서 한 문제의 답이 다른 문제의 답이기도 하다. 이 장의 예제는 온도와 퍼텐셜을 섞어 쓴다.</p>
+
+    <h3 id="s1-wave">파동 방정식</h3>
+    <p>장력 \(T\)로 팽팽하게 당긴, 선밀도 \(\mu\)인 줄의 가로 변위 \(y(x, t)\)를 생각하자. 기울기 \(\partial_xy\)가 작으면 줄 조각 \([x, x + dx]\)의 양 끝을 당기는 장력의 세로 성분은 \(T\partial_xy\)이고, 두 끝에서 방향이 반대다. 뉴턴 법칙은</p>
+    <div class="formula">\[ \begin{aligned} \mu\,dx\,\frac{\partial^2y}{\partial t^2} &= T\,\frac{\partial y}{\partial x}\Big|_{x+dx} - T\,\frac{\partial y}{\partial x}\Big|_{x} \\ &= T\,\frac{\partial^2y}{\partial x^2}\,dx \end{aligned} \]</div>
+    <p>이다. 양변을 \(\mu\,dx\)로 나누면 \(\partial_t^2y = c^2\partial_x^2y\), \(c = \sqrt{T/\mu}\)이다. 같은 생각을 막, 기체의 압력, 전자기장에 하면 3차원의 <span class="term">파동 방정식</span> <span class="en">(wave equation)</span>을 얻는다.</p>
+    <div class="formula" id="eq-wave-equation">\[ \frac{\partial^2 u}{\partial t^2} = c^2\,\nabla^2 u \]<div class="where">\(c\)는 파동의 속력이다. 줄은 \(c = \sqrt{T/\mu}\), 단위 길이당 장력 \(T\)(N/m)와 면밀도 \(\sigma\)인 막은 \(c = \sqrt{T/\sigma}\), 진공의 전자기파는 빛의 속력이다(4장 <a href="ch04.html#ex-em-wave-equation">예제 4.10</a>).</div></div>
+    <p>진동이 한 각진동수 \(\omega\)로만 일어나면 \(u(\mathbf r, t) = \psi(\mathbf r)\,e^{-i\omega t}\)로 쓸 수 있다. 파동 방정식에 넣으면 시간이 빠지고 공간 부분만 남는다.</p>
+    <div class="formula" id="eq-helmholtz-equation">\[ \nabla^2\psi + k^2\psi = 0 \]<div class="where">\(k = \omega/c\)는 파수다. 식 <a class="ref" href="#eq-fourier-law"></a>의 열전도도 \(k\)와는 다른 양이다.</div></div>
+    <p>이 식을 <span class="term">헬름홀츠 방정식</span> <span class="en">(Helmholtz equation)</span>이라 한다. 확산 방정식에서 \(u = \psi(\mathbf r)\,e^{-Dk^2t}\)로 두어도 같은 식이 나오고, 시간에 기대지 않는 슈뢰딩거 방정식도 퍼텐셜이 0인 곳에서는 \(k^2 = 2mE/\hbar^2\)인 헬름홀츠 방정식이다. 13장의 베셀 함수는 원통 좌표의 헬름홀츠 방정식에서 나왔다.</p>
+
+    <h3 id="s1-types">방정식의 유형</h3>
+    <p>세 방정식은 모양이 비슷하지만 해의 성격은 전혀 다르다. 퍼텐셜은 경계 어디를 바꾸어도 안쪽 전체가 바로 바뀌고, 열은 퍼지면서 모난 곳을 지우고, 파동은 모양을 지닌 채 유한한 속력으로 간다. 이 차이는 2계 도함수 항의 계수만 보고 미리 알 수 있다.</p>
+    <div class="box def" id="def-pde-types"><div class="box-h">2계 선형 편미분방정식의 세 유형</div>
+      <p>두 변수 \((x, y)\)의 함수 \(u\)에 대한 2계 선형 편미분방정식</p>
+      <div class="formula">\[ A\,u_{xx} + 2B\,u_{xy} + C\,u_{yy} + (\text{1계 이하의 항}) = 0 \]</div>
+      <p>에서 \(A, B, C\)가 상수(또는 한 점에서의 값)일 때, 판별식 \(B^2 - AC\)의 부호로 방정식을 나눈다. \(B^2 - AC &lt; 0\)이면 <span class="term">타원형</span> <span class="en">(elliptic)</span>, \(= 0\)이면 <span class="term">포물형</span> <span class="en">(parabolic)</span>, \(> 0\)이면 <span class="term">쌍곡형</span> <span class="en">(hyperbolic)</span>이라 한다. 이름은 이차 곡선 \(Ax^2 + 2Bxy + Cy^2 = 1\)의 분류에서 왔다.</p>
+    </div>
+    <p>2차원 라플라스 방정식 \(u_{xx} + u_{yy} = 0\)은 \(A = C = 1\), \(B = 0\)이라 판별식이 \(-1\)인 타원형이다. 확산 방정식 \(Du_{xx} - u_t = 0\)을 변수 \((x, t)\)로 보면 \(A = D\), \(B = C = 0\)이라 포물형이고, \(u_t\)는 1계 항이다. 파동 방정식 \(c^2u_{xx} - u_{tt} = 0\)은 \(A = c^2\), \(C = -1\)이라 판별식이 \(c^2 > 0\)인 쌍곡형이다. 변수가 셋 이상이면 2계 항의 계수 행렬의 고유값 부호로 같은 분류를 한다(3차원 라플라스 방정식은 고유값이 모두 같은 부호라 타원형이다). 1계 이하의 항은 유형을 바꾸지 않는다. 예를 들어 감쇠가 있는 줄의 식 \(u_{tt} + 2\gamma u_t = c^2u_{xx}\)도 쌍곡형이다.</p>
+
+    <h3 id="s1-bc">경계 조건과 초기 조건</h3>
+    <p>미분방정식만으로는 해가 하나로 정해지지 않는다. 상미분방정식에서 처음 위치와 속도를 주었듯이, 편미분방정식에서는 영역의 경계에서 무엇이 일어나는지와 처음 순간의 상태를 주어야 한다.</p>
+    <div class="box def" id="def-boundary-conditions"><div class="box-h">경계 조건과 초기 조건</div>
+      <p>영역 \(V\)의 경계 \(S\)에서 바깥쪽 법선 방향의 도함수를 \(\partial u/\partial n = \hat{\mathbf n}\cdot\nabla u\)라 하자. 경계에서 주는 조건 가운데</p>
+      <ul>
+        <li>값 \(u\lvert_S = g\)를 주는 것을 <span class="term">디리클레 조건</span> <span class="en">(Dirichlet condition)</span>,</li>
+        <li>법선 도함수 \(\partial u/\partial n\lvert_S = g\)를 주는 것을 <span class="term">노이만 조건</span> <span class="en">(Neumann condition)</span>,</li>
+        <li>둘의 일차 결합 \(\big(\alpha u + \beta\,\partial u/\partial n\big)\big\lvert_S = g\) (열을 잃는 끝처럼 이 장에서 다루는 경우에는 \(\alpha\beta > 0\))를 주는 것을 <span class="term">로빈 조건</span> <span class="en">(Robin condition)</span></li>
+      </ul>
+      <p>이라 한다. \(g = 0\)이면 <span class="term">동차</span> <span class="en">(homogeneous)</span> 조건이라 한다. 시간에 따라 바뀌는 문제에서는 \(t = 0\)의 상태를 <span class="term">초기 조건</span> <span class="en">(initial condition)</span>으로 준다. 확산 방정식은 \(u(\mathbf r, 0)\) 하나, 시간에 대해 2계인 파동 방정식은 \(u(\mathbf r, 0)\)과 \(\partial_tu(\mathbf r, 0)\) 둘이 필요하다.</p>
+    </div>
+    <p>온도로 읽으면 디리클레 조건은 "끝을 일정한 온도의 물에 담갔다", 노이만 조건은 "끝으로 나가는 열흐름 \(-k\,\partial u/\partial n\)을 정했다"(\(g = 0\)이면 단열), 로빈 조건은 "끝이 주위 공기와 온도 차에 비례하는 열을 주고받는다"는 뜻이다. 정전기학에서는 도체 표면의 퍼텐셜이 디리클레 조건이고, 표면 전하 밀도 \(\sigma = -\varepsilon_0\,\partial V/\partial n\)(여기서 \(\sigma\)는 전하 밀도이고, \(\hat{\mathbf n}\)은 도체에서 바깥으로 향한다)이 노이만 조건이다. 세 방정식이 대개 요구하는 조건을 모으면 다음과 같다.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>방정식</th><th>유형</th><th>경계에서</th><th>처음에</th><th>예</th></tr></thead>
+      <tbody>
+        <tr><td>라플라스·푸아송</td><td>타원형</td><td>닫힌 경계 전체에서 조건 하나</td><td>없음</td><td>정전 퍼텐셜, 정상 온도</td></tr>
+        <tr><td>확산</td><td>포물형</td><td>조건 하나</td><td>\(u\)</td><td>열전도, 분자 확산</td></tr>
+        <tr><td>파동</td><td>쌍곡형</td><td>조건 하나</td><td>\(u\), \(\partial_tu\)</td><td>줄, 막, 소리, 빛</td></tr>
+      </tbody>
+    </table></div>
+    <p>이 장의 방정식은 모두 <span class="term">선형</span> <span class="en">(linear)</span>이다. 해 \(u_1\), \(u_2\)가 있으면 \(a u_1 + b u_2\)도 해다. 동차 경계 조건도 선형이라 이 성질을 지킨다. 그래서 단순한 해를 많이 찾아 더하는 것이 이 장 전체의 전략이 된다. 다음 절의 변수 분리가 그 단순한 해를 만드는 방법이다.</p>
+
+    <div class="box ex" id="ex-robin-biot"><div class="box-h">공기 속에 둔 막대 끝의 경계 조건</div>
+      <p>길이 \(L = 0.40\ \text{m}\)인 구리 막대(\(k = 401\ \text{W/(m}\cdot\text{K)}\))의 옆면은 단열되어 있고, 끝 \(x = L\)이 주위 온도 \(u_\infty\)인 유체에 닿아 있다. 끝면이 유체에 내주는 열흐름이 뉴턴의 냉각 법칙 \(J = h(u - u_\infty)\)를 따를 때 \(x = L\)의 경계 조건을 쓰고, 고요한 공기(\(h \approx 10\ \text{W/(m}^2\cdot\text{K)}\))와 흐르는 물(\(h \approx 1000\ \text{W/(m}^2\cdot\text{K)}\))에서 그것이 디리클레 조건과 노이만 조건 가운데 어느 쪽에 가까운지 판단하라. \(h\)의 크기는 자연 대류하는 기체 2~25, 강제 대류하는 액체 \(100\)~\(20\,000\ \text{W/(m}^2\cdot\text{K)}\)의 범위에서 고른 것이다(F. P. Incropera et al., <i>Fundamentals of Heat and Mass Transfer</i>, 6th ed., Wiley 2007, 표 1.1).</p>
+      <p><b>풀이.</b> 끝면에서 막대 안쪽으로부터 오는 열흐름은 식 <a class="ref" href="#eq-fourier-law"></a>에서 \(-k\,\partial_xu\)이고, 이것이 유체로 나가는 \(h(u - u_\infty)\)와 같아야 한다. \(u\)를 주위 온도에서 잰 값 \(\vartheta = u - u_\infty\)로 바꾸면</p>
+      <div class="formula" id="eq-robin-biot">\[ \frac{\partial\vartheta}{\partial x} + \frac{\mathrm{Bi}}{L}\,\vartheta = 0 \quad (x = L) \]<div class="where">\(\mathrm{Bi} = hL/k\)</div></div>
+      <p>인 동차 로빈 조건이다. 무차원 수 \(\mathrm{Bi}\)를 <span class="term">비오 수</span> <span class="en">(Biot number)</span>라 한다. 막대 안의 온도는 길이 \(L\)에 걸쳐 바뀌므로 \(\partial_x\vartheta\)의 크기는 \(\vartheta/L\) 정도다. 따라서 \(\mathrm{Bi} \ll 1\)이면 둘째 항이 작아 \(\partial_x\vartheta \approx 0\), 곧 단열(노이만) 끝에 가깝고, \(\mathrm{Bi} \gg 1\)이면 \(\vartheta \approx 0\), 곧 유체 온도로 고정된(디리클레) 끝에 가깝다.</p>
+      <p><b>숫자로 보기.</b> 고요한 공기에서는 \(\mathrm{Bi} = (10)(0.40)/401 = 0.010\)이다. 구리는 열을 잘 전하므로 끝면에서 공기로 새는 열은 막대 안의 열흐름에 비하면 아주 작고, 끝은 거의 단열 끝이다. 흐르는 물에서는 \(\mathrm{Bi} = 1.0\)이라 어느 극한도 아니고 로빈 조건을 그대로 써야 한다. \(h\)와 \(k\)의 단위가 \(\text{W/(m}^2\cdot\text{K)}\)와 \(\text{W/(m}\cdot\text{K)}\)이므로 \(hL/k\)는 차원이 없다. 이 차이가 막대가 식는 빠르기를 얼마나 바꾸는지는 17.4절에서 계산한다.</p>
+    </div>
+    <div class="callout warn"><strong>조건을 많이 준다고 좋은 것이 아니다</strong><p>타원형 방정식에 시간 문제처럼 "한쪽 끝에서 값과 도함수를 모두" 주면 해가 아주 불안정해진다. 아다마르의 예를 보자. \(u_{xx} + u_{yy} = 0\)에 \(u(0, y) = 0\), \(u_x(0, y) = \sin(ny)/n\)을 주면 해는 \(u = \sin(ny)\sinh(nx)/n^2\)이다. \(n = 100\)이면 주어진 자료의 크기는 0.01인데 \(x = 1\)에서 해의 진폭은 \(\sinh(100)/10^4 = 1.3 \times 10^{39}\)이다. 자료를 아주 조금 바꾸면 해가 터무니없이 바뀌므로 물리 문제의 답이 될 수 없다. 표의 조합(타원형은 닫힌 경계에서 조건 하나, 쌍곡형은 초기 조건 둘)이 해가 있고, 하나뿐이고, 자료에 연속적으로 기대는 조합이다. 이런 문제를 <span class="term">잘 놓인 문제</span> <span class="en">(well-posed problem)</span>라 한다. 라플라스 방정식에 대해서는 17.7절에서 유일성을 증명한다.</p></div>
+  </section>
+
+  <!-- ============================================================ 17.2 -->
+  <section id="s2">
+    <h2>직교 좌표에서의 변수 분리</h2>
+    <p>단면이 한 변 \(a\)인 정사각형이고 아주 긴 금속 관이 있다. 관은 네 장의 판으로 되어 있고 판 사이는 얇게 절연되어 있다. 윗판만 퍼텐셜 \(V_0\)이고 나머지 세 판은 접지되어 있다면, 관 속의 퍼텐셜은 어떻게 될까? 관이 길면 퍼텐셜은 \(z\)에 기대지 않으므로 단면 \(0 &lt; x &lt; a\), \(0 &lt; y &lt; b\)(여기서는 \(b = a\)이지만 잠시 일반적으로 둔다)에서 2차원 라플라스 방정식 \(V_{xx} + V_{yy} = 0\)을 풀면 된다. 경계 조건은</p>
+    <div class="formula" id="eq-rectangle-bc">\[ \begin{aligned} V(0, y) &= V(a, y) = V(x, 0) = 0 \\ V(x, b) &= V_0 \end{aligned} \]</div>
+    <p>이다. 네 변 가운데 세 변의 조건이 동차라는 점이 열쇠다.</p>
+
+    <h3 id="s2-separate">곱의 꼴로 찾기</h3>
+    <p>해를 \(x\)만의 함수와 \(y\)만의 함수의 곱 \(V = X(x)\,Y(y)\)로 찾아보자. 라플라스 방정식에 넣고 \(XY\)로 나누면</p>
+    <div class="formula">\[ \frac{X''(x)}{X(x)} = -\frac{Y''(y)}{Y(y)} \]</div>
+    <p>이다. 왼쪽은 \(x\)에만, 오른쪽은 \(y\)에만 기댄다. \(x\)를 바꾸어도 오른쪽은 그대로이므로 왼쪽도 바뀌지 않고, 따라서 양쪽은 같은 상수다. 이 상수를 <span class="term">분리 상수</span> <span class="en">(separation constant)</span>라 하고 \(-k^2\)으로 두자. 편미분방정식 하나가 상미분방정식 둘로 나뉜다. 이렇게 해를 한 변수 함수들의 곱으로 놓고 방정식을 나누는 방법을 <span class="term">변수 분리</span> <span class="en">(separation of variables)</span>라 한다.</p>
+    <div class="formula" id="eq-separation-2d">\[ X'' + k^2X = 0, \quad Y'' - k^2Y = 0 \]</div>
+    <p>이제 동차 조건을 쓴다. \(V(0, y) = V(a, y) = 0\)이 모든 \(y\)에서 성립하려면 \(X(0) = X(a) = 0\)이어야 한다. 그러면 \(X\)에 대한 문제는 끝이 고정된 줄과 같은 고유값 문제다. \(k^2 \le 0\)이면 해가 \(\cosh\), \(\sinh\)나 일차 함수라 두 끝에서 함께 0이 될 수 없으므로 \(X = 0\)뿐이다. \(k^2 > 0\)이면 \(X = \sin kx\)이고 \(\sin ka = 0\)에서 \(k\)가 정해진다.</p>
+    <div class="formula" id="eq-rectangle-eigen">\[ \begin{aligned} X_n(x) &= \sin\frac{n\pi x}{a} \\ k_n &= \frac{n\pi}{a} \quad (n = 1, 2, \ldots) \end{aligned} \]</div>
+    <p>\(Y\)의 식에서 \(Y(0) = 0\)을 만족하는 해는 \(\sinh k_ny\)이다. 그래서 \(\sin(n\pi x/a)\sinh(n\pi y/a)\)는 \(n\)마다 라플라스 방정식과 세 동차 조건을 모두 만족한다. 방정식과 동차 조건이 선형이므로 그 합도 만족한다.</p>
+    <div class="formula">\[ V(x, y) = \sum_{n=1}^\infty c_n\,\sin\frac{n\pi x}{a}\,\sinh\frac{n\pi y}{a} \]</div>
+    <p>남은 것은 비동차 조건 \(V(x, b) = V_0\)이다. \(y = b\)를 넣으면 \(V_0 = \sum_n c_n\sinh(n\pi b/a)\sin(n\pi x/a)\)이므로 \(c_n\sinh(n\pi b/a)\)는 상수 \(V_0\)의 사인 반구간 급수 계수(<a href="ch14.html#eq-half-range-sine">14장 식 (14.23)</a>)다. 그 계수는 \(\tfrac2a\int_0^aV_0\sin(n\pi x/a)\,dx = 2V_0(1 - \cos n\pi)/(n\pi)\), 곧 홀수 \(n\)에서 \(4V_0/(n\pi)\), 짝수 \(n\)에서 0이다(14장 <a href="ch14.html#ex-square-wave">예제 14.2</a>의 사각파와 같은 계수다). 따라서</p>
+    <div class="formula" id="eq-rectangle-potential">\[ \begin{aligned} V(x, y) &= \frac{4V_0}{\pi}\sum_{n = 1, 3, 5, \ldots}\frac1n\,\sin\frac{n\pi x}{a} \\ &\qquad\times\frac{\sinh(n\pi y/a)}{\sinh(n\pi b/a)} \end{aligned} \]</div>
+    <p>이다. 정사각형(\(b = a\))의 중심에서 값을 확인하자. 네 변을 차례로 \(V_0\)으로 둔 네 문제를 겹치면 네 변이 모두 \(V_0\)인 문제가 되고, 그 답은 상수 \(V_0\)이다(17.7절의 유일성 정리가 이것이 유일한 답임을 보장한다). 중심은 네 문제에서 같은 자리에 있으므로 각 문제의 중심값은 정확히 \(V_0/4\)이다. 식 <a class="ref" href="#eq-rectangle-potential"></a>에 \(x = y = a/2\)를 넣으면 \(\sinh(n\pi/2)/\sinh(n\pi) = 1/(2\cosh(n\pi/2))\)이므로 첫 항은 \(0.2537V_0\), 둘째 항까지는 \(0.2499V_0\), 셋째 항까지는 \(0.25000V_0\)이다. 항이 \(e^{-n\pi/2}\)처럼 빨리 줄기 때문이다.</p>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 352" role="img" aria-label="정사각형 단면의 위쪽 변만 퍼텐셜 V0이고 나머지 세 변이 0일 때의 등전위선. 0.25 등전위선이 중심을 지난다"><rect x="70" y="40" width="280" height="280" class="f-surface"/><path d="M350,42.1l-7,75.8-3.2,24.8-3.8,23.2-4.7,21.4-4.6,16.4-6,16-7.1,14-7.9,11.4-9,9.6-9.7,7.5-11.7,6.4-14,5.3-16.3,3.9-16.3,2.2-18.7,.8-18.7,-.8-16.3,-2.2-16.3,-3.9-14,-5.3-11.7,-6.4-9.7,-7.5-9,-9.6-7.9,-11.4-7.1,-14-6,-16-4.6,-16.4-4.7,-21.4-3.8,-23.2-3.2,-24.8-7,-75.8" class="s-acc2" style="stroke-width:1.8"/><path d="M350,41.9l-.5,.4-5.2,32.7-5.2,28-4.7,21-5,18.7-5.3,16.3-6.8,16.6-7,13.8-7,11.1-9.3,11.8-9.3,9.2-9.4,7.1-11.6,6.8-11.7,4.9-14,3.9-14,2.3-14,.7-14,-.7-14,-2.3-14,-3.9-11.7,-4.9-11.6,-6.8-9.4,-7.1-9.3,-9.2-9.3,-11.8-7,-11.1-7,-13.8-6.8,-16.6-5.3,-16.3-5,-18.7-4.7,-21-5.2,-28-5.2,-32.7-.5,-.4" class="s-acc2" style="stroke-width:1.8"/><path d="M350,41.2l-1.2,1.1-8.1,20-9.4,20.7-11.6,22.4-7,11.5-7,10.1-7,8.9-9.4,10.1-9.3,8.4-9.3,6.9-9.4,5.6-9.3,4.5-9.3,3.5-11.7,3-9.3,1.5-11.7,.6-11.7,-.6-9.3,-1.5-11.7,-3-9.3,-3.5-9.3,-4.5-9.4,-5.6-9.3,-6.9-9.3,-8.4-9.4,-10.1-7,-8.9-7,-10.1-7,-11.5-11.6,-22.4-9.4,-20.7-8.1,-20-1.2,-1.1" class="s-acc" style="stroke-width:2.4"/><path d="M350,40l-23.3,22.8-16.4,14.4-16.3,12.3-16.3,10.1-16.4,7.8-16.3,5.5-16.3,3.4-9.4,1-9.3,.3-9.3,-.3-9.4,-1-16.3,-3.4-16.3,-5.5-16.4,-7.8-16.3,-10.1-16.3,-12.3-16.4,-14.4-23.3,-22.8" class="s-acc2" style="stroke-width:1.8"/><path d="M348.8,40l-1.1,1.2-37.4,14.6-18.6,6.4-16.4,4.7-16.3,3.8-16.3,2.7-16.4,1.7-16.3,.5-16.3,-.5-16.4,-1.7-16.3,-2.7-16.3,-3.8-16.4,-4.7-18.6,-6.4-37.4,-14.6-1.1,-1.2" class="s-acc2" style="stroke-width:1.8"/><path d="M70,40V320H350V40" class="s-line" style="stroke:var(--text);stroke-width:2.5"/><line x1="70" y1="40" x2="350" y2="40" class="s-acc" style="stroke-width:5"/><text x="216" y="275.8" class="t-mono" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;font-size:13px">0.05</text><text x="216" y="242.2" class="t-mono" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;font-size:13px">0.1</text><circle cx="210" cy="180" r="4" class="f-acc"/><text x="218" y="174" class="t-acc" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;font-size:13px">0.25 (중심)</text><text x="216" y="112.6" class="t-mono" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;font-size:13px">0.5</text><text x="216" y="70.6" class="t-mono" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;font-size:13px">0.75</text><text x="210" y="28" class="t-math acc" text-anchor="middle">V = V₀</text><text x="210" y="342" class="t-math" text-anchor="middle">V = 0</text><text x="62" y="185" class="t-math" text-anchor="end">0</text><text x="358" y="185" class="t-math" text-anchor="start">0</text><text x="364" y="324" class="t-dim" style="font-size:14px">x</text><text x="62" y="36" class="t-dim" style="font-size:14px" text-anchor="end">y</text></svg></div>
+      <figcaption><b>그림 17-1.</b> 정사각형 관 속의 등전위선. 윗변(굵은 선)만 \(V_0\)이고 나머지 세 변은 0이다. 숫자는 \(V/V_0\)이고, 0.25 등전위선이 중심을 지난다. 식 <a class="ref" href="#eq-rectangle-potential"></a>을 200개 항까지 더해 계산했다. 모든 등전위선이 윗변의 두 모서리로 모이는데, 그곳에서 경계값이 0에서 \(V_0\)으로 뛰기 때문이다.</figcaption>
+    </figure>
+    <p>그림 17-1에서 보듯 퍼텐셜은 윗변에서 멀어질수록 빠르게 줄어든다. \(n\)번째 항은 \(y = b\)에서 아래로 내려가면 \(e^{-n\pi(b - y)/a}\)처럼 줄어들므로, 윗변의 세세한 모양(높은 \(n\))은 안쪽으로 거의 들어오지 못한다. 안쪽에서는 첫 항 \(\sin(\pi x/a)\sinh(\pi y/a)\)이 퍼텐셜의 모양을 거의 정한다. 반대로 윗변 바로 근처에서는 급수가 느리게 수렴하고, 모서리 근처에서는 사인 급수의 깁스 현상이 나타난다.</p>
+
+    <h3 id="s2-general">세 변수의 분리와 절차</h3>
+    <p>3차원에서도 같다. \(u = X(x)Y(y)Z(z)\)를 \(\nabla^2u = 0\)에 넣고 \(XYZ\)로 나누면 \(X''/X + Y''/Y + Z''/Z = 0\)이다. 세 항은 각각 다른 변수에만 기대므로 각각이 상수여야 하고, 세 상수의 합이 0이다.</p>
+    <div class="formula" id="eq-separation-cartesian">\[ \frac{X''}{X} = -\alpha^2, \quad \frac{Y''}{Y} = -\beta^2, \quad \frac{Z''}{Z} = \alpha^2 + \beta^2 \]</div>
+    <p>분리 상수의 부호는 문제가 정한다. 두 끝에서 동차 조건이 있는 방향에는 진동하는 해(\(\sin\), \(\cos\))가 필요하므로 음의 상수를 주고, 비동차 조건이 있는 방향은 나머지를 받아 \(\sinh\), \(\cosh\)나 지수 함수가 된다. 헬름홀츠 방정식 \(\nabla^2\psi + k^2\psi = 0\)이면 세 상수의 합이 \(-k^2\)이 되어, 세 방향이 모두 진동할 수 있다(<a class="ref" href="#prob-cube-degeneracy"></a>). 지금까지 한 일을 절차로 정리하면 다음과 같다.</p>
+    <ol>
+      <li><b>분리.</b> 해를 한 변수 함수의 곱으로 두고 방정식을 변수마다의 상미분방정식으로 나눈다.</li>
+      <li><b>고유값 문제.</b> 동차 경계 조건이 있는 방향의 상미분방정식은 고유값 문제다. 이것을 풀어 분리 상수의 허용값과 고유함수를 얻는다.</li>
+      <li><b>나머지 방향.</b> 분리 상수가 정해지면 나머지 방향(또는 시간)의 식은 보통의 상미분방정식이다. 남은 동차 조건(유한성, 한쪽 끝의 조건)을 쓴다.</li>
+      <li><b>중첩과 계수.</b> 모든 고유함수에 대한 해를 더하고, 마지막 비동차 조건을 고유함수 급수로 맞춘다. 계수는 직교성으로 구한다.</li>
+    </ol>
+    <p>4단계가 성립하려면 고유함수들이 비동차 조건에 나오는 임의의 함수를 펼칠 수 있을 만큼 충분히 많아야 한다. 사인 함수에 대해서는 14장의 디리클레 정리가 이것을 보장한다. 다른 좌표계에서 나오는 베셀 함수와 르장드르 함수에 대해서도 같은 보장이 있으며, 그 일반론이 16장의 스투름-리우빌 이론이다.</p>
+    <div class="box math" id="math-sl-completeness"><div class="box-h">스투름-리우빌 고유함수의 직교성과 완비성</div>
+      <p>구간 \([a, b]\)에서 \(p, p', q, w\)가 연속이고 \(p > 0\), \(w > 0\)이라 하자. 방정식</p>
+      <div class="formula">\[ \big(p\,y'\big)' - q\,y + \lambda\,w\,y = 0 \]</div>
+      <p>에 두 끝에서 따로 주는 동차 조건 \(\alpha_1y(a) + \alpha_2y'(a) = 0\), \(\beta_1y(b) + \beta_2y'(b) = 0\)(또는 \(p(a) = p(b)\)일 때 주기 조건)을 붙인 문제를 정칙 스투름-리우빌 문제(주기 조건이면 주기 스투름-리우빌 문제)라 한다. 그러면 다음이 성립한다(16장의 <a href="ch16.html#thm-sl-real-orthogonal">실수성과 직교성 정리</a>, <a href="ch16.html#thm-sl-completeness">완비성 정리</a>).</p>
+      <ol>
+        <li>고유값은 모두 실수이고, 셀 수 있게 무한히 많으며 \(\lambda_1 &lt; \lambda_2 &lt; \cdots \to \infty\)로 늘어놓을 수 있다. 두 끝에서 따로 주는 조건이면 고유값마다 고유함수가 상수배를 빼고 하나뿐이다. 주기 조건이면 한 고유값에 서로 직교하는 고유함수가 둘까지 있을 수 있다(17.5절의 \(\cos m\phi\)와 \(\sin m\phi\)). 그때는 3항의 합에 둘을 모두 넣는다.</li>
+        <li>다른 고유값의 고유함수는 가중 함수 \(w\)에 대해 직교한다: \(\int_a^bu_m^*u_n\,w\,dx = 0\) (\(m \ne n\)).</li>
+        <li>\(\int_a^b\lvert f\rvert^2w\,dx\)가 유한한 함수는 \(f = \sum_nc_nu_n\), \(c_n = \int_a^bu_n^*f\,w\,dx\big/\int_a^b\lvert u_n\rvert^2w\,dx\)로 펼쳐진다. 급수는 제곱 평균의 뜻으로 \(f\)에 수렴하고, \(f\)가 구간별로 매끄러우면 각 점에서 좌우 극한의 평균으로 수렴한다.</li>
+      </ol>
+      <p>\(p\)나 \(w\)가 끝에서 0이 되는 특이한 경우(르장드르 방정식의 \(x = \pm1\), 베셀 방정식의 \(s = 0\))에도, 조건 대신 "끝에서 유한하다"를 주면 같은 결론이 성립한다. 이 장에서는 \(\sin(n\pi x/L)\) (\(p = w = 1\)), \(J_m(\alpha_{mn}s/a)\) (\(p = s\), \(w = s\)), \(P_l(\cos\theta)\) (\(x = \cos\theta\), \(p = 1 - x^2\), \(w = 1\))가 이 정리의 예다. 증명의 생각과 출처는 16장에 있다.</p>
+    </div>
+
+    <div class="box ex" id="ex-box-potential"><div class="box-h">한 면만 퍼텐셜 \(V_0\)인 상자 속 퍼텐셜</div>
+      <p>세 변이 \(a, b, c\)인 직육면체 금속 상자 \(0 \le x \le a\), \(0 \le y \le b\), \(0 \le z \le c\)가 있다. 윗면 \(z = c\)만 퍼텐셜 \(V_0\)이고 나머지 다섯 면은 접지되어 있다(면 사이는 절연). 상자 속의 퍼텐셜을 구하라. 정육면체(\(a = b = c\))이고 \(V_0 = 120\ \text{V}\)일 때 중심의 퍼텐셜을 급수로 계산하고, 대칭으로 얻는 정확한 값과 비교하라.</p>
+      <p><b>풀이.</b> \(x\)와 \(y\) 방향은 두 끝 모두 동차 조건이므로 식 <a class="ref" href="#eq-separation-cartesian"></a>에서 \(X = \sin(n\pi x/a)\), \(Y = \sin(m\pi y/b)\)이고 \(\alpha = n\pi/a\), \(\beta = m\pi/b\)이다. \(z\) 방향의 식은 \(Z'' = k_{nm}^2Z\)이고, \(Z(0) = 0\)이므로 \(Z = \sinh k_{nm}z\)이다.</p>
+      <div class="formula" id="eq-box-decay-constant">\[ k_{nm} = \pi\sqrt{\frac{n^2}{a^2} + \frac{m^2}{b^2}} \]</div>
+      <p>윗면의 조건 \(V_0 = \sum_{n,m}c_{nm}\sinh(k_{nm}c)\sin(n\pi x/a)\sin(m\pi y/b)\)는 2중 사인 급수다. 두 사인 집합의 직교성을 차례로 쓰면 계수는 상수 \(V_0\)의 계수 두 개의 곱 \(\tfrac{4}{n\pi}\cdot\tfrac{4}{m\pi}V_0\) (\(n, m\)이 모두 홀수)이다. 따라서</p>
+      <div class="formula" id="eq-box-potential">\[ \begin{aligned} V &= \frac{16V_0}{\pi^2}\sum_{n,m\ \text{홀수}}\frac{1}{nm} \\ &\quad\times\sin\frac{n\pi x}{a}\,\sin\frac{m\pi y}{b}\,\frac{\sinh k_{nm}z}{\sinh k_{nm}c} \end{aligned} \]</div>
+      <p>이다. 정육면체의 중심에서는 \(\sin(n\pi/2)\sin(m\pi/2) = (-1)^{(n+m)/2 - 1}\)이고 \(\sinh(k_{nm}a/2)/\sinh(k_{nm}a) = 1/(2\cosh(k_{nm}a/2))\), \(k_{nm}a = \pi\sqrt{n^2 + m^2}\)이다. 대칭으로 얻는 값은 정사각형에서와 같은 논리로 정확히 \(V_0/6\)이다. 여섯 면을 하나씩 \(V_0\)으로 둔 여섯 문제를 겹치면 상수 \(V_0\)이 되고, 중심은 여섯 문제에서 같은 자리이기 때문이다.</p>
+      <p><b>숫자로 보기.</b> \((n, m) = (1, 1)\) 항은 \(\tfrac{16}{\pi^2}\cdot\tfrac{1}{2\cosh(\pi/\sqrt2)} = 0.17377\)이고, \((1, 3)\)과 \((3, 1)\)은 각각 \(-0.00376\), \((3, 3)\)은 \(+0.00023\)이다. \(V_0 = 120\ \text{V}\)를 곱하면</p>
+      <div class="formula">\[ \begin{aligned} \text{첫 항만:}\ & 20.85\ \text{V} \\ n, m \le 3:\ & 19.98\ \text{V} \\ \text{정확한 값:}\ & V_0/6 = 20.00\ \text{V} \end{aligned} \]</div>
+      <p>이다. 첫 항만으로는 4.3% 크고, 네 항이면 0.11% 안에 든다. 2차원 정사각형의 중심값 \(V_0/4\)보다 작은 것은 접지된 면이 둘 더 있기 때문이다. 각 항의 분자와 분모가 모두 볼트이고 사인과 \(\sinh\)의 비는 차원이 없으므로 단위는 맞다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 17.3 -->
+  <section id="s3">
+    <h2>파동 방정식: 진동하는 현과 달랑베르 해</h2>
+    <p>기타 줄을 뜯으면 줄은 처음에 삼각형 모양이다. 손을 뗀 뒤 그 모양은 어떻게 바뀔까? 14장에서는 처음 모양을 정상 모드로 나누는 계수만 구했고(<a href="ch14.html#ex-string-harmonics">예제 14.6</a>), 9장에서는 그 모드들이 직교한다는 것을 보았다(<a href="ch09.html#ex-string-mode-orthogonality">예제 9.6</a>). 이 절에서는 파동 방정식 자체를 풀어 줄의 움직임을 시간에 따라 따라간다. 답을 얻는 길은 두 가지다. 하나는 변수 분리로 얻는 정상 모드의 합이고, 다른 하나는 파동이 모양을 지닌 채 간다는 것을 그대로 쓰는 달랑베르 해다.</p>
+
+    <h3 id="s3-modes">정상 모드</h3>
+    <p>길이 \(L\)인 줄의 양 끝이 고정되어 있다. 줄의 변위 \(y(x, t)\)는 \(\partial_t^2y = c^2\partial_x^2y\)를 따르고, 경계 조건은 \(y(0, t) = y(L, t) = 0\), 초기 조건은 \(y(x, 0) = y_0(x)\), \(\partial_ty(x, 0) = v_0(x)\)이다. \(y = X(x)\,\mathcal T(t)\)로 두고 \(c^2X\mathcal T\)로 나누면</p>
+    <div class="formula">\[ \frac{X''}{X} = \frac{1}{c^2}\,\frac{\mathcal T''}{\mathcal T} = -k^2 \]</div>
+    <p>이다. \(X\)에 대한 문제는 17.2절의 \(X\)와 똑같으므로 \(X_n = \sin(n\pi x/L)\), \(k_n = n\pi/L\)이다. 시간 부분 \(\mathcal T'' + c^2k_n^2\mathcal T = 0\)은 각진동수 \(\omega_n = ck_n\)인 단진동(<a href="ch10.html#eq-ode-characteristic">10장 식 (10.8)</a>의 특성근 \(\pm i\omega_n\))이다. 모든 모드를 더하면 다음을 얻는다.</p>
+    <div class="formula" id="eq-string-modes">\[ \begin{aligned} y(x, t) &= \sum_{n=1}^\infty\sin\frac{n\pi x}{L}\,\big(A_n\cos\omega_nt + B_n\sin\omega_nt\big) \\ \omega_n &= \frac{n\pi c}{L} \end{aligned} \]</div>
+    <p>\(t = 0\)을 넣으면 \(y_0 = \sum A_n\sin(n\pi x/L)\), \(v_0 = \sum\omega_nB_n\sin(n\pi x/L)\)이므로, \(A_n\)과 \(\omega_nB_n\)은 각각 처음 모양과 처음 속도의 사인 반구간 급수 계수다.</p>
+    <div class="formula" id="eq-string-coefficients">\[ \begin{aligned} A_n &= \frac2L\int_0^Ly_0(x)\sin\frac{n\pi x}{L}\,dx \\ B_n &= \frac{2}{L\omega_n}\int_0^Lv_0(x)\sin\frac{n\pi x}{L}\,dx \end{aligned} \]</div>
+    <p>모드 \(n\)은 제자리에서 진동하는 <span class="term">정상파</span> <span class="en">(standing wave)</span>이고, \(n - 1\)개의 마디(움직이지 않는 점)를 갖는다. 진동수 \(f_n = nc/2L\)이 기본 진동수의 정수배라는 것이 줄의 특징이다. 그래서 모든 모드가 주기 \(T_1 = 2L/c\)마다 함께 처음 위상으로 돌아오고, 줄의 운동 전체가 주기 \(T_1\)인 주기 운동이다. 귀는 이것을 하나의 뚜렷한 음높이로 듣는다. 17.5절의 북은 그렇지 않다.</p>
+
+    <h3 id="s3-dalembert">달랑베르 해</h3>
+    <p>정상 모드의 합은 정확하지만, 뜯은 줄처럼 꺾인 모양은 많은 항을 더해야 보인다. 다른 길이 있다. 변수를 \(\xi = x - ct\), \(\eta = x + ct\)로 바꾸자. 연쇄 법칙으로 \(\partial_x = \partial_\xi + \partial_\eta\), \(\partial_t = c(\partial_\eta - \partial_\xi)\)이므로</p>
+    <div class="formula">\[ \begin{aligned} &\frac{\partial^2y}{\partial t^2} - c^2\frac{\partial^2y}{\partial x^2} \\ &\quad = c^2\big[(\partial_\eta - \partial_\xi)^2 - (\partial_\eta + \partial_\xi)^2\big]y \\ &\quad = -4c^2\,\frac{\partial^2y}{\partial\xi\,\partial\eta} \end{aligned} \]</div>
+    <p>이다. 따라서 파동 방정식은 \(\partial_\xi\partial_\eta y = 0\)이다. \(\eta\)로 적분하면 \(\partial_\xi y\)는 \(\xi\)만의 함수이고, 다시 \(\xi\)로 적분하면</p>
+    <div class="formula" id="eq-dalembert-general">\[ y(x, t) = F(x - ct) + G(x + ct) \]</div>
+    <p>을 얻는다. \(F\)와 \(G\)는 아무 함수나 될 수 있다. \(F(x - ct)\)는 모양 \(F\)가 속력 \(c\)로 오른쪽으로 가는 진행파이고, \(G(x + ct)\)는 왼쪽으로 가는 진행파다. 1차원 파동 방정식의 모든 해는 이렇게 반대로 가는 두 진행파의 합이다. 초기 조건으로 \(F\)와 \(G\)를 정하자. \(F + G = y_0\)이고, \(\partial_t\)를 취한 \(c(G' - F') = v_0\)를 적분하면 \(G - F = \tfrac1c\int_0^xv_0\,ds + C\)이다. 두 식을 풀어 더하면 상수 \(C\)가 지워지고, 다음 결과를 얻는다.</p>
+    <div class="box thm" id="thm-dalembert"><div class="box-h">달랑베르 해</div>
+      <p>끝없이 긴 줄(\(-\infty &lt; x &lt; \infty\))에서 \(\partial_t^2y = c^2\partial_x^2y\)의 해 가운데 초기 조건 \(y(x, 0) = y_0(x)\), \(\partial_ty(x, 0) = v_0(x)\)를 만족하는 것은 (\(y_0\)이 두 번, \(v_0\)이 한 번 연속 미분 가능할 때) 하나뿐이고, 다음과 같다.</p>
+    <div class="formula" id="eq-dalembert">\[ \begin{aligned} y(x, t) &= \frac{y_0(x - ct) + y_0(x + ct)}{2} \\ &\quad + \frac{1}{2c}\int_{x - ct}^{x + ct}v_0(s)\,ds \end{aligned} \]</div>
+    </div>
+    <p>이것이 <span class="term">달랑베르 해</span> <span class="en">(d'Alembert solution)</span>다. 점 \(x\)의 시각 \(t\)의 변위는 처음 상태 가운데 구간 \([x - ct, x + ct]\)에 있던 것만으로 정해진다. 파동이 유한한 속력으로 간다는 쌍곡형 방정식의 성질이 식에 그대로 보인다.</p>
+    <p>식 <a class="ref" href="#eq-dalembert"></a>은 끝이 없는 줄의 해다. 끝이 \(x = 0\)과 \(x = L\)에 고정되어 있으면 \(y_0\)과 \(v_0\)을 \(x = 0\)에 대해 홀함수로, 주기 \(2L\)로 늘인 함수 \(\tilde y_0\), \(\tilde v_0\)을 대신 넣는다. 그러면 \(x = 0\)에서 \(\tilde y_0(-ct) + \tilde y_0(ct) = 0\)이므로 끝의 조건이 저절로 성립하고, \(x = L\)도 같다. 사인 급수가 바로 이렇게 늘인 함수의 푸리에 급수이므로 두 풀이는 같은 답을 준다. 실제로 모드 하나는 \(\sin k_nx\cos\omega_nt = \tfrac12\big[\sin k_n(x - ct) + \sin k_n(x + ct)\big]\)로 그 자체가 두 진행파의 합이다.</p>
+    <div data-sim="waves" data-title="정상파는 반대로 가는 두 진행파의 합" data-note="해볼 것: ‘정상파’ 예시는 오른쪽으로 가는 파동 1과 왼쪽으로 가는 파동 2의 합으로, 달랑베르 해 F(x − ct) + G(x + ct)의 가장 단순한 경우입니다. 위상차가 0일 때 x = 0이 마디인 것은 왼쪽으로 가는 파동이 G(u) = −F(−u), 곧 오른쪽으로 가는 파동을 고정된 끝에서 뒤집어 되돌려 보낸 것이기 때문입니다. 파동 2의 진행 방향을 같은 쪽으로 바꾸면 마디가 사라지고 합 전체가 한쪽으로 갑니다."></div>
+
+    <div class="box ex" id="ex-plucked-string"><div class="box-h">뜯은 줄의 운동</div>
+      <p>14장 <a href="ch14.html#ex-string-harmonics">예제 14.6</a>의 줄(\(L = 0.650\ \text{m}\), \(c = 429\ \text{m/s}\))을 끝에서 \(a = L/5\)인 점에서 높이 \(h = 3.0\ \text{mm}\)로 당겼다가 가만히 놓는다. (가) 정상 모드의 합으로 \(y(x, t)\)를 써라. (나) 달랑베르 해로 줄의 모양이 시간에 따라 어떻게 바뀌는지 구하라. (다) 당긴 점의 변위와 두 꺾인 점 사이의 선분이 움직이는 속도를 구하고, 반주기 뒤의 모양을 구하라.</p>
+      <p><b>풀이.</b> (가) 처음 속도가 0이므로 \(B_n = 0\)이고, \(A_n\)은 14장에서 구한 삼각형의 사인 계수(<a href="ch14.html#eq-plucked-coefficients">식 (14.26)</a>)다.</p>
+      <div class="formula" id="eq-plucked-modes">\[ \begin{aligned} y(x, t) &= \sum_{n=1}^\infty A_n\sin\frac{n\pi x}{L}\,\cos\frac{n\pi ct}{L} \\ A_n &= \frac{2hL^2\sin(n\pi a/L)}{n^2\pi^2a(L - a)} \end{aligned} \]</div>
+      <p>(나) 식 <a class="ref" href="#eq-dalembert"></a>에서 \(v_0 = 0\)이므로 \(y = \tfrac12[\tilde y_0(x - ct) + \tilde y_0(x + ct)]\)이다. 처음 삼각형의 반쪽 높이가 하나는 오른쪽, 하나는 왼쪽으로 속력 \(c\)로 간다. \(\tilde y_0\)이 꺾인 직선이므로 두 반쪽의 합도 꺾인 직선이고, 꺾인 점(처음에는 \(x = a\) 하나)이 둘로 나뉘어 양쪽으로 간다. 꺾인 점이 끝에 닿으면 홀함수로 늘인 부분이 들어와 부호가 뒤집힌 채 되돌아온다(그림 17-2).</p>
+      <p>(다) \(ct &lt; a\)인 동안 당긴 점 \(x = a\)에서 \(\tilde y_0(a - ct) = h(a - ct)/a\), \(\tilde y_0(a + ct) = h(L - a - ct)/(L - a)\)이므로</p>
+      <div class="formula">\[ \begin{aligned} y(a, t) &= h\Big[1 - \frac{ct}{2}\Big(\frac1a + \frac{1}{L - a}\Big)\Big] \\ &= h\Big(1 - \frac{25\,ct}{8L}\Big) \end{aligned} \]</div>
+      <p>이다(\(a = L/5\)). 두 꺾인 점 사이의 줄은 곧은 선분으로 남은 채 아래로 내려간다. 그 속도는 \(\partial_ty = -\tfrac c2[\tilde y_0'(x - ct) - \tilde y_0'(x + ct)] = -\tfrac c2\big(\tfrac ha + \tfrac{h}{L - a}\big)\)로 일정하다. 반주기 \(T_1/2 = L/c\)가 지나면(아래 계산의 세부)</p>
+      <div class="formula" id="eq-string-half-period">\[ y\big(x, t + T_1/2\big) = -\,y(L - x, t) \]</div>
+      <p>이 된다. 처음 삼각형이 좌우로 뒤집히고 아래로 뒤집혀, 꼭짓점이 \(x = 4L/5\)에서 \(-h\)인 삼각형이 된다.</p>
+      <details class="proof"><summary>계산의 세부</summary>
+        <p>\(\tilde y_0\)은 홀함수이고 주기가 \(2L\)이므로 \(\tilde y_0(s + L) = \tilde y_0(s - L) = -\tilde y_0(L - s)\)이다. 따라서 \(y(x, t + L/c) = \tfrac12[\tilde y_0(x - ct - L) + \tilde y_0(x + ct + L)] = -\tfrac12[\tilde y_0(L - x + ct) + \tilde y_0(L - x - ct)] = -y(L - x, t)\)이다. 정상 모드로 보면 \(\cos(\omega_n(t + L/c)) = (-1)^n\cos\omega_nt\)이고 \(\sin(n\pi(L - x)/L) = -(-1)^n\sin(n\pi x/L)\)이므로 같은 결론이다.</p>
+      </details>
+      <p><b>숫자로 보기.</b> 주기는 \(T_1 = 2L/c = 1.30\ \text{m}/(429\ \text{m/s}) = 3.03\ \text{ms}\)(330 Hz)이다. 왼쪽 꺾인 점은 \(t = a/c = 0.303\ \text{ms}\)에 끝 \(x = 0\)에 닿고, 그때 당긴 점의 변위는 \(3h/8 = 1.13\ \text{mm}\)이다. 두 꺾인 점 사이 선분의 속도는</p>
+      <div class="formula">\[ \begin{aligned} \partial_ty &= -\frac{25}{8}\,\frac{ch}{L} \\ &= -\frac{25}{8}\cdot\frac{(429\ \text{m/s})(0.0030\ \text{m})}{0.650\ \text{m}} \\ &= -6.19\ \text{m/s} \end{aligned} \]</div>
+      <p>로, 3 mm만 당긴 줄이 초속 6 m로 움직인다. 진폭이 작아도 진동수가 크기 때문이다. 식 <a class="ref" href="#eq-plucked-modes"></a>를 30항에서 끊으면 \(t = T_1/4\)에서 달랑베르 해와의 차이가 0.032 mm 이하다. 꺾인 점 근처에서는 많은 모드가 필요하다는 뜻이다. 단위: \(ch/L\)은 \((\text{m/s})\cdot\text{m}/\text{m} = \text{m/s}\)이다.</p>
+    </div>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 250" role="img" aria-label="t = T1/20에서 줄의 모양은 반대로 가는 두 진행파의 합이다"><text x="12" y="20" class="t" style="font-size:14px">(가) t = T₁/20: 두 진행파와 그 합</text><line x1="40" y1="130" x2="360" y2="130" class="s-grid"/><line x1="40" y1="52.0" x2="360" y2="52.0" class="s-grid" stroke-dasharray="2 4"/><text x="34" y="56.0" class="t-dim" style="font-size:13px" text-anchor="end">3</text><line x1="40" y1="208.0" x2="360" y2="208.0" class="s-grid" stroke-dasharray="2 4"/><text x="34" y="212.0" class="t-dim" style="font-size:13px" text-anchor="end">−3</text><text x="34" y="134" class="t-dim" style="font-size:13px" text-anchor="end">0</text><text x="40" y="238" class="t-dim" style="font-size:13px" text-anchor="middle">0</text><text x="104.0" y="238" class="t-dim" style="font-size:13px" text-anchor="middle">L/5</text><text x="200.0" y="238" class="t-dim" style="font-size:13px" text-anchor="middle">L/2</text><text x="360" y="238" class="t-dim" style="font-size:13px" text-anchor="middle">L</text><line x1="40" y1="40" x2="40" y2="220" class="s-line"/><line x1="360" y1="40" x2="360" y2="220" class="s-line"/><text x="44" y="48" class="t-dim" style="font-size:13px">y (mm)</text><path d="M40,149.5l96,-58.5 224,34.1" class="s-acc" stroke-dasharray="6 4"/><path d="M40,110.5l32,-19.5 288,43.9" class="s-acc2" stroke-dasharray="2 3" style="stroke-width:2.2"/><path d="M40,130l32,-39 64,-29.2 224,68.2" class="s-line" style="stroke:var(--text);stroke-width:2.6"/><line x1="196" y1="166" x2="222" y2="166" class="s-acc" stroke-dasharray="6 4"/><text x="228" y="170" class="t" style="font-size:13px">½ỹ₀(x − ct) →</text><line x1="196" y1="185" x2="222" y2="185" class="s-acc2" stroke-dasharray="2 3" style="stroke-width:2.2"/><text x="228" y="189" class="t" style="font-size:13px">← ½ỹ₀(x + ct)</text><line x1="196" y1="204" x2="222" y2="204" class="s-line" style="stroke:var(--text);stroke-width:2.6"/><text x="228" y="208" class="t" style="font-size:13px">합 y(x, t)</text></svg><svg viewBox="0 0 380 250" role="img" aria-label="뜯은 줄의 모양이 시간에 따라 꺾인 직선으로 바뀌고 반주기 뒤에 좌우와 위아래가 뒤집힌다"><text x="12" y="20" class="t" style="font-size:14px">(나) 시간에 따른 모양 (T₁ = 2L/c)</text><line x1="40" y1="130" x2="360" y2="130" class="s-grid"/><line x1="40" y1="52.0" x2="360" y2="52.0" class="s-grid" stroke-dasharray="2 4"/><text x="34" y="56.0" class="t-dim" style="font-size:13px" text-anchor="end">3</text><line x1="40" y1="208.0" x2="360" y2="208.0" class="s-grid" stroke-dasharray="2 4"/><text x="34" y="212.0" class="t-dim" style="font-size:13px" text-anchor="end">−3</text><text x="34" y="134" class="t-dim" style="font-size:13px" text-anchor="end">0</text><text x="40" y="238" class="t-dim" style="font-size:13px" text-anchor="middle">0</text><text x="104.0" y="238" class="t-dim" style="font-size:13px" text-anchor="middle">L/5</text><text x="200.0" y="238" class="t-dim" style="font-size:13px" text-anchor="middle">L/2</text><text x="360" y="238" class="t-dim" style="font-size:13px" text-anchor="middle">L</text><line x1="40" y1="40" x2="40" y2="220" class="s-line"/><line x1="360" y1="40" x2="360" y2="220" class="s-line"/><text x="44" y="48" class="t-dim" style="font-size:13px">y (mm)</text><path d="M40,130l64,-78 256,78" class="s-line" style="stroke:var(--text);stroke-width:2.6"/><path d="M40,130l128,-58.5 192,58.5" class="s-acc"/><path d="M40,130l96,29.2 128,-58.4 96,29.2" class="s-acc2" stroke-dasharray="6 4"/><path d="M40,130l256,78 64,-78" class="s-line" stroke-dasharray="2 3" style="stroke-width:2"/><text x="110" y="47" class="t" style="font-size:13px">t = 0</text><text x="174" y="68" class="t-acc">T₁/10</text><text x="270" y="96" class="t" style="font-size:13px;fill:var(--accent-2);font-weight:700">T₁/4</text><text x="304" y="226" class="t-dim" style="font-size:13px">T₁/2</text></svg></div>
+      <figcaption><b>그림 17-2.</b> 끝에서 \(L/5\)인 점을 3 mm 당겼다가 놓은 줄(\(T_1 = 2L/c\)). (가) \(t = T_1/20\)의 모양(굵은 선)은 홀함수로 늘인 처음 모양의 절반이 오른쪽으로 간 것(긴 파선)과 왼쪽으로 간 것(짧은 파선)의 합이다. (나) \(t = 0\), \(T_1/10\), \(T_1/4\), \(T_1/2\)의 모양. 줄은 언제나 꺾인 직선이고, 반주기 뒤에는 처음 모양이 좌우·위아래로 뒤집힌다. 곡선은 식 <a class="ref" href="#eq-dalembert"></a>로 계산했다.</figcaption>
+    </figure>
+    <div class="callout warn"><strong>고정된 끝에서는 뒤집혀 반사한다</strong><p>고정된 끝(\(y = 0\), 디리클레 조건)에 닿은 펄스는 위아래가 뒤집혀 돌아온다. 홀함수로 늘인 "영상" 펄스가 반대편에서 거울에 비친 듯 들어오기 때문이다. 끝이 위아래로 자유롭게 미끄러지는 고리에 걸려 있으면 끝에서 장력의 세로 성분이 0이어야 하므로 \(\partial_xy = 0\)(노이만 조건)이고, 이때는 짝함수로 늘여야 하며 펄스가 뒤집히지 않고 돌아온다. 두 끝이 모두 이렇게 자유로우면 모드는 \(\cos(n\pi x/L)\)이고, 한 끝만 자유로우면 \(\sin\big((n - \tfrac12)\pi x/L\big)\)이다. 어느 쪽으로 늘일지는 경계 조건이 정한다.</p></div>
+  </section>
+
+  <!-- ============================================================ 17.4 -->
+  <section id="s4">
+    <h2>확산 방정식</h2>
+    <p>끓는 물에 담가 두어 전체가 100 °C인 구리 막대를 꺼내 두 끝을 얼음물에 담그면, 막대는 얼마나 빨리 식을까? 파동 방정식과 확산 방정식은 시간 도함수의 차수가 하나 다를 뿐인데, 해의 모습은 완전히 다르다. 줄의 모드는 영원히 진동하지만 막대 온도의 모드는 사라진다. 그리고 짧은 모드일수록 훨씬 빨리 사라진다.</p>
+
+    <h3 id="s4-modes">확산 모드</h3>
+    <p>옆면이 단열된 길이 \(L\)인 막대에서 \(\partial_tu = D\,\partial_x^2u\), \(u(0, t) = u(L, t) = 0\), \(u(x, 0) = f(x)\)를 풀자. \(u = X(x)\,T(t)\)로 두면 \(X''/X = T'/(DT) = -k^2\)이고, \(X\)의 문제는 다시 \(X_n = \sin(n\pi x/L)\)이다. 시간 부분은 1계 방정식 \(T' = -Dk_n^2T\)이므로 지수적으로 줄어든다.</p>
+    <div class="formula" id="eq-diffusion-modes">\[ \begin{aligned} u(x, t) &= \sum_{n=1}^\infty b_n\,\sin(k_nx)\,e^{-Dk_n^2t} \\ k_n &= \frac{n\pi}{L}, \quad b_n = \frac2L\int_0^Lf(x)\sin(k_nx)\,dx \end{aligned} \]</div>
+    <p>모드 \(n\)의 시간 상수는 \(\tau_n = 1/(Dk_n^2) = L^2/(n^2\pi^2D)\)이다. 파동의 진동수가 \(n\)에 비례한 것과 달리 감쇠율은 \(n^2\)에 비례한다. 그래서 처음 분포에 있던 날카로운 굴곡(높은 \(n\))은 순식간에 지워지고, 조금만 지나면 가장 느린 모드 \(\sin(\pi x/L)\)만 남는다. 확산이 모양을 매끄럽게 만든다는 말의 정확한 뜻이 이것이다. 경계가 단열이면(노이만 조건) 모드가 \(\cos(n\pi x/L)\)이 되고, 감쇠하지 않는 \(n = 0\) 모드가 평균 온도를 지킨다(<a href="ch14.html#prob-insulated-rod">14장 문제 14.7</a>).</p>
+    <p>두 끝의 온도가 0이 아닌 상수 \(u_A\), \(u_B\)이면 정상 상태 \(u_s(x) = u_A + (u_B - u_A)x/L\)(\(u_s'' = 0\))를 먼저 빼낸다. \(u = u_s + v\)로 두면 \(v\)는 같은 확산 방정식과 동차 조건 \(v(0, t) = v(L, t) = 0\)을 만족하고, 초기 조건은 \(v(x, 0) = f(x) - u_s(x)\)이다. 그러면 \(v\)는 식 <a class="ref" href="#eq-diffusion-modes"></a>로 풀린다(<a class="ref" href="#prob-rod-steady-transient"></a>). 비동차 경계 조건을 동차로 바꾸는 이 방법은 라플라스 방정식에서도 쓴다.</p>
+
+    <div class="box ex" id="ex-rod-cooling"><div class="box-h">두 끝을 얼음물에 담근 막대가 식는 빠르기</div>
+      <p>길이 \(L = 0.40\ \text{m}\)인 구리 막대(열확산도 \(D = 1.17 \times 10^{-4}\ \text{m}^2/\text{s}\), 11장 <a href="ch11.html#ex-diffusion-erf">예제 11.7</a>)가 처음에 고르게 \(u_0 = 100\ ^\circ\text{C}\)이다. \(t = 0\)에 두 끝을 0 °C로 고정한다. 옆면은 단열되어 있다. (가) 온도 분포를 구하라. (나) 가운데 온도가 50 °C가 되는 시각을 구하라. (다) 언제부터 첫 모드 하나로 충분한가?</p>
+      <p><b>풀이.</b> (가) 상수 \(u_0\)의 사인 계수는 홀수 \(n\)에서 \(4u_0/(n\pi)\)이므로</p>
+      <div class="formula" id="eq-rod-cooling">\[ \begin{aligned} u(x, t) &= \frac{4u_0}{\pi}\sum_{n\ \text{홀수}}\frac1n\,\sin\frac{n\pi x}{L}\,e^{-n^2t/\tau_1} \\ \tau_1 &= \frac{L^2}{\pi^2D} \end{aligned} \]</div>
+      <p>이다. (나) 가운데 \(x = L/2\)에서 \(\sin(n\pi/2) = \pm1\)이고, 셋째 모드는 첫 모드보다 9배 빨리 준다. 첫 항만 남기면 \(\tfrac{4u_0}{\pi}e^{-t/\tau_1} = u_0/2\)에서 \(t = \tau_1\ln(8/\pi)\)이다. (다) 셋째 모드와 첫 모드의 진폭 비는 \(\tfrac13e^{-8t/\tau_1}\)이다. 이것이 1%보다 작으려면 \(t > \tfrac{\tau_1}{8}\ln\tfrac{100}{3}\)이어야 한다.</p>
+      <p><b>숫자로 보기.</b></p>
+      <div class="formula">\[ \begin{aligned} \tau_1 &= \frac{(0.40\ \text{m})^2}{\pi^2(1.17 \times 10^{-4}\ \text{m}^2/\text{s})} \\ &= 139\ \text{s} \end{aligned} \]</div>
+      <p>이고 \(\tau_3 = \tau_1/9 = 15\ \text{s}\)이다. 가운데가 50 °C가 되는 것은 \(t = 0.935\tau_1 = 129.5\ \text{s}\)로, 약 2분 뒤다. 이 시각에 셋째 모드의 기여는 0.01 °C 정도라 첫 항 근사가 사실상 정확하다(급수를 다 더한 값과 0.03 s 다르다). 첫 모드 하나로 1% 안에 드는 것은 \(t > 0.44\tau_1 = 61\ \text{s}\)부터다. 그 뒤로는 그림 17-3처럼 사인 반 파장 모양이 그대로 \(e^{-t/139\ \text{s}}\)로 가라앉는다. 막대 길이가 두 배이면 \(\tau_1\)은 네 배인 9분이 된다.</p>
+      <p><b>다음 항은 몇 차인가.</b> 첫 항 근사의 상대 오차는 \(\tfrac13e^{-8t/\tau_1}\)이다. 오차가 시간에 대해 지수적으로 줄어드는 근사이므로, 한 번 1% 아래로 내려가면 \(\tau_1/8 = 17\ \text{s}\)마다 \(e\)배씩 더 좋아진다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 284" role="img" aria-label="양 끝을 0도로 붙잡은 100도 구리 막대의 온도 분포가 시간에 따라 사인 모양으로 가라앉는다"><line x1="60" y1="230.0" x2="460" y2="230.0" class="s-grid"/><text x="52" y="235.0" class="t-dim" style="font-size:14px" text-anchor="end">0</text><line x1="60" y1="140.0" x2="460" y2="140.0" class="s-grid"/><text x="52" y="145.0" class="t-dim" style="font-size:14px" text-anchor="end">50</text><line x1="60" y1="50.0" x2="460" y2="50.0" class="s-grid"/><text x="52" y="55.0" class="t-dim" style="font-size:14px" text-anchor="end">100</text><text x="60.0" y="252" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="160.0" y="252" class="t-dim" style="font-size:14px" text-anchor="middle">0.1</text><text x="260.0" y="252" class="t-dim" style="font-size:14px" text-anchor="middle">0.2</text><text x="360.0" y="252" class="t-dim" style="font-size:14px" text-anchor="middle">0.3</text><text x="460.0" y="252" class="t-dim" style="font-size:14px" text-anchor="middle">0.4</text><line x1="60" y1="50" x2="460" y2="50" class="s-line" stroke-dasharray="3 4"/><path d="M60,230V50M460,230V50" class="s-line" style="stroke:var(--text);stroke-width:2.5"/><path d="M60,230l12,-35.3 10,-27.8 10,-25.4 8,-18 8,-15.7 8,-13.3 8,-11.1 4,-4.6 6,-6.1 8,-6.5 10,-5.9 10,-4 12,-3 12,-1.6 16,-1.1 22,-.5 36,-.1 36,.1 22,.5 16,1.1 12,1.6 12,3 10,4 10,5.9 8,6.5 6,6.1 4,4.6 8,11.1 8,13.3 8,15.7 8,18 10,25.4 10,27.8 12,35.3" class="s-acc" style="stroke-width:2.2"/><path d="M60,230l30,-50.3 12,-18.8 12,-17.4 12,-15.9 10,-12 10,-10.7 12,-11.3 10,-8 12,-8.1 12,-6.5 12,-5.2 12,-3.9 14,-3.2 14,-1.9 16,-.7 16,.7 14,1.9 14,3.2 12,3.9 12,5.2 12,6.5 12,8.1 10,8 12,11.3 10,10.7 10,12 12,15.9 12,17.4 12,18.8 30,50.3" class="s-acc2" style="stroke-width:2.2"/><path d="M60,230l36,-42.6 26,-28.5 12,-12 12,-11.2 12,-10.3 10,-7.8 12,-8.3 12,-7.3 12,-6.1 10,-4.2 12,-4 12,-2.8 12,-1.6 10,-.4 10,.4 12,1.6 12,2.8 12,4 10,4.2 12,6.1 12,7.3 12,8.3 10,7.8 12,10.3 12,11.2 12,12 26,28.5 36,42.6" class="s-acc" style="stroke-width:2.2"/><path d="M60,230l36,-26.9 28,-19.6 24,-15 12,-6.7 12,-6.1 12,-5.4 10,-4 12,-4.1 10,-2.9 12,-2.6 10,-1.6 12,-1.2 10,-.3 10,.3 12,1.2 10,1.6 12,2.6 10,2.9 12,4.1 10,4 12,5.4 12,6.1 12,6.7 24,15 28,19.6 36,26.9" class="s-acc2" style="stroke-width:2.2"/><path d="M60,230l64,-12.7 24,-4.1 24,-3.5 22,-2.5 22,-1.9 22,-1.2 22,-.4 22,.4 22,1.2 22,1.9 22,2.5 24,3.5 24,4.1 64,12.7" class="s-acc" style="stroke-width:2.2"/><text x="330" y="44" class="t-acc" style="font-size:15px">10 s</text><text x="312" y="80" class="t" style="font-size:15px;fill:var(--accent-2);font-weight:700">30 s</text><text x="312" y="118" class="t-acc" style="font-size:15px">60 s</text><text x="312" y="172" class="t" style="font-size:15px;fill:var(--accent-2);font-weight:700">120 s</text><text x="312" y="199" class="t-acc" style="font-size:15px">300 s</text><text x="460" y="276" class="t-dim" style="font-size:14px" text-anchor="end">위치 x (m)</text><text x="66" y="40" class="t-dim" style="font-size:14px">온도 (°C)</text><text x="140" y="44" class="t-dim" style="font-size:14px">t = 0</text></svg>
+      <figcaption><b>그림 17-3.</b> 처음에 100 °C인 구리 막대(\(L = 0.40\ \text{m}\))의 두 끝을 0 °C로 고정한 뒤의 온도 분포. 식 <a class="ref" href="#eq-rod-cooling"></a>를 2000개 항까지 더해 계산했다. 처음의 모난 분포(점선)가 10 s 안에 끝에서부터 둥글어지고, 1분 남짓 지나면 \(\sin(\pi x/L)\) 모양으로 \(\tau_1 = 139\ \text{s}\)마다 \(1/e\)씩 가라앉는다.</figcaption>
+    </figure>
+    <p>17.1절의 <a class="ref" href="#ex-robin-biot"></a>로 돌아가 보자. 왼쪽 끝을 얼음물에 담그고 오른쪽 끝을 0 °C인 공기나 물에 두면, 오른쪽 끝의 로빈 조건 \(X'(L) + (\mathrm{Bi}/L)X(L) = 0\)과 \(X = \sin\lambda x\)(여기서 \(\lambda\)는 파수이고, 스투름-리우빌 고유값은 \(\lambda^2\)이다)에서 \(\tan\lambda L = -\lambda L/\mathrm{Bi}\)라는 초월 방정식이 나온다(16장 <a href="ch16.html#ex-robin-eigenvalues">로빈 조건의 고유값</a>). 가장 작은 근은 단열 끝(\(\mathrm{Bi} = 0\))에서 \(\lambda L = \pi/2\), 공기(\(\mathrm{Bi} = 0.010\))에서 1.577, 물(\(\mathrm{Bi} = 1.0\))에서 2.029이고, 얼음물(\(\mathrm{Bi} \to \infty\))에서 \(\pi\)이다. 가장 느린 모드의 시간 상수 \(1/(\lambda^2D) = L^2/\big((\lambda L)^2D\big)\)는 차례로 554 s, 550 s, 332 s, 139 s이다. 공기에 둔 끝은 단열 끝과 1%도 다르지 않다.</p>
+    <div data-sim="heat" data-title="경계 조건이 정하는 확산" data-note="해볼 것: 경계 조건을 ‘고정 0°’(디리클레)와 ‘단열’(노이만) 사이에서 바꿔 보세요. 고정 경계에서는 총 열량 Σu가 벽으로 빠져나가고, ‘처음 상태’를 ‘뜨거운 막대’로 두면 오래 지나 가장 느린 모드 sin(πx/a)·sin(πy/b)(a, b는 판의 가로·세로) 모양 하나만 남아 가라앉습니다. 기본 상태(뜨거운 점과 차가운 점)는 좌우가 반대칭이라 이 모드가 거의 없고, 가운데에 마디선이 있는 둘째 모드 모양으로 사라집니다. 단열 경계에서는 Σu가 보존되고 온도가 평균값으로 고르게 됩니다. 작은 얼룩이 큰 얼룩보다 훨씬 빨리 사라지는 것은 짧은 파장의 모드가 e^(−Dk²t)로 빨리 줄기 때문입니다."></div>
+
+    <h3 id="s4-random-walk">랜덤 워크와 확산</h3>
+    <p>확산 방정식은 열뿐 아니라 무작위로 움직이는 입자(<span class="term">랜덤 워크</span> <span class="en">(random walk)</span>)의 분포도 기술한다. 입자가 시간 \(\Delta t\)마다 \(\pm\Delta x\)만큼 같은 확률로 한 칸씩 움직인다고 하자. 시각 \(t\)에 위치 \(x\)에 있을 확률(밀도)을 \(p(x, t)\)라 하면, \(t + \Delta t\)에 \(x\)에 있으려면 바로 전에 \(x - \Delta x\)나 \(x + \Delta x\)에 있어야 하므로</p>
+    <div class="formula">\[ p(x, t + \Delta t) = \tfrac12\,p(x - \Delta x, t) + \tfrac12\,p(x + \Delta x, t) \]</div>
+    <p>이다. 양변을 테일러 전개하면 왼쪽은 \(p + \Delta t\,\partial_tp + O(\Delta t^2)\), 오른쪽은 \(p + \tfrac12\Delta x^2\,\partial_x^2p + O(\Delta x^4)\)이다(홀수 차수 항은 지워진다). \(\Delta x^2/\Delta t\)를 일정하게 두고 둘을 0으로 보내면</p>
+    <div class="formula" id="eq-random-walk-diffusion">\[ \frac{\partial p}{\partial t} = D\,\frac{\partial^2p}{\partial x^2} \]<div class="where">\(D = \Delta x^2/(2\,\Delta t)\)</div></div>
+    <p>이다. 입자들이 얼마나 퍼지는지는 해를 구하지 않고도 알 수 있다. 평균 제곱 변위 \(\langle x^2\rangle = \int x^2p\,dx\)를 시간으로 미분하고 두 번 부분 적분하면(멀리서 \(p\)와 \(\partial_xp\)는 0이다)</p>
+    <div class="formula" id="eq-diffusion-msd">\[ \begin{aligned} \frac{d\langle x^2\rangle}{dt} &= D\int x^2\,\partial_x^2p\,dx = 2D\int p\,dx = 2D \\ \langle x^2\rangle &= 2Dt \end{aligned} \]</div>
+    <p>이다(처음에 한 점에서 출발했을 때). 퍼진 폭은 \(\sqrt{2Dt}\)로, 시간의 제곱근에 비례한다. 같은 방향으로 가는 운동이라면 거리가 시간에 비례하겠지만, 무작위 걸음은 앞뒤로 상쇄되어 훨씬 느리다. 3차원에서는 세 방향이 독립이므로 \(\langle r^2\rangle = 6Dt\)이다. 끝없이 긴 막대에서 확산 방정식의 해 자체(점 원천에서 퍼지는 가우스 분포, 곧 열 핵)는 20장에서 그린 함수로 구한다(<a href="ch20.html#eq-heat-kernel">20장의 열 핵</a>). 두 반무한 막대를 맞붙인 문제의 오차 함수 해는 11장 <a href="ch11.html#ex-diffusion-erf">예제 11.7</a>에서 보았다.</p>
+    <div data-sim="random-walk" data-title="랜덤 워크의 퍼짐 — ⟨x²⟩ = 2Dt" data-note="해볼 것: p = 0.5에서 한 걸음은 Δx = 1, Δt = 1이므로 D = Δx²/2Δt = 1/2이고, 평균제곱변위의 이론값은 2Dt = t입니다(오른쪽 그래프의 점선). 위치 분포가 폭 √t인 가우스 분포로 퍼지는 것을 보세요. 위쪽 그래프의 ±2√t 포락선 안에 입자의 약 95%가 들어갑니다."></div>
+    <div class="box ex" id="ex-brownian-colloid"><div class="box-h">물속 콜로이드 입자의 브라운 운동</div>
+      <p>반지름 \(r_p = 0.50\ \mu\text{m}\)인 공 모양 입자가 25 °C의 물(점성 계수 \(\eta = 0.890\ \text{mPa}\cdot\text{s}\))에 떠 있다. 아인슈타인은 이런 입자의 확산 계수가 \(D = k_BT/(6\pi\eta r_p)\)임을 보였다(A. Einstein, Ann. Phys. 17, 549 (1905)). (가) \(D\)를 구하라. (나) 현미경으로 1 s와 1분 동안 한 방향의 퍼짐 \(\sqrt{\langle x^2\rangle}\)을 구하라. (다) 입자가 폭 100 μm인 시야를 확산만으로 가로지르는 데 걸리는 시간을 어림하라.</p>
+      <p><b>풀이.</b> (가) \(k_BT = (1.381 \times 10^{-23}\ \text{J/K})(298\ \text{K}) = 4.11 \times 10^{-21}\ \text{J}\)이므로</p>
+      <div class="formula">\[ \begin{aligned} D &= \frac{4.11 \times 10^{-21}\ \text{J}}{6\pi(0.890 \times 10^{-3}\ \text{Pa}\cdot\text{s})(0.50 \times 10^{-6}\ \text{m})} \\ &= 4.9 \times 10^{-13}\ \text{m}^2/\text{s} \end{aligned} \]</div>
+      <p>이다. 단위: \(\text{J}/(\text{Pa}\cdot\text{s}\cdot\text{m}) = (\text{N}\cdot\text{m})/(\text{N}\cdot\text{s}/\text{m}) = \text{m}^2/\text{s}\). (나) 식 <a class="ref" href="#eq-diffusion-msd"></a>에서 \(\sqrt{\langle x^2\rangle} = \sqrt{2Dt}\)이다.</p>
+      <p><b>숫자로 보기.</b> \(t = 1\ \text{s}\)이면 \(\sqrt{2(4.9 \times 10^{-13})(1)}\ \text{m} = 0.99\ \mu\text{m}\), 곧 입자 지름만큼이고, 1분이면 \(\sqrt{60} = 7.7\)배인 \(7.7\ \mu\text{m}\)이다. 60배 오래 보아도 8배밖에 더 가지 않는다. (다) \(t \approx x^2/2D = (10^{-4}\ \text{m})^2/(9.8 \times 10^{-13}\ \text{m}^2/\text{s}) = 1.0 \times 10^4\ \text{s}\), 약 3시간이다. 반대로 \(\langle x^2\rangle\)과 \(t\)를 재고 \(\eta\), \(r_p\), \(T\)를 알면 이 관계에서 볼츠만 상수(곧 아보가드로 수)를 얻을 수 있다. 페랭이 원자의 실재를 확인한 실험이 이것이다(J. Perrin, Ann. Chim. Phys. (8) 18, 5 (1909)).</p>
+    </div>
+    <div class="callout warn"><strong>확산 방정식은 시간을 거꾸로 풀 수 없다</strong><p>식 <a class="ref" href="#eq-diffusion-modes"></a>에서 \(t\)를 음수로 두면 모드 \(n\)이 \(e^{+n^2\lvert t\rvert/\tau_1}\)로 자란다. 지금의 온도 분포에서 \(\tau_1\)만큼 과거를 계산하려 하면, 측정에 섞인 아주 작은 \(n = 100\) 성분이 \(e^{10^4}\)배로 부풀려진다. 확산은 정보를 지우는 과정이라, 지금의 상태로 처음 상태를 되살릴 수 없다. 파동 방정식은 \(t \to -t\)에 대해 대칭이므로 이런 일이 없다.</p></div>
+  </section>
+
+  <!-- ============================================================ 17.5 -->
+  <section id="s5">
+    <h2>원통 좌표: 원형 막과 원기둥</h2>
+    <p>북을 치면 기타 줄과 달리 음높이가 분명하지 않은 소리가 난다. 같은 파동 방정식인데 무엇이 다를까? 차이는 경계의 모양에 있다. 원형 테두리에 고정된 막은 원통 좌표로 써야 경계 조건이 단순해지고, 그러면 지름 방향의 고유함수가 사인 대신 베셀 함수가 된다. 베셀 함수의 영점은 고르게 늘어서지 않는다.</p>
+
+    <h3 id="s5-membrane">원형 막의 모드</h3>
+    <p>반지름 \(a\)인 원형 테두리에 막이 고정되어 있다. 막의 변위 \(u(s, \phi, t)\)는 파동 방정식 <a class="ref" href="#eq-wave-equation"></a>(\(c = \sqrt{T/\sigma}\))를 따르고, 테두리에서 \(u(a, \phi, t) = 0\)이다. 한 진동수로 진동하는 모드 \(u = \psi(s, \phi)\cos(\omega t + \delta)\)를 찾으면, \(\psi\)는 헬름홀츠 방정식 <a class="ref" href="#eq-helmholtz-equation"></a>을 만족한다. 원통 좌표의 라플라시안(<a href="ch06.html#eq-laplacian-cylindrical">6장 식 (6.32)</a>)에서 \(z\) 부분을 빼면</p>
+    <div class="formula">\[ \frac1s\frac{\partial}{\partial s}\Big(s\frac{\partial\psi}{\partial s}\Big) + \frac{1}{s^2}\frac{\partial^2\psi}{\partial\phi^2} + k^2\psi = 0 \]</div>
+    <p>이다. \(\psi = R(s)\,\Phi(\phi)\)로 두고 \(s^2/(R\Phi)\)를 곱하면</p>
+    <div class="formula" id="eq-membrane-separation">\[ \frac sR\,\big(sR'\big)' + k^2s^2 = -\frac{\Phi''}{\Phi} = m^2 \]</div>
+    <p>으로 나뉜다. 각 부분 \(\Phi'' + m^2\Phi = 0\)에는 "한 바퀴 돌면 제자리"라는 조건 \(\Phi(\phi + 2\pi) = \Phi(\phi)\)가 붙는다. 이것도 주기 경계 조건을 가진 고유값 문제이고, 답은 \(m = 0, 1, 2, \ldots\)와 \(\Phi = \cos m\phi\), \(\sin m\phi\)이다. 지름 부분에 \(R\)을 곱하면 \(s^2R'' + sR' + (k^2s^2 - m^2)R = 0\), 곧 13장의 베셀 방정식(<a href="ch13.html#eq-cylindrical-radial">식 (13.1)</a>)이다. 해는 \(J_m(ks)\)와 \(Y_m(ks)\)인데, \(Y_m\)은 \(s \to 0\)에서 발산하므로(<a href="ch13.html#eq-bessel-small-x">식 (13.17)</a>) 막의 가운데에서 변위가 유한하려면 버려야 한다. 이것이 \(s = 0\)에서의 "조건"이다. 마지막으로 테두리 조건 \(J_m(ka) = 0\)이 \(k\)를 정한다. \(J_m\)의 \(n\)번째 양의 영점을 \(\alpha_{mn}\)이라 하면 \(k = \alpha_{mn}/a\)이다.</p>
+    <div class="formula" id="eq-membrane-modes">\[ \begin{aligned} u_{mn} &= J_m\Big(\frac{\alpha_{mn}s}{a}\Big)\begin{Bmatrix}\cos m\phi \\ \sin m\phi\end{Bmatrix}\cos(\omega_{mn}t + \delta) \\ \omega_{mn} &= \frac{c\,\alpha_{mn}}{a} \end{aligned} \]<div class="where">\(m = 0, 1, 2, \ldots\), \(n = 1, 2, \ldots\). \(m = 0\)이면 \(\sin m\phi = 0\)이므로 모드가 하나, \(m \ge 1\)이면 \(\cos\)와 \(\sin\) 두 모드가 같은 진동수를 갖는다.</div></div>
+    <p>모드 \((m, n)\)의 막은 \(\cos m\phi = 0\)인 지름 \(m\)개와, \(J_m(\alpha_{mn}s/a) = 0\)인 원 \(s = a\,\alpha_{mj}/\alpha_{mn}\) (\(j = 1, \ldots, n - 1\)) \(n - 1\)개에서 움직이지 않는다. 이 선을 <span class="term">마디선</span> <span class="en">(nodal line)</span>이라 한다(그림 17-4). \(m \ge 1\)인 두 겹 모드는 마디 지름의 방향만 다르고, 어느 방향이 나타날지는 막을 친 자리가 정한다. 처음 모양 \(u(s, \phi, 0)\)이 주어지면 먼저 \(\phi\)에 대해 푸리에 급수로, 다음에 \(s\)에 대해 13장의 푸리에-베셀 급수(<a href="ch13.html#eq-fourier-bessel">식 (13.23)</a>)로 펼친다. 이때 직교성에는 가중 함수 \(s\)가 붙는다(<a href="ch13.html#eq-bessel-orthogonality">식 (13.22)</a>). 넓이 요소가 \(s\,ds\,d\phi\)이기 때문이다.</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 320" role="img" aria-label="원형 막의 낮은 여섯 모드의 마디선과 부호. 모드 (m, n)은 마디 지름 m개와 마디 원 n − 1개를 갖는다"><circle cx="80" cy="80" r="56" class="f-acc" style="fill-opacity:.4;stroke:var(--accent);stroke-width:1.2"/><circle cx="80" cy="80" r="56" class="s-line" style="stroke:var(--text);stroke-width:1.8"/><text x="80" y="157" class="t" style="font-size:15px" text-anchor="middle">(0, 1) · 1.000</text><path d="M240,80L240,136A56,56 0 0 0 240,24Z" class="f-acc" style="fill-opacity:.4;stroke:var(--accent);stroke-width:1.2"/><path d="M240,80L240,24A56,56 0 0 0 240,136Z" class="f-acc2" style="fill-opacity:.4;stroke:var(--accent-2);stroke-width:1.2"/><circle cx="240" cy="80" r="56" class="s-line" style="stroke:var(--text);stroke-width:1.8"/><text x="240" y="157" class="t" style="font-size:15px" text-anchor="middle">(1, 1) · 1.593</text><path d="M400,80L439.6,119.6A56,56 0 0 0 439.6,40.4Z" class="f-acc" style="fill-opacity:.4;stroke:var(--accent);stroke-width:1.2"/><path d="M400,80L439.6,40.4A56,56 0 0 0 360.4,40.4Z" class="f-acc2" style="fill-opacity:.4;stroke:var(--accent-2);stroke-width:1.2"/><path d="M400,80L360.4,40.4A56,56 0 0 0 360.4,119.6Z" class="f-acc" style="fill-opacity:.4;stroke:var(--accent);stroke-width:1.2"/><path d="M400,80L360.4,119.6A56,56 0 0 0 439.6,119.6Z" class="f-acc2" style="fill-opacity:.4;stroke:var(--accent-2);stroke-width:1.2"/><circle cx="400" cy="80" r="56" class="s-line" style="stroke:var(--text);stroke-width:1.8"/><text x="400" y="157" class="t" style="font-size:15px" text-anchor="middle">(2, 1) · 2.136</text><circle cx="80" cy="236" r="56" class="f-acc2" style="fill-opacity:.4;stroke:var(--accent-2);stroke-width:1.2"/><circle cx="80" cy="236" r="24.4" class="f-acc" style="fill-opacity:.4;stroke:var(--accent);stroke-width:1.2"/><circle cx="80" cy="236" r="56" class="s-line" style="stroke:var(--text);stroke-width:1.8"/><text x="80" y="313" class="t" style="font-size:15px" text-anchor="middle">(0, 2) · 2.295</text><path d="M240,236L288.5,264A56,56 0 0 0 288.5,208Z" class="f-acc" style="fill-opacity:.4;stroke:var(--accent);stroke-width:1.2"/><path d="M240,236L288.5,208A56,56 0 0 0 240,180Z" class="f-acc2" style="fill-opacity:.4;stroke:var(--accent-2);stroke-width:1.2"/><path d="M240,236L240,180A56,56 0 0 0 191.5,208Z" class="f-acc" style="fill-opacity:.4;stroke:var(--accent);stroke-width:1.2"/><path d="M240,236L191.5,208A56,56 0 0 0 191.5,264Z" class="f-acc2" style="fill-opacity:.4;stroke:var(--accent-2);stroke-width:1.2"/><path d="M240,236L191.5,264A56,56 0 0 0 240,292Z" class="f-acc" style="fill-opacity:.4;stroke:var(--accent);stroke-width:1.2"/><path d="M240,236L240,292A56,56 0 0 0 288.5,264Z" class="f-acc2" style="fill-opacity:.4;stroke:var(--accent-2);stroke-width:1.2"/><circle cx="240" cy="236" r="56" class="s-line" style="stroke:var(--text);stroke-width:1.8"/><text x="240" y="313" class="t" style="font-size:15px" text-anchor="middle">(3, 1) · 2.653</text><path d="M400,236L400,266.6A30.6,30.6 0 0 0 400,205.4Z" class="f-acc" style="fill-opacity:.4;stroke:var(--accent);stroke-width:1.2"/><path d="M400,236L400,205.4A30.6,30.6 0 0 0 400,266.6Z" class="f-acc2" style="fill-opacity:.4;stroke:var(--accent-2);stroke-width:1.2"/><path d="M400,266.6L400,292A56,56 0 0 0 400,180L400,205.4A30.6,30.6 0 0 1 400,266.6Z" class="f-acc2" style="fill-opacity:.4;stroke:var(--accent-2);stroke-width:1.2"/><path d="M400,205.4L400,180A56,56 0 0 0 400,292L400,266.6A30.6,30.6 0 0 1 400,205.4Z" class="f-acc" style="fill-opacity:.4;stroke:var(--accent);stroke-width:1.2"/><circle cx="400" cy="236" r="56" class="s-line" style="stroke:var(--text);stroke-width:1.8"/><text x="400" y="313" class="t" style="font-size:15px" text-anchor="middle">(1, 2) · 2.917</text></svg>
+      <figcaption><b>그림 17-4.</b> 원형 막의 낮은 여섯 모드 \(J_m(\alpha_{mn}s/a)\cos m\phi\). 두 색은 변위의 부호이고, 색이 바뀌는 선이 마디선이다. 괄호는 \((m, n)\), 옆의 수는 진동수 비 \(\alpha_{mn}/\alpha_{01}\)이다. 마디 원의 반지름은 영점의 비 \(\alpha_{mj}/\alpha_{mn}\)로 계산해 그렸다. 예를 들어 \((0, 2)\)의 마디 원은 \(s = 0.436a\), \((1, 2)\)의 마디 원은 \(s = 0.546a\)에 있다.</figcaption>
+    </figure>
+    <!-- sim: membrane-modes -->
+
+    <div class="box ex" id="ex-drum-modes"><div class="box-h">원형 북의 모드와 배음</div>
+      <p>반지름 \(a = 0.20\ \text{m}\)인 북의 막이 단위 길이당 장력 \(T = 2000\ \text{N/m}\), 면밀도 \(\sigma = 0.20\ \text{kg/m}^2\)이다. 막을 이상적인 막(굽힘 강성과 공기의 영향은 없음)으로 보고 (가) 낮은 여섯 모드의 진동수를 구하라. (나) 기본 진동수가 같은 줄의 배음과 비교하고, 배음이 정수배가 아닌 이유를 설명하라. (다) 막의 한가운데를 치면 어떤 모드가 울리는가?</p>
+      <p><b>풀이.</b> (가) \(c = \sqrt{T/\sigma} = \sqrt{2000/0.20}\ \text{m/s} = 100\ \text{m/s}\)이고, 식 <a class="ref" href="#eq-membrane-modes"></a>에서 \(f_{mn} = c\,\alpha_{mn}/(2\pi a)\)이다. 13장의 영점 표(<a href="ch13.html#eq-bessel-zeros">식 (13.20)</a>)와 \(J_3\)의 첫 영점 6.3802를 쓰면 다음과 같다.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>\((m, n)\)</th><th>\(\alpha_{mn}\)</th><th>\(f_{mn}\) (Hz)</th><th>\(f_{mn}/f_{01}\)</th></tr></thead>
+        <tbody>
+          <tr><td>(0, 1)</td><td>2.4048</td><td>191.4</td><td>1.000</td></tr>
+          <tr><td>(1, 1)</td><td>3.8317</td><td>304.9</td><td>1.593</td></tr>
+          <tr><td>(2, 1)</td><td>5.1356</td><td>408.7</td><td>2.136</td></tr>
+          <tr><td>(0, 2)</td><td>5.5201</td><td>439.3</td><td>2.295</td></tr>
+          <tr><td>(3, 1)</td><td>6.3802</td><td>507.7</td><td>2.653</td></tr>
+          <tr><td>(1, 2)</td><td>7.0156</td><td>558.3</td><td>2.917</td></tr>
+        </tbody>
+      </table></div>
+      <p>(나) 기본 진동수가 191.4 Hz인 줄의 배음은 382.7 Hz, 574.1 Hz, …로 정확히 정수배다. 줄의 고유값 조건 \(\sin kL = 0\)의 근이 \(k_nL = n\pi\)로, 첫 근의 정수배이기 때문이다. 막의 조건 \(J_m(ka) = 0\)의 근은 그렇지 않다. 13장의 점근 꼴(<a href="ch13.html#eq-bessel-asymptotic">식 (13.19)</a>)에서 \(J_m(x) \approx \sqrt{2/\pi x}\cos(x - m\pi/2 - \pi/4)\)이므로 큰 영점은 \(\alpha_{mn} \approx (n + m/2 - 1/4)\pi\)이다. 같은 \(m\)에서 이웃한 영점의 간격은 \(\pi\)로 고르지만, 첫 영점이 \(\pi\)의 정수배가 아니라 \(0.75\pi\) 근처에 있어서 비가 \(1 : 2.33 : 3.67 : \cdots\)처럼 정수가 되지 않는다. 게다가 \(m\)이 다른 모드들이 그 사이를 메운다. 진동수들이 공통의 기본 진동수의 배수가 아니므로 막의 운동은 주기 운동이 아니고, 귀에는 뚜렷한 음높이 없이 "둥" 하는 소리로 들린다.</p>
+      <p>(다) 가운데를 치면 처음 속도 분포가 \(\phi\)에 기대지 않는다. \(\int_0^{2\pi}\cos m\phi\,d\phi = 0\) (\(m \ge 1\))이므로 \(m \ge 1\) 모드의 계수는 모두 0이고, \(m = 0\) 모드만 울린다.</p>
+      <p><b>숫자로 보기.</b> 가운데를 친 북에서 울리는 진동수는 \(f_{01} = 191.4\ \text{Hz}\), \(f_{02} = 439.3\ \text{Hz}\), \(f_{03} = 688.6\ \text{Hz}\)로 비가 \(1 : 2.295 : 3.598\)이다. 줄이라면 \(1 : 2 : 3\)이었을 것이다. 단위 확인: \(\sqrt{(\text{N/m})/(\text{kg/m}^2)} = \sqrt{\text{N}\cdot\text{m}/\text{kg}} = \text{m/s}\)이고 \(c/a\)는 \(\text{s}^{-1}\)이다. 실제 팀파니는 막에 실린 공기의 질량과 통 속 공기의 효과로 진동수가 바뀌어, \((1, 1)\), \((2, 1)\), \((3, 1)\) 모드의 진동수가 거의 \(2 : 3 : 4\)가 되도록 만들어져 음높이가 들린다(N. H. Fletcher, T. D. Rossing, <i>The Physics of Musical Instruments</i>, 2nd ed., Springer 1998, 18장). 그래서 팀파니는 가운데가 아니라 가장자리 근처를 친다.</p>
+    </div>
+
+    <h3 id="s5-cylinder">원기둥 속의 라플라스 방정식</h3>
+    <p>원기둥 모양 영역의 정상 온도나 퍼텐셜은 3차원 라플라스 방정식을 원통 좌표로 풀어 얻는다. \(u = R(s)\,\Phi(\phi)\,Z(z)\)로 두면 \(\Phi\)는 앞과 같이 \(\cos m\phi\), \(\sin m\phi\)이고, \(Z''/Z\)가 분리 상수가 된다. 그 부호에 따라 지름 방향의 식이 달라진다. \(Z'' = k^2Z\)이면 \(s^2R'' + sR' + (k^2s^2 - m^2)R = 0\)으로 베셀 방정식이고, \(Z'' = -k^2Z\)이면 \(s^2R'' + sR' - (k^2s^2 + m^2)R = 0\)으로 변형 베셀 방정식(<a href="ch13.html#def-modified-bessel">13장 정의 13.5</a>)이며, \(k = 0\)이면 오일러 방정식이다. 분리한 해를 모으면 다음과 같다.</p>
+    <div class="formula" id="eq-laplace-cylindrical-general">\[ \begin{aligned} Z'' = k^2Z:\quad &\{J_m(ks),\ Y_m(ks)\}\times\{e^{kz},\ e^{-kz}\} \\ Z'' = -k^2Z:\quad &\{I_m(ks),\ K_m(ks)\}\times\{\cos kz,\ \sin kz\} \\ k = 0:\quad &\{s^m,\ s^{-m}\}\times\{1,\ z\} \end{aligned} \]<div class="where">각 줄에 \(\cos m\phi\)나 \(\sin m\phi\)를 곱하고, 허용되는 \(m\)과 \(k\)에 대해 더한 것이 일반해다. \(k = 0\), \(m = 0\)이면 지름 부분은 \(\{1,\ \ln s\}\)이다.</div></div>
+    <p>어느 줄을 쓸지는 동차 조건이 어디에 있는지가 정한다. 옆면 \(s = a\)에서 \(u = 0\)이면 지름 방향이 고유값 문제이므로 \(J_m(ka) = 0\)에서 \(k = \alpha_{mn}/a\)이고 첫 줄을 쓴다(<a class="ref" href="#prob-cylinder-temperature"></a>). 윗면과 아랫면 \(z = 0, h\)에서 \(u = 0\)이면 \(z\) 방향이 고유값 문제이므로 \(\sin(n\pi z/h)\)가 나오고 둘째 줄을 쓴다. 축을 포함하는 영역이면 축에서 발산하는 \(Y_m\), \(K_m\), \(s^{-m}\), \(\ln s\)를 버린다. 13장의 원통 공동(<a href="ch13.html#ex-cylindrical-cavity">예제 13.1</a>)은 첫 줄의 헬름홀츠 판, 차폐된 선전하(<a href="ch13.html#ex-screened-line-charge">예제 13.2</a>)는 \(K_0\)의 예다.</p>
+  </section>
+
+  <!-- ============================================================ 17.6 -->
+  <section id="s6">
+    <h2>구면 좌표: 라플라스 방정식과 르장드르 급수</h2>
+    <p>지구 내부의 온도, 대전된 구 둘레의 퍼텐셜, 별의 중력 퍼텐셜처럼 경계가 구이면 구면 좌표를 쓴다. 12장에서 이 문제의 재료를 이미 모두 만들었다. 각 부분은 르장드르 다항식과 구면 조화 함수이고(12장 <a href="ch12.html#def-spherical-harmonics">정의 12.5</a>), 지름 부분은 \(r^l\)과 \(r^{-l-1}\)이다(<a href="ch12.html#ex-euler-radial">예제 12.8</a>). 이 절에서는 그것을 하나의 일반해로 묶고, 표면의 값이 주어진 구 문제를 끝까지 푼다.</p>
+
+    <h3 id="s6-general">일반해</h3>
+    <p>6장에서 구면 좌표의 라플라시안을 지름 부분과 각 부분으로 나누었다(<a href="ch06.html#eq-laplacian-angular-split">식 (6.35)</a>).</p>
+    <div class="formula">\[ \nabla^2u = \frac{1}{r^2}\frac{\partial}{\partial r}\Big(r^2\frac{\partial u}{\partial r}\Big) + \frac{1}{r^2}\,\Lambda u \]</div>
+    <p>여기서 \(\Lambda\)는 \(\theta\)와 \(\phi\)만 미분하는 각 부분이다. \(u = R(r)\,Y(\theta, \phi)\)를 \(\nabla^2u = 0\)에 넣고 \(RY/r^2\)로 나누면 \((r^2R')'/R = -\Lambda Y/Y\)이고, 양쪽이 같은 상수 \(\lambda\)다. 각 부분 \(\Lambda Y = -\lambda Y\)에 "구면 전체에서 한 값이고 두 극에서 유한하다"는 조건을 붙이면 \(\lambda = l(l+1)\)이고 해는 구면 조화 함수 \(Y_l^m\)이다(<a href="ch12.html#eq-ylm-eigen">12장 식 (12.47)</a>). 극에서의 유한성이 \(\lambda\)를 양자화한다는 것은 12장의 <a href="ch12.html#thm-legendre-termination">정리 12.2</a>에서 보였다. 지름 부분 \(r^2R'' + 2rR' - l(l+1)R = 0\)의 해는 \(r^l\)과 \(r^{-l-1}\)이다(<a href="ch12.html#eq-radial-laplace-solutions">식 (12.58)</a>). 따라서</p>
+    <div class="formula" id="eq-laplace-spherical-ylm">\[ u(r, \theta, \phi) = \sum_{l=0}^\infty\sum_{m=-l}^{l}\Big(A_{lm}\,r^l + \frac{B_{lm}}{r^{l+1}}\Big)Y_l^m(\theta, \phi) \]</div>
+    <p>이다. 문제가 \(z\)축 둘레로 대칭이면 \(m = 0\)만 남고, \(Y_l^0 \propto P_l(\cos\theta)\)이므로 다음의 <span class="term">축대칭 일반해</span> <span class="en">(axisymmetric general solution)</span>를 얻는다.</p>
+    <div class="formula" id="eq-laplace-spherical-general">\[ u(r, \theta) = \sum_{l=0}^\infty\Big(A_l\,r^l + \frac{B_l}{r^{l+1}}\Big)P_l(\cos\theta) \]</div>
+    <p>두 계수 가운데 어느 것을 남길지는 영역이 정한다. 원점을 포함하는 구의 안쪽에서는 \(r^{-l-1}\)이 원점에서 발산하므로 \(B_l = 0\)이다(\(l = 0\)의 \(1/r\)은 원점의 점 원천이 있을 때만 허용된다. <a href="ch06.html#eq-laplacian-inverse-r">6장 식 (6.54)</a>). 구의 바깥에서 \(u \to 0\)이어야 하면 \(A_l = 0\)이다. 두 구면 사이의 껍질에서는 둘 다 남는다. 반지름 \(a\)인 구 안에서 표면값 \(u(a, \theta) = f(\theta)\)가 주어지면, \(r = a\)에서 식 <a class="ref" href="#eq-laplace-spherical-general"></a>는 \(f\)의 르장드르 급수이므로 12장의 계수 공식(<a href="ch12.html#eq-legendre-series">식 (12.34)</a>)으로 \(A_la^l\)이 정해진다.</p>
+    <div class="formula" id="eq-sphere-interior">\[ \begin{aligned} u(r, \theta) &= \sum_{l=0}^\infty c_l\Big(\frac ra\Big)^lP_l(\cos\theta) \\ c_l &= \frac{2l+1}{2}\int_0^\pi f(\theta)\,P_l(\cos\theta)\sin\theta\,d\theta \end{aligned} \]</div>
+    <p>바깥 문제는 \((r/a)^l\)을 \((a/r)^{l+1}\)로 바꾸면 된다. 높은 \(l\)일수록 \((r/a)^l\)이 중심 쪽으로 빨리 줄어들므로, 표면값의 세세한 각 구조는 안쪽 깊이 들어오지 못한다. 17.2절의 상자에서 본 것과 같은 성질이다. 중심 \(r = 0\)에서는 \(l = 0\) 항만 남아 \(u(0) = c_0 = \tfrac12\int_0^\pi f\sin\theta\,d\theta\), 곧 표면값의 평균이다. 이것이 17.7절에서 증명할 평균값 성질의 첫 예다.</p>
+
+    <div class="box ex" id="ex-hemisphere-temperature"><div class="box-h">두 반구의 온도가 다른 구 속의 정상 온도</div>
+      <p>반지름 \(a = 5.0\ \text{cm}\)인 구리 공의 표면 온도가 위 반구(\(0 \le \theta &lt; \pi/2\))에서 \(T_1 = 60\ ^\circ\text{C}\), 아래 반구에서 \(T_2 = 20\ ^\circ\text{C}\)로 유지된다. 공 속에 열원은 없다. (가) 정상 상태의 온도 분포를 구하라. (나) 중심의 온도와 온도 기울기, 그리고 축 위 \(z = a/2\)인 점의 온도를 구하라.</p>
+      <p><b>풀이.</b> (가) 표면값을 평균과 나머지로 나누면 \(f = \bar T + \tfrac{\Delta T}{2}\operatorname{sgn}(\cos\theta)\)이다(\(\bar T = 40\ ^\circ\text{C}\), \(\Delta T = T_1 - T_2 = 40\ \text{K}\)). 상수 \(\bar T\)는 \(l = 0\) 항이다. 부호 함수 \(\operatorname{sgn}x\)는 홀함수이므로 홀수 \(l\)만 남고, \(x = \cos\theta\)로 바꾸면 \(c_l = (2l+1)\int_0^1P_l(x)\,dx\)이다. 12장의 점화식 \((2l+1)P_l = P_{l+1}' - P_{l-1}'\)(<a href="ch12.html#eq-legendre-derivative-recurrence">식 (12.27)</a>)을 0에서 1까지 적분하면, \(P_l(1) = 1\)이므로</p>
+      <div class="formula">\[ c_l = \big[P_{l+1} - P_{l-1}\big]_0^1 = P_{l-1}(0) - P_{l+1}(0) \]</div>
+      <p>이고, \(P_{2k}(0)\)은 12장의 <a href="ch12.html#eq-legendre-zero-values">식 (12.28)</a>에 있다. 앞의 몇 개는</p>
+      <div class="formula" id="eq-hemisphere-coefficients">\[ \begin{aligned} c_1 &= \frac32, & c_3 &= -\frac78, \\ c_5 &= \frac{11}{16}, & c_7 &= -\frac{75}{128} \end{aligned} \]</div>
+      <p>이다. 따라서</p>
+      <div class="formula" id="eq-hemisphere-temperature">\[ \begin{aligned} T &= \bar T + \frac{\Delta T}{2}\Big[\frac32\frac raP_1 - \frac78\Big(\frac ra\Big)^3P_3 \\ &\qquad + \frac{11}{16}\Big(\frac ra\Big)^5P_5 - \cdots\Big] \end{aligned} \]</div>
+      <p>이다(\(P_l = P_l(\cos\theta)\)). 모든 항이 적도면 \(\theta = \pi/2\)에서 0이므로(\(P_l(0) = 0\), \(l\) 홀수) 적도면 전체가 정확히 40 °C다. 대칭으로도 알 수 있다. 위아래를 뒤집고 \(T - \bar T\)의 부호를 바꾸면 같은 문제가 되기 때문이다.</p>
+      <p>(나) 중심에서는 \(T = \bar T\)이고, 기울기는 \(l = 1\) 항 \(\tfrac{\Delta T}{2}\tfrac32\tfrac za\)에서만 나온다. 축 위에서는 \(P_l(1) = 1\)이므로 \(z = a/2\)에서 괄호 안은 \(\sum_lc_l2^{-l}\)이다.</p>
+      <p><b>숫자로 보기.</b> 중심 온도는 40 °C이고, 중심의 온도 기울기는 \(+z\) 방향으로</p>
+      <div class="formula">\[ \lvert\nabla T\rvert = \frac{3\,\Delta T}{4a} = \frac{3 \times 40\ \text{K}}{4 \times 0.050\ \text{m}} = 600\ \text{K/m} \]</div>
+      <p>이다. 구리(\(k = 401\ \text{W/(m}\cdot\text{K)}\))라면 중심을 지나는 열흐름 밀도가 \(2.4 \times 10^5\ \text{W/m}^2\)이다. \(z = a/2\)에서 괄호 안의 부분합은 항을 하나씩 더할 때 \(0.750\), \(0.641\), \(0.662\), \(0.658\), \(0.6585\)이고, 수백 항을 더하면 \(0.6584\)로 수렴한다. 따라서 \(T = 40 + 20 \times 0.6584 = 53.2\ ^\circ\text{C}\)이다. 표면 근처에서는 \((r/a)^l\)이 천천히 줄어 많은 항이 필요하다(그림 17-5). 축 위의 점은 위 반구에 더 가까우므로 평균보다 따뜻하다.</p>
+    </div>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 400 312" role="img" aria-label="위 반구 60도, 아래 반구 20도인 구의 단면 등온선. 적도면이 40도이고 등온선이 적도의 표면으로 모인다"><circle cx="200" cy="155" r="125" class="f-surface"/><path d="M75,155l2.8,6.2 5.5,9.7 5.6,7.8 5.5,6.6 5.6,5.7 8.3,7.4 8.4,6.2 8.3,5.3 8.3,4.5 8.4,3.8 11.1,4.1 8.3,2.4 8.3,2 11.2,1.8 8.3,.8 11.1,.4 11.1,-.4 8.3,-.8 11.2,-1.8 8.3,-2 8.3,-2.4 11.1,-4.1 8.4,-3.8 8.3,-4.5 8.3,-5.3 8.4,-6.2 8.3,-7.4 5.6,-5.7 5.5,-6.6 5.6,-7.8 5.5,-9.7 2.8,-6.2" class="s-acc2" style="stroke-width:1.8"/><path d="M75,155l11.1,9.8 11.1,7.6 16.7,9 13.9,5.8 16.6,5.3 19.5,4.2 16.7,2.1 19.4,.9 19.4,-.9 16.7,-2.1 19.5,-4.2 16.6,-5.3 13.9,-5.8 16.7,-9 11.1,-7.6 11.1,-9.8" class="s-acc2" style="stroke-width:1.8"/><path d="M75,155l11.1,4.3 16.7,5 13.9,3.4 16.6,3.2 16.7,2.3 16.7,1.7 16.6,1 16.7,.3 16.7,-.3 16.6,-1 16.7,-1.7 16.7,-2.3 16.6,-3.2 13.9,-3.4 16.7,-5 11.1,-4.3" class="s-acc2" style="stroke-width:1.8"/><path d="M75,155l11.1,-4.3 16.7,-5 13.9,-3.4 16.6,-3.2 16.7,-2.3 16.7,-1.7 16.6,-1 16.7,-.3 16.7,.3 16.6,1 16.7,1.7 16.7,2.3 16.6,3.2 13.9,3.4 16.7,5 11.1,4.3" class="s-acc" style="stroke-width:1.8"/><path d="M75,155l11.1,-9.8 11.1,-7.6 16.7,-9 13.9,-5.8 16.6,-5.3 19.5,-4.2 16.7,-2.1 19.4,-.9 19.4,.9 16.7,2.1 19.5,4.2 16.6,5.3 13.9,5.8 16.7,9 11.1,7.6 11.1,9.8" class="s-acc" style="stroke-width:1.8"/><path d="M75,155l2.8,-6.2 5.5,-9.7 5.6,-7.8 5.5,-6.6 5.6,-5.7 8.3,-7.4 8.4,-6.2 8.3,-5.3 8.3,-4.5 8.4,-3.8 11.1,-4.1 8.3,-2.4 8.3,-2 11.2,-1.8 8.3,-.8 11.1,-.4 11.1,.4 8.3,.8 11.2,1.8 8.3,2 8.3,2.4 11.1,4.1 8.4,3.8 8.3,4.5 8.3,5.3 8.4,6.2 8.3,7.4 5.6,5.7 5.5,6.6 5.6,7.8 5.5,9.7 2.8,6.2" class="s-acc" style="stroke-width:1.8"/><line x1="75" y1="155" x2="325" y2="155" class="s-line" stroke-dasharray="5 4" style="stroke-width:1.8"/><path d="M75,155A125,125 0 0 1 325,155" class="s-acc" style="stroke-width:5"/><path d="M325,155A125,125 0 0 1 75,155" class="s-acc2" style="stroke-width:5"/><text x="205" y="225.7" class="t-mono" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;font-size:13px">25</text><text x="205" y="195.7" class="t-mono" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;font-size:13px">30</text><text x="205" y="172.2" class="t-mono" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;font-size:13px">35</text><text x="210" y="151" class="t-mono" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;font-size:13px">40</text><text x="205" y="129.8" class="t-mono" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;font-size:13px">45</text><text x="205" y="106.3" class="t-mono" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;font-size:13px">50</text><text x="205" y="76.3" class="t-mono" style="paint-order:stroke;stroke:var(--surface);stroke-width:4px;font-size:13px">55</text><circle cx="200" cy="155" r="3.5" class="f-dim"/><text x="200" y="20" class="t-math acc" text-anchor="middle">60 °C</text><text x="200" y="303" class="t-math acc2" text-anchor="middle">20 °C</text><text x="331" y="160" class="t-dim" style="font-size:13px">적도</text></svg></div>
+      <figcaption><b>그림 17-5.</b> 위 반구 60 °C, 아래 반구 20 °C인 공을 \(xz\) 평면으로 자른 단면의 등온선(숫자는 °C). 식 <a class="ref" href="#eq-hemisphere-temperature"></a>를 \(l = 799\)까지 더해 계산했다. 적도면(파선)은 정확히 40 °C이고, 모든 등온선이 표면 온도가 뛰는 적도의 가장자리로 모인다. 중심의 온도는 표면 온도의 평균이다.</figcaption>
+    </figure>
+    <div class="callout deep" data-later="em"><strong>경계값 문제의 분업</strong><p>이 절의 예는 표면 온도나 표면 퍼텐셜이 처음부터 주어진 문제다. 균일한 전기장 속에 놓인 도체 구나 유전체 구처럼 표면값을 물리 조건(등전위, 법선 성분의 연속)에서 찾아야 하는 문제는 전자기학 책에서 같은 일반해 식 <a class="ref" href="#eq-laplace-spherical-general"></a>로 푼다. 헬름홀츠 방정식을 구면 좌표로 분리하면 각 부분은 그대로 \(Y_l^m\)이고 지름 부분이 구면 베셀 함수가 된다(<a href="ch13.html#eq-spherical-radial">13장 식 (13.24)</a>, <a href="ch13.html#ex-spherical-well">예제 13.4</a>의 구형 우물). 중심력 퍼텐셜 속 슈뢰딩거 방정식의 분리도 같은 길을 가며, 수소 원자는 양자역학 책에서 다룬다.</p></div>
+  </section>
+
+  <!-- ============================================================ 17.7 -->
+  <section id="s7">
+    <h2>해의 유일성과 평균값 성질</h2>
+    <p>지금까지 해를 곱의 꼴로 "추측"하고, 맞는 것을 모아 경계 조건을 맞췄다. 그런데 다른 방법으로 다른 답을 얻을 수는 없을까? 12장의 <a href="ch12.html#ex-euler-radial">예제 12.8</a>에서는 한 항짜리 답을 바로 썼고, 17.2절에서는 겹침과 대칭으로 중심값 \(V_0/4\)를 얻었다. 이런 논리가 옳으려면 경계 조건을 만족하는 해가 하나뿐이어야 한다. 이 절에서 그것을 증명하고, 조화 함수가 갖는 놀라운 성질 하나를 끌어낸다.</p>
+
+    <h3 id="s7-uniqueness">유일성 정리</h3>
+    <div class="box thm" id="thm-uniqueness-laplace"><div class="box-h">라플라스·푸아송 방정식 해의 유일성</div>
+      <p>\(V\)가 유계이고 연결된 영역이고 그 경계 \(S\)가 구간별로 매끄럽다고 하자. \(u\)는 \(V\)를 포함하는 열린 집합에서 2계 편미분이 연속이고 \(V\)에서 푸아송 방정식 \(\nabla^2u = -f\)를 만족한다.</p>
+      <ol>
+        <li>(디리클레) \(S\) 전체에서 \(u\)의 값이 주어지면 해는 하나뿐이다.</li>
+        <li>(노이만) \(S\) 전체에서 \(\partial u/\partial n\)이 주어지면 해는 더하는 상수를 빼고 하나뿐이다.</li>
+        <li>(섞인 조건) \(S\)의 일부 \(S_1\)(넓이가 0이 아님)에서 값을, 나머지에서 법선 도함수를 주거나, \(S\) 전체에서 로빈 조건 \(\alpha u + \beta\,\partial u/\partial n = g\) (\(\alpha/\beta > 0\))를 주면 해는 하나뿐이다.</li>
+      </ol>
+      <p>\(V\)가 공의 바깥처럼 끝없이 넓으면, 멀리서 \(\lvert u\rvert \le C/r\), \(\lvert\nabla u\rvert \le C/r^2\)이라는 조건을 더해 같은 결론이 성립한다(노이만 경우에도 멀리서 0이라는 조건이 상수를 정하므로 해는 하나뿐이다).</p>
+    </div>
+    <p>증명은 5장의 그린 제1 항등식(<a href="ch05.html#eq-green-first-identity">식 (5.29)</a>)에서 바로 나온다. 영역 \(V\)에서 \(\iiint_V(\phi\nabla^2\psi + \nabla\phi\cdot\nabla\psi)\,d^3r = \oint_S\phi\,\partial\psi/\partial n\,da\)이다. 디리클레·노이만 경우는 이미 <a href="ch05.html#prob-poisson-uniqueness">5장 문제 5.9</a>에서 풀었으므로, 여기서는 세 경우를 한꺼번에 보자. 같은 조건을 만족하는 두 해의 차 \(w = u_1 - u_2\)는 \(V\)에서 \(\nabla^2w = 0\)이고 경계에서 동차 조건을 만족한다. 제1 항등식에 \(\phi = \psi = w\)를 넣으면 \(w\nabla^2w\) 항이 사라져</p>
+    <div class="formula" id="eq-uniqueness-energy">\[ \iiint_V\lvert\nabla w\rvert^2\,d^3r = \oint_Sw\,\frac{\partial w}{\partial n}\,da \]</div>
+    <p>이다. 디리클레 경우는 \(S\)에서 \(w = 0\), 노이만 경우는 \(\partial w/\partial n = 0\), 섞인 경우는 \(S_1\)에서 \(w = 0\)이고 나머지에서 \(\partial w/\partial n = 0\)이므로 어느 경우든 오른쪽이 0이다. 로빈 경우는 \(\partial w/\partial n = -(\alpha/\beta)w\)이므로 오른쪽이 \(-(\alpha/\beta)\oint w^2\,da \le 0\)이다. 왼쪽은 0 이상이므로 두 쪽이 모두 0이다. 피적분 함수 \(\lvert\nabla w\rvert^2\)이 연속이고 0 이상이므로 \(V\)에서 \(\nabla w = 0\), 곧 \(w\)는 상수다(\(V\)가 연결이므로). 디리클레·섞인 경우에는 \(S\)나 \(S_1\)에서 \(w = 0\)이므로, 로빈 경우에는 \(\oint w^2\,da = 0\)이므로 그 상수가 0이다. 노이만 경우에는 상수가 남는다. 바깥 영역에서는 \(S\)와 반지름 \(R\)인 큰 구면 사이에 항등식을 쓰면 큰 구면의 기여가 \((C/R)(C/R^2)(4\pi R^2) = 4\pi C^2/R \to 0\)이다. \(\square\)</p>
+    <p>노이만 문제에는 해가 있기 위한 조건도 있다. 푸아송 방정식을 \(V\)에서 적분하고 발산 정리를 쓰면</p>
+    <div class="formula" id="eq-neumann-compatibility">\[ \oint_S\frac{\partial u}{\partial n}\,da = -\iiint_Vf\,d^3r \]</div>
+    <p>이다. 정상 온도로 읽으면 경계로 들어오는 열과 안에서 나는 열의 합이 0이어야 한다는 말이다. 이 조건을 어기는 노이만 자료를 주면 정상 상태가 없고, 온도가 시간에 따라 계속 오르거나 내린다(<a class="ref" href="#prob-neumann-sphere"></a>). 경계값이 그림 17-1의 모서리처럼 불연속인 문제는 정리의 조건을 조금 어기지만, 유계인 해만 생각하면 같은 결론이 성립한다(최대 원리를 쓰는 다른 증명이 필요하다). 물리에서 이 정리가 하는 일은 분명하다. 어떤 방법으로든 방정식과 경계 조건을 모두 만족하는 함수를 찾으면 그것이 답이다.</p>
+    <p>확산 방정식에도 같은 생각이 통한다.</p>
+    <div class="box thm" id="thm-uniqueness-diffusion"><div class="box-h">확산 방정식 해의 유일성</div>
+      <p>유계 영역 \(V\)에서 \(\partial_tu = D\nabla^2u + s(\mathbf r, t)\)의 해 가운데, 초기 조건 \(u(\mathbf r, 0)\)과 경계 \(S\)의 디리클레 또는 노이만 조건을 만족하는 것은(2계 편미분이 연속일 때) 하나뿐이다.</p>
+      <p><b>증명.</b> 두 해의 차 \(w\)는 원천이 없는 확산 방정식, 동차 경계 조건, \(w(\mathbf r, 0) = 0\)을 만족한다. \(E(t) = \iiint_Vw^2\,d^3r\)를 미분하고 그린 제1 항등식을 쓰면 경계 항이 사라져</p>
+      <div class="formula" id="eq-diffusion-energy">\[ \begin{aligned} \frac{dE}{dt} &= 2D\iiint_Vw\,\nabla^2w\,d^3r \\ &= -2D\iiint_V\lvert\nabla w\rvert^2\,d^3r \le 0 \end{aligned} \]</div>
+      <p>이다. \(E(0) = 0\)이고 \(E\)는 늘지 않으면서 0 이상이므로 언제나 \(E = 0\), 곧 \(w = 0\)이다. \(\square\)</p>
+    </div>
+    <p>파동 방정식에서는 에너지 \(\iiint(w_t^2 + c^2\lvert\nabla w\rvert^2)\,d^3r\)가 보존된다는 것으로 같은 결론을 얻는다. 17.3절과 17.4절의 급수 해도 따라서 유일한 답이다.</p>
+
+    <h3 id="s7-mean-value">평균값 성질</h3>
+    <p>17.6절에서 구의 중심 온도가 표면 온도의 평균임을 보았다. 이것은 구 문제에만 있는 우연이 아니다.</p>
+    <div class="box thm" id="thm-mean-value-harmonic"><div class="box-h">조화 함수의 평균값 성질</div>
+      <p>\(u\)가 열린 영역 \(V\)에서 조화 함수(\(\nabla^2u = 0\), 2계 편미분 연속)이고, 중심 \(\mathbf r_0\), 반지름 \(R\)인 닫힌 공이 \(V\) 안에 들어 있으면 \(u(\mathbf r_0)\)는 그 구면 위 \(u\)의 평균과 같다.</p>
+      <div class="formula" id="eq-mean-value">\[ u(\mathbf r_0) = \frac{1}{4\pi R^2}\oint_{\lvert\mathbf r - \mathbf r_0\rvert = R}u\,da \]</div>
+      <p>공 전체에서의 부피 평균과도 같다. 2차원에서는 원 위의 평균이다.</p>
+    </div>
+    <p><b>증명.</b> 반지름 \(\rho\)인 구면 위의 평균을 입체각으로 쓰자: \(\bar u(\rho) = \tfrac{1}{4\pi}\oint u(\mathbf r_0 + \rho\hat{\mathbf n})\,d\Omega\). 적분 영역(단위 구면)은 \(\rho\)에 기대지 않으므로 미분을 적분 안으로 넣을 수 있고, \(\partial_\rho u(\mathbf r_0 + \rho\hat{\mathbf n}) = \hat{\mathbf n}\cdot\nabla u\)이다. \(da = \rho^2\,d\Omega\)와 발산 정리를 쓰면</p>
+    <div class="formula" id="eq-mean-value-proof">\[ \begin{aligned} \frac{d\bar u}{d\rho} &= \frac{1}{4\pi}\oint\hat{\mathbf n}\cdot\nabla u\,d\Omega = \frac{1}{4\pi\rho^2}\oint_{S_\rho}\nabla u\cdot d\mathbf a \\ &= \frac{1}{4\pi\rho^2}\iiint_{B_\rho}\nabla^2u\,d^3r = 0 \end{aligned} \]</div>
+    <p>이다. 따라서 \(\bar u(\rho)\)는 \(\rho\)에 기대지 않는 상수이고, \(u\)가 연속이므로 \(\rho \to 0\)의 값 \(u(\mathbf r_0)\)와 같다. 부피 평균은 \(\bar u(\rho) = u(\mathbf r_0)\)에 \(4\pi\rho^2\,d\rho\)를 곱해 0에서 \(R\)까지 적분하고 \(\tfrac43\pi R^3\)으로 나누면 된다. 2차원에서는 \(4\pi\rho^2\)을 \(2\pi\rho\)로 바꾸면 같다. \(\square\)</p>
+    <p>이 성질을 조화 함수의 <span class="term">평균값 성질</span> <span class="en">(mean value property)</span>이라 한다. 이 정리를 정전기학으로 읽어 보자. 구 밖에 있는 점전하의 퍼텐셜은 구 안에서 조화 함수이므로, 그 퍼텐셜의 구면 평균은 중심의 퍼텐셜 \(q/(4\pi\varepsilon_0d)\)와 같다. \(1/\lvert\mathbf r - \mathbf r'\rvert\)이 두 점에 대해 대칭이므로 원천과 관측점을 바꾸면, 고르게 대전된 구 껍질이 바깥의 점에 만드는 퍼텐셜은 전하가 모두 중심에 있을 때와 같다는 뉴턴의 껍질 정리다. 2차원 판은 19장에서 해석 함수의 원 평균(<a href="ch19.html#eq-mean-value-analytic">식 (19.13)</a>)으로 얻었다. 4장의 이산판(<a href="ch04.html#eq-laplacian-average">식 (4.41)</a>)이 "이웃 여섯 점의 평균과 \(h^2\) 차수까지 같다"였다면, 이 정리는 구면 위의 평균과 정확히 같다는 것이다.</p>
+    <div class="box thm" id="thm-maximum-principle"><div class="box-h">최대 원리</div>
+      <p>유계이고 연결된 영역 \(V\)에서 조화이고 \(V \cup S\)에서 연속인 \(u\)는 최댓값과 최솟값을 경계 \(S\) 위에서 갖는다. \(V\) 안의 한 점에서 최댓값(또는 최솟값)을 가지면 \(u\)는 상수다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>최댓값 \(M\)을 안쪽 점 \(\mathbf r_0\)에서 갖는다고 하자. \(V\) 안에 들어가는 작은 공을 잡으면 평균값 성질에서 \(M = u(\mathbf r_0)\)는 공 위 \(u\)의 부피 평균이다. 그런데 공 위에서 \(u \le M\)이므로, 어느 한 점에서라도 \(u &lt; M\)이면 연속성 때문에 그 근방에서도 \(u &lt; M\)이라 평균이 \(M\)보다 작아진다. 따라서 공 전체에서 \(u = M\)이다. 그러므로 \(u = M\)인 점의 집합은 열려 있다. 연속성 때문에 이 집합은 \(V\) 안에서 닫혀 있기도 하고, \(V\)가 연결이므로 \(V\) 전체다. 최솟값은 \(-u\)에 같은 논리를 쓴다. \(V \cup S\)는 유계이고 닫혀 있으므로 \(u\)는 거기서 최댓값을 갖는다. 그 점이 안쪽이면 \(u\)는 상수라 경계에서도 같은 값이다.</p>
+      </details>
+    </div>
+    <p>이것을 <span class="term">최대 원리</span> <span class="en">(maximum principle)</span>라 한다. 열원이 없는 물체의 정상 온도는 안쪽에 가장 뜨거운 점이나 가장 차가운 점을 가질 수 없다. 17.6절의 공에서 모든 온도가 20 °C와 60 °C 사이에 있었던 것도, 그림 17-1의 퍼텐셜이 0과 \(V_0\) 사이에 있었던 것도 이 때문이다. 최대 원리는 디리클레 문제의 유일성을 다시 준다. 두 해의 차는 경계에서 0이므로 최댓값도 최솟값도 0이다.</p>
+
+    <div class="box ex" id="ex-earnshaw"><div class="box-h">언쇼 정리: 정전기장만으로는 전하를 가둘 수 없다</div>
+      <p>고정된 전하들이 만드는 정전기장 속에서, 그 전하들이 없는 영역에 시험 전하 \(q\)를 놓는다. (가) \(q\)가 안정한 평형에 있을 수 없음을 보여라. (나) 두 전하 \(Q = 10\ \text{nC}\)를 \(z = \pm d\) (\(d = 5.0\ \text{cm}\))에 두고, 가운데에 \(q = +1.0\ \text{nC}\), 질량 \(m = 1.0\ \text{g}\)인 작은 공을 놓는다(중력은 생각하지 않는다. 우주 정거장 안이라고 하자). 원점 근처의 퍼텐셜 에너지를 2차까지 전개해 각 방향의 용수철 상수를 구하고, 공이 옆으로 벗어나는 빠르기를 구하라.</p>
+      <p><b>풀이.</b> (가) 퍼텐셜 에너지 \(U = qV\)이고, 전하가 없는 영역에서 \(V\)는 조화 함수다. 안정한 평형이려면 \(U\)가 그 점에서 엄격한 극소, 곧 둘레의 모든 점보다 작아야 한다. 그러나 <a class="ref" href="#thm-mean-value-harmonic"></a>에 따라 \(U(\mathbf r_0)\)는 작은 구면 위 \(U\)의 평균과 같으므로, 구면 위의 모든 점에서 \(U > U(\mathbf r_0)\)일 수 없다. 2차 전개로 보면 \(U \approx U_0 + \tfrac12(k_xx^2 + k_yy^2 + k_zz^2)\)에서 \(\nabla^2U = k_x + k_y + k_z = 0\)이므로 세 용수철 상수가 모두 양수일 수 없다. 이것이 <span class="term">언쇼 정리</span> <span class="en">(Earnshaw's theorem)</span>다. 중력 퍼텐셜 에너지 \(mgz\)도 \(\nabla^2(mgz) = 0\)이므로, 중력을 더해도 세 용수철 상수의 합은 여전히 0이다.</p>
+      <p>(나) 12장의 다중극 전개(<a href="ch12.html#eq-multipole-expansion">식 (12.24)</a>)에서 \(r &lt; d\)이면 \(1/\lvert\mathbf r \mp d\hat{\mathbf z}\rvert = \sum_l(\pm1)^lr^lP_l(\cos\theta)/d^{l+1}\)이다. 두 전하를 더하면 홀수 \(l\)이 지워지고</p>
+      <div class="formula" id="eq-earnshaw-expansion">\[ \begin{aligned} U &= \frac{qQ}{4\pi\varepsilon_0}\Big[\frac2d + \frac{2r^2P_2(\cos\theta)}{d^3} + O\Big(\frac{r^4}{d^5}\Big)\Big] \\ &= \frac{qQ}{4\pi\varepsilon_0}\Big[\frac2d + \frac{2z^2 - x^2 - y^2}{d^3}\Big] + \cdots \end{aligned} \]</div>
+      <p>이다(\(r^2P_2 = \tfrac12(3z^2 - r^2)\)). 따라서 \(k_z = 4qQ/(4\pi\varepsilon_0d^3)\), \(k_x = k_y = -2qQ/(4\pi\varepsilon_0d^3)\)이고 합이 0이다. 공은 축 방향으로는 되돌아오지만 옆으로는 밀려난다. 옆 방향의 운동 방정식 \(m\ddot x = \lvert k_x\rvert x\)의 해는 \(e^{\pm\kappa t}\), \(\kappa = \sqrt{\lvert k_x\rvert/m}\)이다.</p>
+      <p><b>숫자로 보기.</b> \(qQ/(4\pi\varepsilon_0d^3) = (8.99 \times 10^9)(1.0 \times 10^{-9})(10 \times 10^{-9})/(0.050)^3\ \text{N/m} = 7.19 \times 10^{-4}\ \text{N/m}\)이므로</p>
+      <div class="formula">\[ \begin{aligned} k_z &= 2.88 \times 10^{-3}\ \text{N/m} \\ \omega_z &= \sqrt{k_z/m} = 1.70\ \text{s}^{-1} \\ k_x &= -1.44 \times 10^{-3}\ \text{N/m} \\ \kappa &= \sqrt{\lvert k_x\rvert/m} = 1.20\ \text{s}^{-1} \end{aligned} \]</div>
+      <p>이다. 축 방향으로는 주기 \(2\pi/\omega_z = 3.7\ \text{s}\)로 진동하지만, 옆으로 조금만 벗어나도 \(1/\kappa = 0.83\ \text{s}\)마다 \(e\)배씩 멀어진다. 단위: \(\text{N}\cdot\text{m}^2/\text{C}^2 \times \text{C}^2/\text{m}^3 = \text{N/m}\).</p>
+      <p><b>다음 항은 몇 차인가.</b> 버린 \(l = 4\) 항은 2차 항보다 \((r/d)^2\)배 작다. 공이 \(r = 5\ \text{mm}\)까지 벗어나도 1% 정도이므로, 작은 변위에 대한 결론은 바뀌지 않는다.</p>
+    </div>
+    <div class="callout deep"><strong>이온을 가두는 방법</strong><p>언쇼 정리는 정적인 전기장에만 적용된다. 이온 덫은 이 가정을 피한다. 폴 덫은 위의 사중극 퍼텐셜(한 방향은 되돌리고 다른 방향은 밀어내는)의 부호를 라디오파 진동수로 빠르게 뒤집는다. 이온은 순간마다 한 방향으로 밀려나지만, 시간 평균하면 모든 방향으로 되돌아오는 유효 퍼텐셜을 느낀다. 페닝 덫은 축 방향은 정전기장으로, 옆 방향은 균일한 자기장의 로런츠 힘으로 가둔다(W. Paul, Rev. Mod. Phys. 62, 531 (1990)). 반자성 물질을 자기장으로 띄우는 것도 정리의 가정(고정된 전하나 자극이 만드는 장 속의 점전하)을 벗어나는 예다.</p></div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>보존 법칙과 흐름의 법칙에서 확산 방정식 \(\partial_tu = D\nabla^2u\), 그 정상 상태인 라플라스 방정식 \(\nabla^2u = 0\)(원천이 있으면 푸아송 방정식 \(\nabla^2u = -f\)), 파동 방정식 \(\partial_t^2u = c^2\nabla^2u\)가 나온다. 시간 의존성 \(e^{-i\omega t}\)를 떼면 헬름홀츠 방정식 \(\nabla^2\psi + k^2\psi = 0\)이 남는다.</li>
+      <li>세 방정식은 차례로 타원형·포물형·쌍곡형이다. 타원형은 닫힌 경계에서 조건 하나(디리클레 \(u\), 노이만 \(\partial u/\partial n\), 로빈 \(\alpha u + \beta\partial u/\partial n\)), 확산은 초기 조건 \(u\) 하나, 파동은 \(u\)와 \(\partial_tu\) 둘이 필요하다.</li>
+      <li>변수 분리: 곱의 꼴을 넣어 상미분방정식으로 나누고, 동차 조건이 있는 방향의 고유값 문제로 분리 상수를 정하고, 해를 더해 남은 조건을 고유함수 급수로 맞춘다. 고유함수가 충분하다는 보장은 스투름-리우빌 완비성 정리다.</li>
+      <li>고정된 줄: \(y = \sum\sin(n\pi x/L)(A_n\cos\omega_nt + B_n\sin\omega_nt)\), \(\omega_n = n\pi c/L\). 같은 해가 달랑베르 꼴 \(y = \tfrac12[y_0(x - ct) + y_0(x + ct)] + \tfrac{1}{2c}\int_{x-ct}^{x+ct}v_0\,ds\)(처음 상태를 홀함수로 늘임)로도 쓰인다.</li>
+      <li>확산 모드는 \(e^{-Dk_n^2t}\)로 사라지고 감쇠율이 \(n^2\)에 비례하므로 곧 가장 느린 모드만 남는다(\(\tau_1 = L^2/\pi^2D\)). 무작위 걸음의 퍼짐은 \(\langle x^2\rangle = 2Dt\)이다.</li>
+      <li>원형 막의 모드는 \(J_m(\alpha_{mn}s/a)\cos m\phi\), \(\omega_{mn} = c\alpha_{mn}/a\)이고, 영점이 첫 영점의 정수배가 아니라 배음이 정수배가 아니다. 원통 좌표의 라플라스 방정식은 분리 상수의 부호에 따라 \(J_m, Y_m\)과 \(e^{\pm kz}\), 또는 \(I_m, K_m\)과 \(\cos kz\)를 준다.</li>
+      <li>구면 좌표의 축대칭 일반해는 \(u = \sum_l(A_lr^l + B_lr^{-l-1})P_l(\cos\theta)\)이다. 안쪽 문제는 \(B_l = 0\), 바깥 문제는 \(A_l = 0\)이고, 계수는 표면값의 르장드르 급수에서 나온다.</li>
+      <li>라플라스·푸아송 방정식의 해는 디리클레 조건으로 하나뿐이고, 노이만 조건으로 상수를 빼고 하나뿐이다(그린 제1 항등식). 조화 함수의 값은 구면 위 평균과 같으므로 안쪽에 극대·극소가 없고(최대 원리), 정전기장만으로는 전하를 안정하게 가둘 수 없다(언쇼 정리).</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. 감쇠가 있는 줄의 방정식 \(u_{tt} + 2\gamma u_t = c^2u_{xx}\)의 유형은?</p><div class="opts">
+        <button class="opt">타원형</button>
+        <button class="opt">포물형. 1계 시간 도함수가 있기 때문이다.</button>
+        <button class="opt" data-correct>쌍곡형</button>
+        <button class="opt">\(\gamma\)의 크기에 따라 다르다.</button>
+      </div><div class="quiz-exp">유형은 2계 항만으로 정한다. \(c^2u_{xx} - u_{tt}\)에서 \(A = c^2\), \(B = 0\), \(C = -1\)이므로 \(B^2 - AC = c^2 > 0\), 쌍곡형이다. \(2\gamma u_t\)는 1계 항이라 유형을 바꾸지 않는다. 확산 방정식이 포물형인 것은 2계 시간 도함수가 없어서 \(C = 0\)이기 때문이다.</div></div>
+      <div class="quiz-q"><p>2. 길이 \(L\)인 막대의 양 끝이 단열되어 있다. 확산 방정식을 변수 분리로 풀 때 나오는 공간 고유함수는?</p><div class="opts">
+        <button class="opt">\(\sin(n\pi x/L)\), \(n = 1, 2, \ldots\)</button>
+        <button class="opt" data-correct>\(\cos(n\pi x/L)\), \(n = 0, 1, 2, \ldots\)</button>
+        <button class="opt">\(\sin\big((n - \tfrac12)\pi x/L\big)\), \(n = 1, 2, \ldots\)</button>
+        <button class="opt">\(e^{\pm n\pi x/L}\)</button>
+      </div><div class="quiz-exp">단열 끝은 \(\partial_xu = 0\)(노이만 조건)이다. \(X = \cos kx\)이면 \(X'(0) = 0\)이 저절로 성립하고, \(X'(L) = -k\sin kL = 0\)에서 \(k = n\pi/L\)이다. \(n = 0\)인 상수 모드는 감쇠하지 않고 평균 온도를 지킨다. 셋째 보기는 한 끝은 고정, 다른 끝은 단열일 때의 고유함수다.</div></div>
+      <div class="quiz-q"><p>3. 양 끝이 고정된 막대의 확산 모드 \(n = 3\)은 \(n = 1\)보다 몇 배 빨리 사라지는가? 같은 길이의 줄에서 모드 \(n = 3\)의 진동수는 기본 진동수의 몇 배인가?</p><div class="opts">
+        <button class="opt">3배, 3배</button>
+        <button class="opt">9배, 9배</button>
+        <button class="opt" data-correct>9배, 3배</button>
+        <button class="opt">3배, 9배</button>
+      </div><div class="quiz-exp">확산 모드의 감쇠율은 \(Dk_n^2 \propto n^2\)이므로 9배다. 줄의 각진동수는 \(\omega_n = ck_n \propto n\)이므로 3배다. 시간 도함수가 1계이냐 2계이냐가 \(k^2\)과 \(k\)의 차이를 만든다.</div></div>
+      <div class="quiz-q"><p>4. 이상적인 원형 막의 배음이 기본 진동수의 정수배가 아닌 이유는?</p><div class="opts">
+        <button class="opt">막의 장력이 방향마다 다르기 때문이다.</button>
+        <button class="opt">막이 2차원이라 모드가 두 지수 \((m, n)\)으로 정해지기 때문이다.</button>
+        <button class="opt" data-correct>진동수가 베셀 함수의 영점 \(\alpha_{mn}\)에 비례하는데, 이 영점들이 첫 영점의 정수배가 아니기 때문이다.</button>
+        <button class="opt">가운데에서 유한해야 한다는 조건 때문에 \(Y_m\)을 버렸기 때문이다.</button>
+      </div><div class="quiz-exp">\(\omega_{mn} = c\alpha_{mn}/a\)이고, \(\alpha_{01} : \alpha_{11} : \alpha_{21} : \alpha_{02} = 1 : 1.593 : 2.136 : 2.295\)이다. 1차원이어도 밀도가 고르지 않은 줄이나 양 끝이 자유로운 막대(실로폰)는 배음이 정수배가 아니다. 지수가 둘이라는 것만으로는 이유가 되지 않고, 고유값 조건의 근이 고르게 늘어서지 않는 것이 핵심이다.</div></div>
+      <div class="quiz-q"><p>5. 열원이 없는 공의 표면 온도가 \(T(\theta) = 20 + 10\cos\theta + 30\cos^2\theta\) (°C)로 유지된다. 정상 상태에서 공 중심의 온도는?</p><div class="opts">
+        <button class="opt">20 °C</button>
+        <button class="opt" data-correct>30 °C</button>
+        <button class="opt">35 °C</button>
+        <button class="opt">60 °C</button>
+      </div><div class="quiz-exp">평균값 성질에 따라 중심 온도는 표면 온도의 평균이다. 구면 위에서 \(\cos\theta\)의 평균은 0, \(\cos^2\theta\)의 평균은 \(\tfrac12\int_{-1}^1x^2\,dx = \tfrac13\)이므로 \(20 + 0 + 10 = 30\ ^\circ\text{C}\)이다.</div></div>
+      <div class="quiz-q"><p>6. 영역의 경계 전체에서 법선 도함수 \(\partial u/\partial n\)만 주어진 라플라스 방정식의 해에 대해 옳은 것은?</p><div class="opts">
+        <button class="opt">해는 언제나 하나뿐이다.</button>
+        <button class="opt" data-correct>해가 있으면 더하는 상수만큼의 차이를 빼고 하나뿐이고, 해가 있으려면 \(\oint\partial u/\partial n\,da = 0\)이어야 한다.</button>
+        <button class="opt">경계 조건이 값이 아니므로 해가 무한히 많고 서로 임의로 다를 수 있다.</button>
+        <button class="opt">해는 언제나 있지만 하나로 정해지지 않는다.</button>
+      </div><div class="quiz-exp">두 해의 차 \(w\)에 대해 \(\int\lvert\nabla w\rvert^2 = \oint w\,\partial_nw = 0\)이므로 \(w\)는 상수다. 또 \(\nabla^2u = 0\)을 적분하면 \(\oint\partial_nu\,da = 0\)이 나오므로, 이 조건을 어기는 자료에는 해가 없다(식 <a class="ref" href="#eq-neumann-compatibility"></a>).</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-pde-classify" data-level="1"><p>다음 방정식의 유형을 판정하라. (가) \(u_{xx} + 4u_{xy} + 3u_{yy} = 0\) (나) \(u_{xx} + 2u_{xy} + u_{yy} = 0\) (다) \(D(u_{xx} + u_{yy}) - v\,u_x = 0\) (흐름 속의 정상 확산) (라) \(y\,u_{xx} + u_{yy} = 0\). (가)의 연산자는 \((\partial_x + \partial_y)(\partial_x + 3\partial_y)\)로 인수분해된다. 이것으로 (가)의 일반해를 달랑베르 꼴로 써라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(A = 1\), \(2B = 4\), \(C = 3\)이므로 \(B^2 - AC = 4 - 3 = 1 > 0\), 쌍곡형이다. (나) \(A = B = C = 1\)이라 \(B^2 - AC = 0\), 포물형이다. (다) 2계 항은 라플라스 방정식과 같으므로 \(B^2 - AC = -D^2 &lt; 0\), 타원형이다. 1계 항 \(-vu_x\)는 유형과 상관이 없다. (라) \(A = y\), \(B = 0\), \(C = 1\)이므로 \(B^2 - AC = -y\)이다. \(y > 0\)인 반평면에서는 타원형, \(y &lt; 0\)에서는 쌍곡형이다. 계수가 변수에 기대면 유형이 점마다 달라질 수 있다(트리코미 방정식).</p>
+        <p>(가)의 일반해: \((\partial_x + \partial_y)\)는 \(x - y\)만의 함수를 0으로 보내고, \((\partial_x + 3\partial_y)\)는 \(3x - y\)만의 함수를 0으로 보낸다(\(\partial_xG(3x - y) + 3\partial_yG(3x - y) = 3G' - 3G' = 0\)). 두 인수는 교환하므로 \(u = F(x - y) + G(3x - y)\)이다. 파동 방정식 \((\partial_t - c\partial_x)(\partial_t + c\partial_x)y = 0\)에서 \(F(x - ct) + G(x + ct)\)가 나온 것과 같은 구조다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-rectangle-plate" data-level="1"><p>변이 \(a\), \(b\)인 직사각형 판의 세 변이 0 °C이고, 윗변 \(y = b\)의 온도가 \(u(x, b) = u_0\sin(\pi x/a)\)로 유지된다. 판의 정상 온도를 구하라. 정사각형(\(b = a\))이고 \(u_0 = 50\ ^\circ\text{C}\)일 때 중심의 온도는?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>17.2절의 분리에서 \(\sin(n\pi x/a)\sinh(n\pi y/a)\)의 합을 쓴다. 윗변의 값이 이미 \(n = 1\) 고유함수 하나이므로 직교성에 따라 \(c_1\sinh(\pi b/a) = u_0\)이고 나머지 계수는 0이다.</p>
+        <div class="formula">\[ u(x, y) = u_0\,\sin\frac{\pi x}{a}\,\frac{\sinh(\pi y/a)}{\sinh(\pi b/a)} \]</div>
+        <p>정사각형의 중심에서는 \(u = u_0\sinh(\pi/2)/\sinh\pi = u_0/(2\cosh(\pi/2)) = 0.1993u_0 = 9.96\ ^\circ\text{C}\)이다. 윗변 가운데의 50 °C가 아래로 \(a/2\) 내려오는 동안 \(1/5\) 정도로 줄었다. 윗변 전체가 \(u_0\)일 때의 중심값 \(0.25u_0\)(17.2절)보다 작은 것은, 이 경계값이 모서리로 갈수록 줄어 평균이 \(2u_0/\pi\)이기 때문이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-cube-degeneracy" data-level="1"><p>한 변 \(L\)인 정육면체 상자 속 입자의 파동함수는 헬름홀츠 방정식 \(\nabla^2\psi + k^2\psi = 0\)과 벽에서 \(\psi = 0\)을 만족하고, 에너지는 \(E = \hbar^2k^2/2m\)이다. 변수 분리로 허용되는 \(k^2\)을 구하라. 가장 낮은 여섯 준위의 \(E/E_{111}\)과 겹침수를 구하고, 겹침수가 처음으로 6이 되는 준위를 찾아라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(\psi = XYZ\)로 두면 \(X''/X + Y''/Y + Z''/Z = -k^2\)이고, 세 방향 모두 두 끝에서 \(\psi = 0\)이므로 \(X = \sin(n_x\pi x/L)\) 등이다. 따라서 \(k^2 = (\pi/L)^2(n_x^2 + n_y^2 + n_z^2)\), \(n_i = 1, 2, \ldots\)이고 \(E/E_{111} = (n_x^2 + n_y^2 + n_z^2)/3\)이다. \(N = n_x^2 + n_y^2 + n_z^2\)을 세면 다음과 같다.</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>\(N\)</th><th>\((n_x, n_y, n_z)\)</th><th>\(E/E_{111}\)</th><th>겹침수</th></tr></thead>
+          <tbody>
+            <tr><td>3</td><td>(1, 1, 1)</td><td>1</td><td>1</td></tr>
+            <tr><td>6</td><td>(2, 1, 1)의 순열</td><td>2</td><td>3</td></tr>
+            <tr><td>9</td><td>(2, 2, 1)의 순열</td><td>3</td><td>3</td></tr>
+            <tr><td>11</td><td>(3, 1, 1)의 순열</td><td>11/3</td><td>3</td></tr>
+            <tr><td>12</td><td>(2, 2, 2)</td><td>4</td><td>1</td></tr>
+            <tr><td>14</td><td>(3, 2, 1)의 순열</td><td>14/3</td><td>6</td></tr>
+          </tbody>
+        </table></div>
+        <p>세 수가 모두 다른 \((3, 2, 1)\)에서 처음으로 \(3! = 6\)겹이 된다. 겹침은 정육면체의 대칭(축을 바꾸는 것)에서 온다. 변의 길이가 모두 다른 상자에서는 대부분 풀린다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-hammer-string" data-level="2"><p>끝없이 긴 곧은 줄(파동 속력 \(c\))의 \(\lvert x\rvert &lt; w\) 부분을 해머가 쳐서, \(t = 0\)에 변위는 0이고 속도가 \(\lvert x\rvert &lt; w\)에서 \(V\), 그 밖에서 0이 되었다. (가) 달랑베르 해로 \(x = 0\)의 변위 \(y(0, t)\)를 모든 \(t > 0\)에서 구하라. (나) 오래 지난 뒤 줄의 모양을 설명하라. (다) \(w = 5.0\ \text{mm}\), \(V = 1.0\ \text{m/s}\), \(c = 429\ \text{m/s}\)이면 \(x = 0\)은 결국 얼마나 올라가는가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 식 <a class="ref" href="#eq-dalembert"></a>에서 \(y_0 = 0\)이므로 \(y(x, t) = \tfrac{V}{2c}\times(\text{구간 }[x - ct, x + ct]\text{와 }[-w, w]\text{가 겹치는 길이})\)이다. \(x = 0\)이면 겹치는 길이가 \(\min(2ct, 2w)\)이므로 \(t &lt; w/c\)에서 \(y(0, t) = Vt\), \(t \ge w/c\)에서 \(y(0, t) = Vw/c\)이다. 처음에는 받은 속도 그대로 올라가다가, 해머 자국의 가장자리에서 출발한 신호가 도착하는 \(t = w/c\)에 멈춘다.</p>
+        <p>(나) \(ct > w\)이면 \(\lvert x\rvert &lt; ct - w\)에서 높이 \(Vw/c\)로 평평하고, \(ct - w &lt; \lvert x\rvert &lt; ct + w\)에서 직선으로 0까지 내려가는 사다리꼴이다. 사다리꼴은 양쪽으로 속력 \(c\)로 넓어지고 줄은 원래 자리로 돌아오지 않는다. 처음에 준 운동량 \(2\mu wV\)는 보존되는데, 넓어지는 평평한 부분의 두 가장자리가 속력 \(c\)로 움직이며 그 운동량을 실어 나른다(변위의 넓이가 \(2c\cdot Vw/c = 2Vw\)의 빠르기로 는다).</p>
+        <p>(다) \(Vw/c = (1.0\ \text{m/s})(0.0050\ \text{m})/(429\ \text{m/s}) = 1.2 \times 10^{-5}\ \text{m} = 12\ \mu\text{m}\)이고, 그때까지 걸리는 시간은 \(w/c = 12\ \mu\text{s}\)이다. 14장 <a href="ch14.html#ex-string-harmonics">예제 14.6</a>의 친 줄을 끝없이 긴 줄에서 시간에 따라 본 것이다. 끝이 고정된 줄이라면 사다리꼴의 가장자리가 끝에서 뒤집혀 돌아와 변위를 지운다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-guitar-tension" data-level="1"><p>길이 \(L = 0.650\ \text{m}\), 선밀도 \(\mu = 5.0\ \text{g/m}\)인 기타 줄이 기본 진동수 110 Hz(A2음)를 내도록 하려면 장력이 얼마여야 하는가? 장력을 바꾸어 반음(진동수 \(2^{1/12}\)배) 올리려면 장력을 몇 % 늘려야 하는가? 대신 줄을 짧게 눌러 반음 올린다면 첫째 프렛은 줄 끝에서 얼마나 떨어져야 하는가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>식 <a class="ref" href="#eq-string-modes"></a>에서 \(f_1 = c/2L\)이므로 \(c = 2Lf_1 = 2(0.650)(110)\ \text{m/s} = 143\ \text{m/s}\)이고, \(c = \sqrt{T/\mu}\)에서 \(T = \mu c^2 = (5.0 \times 10^{-3}\ \text{kg/m})(143\ \text{m/s})^2 = 102\ \text{N}\)이다. \(f \propto \sqrt T\)이므로 반음 올리려면 \(T\)가 \(2^{1/6} = 1.122\)배, 곧 12.2% 늘어야 한다. 길이로 올리면 \(f \propto 1/L\)이므로 \(L' = L/2^{1/12} = 0.6135\ \text{m}\)이고, 프렛은 줄 끝(너트)에서 \(0.650 - 0.6135 = 0.036\ \text{m} = 3.6\ \text{cm}\)에 있다. 단위: \((\text{kg/m})(\text{m/s})^2 = \text{kg}\cdot\text{m/s}^2 = \text{N}\).</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-rod-steady-transient" data-level="2"><p><a class="ref" href="#ex-rod-cooling"></a>의 구리 막대(\(L = 0.40\ \text{m}\), \(\tau_1 = 139\ \text{s}\))가 처음에 고르게 0 °C이다. \(t = 0\)부터 왼쪽 끝을 100 °C, 오른쪽 끝을 0 °C로 유지한다. (가) \(u(x, t)\)를 구하라. (나) 가운데 온도가 최종값의 90%가 되는 시각을 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 정상 상태는 \(u_s = 100\ ^\circ\text{C}\,(1 - x/L)\)이다. \(v = u - u_s\)는 동차 조건과 초기 조건 \(v(x, 0) = -u_s(x)\)를 만족한다. \(1 - x/L\)의 사인 계수는 \(\tfrac2L\int_0^L(1 - x/L)\sin(n\pi x/L)\,dx = 2/(n\pi)\)이므로 식 <a class="ref" href="#eq-diffusion-modes"></a>에서</p>
+        <div class="formula">\[ \begin{aligned} u(x, t) &= 100\ ^\circ\text{C}\,\Big(1 - \frac xL\Big) \\ &\quad - \sum_{n=1}^\infty\frac{200\ ^\circ\text{C}}{n\pi}\sin\frac{n\pi x}{L}\,e^{-n^2t/\tau_1} \end{aligned} \]</div>
+        <p>이다. 이번에는 짝수 모드도 있다. 초기 조건 \(-u_s\)가 가운데에 대해 대칭이 아니기 때문이다.</p>
+        <p>(나) 가운데에서는 짝수 모드가 \(\sin(n\pi/2) = 0\)으로 사라지고, 최종값은 50 °C다. 첫 항만 남기면 \(50 - (200/\pi)e^{-t/\tau_1} = 45\)에서 \(e^{-t/\tau_1} = 5\pi/200\), \(t = \tau_1\ln(40/\pi) = 2.54\tau_1 = 353\ \text{s}\)이다. 그때 \(n = 3\) 항은 \((200/3\pi)e^{-9 \times 2.54} \approx 2 \times 10^{-9}\ ^\circ\text{C}\)라 무시할 수 있고, 급수 전체로 구한 값도 352.5 s다. 막대를 데우는 데도 식힐 때와 같은 시간 상수가 걸린다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-diffusion-time" data-level="1"><p>물속에서 확산 계수가 \(D = 1.0 \times 10^{-9}\ \text{m}^2/\text{s}\)인 분자가 한 방향으로 평균 제곱근 거리 1 μm, 1 mm, 1 cm만큼 퍼지는 데 걸리는 시간을 구하라. 3차원에서 \(\sqrt{\langle r^2\rangle} = 1\ \text{mm}\)가 되는 시간은? 컵에 넣은 설탕을 저어야 하는 이유를 설명하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>식 <a class="ref" href="#eq-diffusion-msd"></a>에서 \(t = x^2/2D\)이다. 1 μm는 \((10^{-6})^2/(2 \times 10^{-9})\ \text{s} = 5 \times 10^{-4}\ \text{s}\), 1 mm는 500 s(약 8분), 1 cm는 \(5.0 \times 10^4\ \text{s}\)(약 14시간)이다. 3차원에서는 \(\langle r^2\rangle = 6Dt\)이므로 \(t = (10^{-3})^2/(6 \times 10^{-9})\ \text{s} = 167\ \text{s}\)이다. 걸리는 시간이 거리의 제곱으로 늘어서, 세포 하나(약 10 μm) 안에서는 확산이 0.05 s 만에 끝나지만 컵(반지름 약 4 cm) 전체에 퍼지려면 \((0.04\ \text{m})^2/(2D) = 8 \times 10^5\ \text{s}\), 열흘 가까이 걸린다. 저으면 흐름이 설탕을 컵 전체로 실어 나르고(속력에 비례해 거리를 가는 운동), 확산은 흐름이 만든 가는 줄무늬 사이의 짧은 거리만 메우면 된다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-drum-tuning" data-level="2"><p><a class="ref" href="#ex-drum-modes"></a>의 북(\(a = 0.20\ \text{m}\), \(T = 2000\ \text{N/m}\), \(\sigma = 0.20\ \text{kg/m}^2\))에 대해 (가) \((0, 3)\) 모드의 마디 원의 반지름을 구하라. (나) 기본 진동수를 220 Hz로 올리려면 장력을 얼마로 해야 하는가? (다) 장력, 면밀도, 반지름을 어떻게 바꾸어도 \(f_{11}/f_{01}\)을 1.5(완전 5도)로 만들 수 없는 이유는?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(J_0(\alpha_{03}s/a) = 0\)인 \(s &lt; a\)는 \(s = a\,\alpha_{01}/\alpha_{03}\), \(a\,\alpha_{02}/\alpha_{03}\)이다. \(\alpha_{01}/\alpha_{03} = 2.4048/8.6537 = 0.278\), \(\alpha_{02}/\alpha_{03} = 5.5201/8.6537 = 0.638\)이므로 반지름은 5.6 cm와 12.8 cm이다.</p>
+        <p>(나) \(f_{01} \propto c \propto \sqrt T\)이므로 \(T' = T(220/191.4)^2 = 2000 \times 1.321\ \text{N/m} = 2.64 \times 10^3\ \text{N/m}\), 곧 32% 늘려야 한다.</p>
+        <p>(다) \(f_{11}/f_{01} = \alpha_{11}/\alpha_{01} = 3.8317/2.4048 = 1.593\)이다. \(c\)와 \(a\)는 모든 모드에 같은 인수로 곱해지므로 비에서 지워지고, 비는 베셀 함수의 영점만으로 정해진다. 비를 바꾸려면 막의 방정식이나 경계 조건 자체를 바꾸어야 한다. 팀파니에서는 공기가 그 일을 한다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-cylinder-temperature" data-level="3"><p>반지름 \(a\), 높이 \(h\)인 원기둥의 옆면과 아랫면은 0 °C이고, 윗면 \(z = h\)는 \(u_0\)으로 유지된다. (가) 정상 온도를 식 <a class="ref" href="#eq-laplace-cylindrical-general"></a>로 구하라. 적분 \(\int_0^\alpha xJ_0(x)\,dx = \alpha J_1(\alpha)\)를 써도 된다. (나) \(h = 2a\)일 때 중심(\(s = 0\), \(z = a\))의 온도를 \(u_0\)의 몇 배인지 소수 넷째 자리까지 구하라. \(J_1(\alpha_{01}) = 0.5191\), \(J_1(\alpha_{02}) = -0.3403\), \(J_1(\alpha_{03}) = 0.2715\)이다.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 축대칭이므로 \(m = 0\)이다. 옆면에서 \(u = 0\)이므로 지름 방향이 고유값 문제이고, 첫 줄을 써서 \(J_0(ks)\), \(J_0(ka) = 0\), \(k = \alpha_{0n}/a\)이다. 축에서 유한해야 하므로 \(Y_0\)은 버리고, \(z = 0\)에서 0이어야 하므로 \(e^{\pm kz}\)를 묶어 \(\sinh kz\)를 쓴다.</p>
+        <div class="formula">\[ u = \sum_{n=1}^\infty c_nJ_0\Big(\frac{\alpha_{0n}s}{a}\Big)\frac{\sinh(\alpha_{0n}z/a)}{\sinh(\alpha_{0n}h/a)} \]</div>
+        <p>윗면에서 \(u_0 = \sum c_nJ_0(\alpha_{0n}s/a)\)은 푸리에-베셀 급수(<a href="ch13.html#eq-fourier-bessel">13장 식 (13.23)</a>)이다. \(x = \alpha_{0n}s/a\)로 바꾸면 \(\int_0^aJ_0(\alpha_{0n}s/a)\,s\,ds = (a^2/\alpha_{0n})J_1(\alpha_{0n})\)이므로</p>
+        <div class="formula">\[ \begin{aligned} c_n &= \frac{2u_0}{a^2J_1(\alpha_{0n})^2}\cdot\frac{a^2J_1(\alpha_{0n})}{\alpha_{0n}} \\ &= \frac{2u_0}{\alpha_{0n}J_1(\alpha_{0n})} \end{aligned} \]</div>
+        <p>이다. (나) \(s = 0\)에서 \(J_0 = 1\), \(z = a\), \(h = 2a\)이면 \(\sinh\alpha/\sinh2\alpha = 1/(2\cosh\alpha)\)이므로 \(u/u_0 = \sum_n1/(\alpha_{0n}J_1(\alpha_{0n})\cosh\alpha_{0n})\)이다. 세 항은 \(0.14346\), \(-0.00427\), \(+0.00015\)이고 합은 \(0.1393\)이다. 넷째 항은 \(-6 \times 10^{-6}\)이다. 한 면만 뜨거운 정육면체의 중심값 \(1/6 = 0.1667\)보다 작다. 중심에서 본 윗면의 입체각이 전체의 14.6%로, 정육면체의 한 면(1/6)보다 작은 것과 어울린다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-sphere-cos2" data-level="2"><p>반지름 \(a = 10\ \text{cm}\)인 구면의 퍼텐셜이 \(V(a, \theta) = V_0\cos^2\theta\) (\(V_0 = 30\ \text{V}\))로 주어지고 안팎에 다른 전하가 없다. (가) 구 안과 밖의 퍼텐셜을 구하라. (나) 중심의 퍼텐셜이 표면 퍼텐셜의 평균과 같음을 확인하라. (다) 구 안의 전기장을 구하라. (라) 구면에 있는 전체 전하는?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(P_2 = \tfrac12(3x^2 - 1)\)에서 \(x^2 = \tfrac13 + \tfrac23P_2(x)\)이므로 표면값은 \(l = 0, 2\) 두 항뿐이다. 식 <a class="ref" href="#eq-sphere-interior"></a>과 그 바깥판에서</p>
+        <div class="formula">\[ \begin{aligned} V_{\text{안}} &= V_0\Big[\frac13 + \frac23\Big(\frac ra\Big)^2P_2(\cos\theta)\Big] \\ V_{\text{밖}} &= V_0\Big[\frac13\,\frac ar + \frac23\Big(\frac ar\Big)^3P_2(\cos\theta)\Big] \end{aligned} \]</div>
+        <p>이다. 두 식은 \(r = a\)에서 표면값과 맞고, 유일성 정리에 따라 답이다.</p>
+        <p>(나) 중심값은 \(V_0/3 = 10\ \text{V}\)이다. 표면 평균은 \(\tfrac12\int_{-1}^1V_0x^2\,dx = V_0/3\)으로 같다.</p>
+        <p>(다) \(r^2P_2 = \tfrac12(3z^2 - r^2) = z^2 - \tfrac12(x^2 + y^2)\)이므로 \(V_{\text{안}} = \tfrac{V_0}{3} + \tfrac{V_0}{3a^2}(2z^2 - x^2 - y^2)\)이고 \(\mathbf E = -\nabla V = \tfrac{2V_0}{3a^2}(x, y, -2z)\)이다. 중심에서 0이고, 극 \((0, 0, a)\)에서 \(-z\) 방향으로 \(4V_0/3a = 400\ \text{V/m}\)이다.</p>
+        <p>(라) 구 밖의 퍼텐셜에서 \(1/r\) 항이 전체 전하를 정한다: \(V_0a/(3r) = Q/(4\pi\varepsilon_0r)\). 따라서 \(Q = 4\pi\varepsilon_0aV_0/3 = (1.113 \times 10^{-10})(0.10)(10)\ \text{C} = 1.1 \times 10^{-10}\ \text{C}\)이다. \(l = 2\) 항은 전체 전하에 기여하지 않고 사중극을 만든다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-neumann-sphere" data-level="3"><p>반지름 \(a\)인 공(열전도도 \(k\), 열원 없음)의 표면에서 바깥으로 나가는 열흐름 밀도 \(-k\,\partial u/\partial r\)가 주어진다. (가) 열흐름이 \(q_0\cos\theta\)일 때 정상 온도를 구하라. 해는 얼마나 정해지는가? (나) 열흐름이 고르게 \(q_0\)이면 정상 상태가 없음을 보이고, 공의 평균 온도가 바뀌는 빠르기를 구하라. 구리 공(\(\rho c_p = 3.44 \times 10^6\ \text{J/(m}^3\cdot\text{K)}\), \(k = 401\ \text{W/(m}\cdot\text{K)}\)), \(a = 5.0\ \text{cm}\), \(q_0 = 1000\ \text{W/m}^2\)이면 (가)의 위아래 온도 차와 (나)의 빠르기는 얼마인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 식 <a class="ref" href="#eq-neumann-compatibility"></a>에서 \(f = 0\)이므로 \(\oint\partial u/\partial r\,da\)가 0이어야 하고, \(\oint\cos\theta\,d\Omega = 0\)이므로 조건이 성립한다. 안쪽 일반해 \(\sum A_lr^lP_l\)에서 \(\partial_ru\lvert_a = \sum lA_la^{l-1}P_l = -(q_0/k)P_1\)이므로 \(A_1 = -q_0/k\)이고 \(l \ge 2\)의 계수는 0이다. \(l = 0\)은 \(\partial_r\)에 나타나지 않으므로 \(A_0\)은 정해지지 않는다.</p>
+        <div class="formula">\[ u = A_0 - \frac{q_0}{k}\,r\cos\theta = A_0 - \frac{q_0}{k}\,z \]</div>
+        <p>이다. <a class="ref" href="#thm-uniqueness-laplace"></a>의 노이만 경우대로 해는 상수만큼 정해지지 않는다. 열이 위로 나가고 아래로 들어오므로 아래가 따뜻하다. 위아래 극의 온도 차는 \(2aq_0/k = 2(0.050)(1000)/401\ \text{K} = 0.25\ \text{K}\)이다.</p>
+        <p>(나) 고른 \(q_0\)이면 \(\oint\partial_ru\,da = -4\pi a^2q_0/k \ne 0\)이라 조건을 어기므로 \(\nabla^2u = 0\)의 해가 없다. 열이 계속 빠져나가므로 공은 식는다. 에너지 보존에서 \(\rho c_p\cdot\tfrac43\pi a^3\cdot d\bar u/dt = -4\pi a^2q_0\), 곧</p>
+        <div class="formula">\[ \begin{aligned} \frac{d\bar u}{dt} &= -\frac{3q_0}{\rho c_pa} \\ &= -\frac{3(1000)}{(3.44 \times 10^6)(0.050)}\ \text{K/s} \\ &= -0.017\ \text{K/s} \end{aligned} \]</div>
+        <p>이다. 1분에 약 1 K씩 식는다. 단위: \((\text{W/m}^2)/(\text{J/(m}^3\cdot\text{K)}\cdot\text{m}) = \text{K/s}\).</p>
+      </details>
+    </div>
+    <div class="prob" id="prob-earnshaw-ring" data-level="2"><p>네 전하 \(Q = 10\ \text{nC}\)을 \(xy\) 평면의 \((\pm d, 0, 0)\), \((0, \pm d, 0)\) (\(d = 5.0\ \text{cm}\))에 고정하고, 원점에 \(q = +1.0\ \text{nC}\), \(m = 1.0\ \text{g}\)인 작은 공을 놓는다(중력은 생각하지 않는다). (가) 원점 근처의 퍼텐셜 에너지 \(U\)를 2차까지 전개해 \(k_x, k_y, k_z\)를 구하고 합이 0임을 확인하라. (나) 공은 어느 방향으로 얼마나 빨리 벗어나는가? (다) <a class="ref" href="#ex-earnshaw"></a>의 두 전하 배치와 비교하라. 최대 원리로 보면 원점의 \(U\)가 극소가 될 수 없는 이유는 무엇인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(K = qQ/4\pi\varepsilon_0\)로 두자. 식 <a class="ref" href="#eq-earnshaw-expansion"></a>과 같이 다중극 전개에서 각 전하의 \(l = 1\) 항은 마주 보는 전하와 지워지고, \(l = 2\) 항은 \(\hat{\mathbf x}\) 축의 두 전하가 \(2\cdot\tfrac12(3x^2 - r^2)/d^3\), \(\hat{\mathbf y}\) 축의 두 전하가 \(2\cdot\tfrac12(3y^2 - r^2)/d^3\)을 준다. 합은 \((3x^2 + 3y^2 - 2r^2)/d^3 = (x^2 + y^2 - 2z^2)/d^3\)이므로</p>
+        <div class="formula">\[ U = K\Big[\frac4d + \frac{x^2 + y^2 - 2z^2}{d^3}\Big] + O\Big(\frac{Kr^4}{d^5}\Big) \]</div>
+        <p>이다. \(k_x = k_y = 2K/d^3 = 1.44 \times 10^{-3}\ \text{N/m}\), \(k_z = -4K/d^3 = -2.88 \times 10^{-3}\ \text{N/m}\)이고 합은 0이다(\(K/d^3 = 7.19 \times 10^{-4}\ \text{N/m}\)).</p>
+        <p>(나) 평면 안에서는 \(\omega = \sqrt{k_x/m} = 1.20\ \text{s}^{-1}\), 주기 5.2 s로 진동한다. \(z\) 방향으로는 \(\kappa = \sqrt{\lvert k_z\rvert/m} = 1.70\ \text{s}^{-1}\)로, \(1/\kappa = 0.59\ \text{s}\)마다 \(e\)배씩 멀어진다.</p>
+        <p>(다) 예제의 배치와 용수철 상수의 부호가 정확히 반대다(예제는 \(z\)로 되돌리고 옆으로 밀어냄). 두 배치를 빠르게 번갈아 바꾸면 폴 덫의 생각이 된다. 원점을 둘러싼 작은 공에서 \(U\)는 조화 함수이므로 <a class="ref" href="#thm-maximum-principle"></a>에 따라 최솟값을 공의 표면에서 갖고, 원점에서 엄격한 극소가 되면 표면의 모든 점보다 작아야 하므로 모순이다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+</body>
+</html>
