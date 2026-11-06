@@ -199,7 +199,7 @@ details.proof[open]::after { content: "∎"; display: block; text-align: right; 
 details.sol[open] { padding-bottom: 4px; }
 .exercises .prob { margin: 18px 0; padding: 16px 20px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg-elev); }
 .prob-n { display: block; margin-bottom: 6px; font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--accent); }
-.prob-n .lv { color: var(--warn); letter-spacing: .05em; font-family: var(--font); font-weight: 400; }
+.prob-n .lv { color: color-mix(in srgb, var(--warn) 65%, var(--text)); letter-spacing: .05em; font-family: var(--font); font-weight: 400; }
 .katex .tag { color: var(--text-dim); }
 /* 좁은 화면에서 식과 겹치는 식 번호는 식 아래 오른쪽으로 (book.js fitDisplays) */
 .katex-display.tag-below > .katex > .katex-html > .tag { position: static; display: block; text-align: right; margin-top: 2px; }
@@ -294,4 +294,102 @@ details.sol[open] { padding-bottom: 4px; }
   .hero-stage { height: 320px; }
   .ls-pager { grid-template-columns: 1fr; }
   .ls-pager .next { grid-column: 1; }
+}
+
+/* ==========================================================================
+   외국어 부품 (assets/js/lang.js와 함께 쓴다. 마크업은 templates/language.html 참고)
+   - 인라인 독일어 · 발음 듣기 버튼 · 성 색 · 단어장/활용표 · 대화 · 문법/대화/표현 상자 · 독일 생활 콜아웃
+   ========================================================================== */
+:root {
+  --g-m: #1d4ed8; --g-f: #be123c; --g-n: #15803d; --g-pl: #6d28d9;
+  --gram: #4f46e5; --dia: #0f766e; --expr: #b45309; --culture: #c2410c;
+}
+:root[data-theme="dark"] {
+  --g-m: #7cb2ff; --g-f: #ff8fab; --g-n: #5fdc8b; --g-pl: #c4b0ff;
+  --gram: #a5b4fc; --dia: #5eead4; --expr: #fcd34d; --culture: #fdba74;
+}
+
+/* 인라인 독일어: 분야 강조색을 본문색과 섞어 가볍게. 긴 합성어는 하이픈/줄바꿈으로 접는다 */
+[lang="de"] { overflow-wrap: break-word; }
+p[lang="de"] { hyphens: manual; -webkit-hyphens: manual; }  /* 대화 줄도 하이픈 없이(Ko-rea처럼 끊기지 않게). 긴 낱말은 overflow-wrap으로 */
+span[lang="de"] { color: color-mix(in srgb, var(--accent) 78%, var(--text)); font-weight: 600; }
+span[lang="de"] .g, span[lang="de"] .ipa, span[lang="de"] .hangul { font-weight: 400; }
+
+/* 발음 듣기 버튼 (lang.js가 붙인다). 복사할 때 글자가 섞이지 않도록 선택 불가 */
+.say-btn {
+  display: inline-flex; align-items: center; justify-content: center; position: relative;
+  width: 24px; height: 24px; margin: 0 2px 0 5px; padding: 0; vertical-align: -0.3em; flex: none;
+  border: 1px solid var(--border); border-radius: 999px; background: var(--bg-elev); color: var(--accent);
+  cursor: pointer; line-height: 1; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent;
+}
+.say-btn::after { content: ""; position: absolute; inset: -8px; }  /* 손가락으로 누르기 쉽게 */
+.say-btn:hover, .say-btn:focus-visible { border-color: var(--accent); background: var(--accent-soft); }
+.say-btn.playing { background: var(--accent); border-color: var(--accent); color: var(--bg-elev); }
+.say-on { background: var(--accent-soft); border-radius: 4px; }
+
+/* 성(性) 색: m 파랑 · f 장미 · n 초록 · pl 보라 (관례). 색에만 기대지 않도록 굵게 */
+.g { font-weight: 700; white-space: nowrap; }
+.g.m { color: var(--g-m); }
+.g.f { color: var(--g-f); }
+.g.n { color: var(--g-n); }
+.g.pl { color: var(--g-pl); }
+
+/* 발음 표기 */
+.ipa { font-family: var(--mono); font-size: 0.86em; color: var(--text-dim); letter-spacing: -0.01em; }
+.hangul { font-size: 0.82em; color: var(--text-dim); }
+
+/* 단어장 · 활용표 (lang.js가 .table-wrap으로 감싼다) */
+table.vocab, table.conj { font-size: 15.5px; }
+table.vocab th, table.vocab td, table.conj th, table.conj td { overflow-wrap: anywhere; }
+/* 표 안의 독일어 낱말은 중간에서 끊지 않는다(칸 폭이 낱말에 맞춰진다). 한국어 설명·IPA는 어디서든 줄바꿈 */
+table [lang="de"] { overflow-wrap: break-word; word-break: normal; hyphens: manual; -webkit-hyphens: manual; }
+/* 단어 표의 뜻 칸이 메모 칸에 밀려 한 글자씩 줄바꿈되지 않게 */
+table.vocab th:nth-child(2), table.vocab td:nth-child(2) { min-width: 5em; }
+table.vocab td:first-child { font-weight: 600; min-width: 7.5em; }
+table.vocab td:nth-child(3) { color: var(--text-dim); font-size: 14px; }
+table.vocab td:first-child .ipa, table.vocab td:first-child .hangul { font-weight: 400; }
+table.vocab td:first-child .ipa, table.vocab td:first-child .hangul { display: block; }
+table.conj { width: auto; min-width: 100%; }
+table.conj th, table.conj td { padding: 7px 12px; }
+table.conj thead th { text-align: center; color: var(--accent); }
+table.conj tbody th { font-weight: 600; color: var(--text-dim); background: var(--surface); text-align: left; white-space: nowrap; }
+table.conj tbody td { text-align: center; font-weight: 600; }
+table.conj .end { color: color-mix(in srgb, var(--accent-2) 60%, var(--text)); font-weight: 800; background: color-mix(in srgb, var(--accent-2) 14%, transparent); border-radius: 3px; padding: 0 1px; }
+
+/* 대화: 말풍선. 학습자 본인(.me)은 오른쪽, 강조색 */
+.dialog { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
+.dialog-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 2px; }
+.dlg-btn { font: inherit; font-size: 13.5px; font-weight: 600; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-elev); color: var(--text-dim); cursor: pointer; line-height: 1.4; }
+.dlg-btn:hover, .dlg-btn:focus-visible { border-color: var(--accent); color: var(--accent); }
+.dlg-btn.playing { background: var(--accent); border-color: var(--accent); color: var(--bg-elev); }
+.dialog .line { align-self: flex-start; max-width: min(90%, 580px); min-width: 0; padding: 8px 14px 10px; border: 1px solid var(--border); border-radius: 4px 16px 16px 16px; background: var(--surface); }
+.dialog .line[data-who]::before { content: attr(data-who); display: block; font-size: 12px; font-weight: 700; line-height: 1.5; color: var(--text-dim); }
+.dialog .line.me { align-self: flex-end; border-radius: 16px 4px 16px 16px; background: color-mix(in srgb, var(--accent) 12%, var(--bg-elev)); border-color: color-mix(in srgb, var(--accent) 38%, var(--border)); }
+.dialog .line.me[data-who]::before { text-align: right; color: var(--accent); }
+.dialog .line.speaking { outline: 2px solid var(--accent); outline-offset: 1px; }
+.dialog .line p { margin: 0; }
+.dialog .line p[lang] { font-weight: 600; }
+.dialog .line .tr { margin-top: 2px; font-size: 14.5px; line-height: 1.55; color: var(--text-dim); font-weight: 400; }
+.dialog.tr-hidden .tr { filter: blur(5px); cursor: pointer; -webkit-user-select: none; user-select: none; transition: filter .15s; }
+.dialog.tr-hidden .tr.show { filter: none; -webkit-user-select: auto; user-select: auto; }
+.box .dialog .line { background: var(--bg); }
+.box .dialog .line.me { background: color-mix(in srgb, var(--accent) 12%, var(--bg-elev)); }
+
+/* 문법 · 대화 · 표현 상자 (번호는 book.js textbook()이 붙인다) */
+.box.gram { border-left-color: var(--gram); background: color-mix(in srgb, var(--gram) 6%, var(--bg-elev)); }
+.box.gram .box-n { background: color-mix(in srgb, var(--gram) 15%, transparent); color: var(--gram); }
+.box.dia { border-left-color: var(--dia); }
+.box.dia .box-n { background: color-mix(in srgb, var(--dia) 15%, transparent); color: var(--dia); }
+.box.expr { border-left-color: var(--expr); background: color-mix(in srgb, var(--expr) 6%, var(--bg-elev)); }
+.box.expr .box-n { background: color-mix(in srgb, var(--expr) 16%, transparent); color: var(--expr); }
+
+/* 독일 생활 콜아웃 */
+.callout.culture { background: color-mix(in srgb, var(--culture) 10%, transparent); border-left-color: var(--culture); }
+.callout.culture > strong:first-child::before { content: "독일 생활 · "; color: var(--culture); }
+
+@media (max-width: 640px) {
+  table.vocab, table.conj { font-size: 15px; }
+  table.vocab th, table.vocab td { padding: 8px 10px; }
+  table.conj th, table.conj td { padding: 6px 8px; }
+  .dialog .line { max-width: 94%; padding: 7px 12px 9px; }
 }

@@ -141,6 +141,43 @@ window.SHELF_DATA = {
       path: "books/black-holes/", chapters: [],
     },
 
+    /* ------------------------------------------------------------ 외국어 */
+    {
+      id: "german-a1", field: "lang", status: "writing", level: 1, kind: "textbook", motif: "bell",
+      series: "Deutsch", title: "아빠의 독일어 A1", en: "Papa Learns German (A1)",
+      tagline: "독일인 아내와 갓난 아들 곁에서, 한 마디씩",
+      desc: "기저귀 갈기, 수유, 재우기에서 처가 식구와의 영상 통화, 서울의 크리스마스, 하노버 여행, 첫돌까지 — 갓난아기를 키우는 한국인 아빠의 첫 1년을 따라가며 독일어 A1(Goethe-Zertifikat A1 수준)의 발음, 문법, 어휘 약 700개를 차근차근 익힙니다.",
+      path: "books/german-a1/",
+      parts: [
+        { title: "갓난아기와 함께", desc: "집에 온 첫날부터 생후 6주까지. 울음, 수유, 기저귀, 잠, 목욕 — 매일 아기에게 하는 말로 sein·haben, 관사와 1·4격, 복수, 시각, 분리 동사와 명령법을 익힙니다." },
+        { title: "가족과 이어지기", desc: "처가와의 영상 통화, 대사관에서 아기 여권 신청, 서울에 온 장인 장모와 보내는 크리스마스. 소유 관사, 존칭 Sie와 날짜, 화법 조동사, 장소와 사람의 3격을 배웁니다." },
+        { title: "자라는 아기", desc: "한 주의 일과, 첫 열, 유모차 산책, 첫 이유식, 뒤집기와 기기와 첫 말. 요일과 시간 전치사, 조동사 정리, 3격 전치사, werden, 현재완료와 war·hatte로 지난 일을 이야기합니다." },
+        { title: "독일 여행과 첫돌", desc: "비행기와 기차로 하노버의 처가에 가고, 빵집과 이웃 앞에서 Sie와 du를 고르고, 서울로 돌아와 첫돌을 맞아 한 해를 돌아봅니다." },
+      ],
+      chapters: [
+        { slug: "ch01", num: "01", part: 1, status: "draft", title: "집에 온 첫날 — Hallo, Jonas!", desc: "조리원에서 집으로 온 날의 현관과 다음 날 아침, 하노버와의 영상 통화로 sein 현재형과 인칭대명사, Das ist …, 동사의 자리, 때에 따른 인사와 안부를 익힌다. 알파벳과 모음 장단, 움라우트와 ß, 이 책의 발음 표기 읽는 법, 산후조리원과 독일의 Wochenbett를 함께 다룬다." },
+        { slug: "ch02", num: "02", part: 1, status: "draft", title: "왜 울까? — Warum weint er?", desc: "새벽에 우는 아기에게 이유를 묻고 달래며 규칙 동사의 현재형과 haben, W-의문문과 예/아니오 의문문을 익힌다. 발음 절에서는 ch의 두 소리, sch, 독일어 r을 다룬다." },
+        { slug: "ch03", num: "03", part: 1, status: "draft", title: "배고프니? — Hast du Hunger?", desc: "생후 4주, 새벽 수유와 트림 장면에서 명사의 성과 정관사·부정관사, 사물을 받는 er/sie/es, kein과 nicht, 0~100의 숫자를 익힌다. 어말 무성음화와 s·z·ß의 발음, 한국의 수유실과 독일의 공공장소 모유 수유도 다룬다." },
+        { slug: "ch04", num: "04", part: 1, status: "draft", title: "기저귀 갈기 — Die Windel ist voll!", desc: "생후 5주, 기저귀 갈이대와 온라인 장보기 장면으로 4격(den, einen, keinen), 명사의 복수형, es gibt, 부정 의문에 답하는 doch를 익히고 이중모음 ei, ie, eu/äu, au를 발음한다." },
+        { slug: "ch05", num: "05", part: 1, status: "draft", title: "잘 자, 요나스 — Schlaf gut, Jonas!", desc: "생후 6주 요나스를 재우는 저녁과 새벽 교대 장면에서 어간 모음이 바뀌는 동사, 시각 말하기(halb vier 포함), um·von … bis, 시간 표현이 앞에 올 때의 어순을 익히고, 단어 강세와 문장 억양을 읽는 법을 배운다." },
+        { slug: "ch06", num: "06", part: 1, status: "draft", title: "목욕하고 옷 입기 — Baden und Anziehen", desc: "목욕시키고 옷 입히고 아침에 깨우는 장면으로 분리 동사, du·ihr 명령법, zu + 형용사와 색 이름을 익힌다. 발음은 st·sp, pf, w·v·f, qu를 다룬다." },
+        { slug: "ch07", num: "07", part: 2, status: "draft", title: "할머니 할아버지와 영상 통화 — Videoanruf mit Oma und Opa", desc: "하노버의 장인·장모와 영상 통화를 하며 4격 인칭대명사, 소유 관사, 이름 + s(Lenas Mutter), 가족과 얼굴의 낱말을 익히고, 약한 e와 -er, -en의 발음을 배운다. 시차를 bei uns·bei euch로 말하고 Ich hab dich lieb로 통화를 마치는 법도 다룬다." },
+        { slug: "ch08", num: "08", part: 2, status: "draft", title: "요나스의 여권 — Ein Pass für Jonas", desc: "주한 독일 대사관 창구에서 낯선 사람에게 존칭 Sie로 말하며(동사, Ihr·Ihre, Sie 명령법) 이름·출신·주소·전화번호를 말하고 철자를 불러 준다. 서수와 달 이름으로 아기의 생일을 말하고, 큰 수와 연도를 읽는다." },
+        { slug: "ch09", num: "09", part: 2, status: "draft", title: "처가 식구가 온다 — Oma und Opa kommen!", desc: "장인·장모가 크리스마스를 보내러 서울에 오는 날, 공항 마중과 집에서의 대접을 배경으로 화법 조동사 können·möchten·wollen과 조동사 문장의 틀을 익히고, ng·nk·-ig를 발음한다." },
+        { slug: "ch10", num: "10", part: 2, status: "draft", title: "쪽쪽이는 어디 있지? — Wo ist der Schnuller?", desc: "처가 식구가 온 둘째 날, 집 구경과 사라진 쪽쪽이 찾기로 방과 가구의 낱말, Wo?와 장소 전치사 + 3격, im·am, liegen·stehen·hängen을 익히고 ü·ö를 발음한다. 온돌과 독일식 환기도 비교한다." },
+        { slug: "ch11", num: "11", part: 2, status: "draft", title: "할머니와 쿠키 굽기 — Plätzchen backen mit Oma", desc: "장모와 크리스마스 쿠키를 굽고 장인·장모에게 한국 음식을 대접하며 일반 주어 man과 양 말하기, gern·lieber·am liebsten과 mögen, 접속사 und·aber·oder·denn을 익히고, 철자로 모음의 길이를 아는 법을 배운다." },
+        { slug: "ch12", num: "12", part: 2, status: "draft", title: "메리 크리스마스 — Frohe Weihnachten!", desc: "서울에서 맞는 요나스의 첫 크리스마스이브에 선물을 풀며 3격 인칭대명사와 Wie geht es dir?, 3격 동사(gefallen, gehören, helfen, danken), 3격과 4격 목적어의 어순, für·ohne를 익힌다. 성문 파열음을 발음하고 독일의 Advent와 크리스마스 풍습을 알아본다." },
+        { slug: "ch13", num: "13", part: 3, status: "draft", title: "우리 가족의 한 주 — Unsere Woche", desc: "1월 중순, 민호가 다시 출근하는 한 주를 배경으로 요일과 하루의 때, am·im·um, 빈도 부사, 직업 말하기, 화법 조동사 müssen·dürfen과 복합어의 강세를 익힌다. 독일의 Elternzeit와 일요일 휴식 이야기도 곁들인다." },
+        { slug: "ch14", num: "14", part: 3, status: "draft", title: "열이 나요 — Jonas hat Fieber", desc: "예방접종 뒤 열이 난 요나스를 돌보며 체온을 소수로 읽고, 소아과에서 들은 말을 sollen으로 레나와 장모에게 전하며 화법 조동사를 정리한다. zu·bei + 3격(zum, zur, beim), 아픈 곳 말하기와 Gute Besserung!, l과 r의 발음도 익힌다." },
+        { slug: "ch15", num: "15", part: 3, status: "draft", title: "유모차 산책 — Spaziergang mit dem Kinderwagen", desc: "봄날 유모차 산책을 따라 날씨의 es와 werden(되다), 사계절과 공원의 낱말, 늘 3격을 받는 전치사 aus·bei·mit·nach·seit·von·zu, Wohin?에 답하는 zu와 nach를 익히고 자음이 겹칠 때의 발음을 배운다. 미세먼지 날의 통화로 날씨 이야기도 연습한다." },
+        { slug: "ch16", num: "16", part: 3, status: "draft", title: "첫 이유식 — Der erste Brei", desc: "요나스의 첫 이유식 장면으로 haben + 과거분사의 현재완료(어순, 질문, 부정)와 과거분사 만드는 법을 배우고, schmecken + 3격과 ge-·-iert의 강세를 익히며 할머니에게 오늘 있었던 일을 전한다." },
+        { slug: "ch17", num: "17", part: 3, status: "draft", title: "처음 해낸 것들 — Er krabbelt!", desc: "요나스의 첫 이와 첫 기기, 첫 낱말을 이야기하며 sein + 과거분사의 현재완료와 haben/sein 고르기, sein·haben의 과거형 war·hatte, 지난 때의 표현을 익히고, 이야기하는 문장의 강세와 리듬을 배운다. 한국의 백일과 두 언어로 크는 아기 이야기도 곁들인다." },
+        { slug: "ch18", num: "18", part: 4, status: "draft", title: "독일로 가는 길 — Wir fliegen nach Deutschland!", desc: "7월, 인천에서 프랑크푸르트를 거쳐 하노버로 가는 길에 승무원·입국 심사관·역무원에게 Sie로 정중하게 부탁하고(Können Sie mir bitte helfen?, Ich hätte gern …) 주문하는 법을 익힌다. von … nach …, 24시간제 공식 시각, 안내 방송의 핵심 낱말과 구어의 줄임말도 배운다." },
+        { slug: "ch19", num: "19", part: 4, status: "draft", title: "하노버의 처가에서 — Bei Oma und Opa in Hannover", desc: "하노버 처가에서 빵집과 드럭스토어를 오가며 주문하고 값을 묻고 계산하는 법, 이웃 베커 부인과 위르겐을 만나 Sie로 인사하고 du를 주고받는 법을 배운다. du·ihr·Sie를 한 표로 정리하고, 일요일과 현금, 빈 병 보증금(Pfand) 문화를 알아본다." },
+        { slug: "ch20", num: "20", part: 4, status: "draft", title: "첫돌 — Alles Gute zum Geburtstag, Jonas!", desc: "요나스의 첫돌에 첫걸음과 돌잡이를 독일어로 이야기하며 seit + 3격과 vor + 3격을 구별하고, 초대장과 짧은 편지 쓰는 법을 익힌다. 한 해를 돌아보며 현재·현재완료·war·hatte를 고르는 법을 정리하고 1~19장의 발음을 되짚는다." },
+      ],
+    },
+
     /* ------------------------------------------------------------ 취미 */
     {
       id: "composition", field: "music", status: "planned", level: 1, kind: "textbook", motif: "waves",

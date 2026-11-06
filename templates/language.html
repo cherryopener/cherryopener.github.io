@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>00 새 장 제목 · Deutsch</title>
+<meta name="description" content="장 설명">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+<script defer src="../../../assets/js/lang.js"></script>
+</head>
+<body data-root="../../../" data-book="여기에-책-id" data-field="lang" data-chapter="여기에-챕터-slug">
+<!--
+  ✎ 외국어 책 장 틀 (독일어 등). 집필 규칙은 책마다 books/<책-id>/GUIDE.md에 있습니다.
+  순서: 머리(리드 · 학습 목표 · 선수 지식) → 절 n.1 … n.k → 핵심 정리 → 확인 퀴즈 → 연습문제
+  - 절 하나 = <section id="s1"><h2>절 제목</h2> … </section>. 절 번호(1.1, 1.2 …)는 자동으로 붙는다
+  - 상자: <div class="box gram|dia|expr|ex" id="gram-…"><div class="box-h">이름</div> … </div>
+      gram 문법 · dia 대화 · expr 표현 · ex 예제 → "문법 1.2"처럼 종류별 번호가 자동으로 붙는다
+  - 참조:        <a class="ref" href="#gram-…"></a> → "문법 1.2"로 채워진다. 다른 장은 <a href="ch02.html#gram-…">문법 2.1</a>
+  - 연습문제:    <div class="prob" id="prob-…" data-level="1|2|3"><p>…</p><details class="sol"><summary>풀이</summary>…</details></div>
+  - 콜아웃:      <div class="callout tip|warn|deep|culture"><strong>제목</strong><p>…</p></div>  (culture = 독일 생활)
+  - 실험 위젯·수식(KaTeX)도 쓸 수 있지만 외국어 책에서는 거의 필요 없다
+
+  ── 외국어 부품 (assets/js/lang.js, assets/css/book.css "외국어 부품") ──
+  1) 본문 속 독일어:     <span lang="de">Guten Morgen</span>
+       소리 버튼까지 달려면 class="say":  <span lang="de" class="say">Guten Morgen</span>
+  2) 성 색 (관사):       <span class="g m">der</span> · <span class="g f">die</span> · <span class="g n">das</span> · <span class="g pl">die</span>(복수)
+  3) 발음:               <span class="ipa">[ˈvɪndəl]</span> <span class="hangul">[빈델]</span>
+  4) 단어장 (첫 칸에 소리 버튼 자동, 셋째 칸 '메모'는 생략 가능):
+       <table class="vocab"><thead><tr><th>독일어</th><th>뜻</th><th>메모</th></tr></thead><tbody>
+       <tr><td lang="de"><span class="g m">der</span> Schnuller, -</td><td>쪽쪽이</td><td>복수형은 같다</td></tr>
+       </tbody></table>
+       복수 표기(", -", ", -n", ", ¨-er")는 소리로 읽지 않는다
+  5) 활용표:             <table class="conj"><thead><tr><th></th><th>machen</th><th>schlafen</th></tr></thead><tbody>
+       <tr><th>ich</th><td>mach<b class="end">e</b></td><td>schlaf<b class="end">e</b></td></tr>
+       </tbody></table>
+  6) 대화 (.me = 학습자 본인. 위에 '전체 듣기'와 '번역 가리기' 단추가 자동으로 붙는다):
+       <div class="dialog">
+         <div class="line" data-who="Lena"><p lang="de">Er hat Hunger.</p><p class="tr">애가 배고파.</p></div>
+         <div class="line me" data-who="나"><p lang="de">Ich mache die Flasche.</p><p class="tr">내가 젖병 준비할게.</p></div>
+       </div>
+-->
+<!-- 이 파일을 books/<책-id>/chapters/<slug>.html 로 복사한 뒤 body의 data-book, data-chapter를 바꾸고 data/books.js에 장을 추가하세요. -->
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">00</span></div>
+    <h1 data-fill="chapter-title">새 장 제목</h1>
+    <p class="lead slot" data-slot="리드 문단">이 장이 답하려는 질문을 두세 문장으로 적습니다. 앞 장과 어떻게 이어지는지도 한 문장.</p>
+    <ul class="objectives">
+      <li class="slot" data-slot="학습 목표">"…을 말할 수 있다", "…을 구별할 수 있다" 꼴로 적습니다.</li>
+      <li class="slot" data-slot="학습 목표">학습 목표 2</li>
+      <li class="slot" data-slot="학습 목표">학습 목표 3</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b><span class="slot" data-slot="선수 지식">예: 1장 (인사와 자기소개)</span></p>
+  </header>
+
+  <section id="s1">
+    <h2>절 제목</h2>
+    <p class="slot" data-slot="동기">이 절이 왜 필요한지, 어떤 상황에서 쓰는 말인지로 시작합니다.</p>
+    <div class="box dia" id="dia-example"><div class="box-h">대화 제목 (상황)</div>
+      <div class="dialog">
+        <div class="line" data-who="Lena"><p lang="de">Er hat Hunger.</p><p class="tr">애가 배고파.</p></div>
+        <div class="line me" data-who="나"><p lang="de">Ich mache die Flasche.</p><p class="tr">내가 젖병 준비할게.</p></div>
+      </div>
+    </div>
+    <p>대화 속 <span lang="de" class="say">die Flasche</span> 같은 단어는 다음 표에 모읍니다. 발음은 <span lang="de">Flasche</span> <span class="ipa">[ˈflaʃə]</span> <span class="hangul">[플라셰]</span>처럼 적습니다.</p>
+    <table class="vocab"><thead><tr><th>독일어</th><th>뜻</th><th>메모</th></tr></thead><tbody>
+      <tr><td lang="de"><span class="g f">die</span> Flasche, -n</td><td>젖병, 병</td><td>복수 -n</td></tr>
+      <tr><td lang="de"><span class="g m">der</span> Schnuller, -</td><td>쪽쪽이</td><td></td></tr>
+    </tbody></table>
+    <div class="box gram" id="gram-example"><div class="box-h">문법 항목 이름</div><p class="slot" data-slot="문법">규칙을 한두 문장으로, 아래에 활용표를 둡니다.</p>
+      <table class="conj"><thead><tr><th></th><th>machen</th></tr></thead><tbody>
+        <tr><th>ich</th><td>mach<b class="end">e</b></td></tr>
+        <tr><th>du</th><td>mach<b class="end">st</b></td></tr>
+      </tbody></table>
+    </div>
+    <p>문법 상자는 <a class="ref" href="#gram-example"></a>처럼 참조합니다.</p>
+    <div class="box expr" id="expr-example"><div class="box-h">표현 이름</div><p><span lang="de" class="say">Gute Besserung!</span> — 빨리 낫길 바랍니다.</p></div>
+    <div class="callout culture"><strong>제목</strong><p class="slot" data-slot="콜아웃">독일 생활에서 알아 둘 점(소아과 정기검진, 휴일 영업 등)을 적습니다.</p></div>
+    <div class="callout warn"><strong>흔한 실수</strong><p class="slot" data-slot="콜아웃">한국어 화자가 자주 틀리는 곳을 적습니다.</p></div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li class="slot" data-slot="요점">요점 1</li>
+      <li class="slot" data-slot="요점">요점 2</li>
+      <li class="slot" data-slot="요점">요점 3</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. (퀴즈 슬롯) 질문을 적으세요. 정답 보기에는 <code>data-correct</code> 속성을 붙입니다.</p><div class="opts">
+        <button class="opt">보기 A</button>
+        <button class="opt" data-correct>보기 B (정답 예시)</button>
+        <button class="opt">보기 C</button>
+      </div><div class="quiz-exp">해설 슬롯 — 왜 이것이 정답인지 설명하세요.</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+    <div class="prob" id="prob-example" data-level="1"><p class="slot" data-slot="문제">문제. 난이도는 data-level 1~3 (★)으로 표시합니다.</p>
+      <details class="sol"><summary>풀이</summary><p class="slot" data-slot="풀이">풀이는 접어 둡니다.</p></details>
+    </div>
+  </section>
+</main>
+</body>
+</html>

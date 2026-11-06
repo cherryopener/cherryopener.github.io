@@ -134,7 +134,7 @@
     const main = $("main.chapter");
     if (!main || !chapter) return;
     const n = Number(chapter.num), label = {}, count = {};
-    const KIND = { def: "정의", thm: "정리", ex: "예제", math: "수학 상자", post: "공준" };
+    const KIND = { def: "정의", thm: "정리", ex: "예제", math: "수학 상자", post: "공준", gram: "문법", dia: "대화", expr: "표현" };
     $$(".box", main).forEach((b) => {
       const k = Object.keys(KIND).find((x) => b.classList.contains(x));
       if (!k) return;
