@@ -28,7 +28,7 @@
     };
     if (chapter) Object.assign(map, { "chapter-title": chapter.title, "chapter-num": chapter.num, "chapter-desc": chapter.desc });
     $$("[data-fill]").forEach((el) => { const v = map[el.dataset.fill]; if (v != null) el.textContent = v; });
-    document.title = chapter ? `${chapter.num} ${chapter.title} · ${book.series}` : `${book.series} · ${book.title}`;
+    document.title = chapter ? `${chapter.num} ${chapter.title} · ${LS.site.name}` : `${book.title} · ${LS.site.name}`;
   }
 
   /** 부(parts)가 있는 책에서 i번째 챕터가 새 부를 시작하면 render(부 번호, 부)를, 아니면 ""를 돌려준다 */
@@ -44,7 +44,8 @@
     bar.className = "ls-topbar";
     bar.innerHTML = `<div class="nav-left">
         <button class="icon-btn" type="button" id="ls-menu" aria-label="챕터 목록 열기" title="챕터 목록">${LS.icons.menu}</button>
-        <a class="ls-logo" href="${url(book.path + "index.html")}">${LS.logo()}<span>${esc(book.series)} <small>${esc(book.title)}</small></span></a>
+        <a class="ls-logo" href="${url("index.html")}" title="${esc(LS.site.name)} 홈" aria-label="${esc(LS.site.name)} 홈">${LS.logo()}</a>
+        <a class="ls-logo ls-logo-text" href="${url(book.path + "index.html")}"><span>${esc(book.series)} <small>${esc(book.title)}</small></span></a>
       </div>
       <div class="nav-right">
         <a class="icon-btn" href="${url("index.html")}" title="서재로 돌아가기" aria-label="서재로 돌아가기">${LS.icons.shelf}<span class="lbl">서재</span></a>

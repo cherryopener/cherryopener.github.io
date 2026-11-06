@@ -167,7 +167,7 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 48px 0; }
 .ls-progress { position: absolute; left: 0; bottom: -1px; height: 2px; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
 @media (max-width: 900px) { .ls-nav { display: none; } }
 @media (max-width: 760px) { .ls-logo small { display: none; } .icon-btn .lbl { display: none; } }
-@media (max-width: 560px) { .ls-topbar .nav-left .ls-logo span { display: none; } }
+@media (max-width: 560px) { .ls-topbar .nav-left .ls-logo span, .ls-topbar .nav-left .ls-logo-text { display: none; } }
 @media (max-width: 480px) { .ls-topbar .nav-right a.icon-btn { display: none; } .ls-topbar { gap: 8px; padding: 0 12px; } }
 
 /* 검색 */
