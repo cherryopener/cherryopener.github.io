@@ -203,7 +203,7 @@
     title: "푸리에 스펙트럼 — 주파수로 보는 시계열",
     desc: "세 개의 사인파와 잡음을 섞은 신호를 FFT로 분해하고, 차단 주파수 위를 지워 잡음을 걷어 냅니다.",
     tags: ["FFT", "스펙트럼", "필터", "주파수"],
-    note: "해볼 것: 주파수를 정수가 아닌 값(예: 10.5 Hz)으로 두면 에너지가 이웃 칸으로 번지는 <b>스펙트럼 누설</b>이 생깁니다. 한 창(Hann)을 켜면 누설이 줄어듭니다. 신호 주파수가 나이퀴스트(64 Hz)에 가까워지면 시간 영역 모양이 어떻게 보이는지도 확인해 보세요.",
+    note: "해볼 것: 주파수를 칸 간격(0.5 Hz)의 정수배가 아닌 값(예: 10.25 Hz)으로 두면 에너지가 이웃 칸으로 번지는 <b>스펙트럼 누설</b>이 생깁니다. 한 창(Hann)을 켜면 누설이 줄어듭니다. 신호 주파수가 나이퀴스트(64 Hz)에 가까워지면 시간 영역 모양이 어떻게 보이는지도 확인해 보세요.",
     mount(S) {
       const N = 256, FS = 128;
       const st = { f: [5, 18, 40], a: [1.5, 0.8, 0.4], noise: 0.5, cut: 25, hann: false, seed: 1 };
@@ -250,7 +250,7 @@
         set("keep", (kept * 100).toFixed(1) + "<small>%</small>");
       }
       [0, 1, 2].forEach((i) => {
-        S.range({ label: `성분 ${i + 1} 주파수`, min: 0.5, max: 63, step: 0.5, value: st.f[i], fmt: (v) => v.toFixed(1) + " Hz", onInput: (v) => { st.f[i] = v; upd(); } });
+        S.range({ label: `성분 ${i + 1} 주파수`, min: 0.5, max: 63, step: 0.25, value: st.f[i], fmt: (v) => v.toFixed(2) + " Hz", onInput: (v) => { st.f[i] = v; upd(); } });
         S.range({ label: `성분 ${i + 1} 진폭`, min: 0, max: 2, step: 0.05, value: st.a[i], fmt: (v) => v.toFixed(2), onInput: (v) => { st.a[i] = v; upd(); } });
       });
       S.range({ label: "잡음 σ", min: 0, max: 2, step: 0.05, value: st.noise, fmt: (v) => v.toFixed(2), onInput: (v) => { st.noise = v; upd(); } });
