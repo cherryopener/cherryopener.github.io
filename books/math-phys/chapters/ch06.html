@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>06 곡선 좌표계와 디랙 델타 · 수리물리학</title>
+<meta name="description" content="척도 인자에서 원통·구면 좌표의 기울기, 발산, 회전, 라플라시안을 유도하고, 디랙 델타로 점 원천을 써서 ∇²(1/r) = −4πδ³(r)을 세운다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys" data-field="phys" data-chapter="ch06">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">06</span></div>
+    <h1 data-fill="chapter-title">곡선 좌표계와 디랙 델타</h1>
+    <p class="lead">점전하의 전기장은 직교 좌표로 쓰면 세 성분이 모두 \(x, y, z\)에 얽힌 식이지만, 구면 좌표로 쓰면 \(\hat{\mathbf r}\) 성분 하나가 \(r\) 하나에만 기댄다. 대칭에 맞는 좌표를 고르면 계산이 짧아진다. 대신 단위 벡터가 점마다 방향을 바꾸므로 4장의 기울기·발산·회전 공식을 그대로 쓸 수 없다. 이 장에서는 척도 인자 하나로 원통·구면 좌표의 미분 연산자를 모두 유도하고, 4장과 5장이 남긴 수수께끼, 곧 원점 밖에서는 발산이 0인 역제곱 장이 플럭스 \(4\pi\)를 내는 까닭을 디랙 델타로 푼다. 디랙 델타는 10장의 충격 응답과 15장의 푸리에 변환이 출발점으로 삼고, 그 결과인 \(\nabla^2(1/r) = -4\pi\delta^3(\mathbf r)\)은 20장의 그린 함수가 출발점으로 삼는 식이다.</p>
+    <ul class="objectives">
+      <li>원통·구면 좌표의 단위 벡터를 위치의 함수로 쓰고, 그 도함수로 곡선 좌표의 속도와 가속도를 유도할 수 있다.</li>
+      <li>직교 곡선 좌표의 척도 인자를 구하고, 선 요소·면 요소·부피 요소를 써서 적분을 계산할 수 있다.</li>
+      <li>발산과 회전의 적분 정의에서 직교 곡선 좌표의 기울기, 발산, 회전, 라플라시안을 유도하고, 원통·구면 좌표에서 계산할 수 있다.</li>
+      <li>디랙 델타를 함수열의 극한으로 이해하고, 거르기·척도·합성·도함수 성질로 델타가 든 적분을 계산할 수 있다.</li>
+      <li>점·선·면 원천의 밀도를 델타로 쓰고, \(\nabla\cdot(\hat{\mathbf r}/r^2) = 4\pi\delta^3(\mathbf r)\)과 \(\nabla^2(1/r) = -4\pi\delta^3(\mathbf r)\)로 점 원천이 있는 장을 다룰 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b>4장(기울기, 발산, 회전의 성분 정의와 지수 표기, 곱의 미분 법칙), 5장(발산 정리와 스토크스 정리, 발산과 회전의 적분 정의), 3장(야코비 행렬식과 변수 바꾸기), 1장(테일러 전개).</p>
+  </header>
+
+  <!-- ============================================================ 6.1 -->
+  <section id="s1">
+    <h2>원통 좌표와 구면 좌표</h2>
+    <p>원점에 있는 점전하 \(q\)의 전기장을 직교 좌표로 쓰면 \(\mathbf E = kq\,(x, y, z)/(x^2 + y^2 + z^2)^{3/2}\)이다(\(k = 1/4\pi\varepsilon_0\)). 성분 셋이 모두 세 변수에 기댄다. 그런데 물리적으로 이 장이 담은 정보는 "원점에서 바깥으로, 세기는 거리의 제곱에 반비례"뿐이다. 문제의 대칭이 구면이면 원점에서의 거리를 좌표 하나로 삼는 것이 자연스럽고, 대칭이 축 둘레의 회전이면 축까지의 거리를 좌표로 삼는 것이 자연스럽다. 이 절에서는 두 좌표계를 세우고, 직교 좌표와 가장 크게 다른 점인 "단위 벡터가 점마다 다르다"는 사실을 다룬다.</p>
+
+    <h3 id="s1-cylindrical">원통 좌표</h3>
+    <div class="box def" id="def-cylindrical-coords"><div class="box-h">원통 좌표</div>
+      <p>점 \((x, y, z)\)를 \(z\)축까지의 거리 \(s\), \(xy\) 평면에서 \(+x\)축으로부터 잰 방위각 \(\phi\), 높이 \(z\)로 나타낸 것을 <span class="term">원통 좌표</span> <span class="en">(cylindrical coordinates)</span> \((s, \phi, z)\)라 한다.</p>
+      <div class="formula" id="eq-cylindrical-coords">\[ x = s\cos\phi, \quad y = s\sin\phi, \quad z = z \]<div class="where">범위는 \(s \ge 0\), \(0 \le \phi &lt; 2\pi\)이다. 거꾸로 \(s = \sqrt{x^2 + y^2}\)이고, \(\phi\)는 \(\cos\phi = x/s\), \(\sin\phi = y/s\)를 함께 만족하는 각이다. \(\tan\phi = y/x\) 하나만 쓰면 사분면을 놓친다. \(z\)축 위(\(s = 0\))에서는 \(\phi\)가 정해지지 않는다.</div></div>
+    </div>
+    <p>좌표 하나를 고정한 곡면을 <span class="term">좌표면</span> <span class="en">(coordinate surface)</span>이라 한다. \(s =\) 상수는 \(z\)축을 축으로 하는 원기둥, \(\phi =\) 상수는 \(z\)축을 가장자리로 하는 반평면, \(z =\) 상수는 수평면이다. 한 점을 지나는 세 좌표면은 서로 직각으로 만난다. 그 점에서 좌표 하나만 늘릴 때 점이 움직이는 방향의 단위 벡터를 그 좌표의 단위 벡터라 한다.</p>
+    <div class="formula" id="eq-unit-vectors-cylindrical">\[ \begin{aligned} \hat{\mathbf s} &= (\cos\phi,\ \sin\phi,\ 0) \\ \hat{\boldsymbol\phi} &= (-\sin\phi,\ \cos\phi,\ 0) \\ \hat{\mathbf z} &= (0,\ 0,\ 1) \end{aligned} \]</div>
+    <p>세 벡터는 서로 수직인 단위 벡터이고 \(\hat{\mathbf s}\times\hat{\boldsymbol\phi} = \hat{\mathbf z}\)이므로 오른손 직교 기저를 이룬다. 직교 좌표의 기저와 다른 점은 \(\hat{\mathbf s}\)와 \(\hat{\boldsymbol\phi}\)가 \(\phi\)에 기댄다는 것이다. 성분을 미분하면 바로</p>
+    <div class="formula" id="eq-unit-vector-derivatives-cylindrical">\[ \frac{\partial\hat{\mathbf s}}{\partial\phi} = \hat{\boldsymbol\phi}, \quad \frac{\partial\hat{\boldsymbol\phi}}{\partial\phi} = -\hat{\mathbf s} \]</div>
+    <p>이고, 나머지 도함수는 모두 0이다. 위치 벡터는 \(\mathbf r = s\,\hat{\mathbf s} + z\,\hat{\mathbf z}\)이다. \(\hat{\boldsymbol\phi}\) 성분이 없다는 데 주의하자. 방위각의 정보는 성분이 아니라 \(\hat{\mathbf s}\)의 방향 속에 들어 있다.</p>
+
+    <h3 id="s1-spherical">구면 좌표</h3>
+    <div class="box def" id="def-spherical-coords"><div class="box-h">구면 좌표</div>
+      <p>점을 원점에서의 거리 \(r\), \(+z\)축에서 잰 극각 \(\theta\), 방위각 \(\phi\)로 나타낸 것을 <span class="term">구면 좌표</span> <span class="en">(spherical coordinates)</span> \((r, \theta, \phi)\)라 한다.</p>
+      <div class="formula" id="eq-spherical-coords">\[ \begin{aligned} x &= r\sin\theta\cos\phi \\ y &= r\sin\theta\sin\phi \\ z &= r\cos\theta \end{aligned} \]<div class="where">범위는 \(r \ge 0\), \(0 \le \theta \le \pi\), \(0 \le \phi &lt; 2\pi\)이다. 거꾸로 \(r = \sqrt{x^2 + y^2 + z^2}\), \(\theta = \cos^{-1}(z/r)\)이고, \(\phi\)는 원통 좌표와 같다. 원통 좌표와는 \(s = r\sin\theta\), \(z = r\cos\theta\)로 이어진다. 원점에서는 \(\theta\)와 \(\phi\)가, \(z\)축 위에서는 \(\phi\)가 정해지지 않는다.</div></div>
+    </div>
+    <p>좌표면은 \(r =\) 상수인 구면, \(\theta =\) 상수인 원뿔면(꼭짓점이 원점), \(\phi =\) 상수인 반평면이다. 지구의 위도와 경도로 말하면 \(\theta\)는 북극에서 잰 각(\(90°\)에서 위도를 뺀 것), \(\phi\)는 경도다(그림 6-1).</p>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 290" role="img" aria-label="원통 좌표 s, φ, z와 점 P의 단위 벡터 s, φ, z 모자"><defs><marker id="f0601-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker><marker id="f0601-arra" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker><marker id="f0601-arrb" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc2"/></marker></defs><line x1="172" y1="214" x2="79.1" y2="268" class="s-line" marker-end="url(#f0601-arr)"/><line x1="172" y1="214" x2="346.6" y2="242.7" class="s-line" marker-end="url(#f0601-arr)"/><line x1="172" y1="214" x2="172" y2="42.2" class="s-line" marker-end="url(#f0601-arr)"/><text x="69.1" y="282" class="t-math" style="font-size:18px" text-anchor="middle"><tspan font-style="italic">x</tspan></text><text x="358.6" y="248.7" class="t-math" style="font-size:18px" text-anchor="middle"><tspan font-style="italic">y</tspan></text><text x="184" y="46.2" class="t-math" style="font-size:18px" text-anchor="middle"><tspan font-style="italic">z</tspan></text><path d="M103.4,253.9 L126.8,257 L151.7,258.7 L177.1,259.2 L202.4,258.2 L226.8,255.9 L249.5,252.3 L269.8,247.6 L287.2,241.8 L301.1,235.2 L311,228 L316.8,220.3 L318.1,212.4 L315,204.6 L307.6,197.1 L296,190.1 L280.6,183.8 L262,178.4 L240.6,174.1 L217.2,171 L192.3,169.3 L166.9,168.8 L141.6,169.8 L117.2,172.1 L94.5,175.7 L74.2,180.4 L56.8,186.2 L42.9,192.8 L33,200 L27.2,207.7 L25.9,215.6 L29,223.4 L36.4,230.9 L48,237.9 L63.4,244.2 L82,249.6 L103.4,253.9" class="s-faint"/><path d="M103.4,131.2 L126.8,134.3 L151.7,136.1 L177.1,136.5 L202.4,135.5 L226.8,133.2 L249.5,129.6 L269.8,124.9 L287.2,119.1 L301.1,112.5 L311,105.3 L316.8,97.6 L318.1,89.7 L315,81.9 L307.6,74.4 L296,67.4 L280.6,61.1 L262,55.7 L240.6,51.4 L217.2,48.3 L192.3,46.6 L166.9,46.2 L141.6,47.1 L117.2,49.4 L94.5,53 L74.2,57.7 L56.8,63.5 L42.9,70.1 L33,77.4 L27.2,85 L25.9,92.9 L29,100.7 L36.4,108.2 L48,115.3 L63.4,121.5 L82,126.9 L103.4,131.2" class="s-faint"/><line x1="172" y1="214" x2="202.4" y2="258.2" class="s-line" stroke-dasharray="5 4"/><line x1="202.4" y1="258.2" x2="202.4" y2="135.5" class="s-line" stroke-dasharray="5 4"/><line x1="172" y1="91.3" x2="202.4" y2="135.5" class="s-faint"/><path d="M141.3,231.8 L143.3,232.2 L145.4,232.5 L147.5,232.7 L149.6,233 L151.8,233.2 L154,233.4 L156.2,233.6 L158.4,233.8 L160.7,233.9 L162.9,234 L165.2,234.1 L167.4,234.1 L169.7,234.2 L172,234.2 L174.3,234.2 L176.6,234.1 L178.8,234.1 L181.1,234 L183.3,233.9 L185.6,233.8" class="s-line"/><text x="160.5" y="249.3" class="t-math" style="font-size:18px" text-anchor="middle"><tspan font-style="italic">φ</tspan></text><text x="191.2" y="254.1" class="t-math" style="font-size:18px" text-anchor="middle"><tspan font-style="italic">s</tspan></text><text x="209.4" y="202.8" class="t-math" style="font-size:18px" text-anchor="start"><tspan font-style="italic">z</tspan></text><circle cx="202.4" cy="135.5" r="4" class="f-dim"/><text x="194.4" y="129.5" class="t-math" style="font-size:17px" text-anchor="end">P</text><line x1="202.4" y1="135.5" x2="217.4" y2="157.3" class="s-acc" style="stroke-width:2.6" marker-end="url(#f0601-arra)"/><text x="223.4" y="171.3" class="t-math acc" style="font-size:19px" text-anchor="start"><tspan font-weight="bold">ŝ</tspan></text><line x1="202.4" y1="135.5" x2="273.1" y2="130.9" class="s-acc2" style="stroke-width:2.6" marker-end="url(#f0601-arrb)"/><text x="283.1" y="134.9" class="t-math acc2" style="font-size:19px" text-anchor="start"><tspan font-weight="bold">φ̂</tspan></text><line x1="202.4" y1="135.5" x2="202.4" y2="66.8" class="s-acc" style="stroke-width:2.6" marker-end="url(#f0601-arra)"/><text x="212.4" y="70.8" class="t-math acc" style="font-size:19px" text-anchor="start"><tspan font-weight="bold">ẑ</tspan></text><text x="8" y="20" class="t" style="font-size:15px">(가) 원통 좌표</text></svg><svg viewBox="0 0 380 290" role="img" aria-label="구면 좌표 r, θ, φ와 점 P의 단위 벡터 r, θ, φ 모자"><line x1="172" y1="214" x2="79.1" y2="268" class="s-line" marker-end="url(#f0601-arr)"/><line x1="172" y1="214" x2="346.6" y2="242.7" class="s-line" marker-end="url(#f0601-arr)"/><line x1="172" y1="214" x2="172" y2="34.1" class="s-line" marker-end="url(#f0601-arr)"/><text x="69.1" y="282" class="t-math" style="font-size:18px" text-anchor="middle"><tspan font-style="italic">x</tspan></text><text x="358.6" y="248.7" class="t-math" style="font-size:18px" text-anchor="middle"><tspan font-style="italic">y</tspan></text><text x="184" y="38.1" class="t-math" style="font-size:18px" text-anchor="middle"><tspan font-style="italic">z</tspan></text><line x1="172" y1="214" x2="198.6" y2="143.2" class="s-line" style="stroke:var(--text);stroke-width:2"/><line x1="172" y1="214" x2="198.6" y2="252.6" class="s-line" stroke-dasharray="5 4"/><line x1="198.6" y1="252.6" x2="198.6" y2="143.2" class="s-line" stroke-dasharray="5 4"/><path d="M172,50.4 L175.7,56.7 L179.4,64.8 L183.1,74.5 L186.5,85.7 L189.9,98.3 L193,112.2 L195.9,127.2 L198.6,143.2 L200.9,159.9 L203,177.2 L204.7,195 L206,212.9 L207,230.8 L207.6,248.6 L207.8,266 L207.6,282.8 L207,298.9" class="s-faint"/><path d="M112,139.4 L132.5,142.1 L154.2,143.7 L176.5,144 L198.6,143.2 L219.9,141.2 L239.7,138 L257.5,133.9 L272.7,128.9 L284.9,123.1 L293.6,116.7 L298.6,110 L299.7,103.2 L297,96.3 L290.5,89.7 L280.4,83.6 L267,78.1 L250.7,73.4 L232,69.7 L211.5,67 L189.8,65.4 L167.5,65.1 L145.4,65.9 L124.1,67.9 L104.3,71 L86.5,75.2 L71.3,80.2 L59.1,86 L50.4,92.3 L45.4,99 L44.3,105.9 L47,112.8 L53.5,119.3 L63.6,125.5 L77,131 L93.3,135.7 L112,139.4" class="s-faint"/><path d="M172,164.9 L172.4,165.6 L172.9,166.4 L173.3,167.3 L173.8,168.2 L174.2,169.2 L174.7,170.3 L175.1,171.5 L175.5,172.8 L175.9,174.1 L176.4,175.5 L176.8,177 L177.2,178.5 L177.6,180.1 L177.9,181.8 L178.3,183.5 L178.7,185.2 L179,187 L179.3,188.9 L179.7,190.8 L180,192.8" class="s-line"/><text x="179.8" y="162.7" class="t-math" style="font-size:18px" text-anchor="middle"><tspan font-style="italic">θ</tspan></text><path d="M146.2,229 L147.9,229.3 L149.6,229.5 L151.4,229.8 L153.2,230 L155,230.2 L156.8,230.3 L158.7,230.5 L160.6,230.6 L162.4,230.7 L164.3,230.8 L166.2,230.9 L168.2,231 L170.1,231 L172,231 L173.9,231 L175.8,231 L177.8,230.9 L179.7,230.8 L181.6,230.7 L183.4,230.6" class="s-line"/><text x="161.9" y="246.1" class="t-math" style="font-size:18px" text-anchor="middle"><tspan font-style="italic">φ</tspan></text><text x="192.3" y="182.6" class="t-math" style="font-size:18px" text-anchor="start"><tspan font-style="italic">r</tspan></text><circle cx="198.6" cy="143.2" r="4" class="f-dim"/><text x="189.6" y="137.2" class="t-math" style="font-size:17px" text-anchor="end">P</text><line x1="198.6" y1="143.2" x2="209.7" y2="113.4" class="s-acc" style="stroke-width:2.6" marker-end="url(#f0601-arra)"/><text x="217.7" y="113.4" class="t-math acc" style="font-size:19px" text-anchor="start"><tspan font-weight="bold">r̂</tspan></text><line x1="198.6" y1="143.2" x2="208.6" y2="208.8" class="s-acc2" style="stroke-width:2.6" marker-end="url(#f0601-arrb)"/><text x="216.6" y="222.8" class="t-math acc2" style="font-size:19px" text-anchor="start"><tspan font-weight="bold">θ̂</tspan></text><line x1="198.6" y1="143.2" x2="269.2" y2="138.5" class="s-acc" style="stroke-width:2.6" marker-end="url(#f0601-arra)"/><text x="277.2" y="144.5" class="t-math acc" style="font-size:19px" text-anchor="start"><tspan font-weight="bold">φ̂</tspan></text><text x="8" y="20" class="t" style="font-size:15px">(나) 구면 좌표</text></svg></div>
+      <figcaption><b>그림 6-1.</b> (가) 원통 좌표 \((s, \phi, z)\)와 (나) 구면 좌표 \((r, \theta, \phi)\). 점 P에서 좌표 하나만 늘릴 때 움직이는 방향이 그 좌표의 단위 벡터다. 연한 원은 (가)에서 \(s\)가 같은 점들, (나)에서 \(r\)과 \(\theta\)가 같은 위도선과 \(r\)과 \(\phi\)가 같은 경도선이다. 세 단위 벡터는 P에서 서로 수직이지만, P가 움직이면 방향이 바뀐다.</figcaption>
+    </figure>
+    <div class="callout warn"><strong>좌표의 이름은 교재마다 다르다</strong><p>이 책은 원통 좌표를 \((s, \phi, z)\)로, 구면 좌표를 \((r, \theta, \phi)\)로 쓰고 \(\theta\)를 \(+z\)축에서 잰 극각으로 둔다(물리의 관례, ISO 80000-2). 다른 교재와 섞어 읽을 때는 다음을 확인한다. (1) 원통 좌표의 축까지 거리를 아프켄과 잭슨은 \(\rho\), 보아스는 \(r\)로 쓴다. 이 책은 전하 밀도 \(\rho\)와 구면 좌표의 \(r\)과 겹치지 않도록 그리피스처럼 \(s\)를 쓴다. (2) 미적분 교재 일부는 \(\theta\)를 방위각, \(\phi\)를 극각으로 바꿔 쓴다. 그러면 부피 요소가 \(r^2\sin\phi\,dr\,d\theta\,d\phi\)처럼 보인다. (3) 방위각을 \(\varphi\)로 쓰는 교재도 있다. 이 책은 \(\phi\)로 통일한다.</p></div>
+
+    <h3 id="s1-unit-vectors">구면 좌표의 단위 벡터와 그 도함수</h3>
+    <p>단위 벡터를 체계적으로 얻으려면 위치 벡터 \(\mathbf r = (r\sin\theta\cos\phi,\ r\sin\theta\sin\phi,\ r\cos\theta)\)를 좌표 하나로 미분한다. 그 벡터가 바로 "그 좌표만 늘릴 때 점이 움직이는 방향"이다.</p>
+    <div class="formula" id="eq-position-derivatives-spherical">\[ \begin{aligned} \frac{\partial\mathbf r}{\partial r} &= (\sin\theta\cos\phi,\ \sin\theta\sin\phi,\ \cos\theta) \\ \frac{\partial\mathbf r}{\partial\theta} &= r\,(\cos\theta\cos\phi,\ \cos\theta\sin\phi,\ -\sin\theta) \\ \frac{\partial\mathbf r}{\partial\phi} &= r\sin\theta\,(-\sin\phi,\ \cos\phi,\ 0) \end{aligned} \]</div>
+    <p>괄호 안의 벡터들은 길이가 1이다. 따라서 세 도함수의 길이는 \(1\), \(r\), \(r\sin\theta\)이고, 괄호 안이 단위 벡터다.</p>
+    <div class="formula" id="eq-unit-vectors-spherical">\[ \begin{aligned} \hat{\mathbf r} &= (\sin\theta\cos\phi,\ \sin\theta\sin\phi,\ \cos\theta) \\ \hat{\boldsymbol\theta} &= (\cos\theta\cos\phi,\ \cos\theta\sin\phi,\ -\sin\theta) \\ \hat{\boldsymbol\phi} &= (-\sin\phi,\ \cos\phi,\ 0) \end{aligned} \]</div>
+    <p>내적을 계산하면 \(\hat{\mathbf r}\cdot\hat{\boldsymbol\theta} = \sin\theta\cos\theta(\cos^2\phi + \sin^2\phi) - \cos\theta\sin\theta = 0\)이고, \(\hat{\boldsymbol\phi}\)는 \(z\) 성분이 0이며 \(\hat{\mathbf r}\)과 \(\hat{\boldsymbol\theta}\)의 \((x, y)\) 부분 \((\cos\phi, \sin\phi)\)에 수직이므로 둘 모두와 수직이다. 외적을 성분으로 계산하면 \(\hat{\mathbf r}\times\hat{\boldsymbol\theta} = (-\sin\phi(\sin^2\theta + \cos^2\theta),\ \cos\phi(\sin^2\theta + \cos^2\theta),\ 0) = \hat{\boldsymbol\phi}\)이다. 곧 \((\hat{\mathbf r}, \hat{\boldsymbol\theta}, \hat{\boldsymbol\phi})\)는 이 순서로 오른손 직교 기저다. \(\hat{\boldsymbol\theta}\)는 경도선을 따라 남쪽을, \(\hat{\boldsymbol\phi}\)는 위도선을 따라 동쪽을 가리킨다.</p>
+    <p>세 단위 벡터는 \(r\)에는 기대지 않고 \(\theta\)와 \(\phi\)에 기댄다. 식 <a class="ref" href="#eq-unit-vectors-spherical"></a>의 성분을 미분해 다시 \(\hat{\mathbf r}, \hat{\boldsymbol\theta}, \hat{\boldsymbol\phi}\)로 나타내면 다음 표를 얻는다.</p>
+    <div class="formula" id="eq-unit-vector-derivatives-spherical">\[ \begin{aligned} \frac{\partial\hat{\mathbf r}}{\partial\theta} &= \hat{\boldsymbol\theta}, & \frac{\partial\hat{\mathbf r}}{\partial\phi} &= \sin\theta\,\hat{\boldsymbol\phi} \\ \frac{\partial\hat{\boldsymbol\theta}}{\partial\theta} &= -\hat{\mathbf r}, & \frac{\partial\hat{\boldsymbol\theta}}{\partial\phi} &= \cos\theta\,\hat{\boldsymbol\phi} \\ \frac{\partial\hat{\boldsymbol\phi}}{\partial\theta} &= 0, & \frac{\partial\hat{\boldsymbol\phi}}{\partial\phi} &= -\sin\theta\,\hat{\mathbf r} - \cos\theta\,\hat{\boldsymbol\theta} \end{aligned} \]<div class="where">\(r\)에 대한 도함수는 모두 0이다.</div></div>
+    <p>마지막 줄만 확인해 보자. \(\partial\hat{\boldsymbol\phi}/\partial\phi = (-\cos\phi, -\sin\phi, 0)\)이다. 한편 \(\sin\theta\,\hat{\mathbf r} + \cos\theta\,\hat{\boldsymbol\theta} = \big(\cos\phi(\sin^2\theta + \cos^2\theta),\ \sin\phi(\sin^2\theta + \cos^2\theta),\ \sin\theta\cos\theta - \cos\theta\sin\theta\big) = (\cos\phi, \sin\phi, 0)\)이므로 두 식이 같다. \((\cos\phi, \sin\phi, 0)\)은 원통 좌표의 \(\hat{\mathbf s}\)이다. 곧 위도선을 따라 돌면 \(\hat{\boldsymbol\phi}\)는 \(z\)축을 향해 꺾이고, 이것은 식 <a class="ref" href="#eq-unit-vector-derivatives-cylindrical"></a>의 \(\partial\hat{\boldsymbol\phi}/\partial\phi = -\hat{\mathbf s}\)와 같은 말이다.</p>
+    <p>입자가 움직이면 단위 벡터도 입자를 따라 바뀐다. 연쇄 법칙으로 \(d\hat{\mathbf r}/dt = \dot\theta\,\partial_\theta\hat{\mathbf r} + \dot\phi\,\partial_\phi\hat{\mathbf r} = \dot\theta\,\hat{\boldsymbol\theta} + \sin\theta\,\dot\phi\,\hat{\boldsymbol\phi}\)이다. 위치 벡터는 \(\mathbf r = r\,\hat{\mathbf r}\)이므로 곱의 미분으로 속도를 얻는다.</p>
+    <div class="formula" id="eq-velocity-spherical">\[ \mathbf v = \dot r\,\hat{\mathbf r} + r\dot\theta\,\hat{\boldsymbol\theta} + r\sin\theta\,\dot\phi\,\hat{\boldsymbol\phi} \]</div>
+    <p>각 항은 "좌표 하나의 변화율 × 그 좌표가 바뀔 때 움직이는 거리의 비율"이다. 이 비율 \(1, r, r\sin\theta\)가 6.2절의 척도 인자다.</p>
+    <div class="callout warn"><strong>곡선 좌표의 성분을 그대로 더하거나 적분하지 않는다</strong><p>직교 좌표에서는 두 점의 벡터를 성분끼리 더해도 되지만, 곡선 좌표의 성분은 점마다 다른 기저에 대한 것이다. 예를 들어 단위 구면 위에서 \(\hat{\mathbf r}\)을 넓이에 대해 적분하면 "성분 \(A_r = 1\)이 넓이 \(4\pi\)만큼"이라서 \(4\pi\hat{\mathbf r}\)일 것 같지만, 어느 점의 \(\hat{\mathbf r}\)인지 정할 수 없다. 실제로는 반대쪽 점의 \(\hat{\mathbf r}\)끼리 지워져 \(\oint\hat{\mathbf r}\,da = 0\)이다. 곡선 좌표의 벡터를 적분할 때는 식 <a class="ref" href="#eq-unit-vectors-spherical"></a>으로 직교 성분으로 바꾼 뒤 적분한다. 미분할 때도 마찬가지로 단위 벡터의 도함수 <a class="ref" href="#eq-unit-vector-derivatives-spherical"></a>을 빠뜨리면 안 된다.</p></div>
+
+    <div class="box ex" id="ex-polar-acceleration"><div class="box-h">극좌표의 가속도와 줄에 매인 원반</div>
+      <p>평면 위에서 움직이는 입자를 극좌표 \((r, \theta)\)로 나타낸다(3장처럼 평면 극좌표는 \((r, \theta)\)로 쓴다. 원통 좌표의 \((s, \phi)\)를 \(z = 0\) 평면에 놓은 것과 같다). (가) 가속도의 지름 성분과 둘레 성분을 구하라. (나) 마찰 없는 수평 탁자 가운데의 작은 구멍에 줄을 꿰고, 위쪽 끝에 질량 \(m = 0.20\ \text{kg}\)인 원반을 매었다. 원반은 처음에 반지름 \(r_0 = 0.50\ \text{m}\), 각속도 \(\omega_0 = 2.0\ \text{rad/s}\)로 원운동한다. 탁자 밑에서 줄을 일정한 빠르기 \(0.10\ \text{m/s}\)로 잡아당길 때, \(r = 0.25\ \text{m}\)에서의 각속도와 줄의 장력을 구하라.</p>
+      <p><b>풀이.</b> (가) 평면에서 \(\hat{\mathbf r} = (\cos\theta, \sin\theta)\), \(\hat{\boldsymbol\theta} = (-\sin\theta, \cos\theta)\)이다. 성분을 \(t\)로 미분하면</p>
+      <div class="formula">\[ \frac{d\hat{\mathbf r}}{dt} = \dot\theta\,\hat{\boldsymbol\theta}, \quad \frac{d\hat{\boldsymbol\theta}}{dt} = -\dot\theta\,\hat{\mathbf r} \]</div>
+      <p>이다. \(\mathbf r = r\hat{\mathbf r}\)을 한 번 미분하면 \(\mathbf v = \dot r\,\hat{\mathbf r} + r\dot\theta\,\hat{\boldsymbol\theta}\)이고, 한 번 더 미분하면서 위 식을 쓰면</p>
+      <div class="formula">\[ \begin{aligned} \mathbf a &= \ddot r\,\hat{\mathbf r} + \dot r\dot\theta\,\hat{\boldsymbol\theta} + \dot r\dot\theta\,\hat{\boldsymbol\theta} + r\ddot\theta\,\hat{\boldsymbol\theta} - r\dot\theta^2\,\hat{\mathbf r} \end{aligned} \]</div>
+      <p>이다. 첫 항은 \(\dot r\)의 변화, 둘째 항은 \(\hat{\mathbf r}\)의 회전, 셋째와 넷째 항은 \(r\dot\theta\)의 변화, 마지막 항은 \(\hat{\boldsymbol\theta}\)의 회전에서 왔다. 정리하면</p>
+      <div class="formula" id="eq-polar-acceleration">\[ \mathbf a = (\ddot r - r\dot\theta^2)\,\hat{\mathbf r} + (r\ddot\theta + 2\dot r\dot\theta)\,\hat{\boldsymbol\theta} \]</div>
+      <p>이다. \(-r\dot\theta^2\)은 구심 가속도이고, \(2\dot r\dot\theta\)는 지름 방향으로 움직이면서 돌 때 생기는 항이다. 둘레 성분은 \(r\ddot\theta + 2\dot r\dot\theta = \dfrac{1}{r}\dfrac{d}{dt}(r^2\dot\theta)\)로 쓸 수 있다.</p>
+      <p>(나) 줄의 장력 \(T\)는 구멍을 향하므로 힘은 \(-T\hat{\mathbf r}\)뿐이다. 둘레 방향의 힘이 없으므로 \(\frac{d}{dt}(r^2\dot\theta) = 0\), 곧 단위 질량당 각운동량 \(r^2\dot\theta\)가 보존된다. 따라서 \(\dot\theta = \omega_0(r_0/r)^2\)이다. 줄을 일정한 빠르기로 당기므로 \(\ddot r = 0\)이고, 지름 성분에서 \(-T = m(0 - r\dot\theta^2)\)이다.</p>
+      <p><b>숫자로 보기.</b> \(r = 0.25\ \text{m}\)에서 \(\dot\theta = 2.0\ \text{rad/s} \times (0.50/0.25)^2 = 8.0\ \text{rad/s}\)이고</p>
+      <div class="formula">\[ \begin{aligned} T &= mr\dot\theta^2 \\ &= (0.20\ \text{kg})(0.25\ \text{m})(8.0\ \text{s}^{-1})^2 \\ &= 3.2\ \text{N} \end{aligned} \]</div>
+      <p>이다. 처음 장력 \(mr_0\omega_0^2 = 0.40\ \text{N}\)의 8배다. 반지름이 절반이 되면 \(r\dot\theta^2 \propto r^{-3}\)이므로 장력이 \(2^3 = 8\)배가 된다. 에너지로 검산하자. 운동 에너지 \(\tfrac12 m(\dot r^2 + r^2\dot\theta^2)\)는 \(0.101\ \text{J}\)에서 \(0.401\ \text{J}\)로 \(0.300\ \text{J}\) 늘었다. 줄이 한 일은 \(\int T\,(-dr) = m\omega_0^2r_0^4\int_{0.25}^{0.50}r^{-3}\,dr\)이다. \(m\omega_0^2r_0^4 = 0.050\ \text{kg}\cdot\text{m}^4/\text{s}^2\)이고 적분은 \(\big[-1/2r^2\big]_{0.25}^{0.50} = 6.0\ \text{m}^{-2}\)이므로 일은 \(0.30\ \text{J}\)로 같다. 단위는 \(\text{kg}\cdot\text{m}\cdot\text{s}^{-2} = \text{N}\)이다. 같은 식을 21장에서는 라그랑지안에서 단위 벡터를 미분하지 않고 얻는다(<a href="ch21.html#eq-lagrange-equations">21장 식 (21.38)</a>).</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 6.2 -->
+  <section id="s2">
+    <h2>척도 인자와 선·넓이·부피 요소</h2>
+    <p>구면 좌표로 공의 부피를 구한다고 \(\int dr\,d\theta\,d\phi\)를 계산하면 \(R \cdot \pi \cdot 2\pi\)가 나오는데, 이것은 차원부터 부피가 아니다. \(\theta\)와 \(\phi\)는 각이라 \(d\theta\)는 길이가 아니기 때문이다. 좌표를 조금 바꿀 때 실제로 움직이는 거리를 알아야 길이, 넓이, 부피를 셀 수 있다. 원통 좌표와 구면 좌표만 따로 외우는 대신, 이 절에서는 좌표를 일반적인 \((u_1, u_2, u_3)\)로 두고 한 번에 다룬다. 연습문제의 포물선 좌표(<a class="ref" href="#prob-parabolic-coords"></a>)처럼 새 좌표계를 만나도 같은 방법을 쓸 수 있다.</p>
+
+    <h3 id="s2-scale-factors">척도 인자</h3>
+    <p>위치 벡터가 세 좌표의 함수 \(\mathbf r(u_1, u_2, u_3)\)로 주어졌다고 하자. \(u_1\)만 \(du_1\)만큼 바꾸면 점은 \((\partial\mathbf r/\partial u_1)\,du_1\)만큼 움직인다(1차까지). 이 변위의 길이와 방향이 좌표계의 기하를 모두 담는다.</p>
+    <div class="box def" id="def-scale-factors"><div class="box-h">척도 인자와 직교 곡선 좌표</div>
+      <p>좌표 \(u_i\)의 <span class="term">척도 인자</span> <span class="en">(scale factor)</span> \(h_i\)와 단위 벡터 \(\hat{\mathbf e}_i\)를 다음으로 정한다(같은 \(i\)에 대해 더하지 않는다).</p>
+      <div class="formula">\[ h_i = \left\lvert\frac{\partial\mathbf r}{\partial u_i}\right\rvert, \quad \frac{\partial\mathbf r}{\partial u_i} = h_i\,\hat{\mathbf e}_i \]</div>
+      <p>모든 점에서(좌표가 정해지지 않는 점은 빼고) \(\hat{\mathbf e}_i\cdot\hat{\mathbf e}_j = \delta_{ij}\)이면 \((u_1, u_2, u_3)\)를 <span class="term">직교 곡선 좌표</span> <span class="en">(orthogonal curvilinear coordinates)</span>라 한다. 이 장에서는 \(\hat{\mathbf e}_1\times\hat{\mathbf e}_2 = \hat{\mathbf e}_3\)이 되도록 좌표의 순서를 정한다.</p>
+    </div>
+    <p>\(h_i\)는 "\(u_i\)를 1만큼 바꿀 때(1차 근사로) 움직이는 거리"이다. \(u_i\)가 각이면 \(h_i\)가 길이의 차원을 가져서 \(h_i\,du_i\)가 길이가 된다. 식 <a class="ref" href="#eq-position-derivatives-spherical"></a>에서 이미 구면 좌표의 척도 인자를 읽을 수 있고, 원통 좌표도 식 <a class="ref" href="#eq-cylindrical-coords"></a>을 미분하면 같은 방법으로 나온다.</p>
+    <div class="formula" id="eq-scale-factors-table">\[ \begin{aligned} &\text{직교 좌표 } (x, y, z): && h = (1,\ 1,\ 1) \\ &\text{원통 좌표 } (s, \phi, z): && h = (1,\ s,\ 1) \\ &\text{구면 좌표 } (r, \theta, \phi): && h = (1,\ r,\ r\sin\theta) \end{aligned} \]</div>
+    <p>기하로 읽으면 쉽다. 구면 좌표에서 \(\theta\)를 \(d\theta\)만큼 바꾸면 점은 반지름 \(r\)인 경도선 위의 호 \(r\,d\theta\)를 지나고, \(\phi\)를 \(d\phi\)만큼 바꾸면 반지름 \(s = r\sin\theta\)인 위도선 위의 호 \(r\sin\theta\,d\phi\)를 지난다. 극 근처에서는 위도선이 작아서 같은 \(d\phi\)라도 조금만 움직인다. 4장의 경고에서 본 "\(\hat{\boldsymbol\theta}\) 성분은 \(\tfrac1r\partial_\theta f\)이어야 한다"는 이 사실에서 나온다.</p>
+
+    <h3 id="s2-line-element">선 요소</h3>
+    <p>세 좌표를 모두 조금씩 바꾸면 변위는 세 변위의 합이다. 연쇄 법칙으로 \(d\mathbf r = \sum_i(\partial\mathbf r/\partial u_i)\,du_i\)이므로</p>
+    <div class="formula" id="eq-line-element">\[ \begin{aligned} d\mathbf l &= \sum_{i=1}^{3} h_i\,du_i\,\hat{\mathbf e}_i \\ ds^2 &= d\mathbf l\cdot d\mathbf l = \sum_{i=1}^{3} h_i^2\,du_i^2 \end{aligned} \]<div class="where">\(ds\)는 변위의 길이다. 둘째 줄에서 엇갈린 항 \(h_ih_j\,du_i\,du_j\,\hat{\mathbf e}_i\cdot\hat{\mathbf e}_j\) (\(i \ne j\))이 사라지는 것은 좌표가 직교이기 때문이다. 직교가 아닌 좌표에서는 이 항이 남고, 22장에서 계량 텐서 \(g_{ij}\)로 \(ds^2 = g_{ij}\,du^i\,du^j\)라 쓴다.</div></div>
+    <p>구면 좌표에서는</p>
+    <div class="formula" id="eq-line-element-spherical">\[ ds^2 = dr^2 + r^2\,d\theta^2 + r^2\sin^2\theta\,d\phi^2 \]<div class="where">원통 좌표에서는 \(\lvert d\mathbf l\rvert^2 = (ds)^2 + s^2\,d\phi^2 + dz^2\)이다. 여기서 \(ds\)는 좌표 \(s\)의 변화이므로, 원통 좌표에서는 길이를 \(\lvert d\mathbf l\rvert\)로 쓰는 편이 헷갈리지 않는다.</div></div>
+    <p>이다. 첫 식에서 \(dr = 0\)으로 두면 반지름 \(R\)인 구면 위의 거리 \(ds^2 = R^2(d\theta^2 + \sin^2\theta\,d\phi^2)\)가 되고, 21장은 이 식으로 구면 위의 가장 짧은 길(측지선)을 찾는다. 선 요소는 곡선의 길이도 준다. 곡선이 \(u_i(t)\)로 주어지면 길이는 \(\int\sqrt{\sum_i h_i^2\dot u_i^2}\,dt\)이고, 식 <a class="ref" href="#eq-velocity-spherical"></a>의 속력 \(\lvert\mathbf v\rvert\)도 같은 식이다.</p>
+
+    <h3 id="s2-area-volume">넓이 요소와 부피 요소</h3>
+    <p>좌표면 \(u_1 =\) 상수 위에서 \(u_2\)와 \(u_3\)만 바꾸면, 변이 \(h_2\,du_2\,\hat{\mathbf e}_2\)와 \(h_3\,du_3\,\hat{\mathbf e}_3\)인 작은 직사각형이 생긴다. 두 변이 수직이므로 넓이는 변의 길이의 곱이고, 법선은 \(\hat{\mathbf e}_2\times\hat{\mathbf e}_3 = \hat{\mathbf e}_1\)이다. 세 좌표를 모두 바꾸면 변이 \(h_1\,du_1\), \(h_2\,du_2\), \(h_3\,du_3\)인 작은 직육면체가 생긴다(그림 6-2).</p>
+    <div class="formula" id="eq-area-element-general">\[ d\mathbf a = h_2h_3\,du_2\,du_3\,\hat{\mathbf e}_1 \quad (u_1 = \text{상수인 면}) \]</div>
+    <div class="formula" id="eq-volume-element-general">\[ d^3r = h_1h_2h_3\,du_1\,du_2\,du_3 \]</div>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 300" role="img" aria-label="구면 좌표의 부피 요소. 세 변의 길이가 dr, r dθ, r sinθ dφ인 작은 상자"><path d="M68.2,196.4 L103.3,124.3" class="s-faint" stroke-dasharray="4 4"/><path d="M134.5,180.9 L208.4,99.8" class="s-faint" stroke-dasharray="4 4"/><path d="M85.9,265.4 L131.3,233.6" class="s-faint" stroke-dasharray="4 4"/><path d="M171.8,245.4 L267.3,201.9" class="s-faint" stroke-dasharray="4 4"/><text x="81.9" y="283.4" class="t-dim" style="font-size:14px" text-anchor="start">원점 방향</text><path d="M133.3,62.5 L136,70.9 L138.7,79.3 L141.3,87.9 L143.9,96.6 L146.4,105.3 L148.8,114.2 L151.2,123.1 L153.6,132.1 L155.8,141.1 L158.1,150.3 L160.2,159.5 L162.4,168.7 L164.4,178 L166.4,187.4 L168.3,196.8 L170.2,206.3 L170.2,206.3 L183.3,204.6 L196.1,202.8 L208.8,200.8 L221.2,198.7 L233.4,196.5 L245.4,194.1 L257.1,191.7 L268.6,189.1 L279.8,186.4 L290.7,183.6 L301.2,180.7 L311.5,177.7 L321.4,174.6 L331.1,171.3 L340.3,168 L349.2,164.6 L349.2,164.6 L345.3,155.6 L341.2,146.7 L337,137.8 L332.7,129.1 L328.3,120.3 L323.7,111.7 L319,103.1 L314.2,94.7 L309.3,86.3 L304.2,78 L299.1,69.8 L293.8,61.7 L288.4,53.7 L282.9,45.8 L277.3,38 L271.6,30.3 L271.6,30.3 L264.8,32.9 L257.6,35.5 L250.2,37.9 L242.5,40.4 L234.6,42.7 L226.4,44.9 L218,47.1 L209.3,49.2 L200.5,51.2 L191.4,53.1 L182.2,54.9 L172.7,56.6 L163.1,58.2 L153.4,59.7 L143.4,61.2 L133.3,62.5 Z" class="f-acc-soft" style="stroke-width:1"/><path d="M103.3,124.3 L110.9,123.3 L118.5,122.2 L125.9,121 L133.2,119.8 L140.4,118.5 L147.4,117.1 L154.3,115.7 L161,114.2 L167.6,112.6 L174,111 L180.2,109.2 L186.2,107.5 L192.1,105.6 L197.7,103.7 L203.1,101.8 L208.4,99.8" class="s-line" style="stroke:var(--text);stroke-width:1.6"/><path d="M131.3,233.6 L141.2,232.3 L151,230.9 L160.6,229.4 L170.1,227.8 L179.3,226.1 L188.4,224.3 L197.3,222.5 L206.1,220.5 L214.5,218.5 L222.8,216.3 L230.9,214.1 L238.7,211.8 L246.2,209.5 L253.5,207 L260.6,204.5 L267.3,201.9" class="s-line" style="stroke:var(--text);stroke-width:1.6"/><path d="M103.3,124.3 L105.3,130.7 L107.3,137.1 L109.3,143.6 L111.3,150.2 L113.2,156.9 L115,163.6 L116.8,170.3 L118.6,177.2 L120.4,184.1 L122.1,191 L123.7,198 L125.3,205 L126.9,212.1 L128.4,219.2 L129.9,226.4 L131.3,233.6" class="s-line" style="stroke:var(--text);stroke-width:1.6"/><path d="M208.4,99.8 L212.7,105.6 L216.9,111.6 L221.1,117.6 L225.2,123.7 L229.2,129.8 L233.1,136.1 L237,142.4 L240.7,148.7 L244.4,155.2 L247.9,161.7 L251.4,168.3 L254.8,174.9 L258.1,181.6 L261.2,188.3 L264.3,195.1 L267.3,201.9" class="s-line" style="stroke:var(--text);stroke-width:1.6"/><path d="M133.3,62.5 L143.4,61.2 L153.4,59.7 L163.1,58.2 L172.7,56.6 L182.2,54.9 L191.4,53.1 L200.5,51.2 L209.3,49.2 L218,47.1 L226.4,44.9 L234.6,42.7 L242.5,40.4 L250.2,37.9 L257.6,35.5 L264.8,32.9 L271.6,30.3" class="s-line" style="stroke:var(--text);stroke-width:1.6"/><path d="M170.2,206.3 L183.3,204.6 L196.1,202.8 L208.8,200.8 L221.2,198.7 L233.4,196.5 L245.4,194.1 L257.1,191.7 L268.6,189.1 L279.8,186.4 L290.7,183.6 L301.2,180.7 L311.5,177.7 L321.4,174.6 L331.1,171.3 L340.3,168 L349.2,164.6" class="s-line" style="stroke:var(--text);stroke-width:1.6"/><path d="M133.3,62.5 L136,70.9 L138.7,79.3 L141.3,87.9 L143.9,96.6 L146.4,105.3 L148.8,114.2 L151.2,123.1 L153.6,132.1 L155.8,141.1 L158.1,150.3 L160.2,159.5 L162.4,168.7 L164.4,178 L166.4,187.4 L168.3,196.8 L170.2,206.3" class="s-line" style="stroke:var(--text);stroke-width:1.6"/><path d="M271.6,30.3 L277.3,38 L282.9,45.8 L288.4,53.7 L293.8,61.7 L299.1,69.8 L304.2,78 L309.3,86.3 L314.2,94.7 L319,103.1 L323.7,111.7 L328.3,120.3 L332.7,129.1 L337,137.8 L341.2,146.7 L345.3,155.6 L349.2,164.6" class="s-line" style="stroke:var(--text);stroke-width:1.6"/><path d="M103.3,124.3 L133.3,62.5" class="s-line" style="stroke:var(--text);stroke-width:1.6"/><path d="M208.4,99.8 L271.6,30.3" class="s-line" style="stroke:var(--text);stroke-width:1.6"/><path d="M131.3,233.6 L170.2,206.3" class="s-line" style="stroke:var(--text);stroke-width:1.6"/><path d="M267.3,201.9 L349.2,164.6" class="s-line" style="stroke:var(--text);stroke-width:1.6"/><text x="316.3" y="201.3" class="t-math acc2" style="font-size:18px" text-anchor="start"><tspan font-style="italic">dr</tspan></text><text x="324.2" y="98.7" class="t-math acc2" style="font-size:18px" text-anchor="start"><tspan font-style="italic">r</tspan> <tspan font-style="italic">dθ</tspan></text><text x="213.3" y="37.2" class="t-math acc2" style="font-size:18px" text-anchor="middle"><tspan font-style="italic">r</tspan> sin <tspan font-style="italic">θ</tspan> <tspan font-style="italic">dφ</tspan></text></svg></div>
+      <figcaption><b>그림 6-2.</b> 구면 좌표의 부피 요소. \((r, \theta, \phi)\)에서 \((r + dr, \theta + d\theta, \phi + d\phi)\)까지의 작은 상자는 세 변이 \(dr\), \(r\,d\theta\), \(r\sin\theta\,d\phi\)인 직육면체에 가깝다(그림은 크기를 과장했다). 색칠한 바깥 면은 반지름 \(r + dr\)인 구면의 조각이고 넓이는 \(r^2\sin\theta\,d\theta\,d\phi\)에 가깝다. 상자의 변들은 곡선이지만, 곡률에서 오는 차이는 \(dr, d\theta, d\phi\)를 하나 더 곱한 차수라 부피 요소에 들어오지 않는다.</figcaption>
+    </figure>
+    <p>구면 좌표와 원통 좌표에 척도 인자를 넣으면 다음을 얻는다.</p>
+    <div class="formula" id="eq-volume-element-spherical">\[ d^3r = r^2\sin\theta\,dr\,d\theta\,d\phi \]</div>
+    <div class="formula" id="eq-volume-element-cylindrical">\[ d^3r = s\,ds\,d\phi\,dz \]</div>
+    <p>반지름 \(R\)인 구면의 넓이 요소는 \(d\mathbf a = R^2\sin\theta\,d\theta\,d\phi\,\hat{\mathbf r}\)이다. 5장 <a href="ch05.html#eq-sphere-surface-element">식 (5.18)</a>에서 매개변수 곡면의 외적으로 구한 것과 같다. 반지름 \(a\)인 원기둥 옆면은 \(d\mathbf a = a\,d\phi\,dz\,\hat{\mathbf s}\)이다. 구면 넓이 요소를 \(R^2\)으로 나눈 것을 <span class="term">입체각</span> <span class="en">(solid angle)</span> 요소라 한다.</p>
+    <div class="formula" id="eq-solid-angle">\[ d\Omega = \sin\theta\,d\theta\,d\phi, \quad \oint d\Omega = \int_0^{2\pi}\!\!\int_0^\pi\sin\theta\,d\theta\,d\phi = 4\pi \]</div>
+    <p>점에서 본 방향의 "넓이"가 입체각이다. 이제 처음의 공은 \(\int_0^R r^2\,dr \int d\Omega = \tfrac43\pi R^3\)으로 바르게 나온다.</p>
+    <div class="box thm" id="thm-volume-element-jacobian"><div class="box-h">부피 요소와 야코비 행렬식</div>
+      <p>직교 곡선 좌표의 야코비 행렬식은 척도 인자의 곱이다.</p>
+      <div class="formula">\[ \frac{\partial(x, y, z)}{\partial(u_1, u_2, u_3)} = h_1h_2h_3 \]</div>
+      <p>따라서 식 <a class="ref" href="#eq-volume-element-general"></a>는 3장 <a href="ch03.html#eq-jacobian-change">식 (3.30)</a>의 변수 바꾸기와 같은 결과다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>야코비 행렬 \(\partial x_i/\partial u_j\)의 \(j\)번째 열은 \(\partial\mathbf r/\partial u_j = h_j\hat{\mathbf e}_j\)이다. \(3\times3\) 행렬식은 세 열의 스칼라 삼중곱이므로(4장 <a href="ch04.html#eq-triple-product">식 (4.19)</a>)</p>
+        <div class="formula">\[ \begin{aligned} \det\Big(\frac{\partial x_i}{\partial u_j}\Big) &= (h_1\hat{\mathbf e}_1)\cdot(h_2\hat{\mathbf e}_2\times h_3\hat{\mathbf e}_3) \\ &= h_1h_2h_3\,\hat{\mathbf e}_1\cdot\hat{\mathbf e}_1 = h_1h_2h_3 \end{aligned} \]</div>
+        <p>이다. 둘째 줄에서 오른손 순서 \(\hat{\mathbf e}_2\times\hat{\mathbf e}_3 = \hat{\mathbf e}_1\)을 썼다. 구면 좌표에서 직접 \(3\times3\) 행렬식을 전개해도 \(r^2\sin\theta\)가 나오지만, 척도 인자로 보면 계산이 필요 없다.</p>
+      </details>
+    </div>
+    <div class="callout tip"><strong>\(\sin\theta\)는 극 근처의 칸이 좁다는 뜻이다</strong><p>방향이 고르게(등방적으로) 흩어진 입자들, 예를 들어 방사성 원자핵에서 나오는 감마선의 방향을 생각하자. "고르게"는 같은 입체각에 같은 수가 들어간다는 뜻이다. \(d\Omega = \sin\theta\,d\theta\,d\phi = -d(\cos\theta)\,d\phi\)이므로 고르게 분포하는 것은 \(\theta\)가 아니라 \(\cos\theta\)이다. 그래서 \(\theta &lt; 10°\)인 원뿔에 들어가는 비율은 \(10/180 = 5.6\%\)가 아니라 \((1 - \cos10°)/2 = 0.76\%\)이다. 몬테카를로 계산에서 방향을 뽑을 때 \(\theta\)를 고르게 뽑으면 극에 입자가 몰린다.</p></div>
+
+    <div class="box ex" id="ex-hydrogen-1s-charge"><div class="box-h">수소 원자 바닥 상태의 전자 구름</div>
+      <p>수소 원자의 바닥 상태에서 전자의 확률 밀도는 \(\lvert\psi\rvert^2 = e^{-2r/a}/(\pi a^3)\)이다(\(a = 0.0529\ \text{nm}\)는 보어 반지름, 유도는 6.4절의 <a class="ref" href="#ex-hydrogen-laplacian-split"></a>). 전자의 전하가 \(\rho(r) = -e\lvert\psi\rvert^2\)으로 퍼져 있다고 보자. (가) 전체 전하가 \(-e\)임을 확인하라. (나) 반지름 \(a\)인 공 안에 든 전하의 비율을 구하라. (다) 원자핵에서 전자까지 거리의 평균 \(\langle r\rangle\)을 구하라.</p>
+      <p><b>풀이.</b> 밀도가 \(r\)에만 기대므로 식 <a class="ref" href="#eq-volume-element-spherical"></a>에서 각을 먼저 적분하면 \(\int d\Omega = 4\pi\)이다. 따라서 반지름 \(r\)과 \(r + dr\) 사이의 껍질에 든 전하는 \(4\pi r^2\rho(r)\,dr\)이다. 적분에는 부분 적분을 \(n\)번 되풀이해 얻는 공식 \(\int_0^\infty r^ne^{-\beta r}\,dr = n!/\beta^{n+1}\)을 쓴다(11장에서 <a href="ch11.html#def-gamma">감마 함수</a>로 일반화한다).</p>
+      <p>(가) \(\beta = 2/a\)로 두면</p>
+      <div class="formula">\[ \begin{aligned} Q &= -\frac{e}{\pi a^3}\int_0^\infty 4\pi r^2e^{-2r/a}\,dr \\ &= -\frac{4e}{a^3}\cdot\frac{2!}{(2/a)^3} = -e \end{aligned} \]</div>
+      <p>(나) \(x = r/a\)로 두고 부분 적분을 두 번 하면 \(\int_0^1 4x^2e^{-2x}\,dx = \big[-e^{-2x}(2x^2 + 2x + 1)\big]_0^1 = 1 - 5e^{-2}\)이다.</p>
+      <div class="formula">\[ \frac{Q(r &lt; a)}{Q} = 1 - 5e^{-2} = 0.323 \]</div>
+      <p>(다) \(\langle r\rangle = \int r\lvert\psi\rvert^2\,d^3r = \dfrac{4}{a^3}\displaystyle\int_0^\infty r^3e^{-2r/a}\,dr = \dfrac{4}{a^3}\cdot\dfrac{3!}{(2/a)^4} = \dfrac32 a\)이다.</p>
+      <p><b>숫자로 보기.</b> 보어 반지름 안에 든 전하는 전체의 32%에 불과하다. 껍질의 전하 \(4\pi r^2\rho\)는 \(r^2e^{-2r/a}\)에 비례해서 \(r = a\)에서 가장 크지만, 꼬리가 길어 평균 거리는 \(\tfrac32 a = 0.0794\ \text{nm}\)이다. 밀도 \(\lvert\psi\rvert^2\) 자체는 원점에서 가장 크다. 껍질의 부피 \(4\pi r^2\,dr\)이 원점 근처에서 0으로 가므로, 밀도가 가장 큰 곳과 전하가 가장 많은 거리는 다르다. 단위 확인: \(\lvert\psi\rvert^2\)은 \(\text{m}^{-3}\)이고 \(d^3r\)은 \(\text{m}^3\)이므로 \(Q\)는 전하의 단위를 갖는다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 6.3 -->
+  <section id="s3">
+    <h2>곡선 좌표의 기울기, 발산, 회전</h2>
+    <p>4장에서 기울기, 발산, 회전을 직교 성분으로 정의했고, 5장에서 발산과 회전이 좌표와 상관없는 적분 정의 <a href="ch05.html#eq-div-integral-def">식 (5.23)</a>과 <a href="ch05.html#eq-curl-integral-def">식 (5.37)</a>을 가진다는 것을 보았다. 좌표와 상관없는 정의가 있으면 어느 좌표에서든 계산할 수 있다. 이 절에서는 기울기는 미분 \(df\)에서, 발산과 회전은 작은 곡선 상자와 작은 곡선 고리에서 직교 곡선 좌표의 공식을 유도한다. 필요한 것은 척도 인자뿐이다. 편미분을 \(\partial_i = \partial/\partial u_i\)로 줄여 쓴다.</p>
+
+    <h3 id="s3-gradient">기울기</h3>
+    <p>4장 <a href="ch04.html#eq-gradient-differential">식 (4.26)</a>에 따르면 기울기는 "어느 방향으로 \(d\mathbf l\)만큼 움직이든 \(df = \nabla f\cdot d\mathbf l\)"을 만족하는 벡터다. 이 성질은 좌표와 상관이 없다. \(\nabla f = \sum_i G_i\hat{\mathbf e}_i\)로 두고 식 <a class="ref" href="#eq-line-element"></a>을 넣으면, 직교성 때문에</p>
+    <div class="formula">\[ df = \nabla f\cdot d\mathbf l = \sum_i G_i\,h_i\,du_i \]</div>
+    <p>이다. 한편 연쇄 법칙으로 \(df = \sum_i(\partial_i f)\,du_i\)이다. 두 식이 아무 \(du_1, du_2, du_3\)에 대해 같아야 하므로 계수가 같고, \(G_i = \partial_i f/h_i\)이다.</p>
+    <div class="box thm" id="thm-grad-curvilinear"><div class="box-h">직교 곡선 좌표의 기울기</div>
+      <div class="formula" id="eq-grad-curvilinear">\[ \nabla f = \sum_{i=1}^{3}\frac{1}{h_i}\frac{\partial f}{\partial u_i}\,\hat{\mathbf e}_i \]<div class="where">\(f\)는 미분 가능하고, 척도 인자가 0이 아닌 점(원점과 \(z\)축 밖)에서 성립한다.</div></div>
+      <p>원통 좌표와 구면 좌표에서는 다음과 같다.</p>
+      <div class="formula" id="eq-grad-cylindrical">\[ \nabla f = \frac{\partial f}{\partial s}\,\hat{\mathbf s} + \frac1s\frac{\partial f}{\partial\phi}\,\hat{\boldsymbol\phi} + \frac{\partial f}{\partial z}\,\hat{\mathbf z} \]</div>
+      <div class="formula" id="eq-grad-spherical">\[ \nabla f = \frac{\partial f}{\partial r}\,\hat{\mathbf r} + \frac1r\frac{\partial f}{\partial\theta}\,\hat{\boldsymbol\theta} + \frac{1}{r\sin\theta}\frac{\partial f}{\partial\phi}\,\hat{\boldsymbol\phi} \]</div>
+    </div>
+    <p>예를 들어 \(\nabla(1/r) = -\hat{\mathbf r}/r^2\)이 한 줄로 나온다. 4장 <a href="ch04.html#ex-coulomb-gradient">예제 4.5</a>에서 세 성분을 미분해 얻은 쿨롱 장이다. 좌표 자신의 기울기도 유용하다. \(f = u_i\)로 두면</p>
+    <div class="formula" id="eq-grad-coordinate">\[ \nabla u_i = \frac{\hat{\mathbf e}_i}{h_i} \]</div>
+    <p>이다. 이 식은 아래에서 발산 공식을 다른 방법으로 유도하는 데 쓴다.</p>
+
+    <h3 id="s3-divergence">발산</h3>
+    <p>5장 <a href="ch05.html#eq-div-integral-def">식 (5.23)</a>을 좌표가 \([u_1, u_1 + \Delta u_1]\times[u_2, u_2 + \Delta u_2]\times[u_3, u_3 + \Delta u_3]\)인 작은 곡선 상자에 쓰자. 상자의 여섯 면은 모두 좌표면이다. 먼저 \(u_1\)이 일정한 두 면을 본다.</p>
+    <ul>
+      <li>면 \(u_1 + \Delta u_1\)의 바깥 법선은 \(+\hat{\mathbf e}_1\)이고 넓이는 식 <a class="ref" href="#eq-area-element-general"></a>에 따라 \(h_2h_3\,\Delta u_2\,\Delta u_3\)이다. 이 면을 지나는 플럭스는 \(\mathbf F\cdot\hat{\mathbf e}_1 = F_1\)에 넓이를 곱한 \((F_1h_2h_3)\big\rvert_{u_1 + \Delta u_1}\Delta u_2\,\Delta u_3\)이다. \(F_2\)와 \(F_3\)은 면에 평행하므로 이 면을 지나지 않는다. 여기서 좌표의 직교성을 썼다.</li>
+      <li>면 \(u_1\)의 바깥 법선은 \(-\hat{\mathbf e}_1\)이므로 플럭스는 \(-(F_1h_2h_3)\big\rvert_{u_1}\Delta u_2\,\Delta u_3\)이다.</li>
+    </ul>
+    <p>둘을 더하고 \(u_1\)에 대해 테일러 전개하면</p>
+    <div class="formula">\[ \begin{aligned} &\big[(F_1h_2h_3)\big\rvert_{u_1 + \Delta u_1} - (F_1h_2h_3)\big\rvert_{u_1}\big]\Delta u_2\,\Delta u_3 \\ &\quad = \partial_1(F_1h_2h_3)\,\Delta u_1\,\Delta u_2\,\Delta u_3 + \cdots \end{aligned} \]</div>
+    <p>이다. "\(\cdots\)"는 \(\Delta u\)를 하나 더 곱한 차수의 항이다. 면 위에서 \(F_1h_2h_3\)가 변하는 효과는 이 차수에 들어간다(좌표면의 법선은 면 위 어디서나 정확히 \(\hat{\mathbf e}_1\)이므로, 근사는 피적분 함수를 한 점의 값으로 대신한 것뿐이다). 나머지 두 쌍의 면도 같은 꼴이다. 세 쌍을 더하고 상자의 부피 \(h_1h_2h_3\,\Delta u_1\,\Delta u_2\,\Delta u_3\)으로 나눈 뒤 상자를 줄이면 다음 정리를 얻는다.</p>
+    <div class="box thm" id="thm-div-curvilinear"><div class="box-h">직교 곡선 좌표의 발산</div>
+      <div class="formula" id="eq-div-curvilinear">\[ \begin{aligned} \nabla\cdot\mathbf F = \frac{1}{h_1h_2h_3}\Big[&\partial_1(h_2h_3F_1) \\ &+ \partial_2(h_3h_1F_2) \\ &+ \partial_3(h_1h_2F_3)\Big] \end{aligned} \]<div class="where">\(F_i = \mathbf F\cdot\hat{\mathbf e}_i\)는 곡선 좌표의 성분이다. \(\mathbf F\)는 연속 미분 가능하고, 척도 인자가 0이 아닌 점에서 성립한다.</div></div>
+      <details class="proof"><summary>다른 유도: 기울기의 외적으로</summary>
+        <p>상자의 면을 쓰지 않고 4장의 항등식만으로도 같은 식이 나온다. 식 <a class="ref" href="#eq-grad-coordinate"></a>과 오른손 순서에서 \(\hat{\mathbf e}_1 = \hat{\mathbf e}_2\times\hat{\mathbf e}_3 = h_2h_3\,\nabla u_2\times\nabla u_3\)이다. 따라서 \(g = h_2h_3F_1\)로 두면 \(F_1\hat{\mathbf e}_1 = g\,(\nabla u_2\times\nabla u_3)\)이고, 4장의 곱의 미분 법칙 <a href="ch04.html#eq-product-rules">식 (4.45)</a>를 두 번 쓰면</p>
+        <div class="formula">\[ \begin{aligned} &\nabla\cdot(F_1\hat{\mathbf e}_1) \\ &\quad = \nabla g\cdot(\nabla u_2\times\nabla u_3) \\ &\qquad + g\,\nabla\cdot(\nabla u_2\times\nabla u_3) \\ &\nabla\cdot(\nabla u_2\times\nabla u_3) \\ &\quad = \nabla u_3\cdot(\nabla\times\nabla u_2) \\ &\qquad - \nabla u_2\cdot(\nabla\times\nabla u_3) \end{aligned} \]</div>
+        <p>이다. 기울기의 회전은 0이므로(4장 <a href="ch04.html#thm-curl-grad">정리 4.5</a>) 둘째 줄은 0이다. 첫 줄의 첫 항은 \(\nabla u_2\times\nabla u_3 = \hat{\mathbf e}_1/(h_2h_3)\)과 식 <a class="ref" href="#eq-grad-curvilinear"></a>에서 \(\nabla g\cdot\hat{\mathbf e}_1/(h_2h_3) = \partial_1 g/(h_1h_2h_3)\)이다. \(F_2\hat{\mathbf e}_2\), \(F_3\hat{\mathbf e}_3\)도 같은 방법으로 계산해 더하면 식 <a class="ref" href="#eq-div-curvilinear"></a>이다. 이 유도에는 근사가 없다.</p>
+      </details>
+    </div>
+    <p>척도 인자를 넣으면 원통 좌표와 구면 좌표의 발산이다.</p>
+    <div class="formula" id="eq-div-cylindrical">\[ \nabla\cdot\mathbf F = \frac1s\frac{\partial}{\partial s}(sF_s) + \frac1s\frac{\partial F_\phi}{\partial\phi} + \frac{\partial F_z}{\partial z} \]</div>
+    <div class="formula" id="eq-div-spherical">\[ \begin{aligned} \nabla\cdot\mathbf F &= \frac{1}{r^2}\frac{\partial}{\partial r}(r^2F_r) + \frac{1}{r\sin\theta}\frac{\partial}{\partial\theta}(\sin\theta\,F_\theta) \\ &\quad + \frac{1}{r\sin\theta}\frac{\partial F_\phi}{\partial\phi} \end{aligned} \]</div>
+    <p>식 <a class="ref" href="#eq-div-spherical"></a>의 첫 항에서 척도 인자가 미분 안에 들어가는 까닭을 그림 6-3이 보여 준다. 지름 방향의 장이 바깥 면을 지나는 플럭스는 \(F_r\)과 면의 넓이 \(r^2\,d\Omega\)의 곱이므로, 발산을 정하는 것은 \(F_r\)의 변화가 아니라 \(r^2F_r\)의 변화다.</p>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 290" role="img" aria-label="구면 좌표의 작은 조각을 지나는 역제곱 장. 안쪽 면의 장은 세지만 넓이가 작고, 바깥 면의 장은 약하지만 넓이가 커서 플럭스가 같다"><defs><marker id="f0603-arra" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs><line x1="26" y1="266" x2="368.4" y2="161.3" class="s-faint" stroke-dasharray="4 4"/><line x1="26" y1="266" x2="300.2" y2="35.9" class="s-faint" stroke-dasharray="4 4"/><path d="M179,219.2 L178.2,216.7 L177.4,214.1 L176.5,211.6 L175.5,209.1 L174.6,206.6 L173.6,204.1 L172.5,201.7 L171.4,199.2 L170.3,196.8 L169.1,194.4 L167.9,192 L166.6,189.7 L165.3,187.3 L164,185 L162.6,182.7 L161.2,180.4 L159.7,178.2 L158.3,176 L156.7,173.8 L155.2,171.6 L153.6,169.4 L151.9,167.3 L150.3,165.2 L148.6,163.2 L269.6,61.6 L269.6,61.6 L273,65.7 L276.3,69.9 L279.5,74.1 L282.7,78.3 L285.8,82.7 L288.9,87 L291.8,91.4 L294.7,95.9 L297.5,100.4 L300.2,105 L302.9,109.6 L305.5,114.3 L308,119 L310.4,123.7 L312.7,128.5 L315,133.3 L317.2,138.1 L319.3,143 L321.3,147.9 L323.2,152.9 L325.1,157.9 L326.8,162.9 L328.5,168 L330.1,173 Z" class="f-acc2-soft" style="stroke-width:1.5"/><circle cx="26" cy="266" r="3" class="f-dim"/><text x="22" y="284" class="t-math" style="font-size:16px" text-anchor="middle">O</text><line x1="136.3" y1="224" x2="214.8" y2="194.2" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0603-arra)"/><line x1="313.3" y1="156.7" x2="336.9" y2="147.7" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0603-arra)"/><line x1="129.7" y1="209.7" x2="203.5" y2="169.6" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0603-arra)"/><line x1="296.1" y1="119.3" x2="318.3" y2="107.3" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0603-arra)"/><line x1="121.3" y1="196.4" x2="189.1" y2="146.8" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0603-arra)"/><line x1="274.1" y1="84.6" x2="294.5" y2="69.7" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0603-arra)"/><text x="181" y="239.2" class="t-math" style="font-size:16px" text-anchor="middle"><tspan font-style="italic">r</tspan></text><text x="332.1" y="193" class="t-math" style="font-size:16px" text-anchor="middle"><tspan font-style="italic">r</tspan> + <tspan font-style="italic">dr</tspan></text><text x="134.5" y="158" class="t-dim" style="font-size:14px" text-anchor="end">안쪽 면 넓이 <tspan font-style="italic">r</tspan>² <tspan font-style="italic">d</tspan>Ω</text><text x="265.6" y="51.6" class="t-dim" style="font-size:14px" text-anchor="middle">바깥 면 넓이 (<tspan font-style="italic">r</tspan>+<tspan font-style="italic">dr</tspan>)² <tspan font-style="italic">d</tspan>Ω</text><text x="236" y="157" class="t-math acc" style="font-size:15px" text-anchor="middle"><tspan font-style="italic">F</tspan><tspan baseline-shift="sub" style="font-size:11px"><tspan font-style="italic">r</tspan></tspan> = 1/<tspan font-style="italic">r</tspan>²</text></svg></div>
+      <figcaption><b>그림 6-3.</b> 구면 좌표의 작은 상자를 지나는 역제곱 장 \(F_r = 1/r^2\)(단면). 안쪽 면에서는 장이 세지만(긴 화살표) 넓이 \(r^2\,d\Omega\)가 작고, 바깥 면에서는 장이 약하지만(짧은 화살표) 넓이 \((r + dr)^2\,d\Omega\)가 크다. 둘의 곱 \(r^2F_r\)이 같아서 들어온 만큼 나가고, 발산이 0이다. 화살표의 길이는 \(1/r^2\)에 비례하게 그렸다.</figcaption>
+    </figure>
+    <p>4장의 결과를 다시 확인하자. \(\mathbf F = r^n\mathbf r = r^{n+1}\hat{\mathbf r}\)이면 식 <a class="ref" href="#eq-div-spherical"></a>의 첫 항만 남아</p>
+    <div class="formula" id="eq-div-power-r-spherical">\[ \nabla\cdot(r^{n+1}\hat{\mathbf r}) = \frac{1}{r^2}\frac{d}{dr}\big(r^{n+3}\big) = (n + 3)\,r^n \]</div>
+    <p>이다. 4장 <a href="ch04.html#eq-div-power-r">식 (4.37)</a>에서 지수 표기로 계산한 것과 같다. 특히 \(n = -3\), 곧 \(\hat{\mathbf r}/r^2\)이면 \(r \ne 0\)에서 발산이 0이다.</p>
+    <div class="callout warn"><strong>\(\nabla\cdot\mathbf F\)는 성분의 편미분의 합이 아니다</strong><p>\(\nabla = \sum_i\hat{\mathbf e}_i\,h_i^{-1}\partial_i\)라고 써 두고 \(\mathbf F = \sum_jF_j\hat{\mathbf e}_j\)와 내적하면 \(\sum_i h_i^{-1}\partial_iF_i\)가 될 것 같다. 그러나 \(\partial_i\)는 성분 \(F_j\)뿐 아니라 단위 벡터 \(\hat{\mathbf e}_j\)에도 걸린다. \(\hat{\mathbf r}\)으로 보자. 성분은 \(F_r = 1\)뿐이라 "편미분의 합"은 0이지만, 단위 벡터의 도함수 <a class="ref" href="#eq-unit-vector-derivatives-spherical"></a>을 넣으면</p>
+      <div class="formula">\[ \begin{aligned} \nabla\cdot\hat{\mathbf r} &= \hat{\boldsymbol\theta}\cdot\frac1r\frac{\partial\hat{\mathbf r}}{\partial\theta} + \hat{\boldsymbol\phi}\cdot\frac{1}{r\sin\theta}\frac{\partial\hat{\mathbf r}}{\partial\phi} \\ &= \frac1r + \frac1r = \frac2r \end{aligned} \]</div>
+      <p>이다. 식 <a class="ref" href="#eq-div-spherical"></a>의 \((1/r^2)\partial_r(r^2)\)도 \(2/r\)이다. 공식 속의 척도 인자는 바로 이 "단위 벡터가 퍼지는 효과"를 담고 있다.</p></div>
+
+    <div class="box ex" id="ex-ball-field-spherical-div"><div class="box-h">고르게 대전된 원자핵의 전기장</div>
+      <p>전하 \(Q\)가 반지름 \(R\)인 공 안에 고르게 퍼져 있다(밀도 \(\rho_0 = 3Q/4\pi R^3\)). 대칭에서 \(\mathbf E = E(r)\,\hat{\mathbf r}\)이라 하자. (가) 가우스 법칙의 미분형 \(\nabla\cdot\mathbf E = \rho/\varepsilon_0\)을 구면 좌표에서 풀어 \(E(r)\)을 구하라. 적분 상수는 어떻게 정하는가? (나) 금 원자핵(\(Z = 79\))을 반지름 \(R = 7.0\ \text{fm}\)인 고른 공으로 보고, 겉면의 전기장과 \(\nabla\cdot\mathbf E\)를 구하라.</p>
+      <p><b>풀이.</b> (가) \(\mathbf E\)에 \(\hat{\mathbf r}\) 성분만 있고 그것이 \(r\)에만 기대므로 식 <a class="ref" href="#eq-div-spherical"></a>의 첫 항만 남는다.</p>
+      <div class="formula" id="eq-ball-field-ode">\[ \frac{1}{r^2}\frac{d}{dr}\big(r^2E\big) = \frac{\rho(r)}{\varepsilon_0} \]</div>
+      <p>공 안(\(r &lt; R\))에서는 오른쪽이 상수 \(\rho_0/\varepsilon_0\)이므로 \(r^2E = \rho_0r^3/(3\varepsilon_0) + C_1\)이다. \(C_1 \ne 0\)이면 원점 근처에서 \(E \approx C_1/r^2\)으로, 원점에 점전하 \(4\pi\varepsilon_0C_1\)이 있는 장이 된다. 원점에 점전하가 없으므로 \(C_1 = 0\)이다(이 논법을 6.6절에서 델타로 정확하게 쓴다). 공 밖에서는 \(r^2E = C_2\)로 일정하다. 겉면에는 면전하가 없으므로 \(E\)가 \(r = R\)에서 이어지고(5장의 적분형으로 확인할 수 있다), \(C_2 = \rho_0R^3/(3\varepsilon_0) = Q/(4\pi\varepsilon_0)\)이다.</p>
+      <div class="formula">\[ E(r) = \begin{cases} \dfrac{Q\,r}{4\pi\varepsilon_0R^3} & (r &lt; R) \\[2ex] \dfrac{Q}{4\pi\varepsilon_0r^2} & (r > R) \end{cases} \]</div>
+      <p>5장 <a href="ch05.html#eq-uniform-ball-field">식 (5.28)</a>에서 가우스 법칙의 적분형으로 구한 것과 같다. 적분형에서는 "반지름 \(r\)인 구면 안의 전하"를 세었고, 미분형에서는 같은 일을 \(r^2E\)의 미분방정식을 적분하는 것으로 했다. 적분 상수를 정하는 조건(원점에서 유한함, 겉면에서 이어짐)이 적분형에서 "구면 안의 전하"를 셀 때 저절로 들어 있던 정보다.</p>
+      <p><b>숫자로 보기.</b> (나) \(e^2/4\pi\varepsilon_0 = 1.440\ \text{MeV}\cdot\text{fm}\)을 쓰면 겉면의 전기장은</p>
+      <div class="formula">\[ \begin{aligned} E(R) &= \frac{79 \times 1.440\ \text{MeV}\cdot\text{fm}}{e\,(7.0\ \text{fm})^2} = 2.32\ \text{MV/fm} \\ &= 2.32 \times 10^{21}\ \text{V/m} \end{aligned} \]</div>
+      <p>이다. 공 안의 발산은 \(\nabla\cdot\mathbf E = \rho_0/\varepsilon_0 = 3E(R)/R = 9.9 \times 10^{35}\ \text{V/m}^2\)이다. 단위는 전기장을 길이로 나눈 것이다. 반지름 7.0 fm는 핵 반지름의 어림 \(R \approx 1.2A^{1/3}\ \text{fm}\)(전자 산란으로 잰 전하 반지름, K. S. Krane, <i>Introductory Nuclear Physics</i>, Wiley 1988, 3장)에 금의 질량수 \(A = 197\)을 넣은 값이다.</p>
+    </div>
+
+    <h3 id="s3-curl">회전</h3>
+    <p>회전의 \(\hat{\mathbf e}_1\) 성분은 5장 <a href="ch05.html#eq-curl-integral-def">식 (5.37)</a>에서 법선이 \(\hat{\mathbf e}_1\)인 작은 고리의 순환을 넓이로 나눈 값이다. 좌표면 \(u_1 =\) 상수 위에서 \([u_2, u_2 + \Delta u_2]\times[u_3, u_3 + \Delta u_3]\)의 가장자리를 \(\hat{\mathbf e}_2\) 방향, \(\hat{\mathbf e}_3\) 방향, \(-\hat{\mathbf e}_2\) 방향, \(-\hat{\mathbf e}_3\) 방향 순서로 돈다. \(\hat{\mathbf e}_2\times\hat{\mathbf e}_3 = \hat{\mathbf e}_1\)이므로 오른손 규칙에 맞는 방향이다.</p>
+    <ul>
+      <li>\(u_3\)에 놓인 변(\(+\hat{\mathbf e}_2\) 방향, 길이 \(h_2\,\Delta u_2\))과 \(u_3 + \Delta u_3\)에 놓인 변(\(-\hat{\mathbf e}_2\) 방향)의 기여를 더하면 \(\big[(h_2F_2)\big\rvert_{u_3} - (h_2F_2)\big\rvert_{u_3 + \Delta u_3}\big]\Delta u_2 = -\partial_3(h_2F_2)\,\Delta u_2\,\Delta u_3 + \cdots\)이다.</li>
+      <li>\(u_2 + \Delta u_2\)에 놓인 변(\(+\hat{\mathbf e}_3\) 방향)과 \(u_2\)에 놓인 변(\(-\hat{\mathbf e}_3\) 방향)을 더하면 \(+\partial_2(h_3F_3)\,\Delta u_2\,\Delta u_3 + \cdots\)이다.</li>
+    </ul>
+    <p>넓이 \(h_2h_3\,\Delta u_2\,\Delta u_3\)으로 나누고 고리를 줄이면 \((\nabla\times\mathbf F)_1 = \big[\partial_2(h_3F_3) - \partial_3(h_2F_2)\big]/(h_2h_3)\)이다. 지수를 \(1 \to 2 \to 3 \to 1\)로 돌리면 나머지 두 성분이 나온다.</p>
+    <div class="box thm" id="thm-curl-curvilinear"><div class="box-h">직교 곡선 좌표의 회전</div>
+      <div class="formula" id="eq-curl-curvilinear">\[ \nabla\times\mathbf F = \frac{1}{h_1h_2h_3}\det\begin{pmatrix} h_1\hat{\mathbf e}_1 & h_2\hat{\mathbf e}_2 & h_3\hat{\mathbf e}_3 \\ \partial_1 & \partial_2 & \partial_3 \\ h_1F_1 & h_2F_2 & h_3F_3 \end{pmatrix} \]<div class="where">행렬식은 첫 행으로 전개하고, 둘째 행의 미분은 셋째 행에만 건다. 예를 들어 \(\hat{\mathbf e}_1\) 성분은 \(\frac{h_1}{h_1h_2h_3}\big[\partial_2(h_3F_3) - \partial_3(h_2F_2)\big]\)이다.</div></div>
+    </div>
+    <p>원통 좌표와 구면 좌표에서는 다음과 같다.</p>
+    <div class="formula" id="eq-curl-cylindrical">\[ \begin{aligned} \nabla\times\mathbf F &= \Big(\frac1s\partial_\phi F_z - \partial_zF_\phi\Big)\hat{\mathbf s} + \big(\partial_zF_s - \partial_sF_z\big)\hat{\boldsymbol\phi} \\ &\quad + \frac1s\big[\partial_s(sF_\phi) - \partial_\phi F_s\big]\hat{\mathbf z} \end{aligned} \]</div>
+    <div class="formula" id="eq-curl-spherical">\[ \begin{aligned} (\nabla\times\mathbf F)_r &= \frac{1}{r\sin\theta}\big[\partial_\theta(\sin\theta\,F_\phi) - \partial_\phi F_\theta\big] \\ (\nabla\times\mathbf F)_\theta &= \frac{1}{r\sin\theta}\partial_\phi F_r - \frac1r\partial_r(rF_\phi) \\ (\nabla\times\mathbf F)_\phi &= \frac1r\big[\partial_r(rF_\theta) - \partial_\theta F_r\big] \end{aligned} \]</div>
+    <p>4장의 두 흐름으로 확인하자. 강체 회전 \(\mathbf v = \omega s\,\hat{\boldsymbol\phi}\)은 \((\nabla\times\mathbf v)_z = \frac1s\partial_s(\omega s^2) = 2\omega\)로 4장 <a href="ch04.html#eq-rigid-rotation-curl">식 (4.35)</a>와 같고, 소용돌이 \(\mathbf v = \frac{\Gamma}{2\pi s}\hat{\boldsymbol\phi}\)는 \(\frac1s\partial_s\big(\frac{\Gamma}{2\pi}\big) = 0\)으로 4장 <a href="ch04.html#eq-vortex-curl">식 (4.36)</a>과 같다. 4장에서는 \(x/s^2\), \(y/s^2\)을 미분해 지워지는 것을 보였는데, 여기서는 \(sF_\phi\)가 상수라는 한마디로 끝난다.</p>
+
+    <div class="box ex" id="ex-earth-dipole-field"><div class="box-h">지구 쌍극자 자기장의 발산과 회전</div>
+      <p>지구 밖의 자기장은 첫 근사로 지구 중심에 놓인 자기 쌍극자 \(\mathbf m = m\hat{\mathbf z}\)의 장이다. 여기서 \(\hat{\mathbf z}\)는 쌍극자의 방향이고, 지구에서는 대략 지리적 남쪽을 향한다. 이 축에서 극각 \(\theta\)를 재면</p>
+      <div class="formula" id="eq-dipole-field-spherical">\[ \mathbf B = \frac{\mu_0m}{4\pi r^3}\big(2\cos\theta\,\hat{\mathbf r} + \sin\theta\,\hat{\boldsymbol\theta}\big) \]</div>
+      <p>이다. (가) \(\mathbf B = -\mu_0\nabla\Phi\), \(\Phi = m\cos\theta/(4\pi r^2)\)임을 보여라. (나) \(r > 0\)에서 \(\nabla\cdot\mathbf B = 0\), \(\nabla\times\mathbf B = 0\)임을 구면 좌표로 확인하라. (다) \(m = 7.7 \times 10^{22}\ \text{A}\cdot\text{m}^2\)이면 지표의 자기 적도와 자기 극에서 \(B\)는 얼마인가?</p>
+      <p><b>풀이.</b> (가) 식 <a class="ref" href="#eq-grad-spherical"></a>에서 \(\partial_r(\cos\theta/r^2) = -2\cos\theta/r^3\), \(\frac1r\partial_\theta(\cos\theta/r^2) = -\sin\theta/r^3\)이고 \(\phi\) 성분은 0이다. \(-\mu_0 m/4\pi\)를 곱하면 식 <a class="ref" href="#eq-dipole-field-spherical"></a>이다.</p>
+      <p>(나) 상수 \(\mu_0m/4\pi\)를 빼고 \(B_r = 2\cos\theta/r^3\), \(B_\theta = \sin\theta/r^3\)으로 계산한다. 식 <a class="ref" href="#eq-div-spherical"></a>에서</p>
+      <div class="formula">\[ \begin{aligned} \nabla\cdot\mathbf B &\propto \frac{1}{r^2}\partial_r\Big(\frac{2\cos\theta}{r}\Big) + \frac{1}{r\sin\theta}\partial_\theta\Big(\frac{\sin^2\theta}{r^3}\Big) \\ &= -\frac{2\cos\theta}{r^4} + \frac{2\cos\theta}{r^4} = 0 \end{aligned} \]</div>
+      <p>이다. 회전은 \(B_\phi = 0\)이고 아무것도 \(\phi\)에 기대지 않으므로 \(r\)과 \(\theta\) 성분이 0이다. 남은 \(\phi\) 성분은 식 <a class="ref" href="#eq-curl-spherical"></a>에서</p>
+      <div class="formula">\[ \begin{aligned} (\nabla\times\mathbf B)_\phi &\propto \frac1r\Big[\partial_r\Big(\frac{\sin\theta}{r^2}\Big) - \partial_\theta\Big(\frac{2\cos\theta}{r^3}\Big)\Big] \\ &= \frac1r\Big[-\frac{2\sin\theta}{r^3} + \frac{2\sin\theta}{r^3}\Big] = 0 \end{aligned} \]</div>
+      <p>이다. 기울기의 회전이므로 (가)에서 이미 예상한 결과다. 전류가 없는 곳에서 \(\nabla\times\mathbf B = \mu_0\mathbf J = 0\)과 맞다. 4장 <a href="ch04.html#prob-magnetic-dipole-field">문제 4.9</a>는 같은 장을 벡터 퍼텐셜의 회전으로 직교 성분에서 얻는데, 구면 좌표에서는 성분이 둘뿐이라 확인이 몇 줄로 끝난다.</p>
+      <p><b>숫자로 보기.</b> (다) 지표 \(r = R_\oplus = 6371\ \text{km}\)의 자기 적도(\(\theta = 90°\))에서</p>
+      <div class="formula">\[ \begin{aligned} B &= \frac{\mu_0m}{4\pi R_\oplus^3} \\ &= \frac{(10^{-7}\ \text{T}\cdot\text{m/A})(7.7 \times 10^{22}\ \text{A}\cdot\text{m}^2)}{(6.371 \times 10^6\ \text{m})^3} \\ &= 3.0 \times 10^{-5}\ \text{T} = 30\ \mu\text{T} \end{aligned} \]</div>
+      <p>이고, 자기 극(\(\theta = 0\))에서는 \(2\cos\theta\) 때문에 두 배인 \(60\ \mu\text{T}\)이다. 쌍극자 모멘트 \(7.7 \times 10^{22}\ \text{A}\cdot\text{m}^2\)은 국제 표준 지구 자기장 모형 IGRF-13의 2020년 쌍극자 계수(\(g_1^0 = -29\,405\ \text{nT}\), \(g_1^1 = -1451\ \text{nT}\), \(h_1^1 = 4653\ \text{nT}\))에서 \(m = 4\pi a^3\sqrt{(g_1^0)^2 + (g_1^1)^2 + (h_1^1)^2}/\mu_0\)(\(a = 6371.2\ \text{km}\)는 IGRF의 기준 반지름)로 얻은 값이다(P. Alken et al., Earth Planets Space 73, 49 (2021)).</p>
+    </div>
+    <div class="callout deep"><strong>직교가 아닌 좌표와 계량 텐서</strong><p>이 절의 공식은 모두 \(\hat{\mathbf e}_i\cdot\hat{\mathbf e}_j = \delta_{ij}\)를 썼다(면을 지나는 성분이 \(F_1\) 하나뿐이라는 것, 넓이가 변의 길이의 곱이라는 것). 결정 격자의 비스듬한 축이나 상대론의 좌표처럼 직교하지 않는 좌표에서는 선 요소가 \(ds^2 = g_{ij}\,du^i\,du^j\)가 되고, 발산은 \(\nabla\cdot\mathbf A = \frac{1}{\sqrt g}\partial_i(\sqrt g\,A^i)\)라는 한 줄로 쓰인다(\(g = \det g_{ij}\), \(A^i\)는 반변 성분). 직교 좌표에서는 \(\sqrt g = h_1h_2h_3\)이고 \(A^i = F_i/h_i\)라서 식 <a class="ref" href="#eq-div-curvilinear"></a>로 돌아온다. 22장의 <a href="ch22.html#def-metric-tensor">계량 텐서</a>와 <a href="ch22.html#eq-covariant-divergence">공변 발산</a>에서 다룬다.</p></div>
+  </section>
+
+  <!-- ============================================================ 6.4 -->
+  <section id="s4">
+    <h2>라플라시안</h2>
+    <p>정전기학의 푸아송 방정식 \(\nabla^2V = -\rho/\varepsilon_0\), 열전도의 확산 방정식, 양자역학의 슈뢰딩거 방정식은 모두 라플라시안을 담는다. 원통 모양의 도선, 공 모양의 원자처럼 문제에 대칭이 있으면 라플라시안을 그 대칭에 맞는 좌표로 써야 방정식이 풀리는 꼴이 된다. 17장의 변수 분리는 모두 이 절의 식에서 출발한다.</p>
+
+    <h3 id="s4-scalar">스칼라 라플라시안</h3>
+    <p>라플라시안은 기울기의 발산이다(4장 <a href="ch04.html#def-laplacian">정의 4.9</a>). 식 <a class="ref" href="#eq-grad-curvilinear"></a>의 기울기 성분 \(F_i = h_i^{-1}\partial_if\)를 식 <a class="ref" href="#eq-div-curvilinear"></a>에 넣으면, 예를 들어 첫 항은 \(\partial_1\big(h_2h_3\,h_1^{-1}\partial_1f\big)\)이다.</p>
+    <div class="box thm" id="thm-laplacian-curvilinear"><div class="box-h">직교 곡선 좌표의 라플라시안</div>
+      <div class="formula" id="eq-laplacian-curvilinear">\[ \nabla^2f = \frac{1}{h_1h_2h_3}\sum_{i=1}^{3}\frac{\partial}{\partial u_i}\Big(\frac{h_1h_2h_3}{h_i^2}\,\frac{\partial f}{\partial u_i}\Big) \]</div>
+      <p>원통 좌표와 구면 좌표에서는 다음과 같다.</p>
+      <div class="formula" id="eq-laplacian-cylindrical">\[ \nabla^2f = \frac1s\frac{\partial}{\partial s}\Big(s\,\frac{\partial f}{\partial s}\Big) + \frac{1}{s^2}\frac{\partial^2f}{\partial\phi^2} + \frac{\partial^2f}{\partial z^2} \]</div>
+      <div class="formula" id="eq-laplacian-spherical">\[ \begin{aligned} \nabla^2f &= \frac{1}{r^2}\frac{\partial}{\partial r}\Big(r^2\frac{\partial f}{\partial r}\Big) \\ &\quad + \frac{1}{r^2\sin\theta}\frac{\partial}{\partial\theta}\Big(\sin\theta\,\frac{\partial f}{\partial\theta}\Big) \\ &\quad + \frac{1}{r^2\sin^2\theta}\frac{\partial^2f}{\partial\phi^2} \end{aligned} \]</div>
+    </div>
+    <p>구면 좌표의 계수를 하나 짚어 보자. \(h_1h_2h_3 = r^2\sin\theta\)이고 \(h_\theta^2 = r^2\)이므로 \(\theta\) 항은 \(\frac{1}{r^2\sin\theta}\partial_\theta\big(\frac{r^2\sin\theta}{r^2}\partial_\theta f\big)\)이다. \(h_\phi^2 = r^2\sin^2\theta\)이면 \(\phi\) 항의 괄호 안 계수는 \(r^2\sin\theta/(r^2\sin^2\theta) = 1/\sin\theta\)이고, 이것은 \(\phi\)에 기대지 않으므로 미분 밖으로 나와 \(\frac{1}{r^2\sin^2\theta}\partial_\phi^2f\)가 된다. 지름 부분은 다음처럼 쓸 수도 있다.</p>
+    <div class="formula" id="eq-radial-laplacian">\[ \frac{1}{r^2}\frac{\partial}{\partial r}\Big(r^2\frac{\partial f}{\partial r}\Big) = \frac1r\frac{\partial^2}{\partial r^2}(rf) = \frac{\partial^2f}{\partial r^2} + \frac2r\frac{\partial f}{\partial r} \]</div>
+    <p>가운데 꼴은 \(u = rf\)로 바꾸면 3차원 지름 방정식이 1차원 \(u''\)의 방정식이 된다는 뜻이고, 아래 수소 원자 예제에서 쓴다.</p>
+    <p>공식이 맞는지 4장의 결과와 직교 좌표의 계산으로 시험해 보자.</p>
+    <ul>
+      <li>\(f = r^n\)이면 지름 항만 남아 \(\frac{1}{r^2}(nr^{n+1})' = n(n+1)r^{n-2}\)이다. 4장 <a href="ch04.html#eq-laplacian-power-r">식 (4.43)</a>과 같다.</li>
+      <li>\(f = x = r\sin\theta\cos\phi\)이면 지름 항은 \(\frac{2}{r}\sin\theta\cos\phi\), \(\theta\) 항은 \(\frac{\cos\phi}{r\sin\theta}\partial_\theta(\sin\theta\cos\theta) = \frac{\cos\phi\cos2\theta}{r\sin\theta}\), \(\phi\) 항은 \(-\frac{\cos\phi}{r\sin\theta}\)이다. 더하면 \(\frac{\cos\phi}{r\sin\theta}\big(2\sin^2\theta + \cos2\theta - 1\big) = 0\)으로, 직교 좌표의 \(\nabla^2x = 0\)과 맞는다.</li>
+    </ul>
+    <p>둘째 예로 세 항이 모두 시험된다. 구면 라플라시안을 다음처럼 지름 부분과 각 부분으로 나누어 두면 편하다.</p>
+    <div class="formula" id="eq-laplacian-angular-split">\[ \begin{aligned} \nabla^2 &= \frac1r\frac{\partial^2}{\partial r^2}\,r + \frac{1}{r^2}\Lambda \\ \Lambda &= \frac{1}{\sin\theta}\frac{\partial}{\partial\theta}\Big(\sin\theta\,\frac{\partial}{\partial\theta}\Big) + \frac{1}{\sin^2\theta}\frac{\partial^2}{\partial\phi^2} \end{aligned} \]<div class="where">첫 항의 \(\frac1r\partial_r^2\,r\)은 "함수에 \(r\)을 곱하고 두 번 미분한 뒤 \(r\)로 나눈다"는 뜻이다. \(\Lambda\)는 단위 구면 위의 라플라시안으로, \(r\)에 기대지 않는다. 이 장에서만 쓰는 기호다.</div></div>
+
+    <div class="box ex" id="ex-coax-capacitance"><div class="box-h">동축 케이블의 전기장과 전기 용량</div>
+      <p>반지름 \(a\)인 안쪽 도체와 안쪽 반지름 \(b\)인 바깥 도체 사이를 비유전율 \(\varepsilon_r\)인 절연체가 채운 긴 동축 케이블이 있다. 안쪽 도체의 퍼텐셜이 \(V_0\), 바깥 도체가 접지되어 있다. (가) 두 도체 사이에서 라플라스 방정식을 원통 좌표로 풀어 \(V(s)\)와 \(\mathbf E\)를 구하라. (나) 단위 길이당 전기 용량을 구하라. (다) \(a = 0.50\ \text{mm}\), \(b = 2.0\ \text{mm}\), \(\varepsilon_r = 2.25\), \(V_0 = 100\ \text{V}\)이면 전기 용량과 가장 센 전기장은 얼마인가?</p>
+      <p><b>풀이.</b> (가) 대칭에서 \(V\)는 \(s\)에만 기댄다. 식 <a class="ref" href="#eq-laplacian-cylindrical"></a>에서 첫 항만 남아 \(\frac1s(sV')' = 0\)이므로 \(sV' = A\), 곧 \(V = A\ln s + B\)이다. \(V(a) = V_0\), \(V(b) = 0\)에서</p>
+      <div class="formula">\[ V(s) = V_0\,\frac{\ln(b/s)}{\ln(b/a)}, \quad \mathbf E = -\nabla V = \frac{V_0}{s\ln(b/a)}\,\hat{\mathbf s} \]</div>
+      <p>이다. 기울기는 식 <a class="ref" href="#eq-grad-cylindrical"></a>의 첫 항이다.</p>
+      <p>(나) 안쪽 도체 겉면의 전기 변위는 \(D = \varepsilon_r\varepsilon_0E(a)\)이고, 이것이 면전하 밀도와 같다. 길이 \(\ell\)의 전하는 \(q = 2\pi a\ell\,\varepsilon_r\varepsilon_0E(a) = 2\pi\varepsilon_r\varepsilon_0\ell V_0/\ln(b/a)\)이므로</p>
+      <div class="formula" id="eq-coax-capacitance">\[ \frac{C}{\ell} = \frac{2\pi\varepsilon_r\varepsilon_0}{\ln(b/a)} \]</div>
+      <p>이다.</p>
+      <p><b>숫자로 보기.</b> (다) \(\ln(b/a) = \ln4 = 1.386\)이고</p>
+      <div class="formula">\[ \begin{aligned} \frac{C}{\ell} &= \frac{2\pi(2.25)(8.854 \times 10^{-12}\ \text{F/m})}{1.386} \\ &= 90\ \text{pF/m} \end{aligned} \]</div>
+      <p>이다. 전기장은 \(1/s\)로 줄므로 안쪽 도체 겉면에서 가장 세다: \(E(a) = 100\ \text{V}/(0.50 \times 10^{-3}\ \text{m} \times 1.386) = 1.44 \times 10^5\ \text{V/m}\). 바깥 도체에서는 그 \(1/4\)인 \(3.6 \times 10^4\ \text{V/m}\)이다. \(b \to a\)이면 \(\ln(b/a) \approx (b - a)/a\)이고 \(C/\ell \to \varepsilon_r\varepsilon_0(2\pi a)/(b - a)\), 곧 넓이 \(2\pi a\ell\), 간격 \(b - a\)인 평행판 축전기로 돌아간다.</p>
+    </div>
+
+    <div class="box ex" id="ex-hydrogen-laplacian-split"><div class="box-h">수소 원자의 지름 방정식과 바닥 상태</div>
+      <p>수소 원자에서 전자의 해밀토니안은 \(\hat H = -\dfrac{\hbar^2}{2m_e}\nabla^2 - \dfrac{e^2}{4\pi\varepsilon_0r}\)이다(원자핵은 고정되어 있다고 본다). (가) 파동함수를 \(\psi = R(r)\,Y(\theta, \phi)\)로 두고 \(\Lambda Y = -l(l+1)Y\)라 할 때, \(u = rR\)이 만족하는 1차원 방정식을 구하라. (나) \(l = 0\)이고 \(u = re^{-r/a}\)일 때 \(\hat H\psi = E\psi\)가 되는 \(a\)와 \(E\)를 구하라.</p>
+      <p><b>풀이.</b> (가) 식 <a class="ref" href="#eq-laplacian-angular-split"></a>에서 \(\nabla^2(RY) = Y\,\frac1r(rR)'' + \frac{R}{r^2}\Lambda Y = \frac{Y}{r}\big[u'' - \frac{l(l+1)}{r^2}u\big]\)이다. 슈뢰딩거 방정식 \(\hat H\psi = E\psi\)에 넣고 \(Y/r\)로 나누면</p>
+      <div class="formula" id="eq-radial-schrodinger">\[ -\frac{\hbar^2}{2m_e}u'' + \Big[-\frac{e^2}{4\pi\varepsilon_0r} + \frac{\hbar^2l(l+1)}{2m_er^2}\Big]u = Eu \]</div>
+      <p>이다. 각 부분이 \(\hbar^2l(l+1)/(2m_er^2)\)라는 원심력 퍼텐셜로 바뀌어, 3차원 문제가 반직선 \(r > 0\) 위의 1차원 문제가 되었다. \(\Lambda\)의 고유함수가 12장의 <a href="ch12.html#def-spherical-harmonics">구면 조화 함수</a>이고, \(l(l+1)\)이 나오는 까닭도 그 장에서 보인다.</p>
+      <p>(나) \(u = re^{-r/a}\)이면 \(u' = (1 - r/a)e^{-r/a}\), \(u'' = (-2/a + r/a^2)e^{-r/a} = (1/a^2 - 2/(ar))\,u\)이다. \(l = 0\)으로 넣고 \(u\)로 나누면</p>
+      <div class="formula">\[ -\frac{\hbar^2}{2m_ea^2} + \frac{1}{r}\Big(\frac{\hbar^2}{m_ea} - \frac{e^2}{4\pi\varepsilon_0}\Big) = E \]</div>
+      <p>이다. 왼쪽이 모든 \(r\)에서 상수 \(E\)이려면 \(1/r\)의 계수가 0이어야 한다.</p>
+      <div class="formula" id="eq-bohr-radius">\[ a = \frac{4\pi\varepsilon_0\hbar^2}{m_ee^2}, \quad E = -\frac{\hbar^2}{2m_ea^2} = -\frac{e^2}{8\pi\varepsilon_0a} \]</div>
+      <p><b>숫자로 보기.</b> \(\hbar c = 197.33\ \text{eV}\cdot\text{nm}\), \(m_ec^2 = 511.0\ \text{keV}\), \(e^2/4\pi\varepsilon_0 = 1.440\ \text{eV}\cdot\text{nm}\)을 쓰면</p>
+      <div class="formula">\[ \begin{aligned} a &= \frac{(\hbar c)^2}{m_ec^2\,(e^2/4\pi\varepsilon_0)} \\ &= \frac{(197.33)^2}{(511.0 \times 10^3)(1.440)}\ \text{nm} \\ &= 0.0529\ \text{nm} \\ E &= -\frac{1.440\ \text{eV}\cdot\text{nm}}{2 \times 0.0529\ \text{nm}} \\ &= -13.6\ \text{eV} \end{aligned} \]</div>
+      <p>이다. 보어 반지름과 수소의 이온화 에너지다. 단위 확인: \((\text{eV}\cdot\text{nm})^2/(\text{eV}\cdot\text{eV}\cdot\text{nm}) = \text{nm}\). \(\psi = e^{-r/a}\)은 원점에서 뾰족하다(\(\partial_r\psi \ne 0\)). 이 꼭지가 \(\nabla^2\)에 \(-\frac{2}{ar}\psi\)를 만들어 쿨롱 항을 정확히 지운다. 일반적인 \(l\)과 들뜬 상태는 13장의 <a href="ch13.html#ex-hydrogen-laguerre">연관 라게르 방정식</a>으로 푼다.</p>
+    </div>
+
+    <h3 id="s4-vector">벡터 라플라시안</h3>
+    <p>직교 좌표에서는 벡터장의 라플라시안을 성분마다 \((\nabla^2\mathbf A)_i = \nabla^2A_i\)로 정했다. 곡선 좌표에서는 단위 벡터도 미분되므로 이 정의를 그대로 옮길 수 없다. 대신 4장 <a href="ch04.html#eq-curl-curl">식 (4.50)</a>을 거꾸로 써서, 좌표와 상관없는 연산으로 정의한다.</p>
+    <div class="formula" id="eq-vector-laplacian">\[ \nabla^2\mathbf A = \nabla(\nabla\cdot\mathbf A) - \nabla\times(\nabla\times\mathbf A) \]</div>
+    <p>오른쪽은 기울기, 발산, 회전만으로 되어 있으므로 이 절의 공식으로 어느 좌표에서든 계산할 수 있고, 직교 좌표에서는 성분마다의 정의와 같다. 4장의 경고에서 예로 든 \(\hat{\mathbf r}\)을 계산하자. 식 <a class="ref" href="#eq-div-spherical"></a>로 \(\nabla\cdot\hat{\mathbf r} = 2/r\)이고, 식 <a class="ref" href="#eq-curl-spherical"></a>에서 \(F_r = 1\)뿐이고 각에 기대지 않으므로 \(\nabla\times\hat{\mathbf r} = 0\)이다. 따라서</p>
+    <div class="formula" id="eq-laplacian-rhat">\[ \nabla^2\hat{\mathbf r} = \nabla\Big(\frac2r\Big) = -\frac{2}{r^2}\,\hat{\mathbf r} \]</div>
+    <p>이다. 성분 \(A_r = 1\)의 라플라시안은 0인데 벡터 라플라시안의 \(r\) 성분은 \(-2/r^2\)이다. 곡선 좌표에서 \((\nabla^2\mathbf A)_r \ne \nabla^2A_r\)인 까닭이다.</p>
+  </section>
+
+  <!-- ============================================================ 6.5 -->
+  <section id="s5">
+    <h2>디랙 델타 함수</h2>
+    <p>점전하의 전하 밀도는 무엇인가? 전하 \(q\)가 한 점에 있으면 그 점 밖에서는 밀도가 0이고, 밀도를 공간 전체에 적분하면 \(q\)여야 한다. 한 점만 빼고 0인 보통의 함수는 적분하면 0이므로, 이런 성질을 가진 함수는 없다. 그런데 물리학자는 점전하, 점질량, 순간적인 충격, 가는 도선의 전류를 늘 쓴다. 4장과 5장의 수수께끼도 같은 곳에서 나왔다. \(\hat{\mathbf r}/r^2\)의 발산은 원점 밖에서 0인데, 원점을 둘러싼 곡면의 플럭스는 \(4\pi\)이다. 원점 한 점에 "넓이 \(4\pi\)인 발산"이 몰려 있는 것이다. 이 절에서는 1차원에서 이런 대상을 정확히 다루는 방법을 세우고, 6.6절에서 3차원으로 넓힌다.</p>
+
+    <h3 id="s5-sequences">함수열의 극한</h3>
+    <p>실제 전하는 크기가 있다. 직선 위의 전하 \(q\)가 폭 \(\varepsilon\)인 구간에 고르게 퍼져 있으면 밀도는 그 구간에서 \(q/\varepsilon\)이다. \(\varepsilon\)을 줄이면 밀도는 높아지고 폭은 좁아지지만 넓이는 \(q\)로 그대로다. 퍼진 모양은 직사각형이 아니어도 된다. 넓이가 1인 함수 \(g\)를 하나 골라 폭을 \(\varepsilon\)배로 줄이고 높이를 \(1/\varepsilon\)배로 키운 함수열을 생각한다.</p>
+    <div class="formula" id="eq-delta-sequences">\[ \begin{aligned} \delta_\varepsilon(x) &= \frac1\varepsilon\,g\Big(\frac x\varepsilon\Big), \quad \int_{-\infty}^{\infty}g(t)\,dt = 1 \\ \text{가우스:}\ \ \delta_\varepsilon(x) &= \frac{1}{\sqrt{2\pi}\,\varepsilon}\,e^{-x^2/2\varepsilon^2} \\ \text{로런츠:}\ \ \delta_\varepsilon(x) &= \frac1\pi\,\frac{\varepsilon}{x^2 + \varepsilon^2} \end{aligned} \]<div class="where">치환 \(x = \varepsilon t\)에서 \(\int\delta_\varepsilon\,dx = \int g\,dt = 1\)이 모든 \(\varepsilon\)에서 성립한다. 직사각형(\(\lvert t\rvert &lt; \tfrac12\)에서 \(g = 1\))도 같은 꼴이다.</div></div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 270" role="img" aria-label="가우스 델타 함수열의 폭이 1, 0.5, 0.25로 줄어드는 모습과 같은 폭의 로런츠 함수"><defs><clipPath id="f0604-clip"><rect x="46" y="16" width="420" height="206"/></clipPath></defs><line x1="46" y1="16" x2="46" y2="222" class="s-grid"/><line x1="116" y1="16" x2="116" y2="222" class="s-grid"/><line x1="186" y1="16" x2="186" y2="222" class="s-grid"/><line x1="256" y1="16" x2="256" y2="222" class="s-grid"/><line x1="326" y1="16" x2="326" y2="222" class="s-grid"/><line x1="396" y1="16" x2="396" y2="222" class="s-grid"/><line x1="466" y1="16" x2="466" y2="222" class="s-grid"/><line x1="46" y1="222" x2="466" y2="222" class="s-grid"/><line x1="46" y1="161.4" x2="466" y2="161.4" class="s-grid"/><line x1="46" y1="100.8" x2="466" y2="100.8" class="s-grid"/><line x1="46" y1="40.2" x2="466" y2="40.2" class="s-grid"/><line x1="46" y1="222" x2="466" y2="222" class="s-line"/><line x1="256" y1="16" x2="256" y2="222" class="s-line"/><text x="46" y="242" class="t-dim" style="font-size:14px" text-anchor="middle">−3</text><text x="116" y="242" class="t-dim" style="font-size:14px" text-anchor="middle">−2</text><text x="186" y="242" class="t-dim" style="font-size:14px" text-anchor="middle">−1</text><text x="256" y="242" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="326" y="242" class="t-dim" style="font-size:14px" text-anchor="middle">1</text><text x="396" y="242" class="t-dim" style="font-size:14px" text-anchor="middle">2</text><text x="466" y="242" class="t-dim" style="font-size:14px" text-anchor="middle">3</text><text x="39" y="227" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="39" y="166.4" class="t-dim" style="font-size:14px" text-anchor="end">0.5</text><text x="39" y="105.8" class="t-dim" style="font-size:14px" text-anchor="end">1</text><text x="39" y="45.2" class="t-dim" style="font-size:14px" text-anchor="end">1.5</text><path d="M46,221.5l43.4,-2.3 17.2,-2.1 18.2,-3.4 18.9,-5 14.3,-4.8 41.6,-16.9 18.2,-6.7 17.9,-4.7 16.1,-1.9 8.4,0 10.5,1 8.1,1.4 12.2,3.2 17.9,6.3 45.1,18.3 13.6,4.6 19.6,5.2 18.2,3.4 18.2,2.2 42.4,2.2" class="s-line" clip-path="url(#f0604-clip)" style="stroke:var(--text-dim);stroke-width:2"/><path d="M46,222l97.3,-0.5 19.3,-2.2 12.6,-4 10.5,-6.1 10.5,-9.6 11.2,-14.4 20.9,-34 9.1,-13.2 4.6,-5.3 4.9,-4.2 3.5,-2 4.9,-1.2 3.5,0.3 4.6,1.8 3.8,2.7 4.6,4.5 9.8,13.3 19.5,32 10.5,14.8 5.6,6.4 7,6.5 5.6,4 6.3,3.4 13.3,4.3 19.3,2.2 97.3,0.5" class="s-acc" clip-path="url(#f0604-clip)" style="stroke-width:2"/><path d="M46,222l143.5,-0.1 8.1,-0.6 5.6,-1.3 3.5,-1.6 3.5,-2.6 4.9,-6.3 3.5,-7.1 3.5,-9.9 3.1,-11.6 6,-29.5 16,-100 2.1,-9.3 2.8,-8.8 2.1,-3.7 1.8,-1 2.5,1.9 2.1,4.6 4.2,16.3 4.2,23.5 11.1,72.5 7,34.9 3.5,12.5 3.5,9.2 3.2,6.1 3.8,5 2.8,2.4 4.6,2.4 5.9,1.4 5.7,0.5 145.9,0.2" class="s-acc" clip-path="url(#f0604-clip)" style="stroke-width:3"/><path d="M46,220.9l72.2,-1.3 26.8,-1.3 18.6,-1.6 16.3,-2.4 11.8,-2.9 9.2,-3.5 9.7,-5.8 6.3,-5.8 5.8,-7.6 5.5,-10.4 4.2,-11 7.1,-26.8 12,-63.4 2.1,-6.6 2.1,-2.8 1.1,0.3 1.3,1.9 2.4,7.2 12,63.4 3.4,14.4 4.2,14 5,12.2 4.2,7.6 5.8,7.6 6.3,5.8 9.7,5.8 9.2,3.5 12.3,3 15.8,2.3 18.6,1.6 26.8,1.3 72.2,1.3" class="s-acc2" clip-path="url(#f0604-clip)" style="stroke-width:2" stroke-dasharray="6 4"/><text x="322.5" y="182" class="t-math dim" style="font-size:15px" text-anchor="start"><tspan font-style="italic">ε</tspan> = 1</text><text x="294.5" y="131.1" class="t-math acc" style="font-size:15px" text-anchor="start"><tspan font-style="italic">ε</tspan> = 0.5</text><text x="272.8" y="34.2" class="t-math acc" style="font-size:15px" text-anchor="start"><tspan font-style="italic">ε</tspan> = 0.25</text><text x="221" y="76.6" class="t-math acc2" style="font-size:15px" text-anchor="end">로런츠 <tspan font-style="italic">ε</tspan> = 0.25</text><text x="466" y="264" class="t-math" style="font-size:16px" text-anchor="end"><tspan font-style="italic">x</tspan></text></svg>
+      <figcaption><b>그림 6-4.</b> 가우스 함수열 \(\delta_\varepsilon(x)\)에서 \(\varepsilon = 1, 0.5, 0.25\)인 곡선과, \(\varepsilon = 0.25\)인 로런츠 함수(점선). 폭이 절반이 될 때마다 높이가 두 배가 되어 넓이는 언제나 1이다. 로런츠 함수는 꼭대기가 낮은 대신 꼬리가 \(1/x^2\)로 천천히 줄어서, 같은 \(\varepsilon\)이라도 넓이의 상당 부분이 멀리 퍼져 있다.</figcaption>
+    </figure>
+    <p>\(\varepsilon \to 0\)에서 \(\delta_\varepsilon(x)\) 자체는 \(x \ne 0\)에서 0으로, \(x = 0\)에서 무한대로 간다. 극한의 "함수"는 의미가 없지만, 다른 함수와 곱해 적분한 값의 극한은 의미가 있다.</p>
+    <div class="box thm" id="thm-delta-sequence"><div class="box-h">델타 함수열의 거르기 성질</div>
+      <p>\(g\)가 적분 가능하고 \(\int g\,dt = 1\)이라 하자. \(f\)가 유계이고 \(x = 0\)에서 연속이면</p>
+      <div class="formula">\[ \lim_{\varepsilon\to0}\int_{-\infty}^{\infty}\delta_\varepsilon(x)\,f(x)\,dx = f(0) \]</div>
+      <p>이다. \(g\)가 짝함수이고 \(\int t^2\lvert g\rvert\,dt\)가 유한하며 \(f\)가 0 근처에서 두 번 미분 가능하면, 오차는 \(\tfrac12\varepsilon^2f''(0)\int t^2g\,dt\) 정도다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>\(x = \varepsilon t\)로 치환하면 \(\int\delta_\varepsilon(x)f(x)\,dx = \int g(t)\,f(\varepsilon t)\,dt\)이다. \(\varepsilon \to 0\)이면 각 \(t\)에서 \(f(\varepsilon t) \to f(0)\)이고, \(\lvert g(t)f(\varepsilon t)\rvert \le M\lvert g(t)\rvert\)(\(M\)은 \(\lvert f\rvert\)의 상한)이 \(\varepsilon\)과 상관없이 적분 가능하므로 극한과 적분의 순서를 바꿀 수 있다(르베그의 지배 수렴 정리). 따라서 극한은 \(f(0)\int g\,dt = f(0)\)이다. 오차는 \(f(\varepsilon t) = f(0) + \varepsilon tf'(0) + \tfrac12\varepsilon^2t^2f''(0) + \cdots\)를 넣으면 보인다. \(g\)가 짝함수이면 \(\varepsilon\)의 1차 항은 \(\int tg\,dt = 0\)으로 사라지고, 2차 항이 남는다.</p>
+      </details>
+    </div>
+    <p>가우스 함수열은 \(\int t^2g\,dt = 1\)이므로 오차가 \(\tfrac12\varepsilon^2f''(0)\)이다. 예를 들어 \(f = \cos x\)이면 정확한 값은 \(\int\delta_\varepsilon\cos x\,dx = e^{-\varepsilon^2/2} = 1 - \tfrac12\varepsilon^2 + \cdots\)이고, \(f''(0) = -1\)이므로 맞다. 로런츠 함수열은 \(\int t^2g\,dt\)가 무한대여서 오차가 \(\varepsilon\)의 1차로 더 크다. 같은 \(f = \cos x\)에서 정확히 \(e^{-\varepsilon} = 1 - \varepsilon + \cdots\)이다(<a class="ref" href="#prob-lorentzian-sifting"></a>). 극한은 같지만 다가가는 빠르기가 다르다.</p>
+    <div class="box def" id="def-dirac-delta"><div class="box-h">디랙 델타</div>
+      <p><span class="term">디랙 델타</span> <span class="en">(Dirac delta)</span> \(\delta(x)\)는 적분 안에서 다음처럼 작용하는 대상을 가리키는 기호다. 유계이고 \(x = a\)에서 연속인 함수 \(f\)에 대해</p>
+      <div class="formula" id="eq-delta-sifting">\[ \int_{-\infty}^{\infty}f(x)\,\delta(x - a)\,dx = f(a) \]</div>
+      <p>이 식은 <a class="ref" href="#thm-delta-sequence"></a>의 극한, 곧 \(\lim_{\varepsilon\to0}\int f(x)\,\delta_\varepsilon(x - a)\,dx\)를 줄여 쓴 것이다. 이것을 <span class="term">거르기 성질</span> <span class="en">(sifting property)</span>이라 한다. 적분 구간이 \(a\)를 안에 품으면 결과는 같고, \(a\)가 구간 밖에 있으면 0이다. 델타가 든 식 "\(A(x) = B(x)\)"는 양변에 아무 매끄러운 \(f\)를 곱해 적분한 값이 같다는 뜻이다.</p>
+    </div>
+    <p>그래서 흔히 쓰는 "\(x \ne 0\)에서 \(\delta(x) = 0\)이고 \(\int\delta(x)\,dx = 1\)"은 직관을 주는 그림이지 정의가 아니다. 단위도 보자. \(\int\delta(x)\,dx = 1\)이 차원이 없으므로 \(\delta(x)\)의 단위는 \(1/[x]\)이다. 시간의 델타 \(\delta(t)\)는 \(\text{s}^{-1}\)이고, 3차원 델타 \(\delta^3(\mathbf r)\)는 \(\text{m}^{-3}\)이다. 그래서 \(q\,\delta^3(\mathbf r)\)이 전하 밀도의 단위를 갖는다.</p>
+    <div class="callout deep"><strong>엄밀하게는 분포 이론</strong><p>이 장은 델타를 함수열의 극한으로 다루는 물리학자의 방식을 쓴다. 수학에서는 델타를 함수가 아니라 <span class="term">분포</span> <span class="en">(distribution)</span>, 곧 매끄럽고 빨리 0으로 가는 시험 함수 \(f\)에 수 \(f(0)\)을 대응시키는 연속 선형 범함수로 정의한다(L. Schwartz, <i>Théorie des distributions</i>, Hermann 1950–51). 분포의 도함수는 부분 적분을 흉내 내어 \(T'[f] = -T[f']\)로 정하므로, 모든 분포는 몇 번이든 미분할 수 있다. 델타를 이 장처럼 좋은 함수열로 정의하는 방식을 엄밀하게 세운 책으로는 라이트힐의 것이 있다(M. J. Lighthill, <i>An Introduction to Fourier Analysis and Generalised Functions</i>, Cambridge 1958). 엄밀성을 줄인 곳은 두 군데다. (1) 시험 함수의 조건(얼마나 매끄럽고 얼마나 빨리 줄어야 하는가)을 따지지 않고 "충분히 매끄러운 \(f\)"라고만 한다. (2) 델타끼리의 곱 \(\delta(x)^2\)이나 \(\delta(x)\Theta(x)\)는 분포 이론에서 정의되지 않는데, 이 책은 이런 곱이 나오지 않는 식만 쓴다. 계산 중에 이런 곱이 나오면 식을 다시 세워야 한다는 신호다.</p></div>
+
+    <h3 id="s5-properties">델타의 성질</h3>
+    <p>델타가 든 등식은 "적분 안에서 같다"는 뜻이므로, 성질도 적분의 치환으로 증명한다.</p>
+    <div class="box thm" id="thm-delta-properties"><div class="box-h">디랙 델타의 성질</div>
+      <ol>
+        <li>(척도) 상수 \(a \ne 0\)에 대해
+          <div class="formula" id="eq-delta-scaling">\[ \delta(ax) = \frac{\delta(x)}{\lvert a\rvert} \]</div>
+          특히 \(\delta(-x) = \delta(x)\)이다.</li>
+        <li>(합성) \(g(x)\)의 실근 \(x_i\)가 고립되어 있고 모두 단순근(\(g'(x_i) \ne 0\))이면
+          <div class="formula" id="eq-delta-composition">\[ \delta\big(g(x)\big) = \sum_i\frac{\delta(x - x_i)}{\lvert g'(x_i)\rvert} \]</div></li>
+        <li>(곱) \(f\)가 \(a\)에서 연속이면 \(f(x)\,\delta(x - a) = f(a)\,\delta(x - a)\)이다. 특히 \(x\,\delta(x) = 0\)이다.</li>
+      </ol>
+      <details class="proof"><summary>증명</summary>
+        <p>1. \(a > 0\)이면 \(u = ax\)로 치환해 \(\int f(x)\,\delta(ax)\,dx = \int f(u/a)\,\delta(u)\,du/a = f(0)/a\)이다. \(a &lt; 0\)이면 치환할 때 적분의 위아래 끝이 바뀌므로 부호가 하나 더 붙어 \(f(0)/(-a) = f(0)/\lvert a\rvert\)이다. 이것이 \(\int f(x)\,\delta(x)/\lvert a\rvert\,dx\)와 같다.</p>
+        <p>2. \(\delta_\varepsilon(g(x))\)는 \(g(x) \ne 0\)인 곳에서 \(\varepsilon \to 0\)일 때 0으로 가므로 각 근 \(x_i\)의 작은 근방만 기여한다. 근방에서 \(g\)는 단조이므로 \(u = g(x)\)로 치환하면 \(dx = du/\lvert g'(x)\rvert\)이고, 그 근방의 기여는 \(\int\delta_\varepsilon(u)\,f(x(u))/\lvert g'(x(u))\rvert\,du \to f(x_i)/\lvert g'(x_i)\rvert\)이다(<a class="ref" href="#thm-delta-sequence"></a>). 근마다 더하면 된다.</p>
+        <p>3. 양변에 매끄러운 함수 \(\chi\)를 곱해 적분하면 둘 다 \(f(a)\chi(a)\)이다.</p>
+      </details>
+    </div>
+    <p>예를 들어 \(g(x) = x^2 - c^2\) (\(c > 0\))의 근은 \(\pm c\)이고 \(\lvert g'(\pm c)\rvert = 2c\)이므로</p>
+    <div class="formula" id="eq-delta-two-roots">\[ \delta(x^2 - c^2) = \frac{\delta(x - c) + \delta(x + c)}{2c} \]</div>
+    <p>이다. 단순근이라는 조건은 중요하다. \(\delta(x^2)\)은 근 \(x = 0\)에서 \(g' = 0\)이라 정의되지 않는다. 함수열로 보면 \(\int\delta_\varepsilon(x^2)\,dx\)가 \(\varepsilon \to 0\)에서 발산한다.</p>
+
+    <div class="box ex" id="ex-oscillator-position-distribution"><div class="box-h">조화 진동자가 머무는 위치의 분포</div>
+      <p>진폭 \(A\), 각진동수 \(\omega\)로 진동하는 입자 \(x(t) = A\cos\omega t\)를 아무 때나 사진으로 찍는다. (가) 위치가 \(x\)와 \(x + dx\) 사이에 찍힐 확률 \(P(x)\,dx\)를 델타의 합성 공식으로 구하라. (나) \(\lvert x\rvert &lt; A/2\)에 찍힐 확률은 얼마인가? (다) 진폭 4.0 cm, 주기 1.2 s인 용수철 진자가 한 주기 동안 \(\lvert x\rvert &lt; 2.0\ \text{cm}\)에 머무는 시간은?</p>
+      <p><b>풀이.</b> (가) 한 주기 \(T = 2\pi/\omega\) 동안 고르게 고른 시각의 위치 분포는 "시각 \(t\)의 위치에 델타를 놓고 시간 평균한 것"이다.</p>
+      <div class="formula">\[ P(x) = \frac1T\int_0^T\delta\big(x - A\cos\omega t\big)\,dt \]</div>
+      <p>\(\lvert x\rvert &lt; A\)이면 \(t\)의 함수 \(g(t) = x - A\cos\omega t\)는 한 주기 안에 단순근이 두 개 있다(\(\cos\omega t_i = x/A\)). 거기서 \(\lvert g'(t_i)\rvert = A\omega\lvert\sin\omega t_i\rvert = \omega\sqrt{A^2 - x^2}\)이므로 식 <a class="ref" href="#eq-delta-composition"></a>에서</p>
+      <div class="formula" id="eq-oscillator-distribution">\[ \begin{aligned} P(x) &= \frac1T\cdot\frac{2}{\omega\sqrt{A^2 - x^2}} \\ &= \frac{1}{\pi\sqrt{A^2 - x^2}} \quad (\lvert x\rvert &lt; A) \end{aligned} \]</div>
+      <p>이다. \(\lvert x\rvert > A\)이면 근이 없어 \(P = 0\)이다. 끝점 근처에서 \(P\)가 커지는 것은 입자가 거기서 느려지기 때문이다. \(P\)는 \(x = \pm A\)에서 무한대지만 \(\int_{-A}^{A}P\,dx = \frac1\pi[\sin^{-1}(x/A)]_{-A}^{A} = 1\)로 규격화되어 있다.</p>
+      <p>(나) \(\displaystyle\int_{-A/2}^{A/2}\frac{dx}{\pi\sqrt{A^2 - x^2}} = \frac2\pi\sin^{-1}\frac12 = \frac2\pi\cdot\frac\pi6 = \frac13\)이다.</p>
+      <p><b>숫자로 보기.</b> (다) 구간의 폭은 전체 \(2A\)의 절반인데 머무는 시간은 \(1.2\ \text{s}/3 = 0.40\ \text{s}\)로 주기의 1/3뿐이다. 나머지 0.80 s는 바깥쪽 절반(끝점 근처)에서 보낸다. 직접 확인하면 \(\lvert\cos\omega t\rvert &lt; \tfrac12\)인 시간은 \(\omega t \in (\pi/3, 2\pi/3)\)과 \((4\pi/3, 5\pi/3)\)으로 한 주기의 \(2 \times \tfrac16 = \tfrac13\)이다. 이 고전 분포는 양자 조화 진동자의 확률 밀도를 높은 들뜬 상태에서 평균한 모양과 같아지며, 대응 원리의 한 예다.</p>
+    </div>
+
+    <h3 id="s5-derivative">델타의 도함수와 계단 함수</h3>
+    <p>함수열 \(\delta_\varepsilon\)은 매끄러우므로 미분할 수 있다. 부분 적분에서 경계 항은 \(\delta_\varepsilon\)이 멀리서 0으로 가므로 사라진다. \(\int f\,\delta_\varepsilon'\,dx = -\int f'\,\delta_\varepsilon\,dx \to -f'(0)\)이다. 이것을 델타의 도함수의 정의로 삼는다.</p>
+    <div class="formula" id="eq-delta-derivative">\[ \begin{aligned} \int_{-\infty}^{\infty}f(x)\,\delta'(x - a)\,dx &= -f'(a) \\ \int_{-\infty}^{\infty}f(x)\,\delta^{(n)}(x - a)\,dx &= (-1)^nf^{(n)}(a) \end{aligned} \]</div>
+    <p>\(\delta'\)의 물리적 뜻은 쌍극자다. 직선 위의 \(x = \pm d/2\)에 전하 \(\pm q\)가 있으면 밀도는 \(q\,\delta(x - d/2) - q\,\delta(x + d/2)\)이다. 테일러 전개 \(\delta(x \mp d/2) \approx \delta(x) \mp \tfrac d2\delta'(x)\)(적분 안에서 \(f(\pm d/2) \approx f(0) \pm \tfrac d2f'(0)\)과 같은 말)를 쓰고 \(qd = p\)를 고정한 채 \(d \to 0\)으로 보내면</p>
+    <div class="formula" id="eq-dipole-density-1d">\[ \rho(x) = -p\,\delta'(x) \]</div>
+    <p>이다. 전체 전하는 \(\int\rho\,dx = -p\int 1\cdot\delta'\,dx = p \cdot 0 = 0\)이고, 쌍극자 모멘트는 \(\int x\rho\,dx = -p\int x\,\delta'\,dx = p\cdot\frac{d}{dx}x\big\rvert_0 = p\)이다. 식 <a class="ref" href="#eq-delta-derivative"></a>이 쌍극자의 성질을 정확히 재현한다.</p>
+    <div class="box def" id="def-step-function"><div class="box-h">계단 함수</div>
+      <p><span class="term">계단 함수</span> <span class="en">(step function, Heaviside function)</span> \(\Theta(x)\)는 \(x &lt; 0\)에서 0, \(x > 0\)에서 1인 함수다. \(\Theta(0)\)의 값은 교재마다 0, \(\tfrac12\), 1로 다르게 정하지만 적분에는 영향이 없다. 계단 함수를 \(H(x)\)로 쓰는 교재도 있다.</p>
+    </div>
+    <p>계단 함수는 \(x = 0\)에서 1만큼 뛰고 그 밖에서는 평평하므로, 도함수는 0에 몰린 넓이 1의 대상, 곧 델타일 것이다. 식 <a class="ref" href="#eq-delta-derivative"></a>과 같은 부분 적분으로 확인한다. 멀리서 0으로 가는 \(f\)에 대해 \(\int f\,\Theta'\,dx = -\int f'\,\Theta\,dx = -\int_0^\infty f'\,dx = f(0)\)이므로</p>
+    <div class="formula" id="eq-step-derivative">\[ \frac{d\Theta}{dx} = \delta(x) \]</div>
+    <p>이다. 함수열로는 매끄러운 계단 \(\Theta_\varepsilon(x) = \tfrac12 + \tfrac1\pi\tan^{-1}(x/\varepsilon)\)을 미분하면 정확히 식 <a class="ref" href="#eq-delta-sequences"></a>의 로런츠 함수열이 나온다. 같은 생각으로 \(\lvert x\rvert' = 2\Theta(x) - 1\), \(\lvert x\rvert'' = 2\delta(x)\)이다. 꺾인 곳의 2계 도함수는 기울기가 뛴 양만큼의 델타다.</p>
+    <p>물리에서 계단 함수는 "어느 순간 켜진다"를 쓰는 말이다. 정지한 질량 \(m\)에 시각 \(t_0\)에 충격량 \(J\)를 주면 힘은 \(F(t) = J\,\delta(t - t_0)\)이고, \(m\dot v = F\)를 적분하면 \(v(t) = (J/m)\,\Theta(t - t_0)\)이다. 10장은 이 생각으로 <a href="ch10.html#def-impulse-response">충격 응답</a>(정의 10.3)을 세운다. 델타를 평면파의 겹침으로 쓰는 표현 \(\int e^{ikx}\,dk = 2\pi\delta(x)\)는 15장의 <a href="ch15.html#eq-delta-fourier">푸리에 표현</a>에서 유도한다.</p>
+  </section>
+
+  <!-- ============================================================ 6.6 -->
+  <section id="s6">
+    <h2>3차원 델타와 점 원천</h2>
+    <p>이제 이 장의 처음 질문으로 돌아온다. 점 \(\mathbf r_0\)에 있는 점전하의 밀도는 세 방향으로 모두 몰려 있어야 하므로 1차원 델타 셋을 곱해 쓴다. 이 절에서는 3차원 델타를 곡선 좌표로 옮기고, 선과 면에 몰린 원천도 같은 방법으로 쓴 뒤, 역제곱 장의 발산과 \(1/r\)의 라플라시안을 완성한다.</p>
+
+    <h3 id="s6-delta-3d">3차원 델타</h3>
+    <p>3차원 델타를 \(\delta^3(\mathbf r) = \delta(x)\,\delta(y)\,\delta(z)\)로 정한다. 세 변수에 대해 차례로 거르기 성질을 쓰면</p>
+    <div class="formula" id="eq-delta-3d-sifting">\[ \int f(\mathbf r)\,\delta^3(\mathbf r - \mathbf r_0)\,d^3r = f(\mathbf r_0) \]</div>
+    <p>이다. 적분 영역이 \(\mathbf r_0\)를 품으면 이 값이고, 품지 않으면 0이다. 점 \(\mathbf r_0\)에 있는 점전하 \(q\)의 밀도는 \(\rho = q\,\delta^3(\mathbf r - \mathbf r_0)\)이고, 어떤 영역의 전하 \(\int_V\rho\,d^3r\)는 \(\mathbf r_0\)가 안에 있으면 \(q\), 밖에 있으면 0이다.</p>
+    <p>곡선 좌표에서는 부피 요소가 \(h_1h_2h_3\,du_1\,du_2\,du_3\)이므로 \(\delta(u_1 - u_1')\,\delta(u_2 - u_2')\,\delta(u_3 - u_3')\)만으로는 적분이 \(h_1h_2h_3 f\)가 되어 버린다. 척도 인자로 나눠 주어야 한다.</p>
+    <div class="formula" id="eq-delta-3d-curvilinear">\[ \delta^3(\mathbf r - \mathbf r') = \frac{\delta(u_1 - u_1')\,\delta(u_2 - u_2')\,\delta(u_3 - u_3')}{h_1h_2h_3} \]<div class="where">구면 좌표에서는 \(\delta(r - r')\,\delta(\theta - \theta')\,\delta(\phi - \phi')/(r^2\sin\theta)\), 원통 좌표에서는 \(\delta(s - s')\,\delta(\phi - \phi')\,\delta(z - z')/s\)이다. 척도 인자는 \(\mathbf r'\)에서 값을 매겨도 된다(<a class="ref" href="#thm-delta-properties"></a>의 곱 성질). \(h_1h_2h_3 \ne 0\)인 점, 곧 원점과 \(z\)축 위가 아닌 점에서 쓴다.</div></div>
+    <p>식 <a class="ref" href="#eq-volume-element-general"></a>와 곱하면 \(h_1h_2h_3\)이 지워지고 세 번의 1차원 거르기가 남으므로 검산이 된다. 차원도 맞는다. 구면 좌표에서 \(\delta(r - r')\)은 \(\text{m}^{-1}\), 각의 델타는 차원이 없고, \(1/r^2\)이 \(\text{m}^{-2}\)를 보탠다.</p>
+    <div class="callout warn"><strong>원점의 델타: \(\delta^3(\mathbf r) = \delta(r)/(4\pi r^2)\)</strong><p>원점에서는 \(\theta\)와 \(\phi\)가 정해지지 않으므로 식 <a class="ref" href="#eq-delta-3d-curvilinear"></a>을 쓸 수 없다. 구면 대칭인 원천은 각에 기대지 않으니 각의 델타 대신 \(1/4\pi\)를 쓰면 \(\delta^3(\mathbf r) = \delta(r)/(4\pi r^2)\)이다. 그런데 \(r\)의 적분 구간 \([0, \infty)\)의 끝에 델타가 걸리므로 \(\int_0^\infty\delta(r)\,dr\)을 1로 볼지 \(\tfrac12\)로 볼지 정해야 한다. 이 책은 \(\int d^3r\,\delta^3 = 1\)이 되도록 \(\int_0^\infty\delta(r)\,dr = 1\)로 약속한다(델타가 원점에서 \(r > 0\) 쪽으로 조금 밀려 있다고 생각한다). \(\delta(r)/(2\pi r^2)\)으로 쓰고 \(\tfrac12\)을 약속하는 교재도 있으니, 식을 옮길 때 확인한다. 헷갈리면 직교 좌표의 \(\delta(x)\delta(y)\delta(z)\)로 돌아가 \(\int d^3r\,\delta^3 = 1\)을 확인하면 된다. 같은 문제는 원통 좌표의 \(z\)축에서도 생기고, 그때는 \(\delta(x)\delta(y) = \delta(s)/(2\pi s)\), \(\int_0^\infty\delta(s)\,ds = 1\)이다.</p></div>
+
+    <div class="box ex" id="ex-point-charge-density"><div class="box-h">점·선·면·고리 전하의 밀도</div>
+      <p>다음 전하 분포의 부피 전하 밀도 \(\rho\)를 델타로 쓰고, 전체 전하를 적분해 확인하라. (가) 점 \(\mathbf r_0\)의 점전하 \(q\). (나) \(z\)축 위에 선밀도 \(\lambda\)로 고르게 퍼진 전하. (다) 반지름 \(R\)인 구면 위에 면밀도 \(\sigma\)로 퍼진 전하. (라) \(xy\) 평면 위, 반지름 \(a\)인 고리에 고르게 퍼진 전하 \(Q\). 또 (라)에서 \(Q = 2.0\ \text{nC}\), \(a = 5.0\ \text{cm}\)일 때 고리 중심과 축 위 \(z = a\)의 퍼텐셜을 \(V = \frac{1}{4\pi\varepsilon_0}\int\frac{\rho(\mathbf r')}{\lvert\mathbf r - \mathbf r'\rvert}d^3r'\)으로 구하라.</p>
+      <p><b>풀이.</b> 원천이 몰린 방향의 수만큼 델타를 곱하고, 남은 방향의 밀도(점은 전하, 선은 선밀도, 면은 면밀도)를 앞에 붙인다.</p>
+      <div class="formula" id="eq-point-line-surface-densities">\[ \begin{aligned} \text{(가)}\ \ \rho &= q\,\delta^3(\mathbf r - \mathbf r_0) \\ \text{(나)}\ \ \rho &= \lambda\,\delta(x)\,\delta(y) = \frac{\lambda\,\delta(s)}{2\pi s} \\ \text{(다)}\ \ \rho &= \sigma\,\delta(r - R) \\ \text{(라)}\ \ \rho &= \frac{Q}{2\pi a}\,\delta(s - a)\,\delta(z) \end{aligned} \]</div>
+      <p>(가)는 식 <a class="ref" href="#eq-delta-3d-sifting"></a>에서 바로 \(q\)이다. (나)는 높이 \(L\)인 원기둥에서 \(\int\rho\,d^3r = \lambda\int\delta(x)\delta(y)\,dx\,dy\int_0^Ldz = \lambda L\)이다. 원통 좌표의 꼴로는 \(\int_0^\infty\int_0^{2\pi}\frac{\lambda\delta(s)}{2\pi s}\,s\,d\phi\,ds = \lambda\)(단위 길이당)이고, 여기서 앞의 경고의 약속 \(\int_0^\infty\delta(s)\,ds = 1\)을 썼다. (다)는 식 <a class="ref" href="#eq-volume-element-spherical"></a>로 \(\int\sigma\,\delta(r - R)\,r^2\,dr\,d\Omega = \sigma R^2\cdot4\pi\)로 구면의 넓이 곱하기 면밀도다. 면 위에 몰린 델타는 \(\delta(r - R)\) 하나이고 단위는 \(\text{m}^{-1}\)이므로 \(\sigma\delta\)가 \(\text{C/m}^3\)이다. (라)는 식 <a class="ref" href="#eq-volume-element-cylindrical"></a>으로</p>
+      <div class="formula">\[ \begin{aligned} \int\rho\,d^3r &= \frac{Q}{2\pi a}\int_0^\infty\delta(s - a)\,s\,ds \\ &\quad \times \int_0^{2\pi}d\phi\int\delta(z)\,dz \\ &= \frac{Q}{2\pi a}\cdot a\cdot2\pi = Q \end{aligned} \]</div>
+      <p>이다.</p>
+      <p><b>숫자로 보기.</b> 고리의 선밀도는 \(Q/2\pi a = 2.0\ \text{nC}/(2\pi \times 0.050\ \text{m}) = 6.4\ \text{nC/m}\)이다. 축 위의 점 \(z\hat{\mathbf z}\)에서 고리 위 모든 점까지 거리는 \(\sqrt{a^2 + z^2}\)이므로, 델타 둘이 적분을 고리 위로 걸러 \(V(z) = \frac{1}{4\pi\varepsilon_0}\frac{Q}{\sqrt{a^2 + z^2}}\)이다. 중심에서는</p>
+      <div class="formula">\[ \begin{aligned} V(0) &= \frac{(8.99 \times 10^9\ \text{N}\cdot\text{m}^2/\text{C}^2)(2.0 \times 10^{-9}\ \text{C})}{0.050\ \text{m}} \\ &= 360\ \text{V} \end{aligned} \]</div>
+      <p>이고, \(z = a\)에서는 \(\sqrt2\)로 나눈 \(254\ \text{V}\)이다. 단위는 \(\text{N}\cdot\text{m/C} = \text{J/C} = \text{V}\)이다.</p>
+    </div>
+
+    <h3 id="s6-inverse-square">역제곱 장의 발산과 \(1/r\)의 라플라시안</h3>
+    <p>4장의 <a href="ch04.html#ex-inverse-square-divergence">예제 4.7</a>과 5장의 <a href="ch05.html#ex-coulomb-to-gauss">예제 5.7</a>에서 본 사실 두 가지를 모으자.</p>
+    <ol>
+      <li>\(r \ne 0\)에서 \(\nabla\cdot(\hat{\mathbf r}/r^2) = 0\)이다(식 <a class="ref" href="#eq-div-power-r-spherical"></a>, \(n = -3\)).</li>
+      <li>닫힌 곡면 \(S\)를 지나 나가는 플럭스 \(\oint_S(\hat{\mathbf r}/r^2)\cdot d\mathbf a\)는 원점이 \(S\) 안에 있으면 \(4\pi\), 밖에 있으면 0이다(5장 <a href="ch05.html#eq-inverse-square-excised">식 (5.24)</a>).</li>
+    </ol>
+    <p>발산 정리가 원점을 품은 영역에서도 성립하게 하려면, 어떤 영역 \(V\)에 대해서든 "\(V\) 안의 발산의 적분"이 원점을 품을 때 \(4\pi\), 아니면 0이어야 한다. 그런 "밀도"는 식 <a class="ref" href="#eq-delta-3d-sifting"></a>에 따라 정확히 \(4\pi\delta^3(\mathbf r)\)이다.</p>
+    <div class="box thm" id="thm-inverse-square-delta"><div class="box-h">역제곱 장의 발산과 \(1/r\)의 라플라시안</div>
+      <div class="formula" id="eq-div-inverse-square">\[ \nabla\cdot\Big(\frac{\hat{\mathbf r}}{r^2}\Big) = 4\pi\,\delta^3(\mathbf r) \]</div>
+      <div class="formula" id="eq-laplacian-inverse-r">\[ \nabla^2\Big(\frac1r\Big) = -4\pi\,\delta^3(\mathbf r) \]</div>
+      <p>원점을 \(\mathbf r'\)로 옮기면 \(\nabla^2\big(1/\lvert\mathbf r - \mathbf r'\rvert\big) = -4\pi\,\delta^3(\mathbf r - \mathbf r')\)이다(\(\nabla\)는 \(\mathbf r\)에 대한 미분). 두 식은 델타의 정의대로 "양변에 매끄러운 함수를 곱해 적분한 값이 같다"는 뜻이다.</p>
+    </div>
+    <p>둘째 식은 \(\nabla(1/r) = -\hat{\mathbf r}/r^2\)이므로 첫째 식에서 바로 나온다. 첫째 식을 함수열로 다시 유도하면, 플럭스 논증에서 흐릿하게 남은 "원점에서의 발산"이 무엇인지가 보인다. 원점의 특이점을 길이 \(\varepsilon\)으로 부드럽게 만든 장</p>
+    <div class="formula">\[ \mathbf F_\varepsilon = \frac{\mathbf r}{(r^2 + \varepsilon^2)^{3/2}} = \frac{r}{(r^2 + \varepsilon^2)^{3/2}}\,\hat{\mathbf r} \]</div>
+    <p>을 생각하자. \(r \gg \varepsilon\)에서는 \(\hat{\mathbf r}/r^2\)과 같고, 원점 근처에서는 \(\mathbf r/\varepsilon^3\)으로 유한하다(그림 6-5 (가)). 이 장은 어디서나 매끄러우므로 식 <a class="ref" href="#eq-div-spherical"></a>를 원점까지 쓸 수 있다.</p>
+    <div class="formula" id="eq-div-inverse-square-regularized">\[ \begin{aligned} \nabla\cdot\mathbf F_\varepsilon &= \frac{1}{r^2}\frac{d}{dr}\Big[\frac{r^3}{(r^2 + \varepsilon^2)^{3/2}}\Big] \\ &= \frac{1}{r^2}\Big[\frac{3r^2}{(r^2 + \varepsilon^2)^{3/2}} - \frac{3r^4}{(r^2 + \varepsilon^2)^{5/2}}\Big] \\ &= \frac{3\varepsilon^2}{(r^2 + \varepsilon^2)^{5/2}} \end{aligned} \]</div>
+    <p>이 함수는 \(r \gg \varepsilon\)에서 \(3\varepsilon^2/r^5\)으로 0에 가고, 원점에서 \(3/\varepsilon^3\)으로 크다. 전체 공간의 적분은 \(t = r/\varepsilon\)으로 치환해</p>
+    <div class="formula" id="eq-regularized-integral">\[ \begin{aligned} &\int\nabla\cdot\mathbf F_\varepsilon\,d^3r = 4\pi\int_0^\infty\frac{3\varepsilon^2r^2\,dr}{(r^2 + \varepsilon^2)^{5/2}} \\ &\quad = 4\pi\int_0^\infty\frac{3t^2\,dt}{(1 + t^2)^{5/2}} \\ &\quad = 4\pi\Big[\frac{t^3}{(1 + t^2)^{3/2}}\Big]_0^\infty = 4\pi \end{aligned} \]</div>
+    <p>로 \(\varepsilon\)과 상관없다. 마지막 단계는 \(\frac{d}{dt}\big[t^3(1 + t^2)^{-3/2}\big] = 3t^2(1 + t^2)^{-5/2}\)을 미분해 확인하면 된다. 게다가 \(\nabla\cdot\mathbf F_\varepsilon = \varepsilon^{-3}G(r/\varepsilon)\) 꼴이라 식 <a class="ref" href="#eq-delta-sequences"></a>의 3차원판이다. 따라서 \(\nabla\cdot\mathbf F_\varepsilon/4\pi\)는 \(\delta^3\)의 함수열이다. 한편 \(\mathbf F_\varepsilon\)은 \(\varepsilon \to 0\)에서 \(\hat{\mathbf r}/r^2\)으로 가고(원점 둘레의 작은 공에서 적분한 차이가 \(\varepsilon\)과 함께 0으로 간다), 델타의 정의대로 "매끄러운 \(f\)를 곱해 적분한 값"으로 보면 미분과 극한의 순서를 바꿀 수 있어 식 <a class="ref" href="#eq-div-inverse-square"></a>이 나온다. 이 순서 바꾸기의 엄밀한 근거는 6.5절의 심화 상자가 말한 분포 이론이다. 같은 계산으로 \(\nabla^2(r^2 + \varepsilon^2)^{-1/2} = -3\varepsilon^2(r^2 + \varepsilon^2)^{-5/2}\)이므로 식 <a class="ref" href="#eq-laplacian-inverse-r"></a>도 함수열로 확인된다.</p>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 260" role="img" aria-label="부드럽게 만든 역제곱 장의 세기"><defs><clipPath id="f0605a-clip"><rect x="44" y="16" width="322" height="196"/></clipPath></defs><line x1="44" y1="16" x2="44" y2="212" class="s-grid"/><line x1="108.4" y1="16" x2="108.4" y2="212" class="s-grid"/><line x1="172.8" y1="16" x2="172.8" y2="212" class="s-grid"/><line x1="237.2" y1="16" x2="237.2" y2="212" class="s-grid"/><line x1="301.6" y1="16" x2="301.6" y2="212" class="s-grid"/><line x1="366" y1="16" x2="366" y2="212" class="s-grid"/><line x1="44" y1="212" x2="366" y2="212" class="s-grid"/><line x1="44" y1="163" x2="366" y2="163" class="s-grid"/><line x1="44" y1="114" x2="366" y2="114" class="s-grid"/><line x1="44" y1="65" x2="366" y2="65" class="s-grid"/><line x1="44" y1="16" x2="366" y2="16" class="s-grid"/><line x1="44" y1="212" x2="366" y2="212" class="s-line"/><line x1="44" y1="16" x2="44" y2="212" class="s-line"/><text x="44" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="108.4" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">0.5</text><text x="172.8" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">1</text><text x="237.2" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">1.5</text><text x="301.6" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">2</text><text x="366" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">2.5</text><text x="37" y="217" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="37" y="168" class="t-dim" style="font-size:14px" text-anchor="end">0.5</text><text x="37" y="119" class="t-dim" style="font-size:14px" text-anchor="end">1</text><text x="37" y="70" class="t-dim" style="font-size:14px" text-anchor="end">1.5</text><text x="37" y="21" class="t-dim" style="font-size:14px" text-anchor="end">2</text><path d="M121.3,-60.2l6.9,43 6.3,30.9 5.7,22.8 9,28.7 6.7,17.1 10.4,21.1 10.2,16.1 13.9,16.7 11.8,10.9 15.7,11.2 20.4,10.7 17.8,6.9 19.4,5.8 28.5,6.3 26.9,4.3 35.1,4" class="s-line" clip-path="url(#f0605a-clip)" style="stroke:var(--text-dim);stroke-width:2" stroke-dasharray="6 4"/><path d="M44,212l26,-18.7 9.4,-5.5 9.9,-4.8 9.7,-3.6 9.4,-2.5 11.8,-1.9 10.2,-0.7 14.5,0.2 19.9,1.8 75.6,11.1 43.2,5.3 41.6,3.9 40.8,2.8" class="s-acc2" clip-path="url(#f0605a-clip)" style="stroke-width:2"/><path d="M44,212l13.1,-75.3 5.1,-23.6 5.1,-19.2 4.3,-12.5 5.1,-10.6 5.4,-6.7 3.2,-2.1 3.5,-0.9 3.8,0.4 3.2,1.3 8.6,6.5 8.6,9.2 18.7,22.9 12.9,14.7 18.8,18.2 19.3,14.7 11,6.8 12.6,6.7 14,6.2 15.8,5.8 18.5,5.5 16.1,3.9 16.9,3.4 25.5,4.1 52.9,5.8" class="s-acc" clip-path="url(#f0605a-clip)" style="stroke-width:2.6"/><text x="144.5" y="30.7" class="t-math dim" style="font-size:16px" text-anchor="start">1/<tspan font-style="italic">r</tspan>²</text><text x="98.1" y="55.2" class="t-math acc" style="font-size:15px" text-anchor="end"><tspan font-style="italic">ε</tspan> = 0.5</text><text x="179.2" y="163" class="t-math acc2" style="font-size:15px" text-anchor="start"><tspan font-style="italic">ε</tspan> = 1</text><text x="362" y="30" class="t" style="font-size:15px" text-anchor="end">(가) 장의 세기</text><text x="366" y="252" class="t-math" style="font-size:16px" text-anchor="end"><tspan font-style="italic">r</tspan></text></svg><svg viewBox="0 0 380 260" role="img" aria-label="껍질마다 모은 발산"><defs><clipPath id="f0605b-clip"><rect x="44" y="16" width="322" height="196"/></clipPath></defs><line x1="44" y1="16" x2="44" y2="212" class="s-grid"/><line x1="108.4" y1="16" x2="108.4" y2="212" class="s-grid"/><line x1="172.8" y1="16" x2="172.8" y2="212" class="s-grid"/><line x1="237.2" y1="16" x2="237.2" y2="212" class="s-grid"/><line x1="301.6" y1="16" x2="301.6" y2="212" class="s-grid"/><line x1="366" y1="16" x2="366" y2="212" class="s-grid"/><line x1="44" y1="212" x2="366" y2="212" class="s-grid"/><line x1="44" y1="171.2" x2="366" y2="171.2" class="s-grid"/><line x1="44" y1="130.3" x2="366" y2="130.3" class="s-grid"/><line x1="44" y1="89.5" x2="366" y2="89.5" class="s-grid"/><line x1="44" y1="48.7" x2="366" y2="48.7" class="s-grid"/><line x1="44" y1="212" x2="366" y2="212" class="s-line"/><line x1="44" y1="16" x2="44" y2="212" class="s-line"/><text x="44" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="108.4" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">0.5</text><text x="172.8" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">1</text><text x="237.2" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">1.5</text><text x="301.6" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">2</text><text x="366" y="232" class="t-dim" style="font-size:14px" text-anchor="middle">2.5</text><text x="37" y="217" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="37" y="176.2" class="t-dim" style="font-size:14px" text-anchor="end">0.5</text><text x="37" y="135.3" class="t-dim" style="font-size:14px" text-anchor="end">1</text><text x="37" y="94.5" class="t-dim" style="font-size:14px" text-anchor="end">1.5</text><text x="37" y="53.7" class="t-dim" style="font-size:14px" text-anchor="end">2</text><path d="M44,212l8.9,-1.1 11.8,-4.8 10.2,-6.3 25.4,-18.1 15.6,-8.5 13.7,-4.6 15.3,-2.1 13.4,0.3 14.8,1.9 15.3,3 53.9,12.5 42.1,7.8 39.7,5.3 41.9,3.9" class="s-line" clip-path="url(#f0605b-clip)" style="stroke:var(--text-dim);stroke-width:2"/><path d="M44,212l2.7,-0.8 2.7,-2.5 5.1,-8.8 4.3,-10.5 13.6,-38.6 7,-15.4 4,-6.3 4.3,-4.7 3.5,-2.3 4.6,-1.2 3.7,0.3 4.1,1.4 8.6,5.5 30.5,27.9 18,13.7 18.5,10.6 22,8.9 13.2,3.9 15,3.5 36,5.6 49.3,4.1 51.3,2.1" class="s-acc2" clip-path="url(#f0605b-clip)" style="stroke-width:2"/><path d="M44,212l1.6,-2.4 1.4,-5.7 2.4,-17.3 7.7,-85.7 5.1,-45.8 3.5,-17.8 1.6,-4.5 2.7,-3 1.9,0.8 1.9,2.6 3.5,8.6 19,67.9 6.7,19.4 7.5,17.3 7.8,13.8 7.5,10.2 10.2,10.2 11.3,7.9 12.6,6.1 15.6,5 18,3.7 23,2.9 25.5,1.9 32.5,1.4 91.5,1.5" class="s-acc" clip-path="url(#f0605b-clip)" style="stroke-width:2.6"/><text x="82.6" y="36.4" class="t-math acc" style="font-size:15px" text-anchor="start"><tspan font-style="italic">ε</tspan> = 0.25</text><text x="114.8" y="126.2" class="t-math acc2" style="font-size:15px" text-anchor="start"><tspan font-style="italic">ε</tspan> = 0.5</text><text x="205" y="171.2" class="t-math dim" style="font-size:15px" text-anchor="start"><tspan font-style="italic">ε</tspan> = 1</text><text x="362" y="30" class="t" style="font-size:15px" text-anchor="end">(나) 껍질마다의 원천</text><text x="366" y="252" class="t-math" style="font-size:16px" text-anchor="end"><tspan font-style="italic">r</tspan></text></svg></div>
+      <figcaption><b>그림 6-5.</b> 부드럽게 만든 역제곱 장 \(\mathbf F_\varepsilon\). (가) 장의 세기 \(r/(r^2 + \varepsilon^2)^{3/2}\)는 \(r \gg \varepsilon\)에서 \(1/r^2\)(점선)과 겹치고, 원점 근처에서는 유한하다. (나) 발산을 반지름 \(r\)인 껍질마다 모은 값 \(4\pi r^2\nabla\cdot\mathbf F_\varepsilon/4\pi = 3\varepsilon^2r^2/(r^2 + \varepsilon^2)^{5/2}\). \(\varepsilon\)이 줄면 원점으로 몰리지만 곡선 아래 넓이는 언제나 1이다. 곡선은 이 식을 계산해 그렸다.</figcaption>
+    </figure>
+    <p>\(\mathbf F_\varepsilon\)은 수학적 기교만이 아니다. \(\varepsilon_0\nabla\cdot\mathbf E = \rho\)이므로, \(\mathbf E = \frac{q}{4\pi\varepsilon_0}\mathbf F_\varepsilon\)은 전하 \(q\)가 밀도 \(\rho_\varepsilon = \frac{3q\varepsilon^2}{4\pi(r^2 + \varepsilon^2)^{5/2}}\)로 퍼진 "크기 있는 점전하"의 전기장이다. 반지름 \(\varepsilon\) 안에는 식 <a class="ref" href="#eq-regularized-integral"></a>의 부정적분을 \(t = 1\)에서 매겨 전하의 \(2^{-3/2} = 35\%\)가 들어 있다. 이 분포를 아무리 작게 줄여도 멀리서 본 장은 같고, 줄인 극한이 점전하다.</p>
+    <p>이제 점전하의 퍼텐셜 \(V = \frac{q}{4\pi\varepsilon_0r}\)은 원점을 포함한 모든 곳에서 푸아송 방정식을 만족한다.</p>
+    <div class="formula">\[ \nabla^2V = \frac{q}{4\pi\varepsilon_0}\big(-4\pi\delta^3(\mathbf r)\big) = -\frac{q\,\delta^3(\mathbf r)}{\varepsilon_0} = -\frac{\rho}{\varepsilon_0} \]</div>
+    <p>4장 <a href="ch04.html#eq-poisson-electrostatic">식 (4.42)</a>의 푸아송 방정식이 점전하에서도 성립한다. 겹침의 원리로 일반적인 분포의 퍼텐셜 \(V(\mathbf r) = \frac{1}{4\pi\varepsilon_0}\int\frac{\rho(\mathbf r')}{\lvert\mathbf r - \mathbf r'\rvert}\,d^3r'\)에 \(\nabla^2\)를 걸어 적분 안으로 넣으면</p>
+    <div class="formula" id="eq-poisson-superposition">\[ \nabla^2V = \frac{1}{4\pi\varepsilon_0}\int\rho(\mathbf r')\big(-4\pi\delta^3(\mathbf r - \mathbf r')\big)\,d^3r' = -\frac{\rho(\mathbf r)}{\varepsilon_0} \]</div>
+    <p>이다. 곧 쿨롱 법칙을 겹친 퍼텐셜이 푸아송 방정식의 해다. 20장에서는 이것을 거꾸로 읽어, \(\nabla^2G = \delta^3\)의 해 \(G = -1/(4\pi\lvert\mathbf r - \mathbf r'\rvert)\)를 <a href="ch20.html#eq-green-poisson">푸아송 방정식의 그린 함수</a>로 삼는다. 5장의 <a href="ch05.html#thm-helmholtz">헬름홀츠 정리</a>의 증명도 이 식에 기댄다.</p>
+    <div class="callout tip"><strong>\(\delta^3\)은 장선의 샘이다</strong><p>장을 장선(전기력선)으로 그리면 발산은 "그 점에서 새로 생기는 장선의 수"다. 역제곱 장의 장선은 원점에서 모두 나와 끊기지 않고 무한히 뻗는다. 원점 밖에서는 새로 생기는 장선이 없으므로 발산이 0이고, 원점에서는 \(4\pi\)만큼의 장선이 한꺼번에 생기므로 발산이 \(4\pi\delta^3\)이다. 같은 그림으로 2차원의 \(\hat{\mathbf s}/s\)는 \(z\)축에서 \(2\pi\)만큼의 장선이 생기는 장이고, \(\nabla\cdot(\hat{\mathbf s}/s) = 2\pi\delta(x)\delta(y)\)이다. 자기장처럼 장선이 고리를 이루는 장은 회전에 델타가 있다(<a class="ref" href="#prob-wire-curl-delta"></a>).</p></div>
+
+    <div class="box ex" id="ex-hydrogen-field-delta"><div class="box-h">수소 원자 안의 전기장</div>
+      <p>바닥 상태 수소 원자의 전하 밀도는 원점의 양성자와 6.2절의 전자 구름(<a class="ref" href="#ex-hydrogen-1s-charge"></a>)을 합친 것이다.</p>
+      <div class="formula">\[ \rho(\mathbf r) = e\,\delta^3(\mathbf r) - \frac{e}{\pi a^3}\,e^{-2r/a} \]</div>
+      <p>(가) \(\nabla\cdot\mathbf E = \rho/\varepsilon_0\)을 구면 좌표에서 풀어 \(\mathbf E(r)\)을 구하라. (나) \(r = a\)와 \(r = 3a\)에서 전기장을 구하고, 양성자만 있을 때와 비교하라.</p>
+      <p><b>풀이.</b> (가) 대칭에서 \(\mathbf E = E(r)\hat{\mathbf r}\)이고, 식 <a class="ref" href="#eq-ball-field-ode"></a>처럼 \(\frac{1}{r^2}(r^2E)' = \rho/\varepsilon_0\)이다. 양변에 \(r^2\)을 곱하고 0부터 \(r\)까지 적분하자. 원점의 델타는 앞의 경고대로 \(\delta^3 = \delta(r)/(4\pi r^2)\)이므로 \(\int_0^r e\,\delta^3\,r'^2\,dr' = e/4\pi\)를 준다. 이것은 \(r^2E\)가 원점에서 0이 아니라 \(e/(4\pi\varepsilon_0)\)에서 출발한다는 말이다. 6.3절의 원자핵 예제에서 "\(C_1 = 0\)"으로 정한 적분 상수를 여기서는 델타가 정한다. 전자 구름의 적분은 6.2절의 계산을 \(x = r/a\)까지 한 것이다.</p>
+      <div class="formula" id="eq-hydrogen-field">\[ \begin{aligned} r^2E &= \frac{1}{4\pi\varepsilon_0}\Big[e - e\big(1 - e^{-2x}(1 + 2x + 2x^2)\big)\Big] \\ E(r) &= \frac{e}{4\pi\varepsilon_0r^2}\,(1 + 2x + 2x^2)\,e^{-2x}, \quad x = \frac ra \end{aligned} \]</div>
+      <p>괄호의 \(e(1 + 2x + 2x^2)e^{-2x}\)는 반지름 \(r\)인 구 안의 알짜 전하다. \(r \to 0\)이면 \(e\)로 양성자만 보이고, \(r \to \infty\)이면 0으로 원자 전체가 중성이다.</p>
+      <p><b>숫자로 보기.</b> (나) 양성자만의 장은 \(r = a\)에서 \(\frac{1.440\ \text{eV}\cdot\text{nm}}{e\,(0.0529\ \text{nm})^2} = 514\ \text{V/nm} = 5.14 \times 10^{11}\ \text{V/m}\)이다. 전자 구름이 가리는 비율은 \(r = a\)에서 \((1 + 2 + 2)e^{-2} = 0.677\)이므로 \(E(a) = 3.48 \times 10^{11}\ \text{V/m}\)이다. \(r = 3a\)에서는 \((1 + 6 + 18)e^{-6} = 0.062\)로, 양성자의 장의 6%만 남는다. 원자 밖에서 중성 원자의 전기장이 거의 0인 것이 이렇게 지수적으로 나타난다. 단위 확인: \(\text{eV}\cdot\text{nm}/(e\cdot\text{nm}^2) = \text{V/nm}\).</p>
+    </div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>원통 좌표 \((s, \phi, z)\)와 구면 좌표 \((r, \theta, \phi)\)의 단위 벡터는 서로 수직이지만 점마다 방향이 바뀐다. \(\partial_\theta\hat{\mathbf r} = \hat{\boldsymbol\theta}\), \(\partial_\phi\hat{\mathbf r} = \sin\theta\,\hat{\boldsymbol\phi}\) 같은 도함수 때문에 평면 극좌표의 가속도는 \((\ddot r - r\dot\theta^2)\hat{\mathbf r} + (r\ddot\theta + 2\dot r\dot\theta)\hat{\boldsymbol\theta}\)이다.</li>
+      <li>척도 인자 \(h_i = \lvert\partial\mathbf r/\partial u_i\rvert\)는 \(u_i\)를 1만큼 바꿀 때 움직이는 거리다. 원통 \((1, s, 1)\), 구면 \((1, r, r\sin\theta)\). 선 요소 \(d\mathbf l = \sum h_i\,du_i\,\hat{\mathbf e}_i\), 부피 요소 \(d^3r = h_1h_2h_3\,du_1\,du_2\,du_3\)(구면 \(r^2\sin\theta\,dr\,d\theta\,d\phi\)), 입체각 \(d\Omega = \sin\theta\,d\theta\,d\phi\).</li>
+      <li>기울기는 \(df = \nabla f\cdot d\mathbf l\)에서 \(\nabla f = \sum\hat{\mathbf e}_i\,h_i^{-1}\partial_if\), 발산은 작은 곡선 상자의 플럭스에서 \(\nabla\cdot\mathbf F = (h_1h_2h_3)^{-1}\sum_i\partial_i(h_1h_2h_3F_i/h_i)\), 회전은 작은 고리의 순환에서 \((\nabla\times\mathbf F)_1 = (h_2h_3)^{-1}[\partial_2(h_3F_3) - \partial_3(h_2F_2)]\)이다. 척도 인자가 미분 안에 들어가는 것은 면의 넓이와 변의 길이가 위치에 따라 바뀌기 때문이다.</li>
+      <li>구면 라플라시안 \(\nabla^2f = r^{-2}\partial_r(r^2\partial_rf) + (r^2\sin\theta)^{-1}\partial_\theta(\sin\theta\,\partial_\theta f) + (r^2\sin^2\theta)^{-1}\partial_\phi^2f = r^{-1}\partial_r^2(rf) + r^{-2}\Lambda f\). 원통 라플라시안 \(s^{-1}\partial_s(s\partial_sf) + s^{-2}\partial_\phi^2f + \partial_z^2f\). 벡터 라플라시안은 \(\nabla(\nabla\cdot\mathbf A) - \nabla\times(\nabla\times\mathbf A)\)로 계산하며, 예를 들어 \(\nabla^2\hat{\mathbf r} = -2\hat{\mathbf r}/r^2\)이다.</li>
+      <li>디랙 델타는 넓이 1인 함수열 \(\delta_\varepsilon(x) = \varepsilon^{-1}g(x/\varepsilon)\)의 극한으로, 적분 안에서만 뜻을 갖는다: \(\int f(x)\delta(x - a)\,dx = f(a)\). 엄밀한 정의는 분포 이론이다.</li>
+      <li>델타의 성질: \(\delta(ax) = \delta(x)/\lvert a\rvert\), \(\delta(g(x)) = \sum_i\delta(x - x_i)/\lvert g'(x_i)\rvert\)(단순근), \(\int f\,\delta'(x - a)\,dx = -f'(a)\), \(\Theta' = \delta\). \(\delta'\)은 쌍극자의 밀도다.</li>
+      <li>3차원 델타 \(\delta^3(\mathbf r) = \delta(x)\delta(y)\delta(z)\)는 곡선 좌표에서 \(\prod\delta(u_i - u_i')/(h_1h_2h_3)\)이고, 원점에서는 \(\delta(r)/(4\pi r^2)\)이다. 점전하는 \(\rho = q\,\delta^3(\mathbf r - \mathbf r_0)\), 선전하는 \(\lambda\,\delta(x)\delta(y)\), 구면 전하는 \(\sigma\,\delta(r - R)\)이다.</li>
+      <li>\(\nabla\cdot(\hat{\mathbf r}/r^2) = 4\pi\delta^3(\mathbf r)\), \(\nabla^2(1/r) = -4\pi\delta^3(\mathbf r)\), \(\nabla^2(1/\lvert\mathbf r - \mathbf r'\rvert) = -4\pi\delta^3(\mathbf r - \mathbf r')\). 그래서 점전하의 퍼텐셜도, 쿨롱 퍼텐셜을 겹친 \(V = \frac{1}{4\pi\varepsilon_0}\int\rho(\mathbf r')/\lvert\mathbf r - \mathbf r'\rvert\,d^3r'\)도 모든 곳에서 \(\nabla^2V = -\rho/\varepsilon_0\)을 만족한다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. 구면 좌표에서 \(\phi\)만 \(d\phi\)만큼 바꿀 때 점이 움직이는 거리는?</p><div class="opts">
+        <button class="opt">\(r\,d\phi\)</button>
+        <button class="opt" data-correct>\(r\sin\theta\,d\phi\)</button>
+        <button class="opt">\(r\cos\theta\,d\phi\)</button>
+        <button class="opt">\(d\phi\)</button>
+      </div><div class="quiz-exp">\(\phi\)를 바꾸면 점은 \(z\)축 둘레의 위도선을 따라 돈다. 위도선의 반지름은 \(z\)축까지의 거리 \(s = r\sin\theta\)이므로 호의 길이는 \(r\sin\theta\,d\phi\)이고, \(h_\phi = r\sin\theta\)이다. 극(\(\theta = 0\))에서는 0이다.</div></div>
+      <div class="quiz-q"><p>2. 평면 극좌표로 움직이는 입자의 가속도의 둘레 성분 \(r\ddot\theta + 2\dot r\dot\theta\)가 0이다. 이것이 뜻하는 것은?</p><div class="opts">
+        <button class="opt">각속도 \(\dot\theta\)가 일정하다.</button>
+        <button class="opt">입자가 원운동한다.</button>
+        <button class="opt" data-correct>\(r^2\dot\theta\)(단위 질량당 각운동량)가 일정하다.</button>
+        <button class="opt">지름 방향 속력 \(\dot r\)이 일정하다.</button>
+      </div><div class="quiz-exp">\(r\ddot\theta + 2\dot r\dot\theta = \frac1r\frac{d}{dt}(r^2\dot\theta)\)이다. 중심력만 받는 입자는 둘레 성분이 0이므로 각운동량이 보존되고, 반지름이 줄면 \(\dot\theta\)가 \(1/r^2\)로 커진다(<a class="ref" href="#ex-polar-acceleration"></a>).</div></div>
+      <div class="quiz-q"><p>3. 구면 좌표의 장 \(\mathbf F = \hat{\mathbf r}/r\)의 발산(\(r \ne 0\))은?</p><div class="opts">
+        <button class="opt">\(0\)</button>
+        <button class="opt">\(-1/r^2\)</button>
+        <button class="opt" data-correct>\(1/r^2\)</button>
+        <button class="opt">\(2/r^2\)</button>
+      </div><div class="quiz-exp">식 <a class="ref" href="#eq-div-spherical"></a>에서 \(\frac{1}{r^2}\partial_r(r^2\cdot\frac1r) = \frac{1}{r^2}\)이다. 성분 \(F_r = 1/r\)만 미분하면 \(-1/r^2\)이 나오는데, 이것은 바깥 면이 넓어지는 효과 \(2F_r/r\)을 빠뜨린 것이다.</div></div>
+      <div class="quiz-q"><p>4. \(\displaystyle\int_{-\infty}^{\infty}x^2\,\delta(3x - 6)\,dx\)의 값은?</p><div class="opts">
+        <button class="opt">\(4\)</button>
+        <button class="opt">\(12\)</button>
+        <button class="opt" data-correct>\(4/3\)</button>
+        <button class="opt">\(2/3\)</button>
+      </div><div class="quiz-exp">\(\delta(3x - 6) = \delta(3(x - 2)) = \delta(x - 2)/3\)이므로(식 <a class="ref" href="#eq-delta-scaling"></a>) 적분은 \(2^2/3 = 4/3\)이다. 척도 인자 \(1/\lvert a\rvert\)를 빠뜨리면 4가 나온다.</div></div>
+      <div class="quiz-q"><p>5. 구면 좌표로 쓴 3차원 델타 \(\delta^3(\mathbf r - \mathbf r')\) (\(\mathbf r'\)는 원점과 \(z\)축 밖)은?</p><div class="opts">
+        <button class="opt">\(\delta(r - r')\,\delta(\theta - \theta')\,\delta(\phi - \phi')\)</button>
+        <button class="opt" data-correct>\(\dfrac{\delta(r - r')\,\delta(\theta - \theta')\,\delta(\phi - \phi')}{r^2\sin\theta}\)</button>
+        <button class="opt">\(r^2\sin\theta\,\delta(r - r')\,\delta(\theta - \theta')\,\delta(\phi - \phi')\)</button>
+        <button class="opt">\(\dfrac{\delta(r - r')}{4\pi r^2}\)</button>
+      </div><div class="quiz-exp">부피 요소 \(r^2\sin\theta\,dr\,d\theta\,d\phi\)와 곱해 적분이 1이 되려면 \(h_1h_2h_3 = r^2\sin\theta\)로 나눠야 한다. 마지막 보기는 원점에 있는 구면 대칭 원천에만 쓰는 꼴이다.</div></div>
+      <div class="quiz-q"><p>6. \(\nabla^2(1/r) = -4\pi\delta^3(\mathbf r)\)에 대한 설명으로 옳은 것은?</p><div class="opts">
+        <button class="opt">\(1/r\)은 원점을 포함해 어디서나 조화 함수다.</button>
+        <button class="opt">원점 밖에서도 \(\nabla^2(1/r)\)은 0이 아니다.</button>
+        <button class="opt" data-correct>원점을 품은 아무 영역에서 \(\nabla^2(1/r)\)을 적분하면 \(-4\pi\)이고, 품지 않으면 0이다.</button>
+        <button class="opt">\(\nabla(1/r) = \hat{\mathbf r}/r^2\)이므로 부호가 \(+4\pi\)여야 한다.</button>
+      </div><div class="quiz-exp">\(r \ne 0\)에서는 \(\nabla^2(1/r) = 0\)이지만, 원점을 품은 구면에서 \(\nabla(1/r) = -\hat{\mathbf r}/r^2\)의 플럭스는 \(-4\pi\)이다. 그래서 원점에 \(-4\pi\delta^3\)이 몰려 있다. 기울기가 \(-\hat{\mathbf r}/r^2\)이라 부호가 음수다.</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-spherical-div-curl-check" data-level="1"><p>장 \(\mathbf F = r\,\hat{\mathbf z}\)(\(r = \lvert\mathbf r\rvert\))를 생각하자. (가) \(\hat{\mathbf z}\)를 \(\hat{\mathbf r}\)과 \(\hat{\boldsymbol\theta}\)로 나타내 \(\mathbf F\)의 구면 성분을 구하라. (나) 구면 좌표의 공식으로 \(\nabla\cdot\mathbf F\)와 \(\nabla\times\mathbf F\)를 구하라. (다) 직교 좌표에서 \(\nabla\cdot(r\hat{\mathbf z}) = \partial_zr\), \(\nabla\times(r\hat{\mathbf z}) = \nabla r\times\hat{\mathbf z}\)로 계산해 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 식 <a class="ref" href="#eq-unit-vectors-spherical"></a>의 \(z\) 성분을 읽으면 \(\hat{\mathbf z} = \cos\theta\,\hat{\mathbf r} - \sin\theta\,\hat{\boldsymbol\theta}\)이다. 따라서 \(F_r = r\cos\theta\), \(F_\theta = -r\sin\theta\), \(F_\phi = 0\)이다.</p>
+        <p>(나) 발산은 \(\frac{1}{r^2}\partial_r(r^3\cos\theta) + \frac{1}{r\sin\theta}\partial_\theta(-r\sin^2\theta) = 3\cos\theta - 2\cos\theta = \cos\theta\)이다. 회전은 \(\phi\)에 기대는 것이 없고 \(F_\phi = 0\)이므로 \(\phi\) 성분만 남는다: \(\frac1r[\partial_r(-r^2\sin\theta) - \partial_\theta(r\cos\theta)] = \frac1r(-2r\sin\theta + r\sin\theta) = -\sin\theta\). 곧 \(\nabla\times\mathbf F = -\sin\theta\,\hat{\boldsymbol\phi}\)이다.</p>
+        <p>(다) \(\partial_zr = z/r = \cos\theta\)로 같다. \(\nabla r = \hat{\mathbf r}\)이고 \(\hat{\mathbf r}\times\hat{\mathbf z} = \hat{\mathbf r}\times(\cos\theta\,\hat{\mathbf r} - \sin\theta\,\hat{\boldsymbol\theta}) = -\sin\theta\,\hat{\boldsymbol\phi}\)로 같다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-cyclotron-cylindrical" data-level="2"><p>(가) 원통 좌표에서 위치 \(\mathbf r = s\hat{\mathbf s} + z\hat{\mathbf z}\)를 두 번 미분해 가속도를 구하라. (나) 균일한 자기장 \(B\hat{\mathbf z}\) 속에서 양성자가 \(z\)축을 중심으로 나선 운동을 한다(\(s\)가 일정, \(\dot\phi\)가 일정, \(\dot z\)가 일정). 로런츠 힘 \(e\mathbf v\times\mathbf B\)와 (가)를 비교해 \(\dot\phi\)와 \(s\)를 구하라. \(B = 1.0\ \text{T}\), 축에 수직인 속력 \(v_\perp = 1.0 \times 10^6\ \text{m/s}\)이면 \(s\)와 가속도의 크기는?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 식 <a class="ref" href="#eq-unit-vector-derivatives-cylindrical"></a>에서 \(d\hat{\mathbf s}/dt = \dot\phi\,\hat{\boldsymbol\phi}\), \(d\hat{\boldsymbol\phi}/dt = -\dot\phi\,\hat{\mathbf s}\)이다. \(\mathbf v = \dot s\,\hat{\mathbf s} + s\dot\phi\,\hat{\boldsymbol\phi} + \dot z\,\hat{\mathbf z}\)이고 \(\mathbf a = (\ddot s - s\dot\phi^2)\hat{\mathbf s} + (s\ddot\phi + 2\dot s\dot\phi)\hat{\boldsymbol\phi} + \ddot z\,\hat{\mathbf z}\)이다. 식 <a class="ref" href="#eq-polar-acceleration"></a>에 \(z\) 성분을 더한 것이다.</p>
+        <p>(나) \(\mathbf v = s\dot\phi\,\hat{\boldsymbol\phi} + \dot z\,\hat{\mathbf z}\)이므로 \(e\mathbf v\times B\hat{\mathbf z} = es\dot\phi B\,(\hat{\boldsymbol\phi}\times\hat{\mathbf z}) = es\dot\phi B\,\hat{\mathbf s}\)이다. 가속도는 \(-s\dot\phi^2\hat{\mathbf s}\)뿐이므로 \(-m_ps\dot\phi^2 = es\dot\phi B\), 곧 \(\dot\phi = -eB/m_p\)이다(위에서 보면 시계 방향). \(v_\perp = s\lvert\dot\phi\rvert\)에서 \(s = m_pv_\perp/(eB)\)이다.</p>
+        <p>숫자: \(\lvert\dot\phi\rvert = (1.602 \times 10^{-19})(1.0)/(1.673 \times 10^{-27}) = 9.58 \times 10^7\ \text{rad/s}\), \(s = 1.0 \times 10^6/9.58 \times 10^7 = 1.04 \times 10^{-2}\ \text{m} = 1.04\ \text{cm}\), 가속도 \(s\dot\phi^2 = v_\perp^2/s = 9.6 \times 10^{13}\ \text{m/s}^2\)이다. \(\dot z\)는 가속도에 들어오지 않는다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-parabolic-coords" data-level="2"><p><span class="term">포물선 좌표</span> <span class="en">(parabolic coordinates)</span> \((u, v, \phi)\)는 \(x = uv\cos\phi\), \(y = uv\sin\phi\), \(z = \tfrac12(u^2 - v^2)\)으로 정한다(\(u, v \ge 0\)). (가) 세 척도 인자를 구하고 좌표가 직교임을 보여라. (나) 원점까지의 거리 \(r\)을 \(u, v\)로 나타내라. (다) 부피 요소와 라플라시안을 구하라. (이 좌표에서는 쿨롱 퍼텐셜이 들어간 슈뢰딩거 방정식이 변수 분리된다.)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\partial_u\mathbf r = (v\cos\phi, v\sin\phi, u)\), \(\partial_v\mathbf r = (u\cos\phi, u\sin\phi, -v)\), \(\partial_\phi\mathbf r = uv(-\sin\phi, \cos\phi, 0)\)이다. 길이는 \(h_u = h_v = \sqrt{u^2 + v^2}\), \(h_\phi = uv\)이다. 내적은 \(\partial_u\mathbf r\cdot\partial_v\mathbf r = uv - uv = 0\)이고 나머지 둘도 0이므로 직교이다.</p>
+        <p>(나) \(r^2 = u^2v^2 + \tfrac14(u^2 - v^2)^2 = \tfrac14(u^2 + v^2)^2\)이므로 \(r = \tfrac12(u^2 + v^2)\)이다. 그래서 \(r + z = u^2\), \(r - z = v^2\)이고, \(u =\) 상수와 \(v =\) 상수인 면은 초점이 원점인 회전 포물면이다.</p>
+        <p>(다) \(d^3r = (u^2 + v^2)\,uv\,du\,dv\,d\phi\)이다. 식 <a class="ref" href="#eq-laplacian-curvilinear"></a>에서 \(h_uh_vh_\phi/h_u^2 = uv\), \(h_uh_vh_\phi/h_\phi^2 = (u^2 + v^2)/(uv)\)이므로</p>
+        <div class="formula">\[ \begin{aligned} \nabla^2f &= \frac{1}{u^2 + v^2}\Big[\frac1u\partial_u(u\,\partial_uf) \\ &\qquad + \frac1v\partial_v(v\,\partial_vf)\Big] \\ &\quad + \frac{1}{u^2v^2}\partial_\phi^2f \end{aligned} \]</div>
+        <p>이다. \(1/r = 2/(u^2 + v^2)\)이 첫 항의 앞 인자와 같은 꼴이라, \(\nabla^2 + c/r\)에 \(u^2 + v^2\)를 곱하면 \(u\) 부분과 \(v\) 부분이 나뉜다.</p>
+      </details>
+    </div>
+
+
+    <div class="prob" id="prob-atmosphere-mass" data-level="1"><p>대기의 밀도가 지표에서의 높이 \(h\)에 따라 \(\rho = \rho_0e^{-h/H}\)로 준다고 하자(\(\rho_0 = 1.225\ \text{kg/m}^3\), \(H = 8.5\ \text{km}\), 지구 반지름 \(R = 6371\ \text{km}\)). (가) 구면 좌표의 부피 요소로 대기 전체의 질량을 구하라. \(H \ll R\)일 때의 근사식과 보정의 크기도 구하라. (나) 지표 기압 \(p_0 = 101\,325\ \text{Pa}\)로 어림한 질량 \(4\pi R^2p_0/g\)와 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(h = r - R\)이고 \(M = 4\pi\rho_0\int_R^\infty r^2e^{-(r - R)/H}\,dr\)이다. \(r = R + h\)로 바꾸면 \(\int_0^\infty(R + h)^2e^{-h/H}\,dh = R^2H + 2RH^2 + 2H^3\)이므로</p>
+        <div class="formula">\[ M = 4\pi R^2\rho_0H\Big(1 + \frac{2H}{R} + \frac{2H^2}{R^2}\Big) \]</div>
+        <p>이다. 첫 항은 두께 \(H\)인 얇은 껍질의 근사이고, 보정은 \(2H/R = 0.0027\)로 0.27%다. 숫자: \(4\pi(6.371 \times 10^6)^2(1.225)(8500) = 5.31 \times 10^{18}\ \text{kg}\)이고 보정을 넣으면 \(5.33 \times 10^{18}\ \text{kg}\)이다.</p>
+        <p>(나) \(4\pi(6.371 \times 10^6\ \text{m})^2(101\,325\ \text{Pa})/(9.81\ \text{m/s}^2) = 5.27 \times 10^{18}\ \text{kg}\)이다. 1% 차이는 모형의 지표 압력 \(\rho_0gH = 1.02 \times 10^5\ \text{Pa}\)이 \(p_0\)보다 0.8% 큰 것과 \(g\)를 높이에 상관없이 둔 것에서 온다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-delta-integrals" data-level="1"><p>다음 적분을 계산하라. (가) \(\int_0^3(x^3 + 2)\,\delta(x - 1)\,dx\) (나) \(\int_0^\infty e^{-x}\,\delta(x^2 - 4)\,dx\) (다) \(\int_{-\infty}^{\infty}\cos x\,\delta'(x - \pi/2)\,dx\) (라) \(\int_{-\infty}^{\infty}x^3\,\delta(x^2 - 3x + 2)\,dx\)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(1 \in (0, 3)\)이므로 \(1 + 2 = 3\).</p>
+        <p>(나) 식 <a class="ref" href="#eq-delta-two-roots"></a>에서 \(\delta(x^2 - 4) = [\delta(x - 2) + \delta(x + 2)]/4\)이다. 구간 \([0, \infty)\)에는 \(x = 2\)만 들어가므로 \(e^{-2}/4 = 0.0338\)이다.</p>
+        <p>(다) 식 <a class="ref" href="#eq-delta-derivative"></a>에서 \(-\frac{d}{dx}\cos x\big\rvert_{\pi/2} = \sin(\pi/2) = 1\)이다.</p>
+        <p>(라) \(g = (x - 1)(x - 2)\)의 근은 1과 2이고 \(g' = 2x - 3\)이므로 \(\lvert g'(1)\rvert = \lvert g'(2)\rvert = 1\)이다. 식 <a class="ref" href="#eq-delta-composition"></a>에서 \(1^3 + 2^3 = 9\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-delta-sin" data-level="2"><p>(가) \(\delta(\sin x)\)를 \(\delta(x - x_i)\)의 합으로 나타내라. (나) \(\int_1^{10}x\,\delta(\sin x)\,dx\)를 구하라. (다) 적분 구간을 \([0, 10]\)으로 바꾸면 무엇이 문제가 되는가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 근은 \(x_n = n\pi\)(\(n\)은 정수)이고 \(\lvert\cos n\pi\rvert = 1\)이므로 \(\delta(\sin x) = \sum_{n=-\infty}^{\infty}\delta(x - n\pi)\)이다. 간격 \(\pi\)로 늘어선 델타의 열이다.</p>
+        <p>(나) \([1, 10]\) 안의 근은 \(\pi, 2\pi, 3\pi\)(\(3\pi = 9.42\))이므로 \(\pi + 2\pi + 3\pi = 6\pi = 18.85\)이다.</p>
+        <p>(다) \(x = 0\)이 적분 구간의 끝에 걸린다. 끝점의 델타가 1을 주는지 \(\tfrac12\)를 주는지는 정해져 있지 않다(6.6절의 원점 델타와 같은 문제). 이 경우는 피적분 함수 \(x\)가 0에서 0이라 답이 바뀌지 않지만, 일반적으로는 구간 끝에 델타가 걸리지 않게 문제를 다시 세워야 한다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-lorentzian-sifting" data-level="2"><p>로런츠 함수열 \(\delta_\varepsilon(x) = \frac{\varepsilon/\pi}{x^2 + \varepsilon^2}\)과 \(f(x) = 1/(1 + x^2)\)에 대해 (가) \(I(\varepsilon) = \int\delta_\varepsilon f\,dx\)를 정확히 구하라(힌트: \(\frac{1}{(x^2 + \varepsilon^2)(x^2 + 1)}\)을 부분분수로). (나) 가우스 함수열을 쓰면 오차는 근사적으로 얼마인가? 두 오차가 \(\varepsilon\)의 몇 차인지 비교하고 이유를 설명하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\varepsilon \ne 1\)이면 \(\frac{1}{(x^2 + \varepsilon^2)(x^2 + 1)} = \frac{1}{1 - \varepsilon^2}\Big(\frac{1}{x^2 + \varepsilon^2} - \frac{1}{x^2 + 1}\Big)\)이고, \(\int\frac{dx}{x^2 + c^2} = \frac\pi c\)이므로 적분은 \(\frac{\pi}{1 - \varepsilon^2}\big(\frac1\varepsilon - 1\big) = \frac{\pi}{\varepsilon(1 + \varepsilon)}\)이다. \(\varepsilon/\pi\)를 곱하면</p>
+        <div class="formula">\[ I(\varepsilon) = \frac{1}{1 + \varepsilon} = 1 - \varepsilon + \varepsilon^2 - \cdots \]</div>
+        <p>이다. 극한은 \(f(0) = 1\)이고, 오차는 \(-\varepsilon\)으로 1차다.</p>
+        <p>(나) <a class="ref" href="#thm-delta-sequence"></a>에서 오차는 \(\tfrac12\varepsilon^2f''(0) = \tfrac12\varepsilon^2(-2) = -\varepsilon^2\)으로 2차다. 예를 들어 \(\varepsilon = 0.1\)이면 수치 적분으로 가우스 \(0.990\,3\), 로런츠 \(0.909\,1\)이다. 로런츠 함수는 꼬리가 \(\varepsilon/(\pi x^2)\)으로 느리게 줄어서, 넓이 중 약 \(\frac{2\varepsilon}{\pi}\)만큼이 \(\lvert x\rvert > 1\)에 있다. 이 꼬리가 \(f\)를 0 근처가 아닌 곳에서 재므로 오차가 \(\varepsilon\)에 비례한다. 둘째 모멘트 \(\int t^2g\,dt\)가 무한대인 것이 같은 사실을 말한다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-point-dipole-density" data-level="2"><p>점 쌍극자 \(\mathbf p\)가 원점에 있을 때 전하 밀도를 \(\rho(\mathbf r) = -\mathbf p\cdot\nabla\delta^3(\mathbf r)\)로 쓴다. (가) 전체 전하가 0이고 쌍극자 모멘트 \(\int\mathbf r\rho\,d^3r\)가 \(\mathbf p\)임을 보여라. (나) \(V(\mathbf r) = \frac{1}{4\pi\varepsilon_0}\int\frac{\rho(\mathbf r')}{\lvert\mathbf r - \mathbf r'\rvert}\,d^3r'\)으로 쌍극자 퍼텐셜 \(\frac{\mathbf p\cdot\hat{\mathbf r}}{4\pi\varepsilon_0r^2}\)을 얻어라. (다) 1차원의 식 <a class="ref" href="#eq-dipole-density-1d"></a>과 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 성분으로 \(\rho = -p_j\partial_j\delta^3\)이다(합 규약). 식 <a class="ref" href="#eq-delta-derivative"></a>을 세 변수에 쓰면 \(\int f\,\partial_j\delta^3\,d^3r = -\partial_jf(0)\)이다. \(f = 1\)이면 0이므로 전체 전하는 0이다. \(f = x_i\)이면 \(\int x_i\rho\,d^3r = p_j\partial_jx_i = p_j\delta_{ij} = p_i\)이다.</p>
+        <p>(나) \(\mathbf r'\)에 대한 적분이므로 \(f(\mathbf r') = 1/\lvert\mathbf r - \mathbf r'\rvert\)로 두면 \(V = \frac{1}{4\pi\varepsilon_0}p_j\,\partial'_j\frac{1}{\lvert\mathbf r - \mathbf r'\rvert}\Big\rvert_{\mathbf r' = 0}\)이다. \(\partial'_j\lvert\mathbf r - \mathbf r'\rvert^{-1} = (x_j - x'_j)/\lvert\mathbf r - \mathbf r'\rvert^3\)이고 \(\mathbf r' = 0\)에서 \(x_j/r^3\)이므로 \(V = \frac{\mathbf p\cdot\mathbf r}{4\pi\varepsilon_0r^3}\)이다.</p>
+        <p>(다) \(\mathbf p = p\hat{\mathbf x}\)이면 \(\rho = -p\,\delta'(x)\,\delta(y)\,\delta(z)\)로, 1차원의 \(-p\,\delta'(x)\)에 나머지 두 방향의 델타를 곱한 것이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-wire-curl-delta" data-level="2"><p>무한히 긴 직선 도선이 \(z\)축 위에 있고 전류 \(I\)가 \(+z\) 방향으로 흐른다. 자기장은 \(\mathbf B = \frac{\mu_0I}{2\pi s}\hat{\boldsymbol\phi}\)이다. (가) \(s \ne 0\)에서 \(\nabla\times\mathbf B = 0\)임을 원통 좌표로 보여라. (나) 부드럽게 만든 장 \(\mathbf B_\varepsilon = \frac{\mu_0I}{2\pi}\frac{s}{s^2 + \varepsilon^2}\hat{\boldsymbol\phi}\)의 회전을 구하고, 그것을 \(xy\) 평면 전체에서 적분하라. (다) \(\nabla\times\mathbf B = \mu_0I\,\delta(x)\,\delta(y)\,\hat{\mathbf z}\)임을 설명하고, 이것이 \(\nabla\times\mathbf B = \mu_0\mathbf J\)와 맞는지 확인하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 식 <a class="ref" href="#eq-curl-cylindrical"></a>에서 \(B_\phi\)만 있고 \(s\)에만 기대므로 \(z\) 성분만 남는다: \(\frac1s\partial_s(sB_\phi) = \frac1s\partial_s\big(\frac{\mu_0I}{2\pi}\big) = 0\).</p>
+        <p>(나) \(sB_{\varepsilon,\phi} = \frac{\mu_0I}{2\pi}\frac{s^2}{s^2 + \varepsilon^2}\)이고 \(\partial_s\frac{s^2}{s^2 + \varepsilon^2} = \frac{2s\varepsilon^2}{(s^2 + \varepsilon^2)^2}\)이므로 \((\nabla\times\mathbf B_\varepsilon)_z = \frac{\mu_0I}{\pi}\frac{\varepsilon^2}{(s^2 + \varepsilon^2)^2}\)이다. 평면 적분은 \(\int_0^\infty\frac{\mu_0I}{\pi}\frac{\varepsilon^2}{(s^2 + \varepsilon^2)^2}\,2\pi s\,ds = \mu_0I\varepsilon^2\Big[-\frac{1}{s^2 + \varepsilon^2}\Big]_0^\infty = \mu_0I\)로 \(\varepsilon\)과 상관없다.</p>
+        <p>(다) (나)의 회전은 폭 \(\varepsilon\)인 2차원 함수열이고 넓이가 \(\mu_0I\)이므로 \(\varepsilon \to 0\)에서 \(\mu_0I\,\delta(x)\delta(y)\hat{\mathbf z}\)로 간다. 이것은 \(z\)축에 몰린 전류 밀도 \(\mathbf J = I\,\delta(x)\delta(y)\hat{\mathbf z}\)(<a class="ref" href="#ex-point-charge-density"></a>의 선전하와 같은 꼴)에 \(\mu_0\)를 곱한 것이므로 앙페르 법칙과 맞는다. 5장 <a href="ch05.html#ex-wire-not-conservative">예제 5.4</a>에서 "회전이 0인데 순환이 \(\mu_0I\)"였던 수수께끼가, 회전이 \(z\)축 위에 델타로 몰려 있다는 것으로 풀린다. 사실 \(\mathbf B_\varepsilon\)은 전류가 반지름 \(\varepsilon\) 정도로 퍼진 굵은 도선의 자기장이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-yukawa-delta" data-level="3"><p>플라스마나 전해질 속에서 점전하 \(q\)의 퍼텐셜은 주변 전하가 가려서 \(V(r) = \frac{q}{4\pi\varepsilon_0}\frac{e^{-r/\lambda}}{r}\)이 된다(\(\lambda\)는 디바이 길이). (가) \(r \ne 0\)에서 \(\nabla^2V = V/\lambda^2\)임을 보여라. (나) 원점 근처에서 \(V\)가 \(\frac{q}{4\pi\varepsilon_0r}\)처럼 행동함을 써서 \(\nabla^2V - V/\lambda^2 = -q\,\delta^3(\mathbf r)/\varepsilon_0\)임을 보여라. (다) 푸아송 방정식 \(\nabla^2V = -\rho/\varepsilon_0\)에서 원점의 \(q\)를 둘러싼 가림 전하의 밀도를 구하고, 그 전체가 \(-q\)임을 보여라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 식 <a class="ref" href="#eq-radial-laplacian"></a>의 가운데 꼴을 쓴다. \(rV \propto e^{-r/\lambda}\)이므로 \(\frac1r\partial_r^2(rV) = \frac{1}{\lambda^2}\cdot\frac{rV}{r} = \frac{V}{\lambda^2}\)이다.</p>
+        <p>(나) \(V = \frac{q}{4\pi\varepsilon_0}\big[\frac1r + \frac{e^{-r/\lambda} - 1}{r}\big]\)로 나누자. 둘째 항은 \(\frac{e^{-r/\lambda} - 1}{r} = -\frac1\lambda + \frac{r}{2\lambda^2} - \cdots\)로 원점에서 유한하고 기울기도 유한하므로, 그 라플라시안에는 델타가 없다(작은 공의 플럭스가 반지름과 함께 0으로 간다). 따라서 델타는 첫 항에서만 나오고, 식 <a class="ref" href="#eq-laplacian-inverse-r"></a>에서 \(\nabla^2V = \frac{V}{\lambda^2} - \frac{q}{\varepsilon_0}\delta^3(\mathbf r)\)이다.</p>
+        <p>(다) \(\rho = -\varepsilon_0\nabla^2V = q\,\delta^3(\mathbf r) - \varepsilon_0V/\lambda^2\)이다. 가림 전하 밀도는 \(\rho_s = -\frac{q}{4\pi\lambda^2}\frac{e^{-r/\lambda}}{r}\)이고, 전체는 \(\int\rho_s\,d^3r = -\frac{q}{\lambda^2}\int_0^\infty re^{-r/\lambda}\,dr = -\frac{q}{\lambda^2}\lambda^2 = -q\)이다. 원천과 가림 전하를 합치면 중성이고, 그래서 멀리서는 퍼텐셜이 지수적으로 사라진다. 15장의 <a href="ch15.html#eq-yukawa-ft">유카와 퍼텐셜의 푸리에 변환</a> \(4\pi/(k^2 + \lambda^{-2})\)은 이 방정식을 변환한 것이다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+</body>
+</html>
