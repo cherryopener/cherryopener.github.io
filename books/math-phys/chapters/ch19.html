@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>19 복소 적분과 유수 정리 · 수리물리학</title>
+<meta name="description" content="복소 선적분에서 코시 정리와 코시 적분 공식을 증명하고, 테일러·로랑 급수와 유수 정리로 실적분, 응답 함수의 역푸리에 변환, 주값과 분지 절단을 낀 적분을 계산한다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys" data-field="phys" data-chapter="ch19">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">19</span></div>
+    <h1 data-fill="chapter-title">복소 적분과 유수 정리</h1>
+    <p class="lead">정지해 있던 감쇠 진동자를 망치로 한 번 치면 어떻게 움직이는가? 15장의 관례로 쓰면 답은 \(x(t) = \int\frac{d\omega}{2\pi}\,\chi(\omega)\,e^{-i\omega t}\)라는 적분 하나다. 피적분 함수가 유리 함수와 진동 인자의 곱이라 실수 미적분의 도구로는 손대기 어렵다. 이 장에서는 적분 변수를 복소평면으로 넓힌다. 해석 함수의 닫힌 곡선 적분이 0이라는 코시 정리에서 출발해 코시 적분 공식, 테일러·로랑 급수, 유수 정리를 차례로 증명한다. 그러면 그 적분은 극 두 개의 유수로 끝나고, 극이 아래 반평면에 있다는 사실이 "원인보다 앞선 응답은 없다"는 인과율로 읽힌다. 18장의 해석 함수가 출발점이고, 20장의 그린 함수와 분산 관계가 이 장의 도구를 쓴다.</p>
+    <ul class="objectives">
+      <li>복소 선적분을 매개변수로 계산하고, ML 부등식으로 적분의 크기를 어림할 수 있다.</li>
+      <li>코시 정리를 정확한 조건과 함께 증명하고, 경로 변형 원리, 코시 적분 공식, 도함수 공식을 유도할 수 있다.</li>
+      <li>테일러 급수와 로랑 급수를 구하고 수렴 영역을 특이점의 위치로 설명하며, 특이점을 분류하고 유수를 계산할 수 있다.</li>
+      <li>유수 정리로 삼각 함수 적분, 유리 함수 적분, 진동 적분을 계산하고, 큰 반원의 기여가 사라지는 조건을 확인할 수 있다.</li>
+      <li>주값, 소호츠키-플레멜 공식, 분지 절단을 낀 경로로 적분하고, 응답 함수의 극의 위치에서 인과율을 읽을 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b>18장 (복소 미분, 해석 함수, 코시-리만 방정식, 분지 절단), 5장 (선적분, 평면의 그린 정리, 단순 연결 영역), 1장 (멱급수와 수렴 반경), 2장 (복소 로그), 10장 (감쇠 진동자, 라플라스 변환), 11장 (감마 함수와 베타 함수). 푸리에 변환은 15장의 관례 \(\tilde f(\omega) = \int f(t)\,e^{i\omega t}\,dt\), \(f(t) = \int\frac{d\omega}{2\pi}\,\tilde f(\omega)\,e^{-i\omega t}\)를 쓴다.</p>
+  </header>
+
+  <!-- ============================================================ 19.1 -->
+  <section id="s1">
+    <h2>복소 선적분</h2>
+    <p>평면 위의 벡터장을 다룰 때 묻는 것은 대개 두 가지다. 닫힌 곡선을 따라 한 바퀴 돈 순환(앙페르 법칙의 왼쪽)과 그 곡선을 빠져나가는 플럭스(가우스 법칙의 왼쪽)다. 5장에서는 둘을 따로 계산했다. 18장에서 평면의 장 \(\mathbf A\)를 복소 함수 \(A_x - iA_y\) 하나로 묶었는데, 이 함수를 곡선을 따라 \(dz = dx + i\,dy\)로 적분하면 순환과 플럭스가 실수부와 허수부로 한꺼번에 나온다. 이 절에서는 복소 선적분을 정의하고, 원을 따라 도는 거듭제곱의 적분과 ML 부등식이라는 두 도구를 마련한다.</p>
+
+    <h3 id="s1-definition">적분 경로와 복소 선적분</h3>
+    <div class="box def" id="def-contour-integral"><div class="box-h">복소 선적분</div>
+      <p>평면의 곡선 \(C\)가 매개변수 \(z(t) = x(t) + iy(t)\), \(a \le t \le b\)로 주어지고 \(z'(t) = x'(t) + iy'(t)\)가 연속이며 0이 되지 않으면 \(C\)를 <span class="term">매끄러운 곡선</span>이라 한다. 매끄러운 곡선을 유한 개 이어 붙인 곡선을 <span class="term">적분 경로</span> <span class="en">(contour)</span>라 한다. \(f\)가 \(C\) 위에서 연속일 때</p>
+      <div class="formula" id="eq-contour-integral-def">\[ \int_C f(z)\,dz = \int_a^b f\big(z(t)\big)\,z'(t)\,dt \]</div>
+      <p>를 \(C\)를 따른 \(f\)의 <span class="term">복소 선적분</span> <span class="en">(contour integral)</span>이라 한다. 이어 붙인 경로에서는 조각마다 적분해 더한다. 시작점과 끝점이 같은 경로를 닫힌 경로라 하고 적분을 \(\oint_C\)로 쓴다. 자기 자신과 만나지 않는 닫힌 경로를 <span class="term">단순 닫힌 곡선</span> <span class="en">(simple closed curve)</span>이라 하고, 따로 말하지 않으면 안쪽을 왼쪽에 두고 도는 방향(시계 반대 방향)을 <span class="term">양의 방향</span>으로 잡는다.</p>
+    </div>
+    <p>매개변수를 \(t = \phi(\tau)\) (\(\phi' > 0\))로 바꾸면 \(z'(t)\,dt = \frac{dz}{d\tau}\,d\tau\)이므로 적분값은 그대로다. 그래서 적분은 곡선과 방향만으로 정해진다. 방향을 뒤집으면 부호가 바뀌고, 적분은 \(f\)에 대해 선형이다. \(f = u + iv\)와 \(dz = dx + i\,dy\)를 곱해 실수부와 허수부로 나누면</p>
+    <div class="formula" id="eq-contour-real-parts">\[ \int_C f\,dz = \int_C(u\,dx - v\,dy) + i\int_C(v\,dx + u\,dy) \]</div>
+    <p>이다. 복소 선적분은 5장의 실수 선적분(<a href="ch05.html#def-line-integral">정의 5.1</a>) 두 개를 한 줄에 쓴 것이다.</p>
+
+    <h3 id="s1-circle">원을 따라 도는 거듭제곱</h3>
+    <p>이 장에서 가장 많이 쓰는 적분을 먼저 계산하자. \(z_0\)를 중심으로 하는 반지름 \(r\)인 원을 \(z = z_0 + re^{i\theta}\), \(0 \le \theta \le 2\pi\)로 쓰면 \(dz = ire^{i\theta}\,d\theta\)이다. 정수 \(n\)에 대해</p>
+    <div class="formula" id="eq-power-circle-integral">\[ \begin{aligned} \oint_{\lvert z - z_0\rvert = r}(z - z_0)^n\,dz &= ir^{n+1}\int_0^{2\pi}e^{i(n+1)\theta}\,d\theta \\ &= \begin{cases} 2\pi i & (n = -1) \\ 0 & (n \ne -1) \end{cases} \end{aligned} \]</div>
+    <p>이다. \(n \ne -1\)이면 \(e^{i(n+1)\theta}\)가 한 주기를 다 돌아 적분이 0이고, \(n = -1\)이면 피적분 함수가 1이다. 결과가 반지름 \(r\)에 상관없다는 점, 그리고 모든 거듭제곱 가운데 \(n = -1\)만 살아남는다는 점을 기억해 두자. 이 장의 유수 정리는 이 한 식을 길게 펼친 것이다.</p>
+
+    <h3 id="s1-antiderivative">원시함수가 있으면 끝점만 본다</h3>
+    <div class="box thm" id="thm-antiderivative-contour"><div class="box-h">원시함수와 선적분</div>
+      <p>\(f\)가 영역 \(D\)에서 연속이고, \(D\)에서 \(F' = f\)인 해석 함수 \(F\)가 있다고 하자. 그러면 \(D\) 안에서 \(z_A\)에서 \(z_B\)로 가는 모든 적분 경로 \(C\)에 대해 \(\int_C f\,dz = F(z_B) - F(z_A)\)이다. 특히 \(D\) 안의 모든 닫힌 경로에서 \(\oint f\,dz = 0\)이다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>매끄러운 조각 하나에서 \(\frac{d}{dt}F(z(t)) = F'(z(t))\,z'(t)\)이다. 18장 <a href="ch18.html#thm-derivative-rules">정리 18.1</a>의 합성 함수 미분과 같은 논리로, 차분몫 \([F(z(t+\Delta t)) - F(z(t))]/\Delta t\)를 \(\frac{F(z(t+\Delta t)) - F(z(t))}{z(t+\Delta t) - z(t)}\cdot\frac{z(t+\Delta t) - z(t)}{\Delta t}\)로 나누면 된다(\(z' \ne 0\)이라 분모가 0이 아니다). 실수부와 허수부에 각각 미적분의 기본 정리를 쓰면 \(\int_a^b f(z(t))z'(t)\,dt = F(z(b)) - F(z(a))\)이고, 조각들을 이으면 가운데 끝점들이 지워진다.</p>
+      </details>
+    </div>
+    <p>식 <a class="ref" href="#eq-power-circle-integral"></a>을 이 정리로 다시 읽자. \(n \ne -1\)이면 \((z - z_0)^{n+1}/(n+1)\)이 \(z \ne z_0\)인 모든 곳에서 원시함수이므로 닫힌 경로의 적분은 0이다. \(n = -1\)이면 원시함수 후보는 \(\operatorname{Log}(z - z_0)\)인데, 이 함수는 \(z_0\)에서 나가는 절단을 빼야 해석적이다(18장 <a href="ch18.html#thm-log-analytic">정리 18.6</a>). 원은 반드시 절단을 건너고, 건널 때 로그가 \(2\pi i\)만큼 뛴다(18장 <a href="ch18.html#eq-branch-jump">식 (18.39)</a>). 적분값 \(2\pi i\)는 바로 이 도약이다. \(1/z\)은 \(z \ne 0\)인 곳 전체에서 해석적이지만, 그 영역 전체에서 쓸 수 있는 원시함수는 없다.</p>
+
+    <h3 id="s1-ml">크기 어림: ML 부등식</h3>
+    <p>적분을 정확히 계산하지 못해도 크기를 위에서 누를 수 있으면 충분할 때가 많다. 특히 이 장의 실적분 계산은 모두 "큰 반원 위의 적분이 0으로 간다"는 어림에 기댄다. 먼저 복소숫값 함수 \(g(t)\)에 대해서도 \(\big\lvert\int_a^b g\,dt\big\rvert \le \int_a^b\lvert g\rvert\,dt\)임을 보이자. 적분값을 \(I = \lvert I\rvert e^{i\alpha}\)로 쓰면 \(\lvert I\rvert = e^{-i\alpha}I = \int_a^b e^{-i\alpha}g\,dt\)이고, 왼쪽이 실수이므로 오른쪽의 허수부는 0이다. 따라서 \(\lvert I\rvert = \int_a^b\operatorname{Re}(e^{-i\alpha}g)\,dt \le \int_a^b\lvert g\rvert\,dt\)이다. 이것을 식 <a class="ref" href="#eq-contour-integral-def"></a>에 쓰고 \(\int_a^b\lvert z'(t)\rvert\,dt\)가 곡선의 길이임을 쓰면 다음을 얻는다.</p>
+    <div class="formula" id="eq-ml-bound">\[ \Big\lvert\int_C f(z)\,dz\Big\rvert \le \int_a^b\lvert f\rvert\,\lvert z'\rvert\,dt \le M L \]<div class="where">\(M = \max_C\lvert f\rvert\)는 곡선 위에서 \(\lvert f\rvert\)의 최댓값, \(L\)은 곡선의 길이다.</div></div>
+    <p>예를 들어 위 반원 \(C_R\): \(z = Re^{i\theta}\), \(0 \le \theta \le \pi\)에서 \(f = 1/(1 + z^2)\)이면 삼각 부등식에서 \(\lvert 1 + z^2\rvert \ge R^2 - 1\)이므로 \(\lvert\int_{C_R}f\,dz\rvert \le \pi R/(R^2 - 1)\)이고, \(R \to \infty\)에서 0으로 간다. 피적분 함수가 \(1/R\)보다 빨리 줄어야 길이 \(\pi R\)를 이긴다. \(f = 1/z\)이면 ML 부등식은 \(\pi\)를 줄 뿐이고, 실제로 \(\int_{C_R}dz/z = i\pi\)로 0이 아니다.</p>
+
+    <div class="box ex" id="ex-circulation-flux-complex"><div class="box-h">평면 장의 순환과 플럭스를 한 번에</div>
+      <p>평면에 수직인 방향으로는 변하지 않는 벡터장 \(\mathbf A = (A_x, A_y)\)에 대해 \(g = A_x - iA_y\)로 두자. (가) 양의 방향 단순 닫힌 곡선 \(C\)에서 \(\oint_C g\,dz = \Gamma + i\Phi\)임을 보여라. 여기서 \(\Gamma = \oint\mathbf A\cdot d\mathbf l\)은 순환이고 \(\Phi = \oint\mathbf A\cdot\hat{\mathbf n}\,dl\)은 \(C\)를 빠져나가는 플럭스(단위 길이당)다. (나) 선전하 \(\lambda\)의 전기장과 직선 전류 \(I\)의 자기장에 대해, 원점을 중심으로 하는 원 위에서 \(\Gamma\)와 \(\Phi\)를 구하라. \(\lambda = 1.0\ \text{nC/m}\), \(I = 10\ \text{A}\)이면 값은 얼마인가?</p>
+      <p><b>풀이.</b> (가) 곱을 펼치면</p>
+      <div class="formula">\[ \begin{aligned} g\,dz &= (A_x - iA_y)(dx + i\,dy) \\ &= (A_x\,dx + A_y\,dy) + i(A_x\,dy - A_y\,dx) \end{aligned} \]</div>
+      <p>이다. 실수부는 \(\mathbf A\cdot d\mathbf l\)이다. 곡선을 시계 반대 방향으로 돌 때 바깥 법선에 길이를 곱한 것은 \(\hat{\mathbf n}\,dl = (dy, -dx)\)이므로 허수부는 \(\mathbf A\cdot\hat{\mathbf n}\,dl\)이다.</p>
+      <p>(나) 선전하의 장은 18장 <a href="ch18.html#eq-line-charge-field-complex">식 (18.3)</a>의 켤레를 취하면 \(E_x - iE_y = \dfrac{\lambda}{2\pi\varepsilon_0}\dfrac1z\)이다. 식 <a class="ref" href="#eq-power-circle-integral"></a>에서 \(\oint g\,dz = \dfrac{\lambda}{2\pi\varepsilon_0}\cdot2\pi i = i\,\dfrac{\lambda}{\varepsilon_0}\)이므로 \(\Gamma = 0\), \(\Phi = \lambda/\varepsilon_0\)이다. 정전기장은 보존장이고, 플럭스는 2차원 가우스 법칙 그대로다. 직선 전류의 장은 18장에서 \(B_x - iB_y = -\dfrac{i\mu_0I}{2\pi z}\)였으므로 \(\oint g\,dz = -\dfrac{i\mu_0I}{2\pi}\cdot2\pi i = \mu_0I\)이다. \(\Gamma = \mu_0I\)(앙페르 법칙), \(\Phi = 0\)(\(\nabla\cdot\mathbf B = 0\))이다.</p>
+      <p><b>숫자로 보기.</b> \(\Phi = \lambda/\varepsilon_0 = (1.0 \times 10^{-9}\ \text{C/m})/(8.854 \times 10^{-12}\ \text{F/m}) = 113\ \text{V}\)이다. 단위는 \((\text{C/m})/(\text{C}/(\text{V}\cdot\text{m})) = \text{V}\)로, 단위 길이당 전기 플럭스의 단위와 맞다. \(\Gamma = \mu_0I = (1.257 \times 10^{-6}\ \text{T}\cdot\text{m/A})(10\ \text{A}) = 1.26 \times 10^{-5}\ \text{T}\cdot\text{m}\)이다. 두 결과 모두 원의 반지름이 들어가지 않는다. 고리의 모양이 상관없는 이유는 다음 절에서 본다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 19.2 -->
+  <section id="s2">
+    <h2>코시 정리</h2>
+    <p>앞 예제에서 \(g\)가 해석적인 곳, 곧 전하도 전류도 없는 곳에서는 \(\nabla\cdot\mathbf A = 0\)과 \((\nabla\times\mathbf A)_z = 0\)이 함께 성립했다(18장 <a href="ch18.html#eq-polya-field">식 (18.18)</a>). 그런 곳만 감는 고리라면 순환도 플럭스도 0일 것이다. 곧 해석 함수의 닫힌 곡선 적분은 0이다. 18장 끝의 귀띔이 이것이었다. 이 절에서는 이 주장을 조건까지 적어 증명하고, 적분 경로를 바꿀 수 있다는 원리를 얻는다.</p>
+
+    <h3 id="s2-theorem">정리와 증명</h3>
+    <div class="box thm" id="thm-cauchy"><div class="box-h">코시 정리 <span class="en">(Cauchy's theorem)</span></div>
+      <p>\(D\)가 단순 연결 영역(5장 <a href="ch05.html#def-simply-connected">정의 5.3</a>)이고 \(f\)가 \(D\)에서 해석적이라 하자. 그러면 \(D\) 안의 모든 단순 닫힌 적분 경로 \(C\)에 대해</p>
+      <div class="formula" id="eq-cauchy-theorem">\[ \oint_C f(z)\,dz = 0 \]</div>
+      <p>이다. 이 절의 증명은 \(f'\)이 \(D\)에서 연속이라는 가정을 더한다. 이 가정은 필요 없다(구르사의 정리, 아래).</p>
+    </div>
+    <p><b>증명</b> (\(f'\)이 연속이라고 할 때). 세 단계로 나눈다.</p>
+    <ol>
+      <li><b>곡선의 안쪽은 \(D\) 안에 있다.</b> 단순 닫힌 곡선 \(C\)는 평면을 유계인 안쪽 \(\Omega\)와 바깥쪽으로 나눈다(조르당 곡선 정리). \(D\)가 단순 연결이면 \(\Omega\) 전체가 \(D\)에 들어 있다. \(\Omega\)에 \(D\)에 속하지 않는 점이 있으면 \(C\)는 그 "구멍"을 감고, \(D\) 안에서 한 점으로 줄일 수 없기 때문이다. 이것이 5장의 "구멍이 없다"는 직관을 평면에서 정확히 한 말이다.</li>
+      <li><b>그린 정리를 쓸 수 있다.</b> 18장 <a href="ch18.html#eq-derivative-partials">식 (18.9)</a>에서 \(f' = u_x + iv_x = v_y - iu_y\)이므로, \(f'\)이 연속이면 \(u_x, u_y, v_x, v_y\)가 모두 연속이다. 그러면 \(u, v\)는 \(\Omega\)와 \(C\)를 포함하는 열린 집합에서 연속 미분 가능하고, 5장 <a href="ch05.html#thm-green-plane">정리 5.5</a>의 조건이 갖추어진다.</li>
+      <li><b>코시-리만 방정식이 두 적분을 지운다.</b> 식 <a class="ref" href="#eq-contour-real-parts"></a>의 두 실수 선적분에 그린 정리를 쓰면</li>
+    </ol>
+    <div class="formula" id="eq-cauchy-green-proof">\[ \begin{aligned} \oint_C f\,dz &= \iint_\Omega\Big(-\frac{\partial v}{\partial x} - \frac{\partial u}{\partial y}\Big)dx\,dy \\ &\quad + i\iint_\Omega\Big(\frac{\partial u}{\partial x} - \frac{\partial v}{\partial y}\Big)dx\,dy = 0 \end{aligned} \]</div>
+    <p>이다. 첫째 적분은 \(M = u\), \(N = -v\)로, 둘째 적분은 \(M = v\), \(N = u\)로 둔 것이다. 코시-리만 방정식(18장 <a href="ch18.html#eq-cauchy-riemann">식 (18.8)</a>) \(u_x = v_y\), \(u_y = -v_x\)에서 두 피적분 함수는 모든 점에서 0이다. \(\square\)</p>
+
+    <h3 id="s2-goursat">구르사의 정리: \(f'\)의 연속성은 필요 없다</h3>
+    <p>18장의 정의(<a href="ch18.html#def-analytic">정의 18.4</a>)에서 해석 함수는 근방의 모든 점에서 미분 가능하기만 하면 된다. 도함수가 연속이라는 조건은 없다. 그린 정리를 쓴 위 증명은 그 조건을 몰래 더한 것이다. 구르사는 이 조건 없이 코시 정리를 증명했다(Goursat, Trans. Amer. Math. Soc. <b>1</b>, 14 (1900)). 현대적인 증명은 Ahlfors, <i>Complex Analysis</i>, 3rd ed., McGraw-Hill 1979의 4장 1절에 있다. Ahlfors는 직사각형을 4등분하는데, 아래 증명의 생각은 같은 논법을 삼각형으로 쓴 것이다.</p>
+    <div class="box thm" id="thm-goursat"><div class="box-h">구르사의 정리 <span class="en">(Cauchy–Goursat theorem)</span></div>
+      <p>\(f\)가 열린 집합 \(D\)의 모든 점에서 (복소) 미분 가능하기만 하면, \(f'\)의 연속성을 가정하지 않아도 <a class="ref" href="#thm-cauchy"></a>가 성립한다.</p>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>먼저 삼각형 \(T\)의 경계에서 적분이 0임을 보인다. 세 변의 중점을 이어 \(T\)를 네 삼각형으로 나누면 안쪽 변은 반대 방향으로 두 번 지나가 지워지므로, 넷 가운데 하나 \(T_1\)은 \(\lvert\oint_{\partial T_1}\rvert \ge \tfrac14\lvert\oint_{\partial T}\rvert\)이다. 되풀이하면 둘레와 지름이 \(2^{-n}\)배이고 \(\lvert\oint_{\partial T_n}\rvert \ge 4^{-n}\lvert\oint_{\partial T}\rvert\)인 삼각형들이 한 점 \(z_0\)로 줄어든다. \(z_0\)에서 미분 가능하므로 \(f(z) = f(z_0) + f'(z_0)(z - z_0) + \eta(z)(z - z_0)\), \(\eta \to 0\)이다. 일차식 부분은 원시함수가 있어 적분이 0이고(<a class="ref" href="#thm-antiderivative-contour"></a>), 나머지는 ML 부등식으로 \(\max_{T_n}\lvert\eta\rvert\cdot4^{-n}dp\) 이하다(\(d, p\)는 \(T\)의 지름과 둘레). 따라서 \(\lvert\oint_{\partial T}\rvert \le dp\max_{T_n}\lvert\eta\rvert \to 0\)이고, 도함수의 연속성은 쓰지 않았다. 원판에서는 \(z_0\)에서 \(z\)로 가는 꺾인 선분(가로, 세로)을 따라 \(F(z) = \int_{z_0}^zf\)를 정의하면 삼각형의 결과에서 \(F' = f\)이므로 닫힌 경로의 적분이 0이다. 일반적인 단순 연결 영역으로 넓히는 단계는 Ahlfors의 4장을 보라.</p>
+      </details>
+    </div>
+    <p>이 장의 나머지 결과는 모두 코시 정리에서 나온다. 그래서 <a class="ref" href="#thm-goursat"></a>을 받아들이면 모든 결과가 18장의 정의대로의 해석 함수에 성립한다. 구르사의 정리를 건너뛰고 싶은 독자는 "해석적"을 "해석적이고 \(f'\)이 연속"으로 읽으면 된다. 19.3절에서 보겠지만 그렇게 읽어도 결론은 같다. 도함수 공식이 \(f'\)도 해석적이라는 것, 따라서 연속이라는 것을 다시 돌려주기 때문이다.</p>
+    <div class="callout warn"><strong>단순 연결이라는 조건을 빼먹지 말 것</strong><p>\(f = 1/z\)은 \(D = \mathbb C\setminus\{0\}\)에서 해석적인데 단위원에서의 적분은 \(2\pi i\)이다. \(D\)가 단순 연결이 아니어서 원의 안쪽(원점)이 \(D\)에 들어 있지 않기 때문이다. 증명의 1단계가 깨진다. 직선 전류의 자기장이 도선 밖에서 회전이 0인데도 도선을 감는 순환이 0이 아닌 것(5장 <a href="ch05.html#ex-wire-not-conservative">예제 5.4</a>)과 같은 현상이다. 앞 예제의 \(g = -i\mu_0I/(2\pi z)\)가 바로 그 장이다. 거꾸로 곡선이 영역 안에 있어도, 곡선 안쪽의 한 점에서라도 \(f\)가 해석적이지 않으면 정리를 쓸 수 없다.</p></div>
+
+    <h3 id="s2-deformation">경로 변형 원리</h3>
+    <p>곡선 안쪽에 특이점이 있으면 적분은 0이 아닐 수 있다. 그래도 특이점을 건너지 않는 한 곡선을 마음대로 바꿔도 적분값은 그대로다.</p>
+    <div class="box thm" id="thm-deformation"><div class="box-h">경로 변형 원리</div>
+      <p>(가) \(C_1\)과 \(C_2\)가 양의 방향 단순 닫힌 곡선이고 \(C_2\)가 \(C_1\) 안에 있다고 하자. \(f\)가 두 곡선 위와 두 곡선 사이의 영역에서 해석적이면</p>
+      <div class="formula" id="eq-deformation">\[ \oint_{C_1}f(z)\,dz = \oint_{C_2}f(z)\,dz \]</div>
+      <p>이다. \(C_1\) 안에 서로 떨어진 곡선 \(C_2, \ldots, C_N\)이 있고 \(f\)가 그 사이에서 해석적이면 \(\oint_{C_1} = \sum_{k\ge2}\oint_{C_k}\)이다.</p>
+      <p>(나) 두 적분 경로 \(\Gamma_0\)과 \(\Gamma_1\)이 같은 점에서 시작해 같은 점에서 끝나고, \(f\)가 두 경로 위와 두 경로가 둘러싼 영역에서 해석적이면 \(\int_{\Gamma_0}f\,dz = \int_{\Gamma_1}f\,dz\)이다.</p>
+    </div>
+    <p><b>증명.</b> (가) 두 곡선 사이의 영역 \(\Omega\)의 경계는 \(C_1\)(양의 방향)과 \(C_2\)(반대 방향)이다. 5장의 그린 정리는 경계가 단순 닫힌 곡선 여러 개인 영역에도 성립하므로, 식 <a class="ref" href="#eq-cauchy-green-proof"></a>의 계산을 그대로 하면 \(\oint_{C_1}f\,dz - \oint_{C_2}f\,dz = 0\)이다. 구르사의 정리만 쓰려면 그림 19-1처럼 두 곡선을 절단선으로 이어 특이점을 감지 않는 닫힌 경로를 만든다. 곡선이 여럿이어도 같다. (나) \(\Gamma_0\)을 가고 \(\Gamma_1\)을 거꾸로 오는 닫힌 경로에 코시 정리를 쓰면 \(\int_{\Gamma_0} - \int_{\Gamma_1} = 0\)이다. 경로들이 서로 엇갈리면 엇갈리는 점마다 나누어 같은 논리를 쓴다. \(\square\)</p>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 300" role="img" aria-label="바깥 곡선 C1과 특이점을 감은 안쪽 원 C2, 두 곡선을 잇는 두 갈래 절단선"><path d="M353.7,150l-0.7,-7.7 -1.7,-7.5 -2.8,-7.3 -3.8,-7 -4.5,-6.6 -5.2,-6.2 -5.8,-5.7 -6.1,-5.3 -6.4,-4.9 -6.5,-4.6 -6.6,-4.2 -6.5,-4 -6.5,-3.9 -6.4,-3.7 -6.4,-3.7 -6.3,-3.7 -6.5,-3.7 -6.5,-3.7 -6.7,-3.7 -7,-3.5 -7.3,-3.5 -7.6,-3.1 -8,-2.9 -8.3,-2.4 -8.6,-1.8 -8.8,-1.2 -9,-0.4 -9,0.4 -8.9,1.2 -8.7,2 -8.3,3 -7.8,3.7 -7.2,4.4 -6.5,5.1 -5.8,5.6 -5,6.1 -4.2,6.3 -3.6,6.5 -2.8,6.6 -2.3,6.6 -1.9,6.4 -1.5,6.2 -1.4,6.1 -1.4,5.9 -1.4,5.7 -1.5,5.5 -1.8,5.5 -2.1,5.6 -2.3,5.7 -2.5,5.8 -2.6,6.1 -2.6,6.4 -2.5,6.8 -2.3,7.2 -1.8,7.5 -1.1,7.8 -0.4,8.1 0.5,8.1 1.6,8.1 2.7,8 3.9,7.6 5,7.2 6.2,6.5 7.2,5.8 8.1,4.9 8.9,3.8 9.4,2.9 9.9,1.8 10,0.7 10.1,-0.2 9.9,-1.1 9.6,-2 9.2,-2.6 8.7,-3.1 8.1,-3.5 7.6,-3.6 7.1,-3.8 6.6,-3.6 6.3,-3.6 6,-3.2 5.9,-3 5.9,-2.7 6,-2.5 6.2,-2.2 6.5,-2.1 6.8,-2.1 7,-2.2 7.4,-2.4 7.5,-2.7 7.6,-3.2 7.6,-3.6 7.4,-4.2 7,-4.8 6.5,-5.4 5.8,-6 4.9,-6.5 3.9,-6.9 2.9,-7.3 1.7,-7.5 0.6,-7.7z" class="f-acc-soft" style="stroke-width:2.4"/><circle cx="190" cy="152" r="38" class="f-surface" style="stroke:var(--accent-2);stroke-width:2.4"/><line x1="227.5" y1="146" x2="353.5" y2="146" class="s-line" style="stroke:var(--text);stroke-width:1.8"/><line x1="227.5" y1="158" x2="353.1" y2="158" class="s-line" style="stroke:var(--text);stroke-width:1.8"/><polygon points="297.5,146 285.5,150.5 285.5,141.5" class="f-dim"/><polygon points="283.5,158 295.5,153.5 295.5,162.5" class="f-dim"/><polygon points="198.1,34.6 210.7,32.1 209.2,41" class="f-acc"/><polygon points="97.5,247.3 86,241.8 92.4,235.5" class="f-acc"/><polygon points="293.2,214.8 283.2,222.8 280.4,214.3" class="f-acc"/><polygon points="197,114 185,118.5 185,109.5" class="f-acc2"/><polygon points="171.6,185.9 184.4,185.4 181.6,194" class="f-acc2"/><circle cx="190" cy="152" r="4" class="f-dim" style="fill:var(--text)"/><text x="184" y="174" class="t-math" style="font-size:16px" text-anchor="middle"><tspan font-style="italic">z</tspan>₀</text><text x="109.3" y="63.4" class="t-math acc" style="font-size:18px" text-anchor="end"><tspan font-style="italic">C</tspan>₁</text><text x="146" y="118" class="t-math acc2" style="font-size:18px" text-anchor="end"><tspan font-style="italic">C</tspan>₂</text><text x="175" y="234" class="t" style="font-size:14px" text-anchor="middle"><tspan font-style="italic">f</tspan> 해석적</text></svg></div>
+      <figcaption><b>그림 19-1.</b> 경로 변형 원리. 바깥 곡선 \(C_1\)(시계 반대 방향)과 특이점 \(z_0\)를 감은 안쪽 원 \(C_2\)(시계 방향) 사이를 가까운 두 절단선으로 이으면, 이 닫힌 경로는 특이점을 감지 않으므로 적분이 0이다. 두 절단선은 반대 방향으로 지나가므로 간격을 0으로 줄이면 기여가 지워지고 \(\oint_{C_1} = \oint_{C_2}\)(둘 다 양의 방향)가 남는다. 색칠한 영역에서 \(f\)는 해석적이다.</figcaption>
+    </figure>
+    <p>앞 예제의 원을 어떤 모양의 고리로 바꾸어도 도선을 한 번 감기만 하면 순환은 \(\mu_0I\)이고, 도선을 감지 않는 고리에서는 0이다. 도선이 여럿이면 (가)의 뒷부분에서 고리가 감는 전류만 더해진다. 예를 들어 원점에 \(I_1 = 3\ \text{A}\), \(z = 2\ \text{cm}\)에 반대 방향 \(I_2 = -1\ \text{A}\)가 흐를 때, 두 도선을 함께 감는 타원을 따라 수치 적분하면 \(2.51 \times 10^{-6}\ \text{T}\cdot\text{m} = \mu_0(2\ \text{A})\)가 나오고, 첫째 도선만 감는 작은 타원에서는 \(\mu_0(3\ \text{A})\)가 나온다. 2차원 앙페르 법칙과 가우스 법칙이 고리의 모양을 묻지 않는 이유가 이것이다. 11장에서 예고한 <a href="ch11.html#eq-laplace-method">안장점 방법</a>도 (나)를 써서 적분 경로를 안장점을 지나도록 옮기는 것이다.</p>
+
+    <div class="box ex" id="ex-gaussian-contour-shift"><div class="box-h">가우스 펄스의 스펙트럼</div>
+      <p>(가) 실수 \(a > 0\)과 \(b\)에 대해 \(\int_{-\infty}^{\infty}e^{-a(x + ib)^2}\,dx = \sqrt{\pi/a}\)임을 보여라. (나) 반송 진동수 \(\omega_c\)인 가우스 광 펄스 \(E(t) = E_0\,e^{-t^2/2\tau^2}e^{-i\omega_ct}\)의 스펙트럼 \(\tilde E(\omega) = \int E(t)\,e^{i\omega t}\,dt\)를 구하라. (다) 세기 \(\lvert E\rvert^2\)의 반치폭이 \(\Delta t = 10\ \text{fs}\)이고 중심 파장이 800 nm일 때 진동수 폭 \(\Delta\nu\)와 파장 폭 \(\Delta\lambda\)(모두 반치폭)를 구하라.</p>
+      <p><b>풀이.</b> (가) \(e^{-az^2}\)은 정함수다. 꼭짓점이 \(-R, R, R + ib, -R + ib\)인 직사각형을 양의 방향으로 돌면(\(b > 0\)으로 그린다. \(b &lt; 0\)이면 방향만 반대이고 결과는 같다) 코시 정리에서</p>
+      <div class="formula">\[ \begin{aligned} 0 &= \int_{-R}^{R}e^{-ax^2}dx - \int_{-R}^{R}e^{-a(x+ib)^2}dx \\ &\quad + \int_{\text{오른쪽}} + \int_{\text{왼쪽}} \end{aligned} \]</div>
+      <p>이다(윗변은 왼쪽으로 지나가므로 부호가 바뀐다). 오른쪽 변 \(z = R + iy\), \(y\)는 0과 \(b\) 사이에서 \(\lvert e^{-a(R+iy)^2}\rvert = e^{-a(R^2 - y^2)} \le e^{-a(R^2 - b^2)}\)이고 길이는 \(\lvert b\rvert\)이므로, ML 부등식에서 이 기여는 \(R \to \infty\)에서 0이다. 왼쪽 변도 같다. 따라서</p>
+      <div class="formula" id="eq-gaussian-shift">\[ \int_{-\infty}^{\infty}e^{-a(x + ib)^2}\,dx = \int_{-\infty}^{\infty}e^{-ax^2}\,dx = \sqrt{\frac\pi a} \]</div>
+      <p>이다. 경로를 \(\operatorname{Im}z = b\)로 옮긴 것이고, 마지막은 11장의 가우스 적분이다.</p>
+      <p>(나) \(\Omega = \omega - \omega_c\)로 두고 지수를 완전제곱으로 바꾸면 \(-\dfrac{t^2}{2\tau^2} + i\Omega t = -\dfrac{1}{2\tau^2}(t - i\tau^2\Omega)^2 - \dfrac{\tau^2\Omega^2}{2}\)이다. (가)에서 \(a = 1/2\tau^2\), \(b = -\tau^2\Omega\)로 두면</p>
+      <div class="formula" id="eq-gaussian-pulse-spectrum">\[ \tilde E(\omega) = \sqrt{2\pi}\,\tau E_0\,e^{-(\omega - \omega_c)^2\tau^2/2} \]</div>
+      <p>이다. 가우스 함수의 변환은 다시 가우스 함수다(<a href="ch15.html#eq-gaussian-ft">15장의 가우스 함수 변환</a>).</p>
+      <p>(다) \(\lvert E\rvert^2 \propto e^{-t^2/\tau^2}\)이 절반이 되는 곳은 \(t = \pm\tau\sqrt{\ln2}\)이므로 \(\Delta t = 2\sqrt{\ln2}\,\tau\)이다. 스펙트럼 세기 \(\lvert\tilde E\rvert^2 \propto e^{-\tau^2\Omega^2}\)의 반치폭은 \(\Delta\omega = 2\sqrt{\ln2}/\tau\)이다. 그러면 \(\Delta\omega\,\Delta t = 4\ln2\), 진동수로는 \(\Delta\nu\,\Delta t = 2\ln2/\pi = 0.441\)이다.</p>
+      <p><b>숫자로 보기.</b> \(\Delta t = 10\ \text{fs}\)이면 \(\Delta\nu = 0.441/(10 \times 10^{-15}\ \text{s}) = 44.1\ \text{THz}\)이다. \(\lambda = c/\nu\)에서 \(\Delta\lambda \approx \lambda^2\Delta\nu/c = (800 \times 10^{-9}\ \text{m})^2(4.41 \times 10^{13}\ \text{s}^{-1})/(3.00 \times 10^8\ \text{m/s}) = 94\ \text{nm}\)이다. 중심 파장의 12%에 이르는 폭이다. 폭과 대역폭의 곱이 일정한 하한을 갖는다는 것은 <a href="ch15.html#eq-bandwidth-relation">15장의 폭-대역폭 관계</a>이고, 가우스 함수가 그 하한을 채운다.</p>
+      <p><b>다음 항은 몇 차인가.</b> \(\Delta\lambda \approx \lambda^2\Delta\nu/c\)는 \(\lambda = c/\nu\)를 일차까지 전개한 것이다. 정확히는 \(c/(\nu - \tfrac12\Delta\nu) - c/(\nu + \tfrac12\Delta\nu) = (\lambda^2\Delta\nu/c)/[1 - (\Delta\nu/2\nu)^2]\)이고, \(\nu = 375\ \text{THz}\)에서 보정은 \((\Delta\nu/2\nu)^2 = 0.35\%\)이다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 19.3 -->
+  <section id="s3">
+    <h2>코시 적분 공식과 그 결과</h2>
+    <p>전하가 없는 영역의 퍼텐셜은 경계에서의 값으로 안쪽이 모두 정해진다(17장의 <a href="ch17.html#thm-uniqueness-laplace">유일성 정리</a>). 해석 함수에는 훨씬 구체적인 형태로 같은 일이 일어난다. 코시 정리에 \(1/(z - z_0)\)이라는 특이점을 일부러 넣으면, 닫힌 곡선 위의 값들로 안쪽 한 점의 값을 적분 하나로 써낼 수 있다. 그 공식을 미분하면 해석 함수가 몇 번이든 미분 가능하다는 결론이 나온다. 18장이 미리 빌려 간 것이 이것이다.</p>
+
+    <h3 id="s3-formula">코시 적분 공식</h3>
+    <div class="box thm" id="thm-cauchy-integral"><div class="box-h">코시 적분 공식 <span class="en">(Cauchy integral formula)</span></div>
+      <p>\(f\)가 단순 연결 영역 \(D\)에서 해석적이고 \(C\)가 \(D\) 안의 양의 방향 단순 닫힌 곡선이면, \(C\) 안의 모든 점 \(z_0\)에서</p>
+      <div class="formula" id="eq-cauchy-integral">\[ f(z_0) = \frac{1}{2\pi i}\oint_C\frac{f(z)}{z - z_0}\,dz \]</div>
+      <p>이다.</p>
+    </div>
+    <p><b>증명.</b> \(f(z)/(z - z_0)\)은 \(z_0\)을 뺀 \(D\)에서 해석적이다. \(C\) 안에 들어가는 작은 원 \(C_r\): \(\lvert z - z_0\rvert = r\)을 잡으면 <a class="ref" href="#thm-deformation"></a>의 (가)에서 \(C\)를 \(C_r\)로 바꿀 수 있다. \(f(z) = f(z_0) + [f(z) - f(z_0)]\)으로 나누고 식 <a class="ref" href="#eq-power-circle-integral"></a>을 쓰면</p>
+    <div class="formula" id="eq-cauchy-integral-proof">\[ \begin{aligned} \oint_C\frac{f(z)}{z - z_0}\,dz &= 2\pi i\,f(z_0) + I_r, \\ I_r &= \oint_{C_r}\frac{f(z) - f(z_0)}{z - z_0}\,dz \end{aligned} \]</div>
+    <p>이다. ML 부등식에서 \(\lvert I_r\rvert \le \dfrac{\max_{C_r}\lvert f(z) - f(z_0)\rvert}{r}\cdot2\pi r = 2\pi\max_{C_r}\lvert f(z) - f(z_0)\rvert\)이고, \(f\)가 \(z_0\)에서 연속이므로 \(r \to 0\)에서 이것은 0으로 간다. 그런데 왼쪽은 \(r\)과 상관이 없으므로 \(I_r\)도 \(r\)과 상관없는 값이고, 그 값은 0일 수밖에 없다. \(\square\)</p>
+    <p>\(C\)가 \(z_0\)를 중심으로 하는 반지름 \(r\)인 원이면 \(z = z_0 + re^{i\theta}\), \(dz/(z - z_0) = i\,d\theta\)이므로 식 <a class="ref" href="#eq-cauchy-integral"></a>은</p>
+    <div class="formula" id="eq-mean-value-analytic">\[ f(z_0) = \frac{1}{2\pi}\int_0^{2\pi}f(z_0 + re^{i\theta})\,d\theta \]</div>
+    <p>가 된다. 해석 함수의 원 중심의 값은 원 위의 값의 평균이다. 실수부를 취하면 조화 함수의 평균값 성질(17장의 <a href="ch17.html#thm-mean-value-harmonic">평균값 성질</a>)이 해석 함수의 실수부에 대해 나온다.</p>
+
+    <h3 id="s3-derivatives">도함수 공식: 해석 함수는 몇 번이든 미분할 수 있다</h3>
+    <p>식 <a class="ref" href="#eq-cauchy-integral"></a>의 오른쪽에서 \(z_0\)는 \(1/(z - z_0)\)에만 들어 있다. 이 인수는 \(z_0\)에 대해 몇 번이든 미분할 수 있으니, 적분 기호 안에서 미분하면 \(f\)의 도함수들이 나올 것이다. 이 생각을 정확히 하려면 미분과 적분의 순서를 바꿀 수 있음을 보여야 한다. 핵심은 다음 사실이다.</p>
+    <p><b>보조 사실.</b> \(\varphi\)가 적분 경로 \(C\) 위에서 연속이고 \(m\)이 자연수일 때, \(C\) 위에 있지 않은 \(w\)의 함수</p>
+    <div class="formula" id="eq-derivative-lemma">\[ F_m(w) = \oint_C\frac{\varphi(z)}{(z - w)^m}\,dz \]</div>
+    <p>는 미분 가능하고 \(F_m'(w) = m\,F_{m+1}(w)\)이다.</p>
+    <p><b>증명.</b> \(a = z - w - h\), \(b = z - w\)로 두면 \(b - a = h\)이고, 인수분해 \(b^m - a^m = (b - a)\sum_{k=0}^{m-1}a^kb^{m-1-k}\)에서</p>
+    <div class="formula">\[ \frac{1}{h}\Big(\frac{1}{a^m} - \frac{1}{b^m}\Big) = \frac{1}{a^mb^m}\sum_{k=0}^{m-1}a^kb^{m-1-k} \]</div>
+    <p>이다. 따라서 \([F_m(w + h) - F_m(w)]/h\)는 \(\varphi(z)\)에 이 식을 곱해 \(C\)를 따라 적분한 것이다. \(w\)에서 \(C\)까지의 거리를 \(d\)라 하면 \(C\) 위에서 \(\lvert b\rvert \ge d\)이고, \(\lvert h\rvert \le d/2\)이면 \(\lvert a\rvert \ge d/2\)이다. \(h \to 0\)에서 \(a \to b\)이므로 오른쪽은 \(m\,b^{m-1}/b^{2m} = m/b^{m+1}\)로 간다. 분모가 0에서 멀리 떨어져 있으므로 이 수렴은 \(C\) 위의 모든 \(z\)에서 한꺼번에(고르게) 일어난다. 곧 피적분 함수와 극한의 차의 최댓값이 0으로 간다. 그러면 ML 부등식에서 적분의 차도 0으로 가고, \(F_m'(w) = m\oint_C\varphi(z)(z - w)^{-m-1}dz\)이다. \(\square\)</p>
+    <div class="box thm" id="thm-analytic-smooth"><div class="box-h">도함수 공식</div>
+      <p>\(f\)가 단순 연결 영역 \(D\)에서 해석적이면 \(f\)는 \(D\)에서 모든 차수의 도함수를 갖고, 그 도함수들도 모두 \(D\)에서 해석적이다. \(C\)가 \(D\) 안의 양의 방향 단순 닫힌 곡선이고 \(z_0\)가 \(C\) 안에 있으면</p>
+      <div class="formula" id="eq-cauchy-derivative">\[ f^{(n)}(z_0) = \frac{n!}{2\pi i}\oint_C\frac{f(z)\,dz}{(z - z_0)^{n+1}} \]<div class="where">\(n = 0, 1, 2, \ldots\)이고 \(n = 0\)이면 코시 적분 공식이다.</div></div>
+      <p>이다. 따라서 \(f = u + iv\)의 \(u\)와 \(v\)는 모든 차수의 편미분이 존재하고 연속이다.</p>
+    </div>
+    <p><b>증명.</b> \(C\) 안의 \(w\)에 대해 코시 적분 공식은 \(f(w) = F_1(w)/2\pi i\)이다(\(\varphi = f\)). 보조 사실에서 \(f'(w) = F_2(w)/2\pi i\), 이것을 다시 쓰면 \(f''(w) = 2F_3(w)/2\pi i\)이고, 귀납적으로 \(f^{(n)}(w) = n!\,F_{n+1}(w)/2\pi i\)이다. 각 \(F_{n+1}\)이 \(C\) 안의 모든 점에서 미분 가능하므로 \(f^{(n)}\)도 해석적이다. \(D\)의 어느 점이든 그 점을 감는 작은 원을 \(C\)로 잡을 수 있으므로 결론은 \(D\) 전체에서 성립한다. 편미분에 대해서는 18장 <a href="ch18.html#eq-derivative-partials">식 (18.9)</a>를 \(f^{(n)}\)에 차례로 쓴다. \(u_x = \operatorname{Re}f'\), \(u_y = -\operatorname{Im}f'\), \(v_x = \operatorname{Im}f'\), \(v_y = \operatorname{Re}f'\)이고, 같은 식을 \(f'\)에 다시 쓰면 2계 편미분은 \(\pm\operatorname{Re}f''\) 또는 \(\pm\operatorname{Im}f''\)이다. 귀납적으로 \(k\)계 편미분은 모두 \(f^{(k)}\)의 실수부나 허수부에 부호를 붙인 것이고, \(f^{(k)}\)는 해석적이라 연속이다. \(\square\)</p>
+    <div class="callout tip"><strong>논리의 사슬: 18장과의 관계</strong><p>18장의 <a href="ch18.html#thm-analytic-harmonic">정리 18.4</a>(해석 함수의 실수부와 허수부는 조화 함수)는 증명에서 "해석 함수는 무한 번 미분 가능하다"를 이 장에서 빌려 갔다. 위 증명은 코시 정리, 경로 변형 원리, 코시 적분 공식, ML 부등식만 쓰고 조화 함수의 성질은 한 번도 쓰지 않았으므로 순환 논증이 아니다. 사슬은 다음과 같다. 구르사의 정리(<a class="ref" href="#thm-goursat"></a>) → 코시 정리 → 코시 적분 공식 → 도함수 공식 → 18장의 조화 함수 정리. 구르사의 정리를 빼고 그린 정리로 증명한 코시 정리만 쓰면, 이 사슬은 "\(f'\)이 연속인 해석 함수는 무한 번 미분 가능하다"를 준다. 실함수 \(x^2\sin(1/x)\)는 모든 점에서 미분 가능하지만 도함수가 원점에서 연속이 아니다. 복소 미분 가능성은 그보다 훨씬 강한 조건이다.</p></div>
+    <p>원 \(\lvert z - z_0\rvert = R\)가 \(D\) 안에 있고 그 위에서 \(\lvert f\rvert \le M\)이면, 식 <a class="ref" href="#eq-cauchy-derivative"></a>에 ML 부등식을 쓴 \(\lvert f^{(n)}(z_0)\rvert \le \dfrac{n!}{2\pi}\dfrac{M}{R^{n+1}}\cdot2\pi R\)에서</p>
+    <div class="formula" id="eq-cauchy-inequality">\[ \lvert f^{(n)}(z_0)\rvert \le \frac{n!\,M}{R^n} \]</div>
+    <p>를 얻는다. 이것을 <span class="term">코시 부등식</span> <span class="en">(Cauchy's inequality)</span>이라 한다.</p>
+
+    <h3 id="s3-liouville">리우빌 정리</h3>
+    <div class="box thm" id="thm-liouville"><div class="box-h">리우빌 정리 <span class="en">(Liouville's theorem)</span></div>
+      <p>정함수 \(f\)가 유계이면, 곧 모든 \(z\)에서 \(\lvert f(z)\rvert \le M\)인 상수 \(M\)이 있으면, \(f\)는 상수다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>\(f\)는 모든 원에서 해석적이므로 식 <a class="ref" href="#eq-cauchy-inequality"></a>를 \(n = 1\)과 임의의 \(R\)로 쓸 수 있다: \(\lvert f'(z_0)\rvert \le M/R\). \(R \to \infty\)이면 \(f'(z_0) = 0\)이고, \(z_0\)는 아무 점이었다. \(f' = 0\)이면 <a href="ch18.html#eq-derivative-partials">식 (18.9)</a>에서 \(u_x = u_y = v_x = v_y = 0\)이므로 \(u, v\)는 평면 전체에서 상수다.</p>
+      </details>
+    </div>
+    <p>18장에서 본 대로 \(\sin z\)는 실수축에서 \(\lvert\sin x\rvert \le 1\)이지만 허수축 방향으로 \(\sinh y\)처럼 커진다. 리우빌 정리에 따르면 그럴 수밖에 없다. 같은 정리로 <span class="term">대수학의 기본 정리</span> <span class="en">(fundamental theorem of algebra)</span>도 증명된다. 상수가 아닌 다항식 \(p(z)\)가 영점을 하나도 갖지 않는다면 \(1/p\)는 정함수이고, \(\lvert z\rvert \to \infty\)에서 \(\lvert p\rvert \to \infty\)이므로 유계다. 그러면 \(1/p\)가 상수가 되어 모순이다. 따라서 \(n\)차 다항식은 복소수 근을 하나 갖고, 그 근으로 인수를 하나씩 떼어 내면 근을 정확히 \(n\)개(중복 포함) 갖는다. 8장과 10장의 특성 방정식이 언제나 근을 갖는 이유다.</p>
+
+    <div class="box ex" id="ex-mean-value-potential"><div class="box-h">선전하 퍼텐셜의 원 위 평균 (2차원 껍질 정리)</div>
+      <p>선밀도 \(\lambda\)인 선전하가 실수축 위의 점 \(a \ge 0\)에 있다. 퍼텐셜은 \(V(z) = -\dfrac{\lambda}{2\pi\varepsilon_0}\ln\dfrac{\lvert z - a\rvert}{r_0}\)이다(18장 <a href="ch18.html#eq-line-charge-potential">식 (18.26)</a>, \(r_0\)은 기준 거리). 원 \(\lvert z\rvert = R\) (\(R \ne a\)) 위에서 \(V\)의 평균 \(\langle V\rangle\)를 구하라. \(\lambda = 1.0\ \text{nC/m}\), \(R = 5.0\ \text{cm}\), \(r_0 = 1\ \text{m}\)이고 \(a = 3.0\ \text{cm}\)일 때와 \(a = 8.0\ \text{cm}\)일 때 값은 얼마인가?</p>
+      <p><b>풀이.</b> 전하가 원 밖에 있을 때(\(a > R\)): 원판 \(\lvert z\rvert \le R\)에서 \(\operatorname{Re}(a - z) \ge a - R > 0\)이므로 \(\operatorname{Log}(a - z)\)는 이 원판을 조금 넓힌 원판에서 해석적이고, 그 실수부가 \(\ln\lvert z - a\rvert\)이다. 식 <a class="ref" href="#eq-mean-value-analytic"></a>의 실수부에서 \(\langle\ln\lvert z - a\rvert\rangle = \ln a\)이므로 \(\langle V\rangle = V(0)\)이다.</p>
+      <p>전하가 원 안에 있을 때(\(a &lt; R\)): 원 위에서 \(\ln\lvert z - a\rvert = \ln\lvert z\rvert + \ln\lvert 1 - a/z\rvert = \ln R + \operatorname{Re}\operatorname{Log}(1 - a/z)\)이다. \(w = 1/z\)로 두면 \(G(w) = \operatorname{Log}(1 - aw)\)는 \(\lvert w\rvert &lt; 1/a\)에서 해석적이고, 원 \(\lvert z\rvert = R\)은 \(w\) 평면의 원 \(\lvert w\rvert = 1/R &lt; 1/a\)이다. \(\theta\)에 대한 평균은 \(w\) 원 위의 평균(도는 방향만 반대)과 같으므로 \(\langle G\rangle = G(0) = 0\)이다. 따라서</p>
+      <div class="formula">\[ \langle V\rangle = \begin{cases} V(0) = -\dfrac{\lambda}{2\pi\varepsilon_0}\ln\dfrac{a}{r_0} & (a > R) \\[2mm] -\dfrac{\lambda}{2\pi\varepsilon_0}\ln\dfrac{R}{r_0} & (a &lt; R) \end{cases} \]</div>
+      <p>이다. 원 안의 전하는 원 위 평균에 대해 마치 중심에 있는 것처럼 작용하고, 원 밖의 전하는 중심의 퍼텐셜만 남긴다. 뉴턴의 껍질 정리를 2차원에서 복소 적분으로 증명한 것이다.</p>
+      <p><b>숫자로 보기.</b> \(\lambda/2\pi\varepsilon_0 = 17.975\ \text{V}\)이다. \(a = 3.0\ \text{cm}\)이면 \(\langle V\rangle = -17.975\ \text{V}\times\ln0.050 = 53.85\ \text{V}\)이다. 같은 전하가 만드는 원 중심의 퍼텐셜 \(-17.975\ \text{V}\times\ln0.030 = 63.03\ \text{V}\)와 다르다. \(a = 8.0\ \text{cm}\)이면 \(\langle V\rangle = -17.975\ \text{V}\times\ln0.080 = 45.40\ \text{V} = V(0)\)이다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 19.4 -->
+  <section id="s4">
+    <h2>테일러 급수, 로랑 급수, 특이점</h2>
+    <p>1장에서 수수께끼 하나를 남겼다. \(1/(1 + x^2)\)은 실수축 전체에서 매끄러운데 그 멱급수는 \(\lvert x\rvert &lt; 1\)에서만 수렴한다(1장 <a href="ch01.html#eq-arctan-series">식 (1.15)</a> 뒤의 귀띔). 이 절에서 코시 적분 공식으로 그 답을 증명한다. 해석 함수는 테일러 급수와 같고, 수렴 원판은 가장 가까운 특이점에서 멈춘다. 이어서 특이점 둘레의 고리 영역에서 쓰는 로랑 급수를 세우고, 그 음의 거듭제곱 부분으로 특이점을 분류한다.</p>
+
+    <h3 id="s4-taylor">복소 테일러 급수</h3>
+    <div class="box thm" id="thm-taylor-complex"><div class="box-h">해석 함수의 테일러 급수</div>
+      <p>\(f\)가 원판 \(\lvert z - z_0\rvert &lt; R\)에서 해석적이면 그 원판의 모든 점에서</p>
+      <div class="formula" id="eq-taylor-complex">\[ \begin{aligned} f(z) &= \sum_{n=0}^{\infty}a_n(z - z_0)^n, \\ a_n &= \frac{f^{(n)}(z_0)}{n!} = \frac{1}{2\pi i}\oint\frac{f(\zeta)}{(\zeta - z_0)^{n+1}}\,d\zeta \end{aligned} \]</div>
+      <p>이다. 적분은 원판 안에서 \(z_0\)를 감는 아무 원을 따라 한다. 따라서 이 멱급수의 수렴 반경은 \(z_0\)에서 \(f\)가 해석적이지 않은 가장 가까운 점까지의 거리보다 작지 않다.</p>
+    </div>
+    <p><b>증명.</b> \(\lvert z - z_0\rvert = \rho &lt; r &lt; R\)로 \(r\)을 잡고, 원 \(\lvert\zeta - z_0\rvert = r\) 위에서 코시 적분 공식 \(f(z) = \frac{1}{2\pi i}\oint\frac{f(\zeta)}{\zeta - z}d\zeta\)를 쓴다. \(q = (z - z_0)/(\zeta - z_0)\)로 두면 \(\lvert q\rvert = \rho/r &lt; 1\)이고, 1장 <a href="ch01.html#eq-geometric-partial">식 (1.2)</a>의 유한 기하급수에서 \(1/(1 - q) = \sum_{n=0}^{N-1}q^n + q^N/(1 - q)\)이므로</p>
+    <div class="formula" id="eq-geometric-kernel">\[ \frac{1}{\zeta - z} = \sum_{n=0}^{N-1}\frac{(z - z_0)^n}{(\zeta - z_0)^{n+1}} + \frac{q^N}{\zeta - z} \]</div>
+    <p>이다. 양변에 \(f(\zeta)/2\pi i\)를 곱해 적분하면 \(f(z) = \sum_{n=0}^{N-1}a_n(z - z_0)^n + R_N\)이고, 원 위에서 \(\lvert f\rvert \le M\), \(\lvert\zeta - z\rvert \ge r - \rho\)이므로 ML 부등식에서</p>
+    <div class="formula">\[ \lvert R_N\rvert \le \frac{1}{2\pi}\cdot\frac{M(\rho/r)^N}{r - \rho}\cdot2\pi r \;\to\; 0 \quad (N \to \infty) \]</div>
+    <p>이다. 계수의 두 표현이 같다는 것은 식 <a class="ref" href="#eq-cauchy-derivative"></a>다. \(\square\)</p>
+    <p>수렴 반경이 그 거리와 정확히 같아지는 경우도 쉽게 알 수 있다. 가장 가까운 특이점 \(z_1\) 근처에서 \(\lvert f\rvert \to \infty\)이면(곧 볼 극), 수렴 반경이 \(\lvert z_1 - z_0\rvert\)보다 클 수 없다. 멱급수의 합은 수렴 원판 안에서 연속이라(1장 <a href="ch01.html#thm-power-series-calculus">정리 1.6</a>) \(z_1\) 근처에서 유계일 텐데, 그 합이 \(f\)와 같아서 한없이 커지기 때문이다.</p>
+    <p>테일러 급수에서 <b>영점이 고립되어 있다</b>는 사실도 나온다. \(f\)가 \(z_0\)에서 0이지만 항등적으로 0은 아니면, 0이 아닌 첫 계수 \(a_m\)이 있어서 \(f = (z - z_0)^m g(z)\), \(g(z_0) = a_m \ne 0\)이고, \(g\)는 연속이므로 \(z_0\)의 근방에서 0이 아니다. 이 \(m\)을 영점의 차수라 한다. 그래서 연결된 영역에서 해석적인 두 함수가 선분 하나(또는 한 점으로 모이는 점들) 위에서 같으면 영역 전체에서 같다. 차를 취하면 영점이 고립되지 않기 때문이다. 이것을 <span class="term">일치 정리</span> <span class="en">(identity theorem)</span>라 하고, 실수축에서 성립하는 항등식을 복소수로 넓힐 때 쓴다(19.7절의 반사 공식).</p>
+
+    <div class="box ex" id="ex-radius-puzzle"><div class="box-h">\(1/(1 + x^2)\)의 수렴 반경 수수께끼</div>
+      <p>(가) \(f(x) = 1/(1 + x^2)\)의 원점 둘레 테일러 급수의 수렴 반경이 1인 이유를 설명하라. (나) 실수 \(x_0 = a\)를 중심으로 전개하면 수렴 반경은 얼마인가? \(a = 1\)일 때 첫 몇 계수를 구하라. (다) \(\arctan x\)의 급수에 대해서는 무엇을 알 수 있는가?</p>
+      <p><b>풀이.</b> (가) 복소수로 넓힌 \(f(z) = 1/(1 + z^2) = 1/[(z - i)(z + i)]\)은 \(z = \pm i\)를 뺀 모든 곳에서 해석적이다. <a class="ref" href="#thm-taylor-complex"></a>에서 원점 둘레의 수렴 반경은 1 이상이고, \(z \to \pm i\)에서 \(\lvert f\rvert \to \infty\)이므로 정확히 1이다. 급수가 \(\lvert x\rvert > 1\)에서 발산하는 것은 복소평면의 수렴 원판이 실수축 밖의 \(\pm i\)에 막혀 반지름 1에서 끝나기 때문이다. 실수축에서 보이는 것은 그 원판의 그림자다(그림 19-2 (가)).</p>
+      <p>(나) 중심이 \(a\)이면 가장 가까운 특이점까지의 거리는 \(\lvert a \mp i\rvert = \sqrt{1 + a^2}\)이므로 수렴 반경은 \(\sqrt{1 + a^2}\)이다. 계수를 직접 구해 확인하자. 부분 분수 \(f = \frac{1}{2i}\big[\frac{1}{z - i} - \frac{1}{z + i}\big]\)와 기하급수 \(\frac{1}{z - w} = -\sum_{n\ge0}\frac{(z - a)^n}{(w - a)^{n+1}}\) (\(\lvert z - a\rvert &lt; \lvert w - a\rvert\))를 쓰면, \(w = i - a\)로 두었을 때 \(-a - i = w^*\)이므로</p>
+      <div class="formula">\[ a_n = \frac{1}{2i}\Big[-\frac{1}{w^{n+1}} + \frac{1}{(w^*)^{n+1}}\Big] = -\operatorname{Im}\frac{1}{w^{n+1}} \]</div>
+      <p>이다. \(\lvert a_n\rvert\)는 \(\lvert w\rvert^{-(n+1)} = (1 + a^2)^{-(n+1)/2}\)을 넘지 않고, 그 크기로 자주 되돌아오므로 수렴 반경이 \(\sqrt{1 + a^2}\)이다. \(a = 1\)이면 \(w = -1 + i\)이고 \(a_0, a_1, a_2, a_3, a_4 = \tfrac12, -\tfrac12, \tfrac14, 0, -\tfrac18\)이다(\(f(1) = \tfrac12\), \(f'(1) = -\tfrac12\)과 맞는다). 이 급수는 \(-0.414 &lt; x &lt; 2.414\)에서 수렴한다. 실수축만 보아서는 이 \(\sqrt2\)를 설명할 길이 없다.</p>
+      <p>(다) \(\arctan z\)도 \(\pm i\)에서 해석적이지 않으므로(로그 분지점) 1장 식 (1.15)의 급수는 수렴 반경이 1이다. \(\pi/4 = 1 - \tfrac13 + \tfrac15 - \cdots\)는 수렴 원의 경계 위의 점이라 그토록 느리게 수렴한다.</p>
+    </div>
+
+    <h3 id="s4-laurent">로랑 급수</h3>
+    <p>특이점 \(z_0\) 둘레에서는 테일러 급수를 쓸 수 없다. 그러나 \(z_0\)만 빼면 해석적인 함수, 예를 들어 \(e^{1/z}\)이나 \(1/[z(z - 1)]\)은 \(z_0\) 둘레의 고리 모양 영역에서 해석적이다. 이런 영역에서는 음의 거듭제곱까지 허락한 급수를 쓴다.</p>
+    <div class="box def" id="def-laurent"><div class="box-h">로랑 급수</div>
+      <p>\(f\)가 고리 영역 \(r_1 &lt; \lvert z - z_0\rvert &lt; r_2\) (\(0 \le r_1 &lt; r_2 \le \infty\))에서 해석적이면 그 영역에서</p>
+      <div class="formula" id="eq-laurent-series">\[ \begin{aligned} f(z) &= \sum_{n=-\infty}^{\infty}a_n(z - z_0)^n, \\ a_n &= \frac{1}{2\pi i}\oint_C\frac{f(\zeta)}{(\zeta - z_0)^{n+1}}\,d\zeta \end{aligned} \]</div>
+      <p>로 쓸 수 있다. \(C\)는 고리 안에서 \(z_0\)를 한 번 감는 아무 원이다. 이 급수를 \(z_0\)를 중심으로 하는 \(f\)의 <span class="term">로랑 급수</span> <span class="en">(Laurent series)</span>라 하고, 음의 거듭제곱 부분 \(\sum_{n&lt;0}a_n(z - z_0)^n\)을 <span class="term">주요부</span> <span class="en">(principal part)</span>라 한다. 고리에서 수렴하는 이런 꼴의 급수는 하나뿐이다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>\(z\)를 고정하고 \(r_1 &lt; r_a &lt; \lvert z - z_0\rvert &lt; r_b &lt; r_2\)인 두 원 \(C_a\), \(C_b\)를 잡는다. \(f(\zeta)/(\zeta - z)\)는 두 원 사이에서 \(\zeta = z\)만 빼고 해석적이므로, <a class="ref" href="#thm-deformation"></a>의 (가)를 \(z\)를 감는 작은 원과 함께 쓰고 그 작은 원에 코시 적분 공식을 쓰면</p>
+        <div class="formula">\[ \begin{aligned} f(z) &= \frac{1}{2\pi i}\oint_{C_b}\frac{f(\zeta)\,d\zeta}{\zeta - z} \\ &\quad - \frac{1}{2\pi i}\oint_{C_a}\frac{f(\zeta)\,d\zeta}{\zeta - z} \end{aligned} \]</div>
+        <p>이다. 바깥 원의 적분은 테일러 급수의 증명과 똑같이 전개되어 \(n \ge 0\)인 항을 준다. 안쪽 원에서는 \(\lvert\zeta - z_0\rvert &lt; \lvert z - z_0\rvert\)이므로 \(p = (\zeta - z_0)/(z - z_0)\)로 두고 \(-\frac{1}{\zeta - z} = \frac{1}{(z - z_0)(1 - p)} = \sum_{k\ge0}\frac{(\zeta - z_0)^k}{(z - z_0)^{k+1}}\)로 전개한다. 나머지 항은 테일러 급수에서처럼 ML 부등식으로 0으로 간다. \(n = -(k+1)\)로 두면 계수는 \(\frac{1}{2\pi i}\oint_{C_a}f(\zeta)(\zeta - z_0)^{-n-1}d\zeta\)이고 식 <a class="ref" href="#eq-laurent-series"></a>의 꼴이다. 두 경우 모두 피적분 함수가 고리 전체에서 해석적이므로, 원 \(C_a\), \(C_b\)를 고리 안의 아무 원 \(C\)로 옮길 수 있다. 유일성: 급수 \(\sum b_n(z - z_0)^n\)이 고리에서 \(f\)로 수렴하면, 고리 안의 원 위에서는 고르게 수렴하므로(양의 부분과 음의 부분이 각각 그 원 위에서 수렴하는 기하급수로 눌린다) \((z - z_0)^{-m-1}\)을 곱해 항별로 적분할 수 있다. 식 <a class="ref" href="#eq-power-circle-integral"></a>에서 \(n = m\)인 항만 남아 \(2\pi i\,b_m = 2\pi i\,a_m\)이다.</p>
+      </details>
+    </div>
+    <p>유일성 덕분에 로랑 계수를 적분으로 구할 일은 거의 없다. 기하급수나 알려진 테일러 급수를 조합해 어떤 방법으로든 고리에서 수렴하는 급수를 만들면 그것이 로랑 급수다. 중심이 같아도 고리가 다르면 급수가 다르다는 점에 주의하자.</p>
+
+    <div class="box ex" id="ex-laurent-regions"><div class="box-h">한 함수의 세 가지 로랑 급수</div>
+      <p>\(f(z) = \dfrac{3}{(z - 1)(z + 2)}\)를 원점 둘레의 세 영역 ① \(\lvert z\rvert &lt; 1\), ② \(1 &lt; \lvert z\rvert &lt; 2\), ③ \(\lvert z\rvert > 2\)에서 각각 전개하고, 각 영역에서 \(z^{-1}\)의 계수를 구하라.</p>
+      <p><b>풀이.</b> 부분 분수로 \(f = \dfrac{1}{z - 1} - \dfrac{1}{z + 2}\)이다. 두 항을 영역마다 수렴하는 기하급수로 쓴다. \(\lvert z\rvert &lt; 1\)이면 \(\frac{1}{z - 1} = -\sum_{n\ge0}z^n\), \(\lvert z\rvert > 1\)이면 \(\frac{1}{z - 1} = \frac{1}{z}\frac{1}{1 - 1/z} = \sum_{n\ge1}z^{-n}\)이다. \(\lvert z\rvert &lt; 2\)이면 \(\frac{1}{z + 2} = \frac12\sum_{n\ge0}(-z/2)^n\), \(\lvert z\rvert > 2\)이면 \(\frac{1}{z + 2} = \sum_{n\ge1}(-2)^{n-1}z^{-n}\)이다. 따라서</p>
+      <div class="formula">\[ f = \begin{cases} -\dfrac32 - \dfrac34 z - \dfrac98 z^2 - \cdots \\[2mm] \cdots + \dfrac{1}{z^2} + \dfrac1z - \dfrac12 + \dfrac z4 - \dfrac{z^2}{8} + \cdots \\[2mm] \dfrac{3}{z^2} - \dfrac{3}{z^3} + \dfrac{9}{z^4} - \cdots \end{cases} \]</div>
+      <p>이다(위에서부터 영역 ①, ②, ③). ①은 테일러 급수이고(\(a_n = -1 - (-1)^n/2^{n+1}\)), ②는 양쪽으로 끝없이 이어지며, ③의 계수는 \(a_{-n} = 1 - (-2)^{n-1}\)이다. \(z^{-1}\)의 계수는 ①에서 0, ②에서 1, ③에서 \(1 - 1 = 0\)이다. 원 \(\lvert z\rvert = r\)을 따라 적분하면 식 <a class="ref" href="#eq-power-circle-integral"></a>에서 이 계수에 \(2\pi i\)를 곱한 것만 남는다. 원이 극 \(z = 1\)만 감으면 \(2\pi i\), 두 극을 다 감으면 두 기여 \(1\)과 \(-1\)이 상쇄되어 0이다. 다음 절의 유수 정리가 이것을 일반화한다.</p>
+    </div>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 330" role="img" aria-label="1/(1+z^2)의 극 ±i와 중심 0, 중심 1인 수렴 원판"><text x="12" y="22" class="t" style="font-size:15px" text-anchor="start">(가) 1/(1 + z²)의 수렴 원판</text><line x1="20" y1="165" x2="370" y2="165" class="s-line"/><line x1="140" y1="40" x2="140" y2="310" class="s-line"/><text x="368" y="185" class="t-math" style="font-size:16px" text-anchor="end"><tspan font-style="italic">x</tspan></text><text x="148" y="52" class="t-math" style="font-size:16px" text-anchor="start"><tspan font-style="italic">y</tspan></text><circle cx="140" cy="165" r="70" class="f-acc-soft" style="stroke-width:2.2"/><circle cx="210" cy="165" r="99" class="s-acc2" stroke-dasharray="6 4"/><path d="M134,89l12,12M134,101l12,-12" class="s-line" style="stroke:var(--text);stroke-width:2.2"/><path d="M134,229l12,12M134,241l12,-12" class="s-line" style="stroke:var(--text);stroke-width:2.2"/><text x="150" y="87" class="t-math" style="font-size:16px" text-anchor="start"><tspan font-style="italic">i</tspan></text><text x="150" y="255" class="t-math" style="font-size:16px" text-anchor="start">−<tspan font-style="italic">i</tspan></text><circle cx="210" cy="165" r="3.5" class="f-acc2"/><circle cx="140" cy="165" r="3.5" class="f-acc"/><text x="210" y="185" class="t-dim" style="font-size:14px" text-anchor="middle">1</text><text x="132" y="183" class="t-dim" style="font-size:14px" text-anchor="end">0</text><line x1="210" y1="165" x2="140" y2="95" class="s-acc2" style="stroke-width:1.4"/><text x="205" y="126" class="t-math acc2" style="font-size:16px" text-anchor="start">√2</text><text x="74" y="87" class="t-acc" style="font-size:13px" text-anchor="end">반지름 1</text></svg><svg viewBox="0 0 380 330" role="img" aria-label="극 1과 -2, 원 |z|=1과 |z|=2가 나누는 세 영역"><text x="12" y="22" class="t" style="font-size:15px" text-anchor="start">(나) 3/((z − 1)(z + 2))의 세 영역</text><path d="M304,170a104,104 0 1 0 -208,0a104,104 0 1 0 208,0zM252,170a52,52 0 1 1 -104,0a52,52 0 1 1 104,0z" class="f-acc-soft" style="stroke-width:2" fill-rule="evenodd"/><line x1="30" y1="170" x2="370" y2="170" class="s-line"/><line x1="200" y1="45" x2="200" y2="315" class="s-line"/><text x="368" y="190" class="t-math" style="font-size:16px" text-anchor="end"><tspan font-style="italic">x</tspan></text><text x="208" y="57" class="t-math" style="font-size:16px" text-anchor="start"><tspan font-style="italic">y</tspan></text><path d="M246,164l12,12M246,176l12,-12" class="s-line" style="stroke:var(--text);stroke-width:2.2"/><path d="M90,164l12,12M90,176l12,-12" class="s-line" style="stroke:var(--text);stroke-width:2.2"/><text x="256" y="192" class="t-dim" style="font-size:14px" text-anchor="start">1</text><text x="92" y="192" class="t-dim" style="font-size:14px" text-anchor="end">−2</text><text x="186" y="156" class="t" style="font-size:16px" text-anchor="middle">①</text><text x="200" y="98" class="t" style="font-size:16px" text-anchor="middle">②</text><text x="311.8" y="79" class="t" style="font-size:16px" text-anchor="start">③</text></svg></div>
+      <figcaption><b>그림 19-2.</b> (가) \(1/(1 + z^2)\)의 극 \(\pm i\)(×)와 테일러 급수의 수렴 원판. 중심이 0이면 반지름 1(색칠한 원판), 중심이 1이면 반지름 \(\sqrt2\)(점선)이다. 실수축 위의 수렴 구간은 이 원판의 그림자다. (나) \(3/[(z - 1)(z + 2)]\)의 극 1과 \(-2\)(×)가 원점 둘레를 세 영역으로 나눈다. ① \(\lvert z\rvert &lt; 1\)에서는 테일러 급수, 색칠한 고리 ② \(1 &lt; \lvert z\rvert &lt; 2\)와 ③ \(\lvert z\rvert > 2\)에서는 서로 다른 로랑 급수가 성립한다.</figcaption>
+    </figure>
+
+    <h3 id="s4-singularities">고립 특이점의 분류</h3>
+    <p>\(f\)가 \(z_0\)의 근방에서 \(z_0\)만 빼고 해석적이면 \(z_0\)를 <span class="term">고립 특이점</span> <span class="en">(isolated singularity)</span>이라 한다. 그러면 \(0 &lt; \lvert z - z_0\rvert &lt; r\)인 구멍 뚫린 원판에서 로랑 급수가 있고, 주요부가 어떻게 생겼는지로 특이점을 세 가지로 나눈다. 주요부가 없으면 <span class="term">없앨 수 있는 특이점</span> <span class="en">(removable singularity)</span>이다. \(\sin z/z = 1 - z^2/6 + \cdots\)처럼 \(f(z_0) = a_0\)으로 정해 주면 해석 함수가 된다.</p>
+    <div class="box def" id="def-pole"><div class="box-h">극</div>
+      <p>고립 특이점 \(z_0\)에서 로랑 급수의 주요부가 유한 개의 항으로 끝나서 \(a_{-m} \ne 0\)이고 \(n &lt; -m\)이면 \(a_n = 0\)일 때, \(z_0\)를 \(f\)의 \(m\)차 <span class="term">극</span> <span class="en">(pole of order \(m\))</span>이라 한다. 1차 극을 <span class="term">단순 극</span> <span class="en">(simple pole)</span>이라 한다. 같은 말로, \(z_0\) 근처에서 \(g\)가 해석적이고 \(g(z_0) \ne 0\)인</p>
+      <div class="formula" id="eq-pole-form">\[ f(z) = \frac{g(z)}{(z - z_0)^m} \]</div>
+      <p>로 쓸 수 있다는 것이다.</p>
+    </div>
+    <p>극에서는 \(z\)가 어느 방향으로 다가가든 \(\lvert f\rvert \to \infty\)이다. \(f\)가 \(z_0\)에서 \(m\)차 영점을 가지면 \(1/f\)은 \(z_0\)에서 \(m\)차 극을 갖는다. 그래서 유리 함수의 극은 분모의 영점이고(분자와 약분되지 않은 것), \(1/\sin z\)는 \(z = n\pi\)에서 단순 극을, \(1/(1 - \cos z)\)는 \(z = 2n\pi\)에서 2차 극을 갖는다.</p>
+    <div class="box def" id="def-essential-singularity"><div class="box-h">진성 특이점</div>
+      <p>고립 특이점 \(z_0\)에서 로랑 급수의 주요부가 무한히 많은 항을 가지면 \(z_0\)를 \(f\)의 <span class="term">진성 특이점</span> <span class="en">(essential singularity)</span>이라 한다.</p>
+    </div>
+    <p>대표적인 예는 \(e^{1/z} = \sum_{n\ge0}z^{-n}/n!\)의 원점이다. 양의 실수축으로 다가가면 \(e^{1/x} \to \infty\), 음의 실수축으로 다가가면 0, 허수축 \(z = iy\)로 다가가면 \(\lvert e^{1/(iy)}\rvert = 1\)이다. 실제로 진성 특이점의 아무리 작은 근방에서도 \(f\)는 모든 복소수에 한없이 가까운 값을 취한다(카소라티-바이어슈트라스 정리, Ahlfors, 같은 책 4장). 1장의 \(e^{-1/x^2}\)은 \(e^{-1/z^2} = \sum_n(-1)^nz^{-2n}/n!\)이므로 원점이 진성 특이점이다. 실수축에서만 보면 원점에서 몇 번이든 미분할 수 있지만, 복소평면에서 보면 원점은 가장 나쁜 종류의 특이점이다. 1장의 두 번째 수수께끼(테일러 급수가 함수와 다름)의 답이 이것이다.</p>
+    <div class="callout warn"><strong>분지점은 고립 특이점이 아니다</strong><p>\(\sqrt z\)나 \(\operatorname{Log} z\)의 원점은 위 세 가지 어디에도 속하지 않는다. 로랑 급수는 고리 <b>전체</b>에서 한 값으로 해석적인 함수에만 있는데, 이 함수들은 원점의 구멍 뚫린 근방에서 한 값이 아니다. 절단을 고리 안에 두면 고리가 끊긴다. 분지점을 낀 적분은 19.7절에서 따로 다룬다.</p></div>
+
+    <div class="box ex" id="ex-line-dipole-laurent"><div class="box-h">평면 쌍극자와 2차원 다중극 전개</div>
+      <p>선밀도 \(+\lambda\)와 \(-\lambda\)인 두 선전하가 \(z = a\)와 \(z = -a\)에 있다(\(d = 2a\)). (가) 복소 퍼텐셜 \(F(z)\)를 \(\lvert z\rvert > a\)에서 원점 둘레의 로랑 급수로 쓰고 쌍극자 항을 찾아라. (나) \(\lambda = 1.0\ \text{nC/m}\), \(d = 2.0\ \text{mm}\)일 때 축 위의 거리 \(r = 1.0\ \text{cm}\)에서 쌍극자 항, 다음 항, 정확한 퍼텐셜을 비교하라.</p>
+      <p><b>풀이.</b> (가) 18장 <a href="ch18.html#eq-complex-potential">식 (18.23)</a>의 관례로 선전하 하나의 복소 퍼텐셜은 \(-(\lambda/2\pi\varepsilon_0)\log(z - a)\)이다. \(\lvert z\rvert > a\)에서 \(w = a/z\)는 \(\lvert w\rvert &lt; 1\)이고 \(\operatorname{Re}(1 \pm w) > 0\)이므로</p>
+      <div class="formula">\[ F(z) = -\frac{\lambda}{2\pi\varepsilon_0}\Big[\operatorname{Log}\Big(1 - \frac az\Big) - \operatorname{Log}\Big(1 + \frac az\Big)\Big] \]</div>
+      <p>는 \(\lvert z\rvert > a\) 전체에서 한 값의 해석 함수다(두 로그의 \(\log z\)는 지워진다). 1장 <a href="ch01.html#eq-log-series">식 (1.14)</a>의 \(\ln(1 + x)\) 급수를 복소수로 넓혀(수렴 반경이 1이다) 빼면 짝수 차 항이 지워지고</p>
+      <div class="formula" id="eq-dipole-laurent">\[ F(z) = \frac{\lambda}{2\pi\varepsilon_0}\Big[\frac dz + \frac{d^3}{12z^3} + \frac{d^5}{80z^5} + \cdots\Big] \]</div>
+      <p>이다(\(2a = d\), \(2a^3/3 = d^3/12\), \(2a^5/5 = d^5/80\)). 이것이 \(\lvert z\rvert > a\)라는 고리(바깥 반지름 \(\infty\))의 로랑 급수다. 고리의 안쪽 반지름이 가장 먼 전하까지의 거리라는 점이 다중극 전개가 "모든 전하보다 바깥"에서만 성립한다는 것을 정확히 말해 준다. 실수부를 취하면 \(z = re^{i\theta}\)에서 첫 항은</p>
+      <div class="formula">\[ V_{\text{쌍극자}} = \frac{p\cos\theta}{2\pi\varepsilon_0\,r}, \quad p = \lambda d \]</div>
+      <p>이다. 2차원 쌍극자는 \(1/r\)로 줄어든다. 3차원 쌍극자의 \(1/r^2\)보다 한 차수 느리다. 다음 항은 \(\cos3\theta/r^3\)으로, 짝수 차 다중극이 없는 것은 전하 배치가 \(z \to -z\)에 대해 부호만 바뀌기 때문이다. \(a \to 0\)으로 보내는 극한은 18장 <a href="ch18.html#prob-line-dipole">문제 18.7</a>이다.</p>
+      <p><b>숫자로 보기.</b> \(\lambda/2\pi\varepsilon_0 = 17.975\ \text{V}\), \(d/r = 0.20\)이다. 축 위(\(\theta = 0\))에서 쌍극자 항은 \(17.975 \times 0.20 = 3.595\ \text{V}\), 다음 항은 \(17.975 \times 0.008/12 = 0.012\ \text{V}\)이다. 정확한 값은 \(17.975\ \text{V} \times \ln\dfrac{r + a}{r - a} = 17.975 \times \ln\dfrac{1.1}{0.9} = 3.607\ \text{V}\)이고, 두 항의 합 3.607 V와 0.0001 V 안에서 맞는다.</p>
+      <p><b>다음 항은 몇 차인가.</b> 셋째 항은 \((d/r)^5/80\)에 비례해 \(17.975 \times 4.0 \times 10^{-6} = 7 \times 10^{-5}\ \text{V}\)이다. 전개는 \(d/r\)의 홀수 거듭제곱으로 나아가므로, 두 항에서 끊은 오차는 \((d/r)^5\) 차수다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 19.5 -->
+  <section id="s5">
+    <h2>유수 정리</h2>
+    <p>앞 절의 예제에서 원을 따라 적분하면 로랑 급수의 \(z^{-1}\) 계수만 남았다. 곡선 안에 특이점이 여럿 있어도 경로 변형 원리로 곡선을 특이점마다 작은 원으로 쪼갤 수 있으니, 닫힌 곡선의 적분은 특이점마다의 \(z^{-1}\) 계수를 더한 것으로 정해진다. 이 절에서 그 계수에 이름을 붙이고, 이 장을 시작한 진동자의 적분을 끝낸다.</p>
+
+    <h3 id="s5-residue">유수와 그 계산</h3>
+    <div class="box def" id="def-residue"><div class="box-h">유수</div>
+      <p>\(z_0\)가 \(f\)의 고립 특이점일 때, \(z_0\) 둘레의 로랑 급수에서 \((z - z_0)^{-1}\)의 계수 \(a_{-1}\)을 \(z_0\)에서 \(f\)의 <span class="term">유수</span> <span class="en">(residue)</span>라 하고 \(\operatorname*{Res}_{z=z_0}f\)로 쓴다. 식 <a class="ref" href="#eq-laurent-series"></a>에서 \(n = -1\)로 두면</p>
+      <div class="formula" id="eq-residue-def">\[ \operatorname*{Res}_{z=z_0}f = a_{-1} = \frac{1}{2\pi i}\oint_{C}f(z)\,dz \]</div>
+      <p>이다. \(C\)는 \(z_0\) 말고 다른 특이점을 감지 않는 작은 원이다.</p>
+    </div>
+    <p>로랑 급수를 다 구하지 않고도 극에서는 유수를 바로 계산할 수 있다. \(z_0\)가 \(m\)차 극이면 식 <a class="ref" href="#eq-pole-form"></a>의 \(g = (z - z_0)^mf\)는 \(z_0\)에서 해석적이고, 그 테일러 급수가 \(g = a_{-m} + a_{-m+1}(z - z_0) + \cdots + a_{-1}(z - z_0)^{m-1} + \cdots\)이다. 따라서 \(a_{-1}\)은 \(g\)의 \((m-1)\)차 테일러 계수다.</p>
+    <div class="formula" id="eq-residue-pole">\[ \operatorname*{Res}_{z=z_0}f = \frac{1}{(m - 1)!}\lim_{z\to z_0}\frac{d^{m-1}}{dz^{m-1}}\Big[(z - z_0)^mf(z)\Big] \]</div>
+    <p>단순 극(\(m = 1\))이면 \(\operatorname*{Res}f = \lim_{z\to z_0}(z - z_0)f(z)\)이다. 특히 \(f = p/q\)이고 \(p(z_0) \ne 0\), \(q(z_0) = 0\), \(q'(z_0) \ne 0\)이면 \((z - z_0)/q(z) \to 1/q'(z_0)\)이므로</p>
+    <div class="formula" id="eq-residue-simple">\[ \operatorname*{Res}_{z=z_0}\frac{p(z)}{q(z)} = \frac{p(z_0)}{q'(z_0)} \]</div>
+    <p>이다. 예를 들어 \(\operatorname*{Res}_{z=i}\dfrac{1}{1 + z^2} = \dfrac{1}{2i}\), \(\operatorname*{Res}_{z=n\pi}\dfrac{1}{\sin z} = \dfrac{1}{\cos n\pi} = (-1)^n\)이다. 진성 특이점에는 이 공식들을 쓸 수 없고 로랑 급수를 직접 읽는다. \(e^{1/z}\)의 원점에서 유수는 \(1/1! = 1\)이다.</p>
+
+    <h3 id="s5-theorem">유수 정리</h3>
+    <div class="box thm" id="thm-residue"><div class="box-h">유수 정리 <span class="en">(residue theorem)</span></div>
+      <p>\(C\)가 양의 방향 단순 닫힌 곡선이고, \(f\)가 \(C\) 위와 \(C\) 안에서 유한 개의 점 \(z_1, \ldots, z_N\)을 빼고 해석적이라 하자. \(z_k\)는 모두 \(C\) 안에 있고 \(C\) 위에는 없다. 그러면</p>
+      <div class="formula" id="eq-residue-theorem">\[ \oint_Cf(z)\,dz = 2\pi i\sum_{k=1}^{N}\operatorname*{Res}_{z=z_k}f \]</div>
+      <p>이다.</p>
+    </div>
+    <p><b>증명.</b> \(z_k\)마다 서로 겹치지 않고 \(C\) 안에 들어가는 작은 원 \(C_k\)를 잡는다. \(f\)는 \(C\)와 \(C_k\)들 사이에서 해석적이므로 <a class="ref" href="#thm-deformation"></a>의 (가)에서 \(\oint_C f\,dz = \sum_k\oint_{C_k}f\,dz\)이고, 식 <a class="ref" href="#eq-residue-def"></a>에서 각 항은 \(2\pi i\operatorname*{Res}_{z_k}f\)이다. \(\square\)</p>
+    <p>손으로 한 번 해 보자. \(f = \dfrac{z + 2}{z^2(z - 1)}\)을 원 \(\lvert z\rvert = 2\)를 따라 적분한다. 원점은 2차 극이고 식 <a class="ref" href="#eq-residue-pole"></a>에서 유수는 \(\frac{d}{dz}\frac{z + 2}{z - 1}\big|_0 = \frac{-3}{(z - 1)^2}\big|_0 = -3\)이다. \(z = 1\)은 단순 극이고 유수는 \((1 + 2)/1^2 = 3\)이다. 합이 0이므로 적분은 0이다. 아래 귀띔이 이 값을 다른 방법으로 확인해 준다.</p>
+    <div class="callout tip"><strong>검산하는 법: 무한대의 유수</strong><p>\(R > 1\)인 모든 원의 적분은 경로 변형 원리로 같고, \(R \to \infty\)에서 \(f \approx 1/z^2\)이라 ML 부등식으로 0이다. 일반적으로 \(f\)가 큰 \(\lvert z\rvert\)에서 \(f = c_1/z + c_2/z^2 + \cdots\)로 전개되면, 모든 특이점을 감는 큰 원의 적분은 \(2\pi i\,c_1\)이다. 그러니 <b>유한한 특이점들의 유수의 합은 \(1/z\) 꼴로 줄어드는 부분의 계수 \(c_1\)과 같다.</b> \(f\)가 \(1/z^2\)보다 빨리 줄면 유수의 합은 0이다. 앞의 예와 19.4절 예제의 영역 ③이 그렇다.</p></div>
+
+    <h3 id="s5-response">응답 함수의 역변환과 인과율</h3>
+    <div class="box ex" id="ex-oscillator-response-contour"><div class="box-h">감쇠 진동자의 충격 응답과 인과율</div>
+      <p>질량 \(m\)인 진동자 \(\ddot x + 2\gamma\dot x + \omega_0^2x = F(t)/m\)(10장 <a href="ch10.html#eq-damped-oscillator">식 (10.15)</a>, \(0 &lt; \gamma &lt; \omega_0\))이 정지해 있다가 \(t = 0\)에 충격량 \(J\)를 받는다: \(F = J\delta(t)\). 15장의 관례로 변환하면 \(\tilde x(\omega) = \chi(\omega)\tilde F(\omega)\)이고 \(\tilde F = J\), \(\chi(\omega) = \dfrac{1/m}{\omega_0^2 - \omega^2 - 2i\gamma\omega}\)이다(10장 <a href="ch10.html#eq-laplace-fourier-link">식 (10.45)</a>). 따라서</p>
+      <div class="formula">\[ x(t) = J\int_{-\infty}^{\infty}\frac{d\omega}{2\pi}\,\chi(\omega)\,e^{-i\omega t} \]</div>
+      <p>이다. (가) \(t &lt; 0\)이면 \(x(t) = 0\)임을 보이고 \(t > 0\)의 \(x(t)\)를 구하라. (나) \(m = 0.10\ \text{kg}\), \(\omega_0 = 10\ \text{rad/s}\), \(\gamma = 1.0\ \text{s}^{-1}\), \(J = 0.010\ \text{N}\cdot\text{s}\)일 때 진폭과 첫 최댓값을 구하라.</p>
+      <p><b>풀이.</b> (가) 분모가 0인 점은 \(\omega^2 + 2i\gamma\omega - \omega_0^2 = 0\)의 근이다.</p>
+      <div class="formula" id="eq-response-poles">\[ \begin{aligned} \omega_\pm &= \pm\omega_d - i\gamma, \quad \omega_d = \sqrt{\omega_0^2 - \gamma^2} \\ \chi(\omega) &= -\frac{1}{m}\,\frac{1}{(\omega - \omega_+)(\omega - \omega_-)} \end{aligned} \]</div>
+      <p>두 극 모두 <b>아래 반평면</b>에 있다. 실수축의 구간 \([-R, R]\)에 반지름 \(R\)인 반원을 붙여 경로를 닫자. 어느 쪽 반원인지는 \(\lvert e^{-i\omega t}\rvert = e^{t\operatorname{Im}\omega}\)가 정한다. \(t &lt; 0\)이면 위 반원(\(\operatorname{Im}\omega \ge 0\))에서 \(\lvert e^{-i\omega t}\rvert \le 1\)이고, \(\lvert\omega_\pm\rvert = \omega_0\)이므로 \(R > \omega_0\)에서 \(\lvert\chi\rvert \le 1/[m(R - \omega_0)^2]\)이다. ML 부등식에서 반원의 기여는 \(\pi R/[m(R - \omega_0)^2] \to 0\)이다. 위 반평면에는 극이 없으므로 닫힌 경로의 적분은 0이고, 따라서 \(x(t) = 0\)이다.</p>
+      <p>\(t > 0\)이면 아래 반원에서 같은 어림이 성립한다. 이 경로는 시계 방향이므로 적분은 \(-2\pi i\)에 유수의 합을 곱한 것이다. 식 <a class="ref" href="#eq-residue-simple"></a>에서</p>
+      <div class="formula">\[ \begin{aligned} \operatorname*{Res}_{\omega_+}\chi e^{-i\omega t} &= -\frac{e^{-i\omega_+t}}{2m\omega_d} \\ \operatorname*{Res}_{\omega_-}\chi e^{-i\omega t} &= \frac{e^{-i\omega_-t}}{2m\omega_d} \\ \text{합} &= -\frac{e^{-\gamma t}}{2m\omega_d}\big(e^{-i\omega_dt} - e^{i\omega_dt}\big) \\ &= \frac{i\,e^{-\gamma t}\sin\omega_dt}{m\omega_d} \end{aligned} \]</div>
+      <p>이다(\(\omega_+ - \omega_- = 2\omega_d\)). 여기에 \(J\cdot(-2\pi i)/2\pi = -iJ\)를 곱하면</p>
+      <div class="formula" id="eq-oscillator-response-result">\[ x(t) = \Theta(t)\,\frac{J}{m\omega_d}\,e^{-\gamma t}\sin\omega_dt \]</div>
+      <p>이다. 10장 <a href="ch10.html#eq-impulse-response-oscillator">식 (10.28)</a>의 충격 응답에 \(J\)를 곱한 것과 같고, 20장의 <a href="ch20.html#eq-green-oscillator">인과적 진동자 그린 함수</a>가 바로 이것이다. \(t = 0\)에서 양쪽 식이 모두 0이라 연속이다.</p>
+      <p><b>숫자로 보기.</b> (나) \(\omega_d = \sqrt{100 - 1} = 9.950\ \text{rad/s}\), 진폭 \(J/m\omega_d = 0.010/(0.10 \times 9.950)\ \text{m} = 1.005\ \text{cm}\)이다. 단위는 \(\text{N}\cdot\text{s}/(\text{kg}\cdot\text{s}^{-1}) = \text{m}\)이다. \(\dot x = 0\)에서 \(\tan\omega_dt = \omega_d/\gamma\)이므로 첫 최댓값은 \(t_1 = \arctan(9.950)/9.950 = 0.148\ \text{s}\)에 있고, \(x(t_1) = 1.005\ \text{cm} \times e^{-0.148}\sin(1.471) = 0.863\ \text{cm}\)이다.</p>
+    </div>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 300" role="img" aria-label="ω 평면에서 아래 반평면의 두 극과 위아래로 닫는 큰 반원"><text x="12" y="22" class="t" style="font-size:15px" text-anchor="start">(가) ω 평면</text><line x1="20" y1="150" x2="360" y2="150" class="s-line"/><line x1="190" y1="30" x2="190" y2="285" class="s-line"/><text x="358" y="170" class="t-math" style="font-size:15px" text-anchor="end">Re ω</text><text x="198" y="44" class="t-math" style="font-size:15px" text-anchor="start">Im ω</text><line x1="70" y1="150" x2="310" y2="150" class="s-line" style="stroke:var(--text);stroke-width:2.6"/><polygon points="257,150 245,154.5 245,145.5" class="f-dim"/><path d="M310,150a120,120 0 0 0 -240,0" class="s-acc2" stroke-dasharray="6 4"/><path d="M310,150a120,120 0 0 1 -240,0" class="s-acc"/><polygon points="183,30 195,25.5 195,34.5" class="f-acc2"/><polygon points="183,270 195,265.5 195,274.5" class="f-acc"/><path d="M254,170l12,12M254,182l12,-12" class="s-line" style="stroke:var(--text);stroke-width:2.2"/><path d="M114,170l12,12M114,182l12,-12" class="s-line" style="stroke:var(--text);stroke-width:2.2"/><text x="270" y="194" class="t-math" style="font-size:15px" text-anchor="start">ω₊</text><text x="110" y="194" class="t-math" style="font-size:15px" text-anchor="end">ω₋</text><text x="282.4" y="59.6" class="t-acc" style="font-size:13px;fill:var(--accent-2)" text-anchor="start">t &lt; 0: 위로 닫음</text><text x="282" y="248.4" class="t-acc" style="font-size:13px" text-anchor="start">t > 0: 아래로</text><text x="314" y="144" class="t-math dim" style="font-size:14px" text-anchor="start">R</text></svg><svg viewBox="0 0 380 300" role="img" aria-label="충격 응답 x(t): t가 0보다 작으면 0이고, 그 뒤 감쇠 진동"><text x="12" y="22" class="t" style="font-size:15px" text-anchor="start">(나) 충격 응답 x(t)</text><line x1="50" y1="145" x2="365" y2="145" class="s-line"/><line x1="95" y1="40" x2="95" y2="250" class="s-line"/><line x1="50" y1="49.5" x2="365" y2="49.5" class="s-grid"/><line x1="50" y1="240.5" x2="365" y2="240.5" class="s-grid"/><text x="44" y="54.5" class="t-dim" style="font-size:13px" text-anchor="end">1</text><text x="44" y="245.5" class="t-dim" style="font-size:13px" text-anchor="end">−1</text><text x="44" y="150" class="t-dim" style="font-size:13px" text-anchor="end">0</text><text x="185" y="163" class="t-dim" style="font-size:13px" text-anchor="middle">1</text><text x="275" y="163" class="t-dim" style="font-size:13px" text-anchor="middle">2</text><text x="365" y="163" class="t-dim" style="font-size:13px" text-anchor="middle">3</text><path d="M95,49.1l9,9.1 9,8.3 9,7.4 9,6.8 9,6.1 9,5.5 9,5.1 9,4.5 9,4.1 9,3.7 9,3.4 9,3 9,2.8 9,2.4 9,2.3 9,2 9,1.9 9,1.6 9,1.6 9,1.3 9,1.3 9,1.1 9,1 9,0.9 9,0.8 9,0.8 9,0.7 9,0.6 9,0.5 9,0.5" class="s-faint" stroke-dasharray="4 4"/><path d="M95,240.9l9,-9.1 9,-8.3 9,-7.4 9,-6.8 9,-6.1 9,-5.5 9,-5.1 9,-4.5 9,-4.1 9,-3.7 9,-3.4 9,-3 9,-2.8 9,-2.4 9,-2.3 9,-2 9,-1.9 9,-1.6 9,-1.6 9,-1.3 9,-1.3 9,-1.1 9,-1 9,-0.9 9,-0.8 9,-0.8 9,-0.7 9,-0.6 9,-0.5 9,-0.5" class="s-faint" stroke-dasharray="4 4"/><path d="M50,145l45,0 3.6,-35.7 3.6,-27.6 3.6,-15.8 3.6,-2.6 3.6,10 3.6,20.1 3.6,26.4 3.6,28.2 3.6,25.5 3.6,19.3 3.6,10.6 3.6,0.8 3.6,-8.1 3.6,-15.3 3.6,-19.6 3.6,-20.5 3.6,-18.3 3.6,-13.4 3.6,-7 3.6,0.1 3.6,6.6 3.6,11.6 3.6,14.5 3.6,14.9 3.6,13 3.6,9.3 3.6,4.6 3.6,-0.6 3.6,-5.3 3.6,-8.8 3.6,-10.6 3.6,-10.8 3.6,-9.3 3.6,-6.4 3.6,-3 3.6,0.9 3.6,4.1 3.6,6.6 3.6,7.9 3.6,7.8 3.6,6.6 3.6,4.4 3.6,1.8 3.6,-0.8 3.6,-3.3 3.6,-4.9 3.6,-5.8 3.6,-5.6 3.6,-4.7 3.6,-3.1 3.6,-1.1 3.6,0.9 3.6,2.5 3.6,3.7 3.6,4.2 3.6,4.1 3.6,3.3 3.6,2.1 3.6,0.6 3.6,-0.7 3.6,-2 3.6,-2.8 3.6,-3 3.6,-3 3.6,-2.3 3.6,-1.4 3.6,-0.4 3.6,0.7 3.6,1.5 3.6,2 3.6,2.3 3.6,2.1 3.6,1.6 3.6,1 3.6,0.2" class="s-acc" style="stroke-width:2.2"/><text x="365" y="280" class="t-dim" style="font-size:13px" text-anchor="end">t (s)</text><text x="54" y="34" class="t-dim" style="font-size:13px" text-anchor="start">x (cm)</text><text x="176" y="85.8" class="t-dim" style="font-size:13px" text-anchor="start">e^(−γt)</text></svg></div>
+      <figcaption><b>그림 19-3.</b> (가) 감쇠 진동자의 응답 함수의 극 \(\omega_\pm = \pm\omega_d - i\gamma\)(×)는 아래 반평면에 있다. \(t &lt; 0\)이면 위 반원(점선)으로 닫아 극을 감지 않으므로 응답이 0이고, \(t > 0\)이면 아래 반원(실선, 시계 방향)으로 닫아 두 극의 유수를 얻는다. (나) 예제의 값(\(m = 0.10\ \text{kg}\), \(\omega_0 = 10\ \text{rad/s}\), \(\gamma = 1.0\ \text{s}^{-1}\), \(J = 0.010\ \text{N}\cdot\text{s}\))으로 식 <a class="ref" href="#eq-oscillator-response-result"></a>을 계산해 그린 충격 응답. 충격 전에는 0이고, 점선은 포락선 \(\pm1.005\,e^{-\gamma t}\ \text{cm}\)이다.</figcaption>
+    </figure>
+    <p>이 예제에서 \(t &lt; 0\)의 응답이 0인 이유는 하나뿐이다. \(\chi(\omega)\)가 위 반평면에서 해석적이고 큰 \(\lvert\omega\rvert\)에서 줄어든다. 감쇠(\(\gamma > 0\))가 극을 아래로 내려 보낸다. 거꾸로 인과적인 응답 함수는 위 반평면에서 해석적이어야 한다. 이 동치가 20장의 <a href="ch20.html#eq-kramers-kronig">크라머스-크로니히 관계</a>의 출발점이다.</p>
+    <div class="callout warn"><strong>어느 쪽으로 닫는가는 관례가 정한다</strong><p>이 책은 진동을 \(e^{-i\omega t}\)로 쓰고 역변환을 \(\int\frac{d\omega}{2\pi}\tilde f e^{-i\omega t}\)로 한다. 그러면 <b>\(t > 0\)에서 아래로 닫고, 인과적인 응답의 극은 아래 반평면에 있다.</b> 기억하는 법은 "지수 \(-i\omega t\)의 실수부 \(t\operatorname{Im}\omega\)가 음수가 되는 쪽으로 닫는다"이다. 역변환에 \(e^{+i\omega t}\)를 쓰는 교재(공학의 \(e^{j\omega t}\) 관례)에서는 위아래가 모두 바뀐다. 인과적인 극은 위 반평면에 있고 \(t > 0\)에서 위로 닫는다. 다른 교재의 그림을 옮길 때 반드시 확인한다.</p></div>
+  </section>
+
+  <!-- ============================================================ 19.6 -->
+  <section id="s6">
+    <h2>실적분 계산</h2>
+    <p>유수 정리는 복소평면의 닫힌 경로에 대한 정리다. 실수 적분에 쓰려면 실수 구간을 닫힌 경로의 일부로 만들어야 한다. 방법은 두 가지다. 각도 \(\theta\)에 대한 적분은 단위원 위의 복소 적분으로 바꾸고, 실수축 전체의 적분은 큰 반원을 붙여 닫은 뒤 반원의 기여가 사라짐을 보인다. 요령은 반원의 기여가 0으로 가는 조건을 매번 확인하는 것이다.</p>
+
+    <h3 id="s6-trig">삼각 함수의 적분</h3>
+    <p>\(0 \le \theta \le 2\pi\)에서 \(z = e^{i\theta}\)는 단위원을 한 바퀴 돈다. 오일러 공식(2장 <a href="ch02.html#eq-euler-formula">식 (2.10)</a>)에서 다음 치환을 얻는다.</p>
+    <div class="formula" id="eq-trig-integral-sub">\[ \cos\theta = \frac{z + z^{-1}}{2}, \quad \sin\theta = \frac{z - z^{-1}}{2i}, \quad d\theta = \frac{dz}{iz} \]</div>
+    <p>그러면 \(\cos\theta\)와 \(\sin\theta\)의 유리 함수의 적분 \(\int_0^{2\pi}R(\cos\theta, \sin\theta)\,d\theta\)는 단위원 위에서 \(z\)의 유리 함수를 적분하는 것이 되고, 단위원 안의 극의 유수만 더하면 된다. 예를 들어 \(a > \lvert b\rvert > 0\)이면 \(a + b\cos\theta = (bz^2 + 2az + b)/2z\)이므로</p>
+    <div class="formula" id="eq-trig-denominator">\[ \int_0^{2\pi}\frac{d\theta}{a + b\cos\theta} = \oint_{\lvert z\rvert=1}\frac{2\,dz}{i(bz^2 + 2az + b)} = \frac{2\pi}{\sqrt{a^2 - b^2}} \]</div>
+    <p>이다. 분모의 두 근 \(z_\pm = (-a \pm \sqrt{a^2 - b^2})/b\)는 곱이 1이므로 하나만(\(z_+\)) 단위원 안에 있고, 그 유수는 \(\dfrac{2}{i\,b(z_+ - z_-)} = \dfrac{1}{i\sqrt{a^2 - b^2}}\)이다.</p>
+
+    <div class="box ex" id="ex-kepler-period-residue"><div class="box-h">케플러 궤도의 주기</div>
+      <p>태양 둘레의 타원 궤도를 \(r(\theta) = p/(1 + \varepsilon\cos\theta)\)로 쓰자. \(\varepsilon\)은 이심률(\(0 \le \varepsilon &lt; 1\), 이 예제에서만 쓰는 기호), \(p = h^2/GM\)이고 \(h = r^2\dot\theta\)는 단위 질량당 각운동량이다. (가) 주기 \(T = \int_0^{2\pi}d\theta/\dot\theta\)에 나오는 적분 \(\int_0^{2\pi}\dfrac{d\theta}{(1 + \varepsilon\cos\theta)^2}\)을 유수로 계산하라. (나) 긴반지름 \(a = p/(1 - \varepsilon^2)\)로 \(T\)를 쓰라. (다) \(a = 2.0\ \text{AU}\), \(\varepsilon = 0.60\)인 소행성의 주기를 구하라.</p>
+      <p><b>풀이.</b> (가) 식 <a class="ref" href="#eq-trig-integral-sub"></a>에서 \(1 + \varepsilon\cos\theta = (\varepsilon z^2 + 2z + \varepsilon)/2z = \varepsilon(z - z_+)(z - z_-)/2z\)이고, \(z_\pm = (-1 \pm \sqrt{1 - \varepsilon^2})/\varepsilon\)이다. 따라서</p>
+      <div class="formula">\[ \begin{aligned} &\int_0^{2\pi}\frac{d\theta}{(1 + \varepsilon\cos\theta)^2} \\ &\quad = \frac{4}{i\varepsilon^2}\oint_{\lvert z\rvert=1}\frac{z\,dz}{(z - z_+)^2(z - z_-)^2} \end{aligned} \]</div>
+      <p>이다. \(z_+z_- = 1\)이고 \(\lvert z_+\rvert &lt; 1\)이므로 단위원 안에는 2차 극 \(z_+\) 하나가 있다. 식 <a class="ref" href="#eq-residue-pole"></a>에서</p>
+      <div class="formula">\[ \begin{aligned} \operatorname*{Res}_{z_+} &= \frac{d}{dz}\frac{z}{(z - z_-)^2}\Big|_{z_+} = -\frac{z_+ + z_-}{(z_+ - z_-)^3} \\ &= \frac{2/\varepsilon}{\big(2\sqrt{1 - \varepsilon^2}/\varepsilon\big)^3} = \frac{\varepsilon^2}{4(1 - \varepsilon^2)^{3/2}} \end{aligned} \]</div>
+      <p>이고, \(2\pi i \cdot \dfrac{4}{i\varepsilon^2}\)을 곱하면</p>
+      <div class="formula" id="eq-kepler-integral">\[ \int_0^{2\pi}\frac{d\theta}{(1 + \varepsilon\cos\theta)^2} = \frac{2\pi}{(1 - \varepsilon^2)^{3/2}} \]</div>
+      <p>이다. \(\varepsilon = 0\)이면 \(2\pi\)로 맞는다. \(\varepsilon \to 1\)이면 극 \(z_+\)가 단위원 위의 \(-1\)로 다가가 적분이 발산한다. 포물선 궤도는 돌아오지 않는다.</p>
+      <p>(나) \(\dot\theta = h/r^2\)이므로 \(T = \dfrac{p^2}{h}\displaystyle\int_0^{2\pi}\frac{d\theta}{(1 + \varepsilon\cos\theta)^2}\)이다. \(h = \sqrt{GMp}\)에서 \(p^2/h = p^{3/2}/\sqrt{GM}\)이고 \(p = a(1 - \varepsilon^2)\)이므로 \((1 - \varepsilon^2)^{3/2}\)이 지워져</p>
+      <div class="formula">\[ T = \frac{2\pi\,a^{3/2}}{\sqrt{GM}} \]</div>
+      <p>이다. 이심률이 사라진 이 식이 케플러의 제3법칙이다.</p>
+      <p><b>숫자로 보기.</b> (다) 지구(\(a = 1\ \text{AU}\))의 주기가 1년이므로 \(T = 2.0^{3/2}\ \text{yr} = 2.83\ \text{yr}\)이다. \(GM_\odot = 1.327 \times 10^{20}\ \text{m}^3/\text{s}^2\), \(1\ \text{AU} = 1.496 \times 10^{11}\ \text{m}\)을 넣어 직접 계산해도 2.83년이다. 적분 <a class="ref" href="#eq-kepler-integral"></a>의 값은 원 궤도의 \(1/0.64^{3/2} = 1.95\)배지만 그만큼 \(p^{3/2}\)이 작아진다. 단위: \(\sqrt{\text{m}^3/(\text{m}^3/\text{s}^2)} = \text{s}\).</p>
+    </div>
+
+    <h3 id="s6-rational">실수축 위의 유리 함수</h3>
+    <p>\(p, q\)가 다항식이고 \(q\)의 차수가 \(p\)보다 2 이상 크며 \(q\)가 실수 영점을 갖지 않으면, \(\lvert p/q\rvert \le c/R^2\)이 큰 반원에서 성립하므로 반원의 기여는 ML 부등식으로 \(\pi R\cdot c/R^2 \to 0\)이다. 위 반원으로 닫으면</p>
+    <div class="formula" id="eq-rational-integral">\[ \int_{-\infty}^{\infty}\frac{p(x)}{q(x)}\,dx = 2\pi i\sum_{\operatorname{Im}z_k > 0}\operatorname*{Res}_{z=z_k}\frac pq \]</div>
+    <p>이다. 아래로 닫아도 되는데, 그때는 시계 방향이라 \(-2\pi i\)에 아래 반평면의 유수를 곱한다. 두 답이 같다는 것도 앞의 검산(유수의 합 \(= c_1 = 0\))에서 나온다.</p>
+
+    <div class="box ex" id="ex-thermal-oscillator-equipartition"><div class="box-h">열잡음을 받는 진동자의 평균 제곱 변위</div>
+      <p>온도 \(T\)의 주위와 열평형에 있는 진동자 \(m\ddot x + 2m\gamma\dot x + m\omega_0^2x = F(t)\)를 생각하자. 마찰을 일으키는 주위는 동시에 무작위 힘 \(F\)를 주고, 그 상관은 \(\langle F(t)F(t')\rangle = 2b\,k_BT\,\delta(t - t')\) (\(b = 2m\gamma\)는 마찰 계수)이다(요동-소산 정리, Kubo, Rep. Prog. Phys. <b>29</b>, 255 (1966)). 그러면 \(x = \int h(t - t')F(t')\,dt'\)에서 \(\langle x^2\rangle = 2bk_BT\int_0^\infty h(s)^2\,ds\)이고, 15장의 <a href="ch15.html#thm-plancherel">플랑슈렐 정리</a>로 \(\int h^2\,ds = \int\frac{d\omega}{2\pi}\lvert\chi(\omega)\rvert^2\)이다. (가) \(I = \displaystyle\int_{-\infty}^{\infty}\frac{d\omega}{(\omega_0^2 - \omega^2)^2 + 4\gamma^2\omega^2}\)을 유수로 구하라. (나) \(\langle x^2\rangle\)을 구하라. (다) 용수철 상수 \(k = 0.10\ \text{N/m}\)인 원자간력 현미경 캔틸레버가 300 K에서 떠는 변위의 제곱 평균 제곱근을 구하라.</p>
+      <p><b>풀이.</b> (가) 실수 \(\omega\)에서 분모는 \(D(\omega)\bar D(\omega)\)이다. \(D = \omega_0^2 - \omega^2 - 2i\gamma\omega\)의 영점은 아래 반평면의 \(\pm\omega_d - i\gamma\)이고, \(\bar D = \omega_0^2 - \omega^2 + 2i\gamma\omega = -(\omega - \omega_1)(\omega - \omega_2)\)의 영점은 위 반평면의 \(\omega_{1,2} = \pm\omega_d + i\gamma\)이다. 피적분 함수는 \(1/\omega^4\)로 줄어드므로 위로 닫는다. \(\omega_1\)에서 \(\bar D \approx -2\omega_d(\omega - \omega_1)\), \(\omega_2\)에서 \(\bar D \approx 2\omega_d(\omega - \omega_2)\)이고, \(\omega_0^2 - \omega_d^2 = \gamma^2\)를 쓰면 \(D(\omega_{1,2}) = 4\gamma(\gamma \mp i\omega_d)\)이다. 따라서</p>
+      <div class="formula">\[ \begin{aligned} \sum\operatorname*{Res} &= -\frac{1}{8\gamma\omega_d(\gamma - i\omega_d)} + \frac{1}{8\gamma\omega_d(\gamma + i\omega_d)} \\ &= \frac{1}{8\gamma\omega_d}\cdot\frac{-2i\omega_d}{\gamma^2 + \omega_d^2} = -\frac{i}{4\gamma\omega_0^2} \end{aligned} \]</div>
+      <p>이고, \(2\pi i\)를 곱하면</p>
+      <div class="formula" id="eq-thermal-integral">\[ I = \int_{-\infty}^{\infty}\frac{d\omega}{(\omega_0^2 - \omega^2)^2 + 4\gamma^2\omega^2} = \frac{\pi}{2\gamma\omega_0^2} \]</div>
+      <p>이다. 계산에서 \(\omega_d \ne 0\)을 썼지만 결과는 \(\gamma\)와 \(\omega_0\)의 매끄러운 함수이므로 과대 감쇠(\(\gamma > \omega_0\))에서도 같다. 시간 영역에서 \(\int_0^\infty h^2\,dt\)를 직접 적분해도 \(I/(2\pi m^2) = 1/(4m^2\gamma\omega_0^2)\)이 나온다.</p>
+      <p>(나) \(\langle x^2\rangle = 2bk_BT\cdot\dfrac{1}{2\pi m^2}I = \dfrac{4m\gamma k_BT}{4m^2\gamma\omega_0^2} = \dfrac{k_BT}{m\omega_0^2}\)이다. 곧 \(\tfrac12k\langle x^2\rangle = \tfrac12k_BT\)이고, 마찰 \(\gamma\)가 지워져 에너지 등분배 법칙이 정확히 나온다. 마찰이 크면 요동도 크지만 응답이 그만큼 작아진다.</p>
+      <p><b>숫자로 보기.</b> (다) \(k_BT = 25.85\ \text{meV} = 4.14 \times 10^{-21}\ \text{J}\)이므로 \(\langle x^2\rangle = 4.14 \times 10^{-21}\ \text{J}/(0.10\ \text{N/m}) = 4.1 \times 10^{-20}\ \text{m}^2\), 곧 \(x_{\text{rms}} = 0.20\ \text{nm}\)이다. 원자 하나의 크기와 비슷하다. 단위는 \(\text{J}/(\text{N/m}) = \text{m}^2\)이다.</p>
+    </div>
+
+    <h3 id="s6-jordan">진동 인자와 조르당 보조정리</h3>
+    <p>푸리에 변환에는 \(e^{ikx}\)가 붙은 적분이 나온다. 피적분 함수가 \(1/x\)처럼만 줄면 ML 부등식은 \(\pi R\cdot c/R = \pi c\)를 줄 뿐이다. 그래도 반원의 기여는 0으로 간다. \(k > 0\)이면 \(e^{ikz}\)가 위 반평면에서 \(e^{-k\operatorname{Im}z}\)로 줄어들기 때문이다. 다만 실수축 근처(\(\theta \approx 0, \pi\))에서는 줄지 않으므로 조금 더 세밀하게 어림해야 한다. 그 도구는 사인 함수가 \([0, \pi/2]\)에서 위로 볼록하다는 사실, 곧 현이 곡선 아래에 있다는 사실이다.</p>
+    <div class="formula" id="eq-jordan-inequality">\[ \sin\theta \ge \frac{2\theta}{\pi} \quad \Big(0 \le \theta \le \frac\pi2\Big) \]</div>
+    <div class="box thm" id="thm-jordan"><div class="box-h">조르당 보조정리 <span class="en">(Jordan's lemma)</span></div>
+      <p>\(k > 0\)이고, 위 반원 \(C_R\): \(z = Re^{i\theta}\) (\(0 \le \theta \le \pi\)) 위에서 \(\lvert g(z)\rvert \le M_R\)이며 \(R \to \infty\)에서 \(M_R \to 0\)이라 하자. 그러면</p>
+      <div class="formula" id="eq-jordan">\[ \Big\lvert\int_{C_R}g(z)\,e^{ikz}\,dz\Big\rvert &lt; \frac{\pi M_R}{k} \;\to\; 0 \]</div>
+      <p>이다. \(k &lt; 0\)이면 아래 반원에서 같은 결론(\(\pi M_R/\lvert k\rvert\))이 성립한다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>\(\lvert e^{ikz}\rvert = e^{-kR\sin\theta}\)이고 \(\lvert dz\rvert = R\,d\theta\)이므로 적분의 크기는 \(M_RR\int_0^\pi e^{-kR\sin\theta}d\theta = 2M_RR\int_0^{\pi/2}e^{-kR\sin\theta}d\theta\) 이하다(\(\theta \to \pi - \theta\) 대칭). 식 <a class="ref" href="#eq-jordan-inequality"></a>에서 이것은 \(2M_RR\int_0^{\pi/2}e^{-2kR\theta/\pi}d\theta = 2M_RR\cdot\frac{\pi}{2kR}(1 - e^{-kR}) &lt; \pi M_R/k\) 이하다. \(R\)이 지워진다는 점이 요점이다. 지수가 반원 길이의 대부분에서 피적분 함수를 죽인다.</p>
+      </details>
+    </div>
+    <p>이 책의 관례에서 \(e^{-i\omega t}\)는 \(k = -t\)인 경우다. \(t > 0\)이면 아래로, \(t &lt; 0\)이면 위로 닫는다. 앞 절의 진동자에서는 \(\chi\)가 \(1/\omega^2\)로 줄어 ML 부등식으로 충분했지만, \(1/\omega\)로만 주는 응답(1차계, 연습문제)에서는 이 보조정리가 필요하다.</p>
+
+    <div class="box ex" id="ex-fresnel-integral"><div class="box-h">직선 모서리 그림자의 프레넬 적분</div>
+      <p>(가) \(\int_0^\infty\cos x^2\,dx = \int_0^\infty\sin x^2\,dx = \tfrac12\sqrt{\pi/2}\)임을 보여라. (나) 파장 \(\lambda\)인 평면파가 직선 모서리(반평면 가림막)를 지나 거리 \(L\)의 스크린에 닿는다. 프레넬(근축) 근사에서 스크린 위 한 점의 진폭은 가림막 면의 각 점에서 오는 기여 \(e^{ik\xi^2/2L}\)을 열린 부분 \(\xi > \xi_0\)에 대해 더한 것이다(\(\xi\)는 모서리에 수직인 방향의 좌표, \(\xi_0\)는 관측점에서 잰 모서리의 위치). 기하학적 그림자의 경계(\(\xi_0 = 0\))에서 세기는 가림막이 없을 때의 몇 배인가? (다) \(\lambda = 500\ \text{nm}\), \(L = 2.0\ \text{m}\)일 때 가장 밝은 무늬의 위치와 세기를 구하라.</p>
+      <p><b>풀이.</b> (가) 정함수 \(e^{iz^2}\)을 그림 19-4 (가)의 부채꼴 경로를 따라 적분한다. 실수축 \([0, R]\), 원호 \(C_R\) (\(0 \le \theta \le \pi/4\)), 그리고 \(z = re^{i\pi/4}\)인 반직선을 거슬러 온다. 반직선에서 \(z^2 = ir^2\)이므로 \(e^{iz^2} = e^{-r^2}\)이다. 코시 정리에서</p>
+      <div class="formula">\[ \int_0^Re^{ix^2}dx + \int_{C_R}e^{iz^2}dz - e^{i\pi/4}\int_0^Re^{-r^2}dr = 0 \]</div>
+      <p>이다. 원호에서 \(\lvert e^{iz^2}\rvert = e^{-R^2\sin2\theta}\)이므로, \(\phi = 2\theta\)로 바꾸고 식 <a class="ref" href="#eq-jordan-inequality"></a>를 쓰면</p>
+      <div class="formula">\[ \Big\lvert\int_{C_R}\Big\rvert \le \frac R2\int_0^{\pi/2}e^{-R^2\sin\phi}d\phi \le \frac R2\cdot\frac{\pi}{2R^2} = \frac{\pi}{4R} \]</div>
+      <p>이고 \(R \to \infty\)에서 0이다. 따라서 \(\int_0^\infty e^{ix^2}dx = e^{i\pi/4}\sqrt\pi/2\)이고, 실수부와 허수부를 나누면</p>
+      <div class="formula" id="eq-fresnel-result">\[ \begin{aligned} \int_0^\infty\cos x^2\,dx &= \int_0^\infty\sin x^2\,dx \\ &= \frac12\sqrt{\frac\pi2} = 0.6267 \end{aligned} \]</div>
+      <p>이다. 피적분 함수가 0으로 가지 않는데도 수렴하는 것은 진동이 점점 빨라져 이웃한 반주기끼리 상쇄되기 때문이다.</p>
+      <p>(나) \(u = \xi\sqrt{2/\lambda L}\)로 두면 \(k\xi^2/2L = \pi u^2/2\)이다. (가)에서 \(x = u\sqrt{\pi/2}\)로 바꾸면 \(\int_0^\infty e^{i\pi u^2/2}du = \sqrt{2/\pi}\cdot\tfrac{\sqrt\pi}{2}e^{i\pi/4} = \tfrac{1 + i}{2}\)이다. 가림막이 없으면 적분 구간이 실수축 전체라 \(1 + i\)이고, 모서리가 관측점 바로 앞에 있으면 \(\tfrac{1 + i}{2}\)이다. 진폭은 정확히 절반, <b>세기는 4분의 1</b>이다. 일반적인 위치 \(u_0\)에서는 \(I/I_0 = \tfrac12\big\lvert\tfrac{1 + i}{2} - \int_0^{u_0}e^{i\pi u^2/2}du\big\rvert^2\)이고, 이 적분이 그리는 곡선이 그림 19-4 (나)의 코르뉘 나선이다.</p>
+      <p><b>숫자로 보기.</b> (다) 이 식을 수치로 계산하면 세기는 그림자 바깥 \(u_0 = -1.22\)에서 가장 크고, 그 값은 \(I = 1.37I_0\)이다. 거리의 척도는 \(\sqrt{\lambda L/2} = \sqrt{(500 \times 10^{-9})(2.0)/2}\ \text{m} = 0.71\ \text{mm}\)이므로, 가장 밝은 무늬는 그림자 경계에서 밝은 쪽으로 \(1.22 \times 0.71 = 0.86\ \text{mm}\)에 있다.</p>
+    </div>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 300" role="img" aria-label="실수축, 45도 원호, 원점으로 돌아오는 반직선으로 된 부채꼴 경로"><text x="12" y="22" class="t" style="font-size:15px" text-anchor="start">(가) 부채꼴 경로</text><line x1="20" y1="250" x2="365" y2="250" class="s-line"/><line x1="50" y1="35" x2="50" y2="285" class="s-line"/><path d="M50,250l270,0A270,270 0 0 0 240.9,59.1z" class="f-acc-soft" style="stroke-width:2.4"/><polygon points="192,250 180,254.5 180,245.5" class="f-acc"/><polygon points="296.8,140.2 305.5,149.6 297.2,153" class="f-acc"/><polygon points="140.5,159.5 145.8,147.8 152.2,154.2" class="f-acc"/><text x="320" y="270" class="t-math" style="font-size:16px" text-anchor="middle"><tspan font-style="italic">R</tspan></text><text x="44" y="268" class="t-dim" style="font-size:14px" text-anchor="end">0</text><path d="M90,250A40,40 0 0 0 78.3,221.7" class="s-line"/><text x="96" y="240" class="t" style="font-size:13px" text-anchor="start">45°</text><text x="185" y="236" class="t-dim" style="font-size:13px" text-anchor="middle">e^(ix²)</text><text x="131.5" y="146.5" class="t-dim" style="font-size:13px" text-anchor="end">e^(−r²)</text><text x="307.4" y="146.7" class="t-math" style="font-size:16px" text-anchor="start"><tspan font-style="italic">C</tspan>ᴿ</text></svg><svg viewBox="0 0 380 330" role="img" aria-label="코르뉘 나선: 점 (C(w), S(w))가 w가 커지면 (1/2, 1/2)로 감겨 든다"><text x="12" y="22" class="t" style="font-size:15px" text-anchor="start">(나) 코르뉘 나선</text><line x1="20" y1="165" x2="370" y2="165" class="s-grid"/><line x1="190" y1="35" x2="190" y2="320" class="s-grid"/><path d="M78.2,252.2l5,-1.3 5.3,0.1 5,1.5 4.4,2.7 3.6,3.9 2.4,4.6 1.1,5.1 -0.2,5.3 -1.6,4.9 -2.7,4.5 -3.8,3.6 -4.6,2.5 -5.1,1.3 -5.2,0 -5.1,-1.3 -4.6,-2.4 -3.9,-3.5 -3,-4.4 -1.8,-4.9 -0.6,-5.2 0.6,-5.2 1.8,-4.9 2.9,-4.4 3.8,-3.6 4.5,-2.6 5,-1.6 5.2,-0.4 5.2,0.7 4.9,1.9 4.4,2.8 3.7,3.8 2.8,4.4 1.8,4.9 0.7,5.2 -0.4,5.3 -1.4,5 -2.4,4.6 -3.3,4.1 -4,3.4 -4.7,2.4 -5,1.6 -5.2,0.5 -5.2,-0.5 -5,-1.5 -4.7,-2.3 -4.2,-3.2 -3.5,-4 -2.7,-4.4 -1.9,-4.9 -0.9,-5.2 -0.1,-5.2 0.9,-5.2 1.7,-4.9 2.6,-4.6 3.3,-4.1 3.9,-3.5 4.4,-2.8 4.8,-2 5.1,-1.3 5.3,-0.4 5.2,0.4 5.1,1.2 4.9,2 4.5,2.7 4,3.3 3.5,3.9 3,4.4 2.2,4.7 1.6,5 0.9,5.2 0.1,5.2 -0.5,5.2 -1.2,5.1 -1.9,4.9 -2.6,4.6 -3,4.3 -3.6,3.8 -4.1,3.3 -4.4,2.9 -4.7,2.3 -5,1.7 -5.1,1.1 -5.2,0.6 -5.3,-0.1 -5.2,-0.6 -5.1,-1.1 -4.9,-1.8 -4.8,-2.2 -4.5,-2.7 -4.2,-3.1 -3.9,-3.5 -3.5,-3.9 -3.2,-4.2 -2.7,-4.5 -2.4,-4.6 -1.9,-4.9 -1.5,-5.1 -1,-5.1 -0.7,-5.2 -0.2,-5.3 0.2,-5.2 0.6,-5.2 1,-5.2 1.4,-5 1.7,-5 2.1,-4.8 2.3,-4.7 2.7,-4.5 3,-4.4 3.2,-4.1 3.4,-4 3.7,-3.8 3.8,-3.5 4.1,-3.3 4.2,-3.2 4.4,-2.9 4.5,-2.7 4.6,-2.5 4.7,-2.3 4.8,-2.1 4.9,-1.9 5,-1.8 5,-1.5 5,-1.4 5.1,-1.2 5.2,-1.1 5.1,-0.9 5.2,-0.8 5.2,-0.7 5.3,-0.6 5.2,-0.4 5.2,-0.4 5.3,-0.3 5.2,-0.2 5.3,-0.2 5.2,-0.1 5.3,-0.1 5.2,0 5.3,0 5.2,0 5.2,0 5.3,0 5.2,0 5.3,-0.1 5.2,-0.1 5.3,-0.2 5.2,-0.2 5.3,-0.3 5.2,-0.4 5.2,-0.4 5.3,-0.6 5.2,-0.7 5.2,-0.8 5.1,-0.9 5.2,-1.1 5.1,-1.2 5,-1.4 5,-1.5 5,-1.8 4.9,-1.9 4.8,-2.1 4.7,-2.3 4.6,-2.5 4.5,-2.7 4.4,-2.9 4.2,-3.2 4.1,-3.3 3.8,-3.5 3.7,-3.8 3.4,-4 3.2,-4.1 3,-4.4 2.7,-4.5 2.3,-4.7 2.1,-4.8 1.7,-5 1.4,-5 1,-5.2 0.6,-5.2 0.2,-5.2 -0.2,-5.3 -0.7,-5.2 -1,-5.1 -1.5,-5.1 -1.9,-4.9 -2.4,-4.6 -2.7,-4.5 -3.2,-4.2 -3.5,-3.9 -3.9,-3.5 -4.2,-3.1 -4.5,-2.7 -4.8,-2.2 -4.9,-1.8 -5.1,-1.1 -5.2,-0.6 -5.3,-0.1 -5.2,0.6 -5.1,1.1 -5,1.7 -4.7,2.3 -4.4,2.9 -4.1,3.3 -3.6,3.8 -3,4.3 -2.6,4.6 -1.9,4.9 -1.2,5.1 -0.5,5.2 0.1,5.2 0.9,5.2 1.6,5 2.2,4.7 3,4.4 3.5,3.9 4,3.3 4.5,2.7 4.9,2 5.1,1.2 5.2,0.4 5.3,-0.4 5.1,-1.3 4.8,-2 4.4,-2.8 3.9,-3.5 3.3,-4.1 2.6,-4.6 1.7,-4.9 0.9,-5.2 -0.1,-5.2 -0.9,-5.2 -1.9,-4.9 -2.7,-4.4 -3.5,-4 -4.2,-3.2 -4.7,-2.3 -5,-1.5 -5.2,-0.5 -5.2,0.5 -5,1.6 -4.7,2.4 -4,3.4 -3.3,4.1 -2.4,4.6 -1.4,5 -0.4,5.3 0.7,5.2 1.8,4.9 2.8,4.4 3.7,3.8 4.4,2.8 4.9,1.9 5.2,0.7 5.2,-0.4 5,-1.6 4.5,-2.6 3.8,-3.6 2.9,-4.4 1.8,-4.9 0.6,-5.2 -0.6,-5.2 -1.8,-4.9 -3,-4.4 -3.9,-3.5 -4.6,-2.4 -5.1,-1.3 -5.2,0 -5.1,1.3 -4.6,2.5 -3.8,3.6 -2.7,4.5 -1.6,4.9 -0.2,5.3 1.1,5.1 2.4,4.6 3.6,3.9 4.4,2.7 5,1.5 5.3,0.1 5,-1.3" class="s-acc" style="stroke-width:1.6"/><circle cx="295" cy="60" r="4" class="f-acc2"/><circle cx="85" cy="270" r="4" class="f-acc2"/><line x1="190" y1="165" x2="295" y2="60" class="s-acc2" style="stroke-width:2"/><line x1="42.1" y1="298.6" x2="295" y2="60" class="s-line" stroke-dasharray="5 4" style="stroke:var(--text)"/><circle cx="42.1" cy="298.6" r="3.5" class="f-dim" style="fill:var(--text)"/><text x="333" y="24" class="t" style="font-size:14px" text-anchor="middle">(½, ½)</text><text x="35" y="215" class="t" style="font-size:14px" text-anchor="middle">(−½, −½)</text><text x="196" y="183" class="t-dim" style="font-size:13px" text-anchor="start">w = 0</text><text x="52.1" y="310.6" class="t-dim" style="font-size:13px" text-anchor="start">w = −1.22</text><text x="362" y="159" class="t-math dim" style="font-size:14px" text-anchor="end">C</text><text x="196" y="48" class="t-math dim" style="font-size:14px" text-anchor="start">S</text></svg></div>
+      <figcaption><b>그림 19-4.</b> (가) 프레넬 적분의 부채꼴 경로. \(45°\) 반직선에서 \(e^{iz^2} = e^{-r^2}\)이다. (나) 코르뉘 나선: 점 \(\big(\int_0^w\cos\tfrac{\pi u^2}{2}du, \int_0^w\sin\tfrac{\pi u^2}{2}du\big)\)를 \(\lvert w\rvert \le 3.5\)에서 수치 적분해 그렸다. \(w \to \pm\infty\)에서 \((\pm\tfrac12, \pm\tfrac12)\)로 감겨 든다. 모서리 문제에서 세기는 나선 위의 점 \(w = u_0\)에서 \((\tfrac12, \tfrac12)\)까지 거리의 제곱의 절반이다. 원점에서 그은 실선이 그림자 경계(\(I = I_0/4\)), 점 \(w = -1.22\)에서 그은 점선이 가장 밝은 무늬(\(I = 1.37I_0\))에 해당한다.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================================================ 19.7 -->
+  <section id="s7">
+    <h2>주값과 분지 절단을 낀 적분</h2>
+    <p>감쇠가 없는 진동자의 응답 함수 \(\chi = (1/m)/(\omega_0^2 - \omega^2)\)은 극이 실수축 위에 있다. 이때 역변환 적분은 그대로는 뜻이 없고, 극을 어느 쪽으로 비켜 가는지 정해야 한다(10장 식 (10.45) 뒤의 귀띔). 피적분 함수가 \(x^{a-1}\)이나 \(\sqrt s\)처럼 다가 함수이면 분지 절단이 경로를 막는다. 이 절에서는 극을 비켜 가는 주값과 소호츠키-플레멜 공식, 그리고 절단을 감싸는 열쇠 구멍 경로를 다룬다.</p>
+
+    <h3 id="s7-pv">주값과 작은 원호</h3>
+    <p>피적분 함수가 구간 안의 한 점 \(x_0\)에서 \(1/(x - x_0)\)처럼 발산하면 이상적분은 수렴하지 않는다. 그러나 \(x_0\)의 양쪽에서 같은 폭을 잘라 내고 극한을 취하면 양쪽의 발산이 서로 지워져 유한한 값이 남을 수 있다.</p>
+    <div class="formula" id="eq-principal-value">\[ \mathcal P\!\int_a^bf(x)\,dx = \lim_{\varepsilon\to0^+}\Big[\int_a^{x_0-\varepsilon} + \int_{x_0+\varepsilon}^b\Big]f(x)\,dx \]<div class="where">이것을 코시 <span class="term">주값</span> <span class="en">(principal value)</span>이라 한다. 무한 구간은 \(\mathcal P\int_{-\infty}^\infty = \lim_{R\to\infty}\int_{-R}^R\)로 정한다.</div></div>
+    <p>예를 들어 \(\mathcal P\int_{-1}^{2}dx/x = \lim[\ln\varepsilon - \ln1 + \ln2 - \ln\varepsilon] = \ln2\)이고, \(\mathcal P\int_{-\infty}^{\infty}x\,dx/(1 + x^2) = 0\)이다. 양쪽 폭을 \(\varepsilon\)과 \(2\varepsilon\)으로 다르게 자르면 답이 \(\ln2\)만큼 바뀌므로, 주값은 "대칭으로 자른다"는 약속이 들어간 값이다. 복소평면에서는 이 잘라 낸 구멍을 작은 반원으로 메운다.</p>
+    <div class="box thm" id="thm-indentation"><div class="box-h">작은 원호 보조정리</div>
+      <p>\(f\)가 실수축 위의 점 \(x_0\)에서 단순 극을 갖고 그 유수가 \(b\)라 하자. \(C_\varepsilon\)이 \(x_0\)를 중심으로 하는 반지름 \(\varepsilon\), 중심각 \(\alpha\)인 원호를 시계 반대 방향으로 도는 경로이면</p>
+      <div class="formula" id="eq-indentation">\[ \lim_{\varepsilon\to0}\int_{C_\varepsilon}f(z)\,dz = i\alpha\,b \]</div>
+      <p>이다. 특히 극의 위쪽을 지나는 반원을 시계 방향으로 돌면 \(-i\pi b\), 아래쪽 반원을 시계 반대 방향으로 돌면 \(+i\pi b\)이다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>\(x_0\) 근처에서 \(f = b/(z - x_0) + g(z)\)이고 \(g\)는 해석적이라 유계(\(\lvert g\rvert \le K\))다. 원호 \(z = x_0 + \varepsilon e^{i\theta}\)에서 \(\int b\,dz/(z - x_0) = b\int i\,d\theta = i\alpha b\)는 \(\varepsilon\)과 상관없이 정확하고, \(\lvert\int g\,dz\rvert \le K\alpha\varepsilon \to 0\)이다.</p>
+      </details>
+    </div>
+    <p>실수축 위의 단순 극을 작은 반원으로 비켜 가고 나머지는 큰 반원으로 닫으면, 반원들의 기여가 정리되어 다음을 얻는다(큰 반원의 기여는 사라진다고 할 때).</p>
+    <div class="formula" id="eq-pv-residue">\[ \mathcal P\!\int_{-\infty}^{\infty}f\,dx = 2\pi i\!\sum_{\text{위 반평면}}\!\operatorname*{Res}f + \pi i\!\sum_{\text{실수축}}\!\operatorname*{Res}f \]</div>
+
+    <div class="box ex" id="ex-sinc-integral"><div class="box-h">슬릿 회절 무늬의 넓이와 \(\int\sin x/x\,dx\)</div>
+      <p>(가) \(\int_{-\infty}^{\infty}\dfrac{\sin x}{x}\,dx = \pi\)임을 보여라. (나) \(\int_{-\infty}^{\infty}\dfrac{\sin^2x}{x^2}\,dx = \pi\)임을 보여라. (다) 폭 \(a\)인 단일 슬릿의 프라운호퍼 회절 무늬는 \(I(\theta) = I_0\big(\sin\beta/\beta\big)^2\), \(\beta = (\pi a/\lambda)\sin\theta\)이다(15장의 <a href="ch15.html#ex-slit-diffraction">슬릿 회절 예제</a>). 무늬를 각도에 대해 적분한 값을 높이 \(I_0\)인 직사각형의 넓이로 보면 그 폭은 얼마인가? \(a = 0.10\ \text{mm}\), \(\lambda = 633\ \text{nm}\)이면?</p>
+      <p><b>풀이.</b> (가) \(\sin x = \operatorname{Im}e^{ix}\)이므로 \(f = e^{iz}/z\)를 그림 19-5 (가)의 경로로 적분한다. 원점의 단순 극(유수 1)을 위쪽 작은 반원 \(C_\varepsilon\)으로 비켜 가고, 큰 반원 \(C_R\)로 닫는다. 경로 안에 극이 없으므로</p>
+      <div class="formula">\[ \Big[\int_{-R}^{-\varepsilon} + \int_\varepsilon^R\Big]\frac{e^{ix}}{x}dx + \int_{C_\varepsilon} + \int_{C_R} = 0 \]</div>
+      <p>이다. \(C_R\)의 기여는 조르당 보조정리(\(k = 1\), \(M_R = 1/R\))로 0으로 가고, \(C_\varepsilon\)의 기여는 <a class="ref" href="#thm-indentation"></a>에서 \(-i\pi\)로 간다. 따라서</p>
+      <div class="formula" id="eq-sinc-integral">\[ \mathcal P\!\int_{-\infty}^{\infty}\frac{e^{ix}}{x}\,dx = i\pi \]</div>
+      <p>이다. 실수부 \(\mathcal P\int\cos x/x\,dx = 0\)은 홀함수라 당연하고, 허수부가 \(\int\sin x/x\,dx = \pi\)이다. \(\sin x/x\)는 원점에서 연속이므로 이 적분에는 주값이 필요 없다.</p>
+      <p>(나) 실수축에서 \(\sin^2x/x^2 = \operatorname{Re}\dfrac{1 - e^{2ix}}{2x^2}\)이다. \(f = (1 - e^{2iz})/2z^2\)은 원점 근처에서 \(1 - e^{2iz} = -2iz + 2z^2 + \cdots\)이므로 \(f = -i/z + 1 + \cdots\), 곧 유수 \(-i\)인 단순 극이다. 위 반평면에서 \(\lvert1 - e^{2iz}\rvert \le 2\)이므로 \(\lvert f\rvert \le 1/R^2\)이고, 큰 반원의 기여는 ML 부등식으로 사라진다. 같은 경로에서 \(\mathcal P\int f\,dx - i\pi(-i) = 0\), 곧 \(\mathcal P\int f\,dx = \pi\)이고, 실수부가 \(\int\sin^2x/x^2\,dx = \pi\)이다.</p>
+      <p>(다) 무늬가 의미 있는 각도는 작으므로 \(\sin\theta \approx \theta\), \(d\beta = (\pi a/\lambda)d\theta\)로 쓰면 \(\int I\,d\theta = I_0(\lambda/\pi a)\int(\sin\beta/\beta)^2d\beta = I_0\lambda/a\)이다. 같은 넓이의 직사각형의 폭은 \(\lambda/a\)이고, 이것은 중앙 극대에서 첫 어두운 점까지의 각 \(\beta = \pi\)와 같다.</p>
+      <p><b>숫자로 보기.</b> \(\lambda/a = 633 \times 10^{-9}/1.0 \times 10^{-4} = 6.33\ \text{mrad}\)이다. 1.0 m 떨어진 스크린에서는 폭 6.3 mm다.</p>
+    </div>
+
+    <h3 id="s7-sokhotski">소호츠키-플레멜 공식</h3>
+    <p>극을 비켜 가는 대신 극을 실수축에서 조금 밀어내도 같은 효과가 난다. \(\varepsilon > 0\)에 대해 \(1/(x + i\varepsilon)\)의 실수부와 허수부를 나누면</p>
+    <div class="formula">\[ \frac{1}{x + i\varepsilon} = \frac{x}{x^2 + \varepsilon^2} - i\,\frac{\varepsilon}{x^2 + \varepsilon^2} \]</div>
+    <p>이다. 둘째 항의 \(\varepsilon/[\pi(x^2 + \varepsilon^2)]\)은 6장 <a href="ch06.html#eq-delta-sequences">식 (6.41)</a>의 로런츠 델타 수열이므로 \(\varepsilon \to 0\)에서 \(\pi\delta(x)\)로 간다. 첫째 항은 주값이 된다. 원점 근처에서 매끄럽고 멀리서 충분히 빨리 줄어드는 \(f\)에 대해, 대칭 구간 \([-L, L]\)에서 \(\int f(0)\,x\,dx/(x^2 + \varepsilon^2) = 0\)(홀함수)을 빼 두면</p>
+    <div class="formula">\[ \begin{aligned} \int_{-L}^{L}\frac{x\,f(x)\,dx}{x^2 + \varepsilon^2} &= \int_{-L}^{L}\frac{x\,[f(x) - f(0)]}{x^2 + \varepsilon^2}dx \\ &\to \int_{-L}^{L}\frac{f(x) - f(0)}{x}dx \end{aligned} \]</div>
+    <p>이다. 오른쪽 피적분 함수는 원점에서 유계이므로 극한을 적분 안으로 넣을 수 있고, \(\mathcal P\int_{-L}^Ldx/x = 0\)이므로 그 값은 \(\mathcal P\int_{-L}^Lf/x\,dx\)이다. \(\lvert x\rvert > L\)에서는 \(\varepsilon\)이 아무 역할을 하지 않는다. 두 결과를 모으면</p>
+    <div class="formula" id="eq-sokhotski">\[ \lim_{\varepsilon\to0^+}\frac{1}{x \pm i\varepsilon} = \mathcal P\frac1x \mp i\pi\,\delta(x) \]</div>
+    <p>이다. 이 식은 매끄러운 함수를 곱해 적분할 때의 뜻으로 읽는다. 이것을 <span class="term">소호츠키-플레멜 공식</span> <span class="en">(Sokhotski–Plemelj formula)</span>이라 한다. 경로로 보면 쉽게 기억할 수 있다. \(1/(x - x_0 + i\varepsilon)\)의 극 \(x_0 - i\varepsilon\)은 실수축 바로 아래에 있다. 극을 제자리(\(x_0\))에 두고 적분 경로를 극의 위로 지나가게 해도 같다. 위쪽 반원을 시계 방향으로 도는 기여는 <a class="ref" href="#thm-indentation"></a>에서 \(-i\pi f(x_0)\)이고, 나머지가 주값이다.</p>
+
+    <div class="box ex" id="ex-undamped-response"><div class="box-h">감쇠가 없는 진동자: 극을 어느 쪽으로 비켜 가는가</div>
+      <p>(가) 감쇠를 \(\gamma \to 0^+\)로 보내면 \(\omega_0^2 - \omega^2 - 2i\gamma\omega = \omega_0^2 + \gamma^2 - (\omega + i\gamma)^2\)이므로 응답 함수는</p>
+      <div class="formula" id="eq-undamped-chi">\[ \chi(\omega) = \frac{1/m}{\omega_0^2 - (\omega + i\varepsilon)^2}, \quad \varepsilon \to 0^+ \]</div>
+      <p>가 된다. 이 처방으로 얻는 충격 응답과, 주값 \(\mathcal P[1/(\omega_0^2 - \omega^2)]/m\)으로 얻는 응답을 비교하라. (나) \(\operatorname{Im}\chi\)를 구하라. \(m = 0.10\ \text{kg}\), \(\omega_0 = 10\ \text{rad/s}\), \(\gamma = 0.50\ \text{s}^{-1}\)이면 그 봉우리는 얼마나 높고 넓은가?</p>
+      <p><b>풀이.</b> (가) 극은 \(\omega = \pm\omega_0 - i\varepsilon\), 실수축 바로 아래다. 19.5절의 예제에서 \(\gamma \to 0\)으로 보낸 것과 같으므로 \(h(t) = \Theta(t)\sin(\omega_0t)/m\omega_0\)이다. 주값 처방에서는 \(\chi_{\mathcal P} = -\frac{1}{2m\omega_0}\mathcal P\big[\frac{1}{\omega - \omega_0} - \frac{1}{\omega + \omega_0}\big]\)이다. 식 <a class="ref" href="#eq-sinc-integral"></a>에서 변수를 바꾸면 \(\mathcal P\int e^{-iut}du/u = -i\pi\operatorname{sgn}t\)이므로 \(\int\frac{d\omega}{2\pi}e^{-i\omega t}\mathcal P\frac{1}{\omega - \omega_0} = -\frac i2\operatorname{sgn}(t)\,e^{-i\omega_0t}\)이다. 정리하면</p>
+      <div class="formula">\[ h_{\mathcal P}(t) = \operatorname{sgn}(t)\,\frac{\sin\omega_0t}{2m\omega_0} \]</div>
+      <p>이다. 이 응답은 \(t &lt; 0\)에도 0이 아니다. 지연 응답과 앞선 응답을 반씩 섞은 것으로, 원인보다 앞서 움직이므로 물리적인 충격 응답이 아니다. 두 응답의 차 \(h - h_{\mathcal P} = \sin(\omega_0t)/2m\omega_0\)는 모든 \(t\)에서 성립하는 자유 진동이고, 그것이 소호츠키-플레멜 공식의 \(i\pi\delta\) 항이 하는 일이다.</p>
+      <p>(나) \(\chi = -\frac{1}{2m\omega_0}\big[\frac{1}{\omega - \omega_0 + i\varepsilon} - \frac{1}{\omega + \omega_0 + i\varepsilon}\big]\)에 식 <a class="ref" href="#eq-sokhotski"></a>를 쓰면</p>
+      <div class="formula">\[ \operatorname{Im}\chi(\omega) = \frac{\pi}{2m\omega_0}\big[\delta(\omega - \omega_0) - \delta(\omega + \omega_0)\big] \]</div>
+      <p>이다. 감쇠가 없는 진동자는 정확히 공명 진동수에서만 에너지를 흡수한다. 흡수는 \(\omega\operatorname{Im}\chi\)에 비례하고(10장의 공명 곡선), \(\gamma > 0\)이면 이 델타 함수가 폭 \(\sim\gamma\)인 봉우리로 퍼진다.</p>
+      <p><b>숫자로 보기.</b> 공명 근처에서 \(\operatorname{Im}\chi \approx \dfrac{1}{2m\omega_0}\dfrac{\gamma}{(\omega - \omega_0)^2 + \gamma^2}\)이므로 봉우리 높이는 \(1/(2m\gamma\omega_0) = 1/(2 \times 0.10 \times 0.50 \times 10)\ \text{m/N} = 1.0\ \text{m/N}\), 반치폭은 \(2\gamma = 1.0\ \text{rad/s}\)이다. \(\gamma \to 0\)이면 높이는 \(1/\gamma\)로 커지고 폭은 \(\gamma\)로 줄어, 넓이가 \(\pi/2m\omega_0 = 1.57\ \text{m/(N}\cdot\text{s)}\)로 다가가며 (나)의 델타 함수가 된다. 인과율이 \(\operatorname{Im}\chi\)에 거는 조건은 20장에서 다룬다.</p>
+    </div>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 300" role="img" aria-label="원점을 작은 반원으로 비켜 가는 실수축과 위쪽 큰 반원"><text x="12" y="22" class="t" style="font-size:15px" text-anchor="start">(가) 원점을 비켜 가는 경로</text><line x1="15" y1="230" x2="365" y2="230" class="s-line"/><line x1="190" y1="45" x2="190" y2="285" class="s-line"/><path d="M40,230L164,230A26,26 0 0 1 216,230L340,230A150,150 0 0 0 40,230z" class="f-acc-soft" style="stroke-width:2.4"/><polygon points="122,230 110,234.5 110,225.5" class="f-acc"/><polygon points="272,230 260,234.5 260,225.5" class="f-acc"/><polygon points="197,204 185,208.5 185,199.5" class="f-acc"/><polygon points="183,80 195,75.5 195,84.5" class="f-acc"/><path d="M185,225l10,10M185,235l10,-10" class="s-line" style="stroke:var(--text);stroke-width:2.2"/><text x="40" y="250" class="t-math" style="font-size:16px" text-anchor="middle">−<tspan font-style="italic">R</tspan></text><text x="340" y="250" class="t-math" style="font-size:16px" text-anchor="middle"><tspan font-style="italic">R</tspan></text><text x="218" y="250" class="t-math" style="font-size:16px" text-anchor="start">ε</text><text x="202" y="196" class="t-math" style="font-size:15px" text-anchor="start"><tspan font-style="italic">C</tspan>ε</text><text x="302.5" y="111.5" class="t-math" style="font-size:16px" text-anchor="start"><tspan font-style="italic">C</tspan>ᴿ</text></svg><svg viewBox="0 0 380 300" role="img" aria-label="양의 실수축을 절단으로 두고 둘레를 감는 열쇠 구멍 경로, 극 -1"><text x="12" y="22" class="t" style="font-size:15px" text-anchor="start">(나) 열쇠 구멍 경로</text><line x1="20" y1="160" x2="200" y2="160" class="s-line"/><line x1="200" y1="30" x2="200" y2="290" class="s-line"/><line x1="200" y1="160" x2="365" y2="160" class="s-line" style="stroke:var(--text);stroke-width:3" stroke-dasharray="2 4"/><path d="M218.7,153L324.8,153A125,125 0 1 0 324.8,167L218.7,167A20,20 0 1 1 218.7,153z" class="f-acc-soft" style="stroke-width:2.4"/><polygon points="278.8,153 266.8,157.5 266.8,148.5" class="f-acc"/><polygon points="264.8,167 276.8,162.5 276.8,171.5" class="f-acc"/><polygon points="193,35 205,30.5 205,39.5" class="f-acc"/><polygon points="207,140 195,144.5 195,135.5" class="f-acc"/><path d="M131.5,154l12,12M131.5,166l12,-12" class="s-line" style="stroke:var(--text);stroke-width:2.2"/><text x="137.5" y="184" class="t-math" style="font-size:16px" text-anchor="middle">−1</text><text x="293.8" y="60.2" class="t-math" style="font-size:16px" text-anchor="start"><tspan font-style="italic">C</tspan>ᴿ</text><text x="270" y="145" class="t-dim" style="font-size:13px" text-anchor="middle">arg z = 0</text><text x="270" y="187" class="t-dim" style="font-size:13px" text-anchor="middle">arg z = 2π</text></svg></div>
+      <figcaption><b>그림 19-5.</b> (가) 실수축 위의 극(원점)을 위쪽 작은 반원 \(C_\varepsilon\)으로 비켜 가고 큰 반원 \(C_R\)로 닫은 경로. (나) 양의 실수축을 절단(점선)으로 둔 열쇠 구멍 경로. 절단 위(\(\arg z = 0\))로 나가 큰 원 \(C_R\)을 돌고, 절단 아래(\(\arg z = 2\pi\))로 돌아와 작은 원으로 원점을 비켜 간다. 경로 안의 극은 \(z = -1\)(×)이다.</figcaption>
+    </figure>
+
+    <h3 id="s7-branch">분지 절단을 낀 적분</h3>
+    <p>\(\int_0^\infty x^{a-1}R(x)\,dx\)처럼 다가 함수가 들어 있는 적분은 절단을 일부러 적분 구간 위에 놓는다. 절단의 위와 아래에서 함수값이 일정한 위상 인자만큼 다르므로, 절단을 감싸는 경로를 돌면 같은 실수 적분이 두 번, 서로 다른 인자를 달고 나온다. 11장에서 미뤄 둔 감마 함수의 반사 공식이 이렇게 증명된다.</p>
+    <div class="box ex" id="ex-gamma-reflection"><div class="box-h">열쇠 구멍 경로와 감마 함수의 반사 공식</div>
+      <p>(가) \(0 &lt; a &lt; 1\)일 때 \(I(a) = \displaystyle\int_0^\infty\frac{x^{a-1}}{1 + x}\,dx = \frac{\pi}{\sin\pi a}\)임을 보여라. (나) 이것으로 정수가 아닌 모든 \(z\)에서 \(\Gamma(z)\Gamma(1 - z) = \pi/\sin\pi z\)(11장 <a href="ch11.html#eq-gamma-reflection">식 (11.15)</a>)를 증명하라.</p>
+      <p><b>풀이.</b> (가) \(z^{a-1} = e^{(a-1)\log z}\)의 분지를 양의 실수축을 절단으로 하고 \(0 &lt; \arg z &lt; 2\pi\)로 고른다(18장 <a href="ch18.html#def-branch-cut">정의 18.8</a>). 그러면 \(f = z^{a-1}/(1 + z)\)는 절단 밖에서 \(z = -1\)만 빼고 해석적이다. 그림 19-5 (나)의 열쇠 구멍 경로는 절단 바로 위(\(\arg z = 0\))를 따라 \(\varepsilon\)에서 \(R\)까지 가고, 큰 원 \(C_R\)을 시계 반대 방향으로 돌고, 절단 바로 아래(\(\arg z = 2\pi\))를 따라 \(R\)에서 \(\varepsilon\)으로 돌아오고, 작은 원 \(C_\varepsilon\)을 시계 방향으로 돈다. 아래쪽 가장자리에서는 \(z = xe^{2\pi i}\)이므로 \(z^{a-1} = x^{a-1}e^{2\pi i(a-1)} = x^{a-1}e^{2\pi ia}\)이다. 원들의 기여는 ML 부등식으로 사라진다.</p>
+      <div class="formula">\[ \begin{aligned} \Big\lvert\int_{C_R}\Big\rvert &\le 2\pi R\cdot\frac{R^{a-1}}{R - 1} \to 0 \quad (a &lt; 1) \\ \Big\lvert\int_{C_\varepsilon}\Big\rvert &\le 2\pi\varepsilon\cdot\frac{\varepsilon^{a-1}}{1 - \varepsilon} \to 0 \quad (a > 0) \end{aligned} \]</div>
+      <p>두 조건이 곧 \(I(a)\)가 양 끝에서 수렴할 조건이다. 경로 안의 극 \(z = -1 = e^{i\pi}\)에서 유수는 \((e^{i\pi})^{a-1} = -e^{i\pi a}\)이다. 유수 정리에서 \((1 - e^{2\pi ia})I = 2\pi i(-e^{i\pi a})\)이므로</p>
+      <div class="formula" id="eq-keyhole-result">\[ I(a) = \frac{-2\pi i\,e^{i\pi a}}{1 - e^{2\pi ia}} = \frac{2\pi i}{e^{i\pi a} - e^{-i\pi a}} = \frac{\pi}{\sin\pi a} \]</div>
+      <p>이다. 극의 유수를 쓸 때 \(-1\)의 편각을 \(-\pi\)가 아니라 \(\pi\)로 잡아야 한다는 점이 함정이다. 우리가 고른 분지가 \(0 &lt; \arg z &lt; 2\pi\)이기 때문이다.</p>
+      <p>(나) 11장 <a href="ch11.html#eq-beta-infinite">식 (11.20)</a>에서 \(p = a\), \(q = 1 - a\)로 두면 \(p + q = 1\)이라 \(B(a, 1 - a) = I(a)\)이고, 11장 <a href="ch11.html#eq-beta-gamma">식 (11.21)</a>에서 \(B(a, 1 - a) = \Gamma(a)\Gamma(1 - a)/\Gamma(1)\)이다. 따라서 \(0 &lt; a &lt; 1\)에서 반사 공식이 성립한다. 실수 \(z\)로 넓히는 것은 점화식(11장 <a href="ch11.html#eq-gamma-recursion">식 (11.9)</a>)으로 충분하다. \(z\)에서 성립하면 \(\Gamma(z + 1)\Gamma(-z) = z\Gamma(z)\cdot\Gamma(1 - z)/(-z) = -\pi/\sin\pi z = \pi/\sin\pi(z + 1)\)이므로 \(z + 1\)에서도 성립하고, 같은 방법으로 \(z - 1\)로도 간다. 복소수 \(z\)로는 일치 정리(19.4절)로 넓힌다. 양변은 정수를 뺀 연결된 영역에서 해석적이고(\(\operatorname{Re}z > 0\)에서 적분 (11.8)은 \(z\)에 대해 해석적이며 점화식이 이를 넓힌다), 실수 구간 \((0, 1)\)에서 같으므로 어디서나 같다.</p>
+      <p><b>숫자로 보기.</b> \(a = \tfrac13\)이면 \(I = \pi/\sin60° = 2\pi/\sqrt3 = 3.6276\)이고, \(x = e^u\)로 바꾼 수치 적분과 \(\Gamma(\tfrac13)\Gamma(\tfrac23)\)의 값이 모두 3.6276이다. \(a = \tfrac14\)이면 \(\Gamma(\tfrac14)\Gamma(\tfrac34) = \pi\sqrt2 = 4.4429\)로, 11장의 큰 진폭 진자에서 쓴 값이다.</p>
+    </div>
+
+    <div class="box ex" id="ex-bromwich-inversion"><div class="box-h">브롬위치 적분: 갑자기 데운 벽으로 들어가는 열흐름</div>
+      <p>(가) \(t &lt; 0\)에서 0이고 \(\lvert f(t)\rvert \le Ce^{\sigma_0t}\)인 함수의 라플라스 변환 \(F(s)\)(10장 <a href="ch10.html#def-laplace-transform">정의 10.5</a>)에서 \(f\)를 되찾는 공식을 15장의 푸리에 역변환으로 유도하라. (나) 이 공식으로 \(F(s) = s^{-1/2}\)의 역변환을 구하라. (다) 처음 온도가 고른 반무한 매질(\(x > 0\))의 표면 온도를 \(t = 0\)에 갑자기 \(\Delta T\)만큼 올린다. 표면으로 들어가는 열흐름 밀도 \(q(t)\)를 구하고, 물(열전도도 \(k = 0.60\ \text{W/(m}\cdot\text{K)}\), 열확산도 \(D = 1.4 \times 10^{-7}\ \text{m}^2/\text{s}\))에 \(\Delta T = 20\ \text{K}\)이면 \(t = 1.0\ \text{s}\)와 10 s에서 값이 얼마인지 구하라.</p>
+      <p><b>풀이.</b> (가) \(c > \sigma_0\)를 고르고 \(g(t) = f(t)e^{-ct}\)로 두면 \(g\)는 지수적으로 줄어들고, 그 푸리에 변환은 \(\tilde g(\omega) = \int_0^\infty f(t)e^{-ct}e^{i\omega t}dt = F(c - i\omega)\)이다. 역변환 \(g(t) = \int\frac{d\omega}{2\pi}F(c - i\omega)e^{-i\omega t}\)에서 \(s = c - i\omega\)로 바꾸면 \(e^{-i\omega t} = e^{(s - c)t}\), \(d\omega = i\,ds\)이고, \(\omega\)가 \(-\infty\)에서 \(\infty\)로 갈 때 \(s\)는 \(c + i\infty\)에서 \(c - i\infty\)로 간다. 방향을 뒤집어 정리하면</p>
+      <div class="formula" id="eq-bromwich">\[ f(t) = \frac{1}{2\pi i}\int_{c-i\infty}^{c+i\infty}F(s)\,e^{st}\,ds \]</div>
+      <p>이다. 이것을 <span class="term">브롬위치 적분</span> <span class="en">(Bromwich integral)</span>이라 한다. 직선 \(\operatorname{Re}s = c\)는 \(F\)의 모든 특이점의 오른쪽에 있다. \(t > 0\)이면 \(e^{st}\)가 \(\operatorname{Re}s \to -\infty\)에서 줄어드므로 왼쪽으로 닫는다(\(s = c + iw\)로 쓰면 조르당 보조정리 그대로다). \(F\)가 유리 함수이면 \(f(t)\)는 \(F(s)e^{st}\)의 유수의 합이다. 10장 <a href="ch10.html#eq-transfer-function">식 (10.44)</a>의 전달 함수에서는 극 \(-\gamma \pm i\omega_d\)의 유수가 충격 응답을 준다. \(t &lt; 0\)이면 오른쪽으로 닫고, 거기에는 특이점이 없으므로 \(f = 0\)이다. 인과율이 여기서도 극의 위치로 나타난다.</p>
+      <p>(나) \(s^{-1/2}\)은 원점이 분지점이므로 절단을 음의 실수축에 두고 주값(\(-\pi &lt; \arg s &lt; \pi\))을 쓴다. 그림 19-6처럼 브롬위치 직선을 왼쪽 큰 원호로 닫되, 절단의 위 가장자리(\(\arg s = \pi\))를 따라 들어와 원점을 작은 원으로 시계 방향으로 돌고 아래 가장자리(\(\arg s = -\pi\))로 나간다. 경로 안에 특이점이 없으므로 전체 적분은 0이다. 큰 원호는 \(\lvert s^{-1/2}\rvert = R^{-1/2} \to 0\)이므로 조르당 보조정리로 사라지고(직선과 허수축 사이의 짧은 원호는 길이가 \(c\) 정도이고 피적분 함수가 \(e^{ct}R^{-1/2}\) 이하라 역시 사라진다), 작은 원은 \(2\pi\varepsilon\cdot\varepsilon^{-1/2}e^{\varepsilon t} \to 0\)이다. 위 가장자리 \(s = re^{i\pi}\)에서 \(s^{-1/2} = -ir^{-1/2}\), 아래 가장자리 \(s = re^{-i\pi}\)에서 \(+ir^{-1/2}\)이고, 둘 다 \(ds = -dr\)이다.</p>
+      <div class="formula">\[ \begin{aligned} \int_{\text{위}} &= \int_\infty^0(-ir^{-1/2})e^{-rt}(-dr) = -i\sqrt{\pi/t} \\ \int_{\text{아래}} &= \int_0^\infty(ir^{-1/2})e^{-rt}(-dr) = -i\sqrt{\pi/t} \end{aligned} \]</div>
+      <p>이다. 여기서 \(\int_0^\infty r^{-1/2}e^{-rt}dr = \Gamma(\tfrac12)t^{-1/2} = \sqrt{\pi/t}\)를 썼다. 브롬위치 직선의 적분은 이 두 기여의 합에 부호를 바꾼 \(2i\sqrt{\pi/t}\)이므로 \(f(t) = \frac{1}{2\pi i}\cdot2i\sqrt{\pi/t}\)이다.</p>
+      <div class="formula" id="eq-heat-flux-step">\[ \frac{1}{\sqrt s} \;\longleftrightarrow\; \frac{1}{\sqrt{\pi t}} \]</div>
+      <p>거꾸로 \(\int_0^\infty e^{-st}/\sqrt{\pi t}\,dt = \Gamma(\tfrac12)/\sqrt{\pi s} = s^{-1/2}\)이므로 맞다. 분지점에서 나온 이 쌍은 10장의 표로는 얻을 수 없다.</p>
+      <p>(다) 온도의 변화 \(\vartheta = T - T_0\)는 확산 방정식 \(\partial_t\vartheta = D\,\partial_x^2\vartheta\)(17장의 <a href="ch17.html#eq-diffusion-equation">확산 방정식</a>)을 따르고, \(\vartheta(x, 0) = 0\), \(\vartheta(0, t) = \Delta T\)이며 \(x \to \infty\)에서 유계다. 시간에 대해 라플라스 변환하면(10장 <a href="ch10.html#eq-laplace-derivative">식 (10.40)</a>) \(s\tilde\vartheta = D\,\tilde\vartheta''\)이고(\(\tilde\vartheta(x, s)\)는 \(\vartheta\)의 변환), 유계인 해는 \(\tilde\vartheta = (\Delta T/s)\,e^{-x\sqrt{s/D}}\)이다. 표면의 열흐름 \(q = -k\,\partial_x\vartheta|_{x=0}\)의 변환은 \(k\Delta T\sqrt{s/D}/s = (k\Delta T/\sqrt D)\,s^{-1/2}\)이므로 (나)에서</p>
+      <div class="formula">\[ \begin{aligned} q(t) &= \frac{k\,\Delta T}{\sqrt{\pi Dt}} \\ Q(t) &= \int_0^tq\,dt' = 2k\,\Delta T\sqrt{\frac{t}{\pi D}} \end{aligned} \]</div>
+      <p>이다. 들어가는 열흐름은 \(1/\sqrt t\)로 줄고, 쌓인 열은 \(\sqrt t\)로 는다. 열이 퍼진 깊이가 \(\sqrt{Dt}\)로 자라기 때문이다.</p>
+      <p><b>숫자로 보기.</b> \(\sqrt{\pi D\cdot1.0\ \text{s}} = \sqrt{\pi \times 1.4 \times 10^{-7}}\ \text{m} = 6.6 \times 10^{-4}\ \text{m}\)이므로 \(q(1.0\ \text{s}) = (0.60 \times 20)/(6.6 \times 10^{-4})\ \text{W/m}^2 = 1.8 \times 10^4\ \text{W/m}^2\)이고, \(q(10\ \text{s}) = 5.7 \times 10^3\ \text{W/m}^2\)이다. 첫 1초 동안 들어간 열은 \(Q = 3.6 \times 10^4\ \text{J/m}^2\)이다. 단위: \(\text{W/(m}\cdot\text{K)} \times \text{K}/\text{m} = \text{W/m}^2\). \(t \to 0\)에서 \(q\)가 무한대인 것은 표면 온도를 순간적으로 바꾼다는 이상화에서 온다.</p>
+    </div>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 300" role="img" aria-label="브롬위치 직선 Re s = c와 왼쪽 큰 원호, 음의 실수축 절단을 감는 경로"><line x1="15" y1="150" x2="410" y2="150" class="s-line"/><line x1="250" y1="15" x2="250" y2="290" class="s-line"/><line x1="95" y1="150" x2="250" y2="150" class="s-line" style="stroke:var(--text);stroke-width:3" stroke-dasharray="2 4"/><path d="M290,273.7L290,26.3A130,130 0 0 0 120.1,144L235.2,144A16,16 0 1 1 235.2,156L120.1,156A130,130 0 0 0 290,273.7z" class="f-acc-soft" style="stroke-width:2.4"/><polygon points="290,83 294.5,95 285.5,95" class="f-acc"/><polygon points="192,144 180,148.5 180,139.5" class="f-acc"/><polygon points="178,156 190,151.5 190,160.5" class="f-acc"/><polygon points="153.1,63 158.4,51.4 164.8,57.7" class="f-acc"/><text x="298" y="42.3" class="t-math" style="font-size:15px" text-anchor="start">Re <tspan font-style="italic">s</tspan> = <tspan font-style="italic">c</tspan></text><text x="185" y="136" class="t-dim" style="font-size:13px" text-anchor="middle">arg s = π</text><text x="185" y="176" class="t-dim" style="font-size:13px" text-anchor="middle">arg s = −π</text><text x="405" y="142" class="t-math" style="font-size:15px" text-anchor="end">Re <tspan font-style="italic">s</tspan></text><text x="258" y="30" class="t-math" style="font-size:15px" text-anchor="start">Im <tspan font-style="italic">s</tspan></text></svg></div>
+      <figcaption><b>그림 19-6.</b> \(s^{-1/2}\)의 브롬위치 적분. 직선 \(\operatorname{Re}s = c\)를 왼쪽 큰 원호로 닫되, 음의 실수축의 절단(점선)은 위 가장자리(\(\arg s = \pi\))로 들어와 원점을 작은 원으로 감고 아래 가장자리(\(\arg s = -\pi\))로 나간다. 경로 안에 특이점이 없으므로 직선 위의 적분은 절단 양쪽 가장자리의 적분과 크기가 같고 부호가 반대다.</figcaption>
+    </figure>
+    <div class="callout deep" data-later="qm-grad"><strong>안장점 방법과 해석 접속</strong><p>진동하거나 큰 매개변수를 가진 적분 \(\int e^{N\phi(z)}dz\)는 경로 변형 원리로 경로를 \(\phi'(z_0) = 0\)인 안장점을 지나 \(\operatorname{Im}\phi\)가 일정한 방향으로 옮기면 11장의 라플라스 방법으로 바뀐다(최대 경사법). 산란 진폭의 점근 꼴과 경로 적분의 고전 극한이 이 방법에 기댄다. 또 일치 정리는 한 영역에서 정의된 해석 함수를 더 넓은 영역으로 이어 가는 <span class="term">해석 접속</span> <span class="en">(analytic continuation)</span>이 많아야 한 가지임을 보장한다. 반사 공식으로 \(\Gamma\)를 넓힌 것이 그 예다. 두 주제의 일반론은 대학원 양자역학 책에서 다룬다.</p></div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>복소 선적분은 \(\int_Cf\,dz = \int_a^bf(z(t))z'(t)\,dt\)이고 실수 선적분 두 개를 묶은 것이다. 원을 따라 \(\oint(z - z_0)^n\,dz\)는 \(n = -1\)일 때만 \(2\pi i\)이고 나머지는 0이다. 크기는 ML 부등식 \(\lvert\int_Cf\,dz\rvert \le ML\)로 누른다.</li>
+      <li>코시 정리: 단순 연결 영역에서 해석적인 함수의 단순 닫힌 곡선 적분은 0이다. 그린 정리와 코시-리만 방정식으로 증명하면 \(f'\)의 연속성이 더 필요하지만, 구르사의 정리가 이 조건을 없앤다. 특이점을 건너지 않는 한 적분 경로는 마음대로 변형할 수 있다.</li>
+      <li>코시 적분 공식 \(f(z_0) = \frac{1}{2\pi i}\oint\frac{f(z)}{z - z_0}dz\)와 도함수 공식 \(f^{(n)}(z_0) = \frac{n!}{2\pi i}\oint\frac{f(z)}{(z - z_0)^{n+1}}dz\): 해석 함수는 몇 번이든 미분할 수 있고, 원 중심의 값은 원 위의 평균이다. 코시 부등식에서 리우빌 정리(유계인 정함수는 상수)가 나온다.</li>
+      <li>원판에서 해석적인 함수는 테일러 급수와 같고, 수렴 반경은 가장 가까운 특이점까지의 거리 이상이고, 그 점이 극이면 정확히 그 거리다. 고리에서 해석적인 함수는 로랑 급수 \(\sum_{-\infty}^\infty a_n(z - z_0)^n\)을 갖고, 그 주요부로 고립 특이점을 없앨 수 있는 특이점, \(m\)차 극, 진성 특이점으로 나눈다. 분지점은 고립 특이점이 아니다.</li>
+      <li>유수 \(\operatorname{Res}f = a_{-1}\)은 \(m\)차 극에서 \(\frac{1}{(m-1)!}\frac{d^{m-1}}{dz^{m-1}}[(z - z_0)^mf]\), 단순 극에서 \(p(z_0)/q'(z_0)\)이다. 유수 정리 \(\oint_Cf\,dz = 2\pi i\sum\operatorname{Res}\)로 \(z = e^{i\theta}\) 치환의 삼각 함수 적분과 큰 반원으로 닫는 실수축 적분을 계산한다. \(e^{ikz}\)가 붙으면 조르당 보조정리로 \(1/R\)만 줄어도 반원의 기여가 사라진다.</li>
+      <li>\(e^{-i\omega t}\) 관례에서 \(t > 0\)이면 아래로, \(t &lt; 0\)이면 위로 닫는다. 감쇠 진동자의 응답 함수는 극 \(\pm\omega_d - i\gamma\)가 아래 반평면에 있어 \(t &lt; 0\)에서 응답이 0이고, \(t > 0\)에서 \(e^{-\gamma t}\sin(\omega_dt)/m\omega_d\)이다. 인과율은 \(\chi\)가 위 반평면에서 해석적이라는 것과 같다.</li>
+      <li>주값은 극의 양쪽을 대칭으로 잘라 낸 극한이고, 극 위를 지나는 작은 반원은 \(-i\pi\operatorname{Res}\)를 준다. 소호츠키-플레멜 공식은 \(1/(x \pm i\varepsilon) = \mathcal P(1/x) \mp i\pi\delta(x)\)이다. 다가 함수의 적분은 절단을 감싸는 경로로 계산한다(반사 공식, \(1/\sqrt s \leftrightarrow 1/\sqrt{\pi t}\)).</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. 원 \(\lvert z\rvert = 3\)을 양의 방향으로 도는 적분 \(\oint\dfrac{dz}{(z - 1)^2}\)의 값은?</p><div class="opts">
+        <button class="opt" data-correct>\(0\)</button>
+        <button class="opt">\(2\pi i\)</button>
+        <button class="opt">\(4\pi i\)</button>
+        <button class="opt">원 안에 특이점이 있으므로 정의되지 않는다.</button>
+      </div><div class="quiz-exp">\(z = 1\)은 원 안에 있는 2차 극이지만 로랑 급수가 \((z - 1)^{-2}\) 한 항뿐이라 유수(\(z^{-1}\) 계수)가 0이다. 식 <a class="ref" href="#eq-power-circle-integral"></a>의 \(n = -2\)인 경우이고, \(-1/(z - 1)\)이라는 원시함수가 있다는 것으로도 알 수 있다.</div></div>
+      <div class="quiz-q"><p>2. \(f(x) = 1/(1 + x^2)\)를 \(x_0 = 1\)을 중심으로 테일러 전개한 급수의 수렴 반경은?</p><div class="opts">
+        <button class="opt">\(1\)</button>
+        <button class="opt" data-correct>\(\sqrt2\)</button>
+        <button class="opt">\(2\)</button>
+        <button class="opt">\(\infty\) (실수축 전체에서 매끄러우므로)</button>
+      </div><div class="quiz-exp">\(1/(1 + z^2)\)의 특이점은 \(\pm i\)이고, 중심 1에서 그 거리는 \(\lvert 1 - i\rvert = \sqrt2\)이다. 실수축에서 매끄러운 것은 수렴 반경을 정하지 않는다. 수렴 원판은 복소평면에서 가장 가까운 특이점까지 넓어진다.</div></div>
+      <div class="quiz-q"><p>3. \(f = 1/z\)은 \(z \ne 0\)에서 해석적인데 \(\oint_{\lvert z\rvert=1}f\,dz = 2\pi i \ne 0\)이다. 코시 정리와 모순이 아닌 이유는?</p><div class="opts">
+        <button class="opt">\(1/z\)의 도함수가 연속이 아니어서</button>
+        <button class="opt">단위원이 단순 닫힌 곡선이 아니어서</button>
+        <button class="opt" data-correct>\(\mathbb C\setminus\{0\}\)이 단순 연결이 아니어서 원의 안쪽이 해석적인 영역에 들어 있지 않으므로</button>
+        <button class="opt">\(1/z\)이 유계가 아니어서</button>
+      </div><div class="quiz-exp">코시 정리는 곡선의 안쪽 전체에서 \(f\)가 해석적이어야 한다. 원점이 빠진 영역은 단순 연결이 아니고, 원은 그 구멍을 감는다. \(1/z\)의 도함수 \(-1/z^2\)은 \(z \ne 0\)에서 연속이다.</div></div>
+      <div class="quiz-q"><p>4. 이 책의 관례로 \(x(t) = \int\frac{d\omega}{2\pi}\chi(\omega)e^{-i\omega t}\)를 \(t > 0\)에 대해 계산할 때 실수축을 어느 쪽 큰 반원으로 닫아야 하는가?</p><div class="opts">
+        <button class="opt">위 반원, 시계 반대 방향</button>
+        <button class="opt" data-correct>아래 반원, 시계 방향</button>
+        <button class="opt">\(\chi\)의 극이 있는 쪽이면 어느 쪽이든 된다.</button>
+        <button class="opt">어느 쪽으로 닫아도 같다.</button>
+      </div><div class="quiz-exp">\(\lvert e^{-i\omega t}\rvert = e^{t\operatorname{Im}\omega}\)이므로 \(t > 0\)이면 \(\operatorname{Im}\omega &lt; 0\)에서 줄어든다. 위로 닫으면 반원 위에서 피적분 함수가 지수적으로 커져 반원의 기여가 사라지지 않는다. 아래 반원은 시계 방향이라 \(-2\pi i\sum\operatorname{Res}\)이다.</div></div>
+      <div class="quiz-q"><p>5. \(f(z) = e^{2z}/z^3\)의 \(z = 0\)에서의 유수는?</p><div class="opts">
+        <button class="opt">\(0\)</button>
+        <button class="opt">\(1\)</button>
+        <button class="opt" data-correct>\(2\)</button>
+        <button class="opt">\(4\)</button>
+      </div><div class="quiz-exp">\(e^{2z} = 1 + 2z + 2z^2 + \tfrac43z^3 + \cdots\)를 \(z^3\)으로 나누면 \(z^{-1}\)의 계수는 \(2\)이다. 3차 극의 공식 \(\frac{1}{2!}\frac{d^2}{dz^2}e^{2z}\big|_0 = 4/2 = 2\)로도 같다.</div></div>
+      <div class="quiz-q"><p>6. \(\varepsilon \to 0^+\)에서 \(\dfrac{1}{x + i\varepsilon}\)은 무엇이 되는가?</p><div class="opts">
+        <button class="opt">\(\mathcal P(1/x) + i\pi\delta(x)\)</button>
+        <button class="opt" data-correct>\(\mathcal P(1/x) - i\pi\delta(x)\)</button>
+        <button class="opt">\(1/x\) (극한이 그냥 \(1/x\)이다)</button>
+        <button class="opt">\(-i\pi\delta(x)\)만 남는다.</button>
+      </div><div class="quiz-exp">\(1/(x + i\varepsilon) = x/(x^2 + \varepsilon^2) - i\varepsilon/(x^2 + \varepsilon^2)\)이고, 둘째 항의 \(\varepsilon/[\pi(x^2 + \varepsilon^2)]\)이 \(\delta(x)\)로 간다. 극 \(-i\varepsilon\)이 실수축 아래에 있으므로, 극을 실수축에 두고 경로가 위로 비켜 가는 것과 같아 \(-i\pi\)가 붙는다.</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-contour-basics" data-level="1"><p>(가) \(\oint_{\lvert z\rvert=1}z^*\,dz\)를 계산하고, 이 값이 단위원의 넓이와 어떤 관계인지 말하라. (나) \(\int z^2\,dz\)를 0에서 \(1 + i\)까지 선분을 따라, 그리고 0 → 1 → \(1 + i\)의 꺾인 경로를 따라 계산해 비교하라. (다) ML 부등식으로 \(\big\lvert\oint_{\lvert z\rvert=2}\frac{e^z}{z^2 + 1}dz\big\rvert\)의 위 한계를 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(z = e^{i\theta}\)이면 \(z^* = e^{-i\theta}\), \(dz = ie^{i\theta}d\theta\)이므로 \(\oint z^*dz = \int_0^{2\pi}i\,d\theta = 2\pi i\)이다. \(z^*\)는 해석적이지 않으므로 0일 이유가 없다. 식 <a class="ref" href="#eq-contour-real-parts"></a>와 그린 정리에서 일반적으로 \(\oint z^*dz = \oint(x\,dx + y\,dy) + i\oint(x\,dy - y\,dx) = 0 + 2i\cdot(\text{넓이})\)이고, 단위원에서 \(2i\pi\)이다.</p>
+        <p>(나) 선분 \(z = (1 + i)t\): \(\int_0^1(1 + i)^3t^2\,dt = (1 + i)^3/3 = (-2 + 2i)/3\). 꺾인 경로: \(\int_0^1x^2dx + \int_0^1(1 + iy)^2\,i\,dy = \tfrac13 + i\big[1 + i - \tfrac13\big] = \tfrac13 - 1 + \tfrac{2i}{3} = (-2 + 2i)/3\). 같다. \(z^2\)은 원시함수 \(z^3/3\)을 가지므로 끝점만 본다.</p>
+        <p>(다) \(\lvert z\rvert = 2\)에서 \(\lvert e^z\rvert = e^x \le e^2\), \(\lvert z^2 + 1\rvert \ge \lvert z\rvert^2 - 1 = 3\)이고 길이는 \(4\pi\)이므로 \(\le 4\pi e^2/3 = 31\)이다. 실제 값은 유수 정리에서 \(2\pi i\sin1\), 크기 5.29로 한계 안에 있다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-classify-singularities" data-level="1"><p>다음 함수의 특이점을 모두 찾아 종류(없앨 수 있는 특이점, 몇 차 극, 진성 특이점)를 밝히고 유수를 구하라. (가) \((1 - \cos z)/z^4\) (나) \(z^2\sin(1/z)\) (다) \(1/(e^z - 1)\)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(1 - \cos z = z^2/2 - z^4/24 + \cdots\)이므로 \(f = \frac{1}{2z^2} - \frac{1}{24} + \cdots\)이다. 원점은 2차 극이고 \(z^{-1}\) 항이 없으므로 유수는 0이다. \(1 - \cos z\)의 2차 영점이 \(z^4\)의 4차 영점 둘을 지운 것이다.</p>
+        <p>(나) \(\sin(1/z) = 1/z - 1/(6z^3) + 1/(120z^5) - \cdots\)이므로 \(z^2\sin(1/z) = z - \frac{1}{6z} + \frac{1}{120z^3} - \cdots\)이다. 주요부가 무한하므로 원점은 진성 특이점이고, 유수는 \(-1/6\)이다.</p>
+        <p>(다) \(e^z = 1\)인 점 \(z_k = 2\pi ik\) (\(k\)는 정수)에서 분모가 0이고 \((e^z)' = e^{z_k} = 1 \ne 0\)이므로 모두 단순 극이다. 식 <a class="ref" href="#eq-residue-simple"></a>에서 유수는 \(1/e^{z_k} = 1\)이다. 원점에서는 \(1/(e^z - 1) = 1/z - 1/2 + z/12 - \cdots\)로 확인된다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-trig-cos2" data-level="2"><p>\(\displaystyle\int_0^{2\pi}\frac{\cos2\theta}{5 - 3\cos\theta}\,d\theta\)를 계산하라. (힌트: \(\cos2\theta = \operatorname{Re}e^{2i\theta}\))</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>분모는 실수이므로 \(\int\frac{e^{2i\theta}}{5 - 3\cos\theta}d\theta\)의 실수부를 구하면 된다. \(z = e^{i\theta}\)에서 \(5 - 3\cos\theta = 5 - \tfrac32(z + 1/z) = -(3z^2 - 10z + 3)/2z = -(3z - 1)(z - 3)/2z\)이므로</p>
+        <div class="formula">\[ \begin{aligned} &\oint_{\lvert z\rvert=1}\frac{z^2}{-(3z - 1)(z - 3)/2z}\frac{dz}{iz} \\ &\quad = \oint\frac{2i\,z^2\,dz}{(3z - 1)(z - 3)} \end{aligned} \]</div>
+        <p>이다. 단위원 안의 극은 \(z = 1/3\)뿐이고 유수는 \(\dfrac{2i(1/9)}{3(1/3 - 3)} = -\dfrac{i}{36}\)이다. 적분은 \(2\pi i(-i/36) = \pi/18\)로 실수이고, 답은 \(\pi/18 = 0.1745\)이다. 수치 적분과 맞는다. 같은 방법으로 \(\int_0^{2\pi}d\theta/(5 - 3\cos\theta) = \pi/2\)이고, 식 <a class="ref" href="#eq-trig-denominator"></a>과도 맞는다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-lorentzian-decay" data-level="2"><p>들뜬 원자가 내는 빛의 스펙트럼이 로런츠 선 모양 \(S(\omega) = \dfrac{1}{(\omega - \omega_0)^2 + \Gamma^2/4}\)이다. (가) \(\int\frac{d\omega}{2\pi}S(\omega)e^{-i\omega t}\)를 \(t > 0\)과 \(t &lt; 0\)에서 각각 유수로 계산해 \(e^{-i\omega_0t}e^{-\Gamma\lvert t\rvert/2}/\Gamma\)임을 보여라. (나) 선폭 \(\Gamma/2\pi = 10\ \text{MHz}\)이면 들뜬 상태의 수명 \(1/\Gamma\)는 얼마인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 극은 \(\omega_0 \pm i\Gamma/2\)이고 \(S\)는 \(1/\omega^2\)로 주므로 ML 부등식으로 반원의 기여가 사라진다. \(t > 0\)이면 아래로 닫고 극 \(\omega_0 - i\Gamma/2\)의 유수 \(e^{-i\omega_0t - \Gamma t/2}/(-i\Gamma)\)에 \(-2\pi i/2\pi = -i\)를 곱해 \(e^{-i\omega_0t}e^{-\Gamma t/2}/\Gamma\)이다. \(t &lt; 0\)이면 위로 닫고 극 \(\omega_0 + i\Gamma/2\)의 유수 \(e^{-i\omega_0t + \Gamma t/2}/(i\Gamma)\)에 \(i\)를 곱해 \(e^{-i\omega_0t}e^{\Gamma t/2}/\Gamma\)이다. 두 경우를 합치면 \(e^{-\Gamma\lvert t\rvert/2}\)이다. 15장의 <a href="ch15.html#eq-lorentzian-ft">\(e^{-\gamma\lvert t\rvert}\)와 로런츠 함수의 변환 쌍</a>이고, 진폭 \(e^{-\Gamma t/2}\)(세기 \(e^{-\Gamma t}\))로 감쇠하는 방출이 로런츠 선을 낸다는 뜻이다.</p>
+        <p>(나) \(\Gamma = 2\pi \times 10^7\ \text{s}^{-1}\)이므로 \(1/\Gamma = 1.6 \times 10^{-8}\ \text{s} = 16\ \text{ns}\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-rc-causal" data-level="1"><p>저항 \(R\)과 축전기 \(C\)를 직렬로 잇고 축전기 양단의 전압을 출력으로 보는 회로의 응답 함수는 이 책의 관례에서 \(\chi(\omega) = 1/(1 - i\omega\tau)\), \(\tau = RC\)이다. 충격 응답 \(h(t) = \int\frac{d\omega}{2\pi}\chi e^{-i\omega t}\)를 구하라. 왜 ML 부등식만으로는 부족하고 조르당 보조정리가 필요한가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>극은 \(1 - i\omega\tau = 0\), 곧 \(\omega = -i/\tau\)로 아래 반평면에 있다. \(\lvert\chi\rvert \approx 1/(\tau R)\)는 \(1/R\)로만 줄어 ML 부등식은 \(\pi R\cdot1/(\tau R) = \pi/\tau\)를 줄 뿐이다. 조르당 보조정리(\(k = -t\), \(M_R \approx 1/\tau R \to 0\))가 반원의 기여를 없앤다. \(t &lt; 0\)이면 위로 닫아 극이 없으므로 \(h = 0\)이다. \(t > 0\)이면 아래로 닫고, 유수 \(\operatorname{Res}\frac{e^{-i\omega t}}{1 - i\omega\tau} = \frac{e^{-t/\tau}}{-i\tau}\)에 \(-i\)를 곱해 \(h(t) = e^{-t/\tau}/\tau\)이다. 넓이는 \(\int h\,dt = 1 = \chi(0)\)이고, \(\tau\)가 작을수록 응답이 빠르고 좁아진다. 극이 허수축 위에 있어 진동 없이 지수로만 줄어드는 것은 10장의 과대 감쇠와 같은 꼴이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-sokhotski-check" data-level="2"><p>\(\displaystyle J(\varepsilon) = \int_{-\infty}^{\infty}\frac{dx}{(x - i\varepsilon)(1 + x^2)}\) (\(0 &lt; \varepsilon &lt; 1\))를 유수 정리로 정확히 계산하고, \(\varepsilon \to 0^+\)의 극한이 소호츠키-플레멜 공식이 주는 값과 같은지 확인하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>위 반평면의 극은 \(x = i\varepsilon\)과 \(x = i\)이다. 유수는 각각 \(\dfrac{1}{1 + (i\varepsilon)^2} = \dfrac{1}{1 - \varepsilon^2}\)과 \(\dfrac{1}{(i - i\varepsilon)(2i)} = -\dfrac{1}{2(1 - \varepsilon)}\)이다. 피적분 함수가 \(1/x^3\)으로 주므로</p>
+        <div class="formula">\[ J(\varepsilon) = 2\pi i\Big[\frac{1}{1 - \varepsilon^2} - \frac{1}{2(1 - \varepsilon)}\Big] \;\to\; \pi i \]</div>
+        <p>이다. 공식 쪽에서는 \(1/(x - i\varepsilon) \to \mathcal P(1/x) + i\pi\delta(x)\)이고, \(\mathcal P\int\frac{dx}{x(1 + x^2)} = 0\)(홀함수)이며 델타 항이 \(i\pi\cdot1/(1 + 0) = i\pi\)를 준다. 같다. \(\varepsilon = 0.01\)이면 \(J = 3.1105i\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-keyhole-sqrt" data-level="2"><p>열쇠 구멍 경로로 \(\displaystyle\int_0^\infty\frac{\sqrt x}{1 + x^2}\,dx\)를 계산하라. 큰 원과 작은 원의 기여가 사라지는 것도 확인하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(z^{1/2}\)의 분지를 \(0 &lt; \arg z &lt; 2\pi\)로 고른다. 아래 가장자리에서 \(z^{1/2} = \sqrt x\,e^{i\pi} = -\sqrt x\)이므로, 열쇠 구멍 경로의 적분은 \(I - (-I) = 2I\)이다. 큰 원: \(2\pi R\cdot R^{1/2}/(R^2 - 1) \to 0\). 작은 원: \(2\pi\varepsilon\cdot\varepsilon^{1/2}/(1 - \varepsilon^2) \to 0\). 극 \(i = e^{i\pi/2}\)와 \(-i = e^{3i\pi/2}\)(이 분지에서 편각은 \(3\pi/2\)이지 \(-\pi/2\)가 아니다)에서 유수는 \(\dfrac{e^{i\pi/4}}{2i}\)와 \(\dfrac{e^{3i\pi/4}}{-2i}\)이다. 합은 \(\dfrac{e^{i\pi/4} - e^{3i\pi/4}}{2i} = \dfrac{\sqrt2}{2i}\)이므로 \(2I = 2\pi i\cdot\sqrt2/2i = \pi\sqrt2\), 곧 \(I = \pi/\sqrt2 = 2.2214\)이다. 일반적으로 \(\int_0^\infty x^{a-1}/(1 + x^2)dx = (\pi/2)/\sin(\pi a/2)\)이고 \(a = 3/2\)이 이 경우다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-blasius-lift" data-level="3"><p>2차원 이상 유체 속 물체가 받는 힘은 블라시우스 공식 \(F_x - iF_y = \dfrac{i\rho}{2}\oint_C\Big(\dfrac{dF}{dz}\Big)^2dz\)로 주어진다(\(F\)는 복소 퍼텐셜, \(C\)는 물체를 감는 곡선, Blasius, Z. Math. Phys. <b>58</b>, 90 (1910)). 18장 <a href="ch18.html#prob-cylinder-lift">문제 18.10</a>의 순환이 있는 원기둥 흐름 \(F = U(z + a^2/z) + \frac{i\Gamma}{2\pi}\log z\)에 대해 (가) 경로 변형 원리로 \(C\)를 큰 원으로 바꿀 수 있는 이유를 말하고, (나) 유수 정리로 힘을 구해 쿠타-주코프스키 정리 \(F_y = \rho U\Gamma\), \(F_x = 0\)을 얻어라. (다) \(\rho = 1.2\ \text{kg/m}^3\), \(U = 10\ \text{m/s}\), \(\Gamma = 2\pi\ \text{m}^2/\text{s}\)이면 힘은 얼마인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(F\)는 다가지만 \(F' = U(1 - a^2/z^2) + \dfrac{i\Gamma}{2\pi z}\)는 \(z \ne 0\)에서 한 값의 해석 함수이고, 유체가 차지한 \(\lvert z\rvert > a\)에서 특이점이 없다. 따라서 물체를 감는 어떤 곡선도 같은 적분을 주고, 원 \(\lvert z\rvert = R > a\)로 바꿀 수 있다. (\(F'\)을 \(z = 0\)까지 이어서 보면 그 안의 유일한 특이점이 원점이다.)</p>
+        <p>(나) \((F')^2 = U^2\Big(1 - \dfrac{a^2}{z^2}\Big)^2 + \dfrac{iU\Gamma}{\pi z}\Big(1 - \dfrac{a^2}{z^2}\Big) - \dfrac{\Gamma^2}{4\pi^2z^2}\)에서 \(z^{-1}\) 항은 \(iU\Gamma/\pi z\) 하나다. 유수 정리에서 \(\oint(F')^2dz = 2\pi i\cdot iU\Gamma/\pi = -2U\Gamma\)이므로 \(F_x - iF_y = \dfrac{i\rho}{2}(-2U\Gamma) = -i\rho U\Gamma\)이다. 곧 \(F_x = 0\)(항력 없음, 달랑베르 역설)이고 \(F_y = \rho U\Gamma\)이다. 힘은 흐름 방향에 수직이고 \(a\)와 상관없다.</p>
+        <p>(다) \(F_y = 1.2 \times 10 \times 2\pi = 75\ \text{N/m}\)이다. 단위: \(\text{kg/m}^3\cdot\text{m/s}\cdot\text{m}^2/\text{s} = \text{N/m}\). 18장 문제에서 표면 압력 차로 어림한 결론(위로 향하는 힘)과 같고, 거기서 수치 적분으로 확인한 75.4 N/m와 맞는다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-cot-sum" data-level="3"><p>\(g(z) = \dfrac{\pi\cot\pi z}{z^2 + a^2}\) (\(a > 0\))를 꼭짓점이 \((\pm(N + \tfrac12), \pm(N + \tfrac12))\)인 정사각형 경로 \(C_N\)을 따라 적분하라. \(N \to \infty\)에서 적분이 0으로 감을 받아들이고 \(\displaystyle\sum_{n=-\infty}^{\infty}\frac{1}{n^2 + a^2} = \frac{\pi}{a}\coth\pi a\)를 보여라. \(a \to 0\)으로 보내 \(\sum_{n\ge1}1/n^2 = \pi^2/6\)을 다시 얻어라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(\pi\cot\pi z = \pi\cos\pi z/\sin\pi z\)는 정수 \(n\)에서 단순 극을 갖고 유수는 \(\pi\cos n\pi/(\pi\cos n\pi) = 1\)이다(식 <a class="ref" href="#eq-residue-simple"></a>). 그래서 \(g\)의 \(z = n\)에서 유수는 \(1/(n^2 + a^2)\)이다. \(z = \pm ia\)에서는 \(\dfrac{\pi\cot(\pm i\pi a)}{\pm2ia}\)이고 \(\cot(iy) = -i\coth y\)이므로 두 유수가 모두 \(-\dfrac{\pi\coth\pi a}{2a}\)이다. 정사각형의 변 위에서 \(\lvert\cot\pi z\rvert\)는 \(N\)과 상관없는 상수로 유계이고 \(\lvert z^2 + a^2\rvert \gtrsim N^2\), 둘레는 \(8N + 4\)이므로 적분은 \(O(1/N) \to 0\)이다. 유수의 합이 0이어야 하므로</p>
+        <div class="formula">\[ \sum_{n=-\infty}^{\infty}\frac{1}{n^2 + a^2} = \frac{\pi\coth\pi a}{a} \]</div>
+        <p>이다. \(a = 0.7\)이면 양쪽이 4.5998이다. \(n = 0\) 항 \(1/a^2\)을 빼고 반으로 나누면 \(\sum_{n\ge1}\frac{1}{n^2 + a^2} = \frac{\pi\coth\pi a}{2a} - \frac{1}{2a^2}\)이고, \(\coth x = 1/x + x/3 - \cdots\)를 넣으면 \(a \to 0\)에서 \(\frac{\pi}{2a}\big(\frac{1}{\pi a} + \frac{\pi a}{3}\big) - \frac{1}{2a^2} = \frac{\pi^2}{6}\)이다. 1장 <a href="ch01.html#ex-basel-estimate">예제 1.2</a>에서 수치로 어림하고 14장에서 <a href="ch14.html#ex-basel-parseval">파르스발 정리로</a> 증명하는 값을 유수로 얻은 것이다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+</body>
+</html>
