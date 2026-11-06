@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>16 스투름-리우빌 이론 · 수리물리학</title>
+<meta name="description" content="스투름-리우빌 형태와 가중 함수, 자기수반 경계 조건, 고유값의 실수성과 고유함수의 직교성·완비성, 레일리 몫으로 12~14장의 특수 함수와 푸리에 급수를 한 틀로 묶는다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys" data-field="phys" data-chapter="ch16">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">16</span></div>
+    <h1 data-fill="chapter-title">스투름-리우빌 이론</h1>
+    <p class="lead">줄의 정상 모드, 르장드르 다항식, 베셀 함수, 에르미트 다항식은 모두 서로 직교했고, 12~14장은 그 직교성을 하나씩 따로 증명했다. 이 장은 그 증명들이 사실 하나라는 것을 보인다. 2계 선형 미분 연산자를 \((py')' - qy\) 꼴로 쓰고 부분 적분의 경계 항이 사라지는 경계 조건을 고르면, 고유값은 실수이고 고유함수는 가중 함수에 대해 직교하며, 그 수가 넉넉해서 어떤 함수든 전개할 수 있다. 8장의 스펙트럼 정리를 미분 연산자로 옮긴 셈이고, 17장의 변수 분리와 20장의 그린 함수가 이 장의 정리 위에 선다.</p>
+    <ul class="objectives">
+      <li>2계 선형 고유값 방정식을 적분 인자로 스투름-리우빌 형태로 바꾸고, \(p, q, w\)와 가중 함수의 물리적 뜻을 읽을 수 있다.</li>
+      <li>라그랑주 항등식의 경계 항을 계산해 주어진 경계 조건이 자기수반인지 판정할 수 있다.</li>
+      <li>자기수반 경계 조건에서 고유값이 실수이고 고유함수가 가중 함수에 대해 직교함을 증명하고, 로빈 조건처럼 초월 방정식으로 정해지는 고유값을 구할 수 있다.</li>
+      <li>완비성 정리를 조건까지 정확히 진술하고, 함수를 고유함수로 전개해 계수와 수렴의 뜻을 설명할 수 있다.</li>
+      <li>레일리 몫으로 바닥 고유값의 상한을 어림하고, 시험 함수의 오차보다 고유값의 오차가 훨씬 작은 이유를 설명할 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b>9장의 <a href="ch09.html#eq-function-inner-product">가중 함수가 있는 내적(식 (9.35))</a>, <a href="ch09.html#def-hermitian-operator">에르미트 연산자(정의 9.11)</a>와 <a href="ch09.html#eq-second-derivative-boundary">부분 적분의 경계 항(식 (9.50))</a>. 8장의 <a href="ch08.html#thm-hermitian-real-eigen">에르미트 행렬의 고유값(정리 8.2)</a>과 <a href="ch08.html#thm-spectral">스펙트럼 정리(정리 8.3)</a>. 10장의 <a href="ch10.html#def-wronskian">론스키안(정의 10.2)</a>. 12·13장의 르장드르·베셀·에르미트·라게르 함수와 14장의 푸리에 급수. 21장의 변분법은 16.6절에서 한 번 이어 본다.</p>
+  </header>
+
+  <!-- ============================================================ 16.1 -->
+  <section id="s1">
+    <h2>경계값 문제와 고유값</h2>
+    <p>기타 줄을 튕기면 아무 진동수로나 울리지 않는다. 기본음과 그 배음만 울린다. 줄의 운동 방정식은 어느 진동수의 사인 진동이든 허락하는데, 왜 특정한 진동수만 살아남을까? 답은 줄의 양 끝이 고정되어 있다는 데 있다. 이 절에서는 "두 끝의 조건이 진동수를 고른다"는 생각을 고유값 문제의 언어로 옮긴다.</p>
+
+    <h3 id="s1-ivp-bvp">초기값 문제와 경계값 문제</h3>
+    <p>장력 \(T\), 선밀도 \(\mu\)인 줄이 \(0 \le x \le L\)에 걸려 있다. 줄이 진동수 \(\omega\)로 한꺼번에 흔들리는 운동 \(y(x, t) = u(x)\cos\omega t\)를 정상 모드라 한다. 줄의 파동 방정식 \(\mu\,\partial_t^2y = T\,\partial_x^2y\)에 넣으면 \(u\)는</p>
+    <div class="formula" id="eq-string-mode-equation">\[ u'' + \lambda u = 0, \qquad \lambda = \frac{\mu\omega^2}{T} \]</div>
+    <p>을 만족하고, 양 끝이 고정되어 있으므로 \(u(0) = 0\), \(u(L) = 0\)이다. 10장에서 푼 문제와 다른 점은 조건을 한 점이 아니라 <b>두 점</b>에 건다는 것이다. 한 점에서 \(u\)와 \(u'\)을 주는 <span class="term">초기값 문제</span> <span class="en">(initial value problem)</span>는 \(\lambda\)가 무엇이든 해가 정확히 하나 있다. 두 끝에 조건을 나누어 거는 <span class="term">경계값 문제</span> <span class="en">(boundary value problem)</span>는 그렇지 않다.</p>
+    <p>\(\lambda\)의 부호에 따라 나누어 보자. \(\lambda = -\kappa^2 &lt; 0\)이면 일반해는 \(A\sinh\kappa x + B\cosh\kappa x\)이고, \(u(0) = 0\)에서 \(B = 0\), \(u(L) = A\sinh\kappa L = 0\)에서 \(A = 0\)이다. \(\lambda = 0\)이면 \(u = A + Bx\)이고 역시 \(A = B = 0\)이다. \(\lambda = k^2 > 0\)이면 \(u = A\sin kx + B\cos kx\)에서 \(B = 0\)이고, 남은 조건은 \(A\sin kL = 0\)이다. \(A \ne 0\)이려면 \(kL\)이 \(\pi\)의 정수배여야 한다. 따라서 0이 아닌 해는</p>
+    <div class="formula" id="eq-uniform-string-eigen">\[ \lambda_n = \Big(\frac{n\pi}{L}\Big)^2, \quad u_n(x) = \sin\frac{n\pi x}{L}, \quad n = 1, 2, \ldots \]</div>
+    <p>일 때만 있다. 식 <a class="ref" href="#eq-string-mode-equation"></a>의 \(\lambda = \mu\omega^2/T\)로 되돌리면 진동수는 \(f_n = \omega_n/2\pi = (n/2L)\sqrt{T/\mu}\)이다. 기본음과 그 정수배의 배음이다.</p>
+
+    <div class="box def" id="def-bvp-eigenvalue"><div class="box-h">경계값 문제의 고유값과 고유함수</div>
+      <p>매개변수 \(\lambda\)가 들어 있는 선형 동차 미분방정식 \(\mathcal Lu = \lambda u\)와, 구간의 두 끝 \(a, b\)에 거는 선형 동차 경계 조건을 함께 <span class="term">경계값 고유값 문제</span> <span class="en">(boundary value eigenvalue problem)</span>라 한다. \(u \equiv 0\)은 언제나 해이다. 0이 아닌 해가 있게 하는 \(\lambda\)를 <span class="term">고유값</span>, 그때의 해 \(u\)를 그 고유값에 속하는 <span class="term">고유함수</span>라 한다. 방정식과 조건이 모두 동차이므로 고유함수의 상수배도 고유함수이다.</p>
+    </div>
+    <p>8장의 행렬 고유값 문제 \(A\mathbf x = \lambda\mathbf x\)와 같은 꼴이다. 다만 여기서 연산자 \(\mathcal L\)을 정하는 것은 미분식만이 아니다. 9.6절에서 본 대로, 같은 \(-d^2/dx^2\)라도 경계 조건이 다르면 다른 연산자이고 고유값도 다르다.</p>
+
+    <h3 id="s1-shooting">고유값은 왜 띄엄띄엄 있는가</h3>
+    <p>경계값 문제를 초기값 문제로 바꿔 보면 고유값이 띄엄띄엄 나오는 이유가 보인다. 왼쪽 끝 조건 \(u(0) = 0\)에 \(u'(0) = 1\)을 덧붙이면 초기값 문제가 되어, \(\lambda\)마다 해가 하나씩 정해진다. 그 해가 오른쪽 끝에서 내는 값 \(u(L; \lambda)\)는 \(\lambda\)의 연속 함수이고, 고유값은 바로 이 함수의 영점이다. 그림 16-1처럼 \(\lambda\)를 조금씩 바꾸며 오른쪽 끝을 "겨누어" 보는 셈이다. 이 방법을 <span class="term">사격법</span> <span class="en">(shooting method)</span>이라 하고, 정확한 해를 모르는 문제의 고유값을 수치로 구할 때 실제로 쓴다. \(u'(0)\)을 1이 아닌 다른 값으로 잡아도 해가 그만큼 상수배될 뿐 영점은 같다.</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 255" role="img" aria-label="u(0) = 0, u'(0) = 1에서 출발한 세 해. λ = π²인 해만 x = L에서 다시 0이 된다"><defs><clipPath id="f1601-clip"><rect x="52" y="18" width="414" height="188"/></clipPath></defs><line x1="121" y1="18" x2="121" y2="206" class="s-grid"/><line x1="190" y1="18" x2="190" y2="206" class="s-grid"/><line x1="259" y1="18" x2="259" y2="206" class="s-grid"/><line x1="328" y1="18" x2="328" y2="206" class="s-grid"/><line x1="397" y1="18" x2="397" y2="206" class="s-grid"/><line x1="466" y1="18" x2="466" y2="206" class="s-grid"/><line x1="52" y1="192.6" x2="466" y2="192.6" class="s-grid"/><line x1="52" y1="138.9" x2="466" y2="138.9" class="s-grid"/><line x1="52" y1="85.1" x2="466" y2="85.1" class="s-grid"/><line x1="52" y1="31.4" x2="466" y2="31.4" class="s-grid"/><line x1="52" y1="138.9" x2="466" y2="138.9" class="s-line"/><line x1="52" y1="18" x2="52" y2="206" class="s-line"/><text x="52" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="190" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">0.4</text><text x="328" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">0.8</text><text x="397" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">L</text><text x="466" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">1.2</text><text x="46" y="197.6" class="t-dim" style="font-size:14px" text-anchor="end">−0.2</text><text x="46" y="143.9" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="46" y="90.1" class="t-dim" style="font-size:14px" text-anchor="end">0.2</text><text x="46" y="36.4" class="t-dim" style="font-size:14px" text-anchor="end">0.4</text><line x1="397" y1="18" x2="397" y2="206" class="s-acc2" style="stroke-width:1.4" stroke-dasharray="5 4"/><path d="M52 138.9 L74.4 121.5 L91.7 108.4 L107.2 97 L121 87.4 L134.8 78.2 L146.9 70.7 L158.9 63.7 L171 57.3 L183.1 51.5 L195.2 46.3 L207.2 41.9 L217.6 38.7 L229.7 35.7 L240 33.8 L252.1 32.2 L262.4 31.5 L272.8 31.5 L284.9 32.2 L295.2 33.4 L307.3 35.6 L317.6 38.1 L329.7 41.7 L341.8 46.1 L353.9 51.2 L366 57 L378 63.4 L390.1 70.3 L403.9 78.9 L417.7 88.1 L431.5 97.9 L447 109.3 L466 123.7" class="s-line" style="stroke:var(--text);stroke-width:1.8" stroke-dasharray="6 4" fill="none" clip-path="url(#f1601-clip)"/><path d="M52 138.9 L72.7 122.8 L86.5 112.4 L100.3 102.5 L112.4 94.2 L124.4 86.5 L134.8 80.3 L146.9 73.9 L157.2 68.9 L169.3 63.9 L179.7 60.4 L190 57.6 L200.3 55.4 L210.7 54 L221 53.4 L231.4 53.5 L241.8 54.4 L250.4 55.7 L260.7 58 L269.4 60.4 L279.7 63.9 L290 68.2 L300.4 73 L310.8 78.4 L321.1 84.4 L329.7 89.7 L338.3 95.3 L355.6 107.4 L374.6 121.5 L414.3 152.2 L431.5 165.3 L450.5 178.9 L466 189.1" class="s-acc" style="stroke-width:3" fill="none" clip-path="url(#f1601-clip)"/><path d="M52 138.9 L69.2 125.5 L81.3 116.4 L93.4 107.7 L103.8 100.7 L114.1 94.2 L122.7 89.2 L133.1 83.8 L141.7 79.8 L152.1 75.8 L160.7 73.1 L169.3 70.9 L177.9 69.4 L186.5 68.5 L195.2 68.2 L203.8 68.5 L214.2 69.8 L221 71.2 L228 72.9 L234.8 75 L243.5 78.2 L250.4 81.1 L259 85.2 L267.6 89.8 L276.2 94.9 L291.8 104.9 L307.3 116 L322.8 127.7 L357.3 154.4 L376.3 168.3 L384.9 174.3 L393.6 179.9 L402.2 185.2 L409.1 189.1 L417.7 193.6 L424.6 196.9 L431.5 199.8 L438.4 202.3 L445.3 204.5 L452.2 206.3 L459.1 207.7 L466 208.7" class="s-acc2" style="stroke-width:2" fill="none" clip-path="url(#f1601-clip)"/><line x1="69.2" y1="149.6" x2="103.8" y2="149.6" class="s-line" style="stroke:var(--text);stroke-width:1.8" stroke-dasharray="6 4"/><text x="110.7" y="154.6" class="t" style="font-size:14px" text-anchor="start">λ = 6.25</text><line x1="69.2" y1="168.6" x2="103.8" y2="168.6" class="s-acc" style="stroke-width:3"/><text x="110.7" y="173.6" class="t-acc" style="font-size:14px" text-anchor="start">λ = π²</text><line x1="69.2" y1="187.6" x2="103.8" y2="187.6" class="s-acc2" style="stroke-width:2"/><text x="110.7" y="192.6" class="t-dim" style="font-size:14px" text-anchor="start">λ = 14.4</text><circle cx="397" cy="138.9" r="4.5" class="f-acc"/><text x="466" y="250" class="t-dim" style="font-size:14px" text-anchor="end">x</text><text x="58" y="30" class="t-dim" style="font-size:14px" text-anchor="start">u(x)</text></svg>
+      <figcaption><b>그림 16-1.</b> \(u'' + \lambda u = 0\), \(u(0) = 0\), \(u'(0) = 1\)의 해 \(\sin(\sqrt\lambda\,x)/\sqrt\lambda\)를 \(L = 1\)로 두고 세 \(\lambda\)에 대해 그렸다. \(\lambda = 6.25\)이면 \(x = L\)(점선)에서 아직 양수이고, \(\lambda = 14.4\)이면 이미 음수다. 그 사이의 \(\lambda = \pi^2\)에서만 오른쪽 끝 조건 \(u(L) = 0\)이 맞는다(점).</figcaption>
+    </figure>
+    <p>물리에서 고유값은 여러 얼굴로 나타난다. 줄에서는 진동수의 제곱, 슈뢰딩거 방정식에서는 에너지, 아래 예제에서는 기둥을 휘게 하는 하중이다.</p>
+
+    <div class="box ex" id="ex-euler-buckling"><div class="box-h">기둥의 좌굴 하중</div>
+      <p>길이 \(L\)인 곧은 기둥의 두 끝을 핀으로 고정하고(끝은 옆으로 움직이지 않지만 회전은 자유롭다), 축 방향으로 압축력 \(P\)를 가한다. 기둥이 조금 휘어 옆으로 \(y(x)\)만큼 벗어났다면, 단면에 걸리는 굽힘 모멘트의 평형은 \(EI\,y'' = -Py\)이다. 여기서 \(E\)는 영률, \(I\)는 단면 2차 모멘트이다. (가) 휜 모양이 평형을 이룰 수 있는 \(P\)를 구하라. (나) 지름 \(d = 10.0\ \text{mm}\), 길이 \(L = 1.00\ \text{m}\)인 강철 막대(\(E = 200\ \text{GPa}\))가 휘기 시작하는 하중은 얼마인가?</p>
+      <p><b>풀이.</b> (가) \(\lambda = P/EI\)로 두면 \(y'' + \lambda y = 0\), \(y(0) = y(L) = 0\)으로 식 <a class="ref" href="#eq-string-mode-equation"></a>의 줄과 같은 고유값 문제다. 식 <a class="ref" href="#eq-uniform-string-eigen"></a>에서</p>
+      <div class="formula" id="eq-euler-buckling-load">\[ P_n = \frac{n^2\pi^2 EI}{L^2}, \qquad y_n = \sin\frac{n\pi x}{L} \]</div>
+      <p>이다. \(P &lt; P_1\)이면 \(\lambda\)가 고유값이 아니므로 해는 \(y \equiv 0\)뿐이고, 기둥은 곧은 채로 하중을 버틴다. \(P\)가 \(P_1\)에 이르면 곧은 상태 옆에 휜 평형 \(y_1\)이 처음 나타난다. 이것이 <span class="term">오일러 좌굴 하중</span> <span class="en">(Euler buckling load)</span>이다. 선형 방정식은 휨의 크기를 정하지 못한다. 고유함수의 상수배가 모두 해이기 때문이다. 크기를 정하는 것은 이 식에서 버린 큰 휨의 비선형 항이다.</p>
+      <p>(나) 원형 단면의 단면 2차 모멘트는 \(I = \pi d^4/64\)이다.</p>
+      <div class="formula">\[ \begin{aligned} I &= \frac{\pi(1.00 \times 10^{-2}\ \text{m})^4}{64} = 4.91 \times 10^{-10}\ \text{m}^4 \\ EI &= 98.2\ \text{N}\cdot\text{m}^2 \\ P_1 &= \frac{\pi^2 \times 98.2\ \text{N}\cdot\text{m}^2}{(1.00\ \text{m})^2} = 969\ \text{N} \end{aligned} \]</div>
+      <p>약 \(98.8\ \text{kg}\)의 무게다. 단위는 \(\text{N}\cdot\text{m}^2/\text{m}^2 = \text{N}\)으로 맞다. 같은 막대의 가운데를 옆에서 붙잡아 주면 \(y_1\)은 막히고, 가운데가 마디인 \(y_2\)가 처음 허락되는 모양이 되어 좌굴 하중이 \(P_2 = 4P_1 = 3.88\ \text{kN}\)으로 오른다. 고유값을 올리려면 낮은 모드를 경계 조건으로 막으면 된다.</p>
+    </div>
+    <p>줄과 기둥은 계수가 상수라서 고유함수를 바로 적을 수 있었다. 밀도가 고르지 않은 줄 \(Tu'' + \mu(x)\omega^2u = 0\), 퍼텐셜이 있는 슈뢰딩거 방정식 \(-(\hbar^2/2m)\psi'' + V(x)\psi = E\psi\), 르장드르 방정식 \((1 - x^2)y'' - 2xy' + l(l+1)y = 0\)은 그렇지 않다. 고유함수를 풀어 쓰지 않고도, 고유값이 실수인지, 고유함수가 직교하는지, 고유함수로 다른 함수를 전개할 수 있는지 알 수 있을까? 이 장의 나머지가 그 답이다. 첫걸음은 이 방정식들을 한 가지 꼴로 쓰는 것이다.</p>
+  </section>
+
+  <!-- ============================================================ 16.2 -->
+  <section id="s2">
+    <h2>스투름-리우빌 형태와 가중 함수</h2>
+    <p>12장에서 르장드르 방정식을 \(\big((1 - x^2)y'\big)' + l(l+1)y = 0\)으로 쓰자 직교성의 증명이 부분 적분 한 번으로 끝났다(<a href="ch12.html#thm-legendre-orthogonality">정리 12.5</a>). 13장의 에르미트 방정식 \(y'' - 2xy' + 2ny = 0\)은 그 꼴이 아니어서, \(e^{-x^2}\)을 곱해 \((e^{-x^2}y')' + 2ne^{-x^2}y = 0\)으로 바꾼 뒤에야 같은 증명이 통했다. 두 경우에 공통인 꼴에 이름을 붙이자.</p>
+
+    <div class="box def" id="def-sturm-liouville"><div class="box-h">스투름-리우빌 문제</div>
+      <p>구간 \((a, b)\)에서 실수 함수 \(p, q, w\)가 \(p > 0\), \(w > 0\)을 만족할 때, 미분방정식</p>
+      <div class="formula" id="eq-sl-form">\[ \big(p(x)\,y'\big)' - q(x)\,y + \lambda\,w(x)\,y = 0 \]</div>
+      <p>을 <span class="term">스투름-리우빌 형태</span> <span class="en">(Sturm–Liouville form)</span>라 하고, 이 식과 16.3절의 자기수반 경계 조건을 함께 갖춘 고유값 문제를 <span class="term">스투름-리우빌 문제</span>라 한다. 구간이 유한하고, \(p, p', q, w\)가 닫힌 구간 \([a, b]\)에서 연속이며, 두 끝에서도 \(p > 0\), \(w > 0\)이고, 경계 조건이 각 끝에 따로 걸리는 분리된 꼴(<a class="ref" href="#def-self-adjoint-bc"></a>의 (가))이면 <span class="term">정칙</span> <span class="en">(regular)</span> 문제라 한다. 구간이 무한하거나, 끝점에서 \(p\)나 \(w\)가 0이 되거나, 계수가 끝점에서 발산하면 <span class="term">특이</span> <span class="en">(singular)</span> 문제라 한다.</p>
+    </div>
+    <p>식 <a class="ref" href="#eq-sl-form"></a>를 연산자로 쓰면</p>
+    <div class="formula" id="eq-sl-operator">\[ \mathcal Lu = -\frac{1}{w}\Big[(pu')' - qu\Big] = \lambda u \]</div>
+    <p>이다. 앞의 음의 부호는 \(p = w = 1\), \(q = 0\)일 때 \(\mathcal L = -d^2/dx^2\)이 되게 하려고 붙였다. 그러면 16.1절의 줄처럼 고유값이 파수의 제곱 \(k^2\)이 되어 양수로 나온다. \(1/w\)을 붙인 이유는 16.3절에서 드러난다.</p>
+
+    <div class="box def" id="def-weight-function"><div class="box-h">가중 함수</div>
+      <p>스투름-리우빌 형태에서 \(\lambda\)에 곱해진 양의 함수 \(w(x)\)를 <span class="term">가중 함수</span> <span class="en">(weight function)</span>라 한다. 이 장에서 함수의 내적은 9장의 <a href="ch09.html#eq-function-inner-product">식 (9.35)</a>처럼 이 \(w\)로 정한다.</p>
+      <div class="formula" id="eq-sl-inner-product">\[ \langle f|g\rangle = \int_a^b f^*(x)\,g(x)\,w(x)\,dx \]</div>
+      <p>\(\int_a^b \lvert f\rvert^2 w\,dx &lt; \infty\)인 함수들의 공간을 \(L^2_w(a, b)\)로 쓴다(<a href="ch09.html#def-l2">정의 9.9</a>).</p>
+    </div>
+
+    <h3 id="s2-integrating-factor">적분 인자로 바꾸기</h3>
+    <p>2계 선형 고유값 방정식은 모두 스투름-리우빌 형태로 바꿀 수 있다. 구간 안에서 \(a(x) \ne 0\)인</p>
+    <div class="formula" id="eq-general-second-order">\[ a(x)\,y'' + b(x)\,y' + c(x)\,y + \lambda\,d(x)\,y = 0 \]</div>
+    <p>에 \(p/a\)를 곱하자. \(p\)를 \(p' = (b/a)p\)가 되게 고르면 앞의 두 항이 \(py'' + (pb/a)y' = py'' + p'y' = (py')'\)으로 묶인다. 남은 항의 계수를 맞추면</p>
+    <div class="formula" id="eq-sl-integrating-factor">\[ p = \exp\Big(\int\frac{b}{a}\,dx\Big), \quad q = -\frac{c}{a}\,p, \quad w = \frac{d}{a}\,p \]</div>
+    <p>이다. \(p\)는 지수 함수라 언제나 양수다. \(w > 0\)이 되려면 \(d/a > 0\)이어야 하는데, 물리의 방정식에서는 대개 그렇다. 적분 상수는 \(p, q, w\)를 함께 상수배할 뿐이라 아무렇게나 골라도 된다.</p>
+
+    <div class="box ex" id="ex-sl-forms"><div class="box-h">에르미트·라게르·베셀 방정식의 스투름-리우빌 형태</div>
+      <p>다음 방정식을 스투름-리우빌 형태로 쓰고 \(p, q, w, \lambda\)를 밝혀라. (가) 에르미트 방정식 \(y'' - 2xy' + 2ny = 0\). (나) 라게르 방정식 \(xy'' + (1 - x)y' + ny = 0\). (다) 원통 좌표의 지름 방정식 \(s^2R'' + sR' + (k^2s^2 - m^2)R = 0\)(<a href="ch13.html#eq-cylindrical-radial">13장 식 (13.1)</a>), 단 \(m\)은 고정하고 \(k^2\)을 고유값으로 본다.</p>
+      <p><b>풀이.</b> 식 <a class="ref" href="#eq-sl-integrating-factor"></a>을 쓴다. (가) \(a = 1\), \(b = -2x\)이므로 \(p = e^{-x^2}\), \(w = e^{-x^2}\), \(q = 0\), \(\lambda = 2n\)이다. 13장에서 손으로 찾은 인자가 바로 이것이다. (나) \(b/a = 1/x - 1\)이므로 \(p = xe^{-x}\)이고, \(w = p/x = e^{-x}\), \(q = 0\), \(\lambda = n\)이다. (다) \(a = s^2\), \(b = s\)에서 \(p = s\)이고, \(c = -m^2\), \(d = s^2\)에서 \(q = m^2/s\), \(w = s\)이다.</p>
+      <div class="formula" id="eq-bessel-sl-form">\[ (sR')' - \frac{m^2}{s}R + k^2\,s\,R = 0 \]</div>
+      <p>가중 함수 \(s\)는 13장 베셀 함수의 직교성(<a href="ch13.html#eq-bessel-orthogonality">식 (13.22)</a>)에 붙어 있던 바로 그 \(s\)이다. 원판의 넓이 요소 \(s\,ds\,d\phi\)에서 온 것이다.</p>
+    </div>
+
+    <div class="box ex" id="ex-nonuniform-string"><div class="box-h">밀도가 고르지 않은 현</div>
+      <p>길이 \(L\), 장력 \(T\)인 현의 선밀도가 \(\mu(x) = \mu_0/(1 + x/L)^2\)이어서, 왼쪽 끝 \(\mu_0\)에서 오른쪽 끝 \(\mu_0/4\)로 줄어든다. 양 끝은 고정되어 있다. (가) 정상 모드의 방정식을 스투름-리우빌 형태로 쓰고 \(p, q, w\)를 밝혀라. (나) 고유진동수와 모드 모양을 정확히 구하라. (다) \(T = 100\ \text{N}\), \(\mu_0 = 4.00\ \text{g/m}\), \(L = 1.00\ \text{m}\)일 때 처음 세 진동수를 구하고, 밀도가 \(\mu_0\)이나 \(\mu_0/4\)로 고른 현과 비교하라.</p>
+      <p><b>풀이.</b> (가) 장력이 고르고 진폭이 작으면 운동 방정식은 \(\mu(x)\,\partial_t^2y = T\,\partial_x^2y\)이다. \(y = u(x)\cos\omega t\)를 넣으면</p>
+      <div class="formula">\[ Tu'' + \mu(x)\,\omega^2u = 0, \qquad u(0) = u(L) = 0 \]</div>
+      <p>이다. 식 <a class="ref" href="#eq-sl-form"></a>와 견주면 \(p = T\), \(q = 0\), \(w = \mu(x)\), \(\lambda = \omega^2\)이다. <b>가중 함수는 질량 밀도</b>다.</p>
+      <p>(나) \(\xi = 1 + x/L\)로 바꾸면 \(\xi\)는 1에서 2까지 가고 \(d/dx = L^{-1}d/d\xi\)이므로</p>
+      <div class="formula">\[ \frac{d^2u}{d\xi^2} + \frac{\nu^2}{\xi^2}\,u = 0, \qquad \nu^2 = \frac{\mu_0\omega^2L^2}{T} \]</div>
+      <p>이다(\(\nu\)는 무차원 진동수). 12장 <a href="ch12.html#ex-euler-radial">예제 12.8</a>의 오일러 방정식이다. \(u = \xi^s\)을 넣으면 \(s^2 - s + \nu^2 = 0\), 곧 \(s = \tfrac12 \pm i\beta\), \(\beta = \sqrt{\nu^2 - 1/4}\)이다. (\(\nu \le \tfrac12\)이면 \(s\)가 실수라 두 끝에서 함께 0인 해가 없다.) 실수 해는 \(\xi^{1/2}\cos(\beta\ln\xi)\)와 \(\xi^{1/2}\sin(\beta\ln\xi)\)이고, \(\xi = 1\)에서 0인 것은 뒤의 것이다. \(\xi = 2\)에서도 0이려면 \(\beta\ln 2 = n\pi\)이어야 한다. 따라서</p>
+      <div class="formula" id="eq-nonuniform-string-modes">\[ \begin{aligned} u_n(x) &= \sqrt{1 + \tfrac{x}{L}}\,\sin\Big(\frac{n\pi\ln(1 + x/L)}{\ln 2}\Big) \\ \omega_n &= \frac1L\sqrt{\frac{T}{\mu_0}}\,\sqrt{\frac14 + \Big(\frac{n\pi}{\ln 2}\Big)^2} \end{aligned} \]</div>
+      <p>이다. 단위는 \(\sqrt{\text{N}/(\text{kg/m})} = \text{m/s}\)를 \(\text{m}\)로 나눈 \(\text{s}^{-1}\)이다.</p>
+      <p><b>숫자로 보기.</b> \(\sqrt{T/\mu_0} = 158.1\ \text{m/s}\)이고 \(\nu_n = \sqrt{1/4 + (n\pi/\ln 2)^2} = 4.560,\ 9.078,\ 13.606\)이므로 \(f_n = \nu_n \times 158.1\ \text{s}^{-1}/2\pi\)는</p>
+      <div class="formula">\[ \begin{aligned} f_1 &= 114.7\ \text{Hz}, \quad f_2 = 228.5\ \text{Hz}, \\ f_3 &= 342.4\ \text{Hz} \end{aligned} \]</div>
+      <p>이다. 밀도가 \(\mu_0\)으로 고른 현의 기본음은 \(79.1\ \text{Hz}\)(\(\nu = \pi\)), \(\mu_0/4\)로 고른 현은 \(158.1\ \text{Hz}\)(\(\nu = 2\pi\))이고, 이 현은 그 사이에 있다. 진동수의 비는 \(1 : 1.991 : 2.984\)로 정수비에 가깝지만 정확히 정수비는 아니다. 두 번째 모드의 마디는 \(\ln(1 + x/L) = \tfrac12\ln 2\), 곧 \(x = (\sqrt2 - 1)L = 0.414L\)에 있어 무거운 쪽으로 치우친다(그림 16-2).</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 262" role="img" aria-label="밀도가 왼쪽 끝에서 오른쪽 끝으로 4배 줄어드는 현의 처음 세 정상 모드. 마디가 무거운 왼쪽으로 몰린다"><defs><clipPath id="f1602-clip"><rect x="52" y="22" width="414" height="200"/></clipPath></defs><line x1="134.8" y1="30" x2="134.8" y2="214" class="s-grid"/><line x1="217.6" y1="30" x2="217.6" y2="214" class="s-grid"/><line x1="300.4" y1="30" x2="300.4" y2="214" class="s-grid"/><line x1="383.2" y1="30" x2="383.2" y2="214" class="s-grid"/><line x1="466" y1="30" x2="466" y2="214" class="s-grid"/><line x1="52" y1="202" x2="466" y2="202" class="s-grid"/><line x1="52" y1="42" x2="466" y2="42" class="s-grid"/><line x1="52" y1="122" x2="466" y2="122" class="s-line"/><line x1="52" y1="30" x2="52" y2="214" class="s-line"/><text x="52" y="236" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="134.8" y="236" class="t-dim" style="font-size:14px" text-anchor="middle">0.2L</text><text x="217.6" y="236" class="t-dim" style="font-size:14px" text-anchor="middle">0.4L</text><text x="300.4" y="236" class="t-dim" style="font-size:14px" text-anchor="middle">0.6L</text><text x="383.2" y="236" class="t-dim" style="font-size:14px" text-anchor="middle">0.8L</text><text x="466" y="236" class="t-dim" style="font-size:14px" text-anchor="middle">L</text><text x="46" y="207" class="t-dim" style="font-size:14px" text-anchor="end">−1</text><text x="46" y="127" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="46" y="47" class="t-dim" style="font-size:14px" text-anchor="end">1</text><path d="M52 122 L69.9 108.9 L83.7 99.2 L96.2 90.8 L107.2 83.8 L118.2 77.1 L129.3 71 L140.3 65.4 L151.4 60.4 L162.4 55.9 L173.4 52.1 L183.1 49.3 L194.1 46.6 L205.2 44.5 L216.2 43.1 L227.3 42.3 L238.3 42 L249.3 42.3 L260.4 43.1 L271.4 44.5 L283.8 46.6 L294.9 49 L307.3 52.1 L319.7 55.8 L333.5 60.4 L345.9 65 L359.7 70.5 L373.5 76.4 L388.7 83.3 L403.9 90.5 L420.5 98.7 L466 122" class="s-acc" style="stroke-width:3" fill="none" clip-path="url(#f1602-clip)"/><path d="M52 122 L68.6 100.1 L75.5 91.7 L81 85.3 L86.5 79.5 L92 74.1 L97.5 69.4 L103.1 65.2 L108.6 61.8 L114.1 59 L119.6 56.9 L123.8 55.8 L129.3 54.9 L134.8 54.8 L140.3 55.3 L145.8 56.5 L150 57.8 L154.1 59.4 L158.3 61.4 L163.8 64.5 L167.9 67.2 L173.4 71.3 L179 75.7 L184.5 80.6 L194.1 89.9 L203.8 100 L238.3 138.7 L253.5 154.9 L260.4 161.7 L267.3 168.2 L274.2 174.2 L281.1 179.7 L289.4 185.6 L296.3 189.8 L303.2 193.5 L310.1 196.5 L317 198.8 L323.9 200.5 L330.8 201.6 L339 202 L344.6 201.8 L351.5 200.9 L358.4 199.4 L365.3 197.4 L372.2 194.7 L379.1 191.6 L386 187.9 L392.9 183.8 L399.8 179.3 L408 173.4 L414.9 168 L423.2 161.2 L431.5 154.1 L441.2 145.4 L466 122" class="s-acc2" style="stroke-width:2.2" fill="none" clip-path="url(#f1602-clip)"/><path d="M52 122 L61.7 103.3 L69.9 88.6 L76.8 78.1 L81 72.7 L83.7 69.6 L87.9 65.5 L90.6 63.3 L94.8 60.8 L97.5 59.6 L100.3 58.9 L104.4 58.5 L107.2 58.8 L111.3 60 L114.1 61.2 L116.9 62.9 L119.6 64.9 L122.4 67.3 L127.9 72.9 L130.7 76.2 L134.8 81.6 L140.3 89.7 L147.2 100.7 L169.3 138.8 L177.6 152.4 L183.1 160.7 L187.2 166.5 L191.4 171.9 L195.5 176.7 L201 182.2 L205.2 185.7 L209.3 188.5 L213.5 190.7 L217.6 192.2 L221.7 193.1 L225.9 193.3 L228.6 193 L231.4 192.5 L234.2 191.7 L238.3 190 L242.4 187.7 L246.6 184.8 L250.7 181.4 L254.9 177.5 L259 173.1 L263.1 168.3 L270 159.4 L278.3 147.8 L286.6 135.3 L307.3 103.3 L317 89.1 L322.5 81.5 L328 74.4 L333.5 67.9 L337.7 63.4 L343.2 58 L348.7 53.4 L354.2 49.5 L358.4 47.1 L363.9 44.6 L368 43.3 L372.2 42.4 L377.7 42 L381.8 42.2 L387.3 43.3 L391.5 44.5 L397 46.9 L401.1 49.2 L406.7 52.8 L410.8 56 L416.3 60.8 L420.5 64.7 L426 70.5 L431.5 76.7 L437 83.3 L449.4 99.3 L466 122" class="s-line" style="stroke:var(--text);stroke-width:1.6" fill="none" clip-path="url(#f1602-clip)"/><circle cx="223.5" cy="122" r="4" class="f-acc2"/><circle cx="159.6" cy="122" r="4" class="f-dim"/><circle cx="295.2" cy="122" r="4" class="f-dim"/><text x="223.5" y="142" class="t-mono" style="font-size:13px" text-anchor="middle">0.414L</text><text x="238.3" y="34" class="t-acc" style="font-size:14px" text-anchor="middle">n = 1</text><text x="134.8" y="44.8" class="t" style="font-size:14px;fill:var(--accent-2)" text-anchor="middle">n = 2</text><text x="391.5" y="34" class="t" style="font-size:14px" text-anchor="middle">n = 3</text><text x="58" y="18" class="t-dim" style="font-size:13px" text-anchor="start">무거운 끝 μ₀</text><text x="466" y="18" class="t-dim" style="font-size:13px" text-anchor="end">가벼운 끝 μ₀/4</text><text x="466" y="256" class="t-dim" style="font-size:14px" text-anchor="end">x</text></svg>
+      <figcaption><b>그림 16-2.</b> 식 <a class="ref" href="#eq-nonuniform-string-modes"></a>의 처음 세 모드(최댓값이 1이 되게 맞춤). \(n\)번째 모드는 양 끝 사이에 마디가 \(n - 1\)개 있고(16.5절의 스투름 진동 정리), 마디(점)는 무거운 왼쪽으로 몰린다. 무거운 쪽에서는 파장이 짧고 진폭이 작으며, 가벼운 쪽에서는 파장이 길고 진폭이 크다.</figcaption>
+    </figure>
+    <div class="callout tip"><strong>가중 함수는 질량 행렬이다</strong><p>현을 간격 \(\Delta x\)인 구슬 \(N\)개로 나누면 \(j\)째 구슬의 질량은 \(m_j = \mu(x_j)\Delta x\)이고, 운동 방정식은 8장의 <a href="ch08.html#eq-generalized-eigen">일반화된 고유값 문제 \(K\mathbf x = \omega^2M\mathbf x\)(식 (8.28))</a>가 된다. \(K\)는 장력에서 오는 대칭 행렬이고 질량 행렬 \(M = \operatorname{diag}(m_j)\)가 가중 함수 \(\mu(x)\)의 이산판이다. 8장에서 정규 모드가 \(\mathbf a_j^{\mathsf T}M\mathbf a_k = \delta_{jk}\)(<a href="ch08.html#eq-m-orthonormal">식 (8.29)</a>)로 직교했듯이, 연속인 현의 모드는 \(\int\mu\,u_mu_n\,dx = 0\)으로 직교한다(16.4절). 가중 함수는 다른 문제에서 다른 얼굴로 나온다. 원통 좌표의 \(s\)와 구면 좌표의 \(r^2\)은 넓이와 부피의 요소이고, 16.7절의 관에서는 단면적이다.</p></div>
+  </section>
+
+  <!-- ============================================================ 16.3 -->
+  <section id="s3">
+    <h2>자기수반성과 경계 조건</h2>
+    <p>9장에서 \(-d^2/dx^2\)가 에르미트인지는 부분 적분을 두 번 해서 남는 경계 항 \([f^*g' - f^{*\prime}g]_a^b\)(<a href="ch09.html#eq-second-derivative-boundary">식 (9.50)</a>)이 사라지는지로 정해졌다. 같은 계산을 스투름-리우빌 연산자에 하자. 계수 \(p\)와 \(q\)가 생겨도 경계 항의 모양은 거의 그대로이고, 가중 함수는 저절로 지워진다.</p>
+
+    <div class="box thm" id="thm-lagrange-identity"><div class="box-h">라그랑주 항등식과 그린 공식</div>
+      <p>\(p\)가 연속 미분 가능하고 \(p, q\)가 실수 함수이면, 두 번 미분 가능한 모든 \(u, v\)에 대해</p>
+      <div class="formula" id="eq-lagrange-identity">\[ \begin{aligned} &v^*\big[(pu')' - qu\big] - u\big[(pv^{*\prime})' - qv^*\big] \\ &\quad = \frac{d}{dx}\Big[p\,\big(v^*u' - v^{*\prime}u\big)\Big] \end{aligned} \]</div>
+      <p>이다(<span class="term">라그랑주 항등식</span> <span class="en">(Lagrange identity)</span>). 이것을 \([a, b]\)에서 적분하면 식 <a class="ref" href="#eq-sl-operator"></a>의 \(\mathcal L\)과 식 <a class="ref" href="#eq-sl-inner-product"></a>의 내적에 대해 다음 <span class="term">그린 공식</span> <span class="en">(Green's formula)</span>이 나온다.</p>
+      <div class="formula" id="eq-sl-green-formula">\[ \langle v|\mathcal Lu\rangle - \langle\mathcal Lv|u\rangle = -\Big[p\,\big(v^*u' - v^{*\prime}u\big)\Big]_a^b \]</div>
+    </div>
+    <p><b>증명.</b> 오른쪽을 곱의 미분으로 풀면 \(p'(v^*u' - v^{*\prime}u) + p(v^{*\prime}u' + v^*u'' - v^{*\prime\prime}u - v^{*\prime}u')\)이다. 가운데의 \(v^{*\prime}u'\)이 지워지고, 남은 것을 모으면 \(v^*(p'u' + pu'') - u(p'v^{*\prime} + pv^{*\prime\prime}) = v^*(pu')' - u(pv^{*\prime})'\)이다. 왼쪽의 \(q\) 항은 \(-qv^*u + quv^* = 0\)으로 지워진다. 여기서 \(q\)가 실수라는 것을 썼다. \(q\)가 복소수였다면 \((q - q^*)uv^*\)가 남는다.</p>
+    <p>그린 공식은 정의를 넣기만 하면 된다. \(\mathcal Lu = -w^{-1}[(pu')' - qu]\)이고 \(p, q, w\)가 실수이므로 \((\mathcal Lv)^* = -w^{-1}[(pv^{*\prime})' - qv^*]\)이다. 따라서</p>
+    <div class="formula">\[ \begin{aligned} &\langle v|\mathcal Lu\rangle - \langle\mathcal Lv|u\rangle \\ &\quad = \int_a^b \big[v^*\,\mathcal Lu - (\mathcal Lv)^*\,u\big]\,w\,dx \\ &\quad = -\int_a^b \big\{v^*[(pu')' - qu] - u[(pv^{*\prime})' - qv^*]\big\}\,dx \end{aligned} \]</div>
+    <p>이고, 피적분 함수에 식 <a class="ref" href="#eq-lagrange-identity"></a>을 쓰면 적분이 경계 값으로 바뀐다. \(\square\)</p>
+    <p>두 번째 줄에서 \(\mathcal L\)의 \(1/w\)과 내적의 \(w\)가 약분되었다. <b>가중 함수를 내적에 넣고 연산자에서 나눈 것은 이 약분을 위해서다.</b> 가중 함수 없이 \(\int v^*\,\mathcal Lu\,dx\)로 셈하면 \(1/w\)이 남아 부분 적분이 깔끔하게 되지 않는다. \(p = w = 1\), \(q = 0\)이면 \(\mathcal L = -d^2/dx^2\)이고 식 <a class="ref" href="#eq-sl-green-formula"></a>는 9장의 식 (9.50)에 음의 부호를 붙인 것과 같다.</p>
+    <p>라그랑주 항등식에서 바로 나오는 결과가 하나 있다. \(u_1, u_2\)가 같은 \(\lambda\)에 대한 식 <a class="ref" href="#eq-sl-form"></a>의 실수 해이면, 왼쪽은 \(u_1(-\lambda wu_2) - u_2(-\lambda wu_1) = 0\)이므로</p>
+    <div class="formula" id="eq-sl-pw-constant">\[ p(x)\,W[u_1, u_2](x) = p\,(u_1u_2' - u_1'u_2) = \text{상수} \]</div>
+    <p>이다. \(W\)는 10장의 론스키안(<a href="ch10.html#def-wronskian">정의 10.2</a>)이고, 이 식은 <a href="ch10.html#eq-abel-formula">아벨 공식(식 (10.12))</a>을 스투름-리우빌 형태로 다시 쓴 것이다. 13장의 \(W[J_m, Y_m] = 2/(\pi s)\)(\(p = s\)이므로 \(sW\)가 상수)가 그 예이고, 20장에서 <a href="ch20.html#eq-green-bvp-construction">경계값 문제의 그린 함수</a>를 만들 때 분모에 이 상수가 들어간다.</p>
+
+    <h3 id="s3-self-adjoint">경계 항을 없애는 조건</h3>
+    <div class="box def" id="def-self-adjoint-bc"><div class="box-h">자기수반 경계 조건</div>
+      <p>스투름-리우빌 연산자 \(\mathcal L\)에 거는 경계 조건이, 그 조건을 만족하는 모든 \(u, v\)에 대해 경계 항</p>
+      <div class="formula" id="eq-sl-boundary-term">\[ \Big[p\,\big(v^*u' - v^{*\prime}u\big)\Big]_a^b = 0 \]</div>
+      <p>이 되게 하면 <span class="term">자기수반 경계 조건</span> <span class="en">(self-adjoint boundary conditions)</span>이라 한다. 그러면 그린 공식에서 \(\langle v|\mathcal Lu\rangle = \langle\mathcal Lv|u\rangle\)이고, \(\mathcal L\)은 그 정의역에서 에르미트 연산자다. 대표적인 것은 다음 세 가지이다.</p>
+      <ol>
+        <li><b>(가) 분리된 정칙 조건.</b> \(p(a), p(b) > 0\)이고, 실수 \(\alpha_1, \alpha_2, \beta_1, \beta_2\)에 대해(\((\alpha_1, \alpha_2) \ne (0, 0)\), \((\beta_1, \beta_2) \ne (0, 0)\)) \(\alpha_1u(a) + \alpha_2u'(a) = 0\), \(\beta_1u(b) + \beta_2u'(b) = 0\). 디리클레(\(\alpha_2 = 0\)), 노이만(\(\alpha_1 = 0\)), 로빈 조건이 모두 여기에 든다.</li>
+        <li><b>(나) 주기 조건.</b> \(p(a) = p(b)\)이고 \(u(a) = u(b)\), \(u'(a) = u'(b)\).</li>
+        <li><b>(다) 특이 끝점 조건.</b> \(p(a) = 0\)이거나 \(a = -\infty\)인 끝에서 \(\lim_{x\to a}p\,(v^*u' - v^{*\prime}u) = 0\). 실제로는 "\(u\)와 \(u'\)이 그 끝 근처에서 유계" 또는 "무한대에서 충분히 빨리 줄어든다"는 조건으로 건다. \(b\)도 같다.</li>
+      </ol>
+      <p>두 끝에 서로 다른 종류를 섞어 걸어도 된다.</p>
+    </div>
+    <p>세 경우에 경계 항이 정말 사라지는지 확인하자. (가)에서 \(x = a\)의 항을 보자. \(u\)가 조건을 만족하므로 벡터 \((u(a), u'(a))\)는 \((\alpha_1, \alpha_2)\)와 수직이다. \(\alpha\)가 실수이므로 \(v\)의 조건에 켤레를 씌우면 \(\alpha_1v^*(a) + \alpha_2v^{*\prime}(a) = 0\)이고, \((v^*(a), v^{*\prime}(a))\)도 같은 벡터와 수직이다. 평면에서 0이 아닌 한 벡터에 수직인 벡터들은 모두 평행하므로 두 벡터가 이루는 행렬식이 0이다.</p>
+    <div class="formula" id="eq-separated-determinant">\[ v^*(a)\,u'(a) - v^{*\prime}(a)\,u(a) = \det\begin{pmatrix} v^*(a) & v^{*\prime}(a) \\ u(a) & u'(a) \end{pmatrix} = 0 \]</div>
+    <p>\(x = b\)도 같다. 증명에서 계수가 실수라는 것이 꼭 필요했다. 9장에서 로빈 조건의 \(\kappa\)가 실수여야 했던 것(9.6절)과 같은 이유다. (나)에서는 \(x = b\)의 항과 \(x = a\)의 항이 같아서 차가 0이다. 이때 \(p(a) = p(b)\)가 없으면 두 항의 크기가 달라져 지워지지 않는다(<a class="ref" href="#prob-self-adjoint-check"></a>). (다)는 경계 항이 사라지는 것 자체를 조건으로 삼은 것이다.</p>
+    <p>(다)는 미리 세운 조건이라기보다 방정식이 스스로 정하는 조건에 가깝다. 르장드르 방정식은 \(p = 1 - x^2\)이 두 끝 \(x = \pm1\)에서 0이므로 두 끝이 모두 특이점이다. 그곳에서 유계인 해를 요구하자 급수가 끊겨야 했고, 그 조건이 고유값 \(\lambda = l(l+1)\)을 골랐다(<a href="ch12.html#thm-legendre-termination">정리 12.2</a>). 경계 조건을 따로 세우지 않았는데도 "유계"라는 요구가 경계 조건 노릇을 한 것이다. 다음 예제에서 그 구조를 하나 더 본다.</p>
+
+    <div class="box ex" id="ex-hanging-chain"><div class="box-h">매달린 사슬의 진동</div>
+      <p>길이 \(L\), 선밀도 \(\mu\)가 고른 사슬의 위 끝을 고정하고 아래 끝은 자유롭게 늘어뜨렸다. 사슬이 한 평면 안에서 작게 흔들린다. 아래 끝에서 위로 잰 높이를 \(z\)라 하자(\(0 \le z \le L\)). (가) 정상 모드의 방정식을 스투름-리우빌 형태로 쓰고 두 끝의 조건을 정하라. (나) 고유진동수와 모드 모양을 구하라. (다) \(L = 1.00\ \text{m}\)이면 처음 세 모드의 주기 \(\tau_n = 2\pi/\omega_n\)은 얼마인가? 길이 \(L\)인 단진자와 비교하라.</p>
+      <p><b>풀이.</b> (가) 높이 \(z\)에서 사슬의 장력은 그 아래 사슬의 무게 \(T(z) = \mu gz\)이다. 옆으로 벗어난 거리 \(y(z, t)\)가 작으면, 조각 \(dz\)가 받는 옆 방향 힘은 위아래 장력의 옆 성분의 차 \(\partial_z(T\,\partial_zy)\,dz\)이다. 따라서 \(\mu\,\partial_t^2y = \partial_z(\mu gz\,\partial_zy)\)이고, \(y = u(z)\cos\omega t\)를 넣으면</p>
+      <div class="formula" id="eq-hanging-chain-sl">\[ (z\,u')' + \frac{\omega^2}{g}\,u = 0 \]</div>
+      <p>이다. \(p = z\), \(q = 0\), \(w = 1\), \(\lambda = \omega^2/g\)이다. 위 끝 \(z = L\)은 \(p = L > 0\)인 정칙 끝점이고 고정되어 있으니 \(u(L) = 0\)이다. 아래 끝 \(z = 0\)에서는 장력이 0이라 \(p(0) = 0\)인 특이 끝점이다. 여기에는 조건을 세울 근거가 따로 없고, 사슬 끝이 유한하게 움직인다는 것, 곧 \(u\)가 유계라는 것만 요구한다.</p>
+      <p>(나) \(\xi = 2\sqrt{\lambda z}\)로 바꾸자. \(d\xi/dz = 2\lambda/\xi\)이고 \(z = \xi^2/4\lambda\)이므로 \(zu' = (\xi/2)\,du/d\xi\), \((zu')' = (\lambda/\xi)\,(\xi u_{\xi\xi} + u_\xi)\)이다. 식 <a class="ref" href="#eq-hanging-chain-sl"></a>은</p>
+      <div class="formula">\[ \frac{d^2u}{d\xi^2} + \frac1\xi\,\frac{du}{d\xi} + u = 0 \]</div>
+      <p>로, 차수 0인 베셀 방정식(<a href="ch13.html#eq-bessel-equation">13장 식 (13.2)</a>)이다. 해는 \(J_0(\xi)\)와 \(Y_0(\xi)\)인데, \(Y_0\)은 \(\xi \to 0\)에서 로그로 발산하므로 유계 조건이 이것을 버린다. 왜 버려야 하는지는 경계 항으로도 보인다. 식 <a class="ref" href="#eq-sl-pw-constant"></a>에서 \(z\,W[J_0, Y_0]\)는 0이 아닌 상수이므로, \(Y_0\)을 허락하면 \(z = 0\)의 경계 항이 사라지지 않는다. 유계 조건은 바로 이 경계 항을 없애는 조건이다. 남은 해 \(u = J_0(2\omega\sqrt{z/g})\)가 위 끝에서 0이려면 \(2\omega\sqrt{L/g}\)가 \(J_0\)의 영점 \(\alpha_{0n}\)(<a href="ch13.html#eq-bessel-zeros">13장 식 (13.20)</a>)이어야 한다.</p>
+      <div class="formula" id="eq-hanging-chain-modes">\[ \omega_n = \frac{\alpha_{0n}}{2}\sqrt{\frac gL}, \qquad u_n(z) = J_0\Big(\alpha_{0n}\sqrt{\frac zL}\Big) \]</div>
+      <p>16.4절의 정리에 따르면 이 모드들은 \(w = 1\)로 직교한다: \(\int_0^Lu_mu_n\,dz = 0\) (\(m \ne n\)). \(z = Ls^2\)으로 바꾸면 이 적분은 \(2L\int_0^1J_0(\alpha_{0m}s)J_0(\alpha_{0n}s)\,s\,ds\)가 되어, 13장의 베셀 함수 직교성 식 (13.22)와 같아진다. 그 식의 가중 함수 \(s\)가 여기서는 변수 바꾸기의 \(dz = 2Ls\,ds\)에서 나왔다.</p>
+      <p><b>숫자로 보기.</b> \(\sqrt{g/L} = 3.132\ \text{s}^{-1}\)이고 \(\alpha_{01}, \alpha_{02}, \alpha_{03} = 2.4048,\ 5.5201,\ 8.6537\)이므로</p>
+      <div class="formula">\[ \begin{aligned} \omega_1 &= 3.766\ \text{s}^{-1}, & \tau_1 &= 1.668\ \text{s} \\ \omega_2 &= 8.645\ \text{s}^{-1}, & \tau_2 &= 0.727\ \text{s} \\ \omega_3 &= 13.55\ \text{s}^{-1}, & \tau_3 &= 0.464\ \text{s} \end{aligned} \]</div>
+      <p>이다. 길이 \(L\)인 단진자의 주기 \(2\pi\sqrt{L/g} = 2.006\ \text{s}\)보다 짧고, 위 끝을 축으로 흔들리는 곧은 막대의 주기 \(2\pi\sqrt{2L/3g} = 1.638\ \text{s}\)와 비슷하다. 사슬의 바닥 모드는 거의 한 덩어리로 흔들리기 때문이다. 진동수의 비는 \(1 : 2.295 : 3.598\)로 정수비가 아니다. 단위: \(\sqrt{(\text{m/s}^2)/\text{m}} = \text{s}^{-1}\).</p>
+      <p>이 문제는 베셀 함수가 물리에 처음 나타난 곳이다. 다니엘 베르누이가 1730년대에 이 사슬을 다루며 지금의 \(J_0\)에 해당하는 급수를 얻었다(G. N. Watson, <i>A Treatise on the Theory of Bessel Functions</i>, 2nd ed., Cambridge 1944, 1장).</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 300" role="img" aria-label="위 끝을 매단 사슬의 처음 세 정상 모드. 아래로 갈수록 진폭이 커지고, 2번 모드의 마디는 아래 끝에서 0.19L 높이에 있다"><line x1="50" y1="34" x2="130" y2="34" class="s-line" style="stroke:var(--text);stroke-width:3"/><line x1="90" y1="40" x2="90" y2="250" class="s-grid" stroke-dasharray="4 4"/><path d="M138 250 L130.3 225.8 L123 200.7 L116.4 175.4 L110 149.2 L104.4 123 L99 95.7 L94.3 68.3 L90 40" class="s-acc" style="stroke-width:3" fill="none"/><circle cx="138" cy="250" r="4.5" class="f-dim"/><text x="90" y="272" class="t" style="font-size:15px" text-anchor="middle">n = 1</text><text x="90" y="292" class="t-dim" style="font-size:13px" text-anchor="middle">ω = 1.202√(g/L)</text><line x1="200" y1="34" x2="280" y2="34" class="s-line" style="stroke:var(--text);stroke-width:3"/><line x1="240" y1="40" x2="240" y2="250" class="s-grid" stroke-dasharray="4 4"/><path d="M288 250 L281 245.8 L274.5 241.6 L268.4 237.4 L262.9 233.2 L257.8 229 L253.2 224.8 L248.9 220.6 L244.2 215.3 L240.8 211.2 L237 205.9 L233.7 200.7 L230.8 195.4 L228.4 190.2 L226.4 184.9 L224.7 179.6 L223.3 174.4 L222.3 169.1 L221.5 163.9 L221 158.7 L220.7 152.3 L220.7 146.1 L220.9 139.8 L222.2 126.1 L224.3 112.4 L227.1 97.8 L240 40" class="s-acc2" style="stroke-width:2.2" fill="none"/><circle cx="288" cy="250" r="4.5" class="f-dim"/><circle cx="240" cy="210.1" r="4" class="f-acc2"/><text x="232" y="215.1" class="t-mono" style="font-size:13px" text-anchor="end">0.19L</text><text x="240" y="272" class="t" style="font-size:15px" text-anchor="middle">n = 2</text><text x="240" y="292" class="t-dim" style="font-size:13px" text-anchor="middle">ω = 2.760√(g/L)</text><line x1="350" y1="34" x2="430" y2="34" class="s-line" style="stroke:var(--text);stroke-width:3"/><line x1="390" y1="40" x2="390" y2="250" class="s-grid" stroke-dasharray="4 4"/><path d="M438 250 L421.6 245.8 L408.2 241.6 L397.5 237.4 L388.9 233.2 L385.4 231.1 L382.4 229 L379.8 226.9 L376.6 223.8 L374.9 221.7 L373 218.5 L372 216.4 L371.1 213.2 L370.7 210.1 L370.8 205.9 L371.6 201.7 L372.9 197.5 L374.6 193.3 L377.1 188.1 L390.3 163.9 L393.5 157.6 L396.3 151.3 L399.1 143.9 L401.3 136.6 L402.7 130.3 L403.8 123 L404.3 115.6 L404.3 107.2 L403.7 98.8 L402.5 90.4 L400.9 82 L398.5 71.5 L390 40" class="s-line" style="stroke:var(--text);stroke-width:1.8" fill="none"/><circle cx="438" cy="250" r="4.5" class="f-dim"/><circle cx="390" cy="233.8" r="4" class="f-acc2"/><text x="382" y="238.8" class="t-mono" style="font-size:13px" text-anchor="end">0.08L</text><circle cx="390" cy="164.6" r="4" class="f-acc2"/><text x="382" y="169.6" class="t-mono" style="font-size:13px" text-anchor="end">0.41L</text><text x="390" y="272" class="t" style="font-size:15px" text-anchor="middle">n = 3</text><text x="390" y="292" class="t-dim" style="font-size:13px" text-anchor="middle">ω = 4.327√(g/L)</text><text x="6" y="44" class="t-dim" style="font-size:13px" text-anchor="start">z = L</text><text x="6" y="254" class="t-dim" style="font-size:13px" text-anchor="start">z = 0</text></svg>
+      <figcaption><b>그림 16-3.</b> 매달린 사슬의 처음 세 모드 \(u_n(z) = J_0(\alpha_{0n}\sqrt{z/L})\). 굵은 막대가 고정된 위 끝(\(z = L\))이고 아래 끝(\(z = 0\))은 자유롭다. 장력이 작은 아래쪽일수록 진폭이 크다. 마디(점)의 높이는 \(z/L = (\alpha_{0j}/\alpha_{0n})^2\)이다. 곡선은 \(J_0\)의 급수 <a href="ch13.html#eq-bessel-series">(13.3)</a>을 계산해 그렸다.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================================================ 16.4 -->
+  <section id="s4">
+    <h2>고유값의 실수성과 고유함수의 직교성</h2>
+    <p>8장에서 에르미트 행렬의 고유값은 실수이고 고유벡터는 직교했다(<a href="ch08.html#thm-hermitian-real-eigen">정리 8.2</a>). 그 증명은 \(\mathbf u^\dagger A\mathbf v = (A\mathbf u)^\dagger\mathbf v\)라는 성질 하나만 썼다. 16.3절에서 스투름-리우빌 연산자도 자기수반 경계 조건 아래에서 같은 성질을 가진다는 것을 보였으니, 같은 증명이 그대로 통한다. 이 절의 정리가 12~14장의 직교성 증명을 모두 대신한다.</p>
+
+    <div class="box thm" id="thm-sl-real-orthogonal"><div class="box-h">고유값의 실수성과 고유함수의 직교성</div>
+      <p>식 <a class="ref" href="#eq-sl-form"></a>(\(p, q, w\)는 실수, \(w > 0\))에 자기수반 경계 조건(<a class="ref" href="#def-self-adjoint-bc"></a>)을 건 스투름-리우빌 문제에서 다음이 성립한다.</p>
+      <ol>
+        <li>고유값은 모두 실수이다.</li>
+        <li>서로 다른 고유값 \(\lambda_m \ne \lambda_n\)에 속하는 고유함수는 가중 함수 \(w\)에 대해 직교한다.
+          <div class="formula" id="eq-sl-orthogonality">\[ \langle u_m|u_n\rangle = \int_a^b u_m^*\,u_n\,w\,dx = 0 \]</div></li>
+        <li>고유함수는 실수 함수로 고를 수 있다.</li>
+        <li>적어도 한 끝에 분리된 정칙 조건(<a class="ref" href="#def-self-adjoint-bc"></a>의 (가))이 걸려 있으면, 고유값마다 고유함수는 상수배를 빼면 하나뿐이다(고유값이 <span class="term">단순</span> <span class="en">(simple)</span>하다).</li>
+      </ol>
+    </div>
+    <p><b>증명.</b> (1) \(\mathcal Lu = \lambda u\)이고 \(u \ne 0\)이 경계 조건을 만족한다고 하자. 그린 공식 <a class="ref" href="#eq-sl-green-formula"></a>에 \(v = u\)를 넣으면 경계 항이 0이므로 \(\langle u|\mathcal Lu\rangle = \langle\mathcal Lu|u\rangle\)이다. 내적이 왼쪽 자리에 대해 켤레 선형이므로(<a href="ch09.html#def-inner-product">정의 9.4</a>) 왼쪽은 \(\lambda\langle u|u\rangle\), 오른쪽은 \(\lambda^*\langle u|u\rangle\)이다.</p>
+    <div class="formula" id="eq-sl-real-proof">\[ (\lambda - \lambda^*)\int_a^b \lvert u\rvert^2\,w\,dx = 0 \]</div>
+    <p>\(w > 0\)이고 \(u \ne 0\)이므로 적분은 양수이고, 따라서 \(\lambda = \lambda^*\)이다. 가중 함수가 양수라는 가정이 여기서 쓰였다.</p>
+    <p>(2) \(\mathcal Lu_m = \lambda_mu_m\), \(\mathcal Lu_n = \lambda_nu_n\)이면, 그린 공식에서 \(\langle u_m|\mathcal Lu_n\rangle = \langle\mathcal Lu_m|u_n\rangle\)이고 (1)에 따라 \(\lambda_m^* = \lambda_m\)이므로</p>
+    <div class="formula" id="eq-sl-orthogonality-proof">\[ (\lambda_n - \lambda_m)\,\langle u_m|u_n\rangle = 0 \]</div>
+    <p>이다. \(\lambda_m \ne \lambda_n\)이면 \(\langle u_m|u_n\rangle = 0\)이다.</p>
+    <p>(3) \(p, q, w\)가 실수이고 \(\lambda\)도 실수이므로, \(u\)가 고유함수이면 켤레 \(u^*\)도 같은 방정식을 만족한다. 자기수반 경계 조건의 계수도 실수이므로 \(u^*\)는 경계 조건도 만족한다. 그러면 \(\operatorname{Re}u = (u + u^*)/2\)와 \(\operatorname{Im}u = (u - u^*)/2i\)가 모두 같은 고유값의 해이고, \(u \ne 0\)이므로 둘 가운데 적어도 하나는 0이 아니다. 고유 공간마다 실수 고유함수로 기저를 잡을 수 있다.</p>
+    <p>(4) \(u_1, u_2\)가 같은 \(\lambda\)의 실수 고유함수이고 \(x = a\)에 분리된 조건이 걸려 있다고 하자. 식 <a class="ref" href="#eq-separated-determinant"></a>의 논법(\(v = u_1\), \(u = u_2\))에서 \(W[u_1, u_2](a) = 0\)이다. 식 <a class="ref" href="#eq-sl-pw-constant"></a>에서 \(pW\)는 상수이므로 \(W\)는 구간 안 어디서나 0이고, 10장의 <a href="ch10.html#thm-wronskian-independence">정리 10.2</a>에 따라 \(u_1\)과 \(u_2\)는 선형 종속이다. \(\square\)</p>
+    <p>증명에 쓴 것은 세 가지뿐이다. 경계 항이 사라진다는 것, \(p, q, w\)가 실수라는 것, \(w > 0\)이라는 것. 고유함수를 하나도 구하지 않았다. 그래서 12장의 르장드르 다항식(<a href="ch12.html#thm-legendre-orthogonality">정리 12.5</a>), 13장의 베셀 함수(<a href="ch13.html#thm-bessel-orthogonality">정리 13.6</a>)와 에르미트·라게르 다항식, 14장의 삼각 함수(<a href="ch14.html#eq-trig-orthogonality">식 (14.3)</a>)의 직교성이 모두 이 정리의 특수한 경우다. 16.7절에서 한 표로 모은다.</p>
+    <p>(4)에 "분리된 조건"이 필요한 이유는 주기 조건을 보면 안다. \(-u'' = \lambda u\)에 주기 \(2\pi\)의 조건을 걸면 \(\lambda = n^2\) (\(n \ge 1\))마다 \(\cos nx\)와 \(\sin nx\) 두 개가 속한다. 이 두 함수는 고유값이 같으니 (2)가 직교를 보장하지 않는다. 직교하는 짝으로 고르는 것은 9장의 그람-슈미트 과정(<a href="ch09.html#eq-gram-schmidt">식 (9.16)</a>)의 몫이고, \(\cos nx\)와 \(\sin nx\)는 마침 처음부터 직교한다. 8장의 퇴화 고유값에서 고유벡터를 직교하게 골랐던 것(<a href="ch08.html#thm-spectral">정리 8.3</a>의 증명)과 같다.</p>
+    <div class="callout warn"><strong>경계 조건이 자기수반이 아니면 정리는 무너진다</strong><p>\(-u'' = \lambda u\)에 \(u(0) = u(L)\), \(u'(0) = -u'(L)\)을 걸어 보자. 분리된 조건도 주기 조건도 아니다. \(\lambda = k^2\)으로 두고 \(u = c_1\cos kx + c_2\sin kx\)를 넣으면 두 조건은 \(c_1(1 - \cos kL) - c_2\sin kL = 0\), \(-c_1\sin kL + c_2(1 + \cos kL) = 0\)이 되고, 계수의 행렬식은 \((1 - \cos kL)(1 + \cos kL) - \sin^2kL = 0\)이다. <b>모든 \(k\)에서</b>, 복소수 \(k\)에서도 0이다. 곧 모든 복소수가 고유값이다. 경계 항을 셈해 보면 \(u(0) = A\), \(u'(L) = B\)인 \(u\)와 \(A'\), \(B'\)인 \(v\)에 대해 \(2(A'^*B - B'^*A)\)만큼 남는다. 복소수 고유값이 나오는 다른 예는 <a class="ref" href="#prob-complex-eigenvalues"></a>에 있다. 정리의 가정은 장식이 아니다.</p></div>
+
+    <h3 id="s4-robin">로빈 조건과 초월 방정식</h3>
+    <p>디리클레·노이만 조건의 고유값은 \(\sin kL = 0\)이나 \(\cos kL = 0\)에서 바로 나왔다. 끝에서 열이나 에너지가 새어 나가는 경계에서는 \(u\)와 \(u'\)이 섞인 로빈 조건이 걸리고, 고유값은 초월 방정식의 근이 된다. 이때도 위의 정리는 고유값이 실수이고 고유함수가 직교한다는 것을 근을 구하기 전에 보장한다.</p>
+
+    <div class="box ex" id="ex-robin-eigenvalues"><div class="box-h">끝에서 열을 잃는 막대</div>
+      <p>길이 \(L\)인 막대의 옆면은 단열되어 있다. 온도 \(\vartheta\)는 주위 온도를 0으로 잰 과잉 온도이다(17장과 같은 기호). \(x = 0\) 끝은 얼음물에 담가 \(0\ ^\circ\text{C}\)로 유지하고, \(x = L\) 끝은 \(0\ ^\circ\text{C}\)인 공기로 뉴턴 냉각을 한다: \(-K\,\partial_x\vartheta = H\vartheta\) (\(K\)는 열전도도, \(H\)는 표면 열전달 계수). 확산 방정식 \(\partial_t\vartheta = D\,\partial_x^2\vartheta\)의 모드 \(\vartheta = X(x)\,e^{-D\lambda t}\)를 생각하자. (가) \(X\)의 고유값 문제를 세우고 경계 조건이 자기수반임을 보여라. (나) 고유값을 정하는 방정식을 구하라. (다) \(hL = 1\) (\(h = H/K\), 17장의 \(\mathrm{Bi} = 1\))일 때 처음 세 고유값을 구하라. 강철 막대 \(L = 0.50\ \text{m}\), \(D = 1.2 \times 10^{-5}\ \text{m}^2/\text{s}\)에서 가장 느린 모드의 감쇠 시간 \(\tau_1 = 1/(D\lambda_1)\)을 구하고, 오른쪽 끝도 얼음물에 담근 경우, 단열한 경우와 비교하라.</p>
+      <p><b>풀이.</b> (가) 모드를 넣으면 \(-D\lambda X = DX''\), 곧</p>
+      <div class="formula" id="eq-robin-problem">\[ \begin{aligned} &X'' + \lambda X = 0, \\ &X(0) = 0, \quad X'(L) + hX(L) = 0 \end{aligned} \]</div>
+      <p>이다. \(p = w = 1\), \(q = 0\)이고, 두 조건은 실수 계수의 분리된 조건(\(\alpha_1 = 1, \alpha_2 = 0\), \(\beta_1 = h, \beta_2 = 1\))이므로 자기수반이다. 따라서 고유값은 실수이고 단순하며, 고유함수는 직교한다. 음수나 0인 고유값도 따져야 한다. \(\lambda = 0\)이면 \(X = x\)이고 조건은 \(1 + hL = 0\)이 되어 \(h > 0\)과 맞지 않는다. \(\lambda = -\kappa^2 &lt; 0\)이면 \(X = \sinh\kappa x\)이고 조건은 \(\tanh\kappa L = -\kappa/h\)인데, 왼쪽은 양수이고 오른쪽은 음수이다. 따라서 \(\lambda > 0\)뿐이다. 16.6절에서 이 결과를 계산 없이 다시 얻는다.</p>
+      <p>(나) \(\lambda = k^2\), \(X = \sin kx\)로 두면 \(k\cos kL + h\sin kL = 0\)이다. \(z = kL\)로 쓰면</p>
+      <div class="formula" id="eq-robin-condition">\[ \tan z = -\frac{z}{hL}, \qquad \lambda_n = \frac{z_n^2}{L^2} \]</div>
+      <p>이다. 그림 16-4처럼 \(\tan z\)의 가지마다 직선 \(-z/hL\)과 한 번씩 만나므로, 근 \(z_n\)은 \(\big((n - \tfrac12)\pi,\ n\pi\big)\)에 하나씩 있다. 무차원 수 \(hL = HL/K\)는 17장의 <a href="ch17.html#eq-robin-biot">비오 수 \(\mathrm{Bi}\)</a>이다. 17장은 열전달 계수를 \(h\), 열전도도를 \(k\)로 써서 \(\mathrm{Bi} = hL/k\)로 적는데, 그 \(h\)와 \(k\)가 이 장의 \(H\)와 \(K\)이다. 그래서 이 장의 \(h = H/K\)는 17장의 \(\mathrm{Bi}/L\)이다. 또 17장은 파수를 \(\lambda\)로 써서 같은 식을 \(\tan\lambda L = -\lambda L/\mathrm{Bi}\)로 적는다. 이 장의 \(k\)가 17장의 \(\lambda\)이고, 이 장의 \(\lambda = k^2\)은 스투름-리우빌 고유값이다. \(h \to 0\)(단열)이면 \(z_n \to (n - \tfrac12)\pi\), 곧 노이만 조건의 \(\cos z = 0\)으로 가고, \(h \to \infty\)이면 \(z_n \to n\pi\), 곧 디리클레 조건으로 간다. 로빈 조건은 두 조건 사이를 잇는다.</p>
+      <p>(다) \(hL = 1\)이면 \(\tan z = -z\)이고, 이분법으로 풀면</p>
+      <div class="formula">\[ z_1 = 2.0288, \quad z_2 = 4.9132, \quad z_3 = 7.9787 \]</div>
+      <p>이다. 감쇠 시간은 \(\tau_n = L^2/(Dz_n^2)\)이므로</p>
+      <div class="formula">\[ \tau_1 = \frac{(0.50\ \text{m})^2}{1.2 \times 10^{-5}\ \text{m}^2/\text{s} \times 4.116} = 5.1 \times 10^3\ \text{s} \]</div>
+      <p>로 약 1.4시간이다. 단위는 \(\text{m}^2/(\text{m}^2/\text{s}) = \text{s}\)이다. 두 끝을 모두 얼음물에 담그면 \(z_1 = \pi\)라 \(\tau_1 = 2.1 \times 10^3\ \text{s}\), 오른쪽 끝을 단열하면 \(z_1 = \pi/2\)라 \(8.4 \times 10^3\ \text{s}\)이다. 공기로 열을 잃는 끝은 그 사이에 있다. 다음 모드는 \(\tau_2 = 863\ \text{s}\), \(\tau_3 = 327\ \text{s}\)로 훨씬 빨리 사라지므로, 한 시간쯤 지나면 첫 모드만 남는다(16.5절의 예제). \(h = 1/L = 2\ \text{m}^{-1}\)은 강철의 열전도도 \(K \approx 50\ \text{W/(m}\cdot\text{K)}\)에서 \(H \approx 100\ \text{W/(m}^2\cdot\text{K)}\)에 해당한다. 바람이 부는 공기에서 흔한 크기다.</p>
+      <p>고유함수 \(\sin k_nx\)를 직접 적분해 보면 정말 직교한다. 직교성 자체는 근의 조건 <a class="ref" href="#eq-robin-condition"></a>를 쓰면 손으로도 보일 수 있다(<a class="ref" href="#prob-robin-orthogonality"></a>). 규격화는 \(\sin 2z_n = 2\tan z_n\cos^2z_n\)과 식 <a class="ref" href="#eq-robin-condition"></a>에서</p>
+      <div class="formula" id="eq-robin-norm">\[ \int_0^L\sin^2k_nx\,dx = \frac L2\Big(1 + \frac{hL}{h^2L^2 + z_n^2}\Big) \]</div>
+      <p>이다. 디리클레(\(h \to \infty\))와 노이만(\(h \to 0\))의 극한에서 모두 \(L/2\)가 된다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 262" role="img" aria-label="tan z의 가지들과 직선 −z의 교점이 로빈 조건의 고유값을 준다. 교점 z₁, z₂, z₃은 각각 (n − 1/2)π와 nπ 사이에 있다"><defs><clipPath id="f1604-clip"><rect x="48" y="18" width="418" height="196"/></clipPath></defs><line x1="115.5" y1="18" x2="115.5" y2="214" class="s-grid"/><line x1="183" y1="18" x2="183" y2="214" class="s-grid"/><line x1="250.6" y1="18" x2="250.6" y2="214" class="s-grid"/><line x1="318.1" y1="18" x2="318.1" y2="214" class="s-grid"/><line x1="385.6" y1="18" x2="385.6" y2="214" class="s-grid"/><line x1="453.1" y1="18" x2="453.1" y2="214" class="s-grid"/><line x1="48" y1="208.1" x2="466" y2="208.1" class="s-grid"/><line x1="48" y1="148.7" x2="466" y2="148.7" class="s-grid"/><line x1="48" y1="29.9" x2="466" y2="29.9" class="s-grid"/><line x1="48" y1="89.3" x2="466" y2="89.3" class="s-line"/><line x1="48" y1="18" x2="48" y2="214" class="s-line"/><text x="183" y="107.3" class="t-dim" style="font-size:14px" text-anchor="middle">π</text><text x="318.1" y="107.3" class="t-dim" style="font-size:14px" text-anchor="middle">2π</text><text x="453.1" y="107.3" class="t-dim" style="font-size:14px" text-anchor="middle">3π</text><text x="42" y="213.1" class="t-dim" style="font-size:14px" text-anchor="end">−10</text><text x="42" y="153.7" class="t-dim" style="font-size:14px" text-anchor="end">−5</text><text x="42" y="94.3" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="42" y="34.9" class="t-dim" style="font-size:14px" text-anchor="end">5</text><line x1="115.5" y1="18" x2="115.5" y2="214" class="s-faint" stroke-dasharray="3 4"/><line x1="250.6" y1="18" x2="250.6" y2="214" class="s-faint" stroke-dasharray="3 4"/><line x1="385.6" y1="18" x2="385.6" y2="214" class="s-faint" stroke-dasharray="3 4"/><path d="M48 89.3 L62.1 85.2 L71.8 81.9 L79.6 78.5 L83.1 76.6 L86.1 74.7 L88.9 72.6 L91.5 70.3 L93.7 67.9 L95.8 65.2 L97.6 62.5 L99.3 59.3 L100.8 55.9 L102.3 51.8 L104.7 43 L106.7 32.4 L108.4 18.3 L109.7 2.2 L110.8 -17.9 L111.6 -42 L112.3 -68.6 L112.9 -108.5" class="s-line" style="stroke:var(--text);stroke-width:1.8" fill="none" clip-path="url(#f1604-clip)"/><path d="M118.1 287 L118.5 258.5 L119.4 220.6 L120.7 187.4 L122 167.5 L123.7 150.7 L124.6 144.7 L125.9 137.5 L127.2 131.9 L128.5 127.4 L130.2 122.6 L132 118.8 L133.7 115.7 L135.4 113.1 L137.6 110.3 L139.7 108.1 L142.3 105.8 L145.4 103.5 L148.4 101.6 L151.9 99.8 L158.4 97 L166.2 94.2 L174.4 91.7 L194.3 86.1 L204.2 82.9 L212.9 79.4 L216.4 77.6 L219.8 75.6 L222.9 73.5 L225.9 70.9 L228.5 68.2 L230.7 65.5 L232.8 62.1 L234.6 58.8 L236.3 54.8 L237.6 51.1 L238.9 46.6 L240.2 41 L241.9 31 L243.6 16 L244.9 -1.2 L245.8 -17.9 L246.7 -42 L247.5 -80 L248 -108.5" class="s-line" style="stroke:var(--text);stroke-width:1.8" fill="none" clip-path="url(#f1604-clip)"/><path d="M253.1 287 L253.6 258.5 L254.4 220.6 L255.3 196.5 L256.2 179.8 L257.5 162.5 L259.2 147.6 L260.9 137.5 L262.2 131.9 L263.5 127.4 L264.8 123.7 L266.6 119.7 L268.3 116.4 L270.4 113.1 L272.6 110.3 L275.2 107.7 L278.2 105.1 L281.3 103 L284.7 100.9 L288.2 99.2 L296.9 95.7 L306.8 92.5 L326.7 86.8 L335 84.4 L342.7 81.6 L349.2 78.7 L352.7 76.9 L355.7 75 L358.8 72.8 L361.4 70.5 L363.5 68.2 L365.7 65.5 L367.4 62.9 L369.2 59.7 L370.9 55.9 L372.6 51.1 L373.9 46.6 L375.2 41 L376.5 33.8 L377.4 27.8 L379.1 11 L380.4 -8.9 L381.7 -42 L382.6 -80 L383 -108.5" class="s-line" style="stroke:var(--text);stroke-width:1.8" fill="none" clip-path="url(#f1604-clip)"/><path d="M388.2 287 L388.7 253.8 L389.5 220.6 L390.5 192.7 L391.5 174.5 L393.1 156.6 L394.9 143.2 L397 133 L398.3 128.3 L399.8 123.8 L401.4 120.1 L403.2 116.6 L405.3 113.3 L407.4 110.7 L409.7 108.2 L412.3 105.9 L415.1 103.7 L418.5 101.6 L425.5 98.1 L434.3 94.8 L443.4 92 L466 85.6" class="s-line" style="stroke:var(--text);stroke-width:1.8" fill="none" clip-path="url(#f1604-clip)"/><path d="M48 89.3 L466 204.8" class="s-acc" style="stroke-width:2.6" fill="none" clip-path="url(#f1604-clip)"/><circle cx="135.2" cy="113.4" r="5" class="f-acc2"/><text x="128.2" y="104.4" class="t" style="font-size:15px" text-anchor="end">z₁</text><circle cx="259.2" cy="147.6" r="5" class="f-acc2"/><text x="252.2" y="138.6" class="t" style="font-size:15px" text-anchor="end">z₂</text><circle cx="390.9" cy="184" r="5" class="f-acc2"/><text x="383.9" y="175" class="t" style="font-size:15px" text-anchor="end">z₃</text><text x="63" y="34.6" class="t" style="font-size:14px" text-anchor="start">tan z</text><text x="406.9" y="182.2" class="t-acc" style="font-size:14px" text-anchor="start">−z/(hL)</text><text x="466" y="256" class="t-dim" style="font-size:14px" text-anchor="end">z = kL</text></svg>
+      <figcaption><b>그림 16-4.</b> 식 <a class="ref" href="#eq-robin-condition"></a>를 \(hL = 1\)로 그래프로 풀었다. \(\tan z\)(가는 곡선)의 가지마다 직선 \(-z/(hL)\)이 한 번씩 지나가고, 교점(점)이 고유값 \(\lambda_n = z_n^2/L^2\)을 준다. 점선은 \(\tan z\)의 점근선 \(z = (n - \tfrac12)\pi\)이다. \(n\)이 커지면 교점이 점근선 쪽으로 다가가 \(z_n \approx (n - \tfrac12)\pi + hL/\big((n - \tfrac12)\pi\big)\)가 된다(<a class="ref" href="#prob-robin-limits"></a>).</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================================================ 16.5 -->
+  <section id="s5">
+    <h2>완비성과 고유함수 전개</h2>
+    <p>고유함수가 직교한다는 것만으로는 부족하다. 14장에서 푸리에 급수를 쓴 것은 삼각 함수가 직교해서가 아니라, 직교하는 삼각 함수가 <b>충분히 많아서</b> 웬만한 함수를 다 전개할 수 있었기 때문이다. 유한 차원에서는 이 걱정이 없었다. \(n \times n\) 에르미트 행렬은 정규직교 고유벡터를 \(n\)개 가지고, 그것이 곧 \(\mathbb C^n\)의 기저였다(<a href="ch08.html#thm-spectral">스펙트럼 정리, 정리 8.3</a>). 무한 차원에서는 직교 함수가 무한히 많아도 기저가 아닐 수 있다. 9.5절에서 본 대로 \(\sin(2n\pi x/L)\)만 모은 집합은 무한하지만 \(\sin(\pi x/L)\)을 전개하지 못한다. 그래서 스투름-리우빌 고유함수가 기저를 이룬다는 것은 따로 증명해야 할 정리다.</p>
+    <p>현을 구슬 \(N\)개로 나누면(16.2절의 tip) 문제는 \(N \times N\) 일반화된 고유값 문제가 되고, 8장의 <a href="ch08.html#thm-generalized-eigen">정리 8.4</a>가 \(M\)-정규직교한 고유벡터 \(N\)개, 곧 기저를 준다. 구슬 수를 늘려도 이 기저가 살아남는다는 것이 다음 정리다.</p>
+
+    <div class="box thm" id="thm-sl-completeness"><div class="box-h">완비성 정리</div>
+      <p>정칙 스투름-리우빌 문제(<a class="ref" href="#def-sturm-liouville"></a>: 유한 구간 \([a, b]\), \(p, p', q, w\)가 \([a, b]\)에서 연속인 실수 함수, \([a, b]\)에서 \(p > 0\), \(w > 0\), 분리된 자기수반 경계 조건)에 대해 다음이 성립한다.</p>
+      <ol>
+        <li>고유값은 실수이고 단순하며 가산 무한 개이다. 크기 순으로 \(\lambda_1 &lt; \lambda_2 &lt; \lambda_3 &lt; \cdots\)로 늘어놓을 수 있고 \(\lambda_n \to \infty\)이다.</li>
+        <li>규격화한 실수 고유함수 \(\{u_n\}\) (\(\langle u_m|u_n\rangle = \delta_{mn}\))은 \(L^2_w(a, b)\)의 정규직교 기저다. 곧 \(\int_a^b\lvert f\rvert^2w\,dx &lt; \infty\)인 모든 \(f\)에 대해, \(c_n = \langle u_n|f\rangle\)으로 만든 부분합 \(S_N = \sum_{n=1}^Nc_nu_n\)이 평균 제곱의 뜻으로 \(f\)에 수렴한다.
+          <div class="formula" id="eq-sl-mean-convergence">\[ \lim_{N\to\infty}\int_a^b\lvert f - S_N\rvert^2\,w\,dx = 0 \]</div>
+          따라서 파르스발 등식 \(\sum_n\lvert c_n\rvert^2 = \langle f|f\rangle\)이 성립한다.</li>
+        <li>\(f\)가 \([a, b]\)에서 구간별로 매끄러우면(<a href="ch14.html#def-piecewise-smooth">정의 14.3</a>), 열린 구간 \((a, b)\)의 모든 점에서 \(S_N(x) \to \tfrac12\big[f(x^+) + f(x^-)\big]\)이다.</li>
+        <li>\(f\)가 \([a, b]\)에서 두 번 연속 미분 가능하고 경계 조건을 만족하면, \(S_N\)은 \([a, b]\)에서 \(f\)로 균등 수렴한다.</li>
+      </ol>
+      <p>주기 조건(\(p(a) = p(b)\))에서는 (1)의 "단순" 대신 고유값마다 고유함수가 많아야 두 개이고, 나머지는 그대로 성립한다.</p>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>엄밀한 증명은 길고, 물리를 이해하는 데 보태는 것이 적어 생각만 적는다. 16.6절의 레일리 몫 \(R[u]\)을 쓴다. 필요하면 \(q\)에 상수를 더해(고유값이 모두 같은 양만큼 움직일 뿐이다) 모든 고유값이 양수라고 하자.</p>
+        <p><b>1단계: 고유값을 차례로 만든다.</b> 경계 조건을 만족하는 함수 가운데 \(R[u]\)의 최솟값을 \(\lambda_1\)로, 그것을 주는 함수를 \(u_1\)으로 둔다. \(u_1\)과 직교하는 함수 가운데 최솟값이 \(\lambda_2\), 그다음이 \(\lambda_3\)이다. 최솟값이 실제로 존재한다는 것이 이 단계의 어려운 부분이다(콤팩트성 논법). \(\lambda_n \to \infty\)는 비교로 보인다. \(p \ge p_{\min}\), \(q \ge q_{\min}\), \(w \le w_{\max}\)이면 \(R[u]\)는 상수 계수 문제의 레일리 몫보다 작지 않고, 상수 계수 문제의 고유값은 \(n^2\)처럼 커진다.</p>
+        <p><b>2단계: 매끄러운 함수의 나머지가 0으로 간다.</b> \(f\)가 매끄럽고 경계 조건을 만족하면 나머지 \(r_N = f - S_N\)은 \(u_1, \ldots, u_N\)과 직교한다. 그러면 1단계의 정의에서 \(R[r_N] \ge \lambda_{N+1}\)이다. \(R\)의 분자를 \(\mathcal D[\cdot]\)라 하면 \(\mathcal D[f] = \mathcal D[r_N] + \sum_{n\le N}\lambda_n\lvert c_n\rvert^2 \ge \mathcal D[r_N]\)이므로</p>
+        <div class="formula">\[ \lVert r_N\rVert^2 \le \frac{\mathcal D[r_N]}{\lambda_{N+1}} \le \frac{\mathcal D[f]}{\lambda_{N+1}} \to 0 \]</div>
+        <p><b>3단계: 모든 \(L^2_w\) 함수로 넓힌다.</b> 그런 매끄러운 함수는 \(L^2_w\)에서 조밀하다. \(f\)에 가까운 매끄러운 \(g\)를 잡고, 9장의 <a href="ch09.html#thm-best-approximation">최선 근사 정리(정리 9.3)</a>로 \(\lVert f - S_N[f]\rVert \le \lVert f - S_N[g]\rVert \le \lVert f - g\rVert + \lVert g - S_N[g]\rVert\)를 쓰면 된다.</p>
+        <p>다른 길은 그린 함수를 쓰는 것이다. \(\mathcal L^{-1}\)을 그린 함수 \(G(x, x')\)를 핵으로 하는 적분 연산자로 쓰면, \(G\)가 연속이고 대칭이므로 적분 연산자의 힐베르트-슈미트 정리가 고유함수의 완비성을 준다. (3)과 (4)의 점별·균등 수렴도 이 길에서 나온다. 물리학자의 수준에서는 아프켄 8장(G. B. Arfken, H. J. Weber, F. E. Harris, <i>Mathematical Methods for Physicists</i>, 7th ed., Academic Press 2013)이 설명하고, 엄밀한 증명은 R. Courant, D. Hilbert, <i>Methods of Mathematical Physics</i>, Vol. I, Interscience 1953의 5장과 6장(변분 방법), E. A. Coddington, N. Levinson, <i>Theory of Ordinary Differential Equations</i>, McGraw-Hill 1955의 7장(그린 함수 방법)에 있다.</p>
+      </details>
+    </div>
+    <p>정리는 정칙 문제에 대한 것이다. 르장드르, 베셀, 에르미트, 라게르 문제는 끝점이 특이하거나 구간이 무한해서 이 정리에 그대로 들지 않지만, 각각 완비성이 따로 증명되어 있다(12장의 르장드르 급수는 바이어슈트라스 정리로 보였다). 이 책은 그 결과를 쓴다. 특이 문제의 일반론은 이 절 끝의 심화에서 이름만 적는다.</p>
+
+    <h3 id="s5-expansion">고유함수 전개와 델타 함수</h3>
+    <p>완비성 정리 덕분에 \(L^2_w\)의 함수는 고유함수로 전개된다. 고유함수를 규격화하지 않은 채로 쓰면 계수의 분모에 노름이 남는다.</p>
+    <div class="formula" id="eq-eigenfunction-expansion">\[ \begin{aligned} f(x) &= \sum_n c_n\,u_n(x), \\ c_n &= \frac{\langle u_n|f\rangle}{\langle u_n|u_n\rangle} = \frac{\int_a^b u_n^*\,f\,w\,dx}{\int_a^b\lvert u_n\rvert^2\,w\,dx} \end{aligned} \]</div>
+    <p>규격화하면 분모가 1이 되어 9장의 <a href="ch09.html#eq-function-expansion">식 (9.38)</a>과 같아진다. 계수의 적분에 가중 함수가 들어간다는 것을 잊지 말자. 베셀 급수에서는 \(s\), 에르미트 급수에서는 \(e^{-x^2}\)이 들어간다.</p>
+    <p>규격화한 고유함수로 계수를 전개식에 다시 넣고 합과 적분의 순서를 바꾸면</p>
+    <div class="formula">\[ f(x) = \int_a^b\Big[\sum_n u_n(x)\,u_n^*(x')\,w(x')\Big]f(x')\,dx' \]</div>
+    <p>이다. 이것이 모든 \(f\)에서 성립하므로, 괄호 안은 6장의 디랙 델타(<a href="ch06.html#def-dirac-delta">정의 6.4</a>)처럼 작용한다.</p>
+    <div class="formula" id="eq-sl-delta-completeness">\[ \sum_n u_n(x)\,u_n^*(x')\,w(x') = \delta(x - x') \]</div>
+    <p>9장의 <a href="ch09.html#eq-completeness-delta">식 (9.40)</a>을 스투름-리우빌 고유함수에 대해 다시 쓴 것이고, 디랙 표기의 완비성 관계 \(\sum_n|u_n\rangle\langle u_n| = I\)(<a href="ch09.html#eq-completeness">식 (9.25)</a>)의 함수판이다. 가중 함수는 \(x'\) 쪽에 붙는다. 양쪽을 \(w(x')\)로 나누어 \(\sum_n u_n(x)u_n^*(x') = \delta(x - x')/w(x)\)로 써도 같다. 합은 보통의 뜻으로 수렴하지 않고, 매끄러운 함수와 곱해 적분할 때 뜻을 가진다. 20장은 이 식에서 출발해 <a href="ch20.html#eq-green-eigen-expansion">그린 함수를 고유함수로 전개</a>한다.</p>
+    <p>14장의 푸리에 급수도 이 정리의 한 경우다. \(-y'' = \lambda y\)에 \([-L, L]\)의 주기 조건을 걸면(\(p = w = 1\)) 고유값 \((n\pi/L)^2\)마다 \(\cos(n\pi x/L)\)과 \(\sin(n\pi x/L)\)이 속하고, 완비성 정리의 주기판이 삼각 함수 집합의 완비성이다. \([0, L]\)의 디리클레 조건은 반구간 사인 급수(<a href="ch14.html#eq-half-range-sine">식 (14.23)</a>)를, 노이만 조건은 반구간 코사인 급수를 준다. 정리의 (3)은 14장의 디리클레 정리(<a href="ch14.html#thm-dirichlet">정리 14.2</a>)를 넓힌 것이다.</p>
+
+    <h3 id="s5-oscillation">고유함수의 마디</h3>
+    <p>그림 16-2의 현에서 \(n\)번째 모드는 마디가 \(n - 1\)개였다. 르장드르 다항식 \(P_l\)은 \((-1, 1)\)에 영점이 \(l\)개였고(<a href="ch12.html#thm-legendre-zeros">정리 12.6</a>), 그것은 고유값을 작은 것부터 셀 때 \(l + 1\)번째다. 이것은 우연이 아니다.</p>
+    <div class="box thm" id="thm-sturm-oscillation"><div class="box-h">스투름 진동 정리</div>
+      <p>정칙 스투름-리우빌 문제의 고유값을 \(\lambda_1 &lt; \lambda_2 &lt; \cdots\)로 늘어놓으면, \(\lambda_n\)의 고유함수 \(u_n\)은 열린 구간 \((a, b)\)에서 정확히 \(n - 1\)개의 영점을 가지며 모두 단순 영점이다(\(u_n = 0\)인 곳에서 \(u_n' \ne 0\)). 또 \(u_n\)의 이웃한 두 영점 사이에는 \(u_{n+1}\)의 영점이 적어도 하나 있다.</p>
+    </div>
+    <p>이 책에서는 증명하지 않는다(쿠랑-힐베르트 1권 6장). 생각은 이렇다. 단순 영점인 것은 쉽다. \(u = u' = 0\)인 점이 있으면 초기값 문제의 유일성에 따라 \(u \equiv 0\)이다. 나머지는 스투름의 비교 정리에서 온다. 식 <a class="ref" href="#eq-sl-form"></a>에서 \(\lambda w - q\)가 클수록 해가 빨리 휘어 더 자주 0을 지난다. 그래서 \(\lambda\)를 키우며 사격법(그림 16-1)을 하면 해의 영점이 하나씩 왼쪽에서 들어오고, 오른쪽 끝 조건이 맞을 때마다 고유값이 하나씩 나온다. \(n\)번째로 맞을 때 안쪽 영점은 \(n - 1\)개다. 물리에서는 이 정리가 "에너지가 높은 상태일수록 마디가 많다"는 규칙이다. 1차원 퍼텐셜 속 입자의 바닥 상태에는 마디가 없다.</p>
+
+    <div class="box ex" id="ex-robin-uniform-expansion"><div class="box-h">고르게 데운 막대가 식는 모양</div>
+      <p><a class="ref" href="#ex-robin-eigenvalues"></a>의 막대(\(hL = 1\))가 처음에 온도 \(\vartheta_0\)으로 고르다. (가) \(\vartheta_0\)을 고유함수 \(\sin k_nx\)로 전개한 계수 \(c_n\)을 구하라. (나) 파르스발 등식으로 처음 몇 모드가 "온도 제곱의 적분"을 얼마나 차지하는지 구하라. (다) 부분합은 \(x = 0\)과 \(x = L\)에서 어떻게 되는가? (라) \(\vartheta_0 = 100\ ^\circ\text{C}\)인 강철 막대(\(L = 0.50\ \text{m}\))에서 1시간 뒤 \(x = L\) 끝의 온도를 구하라.</p>
+      <p><b>풀이.</b> (가) 식 <a class="ref" href="#eq-eigenfunction-expansion"></a>에 \(w = 1\), \(\int_0^L\sin k_nx\,dx = L(1 - \cos z_n)/z_n\)과 노름 <a class="ref" href="#eq-robin-norm"></a>을 넣으면</p>
+      <div class="formula" id="eq-robin-uniform-coefficients">\[ \frac{c_n}{\vartheta_0} = \frac{2(1 - \cos z_n)}{z_n\big[1 + hL/(h^2L^2 + z_n^2)\big]} \]</div>
+      <p>이다. \(hL = 1\)이면 \(c_1 = 1.189\,\vartheta_0\), \(c_2 = 0.313\,\vartheta_0\), \(c_3 = 0.278\,\vartheta_0\)이다.</p>
+      <p>(나) 파르스발 등식은 \(\sum_nc_n^2\int_0^L\sin^2k_nx\,dx = \int_0^L\vartheta_0^2\,dx = \vartheta_0^2L\)이다. 왼쪽의 합을 \(\vartheta_0^2L\)로 나눈 부분합은 첫 모드에서 \(0.845\), 세 모드까지 \(0.936\), 열 모드까지 \(0.980\)이다. 첫 모드 하나가 85%를 차지한다. 나머지가 천천히 줄어드는 것은 \(x = 0\)에서 함수가 경계 조건과 맞지 않기 때문이다.</p>
+      <p>(다) \(x = 0\)에서는 모든 \(\sin k_nx\)가 0이므로 부분합도 언제나 0이다. 처음 온도 \(\vartheta_0\)과 다르다. 이것은 사인 급수가 홀함수로 늘린 함수의 뛰는 점에서 하는 일과 같고, 그 근처에서 깁스 넘침이 나타난다(그림 16-5에서 \(N = 20\)이면 \(1.179\,\vartheta_0\)). 정리의 (3)은 열린 구간에서의 수렴만 말하므로 이것과 모순되지 않는다. 오른쪽 끝 \(x = L\)에서는 고유함수가 0이 아니어서, 부분합이 천천히 \(\vartheta_0\)으로 다가간다(\(S_{10}(L) = 0.948\,\vartheta_0\), \(S_{100}(L) = 0.995\,\vartheta_0\)).</p>
+      <p>(라) 각 모드는 \(e^{-D\lambda_nt} = e^{-t/\tau_n}\)으로 줄어들므로(<a href="ch17.html#eq-diffusion-modes">17장의 확산 모드</a>) \(\vartheta(L, t) = \sum_nc_n\sin z_n\,e^{-t/\tau_n}\)이다. <a class="ref" href="#ex-robin-eigenvalues"></a>의 \(\tau_1 = 5.06 \times 10^3\ \text{s}\), \(\tau_2 = 863\ \text{s}\)와 \(\sin z_1 = 0.897\), \(\sin z_2 = -0.980\)을 넣으면, \(t = 3600\ \text{s}\)에서</p>
+      <div class="formula">\[ \begin{aligned} \frac{\vartheta(L, t)}{\vartheta_0} &= 1.189 \times 0.897 \times e^{-0.711} \\ &\quad + 0.313 \times (-0.980) \times e^{-4.17} + \cdots \\ &= 0.524 - 0.005 + \cdots = 0.519 \end{aligned} \]</div>
+      <p>이다. 곧 \(51.9\ ^\circ\text{C}\)이다. 셋째 모드는 \(5 \times 10^{-6}\)으로 보이지 않는다. 처음에는 모드가 많이 필요했지만, 시간이 지나면 높은 모드가 먼저 사라져 첫 모드 하나로 충분하다. 차원도 맞다. \(t/\tau_n\)은 차원이 없고 \(c_n\)은 온도의 단위를 가진다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 255" role="img" aria-label="고른 온도 ϑ₀을 로빈 문제의 고유함수로 전개한 부분합. 항이 늘면 x = 0 근처를 빼고 ϑ₀에 다가가고, x = L에서도 ϑ₀으로 간다"><defs><clipPath id="f1605-clip"><rect x="52" y="18" width="414" height="188"/></clipPath></defs><line x1="134.8" y1="18" x2="134.8" y2="206" class="s-grid"/><line x1="217.6" y1="18" x2="217.6" y2="206" class="s-grid"/><line x1="300.4" y1="18" x2="300.4" y2="206" class="s-grid"/><line x1="383.2" y1="18" x2="383.2" y2="206" class="s-grid"/><line x1="466" y1="18" x2="466" y2="206" class="s-grid"/><line x1="52" y1="129.4" x2="466" y2="129.4" class="s-grid"/><line x1="52" y1="59.8" x2="466" y2="59.8" class="s-grid"/><line x1="52" y1="199" x2="466" y2="199" class="s-line"/><line x1="52" y1="18" x2="52" y2="206" class="s-line"/><text x="52" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="134.8" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">0.2L</text><text x="217.6" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">0.4L</text><text x="300.4" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">0.6L</text><text x="383.2" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">0.8L</text><text x="466" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">L</text><text x="46" y="204" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="46" y="134.4" class="t-dim" style="font-size:14px" text-anchor="end">0.5</text><text x="46" y="64.8" class="t-dim" style="font-size:14px" text-anchor="end">1</text><line x1="52" y1="59.8" x2="466" y2="59.8" class="s-line" style="stroke:var(--text);stroke-width:1.2" stroke-dasharray="5 4"/><path d="M52 199 L95.1 164.4 L126.5 139.9 L140.6 129.4 L154.7 119.2 L167.9 109.9 L181.2 101.1 L194.4 92.6 L206.8 85.1 L219.3 78 L231.7 71.3 L244.1 65.2 L255.7 59.8 L267.3 55 L278.9 50.6 L291.3 46.4 L302.9 43 L314.5 40.1 L326.1 37.7 L337.7 35.8 L349.3 34.5 L360.8 33.7 L372.4 33.4 L384 33.7 L395.6 34.5 L407.2 35.8 L418.8 37.7 L430.4 40 L442 42.9 L453.6 46.3 L466 50.5" class="s-line" style="stroke:var(--text);stroke-width:1.6" fill="none" clip-path="url(#f1605-clip)"/><path d="M52 199 L68.6 155.2 L75.2 138.5 L81 124.5 L86.8 111.2 L92.6 98.8 L98.4 87.3 L103.3 78.3 L109.1 68.8 L114.1 61.5 L119.1 55.1 L124 49.6 L129 44.9 L134.8 40.6 L139.8 37.8 L142.3 36.7 L145.6 35.5 L148.9 34.7 L152.2 34.2 L155.5 34 L158.8 34.2 L162.1 34.5 L165.4 35.2 L168.7 36.1 L172.9 37.4 L179.5 40.3 L186.1 43.7 L193.6 48 L213.5 60 L220.1 63.7 L225.9 66.6 L232.5 69.5 L239.1 71.8 L245.8 73.6 L251.5 74.5 L258.2 75.1 L264.8 74.9 L271.4 74.2 L278.9 72.7 L286.3 70.7 L293.8 68.2 L323.6 56.3 L331 53.6 L337.7 51.5 L345.1 49.6 L352.6 48.2 L360 47.4 L367.5 47.2 L374.9 47.6 L382.4 48.6 L389.8 50.2 L398.1 52.5 L404.7 54.7 L413 57.7 L447.8 71.4 L456.9 74.6 L466 77.5" class="s-acc2" style="stroke-width:2" fill="none" clip-path="url(#f1605-clip)"/><path d="M52 199 L57.8 124.3 L60.3 97 L62.8 74 L65.2 56.3 L66.9 47.5 L67.7 44 L69.4 38.7 L70.2 37 L71 35.8 L71.9 35.1 L72.7 34.8 L73.5 35 L74.4 35.7 L75.2 36.7 L76.8 39.6 L79.3 45.7 L85.1 62.1 L86.8 66 L88.4 69.2 L90.1 71.5 L90.9 72.3 L91.7 72.9 L93.4 73.4 L94.2 73.3 L95.9 72.4 L98.4 69.8 L100.9 66.1 L105.8 57.7 L107.5 55.2 L109.1 53.2 L111.6 51.2 L112.4 50.8 L114.1 50.5 L114.9 50.5 L116.6 51.1 L119.1 52.9 L121.6 55.5 L127.3 62.5 L129.8 64.8 L132.3 66.3 L134.8 66.9 L137.3 66.4 L139.8 65 L142.3 63 L148 57.5 L150.5 55.7 L153 54.4 L155.5 54 L158 54.4 L160.5 55.5 L163 57.2 L168.7 61.7 L171.2 63.3 L173.7 64.3 L176.2 64.6 L178.7 64.3 L181.2 63.4 L183.7 61.9 L189.4 58.1 L191.9 56.7 L194.4 55.9 L196.9 55.6 L199.4 55.8 L201.9 56.7 L204.4 57.9 L210.1 61.3 L212.6 62.5 L215.1 63.3 L217.6 63.5 L220.1 63.3 L222.6 62.5 L225.1 61.4 L230.8 58.4 L233.3 57.3 L235.8 56.6 L238.3 56.4 L240.8 56.6 L243.3 57.3 L254 62 L256.5 62.7 L259 62.9 L261.5 62.7 L264 62.1 L274.7 57.7 L277.2 57.1 L279.7 56.9 L281.4 56.9 L283.8 57.4 L286.3 58.2 L295.4 61.7 L297.9 62.3 L300.4 62.5 L302.9 62.3 L305.4 61.8 L315.3 58.2 L317.8 57.5 L320.3 57.2 L322.8 57.2 L325.2 57.6 L328.6 58.6 L336.8 61.6 L339.3 62.1 L341.8 62.3 L344.3 62.1 L346.8 61.6 L356.7 58.3 L359.2 57.7 L361.7 57.4 L364.2 57.4 L366.6 57.8 L370 58.7 L378.2 61.4 L380.7 61.9 L383.2 62.1 L385.7 62 L388.2 61.6 L398.9 58.2 L401.4 57.7 L403.9 57.5 L406.4 57.6 L409.7 58.2 L418 60.9 L421.3 61.7 L423.8 62 L426.3 62.1 L428.7 61.8 L431.2 61.2 L438.7 58.7 L442 57.8 L444.5 57.5 L447 57.4 L450.3 57.8 L453.6 58.6 L466 63.4" class="s-acc" style="stroke-width:2.6" fill="none" clip-path="url(#f1605-clip)"/><text x="308.7" y="35.9" class="t" style="font-size:14px" text-anchor="middle">N = 1</text><text x="267.3" y="101" class="t" style="font-size:14px;fill:var(--accent-2)" text-anchor="middle">N = 4</text><text x="424.6" y="89.8" class="t-acc" style="font-size:14px" text-anchor="middle">N = 20</text><text x="466" y="250" class="t-dim" style="font-size:14px" text-anchor="end">x</text><text x="466" y="30" class="t-dim" style="font-size:14px" text-anchor="end">S<tspan baseline-shift="sub" style="font-size:10px">N</tspan>(x)/ϑ₀</text></svg>
+      <figcaption><b>그림 16-5.</b> 고른 온도 \(\vartheta_0\)(점선)을 식 <a class="ref" href="#eq-robin-uniform-coefficients"></a>의 계수로 전개한 부분합 \(S_N\) (\(hL = 1\)). \(N\)이 커지면 열린 구간에서 \(\vartheta_0\)에 다가간다. \(x = 0\)에서는 모든 고유함수가 0이라 부분합도 0이고, 그 옆에 깁스 넘침이 남는다. \(x = L\)에서는 부분합이 0이 아니고 천천히 \(\vartheta_0\)으로 간다.</figcaption>
+    </figure>
+    <div class="callout deep" data-later="qm-grad"><strong>특이 문제와 연속 스펙트럼</strong><p>구간이 무한하면 고유값이 띄엄띄엄 있지 않을 수 있다. 실수축 전체의 \(-d^2/dx^2\)에서 \(e^{ikx}\)는 모든 실수 \(k\)에 대해 방정식을 만족하지만, 제곱 적분할 수 없어 \(L^2\)의 고유함수가 아니다. 그래도 전개는 남는다. 합 \(\sum_n\)이 적분 \(\int dk/2\pi\)로 바뀌어 15장의 푸리에 변환이 되고, 식 <a class="ref" href="#eq-sl-delta-completeness"></a>은 \(\int e^{ik(x - x')}\,dk/2\pi = \delta(x - x')\)(<a href="ch15.html#eq-delta-fourier">15장 식 (15.18)</a>)이 된다. 수소 원자의 해밀토니안처럼 띄엄띄엄한 고유값(속박 상태)과 연속 스펙트럼(산란 상태)이 함께 있는 경우도 있다. 어느 경계 조건이 자기수반인지는 바일의 극한점·극한원 분류가 정한다. 이 일반론은 E. C. Titchmarsh, <i>Eigenfunction Expansions Associated with Second-Order Differential Equations</i>, Part I, 2nd ed., Oxford 1962에 있고, 대학원 양자역학 책이 산란 이론에서 다시 다룬다.</p></div>
+  </section>
+
+  <!-- ============================================================ 16.6 -->
+  <section id="s6">
+    <h2>레일리 몫과 변분 추정</h2>
+    <p>밀도가 아무렇게나 변하는 현이나 임의의 퍼텐셜 속 입자는 고유함수를 닫힌 꼴로 쓸 수 없다. 그래도 가장 낮은 진동수나 바닥 에너지는 놀랄 만큼 정확하게 어림할 수 있다. 8장에서 실수 대칭 행렬의 \(\mathbf x^{\mathsf T}A\mathbf x/\mathbf x^{\mathsf T}\mathbf x\)가 가장 작은 고유값보다 작아지지 않았던 것(<a href="ch08.html#thm-quadratic-extremes">정리 8.5</a>, <a href="ch08.html#eq-quadratic-bounds">식 (8.39)</a>)이 무한 차원에서도 성립하기 때문이다. 레일리는 『소리의 이론』(J. W. Strutt, Baron Rayleigh, <i>The Theory of Sound</i>, Vol. I, Macmillan 1877)에서 이 방법으로 여러 진동체의 기본 진동수를 어림했다.</p>
+
+    <h3 id="s6-quotient">레일리 몫</h3>
+    <p>\(u\)가 경계 조건을 만족할 때 \(\langle u|\mathcal Lu\rangle = \int_a^b u^*\big[-(pu')' + qu\big]dx\)에서 첫 항을 한 번 부분 적분하면 \(-\big[pu^*u'\big]_a^b + \int_a^b p\lvert u'\rvert^2dx\)이다. 그래서 다음 비를 정의한다.</p>
+    <div class="formula" id="eq-rayleigh-quotient">\[ \begin{aligned} R[u] &= \frac{\mathcal D[u]}{\int_a^b\lvert u\rvert^2\,w\,dx}, \\ \mathcal D[u] &= \int_a^b\big(p\lvert u'\rvert^2 + q\lvert u\rvert^2\big)\,dx \\ &\quad - \Big[p\,u^*u'\Big]_a^b \end{aligned} \]</div>
+    <p>이것을 <span class="term">레일리 몫</span> <span class="en">(Rayleigh quotient)</span>이라 한다. 분자는 \(\langle u|\mathcal Lu\rangle\)이고 분모는 \(\langle u|u\rangle\)이므로, \(u\)가 고유함수이면 \(R[u]\)는 그 고유값이다. 디리클레·노이만 조건에서는 경계 항이 0이고, 로빈 조건 \(u'(b) = -h\,u(b)\)에서는 경계 항이 \(p(b)\,h\lvert u(b)\rvert^2\)이 되어 분자에 더해진다. 현에서 분자의 \(T\int\lvert u'\rvert^2dx\)는 늘어난 줄의 탄성 에너지(의 두 배)이고 분모의 \(\int\mu\lvert u\rvert^2dx\)에 \(\omega^2/2\)를 곱하면 최대 운동 에너지이다. 레일리 몫은 "최대 퍼텐셜 에너지 = 최대 운동 에너지"를 \(\omega^2\)에 대해 푼 것이다.</p>
+
+    <div class="box thm" id="thm-rayleigh-min"><div class="box-h">레일리 몫의 최소 성질</div>
+      <p>정칙 스투름-리우빌 문제의 고유값을 \(\lambda_1 &lt; \lambda_2 &lt; \cdots\), 정규직교 고유함수를 \(u_1, u_2, \ldots\)라 하자. 경계 조건을 만족하고 두 번 연속 미분 가능한, 0이 아닌 모든 \(u\)에 대해</p>
+      <div class="formula" id="eq-rayleigh-bound">\[ R[u] \ge \lambda_1 \]</div>
+      <p>이고, 등호는 \(u\)가 \(u_1\)의 상수배일 때만 성립한다. 더 나아가 \(u\)가 \(u_1, \ldots, u_{n-1}\)과 직교하면 \(R[u] \ge \lambda_n\)이다. 따라서 \(\lambda_1 = \min R[u]\)이고 \(\lambda_n = \min\{R[u] : u \perp u_1, \ldots, u_{n-1}\}\)이다.</p>
+    </div>
+    <p><b>증명.</b> 완비성 정리에 따라 \(u = \sum_nc_nu_n\), \(c_n = \langle u_n|u\rangle\)이다. \(\mathcal Lu\)도 \(L^2_w\)에 들므로 같은 기저로 전개되고, 그 계수는 그린 공식과 \(\lambda_n\)이 실수라는 것에서 \(\langle u_n|\mathcal Lu\rangle = \langle\mathcal Lu_n|u\rangle = \lambda_nc_n\)이다. 정규직교 기저에서 두 함수의 내적은 계수의 곱의 합이므로(9장의 <a href="ch09.html#eq-parseval-general">파르스발 등식 (9.39)</a>를 두 함수로 넓힌 것) \(\mathcal D[u] = \langle u|\mathcal Lu\rangle = \sum_n c_n^*\lambda_nc_n\)이고</p>
+    <div class="formula" id="eq-rayleigh-expansion">\[ R[u] = \frac{\sum_n\lambda_n\lvert c_n\rvert^2}{\sum_n\lvert c_n\rvert^2} \]</div>
+    <p>이다. 레일리 몫은 고유값들을 \(\lvert c_n\rvert^2\)으로 가중 평균한 것이다. 평균은 가장 작은 값보다 작을 수 없으므로 \(R[u] \ge \lambda_1\)이다. 등호가 성립하려면 \(\lambda_n > \lambda_1\)인 모든 \(n\)에서 \(c_n = 0\)이어야 하고, \(\lambda_1\)은 단순하므로 \(u = c_1u_1\)이다. \(u\)가 \(u_1, \ldots, u_{n-1}\)과 직교하면 \(c_1 = \cdots = c_{n-1} = 0\)이라 평균에 \(\lambda_n\) 이상의 값만 남는다. \(\square\)</p>
+    <p>정리는 두 번 미분 가능한 \(u\)에 대해 세웠지만, \(\mathcal D[u]\)에는 1계 도함수만 들어 있다. 매끄러운 함수로 근사하는 논법으로, \(u\)가 연속이고 \(u'\)이 구간별 연속인 시험 함수(예를 들어 꺾인 삼각형 모양)에도 \(R[u] \ge \lambda_1\)이 그대로 성립한다. 21장은 이 정리를 다른 쪽에서 보았다. \(\int wy^2dx = 1\)을 제약으로 걸고 \(\int(py'^2 + qy^2)dx\)를 정지시키면 오일러-라그랑주 방정식이 스투름-리우빌 형태가 되고 라그랑주 승수가 고유값이 되었다(<a href="ch21.html#eq-eigen-variational">21장 식 (21.34)</a>). 이 절의 정리는 그 정지점 가운데 가장 낮은 것이 실제로 최솟값이라는 것을 보탠다.</p>
+
+    <h3 id="s6-consequences">두 가지 쓸모</h3>
+    <p><b>고유값의 부호.</b> \(q \ge 0\)이고 경계 항이 분자에 양수로만 들어가면(디리클레, 노이만, \(h \ge 0\)인 로빈 조건) 모든 \(u\)에서 \(\mathcal D[u] \ge 0\)이므로 모든 고유값이 0 이상이다. <a class="ref" href="#ex-robin-eigenvalues"></a>의 막대는 \(\mathcal D[u] = \int_0^L\lvert u'\rvert^2dx + h\lvert u(L)\rvert^2 > 0\)이라 고유값이 모두 양수이고, 그래서 모든 모드가 시간이 지나며 줄어든다. 예제에서 \(\lambda \le 0\)을 따로 지운 계산을 하지 않아도 되었다. 열이 저절로 모이는 모드가 없다는 물리적 사실이 \(\mathcal D \ge 0\)이라는 수학으로 나타난 것이다.</p>
+    <p><b>비교.</b> 같은 경계 조건에서 \(p\)나 \(q\)를 키우면 모든 \(u\)의 레일리 몫이 커지므로 최솟값 \(\lambda_1\)도 커진다. \(\mathcal D \ge 0\)일 때 \(w\)를 키우면 반대로 \(\lambda_1\)이 작아진다. 현에 비유하면, 장력이 크면 음이 높고 줄이 무거우면 음이 낮다는 것이다. 밀도가 \(\mu_{\min} \le \mu(x) \le \mu_{\max}\)인 현의 기본 진동수는 밀도가 \(\mu_{\max}\)과 \(\mu_{\min}\)으로 고른 두 현의 기본 진동수 사이에 있다(<a class="ref" href="#prob-density-comparison"></a>). <a class="ref" href="#ex-nonuniform-string"></a>의 \(114.7\ \text{Hz}\)가 \(79.1\ \text{Hz}\)와 \(158.1\ \text{Hz}\) 사이에 있었던 것이 그 예이다.</p>
+
+    <h3 id="s6-second-order">오차는 2차로 작다</h3>
+    <p>레일리 몫이 쓸모 있는 진짜 이유는 따로 있다. 시험 함수가 \(u_1\)에서 조금 벗어나 있으면 레일리 몫은 훨씬 덜 벗어난다. \(\lVert u_1\rVert = 1\)이고, \(\eta\)가 경계 조건을 만족하며 \(u_1\)과 직교할 때 \(u = u_1 + \varepsilon\eta\)를 넣어 보자. 1차 항 \(\varepsilon\big(\langle u_1|\mathcal L\eta\rangle + \langle\eta|\mathcal Lu_1\rangle\big)\)은 \(\langle\eta|\mathcal Lu_1\rangle = \lambda_1\langle\eta|u_1\rangle = 0\)이고 \(\langle u_1|\mathcal L\eta\rangle = \langle\mathcal Lu_1|\eta\rangle = 0\)이므로 사라진다. 남는 것은</p>
+    <div class="formula" id="eq-rayleigh-second-order">\[ \begin{aligned} R[u_1 + \varepsilon\eta] &= \frac{\lambda_1 + \varepsilon^2\langle\eta|\mathcal L\eta\rangle}{1 + \varepsilon^2\lVert\eta\rVert^2} \\ &= \lambda_1 + \varepsilon^2\big(\langle\eta|\mathcal L\eta\rangle - \lambda_1\lVert\eta\rVert^2\big) + O(\varepsilon^4) \end{aligned} \]</div>
+    <p>이다. 레일리 몫은 고유함수에서 <b>정지</b>한다. 함수의 모양이 \(\varepsilon\)만큼 틀리면 고유값은 \(\varepsilon^2\)에 비례해서만 틀린다. 그 비례 상수는 \(\eta\)에 섞인 모드의 고유값이 \(\lambda_1\)에서 얼마나 먼지로 정해지므로, 높은 모드가 적게 섞인 매끄러운 시험 함수일수록 좋다(<a class="ref" href="#prob-rayleigh-second-order"></a>). 괄호 안은 식 <a class="ref" href="#eq-rayleigh-expansion"></a>에 따라 \((\lambda_2 - \lambda_1)\lVert\eta\rVert^2\) 이상이므로, 정리대로 오차는 언제나 위쪽이다. 레일리 몫은 고유값의 <b>상한</b>을 준다. 하한을 얻으려면 위의 비교 같은 다른 논법이 필요하다.</p>
+
+    <div class="box ex" id="ex-rayleigh-estimate"><div class="box-h">고르지 않은 현의 기본 진동수 어림</div>
+      <p><a class="ref" href="#ex-nonuniform-string"></a>의 현(\(\mu = \mu_0/(1 + x/L)^2\), 양 끝 고정)의 기본 진동수를 레일리 몫으로 어림하고, 정확한 값 \(f_1 = 114.7\ \text{Hz}\)와 비교하라. (가) 시험 함수로 고른 현의 모양 \(\sin(\pi x/L)\)을 쓴다. (나) 매개변수 하나를 가진 \(u_a = (1 + x/L)^a\sin(\pi x/L)\)로 \(R\)을 가장 작게 하는 \(a\)를 찾는다.</p>
+      <p><b>풀이.</b> \(p = T\), \(q = 0\), \(w = \mu\), 디리클레 조건이므로 \(\omega^2 \le R[u] = T\int_0^Lu'^2dx\big/\int_0^L\mu u^2dx\)이다. \(t = x/L\)로 쓰면 \(R = (T/\mu_0L^2)\,\rho[u]\)이고</p>
+      <div class="formula">\[ \rho[u] = \frac{\int_0^1(du/dt)^2\,dt}{\int_0^1u^2\,(1 + t)^{-2}\,dt} \]</div>
+      <p>이다. 정확한 값은 \(\rho = \nu_1^2 = 1/4 + (\pi/\ln 2)^2 = 20.792\)이다.</p>
+      <p>(가) \(u = \sin\pi t\)이면 분자는 \(\pi^2/2\)이고, 분모 \(\int_0^1\sin^2(\pi t)/(1 + t)^2\,dt = 0.23251\)은 심프슨 공식으로 계산한다. 따라서 \(\rho = 4.9348/0.23251 = 21.224\)이고, 정확한 값보다 2.1% 크다. 진동수는 제곱근이라 오차가 절반이 된다.</p>
+      <div class="formula">\[ f_1 \le \frac{\sqrt{21.224}}{2\pi}\times 158.1\ \text{s}^{-1} = 115.9\ \text{Hz} \]</div>
+      <p>정확한 값보다 1.0% 높다. 이 시험 함수는 정확한 모드와 모양이 꽤 다르다. 정확한 모드의 최댓값은 \(x = 0.449L\)에 있는데 사인은 \(0.5L\)에 있다. 두 함수를 같은 노름으로 맞추면 차이의 노름은 8.3%이다. 그 차이의 99%가 \(u_2\) 방향이므로 식 <a class="ref" href="#eq-rayleigh-second-order"></a>은 오차를 \((0.083)^2(\lambda_2 - \lambda_1)/\lambda_1 = 0.0069 \times 2.96 = 2.0\%\)로 어림하고, 실제 2.1%와 맞는다.</p>
+      <p>(나) \(\rho[u_a]\)를 몇 개의 \(a\)에서 계산하면 \(a = 0\)에서 \(21.224\), \(a = -0.5\)에서 \(20.826\)이고, 최솟값은 \(a = -0.64\)에서 \(\rho = 20.806\)이다. 정확한 값보다 0.065% 크고, 진동수로는 \(114.78\ \text{Hz}\)로 0.03% 높다. \(a &lt; 0\)은 진폭을 무거운 왼쪽에서 줄이고 최댓값을 왼쪽으로 옮긴다. 정확한 모드가 하는 일과 같은 방향이다. 매개변수를 넣고 레일리 몫을 최소화하는 이 방법을 <span class="term">레일리-리츠 방법</span> <span class="en">(Rayleigh–Ritz method)</span>이라 한다. 어느 \(a\)를 고르든 결과가 정확한 값보다 작아지지는 않는다는 것이 정리의 보증이다.</p>
+    </div>
+
+    <div class="callout tip"><strong>시험 함수가 지켜야 할 경계 조건</strong><p>디리클레 조건은 시험 함수가 반드시 지켜야 한다. \(u(a) = 0\)을 어긴 함수로는 레일리 몫이 고유값보다 작아질 수 있다. 노이만이나 로빈 조건은 다르다. 경계 항을 \(\mathcal D[u] = \int(p\lvert u'\rvert^2 + q\lvert u\rvert^2)dx + p(b)h\lvert u(b)\rvert^2\)처럼 \(h\)로 써 두면, 도함수 조건을 지키지 않는 시험 함수를 써도 \(R \ge \lambda_1\)이 성립하고, 최솟값을 주는 함수는 저절로 \(u'(b) = -hu(b)\)를 만족한다. 21장의 <a href="ch21.html#eq-natural-boundary">자연 경계 조건(식 (21.14))</a>과 같은 이야기다. 그래서 변분 계산에서는 디리클레 조건을 <span class="term">본질적 경계 조건</span> <span class="en">(essential boundary condition)</span>, 노이만·로빈 조건을 <span class="term">자연 경계 조건</span> <span class="en">(natural boundary condition)</span>이라 부른다. 사슬(<a class="ref" href="#prob-chain-rayleigh"></a>)처럼 특이 끝점에서는 유계이기만 하면 된다.</p></div>
+
+    <div class="box ex" id="ex-quantum-bouncer"><div class="box-h">바닥 위에서 튀는 중성자의 바닥 에너지</div>
+      <p>질량 \(m\)인 입자가 중력장 속에서 완전히 반사하는 수평 바닥 \(z = 0\) 위에 있다. 슈뢰딩거 방정식 \(-(\hbar^2/2m)\psi'' + mgz\,\psi = E\psi\), \(\psi(0) = 0\), \(z \to \infty\)에서 \(\psi \to 0\)이다. (가) 이 문제의 \(p, q, w\)를 밝히고 레일리 몫을 써라. (나) 시험 함수 \(\psi = z\,e^{-az/z_0}\)로 바닥 에너지의 상한을 구하라. 여기서 \(z_0 = (\hbar^2/2m^2g)^{1/3}\)이다. (다) 중성자(\(m = 1.675 \times 10^{-27}\ \text{kg}\))에 대해 숫자를 넣고 정확한 값과 비교하라.</p>
+      <p><b>풀이.</b> (가) \(p = \hbar^2/2m\), \(q = mgz\), \(w = 1\), \(\lambda = E\)이다. 구간 \([0, \infty)\)가 무한한 특이 문제이지만, \(q\)가 무한대에서 한없이 커져 고유값이 띄엄띄엄 있고 바닥 고유값이 있다. 이런 문제에서도 <a class="ref" href="#thm-rayleigh-min"></a>의 논법이 그대로 성립한다. 레일리 몫은</p>
+      <div class="formula">\[ E_1 \le \frac{\int_0^\infty\big[\frac{\hbar^2}{2m}\lvert\psi'\rvert^2 + mgz\lvert\psi\rvert^2\big]dz}{\int_0^\infty\lvert\psi\rvert^2dz} \]</div>
+      <p>이다. 분자의 두 항은 운동 에너지와 퍼텐셜 에너지의 기댓값이고, 양자역학의 변분 원리가 바로 이 식이다.</p>
+      <p>(나) \(\zeta = z/z_0\), \(E_0 = mgz_0\)으로 쓰면 \(\hbar^2/(2mz_0^2) = mgz_0 = E_0\)이므로 \(E/E_0 \le \int(\psi_\zeta^2 + \zeta\psi^2)d\zeta/\int\psi^2d\zeta\)이다. \(\psi = \zeta e^{-a\zeta}\)이면 \(\int_0^\infty\zeta^ne^{-2a\zeta}d\zeta = n!/(2a)^{n+1}\)(11장의 감마 함수)에서 \(\int\psi^2 = 1/4a^3\), \(\int\psi_\zeta^2 = 1/4a\), \(\int\zeta\psi^2 = 3/8a^4\)이다. 따라서</p>
+      <div class="formula" id="eq-bouncer-trial">\[ \frac{E(a)}{E_0} = a^2 + \frac{3}{2a} \]</div>
+      <p>이다. \(dE/da = 2a - 3/2a^2 = 0\)에서 \(a^3 = 3/4\), \(a = 0.909\)이고, 최솟값은 \(E = 3a^2E_0 = 3(3/4)^{2/3}E_0 = 2.476\,E_0\)이다(그림 16-6). 정확한 바닥 에너지는 에어리 함수 \(\operatorname{Ai}\)의 첫 영점에서 \(E_1 = 2.338\,E_0\)이다(사격법으로 수치 확인했다). 상한이 5.9% 높다.</p>
+      <p><b>숫자로 보기.</b> \(\hbar = 1.055 \times 10^{-34}\ \text{J}\cdot\text{s}\), \(g = 9.81\ \text{m/s}^2\)이면</p>
+      <div class="formula">\[ \begin{aligned} z_0 &= \Big(\frac{\hbar^2}{2m^2g}\Big)^{1/3} = 5.87\ \mu\text{m} \\ E_0 &= mgz_0 = 9.64 \times 10^{-32}\ \text{J} = 0.602\ \text{peV} \end{aligned} \]</div>
+      <p>이고, \(E_1 = 1.407\ \text{peV}\), 변분 상한은 \(1.490\ \text{peV}\)이다. 같은 에너지의 고전 입자가 튀어 오르는 높이는 \(E_1/mg = 2.338z_0 = 13.7\ \mu\text{m}\)이다. 단위 확인: \(\hbar^2/(m^2g)\)는 \((\text{J}\cdot\text{s})^2/(\text{kg}^2\cdot\text{m/s}^2) = \text{m}^3\)이다. 아주 느린 중성자를 바닥 거울 위로 보내 이 띄엄띄엄한 높이의 상태가 실제로 관측되었다(V. V. Nesvizhevsky et al., Nature 415, 297 (2002)).</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 255" role="img" aria-label="시험 함수 ζe^(−aζ)의 레일리 몫 E(a)는 모든 a에서 참 바닥 에너지 2.338보다 크고, a = 0.909에서 최솟값 2.476이 된다"><defs><clipPath id="f1606-clip"><rect x="52" y="18" width="414" height="188"/></clipPath></defs><line x1="111.1" y1="18" x2="111.1" y2="206" class="s-grid"/><line x1="170.3" y1="18" x2="170.3" y2="206" class="s-grid"/><line x1="229.4" y1="18" x2="229.4" y2="206" class="s-grid"/><line x1="288.6" y1="18" x2="288.6" y2="206" class="s-grid"/><line x1="347.7" y1="18" x2="347.7" y2="206" class="s-grid"/><line x1="406.9" y1="18" x2="406.9" y2="206" class="s-grid"/><line x1="466" y1="18" x2="466" y2="206" class="s-grid"/><line x1="52" y1="166.8" x2="466" y2="166.8" class="s-grid"/><line x1="52" y1="127.7" x2="466" y2="127.7" class="s-grid"/><line x1="52" y1="88.5" x2="466" y2="88.5" class="s-grid"/><line x1="52" y1="49.3" x2="466" y2="49.3" class="s-grid"/><line x1="52" y1="206" x2="466" y2="206" class="s-line"/><line x1="52" y1="18" x2="52" y2="206" class="s-line"/><text x="52" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">0.4</text><text x="170.3" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">0.8</text><text x="288.6" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">1.2</text><text x="406.9" y="228" class="t-dim" style="font-size:14px" text-anchor="middle">1.6</text><text x="46" y="211" class="t-dim" style="font-size:14px" text-anchor="end">2.0</text><text x="46" y="171.8" class="t-dim" style="font-size:14px" text-anchor="end">2.5</text><text x="46" y="132.7" class="t-dim" style="font-size:14px" text-anchor="end">3.0</text><text x="46" y="93.5" class="t-dim" style="font-size:14px" text-anchor="end">3.5</text><text x="46" y="54.3" class="t-dim" style="font-size:14px" text-anchor="end">4.0</text><line x1="52" y1="179.5" x2="466" y2="179.5" class="s-acc2" style="stroke-width:1.8" stroke-dasharray="6 4"/><text x="462" y="197.5" class="t-dim" style="font-size:13px" text-anchor="end">참값 2.338</text><path d="M52 56.4 L58.9 71.1 L65.8 84 L72.7 95.4 L76.8 101.5 L81 107.3 L89.3 117.6 L97.5 126.5 L105.8 134.2 L110 137.7 L115.5 141.9 L125.1 148.3 L130.7 151.5 L136.2 154.3 L141.7 156.9 L147.2 159.1 L152.7 161.1 L158.3 162.8 L169.3 165.5 L174.8 166.5 L181.7 167.5 L194.1 168.5 L201 168.7 L207.9 168.6 L221.7 167.7 L235.5 165.9 L249.3 163.3 L264.5 159.6 L279.7 155 L296.3 149.1 L311.4 142.9 L328 135.3 L344.6 126.9 L361.1 117.7 L377.7 107.8 L395.6 96.3 L412.2 85 L430.1 71.9 L448.1 58.1 L466 43.6" class="s-acc" style="stroke-width:3" fill="none" clip-path="url(#f1606-clip)"/><circle cx="202.4" cy="168.7" r="5" class="f-acc"/><text x="66.8" y="195.8" class="t-mono" style="font-size:13px" text-anchor="start">최솟값 2.476 (a = 0.909)</text><text x="214.6" y="57.2" class="t-acc" style="font-size:14px" text-anchor="start">E(a) = a² + 3/(2a)</text><text x="466" y="250" class="t-dim" style="font-size:14px" text-anchor="end">a</text><text x="58" y="30" class="t-dim" style="font-size:14px" text-anchor="start">E/E₀</text></svg>
+      <figcaption><b>그림 16-6.</b> 시험 함수 \(\zeta e^{-a\zeta}\)의 레일리 몫 \(E(a)/E_0 = a^2 + 3/(2a)\) (식 <a class="ref" href="#eq-bouncer-trial"></a>). 어느 \(a\)에서나 참값 \(2.338\)(점선)보다 크고, 가장 낮은 점 \(a = 0.909\)에서 \(2.476\)이 된다. 최솟값 근처에서 곡선이 평평하므로 \(a\)를 조금 틀려도 상한은 거의 바뀌지 않는다.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================================================ 16.7 -->
+  <section id="s7">
+    <h2>특수 함수를 한 틀로</h2>
+    <p>이제 12~14장의 함수들을 한자리에 모으자. 아래 표의 모든 줄은 식 <a class="ref" href="#eq-sl-form"></a>의 한 경우이고, 직교성은 <a class="ref" href="#thm-sl-real-orthogonal"></a>에서, 전개할 수 있다는 것은 <a class="ref" href="#thm-sl-completeness"></a>(특이 문제는 따로 증명된 완비성)에서 나온다.</p>
+    <div class="formula" id="eq-sl-table">\[ \small\begin{array}{c|cccc} u_n & p & q & w & \lambda \\ \hline \sin\frac{n\pi x}{L},\ e^{in\pi x/L} & 1 & 0 & 1 & \frac{n^2\pi^2}{L^2} \\[3pt] P_l(x) & 1 - x^2 & 0 & 1 & l(l+1) \\[3pt] P_l^m(x) & 1 - x^2 & \frac{m^2}{1 - x^2} & 1 & l(l+1) \\[3pt] J_m(ks) & s & \frac{m^2}{s} & s & k^2 \\[3pt] j_l(kr) & r^2 & l(l+1) & r^2 & k^2 \\[3pt] H_n(x) & e^{-x^2} & 0 & e^{-x^2} & 2n \\[3pt] L_n^{(\alpha)}(x) & x^{\alpha+1}e^{-x} & 0 & x^\alpha e^{-x} & n \end{array} \]</div>
+    <p>구간과 끝점의 조건은 다음과 같다. 특이 끝점(<a class="ref" href="#def-self-adjoint-bc"></a>의 (다))에서는 대부분 \(p\)가 0이 되고, "유계"나 "다항식보다 빨리 자라지 않음"이라는 요구가 고유값을 고른다.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>함수</th><th>구간</th><th>끝점의 조건</th><th>본래 장</th></tr></thead>
+      <tbody>
+        <tr><td>\(\sin(n\pi x/L)\)</td><td>\([0, L]\)</td><td>정칙, 디리클레</td><td><a href="ch14.html#eq-half-range-sine">식 (14.23)</a></td></tr>
+        <tr><td>\(e^{in\pi x/L}\)</td><td>\([-L, L]\)</td><td>주기</td><td><a href="ch14.html#def-fourier-series">정의 14.2</a></td></tr>
+        <tr><td>\(P_l\), \(P_l^m\)</td><td>\([-1, 1]\)</td><td>두 끝 특이(\(p = 0\)), 유계</td><td><a href="ch12.html#eq-legendre-norm">식 (12.33)</a></td></tr>
+        <tr><td>\(J_m(\alpha_{mn}s/a)\)</td><td>\([0, a]\)</td><td>\(s = 0\) 특이, \(s = a\) 디리클레</td><td><a href="ch13.html#eq-bessel-orthogonality">식 (13.22)</a></td></tr>
+        <tr><td>\(j_l(kr)\)</td><td>\([0, a]\)</td><td>\(r = 0\) 특이, \(r = a\) 디리클레</td><td><a href="ch13.html#ex-spherical-well">예제 13.4</a></td></tr>
+        <tr><td>\(H_n\)</td><td>\((-\infty, \infty)\)</td><td>두 끝 무한, 다항식 증가</td><td><a href="ch13.html#eq-hermite-orthogonality">식 (13.37)</a></td></tr>
+        <tr><td>\(L_n^{(\alpha)}\)</td><td>\([0, \infty)\)</td><td>\(x = 0\) 특이, \(\infty\)에서 다항식 증가</td><td><a href="ch13.html#eq-laguerre-orthogonality">식 (13.46)</a></td></tr>
+      </tbody>
+    </table></div>
+    <p>표를 읽는 법을 몇 가지 적는다.</p>
+    <ul>
+      <li><b>고유값이 어디 있는가.</b> 르장드르 방정식에서는 \(l(l+1)\)이, 베셀 방정식에서는 \(m\)이 아니라 \(k^2\)이 고유값이다. \(m\)은 \(q = m^2/s\) 속에 고정된 채로 들어 있다. 그래서 베셀 함수의 직교성은 같은 \(m\)에서 \(k\)가 다른 함수들 사이의 것이다(13장의 tip "베셀 함수는 왜 이 표에 없는가"가 짚은 차이). 연관 르장드르 함수도 \(m\)을 고정하고 \(l\)이 다른 것끼리 직교한다.</li>
+      <li><b>새 결과가 공짜로 나온다.</b> 원통의 벽이 단열되어 있으면 \(s = a\)의 조건은 노이만 조건 \(R'(a) = 0\)이 되어 \(J_m'(\beta_{mn}) = 0\)인 \(\beta_{mn}\)이 고유값을 정한다. 13장에서 증명하지 않았지만, 표의 \(p, q, w\)와 <a class="ref" href="#thm-sl-real-orthogonal"></a>만으로 \(\int_0^aJ_m(\beta_{mn}s/a)J_m(\beta_{mn'}s/a)\,s\,ds = 0\) (\(n \ne n'\))임을 안다.</li>
+      <li><b>13장의 로드리게스 자료와의 관계.</b> 13.7절은 고전 직교 다항식을 \(\sigma\), \(\tau\), \(w\)로 정리했다(<a href="ch13.html#eq-rodrigues-general">식 (13.53)</a>과 그 앞의 표). 방정식 \(\sigma y'' + \tau y' + \lambda y = 0\)에 \(w\)를 곱하면 \((\sigma w)' = \tau w\)이므로 \((\sigma wy')' + \lambda wy = 0\)이 된다. 곧 스투름-리우빌 형태의 \(p\)는 \(\sigma w\)이고 \(q = 0\)이다. 위 표의 르장드르·에르미트·라게르 줄은 그 표에서 \(p = \sigma w\)를 계산한 것이고, 규격화 상수는 <a href="ch13.html#eq-orthopoly-table">13장 식 (13.55)</a>에 있다. 13장 <a href="ch13.html#thm-rodrigues-orthogonality">정리 13.10</a>의 가정 "\(x^k\sigma w\)가 두 끝에서 0으로 간다"는 바로 \(p = \sigma w\)인 특이 끝점에서 경계 항이 사라질 조건이다.</li>
+      <li><b>구면 문제의 지름 방정식.</b> 슈뢰딩거 방정식의 지름 부분은 \(p = r^2\), \(w = r^2\)의 스투름-리우빌 형태이고, 가중 함수 \(r^2\)은 구면 좌표의 부피 요소에서 온다. \(u = rR\)로 바꾸면 \(p = w = 1\)이 된다(<a href="ch06.html#eq-radial-schrodinger">6장 식 (6.37)</a>). 수소 원자의 지름 함수가 \(\int_0^\infty R_{nl}R_{n'l}\,r^2dr = 0\) (\(n \ne n'\))으로 직교하는 것도 이 가중 함수 때문이다.</li>
+    </ul>
+
+    <div class="box ex" id="ex-conical-bore"><div class="box-h">원뿔관과 원통관의 배음</div>
+      <p>단면적이 \(S(x)\)로 천천히 변하는 관 속 소리의 압력 \(P(x)e^{-i\omega t}\)는 웹스터의 관 방정식 \(\frac{1}{S}\frac{d}{dx}\Big(S\frac{dP}{dx}\Big) + k^2P = 0\) (\(k = \omega/c\))을 따른다(A. G. Webster, Proc. Natl. Acad. Sci. USA 5, 275 (1919)). 길이 \(L\)인 두 관을 비교하라. (가) 한쪽 끝(\(x = 0\), 리드가 있는 곳)이 막히고 다른 끝(\(x = L\))이 열린 원통관. (나) 꼭짓점이 \(x = 0\)에 있고 \(x = L\)에서 열린 원뿔관. 막힌 끝에서는 공기가 움직이지 못하므로 \(P' = 0\), 열린 끝에서는 \(P = 0\)으로 둔다. (다) \(L = 0.600\ \text{m}\), \(c = 343\ \text{m/s}\)일 때 처음 세 공명 진동수를 구하라.</p>
+      <p><b>풀이.</b> 관 방정식에 \(S\)를 곱하면 \((SP')' + k^2SP = 0\)이다. \(p = S\), \(q = 0\), \(w = S\), \(\lambda = k^2\)인 스투름-리우빌 문제이고, <b>가중 함수는 단면적</b>이다. 넓은 곳의 공기가 더 많은 질량을 가지기 때문이다.</p>
+      <p>(가) \(S\)가 상수이면 \(P'' + k^2P = 0\), \(P'(0) = 0\), \(P(L) = 0\)이다. \(P = \cos kx\)이고 \(\cos kL = 0\)에서 \(k_n = (n - \tfrac12)\pi/L\)이므로 \(f_n = (2n - 1)c/4L\)이다. 홀수 배음만 있다.</p>
+      <p>(나) \(S \propto x^2\)이면 \((x^2P')' + k^2x^2P = 0\)이다. 꼭짓점 \(x = 0\)에서 \(p = S = 0\)이라 특이 끝점이고, 유계 조건만 건다. 이 방정식은 \(l = 0\)인 구면 베셀 방정식이고 해는 \(j_0(kx) = \sin kx/kx\)와 \(y_0(kx) = -\cos kx/kx\)이다(<a href="ch13.html#eq-spherical-bessel-elementary">13장 식 (13.27)</a>). \(y_0\)은 꼭짓점에서 발산하므로 버린다. \(P(L) = 0\)에서 \(\sin kL = 0\), 곧 \(k_n = n\pi/L\)이고 \(f_n = nc/2L\)이다. 한쪽이 사실상 막혀 있는데도 양쪽이 열린 원통관처럼 모든 정수배 배음이 나온다. 고유함수의 직교성 \(\int_0^LS\,j_0(k_mx)\,j_0(k_nx)\,dx = 0\)은 가중 함수 \(S \propto x^2\)이 \(j_0\)의 \(1/x^2\)을 지워 \(\int_0^L\sin k_mx\sin k_nx\,dx = 0\)이 된다.</p>
+      <p><b>숫자로 보기.</b> \(c/4L = 142.9\ \text{Hz}\), \(c/2L = 285.8\ \text{Hz}\)이다.</p>
+      <div class="formula">\[ \begin{aligned} \text{원통관: } & 142.9,\ 428.8,\ 714.6\ \text{Hz} \\ \text{원뿔관: } & 285.8,\ 571.7,\ 857.5\ \text{Hz} \end{aligned} \]</div>
+      <p>같은 길이에서 막힌 원통관은 한 옥타브 낮은 기본음을 내고 배음이 \(1 : 3 : 5\)이며, 원뿔관은 \(1 : 2 : 3\)이다. 클라리넷(원통관)이 높은 음역으로 넘어갈 때 12도(진동수 3배) 위로 뛰고, 오보에와 색소폰(원뿔관)은 옥타브(2배) 위로 뛰는 이유가 이것이다. 실제 악기는 꼭짓점이 잘린 원뿔이고 열린 끝의 보정도 있어서 값이 몇 % 달라진다(N. H. Fletcher, T. D. Rossing, <i>The Physics of Musical Instruments</i>, 2nd ed., Springer 1998, 8장).</p>
+    </div>
+    <p>이 장의 결과는 다음 장들이 그대로 가져다 쓴다. 17장은 편미분방정식을 변수 분리해 각 좌표마다 스투름-리우빌 문제를 얻고, 완비성 정리로 경계 조건과 초기 조건을 맞춘다(<a href="ch17.html#eq-string-modes">17장의 현의 정상 모드</a>). 20장은 식 <a class="ref" href="#eq-sl-delta-completeness"></a>에서 그린 함수의 고유함수 전개를 만든다. 양자역학에서는 해밀토니안이 에르미트라는 것, 에너지 고유 상태가 직교하고 완비하다는 것, 바닥 에너지를 변분으로 어림한다는 것이 모두 이 장의 정리를 1차원 슈뢰딩거 방정식에 쓴 것이다.</p>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>스투름-리우빌 형태는 \((py')' - qy + \lambda wy = 0\) (\(p > 0\), \(w > 0\)), 연산자로 \(\mathcal Lu = -w^{-1}[(pu')' - qu] = \lambda u\)이다. 2계 선형 방정식 \(ay'' + by' + cy + \lambda dy = 0\)은 \(p = e^{\int b/a\,dx}\), \(q = -cp/a\), \(w = dp/a\)로 이 꼴이 된다. 가중 함수 \(w\)는 질량 밀도, 넓이·부피 요소, 관의 단면적 같은 물리량이다.</li>
+      <li>그린 공식 \(\langle v|\mathcal Lu\rangle - \langle\mathcal Lv|u\rangle = -\big[p(v^*u' - v^{*\prime}u)\big]_a^b\)에서 가중 함수는 약분된다. 같은 \(\lambda\)의 두 해에서는 \(pW\)가 상수다.</li>
+      <li>경계 항을 없애는 자기수반 경계 조건은 실수 계수의 분리된 조건(디리클레, 노이만, 로빈), \(p(a) = p(b)\)인 주기 조건, \(p = 0\)인 특이 끝점에서의 유계 조건이다. 조건이 자기수반이 아니면 복소수 고유값이 나올 수 있다.</li>
+      <li>자기수반 경계 조건에서 고유값은 실수이고, 서로 다른 고유값의 고유함수는 \(\int u_m^*u_nw\,dx = 0\)으로 직교하며, 실수로 고를 수 있다. 분리된 조건이면 고유값이 단순하다. 로빈 조건 \(X'(L) + hX(L) = 0\)의 고유값은 \(\tan kL = -k/h\)의 근이다.</li>
+      <li>정칙 문제의 고유값은 \(\lambda_1 &lt; \lambda_2 &lt; \cdots \to \infty\)이고, 고유함수는 \(L^2_w\)의 정규직교 기저다(완비성 정리, 평균 제곱 수렴, 구간별로 매끄러운 함수는 안쪽 점에서 좌우 극한의 평균으로 수렴). 전개 계수는 \(c_n = \int u_n^*fw\,dx/\int\lvert u_n\rvert^2w\,dx\)이고, 완비성은 \(\sum_nu_n(x)u_n^*(x')w(x') = \delta(x - x')\)로도 쓴다.</li>
+      <li>스투름 진동 정리: \(n\)번째 고유함수는 구간 안에 영점이 \(n - 1\)개다. 에너지가 높을수록 마디가 많다.</li>
+      <li>레일리 몫 \(R[u] = \big[\int(p\lvert u'\rvert^2 + q\lvert u\rvert^2)dx - [pu^*u']_a^b\big]/\int\lvert u\rvert^2w\,dx\)는 고유값의 가중 평균이므로 \(R[u] \ge \lambda_1\)이고, 등호는 바닥 고유함수에서만 성립한다. 시험 함수의 오차가 \(\varepsilon\)이면 고유값의 오차는 \(O(\varepsilon^2)\)이고 언제나 위쪽이다. 장력이 크면 음이 높고 줄이 무거우면 음이 낮다는 비교도 여기서 나온다.</li>
+      <li>푸리에 급수, 르장드르·연관 르장드르 함수, 베셀·구면 베셀 함수, 에르미트·라게르 다항식은 모두 스투름-리우빌 문제의 고유함수이고(식 <a class="ref" href="#eq-sl-table"></a>), 고전 직교 다항식은 \(p = \sigma w\), \(q = 0\)이다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. 라게르 방정식 \(xy'' + (1 - x)y' + ny = 0\)을 스투름-리우빌 형태로 쓸 때 가중 함수 \(w(x)\)는?</p><div class="opts">
+        <button class="opt">\(x\)</button>
+        <button class="opt" data-correct>\(e^{-x}\)</button>
+        <button class="opt">\(xe^{-x}\)</button>
+        <button class="opt">\(1\)</button>
+      </div><div class="quiz-exp">\(p = \exp\int(1 - x)/x\,dx = xe^{-x}\)이고 \(w = (d/a)p = p/x = e^{-x}\)이다. \(xe^{-x}\)는 \(p\)이다. 13장의 라게르 직교성에 붙은 가중 함수 \(e^{-x}\)(\(\alpha = 0\))와 같다.</div></div>
+      <div class="quiz-q"><p>2. 구간 \([0, 1]\)에서 \(-u'' = \lambda u\)에 건 다음 경계 조건 가운데 자기수반이 <b>아닌</b> 것은?</p><div class="opts">
+        <button class="opt">\(u(0) = 0\), \(u(1) = 0\)</button>
+        <button class="opt">\(u'(0) = 0\), \(u'(1) + 3u(1) = 0\)</button>
+        <button class="opt">\(u(0) = u(1)\), \(u'(0) = u'(1)\)</button>
+        <button class="opt" data-correct>\(u(0) = 0\), \(u'(1) = 2u'(0)\)</button>
+      </div><div class="quiz-exp">앞의 둘은 실수 계수의 분리된 조건이고, 셋째는 \(p(0) = p(1) = 1\)인 주기 조건이다. 넷째는 두 끝을 섞는데 주기 조건도 아니다. 경계 항이 \(2[v^*(1)u'(0) - v^{*\prime}(0)u(1)]\)로 남고, 실제로 이 문제에는 복소수 고유값이 있다(<a class="ref" href="#prob-complex-eigenvalues"></a>).</div></div>
+      <div class="quiz-q"><p>3. 반지름 \(a\)인 원판에서 \(J_m(\alpha_{mn}s/a)\)들이 직교할 때 적분에 곱해지는 가중 함수는 무엇이고, 그 이유는?</p><div class="opts">
+        <button class="opt">\(1\). 베셀 함수는 그 자체로 직교한다.</button>
+        <button class="opt" data-correct>\(s\). 지름 방정식의 스투름-리우빌 형태에서 \(\lambda = k^2\)에 곱해진 함수가 \(s\)이다.</button>
+        <button class="opt">\(s^2\). 원판의 넓이가 \(s^2\)에 비례한다.</button>
+        <button class="opt">\(1/s\). \(q = m^2/s\)이기 때문이다.</button>
+      </div><div class="quiz-exp">\((sR')' - (m^2/s)R + k^2sR = 0\)이므로 \(w = s\)이다. \(1/s\)은 \(q = m^2/s\) 쪽에 있는 함수이다.</div></div>
+      <div class="quiz-q"><p>4. 양 끝이 고정된 \([0, L]\)의 \(-u'' = \lambda u\)에서 시험 함수의 레일리 몫이 \(10.0/L^2\)으로 나왔다. 옳은 것은?</p><div class="opts">
+        <button class="opt" data-correct>바닥 고유값은 \(10.0/L^2\) 이하이다.</button>
+        <button class="opt">바닥 고유값은 \(10.0/L^2\) 이상이다.</button>
+        <button class="opt">바닥 고유값은 정확히 \(10.0/L^2\)이다.</button>
+        <button class="opt">시험 함수에 따라 위로도 아래로도 틀릴 수 있다.</button>
+      </div><div class="quiz-exp">레일리 몫은 고유값의 가중 평균이라 \(\lambda_1\)보다 작아지지 않는다. 그래서 언제나 상한을 준다. 실제로 \(\lambda_1 = \pi^2/L^2 = 9.87/L^2\)이고, \(10/L^2\)은 \(x(L - x)\)로 얻은 값이다(<a class="ref" href="#prob-box-trial"></a>).</div></div>
+      <div class="quiz-q"><p>5. 디리클레 조건 \(u(0) = 0\)인 정칙 문제의 고유함수로 \(f(0) = 1\)인 매끄러운 함수 \(f\)를 전개했다. 부분합 \(S_N(0)\)은 \(N \to \infty\)에서 어떻게 되는가?</p><div class="opts">
+        <button class="opt" data-correct>언제나 0이다.</button>
+        <button class="opt">1로 수렴한다.</button>
+        <button class="opt">1/2로 수렴한다.</button>
+        <button class="opt">발산한다.</button>
+      </div><div class="quiz-exp">모든 고유함수가 \(x = 0\)에서 0이므로 부분합도 그 점에서 0이다. 완비성 정리의 점별 수렴은 열린 구간 안에서의 이야기이고, 평균 제곱 수렴은 한 점의 값과 상관없다. 그 근처에서는 깁스 넘침이 생긴다(그림 16-5).</div></div>
+      <div class="quiz-q"><p>6. 정칙 스투름-리우빌 문제에서 크기 순으로 네 번째 고유값의 고유함수는 열린 구간 안에 영점이 몇 개인가?</p><div class="opts">
+        <button class="opt">2개</button>
+        <button class="opt" data-correct>3개</button>
+        <button class="opt">4개</button>
+        <button class="opt">문제마다 다르다</button>
+      </div><div class="quiz-exp">스투름 진동 정리에 따라 \(n\)번째 고유함수의 안쪽 영점은 \(n - 1\)개다. 줄의 \(\sin(4\pi x/L)\)도, 그림 16-2의 고르지 않은 현도 같다.</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-sl-conversion" data-level="1"><p>다음 방정식을 스투름-리우빌 형태로 쓰고 \(p, q, w, \lambda\)를 밝혀라. (가) 체비쇼프 방정식 \((1 - x^2)y'' - xy' + n^2y = 0\) (\(-1 &lt; x &lt; 1\)). (나) 연관 라게르 방정식 \(xy'' + (\alpha + 1 - x)y' + ny = 0\) (\(x > 0\)). (나)의 가중 함수를 13장 식 (13.55)의 표와 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>식 <a class="ref" href="#eq-sl-integrating-factor"></a>을 쓴다. (가) \(b/a = -x/(1 - x^2)\)이므로 \(\int b/a\,dx = \tfrac12\ln(1 - x^2)\)이고 \(p = \sqrt{1 - x^2}\)이다. \(q = 0\), \(w = p/(1 - x^2) = 1/\sqrt{1 - x^2}\), \(\lambda = n^2\)이다.</p>
+        <div class="formula">\[ \big(\sqrt{1 - x^2}\,y'\big)' + \frac{n^2}{\sqrt{1 - x^2}}\,y = 0 \]</div>
+        <p>\(p\)가 두 끝에서 0이므로 두 끝이 특이점이다. \(x = \cos\theta\)로 바꾸면 \(d^2y/d\theta^2 + n^2y = 0\)이 되어 해는 \(\cos n\theta = T_n(x)\)이고, 직교성 \(\int_{-1}^1T_mT_n\,dx/\sqrt{1 - x^2} = \int_0^\pi\cos m\theta\cos n\theta\,d\theta = 0\)은 코사인 급수의 직교성과 같다.</p>
+        <p>(나) \(b/a = (\alpha + 1)/x - 1\)이므로 \(p = x^{\alpha+1}e^{-x}\), \(q = 0\), \(w = p/x = x^\alpha e^{-x}\), \(\lambda = n\)이다. 13장 표의 \(L_n^{(\alpha)}\) 줄의 가중 함수 \(x^\alpha e^{-x}\)와 같다. 13.7절의 \(\sigma = x\)를 쓰면 \(p = \sigma w\)이기도 하다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-self-adjoint-check" data-level="1"><p>구간 \([0, 1]\)의 연산자 \(\mathcal Lu = -(pu')'\)에 대해 다음 경계 조건이 자기수반인지 판정하라. (가) \(p = 1\); \(u(0) = 0\), \(u'(1) + 2u(1) = 0\). (나) \(p = 1\); \(u(0) = u(1)\), \(u'(0) = 2u'(1)\). (다) \(p = 1 + x\); \(u(0) = u(1)\), \(u'(0) = u'(1)\). (라) \(p = 1 + x\); \(u(0) = u(1)\), \(u'(0) = 2u'(1)\).</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>경계 항 <a class="ref" href="#eq-sl-boundary-term"></a>를 셈한다. (가) 실수 계수의 분리된 조건이므로 자기수반이다.</p>
+        <p>(나)~(라)에서는 \(u(0) = u(1) = A\), \(u'(1) = B\)로, \(v\)의 값을 \(A', B'\)로 쓰고 \(\Delta = A'^*B - B'^*A\)라 하자. (나) \(u'(0) = 2B\)이므로 \(x = 1\)의 항은 \(\Delta\), \(x = 0\)의 항은 \(A'^*(2B) - (2B')^*A = 2\Delta\)이고 경계 항은 \(\Delta - 2\Delta = -\Delta\)이다. 예를 들어 \(u\)를 \(A = 1, B = 0\), \(v\)를 \(A' = 0, B' = 1\)로 잡으면 \(-\Delta = 1 \ne 0\)이므로 자기수반이 아니다.</p>
+        <p>(다) \(p(1) = 2\), \(p(0) = 1\)이므로 경계 항은 \(2\Delta - \Delta = \Delta \ne 0\)이다. 주기 조건인데도 \(p(0) \ne p(1)\)이라 자기수반이 아니다.</p>
+        <p>(라) 경계 항은 \(2\Delta - 1 \cdot 2\Delta = 0\)이므로 자기수반이다. (나)와 같은 조건이 \(p\)가 바뀌자 자기수반이 되었다. 조건 \(p(0)u'(0) = p(1)u'(1)\)은 두 끝에서 "플럭스" \(pu'\)이 같다는 뜻이고, \(u\)와 \(pu'\)이 함께 이어지는 이 조건이 주기 조건의 올바른 일반화다. 자기수반성은 연산자와 경계 조건이 함께 정한다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-chain-node" data-level="1"><p>길이 \(L = 1.00\ \text{m}\)인 사슬이 매달려 흔들린다(<a class="ref" href="#ex-hanging-chain"></a>). (가) 두 번째 모드의 마디는 아래 끝에서 얼마나 높은가? 세 번째 모드의 마디들은? (나) 처음 두 모드의 진동수를 Hz로 구하라. (다) 사슬을 \(L/4\)로 줄이면 진동수는 어떻게 바뀌는가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(u_2 = J_0(\alpha_{02}\sqrt{z/L})\)가 0이 되는 곳은 \(\alpha_{02}\sqrt{z/L} = \alpha_{01}\), 곧 \(z = L(\alpha_{01}/\alpha_{02})^2 = L(2.4048/5.5201)^2 = 0.190L\)로 아래 끝에서 19.0 cm이다. 세 번째 모드의 마디는 \(z/L = (2.4048/8.6537)^2 = 0.0772\)와 \((5.5201/8.6537)^2 = 0.407\)이다. 마디가 아래쪽에 몰리는 것은 장력이 작은 아래쪽에서 파동이 느려 파장이 짧기 때문이다. 마디 수는 스투름 진동 정리대로 \(n - 1\)개다.</p>
+        <p>(나) \(f_n = (\alpha_{0n}/4\pi)\sqrt{g/L}\)에서 \(f_1 = 0.599\ \text{Hz}\), \(f_2 = 1.376\ \text{Hz}\)이다.</p>
+        <p>(다) \(\omega_n \propto L^{-1/2}\)이므로 모든 진동수가 2배가 된다. 진동수의 비 \(1 : 2.295 : 3.598\)은 길이와 상관없다. 비가 \(J_0\)의 영점만으로 정해지기 때문이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-robin-orthogonality" data-level="2"><p><a class="ref" href="#ex-robin-eigenvalues"></a>의 고유함수 \(\sin k_nx\) (\(k\cos kL + h\sin kL = 0\)의 근 \(k_n\))에 대해, <a class="ref" href="#thm-sl-real-orthogonal"></a>를 쓰지 않고 적분을 직접 계산해 \(\int_0^L\sin k_mx\sin k_nx\,dx = 0\) (\(m \ne n\))임을 보이고, 규격화 식 <a class="ref" href="#eq-robin-norm"></a>을 유도하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(A = k_mL\), \(B = k_nL\)로 두고 곱을 합으로 바꿔 적분하면</p>
+        <div class="formula">\[ \begin{aligned} &\int_0^L\sin k_mx\sin k_nx\,dx \\ &\quad = \frac12\Big[\frac{\sin(A - B)}{k_m - k_n} - \frac{\sin(A + B)}{k_m + k_n}\Big] \\ &\quad = \frac{k_n\sin A\cos B - k_m\cos A\sin B}{k_m^2 - k_n^2} \end{aligned} \]</div>
+        <p>이다. 마지막 줄은 통분하고 \(\sin(A \mp B)\)를 풀어 정리한 것이다. 근의 조건은 \(k_m\cos A = -h\sin A\), \(k_n\cos B = -h\sin B\)이므로 분자는 \(\sin A(-h\sin B) - (-h\sin A)\sin B = 0\)이다. 같은 고유함수끼리는 \(\int_0^L\sin^2k_nx\,dx = L/2 - \sin(2z_n)/(4k_n)\)이고(\(z_n = k_nL\)), \(\sin 2z = 2\tan z\cos^2z = -2z\cos^2z/(hL)\), \(\cos^2z = 1/(1 + \tan^2z) = h^2L^2/(h^2L^2 + z^2)\)을 넣으면</p>
+        <div class="formula">\[ -\frac{\sin 2z_n}{4k_n} = \frac{L\cos^2z_n}{2hL} = \frac L2\cdot\frac{hL}{h^2L^2 + z_n^2} \]</div>
+        <p>이 되어 식 <a class="ref" href="#eq-robin-norm"></a>이 나온다. 직교성의 계산에서 근의 조건이 경계 항을 지우는 일을 했다. 정리의 증명에서 경계 조건이 한 일과 같다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-robin-limits" data-level="2"><p>식 <a class="ref" href="#eq-robin-condition"></a> \(\tan z = -z/(hL)\)의 근 \(z_n\)에 대해 (가) \(n\)이 크면 \(z_n \approx (n - \tfrac12)\pi + hL/\big((n - \tfrac12)\pi\big)\)임을 보이고 \(hL = 1\)의 \(z_3\)과 비교하라. (나) \(hL \gg 1\)이면 \(z_n \approx n\pi/(1 + 1/hL)\)임을 보여라. (다) <a class="ref" href="#ex-robin-eigenvalues"></a>의 강철 막대에서, 가장 느린 모드의 감쇠 시간이 양 끝을 얼음물에 담근 경우보다 10% 이상 길지 않으려면 \(hL\)과 \(H\)가 얼마 이상이어야 하는가? (\(K = 50\ \text{W/(m}\cdot\text{K)}\))</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(z = (n - \tfrac12)\pi + \delta\)이면 \(\tan z = -\cot\delta \approx -1/\delta\)이므로 \(-1/\delta = -z/hL\), 곧 \(\delta \approx hL/z \approx hL/\big((n - \tfrac12)\pi\big)\)이다. \(hL = 1\), \(n = 3\)이면 \(2.5\pi + 1/(2.5\pi) = 7.9813\)이고 참값 \(7.9787\)과 0.03% 다르다. \(n = 1\)에서는 \(\delta\)가 작지 않아 맞지 않는다(\(2.207\) 대 \(2.029\)).</p>
+        <p>(나) \(z = n\pi - \delta\)이면 \(\tan z = -\tan\delta \approx -\delta\)이므로 \(\delta = z/hL\), 곧 \(z(1 + 1/hL) = n\pi\)이다. \(hL = 100\)이면 \(\pi/1.01 = 3.1105\)이고 참값 \(3.1105\)와 맞는다.</p>
+        <p>(다) \(\tau_1 \propto 1/z_1^2\)이므로 \((\pi/z_1)^2 \le 1.1\), 곧 \(z_1 \ge \pi/\sqrt{1.1} = 2.9954\)이어야 한다. 이 \(z\)를 근의 조건에 넣으면 \(hL = -z/\tan z = 20.3\)이다((나)의 근사로도 \(1 + 1/hL = 1.049\)에서 \(hL \approx 20.5\)). \(L = 0.50\ \text{m}\)이면 \(h \ge 41\ \text{m}^{-1}\), \(H = Kh \ge 2.0 \times 10^3\ \text{W/(m}^2\cdot\text{K)}\)이다. 바람 부는 공기(\(\sim 100\))로는 턱없이 모자라고, 물에 담가 끓이거나 흐르는 물로 식혀야 나오는 크기다. 그래서 "끝을 얼음물에 담근다"는 디리클레 조건이 그럴듯한 모형이 된다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-complex-eigenvalues" data-level="3"><p>\([0, 1]\)에서 \(-u'' = \lambda u\), \(u(0) = 0\), \(u'(1) = 2u'(0)\)을 생각한다. (가) 이 경계 조건이 자기수반이 아님을 보여라. (나) 고유값을 모두 구하라. 실수가 아닌 고유값이 있는가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(u(0) = v(0) = 0\), \(u'(1) = 2u'(0)\), \(v'(1) = 2v'(0)\)을 경계 항 \([v^*u' - v^{*\prime}u]_0^1\)에 넣으면 \(x = 0\)의 항은 0이고 \(x = 1\)의 항은 \(2\big[v^*(1)u'(0) - v^{*\prime}(0)u(1)\big]\)이다. 예를 들어 조건을 만족하는 \(u = x + x^2/2\) (\(u'(0) = 1\), \(u'(1) = 2\), \(u(1) = 3/2\))와 \(v = x^2 - 2x^3/3\) (\(v'(0) = v'(1) = 0\), \(v(1) = 1/3\))을 넣으면 경계 항은 \(2[\tfrac13 \cdot 1 - 0] = \tfrac23 \ne 0\)이다. 따라서 자기수반이 아니다.</p>
+        <p>(나) \(\lambda = 0\)이면 \(u = x\)이고 \(u'(1) = 1 \ne 2\)라 고유값이 아니다. \(\lambda = k^2 \ne 0\)(\(k\)는 복소수일 수 있다)이면 \(u(0) = 0\)에서 \(u = \sin kx\)이고, 둘째 조건은 \(k\cos k = 2k\), 곧 \(\cos k = 2\)이다. \(\cos(x + iy) = \cos x\cosh y - i\sin x\sinh y\)이므로 \(\sin x\sinh y = 0\)이고 \(\cos x\cosh y = 2\)이다. \(y = 0\)이면 \(\cos x = 2\)가 불가능하므로 \(\sin x = 0\), \(\cos x = 1\)(\(\cosh y > 0\)이어야 하므로), 곧 \(x = 2\pi n\), \(\cosh y = 2\), \(y = \pm\ln(2 + \sqrt3) = \pm1.3170\)이다. 따라서</p>
+        <div class="formula">\[ \begin{aligned} \lambda_n &= \big(2\pi n \pm 1.3170\,i\big)^2 \\ &= 4\pi^2n^2 - 1.7344 \pm 16.549\,n\,i \end{aligned} \]</div>
+        <p>이다(\(n = 0, 1, 2, \ldots\)). \(n = 0\)은 실수 고유값 \(\lambda_0 = -1.7344\)이고 고유함수는 \(\sinh(1.3170x)\)이다(\(\cosh 1.3170 = 2\)이므로 \(u'(1) = 2u'(0)\)이 맞는다). \(n \ge 1\)은 모두 실수가 아니고, 예를 들어 \(\lambda_1 = 37.744 \pm 16.549i\)이다. 자기수반성이 깨지자 <a class="ref" href="#thm-sl-real-orthogonal"></a>의 (1)이 바로 무너졌다. \(q = 0\)이고 디리클레·노이만처럼 자기수반인 조건이었다면 16.6절에 따라 음수 고유값도 있을 수 없었다. 실수인 \(\lambda_0\)마저 음수인 것은 레일리 몫의 논법이 이 문제에 통하지 않는다는 표시다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-parseval-robin" data-level="2"><p><a class="ref" href="#ex-robin-uniform-expansion"></a>의 계수 <a class="ref" href="#eq-robin-uniform-coefficients"></a>에 대해 (가) \(n\)이 크면 \(c_n \approx 2\vartheta_0/z_n\)임을 보여라. (나) 이것으로 파르스발 합의 나머지 \(1 - \sum_{n\le N}c_n^2\lVert\sin k_nx\rVert^2/(\vartheta_0^2L)\)이 \(N\)이 클 때 약 \(2/(\pi^2N)\)임을 보이고, 예제의 수치(\(N = 10\)에서 0.980)와 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(n\)이 크면 \(z_n \approx (n - \tfrac12)\pi\)라 \(\cos z_n \approx 0\)이고, 노름의 보정 \(hL/(h^2L^2 + z_n^2)\)도 0으로 간다. 그러면 식 <a class="ref" href="#eq-robin-uniform-coefficients"></a>에서 \(c_n \approx 2\vartheta_0/z_n\)이다. 이것은 \([0, L]\)에서 1을 \(\sin\big((n - \tfrac12)\pi x/L\big)\)로 전개한 계수와 같다. 높은 모드는 오른쪽 끝의 조건이 노이만인지 로빈인지 구별하지 못한다.</p>
+        <p>(나) 항 하나는 \(c_n^2(L/2)/(\vartheta_0^2L) \approx 2/z_n^2 \approx 2/\big(\pi^2(n - \tfrac12)^2\big)\)이다. \(N\)보다 큰 \(n\)에 대해 더하면 \(\sum_{n>N}(n - \tfrac12)^{-2} \approx \int_N^\infty dn/n^2 = 1/N\)이므로 나머지는 약 \(2/(\pi^2N)\)이다. \(N = 10\)이면 \(0.020\)이고, 예제의 \(1 - 0.980 = 0.020\)과 맞는다. \(N = 100\)에서는 \(0.0020\)이다(직접 더하면 \(0.0020\)). 나머지가 \(1/N\)으로 느리게 줄어드는 것은 계수가 \(1/n\)로 줄기 때문이고, 그것은 처음 온도가 \(x = 0\)의 조건과 맞지 않아 생긴 뛰는 점 때문이다(14장의 <a href="ch14.html#thm-coefficient-decay">정리 14.4</a>).</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-density-comparison" data-level="2"><p>양 끝이 고정된 길이 \(L\), 장력 \(T\)인 현의 밀도가 \(\mu_{\min} \le \mu(x) \le \mu_{\max}\)이다. 레일리 몫으로 기본 각진동수 \(\omega_1\)이 다음을 만족함을 보여라.</p>
+      <div class="formula">\[ \frac\pi L\sqrt{\frac{T}{\mu_{\max}}} \le \omega_1 \le \frac\pi L\sqrt{\frac{T}{\mu_{\min}}} \]</div>
+      <p><a class="ref" href="#ex-nonuniform-string"></a>의 현에서 이 범위를 Hz로 구해 정확한 값과 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>경계 조건을 만족하는 모든 \(u\)에서 \(\int\mu u^2\) 은 \(\mu_{\min}\int u^2\)과 \(\mu_{\max}\int u^2\) 사이에 있으므로</p>
+        <div class="formula">\[ \frac{T\int u'^2}{\mu_{\max}\int u^2} \le R_\mu[u] \le \frac{T\int u'^2}{\mu_{\min}\int u^2} \]</div>
+        <p>이다. 왼쪽 부등식의 양변에서 \(u\)에 대한 최솟값을 잡으면, 왼쪽의 최솟값은 밀도 \(\mu_{\max}\)인 고른 현의 바닥 고유값 \((\pi/L)^2T/\mu_{\max}\)이고 오른쪽의 최솟값은 \(\omega_1^2\)이다(<a class="ref" href="#thm-rayleigh-min"></a>). 그래서 \(\omega_1^2 \ge (\pi/L)^2T/\mu_{\max}\)이다. 오른쪽 부등식은 \(u = \sin(\pi x/L)\)에 쓰면 \(\omega_1^2 \le R_\mu[u] \le (\pi/L)^2T/\mu_{\min}\)이다. 예제의 현은 \(\mu_{\max} = \mu_0\), \(\mu_{\min} = \mu_0/4\)이므로 \(79.1\ \text{Hz} \le f_1 \le 158.1\ \text{Hz}\)이고, 정확한 \(114.7\ \text{Hz}\)가 그 안에 있다. 범위가 넓은 것은 밀도가 4배나 변하기 때문이다. 이 논법은 고유함수를 하나도 모르고도 하한을 준다는 점에서 레일리 몫의 상한과 짝을 이룬다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-box-trial" data-level="2"><p>길이 \(L\)인 무한 우물 속 입자(\(-\frac{\hbar^2}{2m}\psi'' = E\psi\), \(\psi(0) = \psi(L) = 0\))에 대해 (가) 시험 함수 \(x(L - x)\)로 \(E_1\)의 상한을 구하라. (나) 시험 함수 \(x(L - x)(L - 2x)\)가 바닥 상태와 직교함을 보이고, 이것으로 \(E_2\)의 상한을 구하라. (다) \(L = 1.00\ \text{nm}\)인 우물 속 전자에 대해 두 상한을 eV로 구하고 정확한 값과 비교하라. (\(\hbar c = 197.3\ \text{eV}\cdot\text{nm}\), \(m_ec^2 = 511.0\ \text{keV}\))</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(u = x(L - x)\)이면 \(\int_0^Lu'^2dx = \int_0^L(L - 2x)^2dx = L^3/3\), \(\int_0^Lu^2dx = L^5/30\)이므로 \(R = 10/L^2\)이고 \(E_1 \le 10\,\hbar^2/(2mL^2)\)이다. 참값은 \(\pi^2 = 9.870\)배이므로 1.3% 높다.</p>
+        <p>(나) 시험 함수는 \(x = L/2\)에 대해 홀함수이고 바닥 상태 \(\sin(\pi x/L)\)는 짝함수이므로 둘의 곱을 적분하면 0이다. <a class="ref" href="#thm-rayleigh-min"></a>의 둘째 부분에 따라 \(R \ge \lambda_2\)이다. 계산하면 \(R = 42/L^2\)이고 참값 \(4\pi^2 = 39.48\)보다 6.4% 높다. 첫째보다 오차가 큰 것은 이 다항식이 \(\sin(4\pi x/L)\), \(\sin(6\pi x/L)\) 같은 높은 모드를 상대적으로 더 많이 섞기 때문이다.</p>
+        <p>(다) \(\hbar^2/(2m_eL^2) = (197.3\ \text{eV}\cdot\text{nm})^2/(2 \times 5.110 \times 10^5\ \text{eV} \times 1.00\ \text{nm}^2) = 0.0381\ \text{eV}\)이다. \(E_1\): 상한 \(0.381\ \text{eV}\), 참값 \(0.376\ \text{eV}\)(9장 <a href="ch09.html#ex-momentum-hermitian">예제 9.7</a>과 같은 값). \(E_2\): 상한 \(1.600\ \text{eV}\), 참값 \(1.504\ \text{eV}\).</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-chain-rayleigh" data-level="2"><p>매달린 사슬의 바닥 진동수를 시험 함수로 어림하자. (가) \(u = 1 - z/L\)로 레일리 몫을 계산해 \(\omega_1\)의 상한을 구하고 정확한 값 \(1.2024\sqrt{g/L}\)과 비교하라. 이 시험 함수는 아래 끝 \(z = 0\)에서 아무 조건도 만족하지 않는데, 써도 되는 이유는 무엇인가? (나) \(u = \cos(\pi z/2L)\)은 \(u'(0) = 0\)을 만족하는데도 상한이 \(1.317\sqrt{g/L}\)로 더 나쁘다. 정확한 모드의 \(u'(0)\)을 방정식에서 구해 이유를 설명하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(p = z\), \(w = 1\), \(q = 0\)이므로 \(\omega^2/g \le \int_0^Lz\,u'^2dz\big/\int_0^Lu^2dz\)이다. \(u' = -1/L\)이라 분자는 \(\int_0^Lz/L^2\,dz = 1/2\), 분모는 \(L/3\)이다. 따라서 \(\omega_1^2 \le 3g/2L\), \(\omega_1 \le 1.2247\sqrt{g/L}\)이고 참값보다 1.9% 높다. 아래 끝은 \(p(0) = 0\)인 특이 끝점이라 레일리 몫의 경계 항 \(pu^*u'\)이 \(z = 0\)에서 저절로 0이 되고, 시험 함수는 유계이기만 하면 된다. 위 끝의 \(u(L) = 0\)은 디리클레 조건이라 지켜야 하고, 이 시험 함수는 지킨다.</p>
+        <p>(나) 식 <a class="ref" href="#eq-hanging-chain-sl"></a>을 풀어 쓰면 \(zu'' + u' + \lambda u = 0\)이므로 \(z = 0\)에서 \(u'(0) = -\lambda u(0) \ne 0\)이다. 아래 끝은 장력이 0이라 기울기가 있어도 힘이 생기지 않으므로, 실제 사슬 끝은 비스듬하다. \(\cos(\pi z/2L)\)은 아래 끝을 일부러 평평하게 만들어 정확한 모양에서 더 멀어졌다. 쓸데없는 조건을 시험 함수에 걸면 오히려 나빠진다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-rayleigh-second-order" data-level="2"><p>\([0, 1]\)에서 \(-u'' = \lambda u\), \(u(0) = u(1) = 0\)의 바닥 고유값 \(\lambda_1 = \pi^2\)을 시험 함수 \(u = \sin\pi x + \varepsilon\sin 3\pi x\)로 어림한다. (가) \(R[u]\)를 정확히 구하고 \(\varepsilon\)의 2차까지 전개해 식 <a class="ref" href="#eq-rayleigh-second-order"></a>과 비교하라. (나) \(\varepsilon = 0.1\)이면 모양의 오차가 10%인데 고유값의 오차는 8%이다. 16.6절의 현 예제(모양 오차 8.3%, 고유값 오차 2.1%)와 차이가 나는 이유는?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 사인 함수들의 직교성에서 \(\int_0^1u'^2dx = \tfrac{\pi^2}{2}(1 + 9\varepsilon^2)\), \(\int_0^1u^2dx = \tfrac12(1 + \varepsilon^2)\)이므로</p>
+        <div class="formula">\[ R = \pi^2\,\frac{1 + 9\varepsilon^2}{1 + \varepsilon^2} = \pi^2\big(1 + 8\varepsilon^2 + O(\varepsilon^4)\big) \]</div>
+        <p>이다. 식 <a class="ref" href="#eq-rayleigh-second-order"></a>에서 \(\eta\)는 \(u_3\) 방향이고(규격화를 맞추면 \(\lVert\eta\rVert = 1\)) \(\langle\eta|\mathcal L\eta\rangle - \lambda_1 = 9\pi^2 - \pi^2 = 8\pi^2\)이므로 같은 결과다. 1차 항이 없다.</p>
+        <p>(나) 2차 계수가 \((\lambda_3 - \lambda_1)/\lambda_1 = 8\)이다. 현 예제에서는 오차가 거의 다 \(u_2\) 방향이라 계수가 \((\lambda_2 - \lambda_1)/\lambda_1 = 2.96\)이었다. \(\varepsilon = 0.1\)에서 정확한 값은 \(\pi^2 \times 1.0792\)로 7.9% 높다. 오차가 \(\varepsilon^2\)에 비례한다는 것은 같지만, 높은 모드가 섞일수록 그 앞의 계수가 커진다. 높은 모드는 많이 휘어 있어서 \(\int u'^2\)을 크게 늘리기 때문이다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>
