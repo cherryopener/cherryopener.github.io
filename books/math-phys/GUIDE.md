@@ -217,6 +217,7 @@
 | linear independence | 선형 독립 (일차 독립이라 하지 않음) | conductivity | 전도도 |
 | augmented matrix / row echelon form | 첨가 행렬 / 행 사다리꼴 | pivot / cofactor | 피벗 / 여인수 |
 | generator / commutator | 생성자 / 교환자 | reactance | 리액턴스 |
+| initial condition | 초기 조건 (처음 조건이라 하지 않음) | thermal conductivity | 열전도도 \(k\) (온도는 \(\vartheta\), \(\Theta\)는 계단 함수) |
 | Lagrange multiplier | 라그랑주 승수 | Jacobian (determinant) | 야코비 행렬식 |
 | gradient | 기울기 | divergence | 발산 |
 | curl | 회전 | Laplacian | 라플라시안 |
