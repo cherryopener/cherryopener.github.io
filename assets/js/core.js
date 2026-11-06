@@ -174,7 +174,7 @@
     f.className = "ls-foot";
     const S = LS.site;
     f.innerHTML = `<div class="row"><a href="${LS.url("index.html")}">서재 홈</a><a href="${LS.url("library/index.html")}">전체 책장</a><a href="${LS.url("lab/index.html")}">실험실</a>${S.github ? `<a href="${esc(S.github)}" rel="noopener">GitHub</a>` : ""}</div>
-      <div>© ${esc(S.year || new Date().getFullYear())} ${S.author ? esc(S.author) + " · " : ""}${esc(S.name)} — ${esc(S.tagline || "")}</div>`;
+      <div>© ${esc(S.year || new Date().getFullYear())} ${esc(S.name)}</div>`;
     return f;
   };
 
