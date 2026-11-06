@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>15 푸리에 변환 · 수리물리학</title>
+<meta name="description" content="푸리에 급수의 주기를 무한대로 보내 푸리에 변환을 세우고, 이 책의 관례, 델타 함수와 평면파, 합성곱·플랑슈렐 정리, 폭-대역폭 부등식, 3차원 변환, 회절과 이산 푸리에 변환을 다룬다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys" data-field="phys" data-chapter="ch15">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">15</span></div>
+    <h1 data-fill="chapter-title">푸리에 변환</h1>
+    <p class="lead">14장은 주기 함수를 배음으로 나누었다. 그런데 한 번만 지나가는 펄스, 공간 한곳에 모인 파속, 원자 하나가 만드는 퍼텐셜에는 주기가 없다. 주기를 한없이 늘리면 배음 사이의 간격이 0으로 줄고 급수의 합이 적분이 되는데, 그 극한이 푸리에 변환이다. 이 장에서는 변환을 정의하고 \(2\pi\)와 지수 부호를 어디에 둘지 정한다. 그다음 델타 함수와 평면파의 완비성, 합성곱 정리와 플랑슈렐 정리, 폭-대역폭 부등식, 3차원 변환을 차례로 유도하고, 회절 무늬와 측정한 스펙트럼을 읽는 데까지 간다. 여기서 정한 관례와 변환 쌍은 이 책의 그린 함수(20장)와 서재의 양자역학·전자기학 책이 그대로 가져다 쓴다.</p>
+    <ul class="objectives">
+      <li>푸리에 급수에서 주기를 무한대로 보내 변환 쌍을 유도하고, 이 책의 관례(\(2\pi\)는 역변환의 \(dk\)에, 시간 변환은 \(e^{+i\omega t}\))와 다른 교재의 관례 사이를 오갈 수 있다.</li>
+      <li>이동·척도·도함수 성질을 써서 가우스 함수, 지수 함수, 사각 펄스의 변환을 계산하고, 미분방정식을 대수 방정식으로 바꿀 수 있다.</li>
+      <li>\(\int e^{ikx}\,dk = 2\pi\delta(x)\)를 델타 함수열로 유도하고, 합성곱 정리와 플랑슈렐 정리로 선형계의 응답과 에너지를 계산할 수 있다.</li>
+      <li>폭-대역폭 부등식 \(\sigma_x\sigma_k \ge \tfrac12\)을 증명하고, 펄스 폭과 스펙트럼 폭, 수명과 선폭의 관계를 어림할 수 있다.</li>
+      <li>3차원 변환으로 쿨롱·유카와 퍼텐셜을 파수 공간으로 옮기고, 회절 무늬와 이산 푸리에 변환의 스펙트럼을 변환으로 해석할 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b>14장(복소 푸리에 급수 식 (14.10)과 시간 신호의 급수 식 (14.13), 파르스발 정리, 주기적인 힘에 대한 응답), 6장(디랙 델타와 델타 함수열, 3차원 델타), 10장(충격 응답, 합성곱, 전달 함수), 11장(가우스 적분), 9장(함수의 내적, 코시-슈바르츠 부등식, 완비성 관계), 2장(오일러 공식과 진동의 \(e^{-i\omega t}\) 관례).</p>
+  </header>
+
+  <!-- ============================================================ 15.1 -->
+  <section id="s1">
+    <h2>급수에서 변환으로</h2>
+    <p>14장의 <a href="ch14.html#ex-pulse-train">예제 14.4</a>에서는 주기 \(T\)마다 폭 \(\tau\)인 펄스를 내는 클록의 스펙트럼을 구했다. 배음은 진동수 \(1/T\)의 정수배에만 있었고, 그 진폭들은 \(\sin u/u\) 모양의 포락선 위에 놓였다. 이제 클록이 펄스를 단 하나만 낸다고 하자. 주기가 없으므로 푸리에 급수를 쓸 수 없다. 그러나 펄스 하나는 "주기가 무한대인 펄스열"로 볼 수 있다. 주기를 늘리면 배음의 간격 \(1/T\)이 좁아지고, 포락선은 그대로 남는다. 극한에서는 모든 진동수가 쓰이는 연속 스펙트럼이 된다. 이 절에서는 이 극한을 식으로 따라가 푸리에 변환을 정의한다.</p>
+
+    <h3 id="s1-limit">주기를 무한대로</h3>
+    <p>구간 \((-L, L)\)에서 정의된 함수의 복소 푸리에 급수는 14장 <a href="ch14.html#eq-complex-fourier">식 (14.10)</a>이다. 지수에 나오는 수를 \(k_n = n\pi/L\)로 쓰면 이웃한 두 값의 간격은 \(\Delta k = \pi/L\)이다. 계수의 적분을 \(k\)의 함수로 보고</p>
+    <div class="formula" id="eq-truncated-transform">\[ \tilde f_L(k) = \int_{-L}^{L} f(x)\,e^{-ikx}\,dx \]</div>
+    <p>로 두면 \(c_n = \tilde f_L(k_n)/2L\)이다. 그런데 \(1/2L = \Delta k/2\pi\)이므로 급수는 다음과 같이 쓸 수 있다.</p>
+    <div class="formula" id="eq-series-riemann-sum">\[ f(x) = \sum_{n=-\infty}^{\infty} \frac{\Delta k}{2\pi}\,\tilde f_L(k_n)\,e^{ik_nx} \]</div>
+    <p>이 식은 함수 \(\tilde f_L(k)\,e^{ikx}/2\pi\)를 간격 \(\Delta k\)로 잘라 더한 리만 합이다(그림 15-1). \(f\)가 멀리서 충분히 빨리 0으로 가면, \(L \to \infty\)에서 \(\tilde f_L\)은 무한 구간의 적분 \(\tilde f\)로 가고 리만 합은 적분이 된다. \(2\pi\)가 어디서 왔는지 보자. 주기가 \(2L\)인 함수의 배음 간격은 \(\Delta k = 2\pi/(2L)\)이다. 그래서 "계수 하나 = \(1/2L\) × 적분"을 "\(\Delta k/2\pi\) × 적분"으로 바꿔 쓸 수 있고, 극한에서 \(\Delta k\)가 \(dk\)가 되면서 \(1/2\pi\)가 \(dk\)에 붙어 남는다.</p>
+    <p>시간 신호도 똑같다. 14장 <a href="ch14.html#eq-time-fourier">식 (14.13)</a>은 주기 \(T\)인 신호를 \(F(t) = \sum_n F_ne^{-in\omega t}\), \(F_n = \tfrac1T\int_{-T/2}^{T/2}F\,e^{in\omega t}\,dt\)로 전개했다(\(\omega = 2\pi/T\)). \(\Omega_n = n\omega\)로 쓰면 간격은 \(\Delta\Omega = \omega = 2\pi/T\)이고, \(\tilde F_T(\Omega) = \int_{-T/2}^{T/2}F(t)\,e^{i\Omega t}\,dt\)로 두면 \(F_n = (\Delta\Omega/2\pi)\,\tilde F_T(\Omega_n)\)이다. 따라서 \(F(t) = \sum_n (\Delta\Omega/2\pi)\,\tilde F_T(\Omega_n)\,e^{-i\Omega_nt}\)이고, \(T \to \infty\)에서 \(\int \tfrac{d\Omega}{2\pi}\,\tilde F(\Omega)\,e^{-i\Omega t}\)가 된다. 14장이 시간 신호에 \(e^{-in\omega t}\)를 쓴 덕분에, 시간 변환의 지수 부호는 공간과 반대가 된다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 480 270" role="img" aria-label="폭 1인 사각 펄스를 주기 2L로 되풀이한 함수의 푸리에 계수 2L c_n을 k_n = nπ/L에 찍은 그림. L이 커질수록 점이 촘촘해져 연속 곡선 sin(k/2)/(k/2)를 채운다"><defs><clipPath id="f1501-clip"><rect x="46" y="18" width="420" height="192"/></clipPath></defs><line x1="46" y1="18" x2="46" y2="210" class="s-grid"/><line x1="151" y1="18" x2="151" y2="210" class="s-grid"/><line x1="256" y1="18" x2="256" y2="210" class="s-grid"/><line x1="361" y1="18" x2="361" y2="210" class="s-grid"/><line x1="466" y1="18" x2="466" y2="210" class="s-grid"/><line x1="46" y1="168.9" x2="466" y2="168.9" class="s-grid"/><line x1="46" y1="100.3" x2="466" y2="100.3" class="s-grid"/><line x1="46" y1="31.7" x2="466" y2="31.7" class="s-grid"/><text x="46" y="230" class="t-dim" style="font-size:14px" text-anchor="middle">−20</text><text x="151" y="230" class="t-dim" style="font-size:14px" text-anchor="middle">−10</text><text x="256" y="230" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="361" y="230" class="t-dim" style="font-size:14px" text-anchor="middle">10</text><text x="466" y="230" class="t-dim" style="font-size:14px" text-anchor="middle">20</text><text x="39" y="173.9" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="39" y="105.3" class="t-dim" style="font-size:14px" text-anchor="end">0.5</text><text x="39" y="36.7" class="t-dim" style="font-size:14px" text-anchor="end">1</text><line x1="46" y1="168.9" x2="466" y2="168.9" class="s-line"/><line x1="256" y1="18" x2="256" y2="210" class="s-line"/><path d="M46,176.3l8.4,-5 17.8,-12.2 7.4,-4.2 4.7,-2 4.7,-1.2 4.2,-0.4 4.3,0.2 4.2,1 4.1,1.7 4.2,2.5 4.8,3.4 7.9,7.3 19.4,20.6 4.7,4.2 4.7,3.3 5.3,2.4 4.7,0.7 4.7,-0.7 4.7,-2.3 5.3,-4.7 5.3,-6.7 5.2,-8.8 5.8,-11.8 9.9,-24.7 22.1,-61.2 5.8,-14.2 5.2,-11.1 5.3,-9 5.2,-6.6 2.7,-2.3 2.6,-1.6 2.6,-1 2.1,-0.2 2.1,0.2 2.6,1 2.7,1.6 2.6,2.3 5.2,6.6 5.3,9 5.2,11.1 5.8,14.2 22.1,61.2 9.9,24.7 5.8,11.8 5.3,8.8 5.2,6.7 5.3,4.7 4.7,2.3 4.7,0.7 4.7,-0.7 5.3,-2.4 4.7,-3.3 4.7,-4.2 19.5,-20.6 7.8,-7.3 4.7,-3.4 4.2,-2.5 4.3,-1.7 4.2,-1 4.2,-0.2 4.1,0.4 4.8,1.2 4.7,2 7.4,4.2 17.8,12.2 8.4,5" class="s-line" style="stroke:var(--text-dim);stroke-width:1.5"  clip-path="url(#f1501-clip)"/><line x1="58.1" y1="168.9" x2="58.1" y2="168.9" class="s-acc" style="stroke-width:2"/><circle cx="58.1" cy="168.9" r="5" class="f-acc"/><line x1="91.1" y1="168.9" x2="91.1" y2="151.4" class="s-acc" style="stroke-width:2"/><circle cx="91.1" cy="151.4" r="5" class="f-acc"/><line x1="124.1" y1="168.9" x2="124.1" y2="168.9" class="s-acc" style="stroke-width:2"/><circle cx="124.1" cy="168.9" r="5" class="f-acc"/><line x1="157" y1="168.9" x2="157" y2="198" class="s-acc" style="stroke-width:2"/><circle cx="157" cy="198" r="5" class="f-acc"/><line x1="190" y1="168.9" x2="190" y2="168.9" class="s-acc" style="stroke-width:2"/><circle cx="190" cy="168.9" r="5" class="f-acc"/><line x1="223" y1="168.9" x2="223" y2="81.5" class="s-acc" style="stroke-width:2"/><circle cx="223" cy="81.5" r="5" class="f-acc"/><line x1="256" y1="168.9" x2="256" y2="31.7" class="s-acc" style="stroke-width:2"/><circle cx="256" cy="31.7" r="5" class="f-acc"/><line x1="289" y1="168.9" x2="289" y2="81.5" class="s-acc" style="stroke-width:2"/><circle cx="289" cy="81.5" r="5" class="f-acc"/><line x1="322" y1="168.9" x2="322" y2="168.9" class="s-acc" style="stroke-width:2"/><circle cx="322" cy="168.9" r="5" class="f-acc"/><line x1="355" y1="168.9" x2="355" y2="198" class="s-acc" style="stroke-width:2"/><circle cx="355" cy="198" r="5" class="f-acc"/><line x1="387.9" y1="168.9" x2="387.9" y2="168.9" class="s-acc" style="stroke-width:2"/><circle cx="387.9" cy="168.9" r="5" class="f-acc"/><line x1="420.9" y1="168.9" x2="420.9" y2="151.4" class="s-acc" style="stroke-width:2"/><circle cx="420.9" cy="151.4" r="5" class="f-acc"/><line x1="453.9" y1="168.9" x2="453.9" y2="168.9" class="s-acc" style="stroke-width:2"/><circle cx="453.9" cy="168.9" r="5" class="f-acc"/><circle cx="49.8" cy="174.2" r="2.6" class="f-acc2"/><circle cx="58.1" cy="168.9" r="2.6" class="f-acc2"/><circle cx="66.3" cy="163" r="2.6" class="f-acc2"/><circle cx="74.6" cy="157.6" r="2.6" class="f-acc2"/><circle cx="82.8" cy="153.5" r="2.6" class="f-acc2"/><circle cx="91.1" cy="151.4" r="2.6" class="f-acc2"/><circle cx="99.3" cy="151.9" r="2.6" class="f-acc2"/><circle cx="107.6" cy="155.1" r="2.6" class="f-acc2"/><circle cx="115.8" cy="161" r="2.6" class="f-acc2"/><circle cx="124.1" cy="168.9" r="2.6" class="f-acc2"/><circle cx="132.3" cy="177.8" r="2.6" class="f-acc2"/><circle cx="140.5" cy="186.5" r="2.6" class="f-acc2"/><circle cx="148.8" cy="193.7" r="2.6" class="f-acc2"/><circle cx="157" cy="198" r="2.6" class="f-acc2"/><circle cx="165.3" cy="198.2" r="2.6" class="f-acc2"/><circle cx="173.5" cy="193.6" r="2.6" class="f-acc2"/><circle cx="181.8" cy="183.7" r="2.6" class="f-acc2"/><circle cx="190" cy="168.9" r="2.6" class="f-acc2"/><circle cx="198.3" cy="149.8" r="2.6" class="f-acc2"/><circle cx="206.5" cy="127.7" r="2.6" class="f-acc2"/><circle cx="214.8" cy="104.3" r="2.6" class="f-acc2"/><circle cx="223" cy="81.5" r="2.6" class="f-acc2"/><circle cx="231.3" cy="61.3" r="2.6" class="f-acc2"/><circle cx="239.5" cy="45.4" r="2.6" class="f-acc2"/><circle cx="247.8" cy="35.2" r="2.6" class="f-acc2"/><circle cx="256" cy="31.7" r="2.6" class="f-acc2"/><circle cx="264.2" cy="35.2" r="2.6" class="f-acc2"/><circle cx="272.5" cy="45.4" r="2.6" class="f-acc2"/><circle cx="280.7" cy="61.3" r="2.6" class="f-acc2"/><circle cx="289" cy="81.5" r="2.6" class="f-acc2"/><circle cx="297.2" cy="104.3" r="2.6" class="f-acc2"/><circle cx="305.5" cy="127.7" r="2.6" class="f-acc2"/><circle cx="313.7" cy="149.8" r="2.6" class="f-acc2"/><circle cx="322" cy="168.9" r="2.6" class="f-acc2"/><circle cx="330.2" cy="183.7" r="2.6" class="f-acc2"/><circle cx="338.5" cy="193.6" r="2.6" class="f-acc2"/><circle cx="346.7" cy="198.2" r="2.6" class="f-acc2"/><circle cx="355" cy="198" r="2.6" class="f-acc2"/><circle cx="363.2" cy="193.7" r="2.6" class="f-acc2"/><circle cx="371.5" cy="186.5" r="2.6" class="f-acc2"/><circle cx="379.7" cy="177.8" r="2.6" class="f-acc2"/><circle cx="387.9" cy="168.9" r="2.6" class="f-acc2"/><circle cx="396.2" cy="161" r="2.6" class="f-acc2"/><circle cx="404.4" cy="155.1" r="2.6" class="f-acc2"/><circle cx="412.7" cy="151.9" r="2.6" class="f-acc2"/><circle cx="420.9" cy="151.4" r="2.6" class="f-acc2"/><circle cx="429.2" cy="153.5" r="2.6" class="f-acc2"/><circle cx="437.4" cy="157.6" r="2.6" class="f-acc2"/><circle cx="445.7" cy="163" r="2.6" class="f-acc2"/><circle cx="453.9" cy="168.9" r="2.6" class="f-acc2"/><circle cx="462.2" cy="174.2" r="2.6" class="f-acc2"/><text x="270.7" y="29" class="t-math" style="font-size:15px" text-anchor="start">2L·c<tspan baseline-shift="sub" style="font-size:11px">n</tspan> = f̃(k<tspan baseline-shift="sub" style="font-size:11px">n</tspan>)</text><text x="313.8" y="59.1" class="t-acc" style="font-size:15px" text-anchor="start">● L = 1: 간격 π</text><text x="313.8" y="81.1" class="t-math acc2" style="font-size:15px" text-anchor="start">● L = 4: 간격 π/4</text><text x="466" y="258" class="t-dim" style="font-size:14px" text-anchor="end">파수 k</text></svg>
+      <figcaption><b>그림 15-1.</b> 폭 1인 사각 펄스(\(\lvert x\rvert &lt; \tfrac12\)에서 1)를 주기 \(2L\)로 되풀이한 함수의 푸리에 계수. \(2Lc_n\)을 \(k_n = n\pi/L\)에 찍었다. \(L = 1\)이면 점 사이의 간격이 \(\pi\)이고(막대), \(L = 4\)이면 \(\pi/4\)이다(작은 점). 점들은 언제나 같은 곡선 \(\tilde f(k) = \sin(k/2)/(k/2)\) 위에 놓이고, 주기가 길어질수록 그 곡선을 촘촘히 채운다. 계수는 변환을 \(k_n\)에서 찍은 표본이다(식 <a class="ref" href="#eq-coefficients-as-samples"></a>).</figcaption>
+    </figure>
+
+    <h3 id="s1-definition">변환 쌍</h3>
+    <div class="box def" id="def-fourier-transform"><div class="box-h">푸리에 변환</div>
+      <p>실수 전체에서 정의되고 절대 적분 가능한(\(\int_{-\infty}^{\infty}\lvert f\rvert\,dx &lt; \infty\)) 함수 \(f\)의 <span class="term">푸리에 변환</span> <span class="en">(Fourier transform)</span> \(\tilde f\)와, \(\tilde f\)에서 \(f\)를 되찾는 <span class="term">역변환</span> <span class="en">(inverse transform)</span>을 다음과 같이 정한다. 공간 변수 \(x\)에는 위의 두 줄을, 시간 변수 \(t\)에는 아래 두 줄을 쓴다.</p>
+      <div class="formula" id="eq-ft-pair">\[ \begin{aligned} \tilde f(k) &= \int_{-\infty}^{\infty} f(x)\,e^{-ikx}\,dx \\ f(x) &= \int_{-\infty}^{\infty} \frac{dk}{2\pi}\,\tilde f(k)\,e^{ikx} \\[4pt] \tilde f(\omega) &= \int_{-\infty}^{\infty} f(t)\,e^{+i\omega t}\,dt \\ f(t) &= \int_{-\infty}^{\infty} \frac{d\omega}{2\pi}\,\tilde f(\omega)\,e^{-i\omega t} \end{aligned} \]<div class="where">\(k\)는 <span class="term">파수</span> <span class="en">(wavenumber)</span>, \(\omega\)는 각진동수다. \(2\pi\)는 언제나 역변환의 \(dk\), \(d\omega\)에 붙인다. 공간과 시간의 지수 부호가 반대인 것은 평면파 \(e^{i(kx - \omega t)}\)의 두 부분에 맞추기 위해서다.</div></div>
+      <p>\(\tilde f\)를 \(f\)의 <span class="term">스펙트럼</span> <span class="en">(spectrum)</span>이라고도 한다. \(\tilde f\)의 단위는 \([f]\times[x]\)이다. 예를 들어 전압 신호 \(V(t)\)의 변환은 \(\text{V}\cdot\text{s}\) 단위이고, \(\tilde V(\omega)\,d\omega/2\pi\)가 각진동수 띠 \(d\omega\)에 든 전압 진폭이다.</p>
+    </div>
+    <p>절대 적분 가능하면 \(\lvert\tilde f(k)\rvert \le \int\lvert f\rvert\,dx\)이므로 변환은 모든 \(k\)에서 유한하다. 또 \(\tilde f\)는 연속이고 \(\lvert k\rvert \to \infty\)에서 0으로 간다(<span class="term">리만-르베그 보조정리</span> <span class="en">(Riemann–Lebesgue lemma)</span>). 빨리 진동하는 \(e^{-ikx}\)를 곱해 적분하면 양과 음이 서로 지워지기 때문이다. 역변환이 정말 \(f\)를 돌려주는지는 다음 정리가 답한다.</p>
+    <div class="box thm" id="thm-fourier-inversion"><div class="box-h">푸리에 역변환 정리</div>
+      <p>\(f\)가 절대 적분 가능하고 구간별로 매끄럽다고 하자(14장 <a href="ch14.html#def-piecewise-smooth">정의 14.3</a>). 그러면 모든 \(x\)에서</p>
+      <div class="formula" id="eq-inversion-limit">\[ \lim_{K\to\infty}\int_{-K}^{K}\frac{dk}{2\pi}\,\tilde f(k)\,e^{ikx} = \frac{f(x^+) + f(x^-)}{2} \]</div>
+      <p>이다. \(f\)가 연속인 점에서는 우변이 \(f(x)\)이므로 식 <a class="ref" href="#eq-ft-pair"></a>의 역변환이 성립한다. 불연속점에서는 좌우 극한의 평균으로 간다. 14장의 디리클레 정리(<a href="ch14.html#thm-dirichlet">정리 14.2</a>)와 같은 결론이다.</p>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>\(\tilde f\)의 정의를 넣고 적분 순서를 바꾸면 왼쪽은 \(\int f(x')\,\frac{\sin K(x - x')}{\pi(x - x')}\,dx'\)이다(\(\int_{-K}^{K}e^{iku}\,dk = 2\sin Ku/u\)). 15.3절에서 보겠지만 \(\sin Ku/\pi u\)는 \(K \to \infty\)에서 델타 함수처럼 행동하고, 넓이의 절반씩을 \(u = 0\)의 양쪽에 둔다. 그래서 오른쪽 극한과 왼쪽 극한이 반씩 들어간다. 이 핵은 14장 디리클레 핵의 연속판이고, 논증도 같다. 엄밀한 증명은 티치마시의 책에 있다(E. C. Titchmarsh, <i>Introduction to the Theory of Fourier Integrals</i>, 2nd ed., Oxford 1948, 1장).</p>
+      </details>
+    </div>
+    <p>역변환의 적분은 식 <a class="ref" href="#eq-inversion-limit"></a>처럼 \(-K\)부터 \(K\)까지 대칭으로 자른 뒤 극한을 잡는 것으로 읽는다. 14장에서 \(\sum_{-N}^{N}\)을 대칭으로 늘린 것과 같다.</p>
+    <p>급수와 변환은 한 가지 사실로 이어진다. 한 주기 밖에서 0인 펄스 \(p\)를 주기 \(2L\)(또는 \(T\))로 되풀이한 함수의 푸리에 계수는, 펄스 하나의 변환을 배음에서 찍은 값이다.</p>
+    <div class="formula" id="eq-coefficients-as-samples">\[ \begin{aligned} c_n &= \frac{\tilde p(n\pi/L)}{2L} \\ F_n &= \frac{\tilde p(n\omega)}{T} \end{aligned} \]<div class="where">첫 식은 공간 변수의 급수 식 (14.10), 둘째 식은 시간 변수의 급수 식 (14.13)의 계수다. 한 주기 안에서 \(f = p\)이면 식 <a class="ref" href="#eq-truncated-transform"></a>의 \(\tilde f_L\)이 곧 \(\tilde p\)이기 때문이다.</div></div>
+
+    <div class="box ex" id="ex-single-pulse"><div class="box-h">하나뿐인 클록 펄스의 스펙트럼</div>
+      <p>높이 \(V_0 = 3.3\ \text{V}\), 폭 \(\tau = 0.25\ \mu\text{s}\)인 사각 펄스 하나 \(V(t)\)(\(\lvert t\rvert &lt; \tau/2\)에서 \(V_0\), 나머지에서 0)의 변환을 구하라. 이 펄스를 주기 \(T = 1.0\ \mu\text{s}\)로 되풀이한 14장 <a href="ch14.html#ex-pulse-train">예제 14.4</a>의 배음 진폭과 비교하라.</p>
+      <p><b>풀이.</b> 시간 변환이므로 식 <a class="ref" href="#eq-ft-pair"></a>의 셋째 줄을 쓴다.</p>
+      <div class="formula" id="eq-single-pulse-ft">\[ \begin{aligned} \tilde V(\omega) &= V_0\int_{-\tau/2}^{\tau/2}e^{i\omega t}\,dt = V_0\,\frac{2\sin(\omega\tau/2)}{\omega} \\ &= V_0\tau\,\frac{\sin(\omega\tau/2)}{\omega\tau/2} \end{aligned} \]</div>
+      <p>이다. 펄스가 \(t = 0\)에 대해 대칭이라 \(\tilde V\)는 실수다. \(\omega = 0\)에서 \(\tilde V(0) = V_0\tau = \int V\,dt\)는 펄스의 넓이이고, 첫 영점은 \(\omega\tau/2 = \pi\), 곧 진동수 \(\nu = \omega/2\pi = 1/\tau\)에 있다.</p>
+      <p><b>숫자로 보기.</b> \(\tilde V(0) = 3.3\ \text{V} \times 0.25\ \mu\text{s} = 0.825\ \text{V}\cdot\mu\text{s}\)이고 첫 영점은 \(1/\tau = 4.0\ \text{MHz}\)이다. 식 <a class="ref" href="#eq-coefficients-as-samples"></a>에 따르면 펄스열의 계수는 \(F_n = \tilde V(n\omega)/T\)이다. \(n = 1\)이면 \(\omega\tau/2 = \pi/4\)이고 \(\tilde V = 0.825 \times 0.900 = 0.743\ \text{V}\cdot\mu\text{s}\)이므로 \(F_1 = 0.743\ \text{V}\), 배음 진폭 \(2F_1 = 1.49\ \text{V}\)이다. 14장에서 직접 적분한 값과 같다. \(n = 4\)이면 \(4\omega = 2\pi/\tau\)가 영점이라 4번째 배음이 빠진다. 같은 \(\tilde V\)에서 \(n = 0\)을 읽으면 직류 성분 \(F_0 = 0.825\ \text{V}\)이다. 단위: \(\tilde V\)는 \(\text{V}\cdot\text{s}\)이고, \(T\)로 나누면 계수의 단위 \(\text{V}\)가 된다.</p>
+      <p>펄스열은 스펙트럼을 배음에서만 표본으로 찍고, 펄스 하나는 그 사이까지 모두 채운다. 좁은 펄스일수록 넓은 띠를 차지한다는 관계는 15.5절에서 부등식이 된다.</p>
+    </div>
+
+    <h3 id="s1-conventions">관례: \(2\pi\)와 부호를 어디에 두는가</h3>
+    <p>변환 쌍에서 바꿀 수 있는 것은 세 가지다. 첫째는 상수의 위치다. 순변환과 역변환에 곱하는 상수의 곱이 \(1/2\pi\)이기만 하면 된다. 둘째는 지수의 부호다. 순변환과 역변환의 부호가 서로 반대이기만 하면 된다. 셋째는 변수의 선택이다. 각진동수 \(\omega\) 대신 진동수 \(\nu = \omega/2\pi\)를 쓰면 \(2\pi\)가 지수로 들어간다. 그래서 교재마다 관례가 다르고, 같은 이름의 식이 상수와 부호만큼 다르다.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>관례</th><th>순변환</th><th>역변환</th><th>쓰는 곳</th></tr></thead>
+      <tbody>
+        <tr><td>이 책 (공간)</td><td>\(\int f\,e^{-ikx}\,dx\)</td><td>\(\int \frac{dk}{2\pi}\,\tilde f\,e^{ikx}\)</td><td>양자장론, 응집물질</td></tr>
+        <tr><td>이 책 (시간)</td><td>\(\int f\,e^{+i\omega t}\,dt\)</td><td>\(\int \frac{d\omega}{2\pi}\,\tilde f\,e^{-i\omega t}\)</td><td>물리 일반</td></tr>
+        <tr><td>대칭</td><td>\(\frac{1}{\sqrt{2\pi}}\int f\,e^{-ikx}\,dx\)</td><td>\(\frac{1}{\sqrt{2\pi}}\int \hat f\,e^{ikx}\,dk\)</td><td>라일리-홉슨-벤스</td></tr>
+        <tr><td>보아스</td><td>\(\frac{1}{2\pi}\int f\,e^{-ikx}\,dx\)</td><td>\(\int g\,e^{ikx}\,dk\)</td><td>보아스</td></tr>
+        <tr><td>진동수</td><td>\(\int x\,e^{-2\pi i\nu t}\,dt\)</td><td>\(\int X\,e^{2\pi i\nu t}\,d\nu\)</td><td>신호처리, 공학</td></tr>
+        <tr><td>양자역학</td><td>\(\frac{1}{\sqrt{2\pi\hbar}}\int\psi\,e^{-ipx/\hbar}\,dx\)</td><td>\(\frac{1}{\sqrt{2\pi\hbar}}\int\phi\,e^{ipx/\hbar}\,dp\)</td><td><code>qm</code> 책</td></tr>
+      </tbody>
+    </table></div>
+    <p>이 책의 공간 변환을 \(\tilde f(k)\)라 할 때, 다른 관례의 변환은 다음과 같이 이어진다.</p>
+    <div class="formula" id="eq-ft-conventions">\[ \begin{aligned} \hat f_{\text{대칭}}(k) &= \frac{\tilde f(k)}{\sqrt{2\pi}} \\ g_{\text{보아스}}(k) &= \frac{\tilde f(k)}{2\pi} \\ X(\nu) &= \tilde x(\omega = -2\pi\nu) \\ \phi(p) &= \frac{\tilde\psi(p/\hbar)}{\sqrt{2\pi\hbar}} \end{aligned} \]<div class="where">셋째 줄의 \(\tilde x(\omega)\)는 이 책의 시간 변환이다. 신호처리의 \(e^{-2\pi i\nu t}\)는 이 책의 \(e^{+i\omega t}\)와 부호가 반대이므로 \(\omega = -2\pi\nu\)에서 읽는다. 실수 신호이면 \(X(\nu) = \tilde x(2\pi\nu)^*\)이고 크기 \(\lvert X\rvert\)는 같다. 넷째 줄은 운동량 \(p = \hbar k\)에 대한 양자역학의 유니타리 관례다. 순변환에 \(e^{+ikx}\)를 쓰는 대칭 관례라면 \(\hat f(k) = \tilde f(-k)/\sqrt{2\pi}\)이다.</div></div>
+    <p>넷째 줄을 확인하자. 역변환 \(\psi(x) = \int\frac{dk}{2\pi}\tilde\psi(k)e^{ikx}\)에서 \(k = p/\hbar\), \(dk = dp/\hbar\)로 바꾸면 \(\psi(x) = \int\frac{dp}{2\pi\hbar}\,\tilde\psi(p/\hbar)\,e^{ipx/\hbar} = \frac{1}{\sqrt{2\pi\hbar}}\int\phi(p)\,e^{ipx/\hbar}\,dp\)이고, 이것이 표의 역변환이다. 15.4절의 플랑슈렐 정리를 쓰면 \(\int\lvert\phi\rvert^2dp = \int\lvert\psi\rvert^2dx\)도 나온다. 그래서 \(\lvert\phi(p)\rvert^2\)을 운동량의 확률 밀도로 읽을 수 있다. 대칭 관례와 양자역학 관례에서는 이런 규격화 식에 \(2\pi\)가 없고, 이 책의 관례에서는 \(dk/2\pi\)가 붙는다.</p>
+    <div class="callout warn"><strong>다른 책의 식을 옮길 때는 델타나 가우스 함수로 시험한다</strong><p>관례가 다른 식을 그대로 섞으면 \(2\pi\)가 하나 빠지거나 위상의 부호가 뒤집힌다. 옮기기 전에 그 책에서 \(\delta(x)\)의 변환이 무엇인지 보면 상수를 알 수 있다. 이 책에서는 \(1\)이고(15.3절), 대칭 관례에서는 \(1/\sqrt{2\pi}\), 보아스에서는 \(1/2\pi\)이다. 지수 부호는 도함수의 변환으로 알 수 있다. 이 책에서 \(d/dx\)는 \(ik\)를, \(d/dt\)는 \(-i\omega\)를 곱한다(식 <a class="ref" href="#eq-ft-derivative"></a>). 공학 교재는 \(e^{j\omega t}\)로 진동을 쓰고 \(\int x\,e^{-j\omega t}\,dt\)로 변환하는데, 이 책의 식에서 \(i\)를 \(-j\)로 바꾸면 그 교재의 식이 된다. 10장 <a href="ch10.html#eq-laplace-fourier-link">식 (10.45)</a>의 \(H(-i\omega)\)가 공학의 \(H(j\omega)\)가 되는 것도 같은 대응이다.</p></div>
+  </section>
+
+  <!-- ============================================================ 15.2 -->
+  <section id="s2">
+    <h2>변환의 기본 성질</h2>
+    <p>변환을 매번 적분으로 계산할 필요는 없다. 몇 가지 기본 성질과 변환을 아는 함수 몇 개만 있으면 물리에 나오는 변환 대부분을 조합해 얻는다. 특히 미분이 곱셈이 된다는 성질 덕분에, 상수 계수 선형 미분방정식은 변환하면 대수 방정식이 된다. 2장에서 페이저에 \(d/dt \to -i\omega\)를 쓴 것을 모든 진동수에 한꺼번에 하는 셈이다.</p>
+
+    <h3 id="s2-symmetry">대칭</h3>
+    <p>식 <a class="ref" href="#eq-ft-pair"></a>의 정의에서 켤레를 취하고 \(k\)를 \(-k\)로 바꾸면 다음을 얻는다.</p>
+    <div class="formula" id="eq-ft-conjugate">\[ f \text{ 가 실함수} \;\Longrightarrow\; \tilde f(-k) = \tilde f(k)^* \]<div class="where">따라서 실함수의 스펙트럼은 양의 \(k\)만 알면 된다. 실수인 짝함수의 변환은 실수 짝함수이고(사인 부분이 지워진다), 실수인 홀함수의 변환은 순허수 홀함수다. 14장에서 \(c_{-n} = c_n^*\)이던 것의 연속판이다.</div></div>
+
+    <h3 id="s2-rules">이동, 척도, 도함수</h3>
+    <div class="box thm" id="thm-ft-properties"><div class="box-h">변환의 기본 성질</div>
+      <p>\(f\)의 변환을 \(\tilde f\)라 하고, 변환으로 짝지어지는 것을 \(\longleftrightarrow\)로 쓴다. \(a\)는 0이 아닌 실수, \(k_0\)는 실수다.</p>
+      <div class="formula" id="eq-ft-shift">\[ \begin{aligned} f(x - a) &\;\longleftrightarrow\; e^{-ika}\,\tilde f(k) \\ e^{ik_0x}f(x) &\;\longleftrightarrow\; \tilde f(k - k_0) \end{aligned} \]<div class="where">시간 변환에서는 \(f(t - t_0) \longleftrightarrow e^{+i\omega t_0}\tilde f(\omega)\), \(e^{-i\omega_0t}f(t) \longleftrightarrow \tilde f(\omega - \omega_0)\)이다.</div></div>
+      <div class="formula" id="eq-ft-scaling">\[ f(ax) \;\longleftrightarrow\; \frac{1}{\lvert a\rvert}\,\tilde f\Big(\frac{k}{a}\Big) \]</div>
+      <div class="formula" id="eq-ft-derivative">\[ \begin{aligned} f'(x) &\;\longleftrightarrow\; ik\,\tilde f(k) \\ x\,f(x) &\;\longleftrightarrow\; i\,\frac{d\tilde f}{dk} \end{aligned} \]<div class="where">시간 변환에서는 \(f'(t) \longleftrightarrow -i\omega\,\tilde f(\omega)\), \(t\,f(t) \longleftrightarrow -i\,d\tilde f/d\omega\)이다. 첫 줄은 \(f \to 0\) (\(\lvert x\rvert \to \infty\))이고 \(f'\)이 절대 적분 가능할 때, 둘째 줄은 \(xf\)가 절대 적분 가능할 때 성립한다.</div></div>
+      <details class="proof"><summary>증명</summary>
+        <p>이동: \(\int f(x - a)e^{-ikx}dx\)에서 \(y = x - a\)로 치환하면 \(e^{-ika}\int f(y)e^{-iky}dy\)이다. 둘째 줄은 \(e^{ik_0x}e^{-ikx} = e^{-i(k - k_0)x}\)에서 바로 나온다. 척도: \(a > 0\)이면 \(y = ax\)로 치환해 \(\int f(y)e^{-i(k/a)y}dy/a\)이다. \(a &lt; 0\)이면 적분 구간의 위아래가 바뀌어 부호가 하나 생기므로 \(1/\lvert a\rvert\)이 된다. 도함수: 부분 적분하면 \(\int f'e^{-ikx}dx = \big[fe^{-ikx}\big]_{-\infty}^{\infty} + ik\int fe^{-ikx}dx\)이고 경계 항은 0이다. 둘째 줄은 정의를 \(k\)로 미분해 \(d\tilde f/dk = \int(-ix)fe^{-ikx}dx\)를 얻은 뒤 양변에 \(i\)를 곱한 것이다. 시간 변환은 지수의 부호만 바꾸면 같은 계산이다.</p>
+      </details>
+    </div>
+    <p>세 성질을 말로 읽어 두자. 신호를 옮기면 스펙트럼의 크기는 그대로이고 위상만 \(k\)에 비례해 돈다. 반대로 신호에 \(e^{ik_0x}\)를 곱하면(변조) 스펙트럼이 \(k_0\)만큼 옮겨 간다. 신호를 \(a\)배로 좁히면 스펙트럼은 \(a\)배로 넓어지고 높이는 \(1/\lvert a\rvert\)배가 된다. 미분은 \(ik\)를 곱하는 것이므로 높은 파수 성분을 키운다. 그래서 매끄러운 함수일수록 스펙트럼이 빨리 줄어든다. \(f\)가 \(n\)번 미분 가능하고 그 도함수가 모두 절대 적분 가능하면 \(k^n\tilde f(k)\)가 유계이므로, \(\tilde f\)는 적어도 \(1/k^n\)처럼 준다. 14장 <a href="ch14.html#thm-coefficient-decay">정리 14.4</a>의 연속판이다.</p>
+
+    <h3 id="s2-gaussian">가우스 함수</h3>
+    <p>가우스 함수 \(f(x) = e^{-x^2/2\sigma^2}\)의 변환은 도함수 성질만으로 구할 수 있다. \(f' = -xf/\sigma^2\)의 양변을 식 <a class="ref" href="#eq-ft-derivative"></a>로 변환하면 \(ik\tilde f = -\tfrac{1}{\sigma^2}\,i\tilde f'(k)\), 곧 \(\tilde f'(k) = -\sigma^2k\,\tilde f(k)\)이다. 이 1계 방정식의 해는 \(\tilde f(k) = \tilde f(0)\,e^{-\sigma^2k^2/2}\)이고, \(\tilde f(0) = \int e^{-x^2/2\sigma^2}dx = \sqrt{2\pi}\,\sigma\)는 3장 <a href="ch03.html#eq-gaussian-integral">식 (3.33)</a>에서 \(x\)를 \(x/\sqrt2\sigma\)로 바꾼 것이다.</p>
+    <div class="formula" id="eq-gaussian-ft">\[ e^{-x^2/2\sigma^2} \;\longleftrightarrow\; \sqrt{2\pi}\,\sigma\,e^{-\sigma^2k^2/2} \]<div class="where">11장 <a href="ch11.html#eq-gaussian-oscillating">식 (11.7)</a>에 \(a = 1/2\sigma^2\)을 넣어도 같다. 넓이가 1인 가우스 함수 \(e^{-x^2/2\sigma^2}/\sqrt{2\pi}\sigma\)의 변환은 \(e^{-\sigma^2k^2/2}\)이다.</div></div>
+    <p>가우스 함수의 변환은 다시 가우스 함수다. 다만 폭이 뒤집힌다. \(x\) 쪽에서 폭이 \(\sigma\)이면 \(k\) 쪽에서는 폭이 \(1/\sigma\)이다(그림 15-2). 3장 <a href="ch03.html#prob-gaussian-cosine">문제 3.11</a>에서 미분방정식으로 구한 \(\int_0^\infty e^{-x^2}\cos kx\,dx = \tfrac{\sqrt\pi}{2}\,e^{-k^2/4}\)의 두 배 \(\int_{-\infty}^{\infty}\)가 바로 이 식의 \(\sigma = 1/\sqrt2\)인 경우다.</p>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 250" role="img" aria-label="폭 σ = 0.5와 1.5인 가우스 함수"><defs><clipPath id="f1502-clip"><rect x="40" y="30" width="324" height="170"/></clipPath></defs><line x1="40" y1="30" x2="40" y2="200" class="s-grid"/><line x1="121" y1="30" x2="121" y2="200" class="s-grid"/><line x1="202" y1="30" x2="202" y2="200" class="s-grid"/><line x1="283" y1="30" x2="283" y2="200" class="s-grid"/><line x1="364" y1="30" x2="364" y2="200" class="s-grid"/><line x1="40" y1="200" x2="364" y2="200" class="s-grid"/><line x1="40" y1="126.1" x2="364" y2="126.1" class="s-grid"/><line x1="40" y1="52.2" x2="364" y2="52.2" class="s-grid"/><text x="40" y="220" class="t-dim" style="font-size:13px" text-anchor="middle">−4</text><text x="121" y="220" class="t-dim" style="font-size:13px" text-anchor="middle">−2</text><text x="202" y="220" class="t-dim" style="font-size:13px" text-anchor="middle">0</text><text x="283" y="220" class="t-dim" style="font-size:13px" text-anchor="middle">2</text><text x="364" y="220" class="t-dim" style="font-size:13px" text-anchor="middle">4</text><text x="33" y="205" class="t-dim" style="font-size:13px" text-anchor="end">0</text><text x="33" y="131.1" class="t-dim" style="font-size:13px" text-anchor="end">0.5</text><text x="33" y="57.2" class="t-dim" style="font-size:13px" text-anchor="end">1</text><line x1="40" y1="200" x2="364" y2="200" class="s-line"/><line x1="202" y1="30" x2="202" y2="200" class="s-line"/><path d="M40,200l76.7,0 15.6,-0.4 6.5,-0.7 5.4,-1.4 4.3,-2 4.4,-3.3 3.7,-4.2 3.8,-6 3.3,-6.6 3.2,-8.3 3.8,-11.8 3.8,-13.9 12.4,-53.3 4.8,-18.1 2.7,-7.9 2.7,-5.7 2.7,-3.4 2.2,-0.8 2.2,0.8 2.7,3.4 2.7,5.7 2.7,7.9 4.8,18.1 12.4,53.3 3.8,13.9 3.8,11.8 3.2,8.3 3.3,6.6 3.8,6 3.7,4.2 4.4,3.3 4.3,2 5.4,1.4 6.5,0.7 15.6,0.4 76.7,0" class="s-acc" style="stroke-width:2.2"  clip-path="url(#f1502-clip)"/><path d="M40,195.8l8.1,-1.8 7.6,-2.1 7,-2.6 6.5,-2.8 6.4,-3.5 6,-3.7 6.5,-4.8 5.9,-4.9 11.9,-11.9 11.9,-14.2 11.3,-15.5 27.5,-39.9 7.6,-9.9 7,-8.2 8.1,-7.9 7.6,-5.4 7.5,-3.4 3.8,-0.8 3.8,-0.3 3.8,0.3 3.8,0.8 7.5,3.4 7.6,5.4 8.1,7.9 7,8.2 7.6,9.9 27.5,39.9 11.3,15.5 11.9,14.2 11.9,11.9 5.9,4.9 6.5,4.8 6,3.7 6.4,3.5 6.5,2.8 7,2.6 7.6,2.1 8.1,1.8" class="s-acc2" style="stroke-width:2.2" stroke-dasharray="6 4" clip-path="url(#f1502-clip)"/><text x="220.2" y="59.6" class="t-math acc" style="font-size:15px" text-anchor="start">σ = 0.5</text><text x="270.9" y="118.7" class="t-math acc2" style="font-size:15px" text-anchor="start">σ = 1.5</text><text x="12" y="14" class="t" style="font-size:14px" text-anchor="start">(가) 가우스 함수 f(x)</text><text x="364" y="240" class="t-math" style="font-size:15px" text-anchor="end">x</text></svg><svg viewBox="0 0 380 250" role="img" aria-label="두 가우스 함수의 푸리에 변환. 좁은 함수의 변환이 넓다"><defs><clipPath id="f1502b-clip"><rect x="40" y="30" width="324" height="170"/></clipPath></defs><line x1="40" y1="30" x2="40" y2="200" class="s-grid"/><line x1="121" y1="30" x2="121" y2="200" class="s-grid"/><line x1="202" y1="30" x2="202" y2="200" class="s-grid"/><line x1="283" y1="30" x2="283" y2="200" class="s-grid"/><line x1="364" y1="30" x2="364" y2="200" class="s-grid"/><line x1="40" y1="200" x2="364" y2="200" class="s-grid"/><line x1="40" y1="157.5" x2="364" y2="157.5" class="s-grid"/><line x1="40" y1="115" x2="364" y2="115" class="s-grid"/><line x1="40" y1="72.5" x2="364" y2="72.5" class="s-grid"/><line x1="40" y1="30" x2="364" y2="30" class="s-grid"/><text x="40" y="220" class="t-dim" style="font-size:13px" text-anchor="middle">−6</text><text x="121" y="220" class="t-dim" style="font-size:13px" text-anchor="middle">−3</text><text x="202" y="220" class="t-dim" style="font-size:13px" text-anchor="middle">0</text><text x="283" y="220" class="t-dim" style="font-size:13px" text-anchor="middle">3</text><text x="364" y="220" class="t-dim" style="font-size:13px" text-anchor="middle">6</text><text x="33" y="205" class="t-dim" style="font-size:13px" text-anchor="end">0</text><text x="33" y="162.5" class="t-dim" style="font-size:13px" text-anchor="end">1</text><text x="33" y="120" class="t-dim" style="font-size:13px" text-anchor="end">2</text><text x="33" y="77.5" class="t-dim" style="font-size:13px" text-anchor="end">3</text><text x="33" y="35" class="t-dim" style="font-size:13px" text-anchor="end">4</text><line x1="40" y1="200" x2="364" y2="200" class="s-line"/><line x1="202" y1="30" x2="202" y2="200" class="s-line"/><path d="M40,199.4l18.9,-1 15.7,-1.7 14,-2.6 13,-3.5 11.8,-4.5 11.9,-5.5 11.4,-6.2 25.3,-14.9 13,-6.5 7,-2.7 7,-2.1 6.5,-1.1 6.5,-0.4 6.5,0.4 6.5,1.1 7,2.1 7,2.7 13,6.5 25.3,14.9 11.4,6.2 11.9,5.5 11.8,4.5 13,3.5 14,2.6 15.7,1.7 18.9,1" class="s-acc" style="stroke-width:2.2"  clip-path="url(#f1502b-clip)"/><path d="M40,200l98.3,-0.3 6.5,-0.7 4.8,-1.3 3.8,-1.9 3.8,-3 3.8,-4.7 3.2,-5.7 3.2,-7.7 3.3,-9.9 3.2,-12.1 3.3,-14.4 11.3,-58.9 4.3,-19.7 2.7,-9.5 2.2,-5.5 2.1,-3.4 1.1,-0.8 1.1,-0.3 1.1,0.3 1.1,0.8 2.1,3.4 2.2,5.5 2.7,9.5 4.3,19.7 11.3,58.9 3.3,14.4 3.2,12.1 3.3,9.9 3.2,7.7 3.2,5.7 3.8,4.7 3.8,3 3.8,1.9 4.8,1.3 6.5,0.7 98.3,0.3" class="s-acc2" style="stroke-width:2.2" stroke-dasharray="6 4" clip-path="url(#f1502b-clip)"/><text x="261.4" y="149" class="t-math acc" style="font-size:15px" text-anchor="start">σ = 0.5</text><text x="226.3" y="47" class="t-math acc2" style="font-size:15px" text-anchor="start">σ = 1.5</text><text x="12" y="14" class="t" style="font-size:14px" text-anchor="start">(나) 그 변환 f̃(k)</text><text x="364" y="240" class="t-math" style="font-size:15px" text-anchor="end">k</text></svg></div>
+      <figcaption><b>그림 15-2.</b> (가) 폭 \(\sigma = 0.5\)(실선)와 \(\sigma = 1.5\)(파선)인 가우스 함수 \(f(x) = e^{-x^2/2\sigma^2}\). (나) 그 변환 \(\tilde f(k) = \sqrt{2\pi}\,\sigma\,e^{-\sigma^2k^2/2}\). 좁은 함수(\(\sigma = 0.5\))의 변환은 폭이 \(1/\sigma = 2\)로 넓고 낮으며, 넓은 함수의 변환은 폭이 \(2/3\)로 좁고 높다. 변환 곡선 아래의 넓이는 \(2\pi f(0) = 2\pi\)로 같다(식 <a class="ref" href="#eq-ft-pair"></a>의 역변환에 \(x = 0\)을 넣은 것).</figcaption>
+    </figure>
+
+    <h3 id="s2-exponential">지수 함수와 로런츠 함수</h3>
+    <p>\(t = 0\)에 시작해 비율 \(\gamma > 0\)으로 줄어드는 신호 \(\Theta(t)e^{-\gamma t}\)를 시간 변환하면 적분이 바로 된다.</p>
+    <div class="formula" id="eq-exponential-ft">\[ \Theta(t)\,e^{-\gamma t} \;\longleftrightarrow\; \int_0^\infty e^{-(\gamma - i\omega)t}\,dt = \frac{1}{\gamma - i\omega} \]<div class="where">\(\Theta\)는 6장의 계단 함수다. 이 변환은 10장 라플라스 변환 \(1/(s + \gamma)\)에 \(s = -i\omega\)를 넣은 것과 같다(10장 <a href="ch10.html#eq-laplace-fourier-link">식 (10.45)</a>).</div></div>
+    <p>양쪽으로 줄어드는 \(e^{-\gamma\lvert t\rvert}\)는 이 신호와 그것을 시간에 대해 뒤집은 \(\Theta(-t)e^{\gamma t}\)의 합이다. 뒤집은 쪽의 변환은 식 <a class="ref" href="#eq-ft-scaling"></a>에서 \(a = -1\)로 두어 \(1/(\gamma + i\omega)\)이므로</p>
+    <div class="formula" id="eq-lorentzian-ft">\[ e^{-\gamma\lvert t\rvert} \;\longleftrightarrow\; \frac{1}{\gamma - i\omega} + \frac{1}{\gamma + i\omega} = \frac{2\gamma}{\gamma^2 + \omega^2} \]<div class="where">공간 변환에서도 같은 꼴이다: \(e^{-\mu\lvert x\rvert} \longleftrightarrow 2\mu/(\mu^2 + k^2)\). 짝함수라 지수의 부호와 상관이 없다.</div></div>
+    <p>오른쪽의 \(\gamma/(\gamma^2 + \omega^2)\) 꼴을 <span class="term">로런츠 함수</span> <span class="en">(Lorentzian)</span>라 한다. 반대 방향, 곧 로런츠 함수의 역변환 \(\int\frac{d\omega}{2\pi}\frac{2\gamma}{\gamma^2 + \omega^2}e^{-i\omega t} = e^{-\gamma\lvert t\rvert}\)은 <a class="ref" href="#thm-fourier-inversion"></a>이 공짜로 준다. 이 적분을 직접 하는 가장 쉬운 길은 19장의 <a href="ch19.html#thm-residue">유수 정리</a>(정리 19.9)다. 두 변환을 비교해 두자. \(e^{-\gamma\lvert t\rvert}\)는 \(t = 0\)에서 꺾여 있어서 변환이 \(1/\omega^2\)로 천천히 주고, 어디서나 매끄러운 가우스 함수의 변환은 어떤 거듭제곱보다도 빨리 준다.</p>
+
+    <div class="box ex" id="ex-lorentzian-line"><div class="box-h">들뜬 원자가 내는 빛의 선 모양</div>
+      <p>들뜬 상태의 원자가 \(t = 0\)부터 빛을 낸다. 에너지는 수명 \(\tau\)로 \(e^{-t/\tau}\)처럼 줄므로 전기장은 \(e^{-t/2\tau}\)처럼 준다. 전기장을 \(E(t) = E_0\,\Theta(t)\,e^{-i\omega_0t}e^{-t/2\tau}\)로 두고(실수 전기장은 이것의 실수부다), 세기 스펙트럼 \(\lvert\tilde E(\omega)\rvert^2\)의 모양과 반치 전폭을 구하라. 나트륨의 노란 D₂선은 진공 파장 \(589.16\ \text{nm}\), 들뜬 상태 수명 약 \(16.2\ \text{ns}\)이다(D. A. Steck, <i>Sodium D Line Data</i>, rev. 2.3.4 (2025), steck.us/alkalidata). 이 선의 자연 선폭을 진동수와 파장으로 구하라.</p>
+      <p><b>풀이.</b> 식 <a class="ref" href="#eq-exponential-ft"></a>에 \(\gamma = 1/2\tau\)를 넣고, 식 <a class="ref" href="#eq-ft-shift"></a>의 시간 변조 규칙으로 \(e^{-i\omega_0t}\)를 곱한 효과를 \(\omega \to \omega - \omega_0\)으로 넣는다.</p>
+      <div class="formula" id="eq-lorentzian-line">\[ \begin{aligned} \tilde E(\omega) &= \frac{E_0}{1/2\tau - i(\omega - \omega_0)} \\ \lvert\tilde E(\omega)\rvert^2 &= \frac{E_0^2}{(\omega - \omega_0)^2 + 1/4\tau^2} \end{aligned} \]</div>
+      <p>세기 스펙트럼은 \(\omega_0\)을 중심으로 한 로런츠 함수다. 봉우리 높이의 절반이 되는 곳은 \((\omega - \omega_0)^2 = 1/4\tau^2\)이므로 <span class="term">반치 전폭</span> <span class="en">(full width at half maximum, FWHM)</span>은 \(\Delta\omega = 1/\tau\)이다. 수명이 길수록 선이 좁다. 이것은 10장 <a href="ch10.html#eq-resonance-width">식 (10.22)</a>와 같은 내용이다. 진폭이 \(e^{-\gamma t}\)로 주는 진동자는 공명 곡선의 반치 전폭이 \(2\gamma\)였는데, 여기서는 \(2\gamma = 1/\tau\)이다. 저절로 울리다 사라지는 진동과 흔들어 줄 때의 공명은 같은 진동자의 두 얼굴이다.</p>
+      <p><b>숫자로 보기.</b> \(\tau = 16.2\ \text{ns}\)이면 \(\Delta\omega = 1/\tau = 6.2 \times 10^7\ \text{s}^{-1}\), 진동수로 \(\Delta\nu = 1/2\pi\tau = 9.8\ \text{MHz}\)이다. 선의 중심 진동수는 \(\nu_0 = c/\lambda = 508.8\ \text{THz}\)이므로 \(\nu_0/\Delta\nu = 5.2 \times 10^7\)이다. 품질 인자로 말하면 원자는 \(Q \approx 5 \times 10^7\)인 진동자다. 파장으로는 \(\Delta\lambda = \lambda\,\Delta\nu/\nu_0 = 1.1 \times 10^{-5}\ \text{nm}\)이다. 차원: \(1/\tau\)는 \(\text{s}^{-1}\)이고 \(\lvert\tilde E\rvert^2\)은 \((\text{V/m})^2\text{s}^2\)이다.</p>
+      <p><b>다음 항은 몇 차인가.</b> 실수 전기장 \(\operatorname{Re}E\)에는 \(e^{+i\omega_0t}\) 성분도 있어서 \(\omega = -\omega_0\)에 같은 모양의 봉우리가 하나 더 생긴다. 그 꼬리가 \(\omega_0\)에서 더하는 세기는 주 봉우리의 \((1/2\tau)^2/(2\omega_0)^2 = (\Delta\omega/4\omega_0)^2 \approx 2 \times 10^{-17}\)배이고, 두 봉우리의 교차항도 같은 차수다. 합쳐 \(10^{-16}\)배 이하이므로 무시한다. 실제 기체에서는 원자의 열운동에 따른 도플러 넓어짐이 1 GHz를 넘어(500 K에서 1.7 GHz) 자연 선폭을 덮는다(<a class="ref" href="#prob-voigt-widths"></a>).</p>
+    </div>
+    <p>\(\tau \to \infty\)이면 \(\tilde E(\omega)\)는 \(iE_0/(\omega - \omega_0 + i0^+)\)로 간다. \(\omega = \omega_0\)에서 무한대가 되는 이 대상은 실수 적분으로는 다룰 수 없고, 19장의 <a href="ch19.html#eq-sokhotski">소호츠키-플레멜 공식</a>(식 (19.40))이 \(\pi\delta(\omega - \omega_0)\)와 주값으로 나누어 준다. 그 델타 부분이 영원히 울리는 진동 \(e^{-i\omega_0t}\)의 "선 스펙트럼"이다. 델타 함수가 변환에 어떻게 들어오는지는 다음 절의 주제다.</p>
+  </section>
+
+  <!-- ============================================================ 15.3 -->
+  <section id="s3">
+    <h2>디랙 델타와 평면파</h2>
+    <p>역변환 정리를 한 줄로 증명해 보려 하면 이상한 적분을 만난다. 식 <a class="ref" href="#eq-ft-pair"></a>의 \(\tilde f\)를 역변환에 넣고 적분 순서를 바꾸면</p>
+    <div class="formula" id="eq-inversion-formal">\[ f(x) = \int_{-\infty}^{\infty}dx'\,f(x')\left[\int_{-\infty}^{\infty}\frac{dk}{2\pi}\,e^{ik(x - x')}\right] \]</div>
+    <p>이다. 모든 \(f\)에서 이것이 성립하려면 대괄호는 6장의 거르기 성질(<a href="ch06.html#eq-delta-sifting">식 (6.42)</a>)을 가진 대상, 곧 \(\delta(x - x')\)이어야 한다. 그런데 \(\int e^{iku}\,dk\)는 어떤 \(u\)에서도 수렴하지 않는다. 피적분 함수의 크기가 언제나 1이기 때문이다. 이 적분에 뜻을 주는 방법은 6장과 같다. 적분을 조금 수렴하게 만든 함수열을 만들고, 그 함수열이 델타 함수열임을 보인다.</p>
+
+    <h3 id="s3-regularize">수렴 인자를 넣어 계산하기</h3>
+    <p>피적분 함수에 \(e^{-\varepsilon\lvert k\rvert}\)를 곱하면 큰 \(\lvert k\rvert\)이 잘려 적분이 수렴한다. 계산은 식 <a class="ref" href="#eq-lorentzian-ft"></a>와 같다. 가우스 인자 \(e^{-\varepsilon^2k^2/2}\)를 곱하면 식 <a class="ref" href="#eq-gaussian-ft"></a>의 역방향 계산이 되고, \(\lvert k\rvert &lt; K\)에서 칼로 자르면 사인 함수가 나온다.</p>
+    <div class="formula" id="eq-delta-regularized">\[ \begin{aligned} \int\frac{dk}{2\pi}\,e^{iku - \varepsilon\lvert k\rvert} &= \frac1\pi\,\frac{\varepsilon}{u^2 + \varepsilon^2} \\ \int\frac{dk}{2\pi}\,e^{iku - \varepsilon^2k^2/2} &= \frac{e^{-u^2/2\varepsilon^2}}{\sqrt{2\pi}\,\varepsilon} \\ \int_{-K}^{K}\frac{dk}{2\pi}\,e^{iku} &= \frac{\sin Ku}{\pi u} \end{aligned} \]<div class="where">첫 줄과 둘째 줄의 오른쪽은 6장 <a href="ch06.html#eq-delta-sequences">식 (6.41)</a>의 로런츠 함수열과 가우스 함수열 그대로다. 폭 \(\varepsilon\)도 같다. 셋째 줄은 \(\varepsilon = 1/K\)로 두면 \(\delta_\varepsilon(u) = \tfrac1\varepsilon g(u/\varepsilon)\), \(g(t) = \sin t/\pi t\) 꼴이다.</div></div>
+    <p>6장의 <a href="ch06.html#thm-delta-sequence">정리 6.6</a>에 따르면 처음 두 함수열은 \(\varepsilon \to 0\)에서 \(\delta(u)\)로 간다. 셋째 함수열 \(\sin Ku/\pi u\)는 그림 15-3처럼 양과 음을 오가며 진동하고, 넓이 \(\int\sin t/\pi t\,dt = 1\)은 절대 수렴하지 않는다. 그래서 6장의 정리를 그대로 쓸 수는 없지만, 구간별로 매끄러운 \(f\)에 곱해 적분하면 역시 \(f(0)\)으로 간다. 14장의 디리클레 정리와 같은 논증이다(<a class="ref" href="#thm-fourier-inversion"></a>의 증명의 생각). 어느 수렴 인자를 쓰든 극한은 같다.</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 270" role="img" aria-label="sin(Kx)/(πx)를 K = 4와 K = 12에 대해 그린 그림. K가 커질수록 가운데 봉우리가 높고 좁아지며 양옆의 진동이 빨라진다"><defs><clipPath id="f1503-clip"><rect x="46" y="18" width="420" height="196"/></clipPath></defs><line x1="46" y1="18" x2="46" y2="214" class="s-grid"/><line x1="116" y1="18" x2="116" y2="214" class="s-grid"/><line x1="186" y1="18" x2="186" y2="214" class="s-grid"/><line x1="256" y1="18" x2="256" y2="214" class="s-grid"/><line x1="326" y1="18" x2="326" y2="214" class="s-grid"/><line x1="396" y1="18" x2="396" y2="214" class="s-grid"/><line x1="466" y1="18" x2="466" y2="214" class="s-grid"/><line x1="46" y1="214" x2="466" y2="214" class="s-grid"/><line x1="46" y1="176.3" x2="466" y2="176.3" class="s-grid"/><line x1="46" y1="138.6" x2="466" y2="138.6" class="s-grid"/><line x1="46" y1="100.9" x2="466" y2="100.9" class="s-grid"/><line x1="46" y1="63.2" x2="466" y2="63.2" class="s-grid"/><line x1="46" y1="25.5" x2="466" y2="25.5" class="s-grid"/><text x="46" y="234" class="t-dim" style="font-size:14px" text-anchor="middle">−3</text><text x="116" y="234" class="t-dim" style="font-size:14px" text-anchor="middle">−2</text><text x="186" y="234" class="t-dim" style="font-size:14px" text-anchor="middle">−1</text><text x="256" y="234" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="326" y="234" class="t-dim" style="font-size:14px" text-anchor="middle">1</text><text x="396" y="234" class="t-dim" style="font-size:14px" text-anchor="middle">2</text><text x="466" y="234" class="t-dim" style="font-size:14px" text-anchor="middle">3</text><text x="39" y="219" class="t-dim" style="font-size:14px" text-anchor="end">−1</text><text x="39" y="181.3" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="39" y="143.6" class="t-dim" style="font-size:14px" text-anchor="end">1</text><text x="39" y="105.9" class="t-dim" style="font-size:14px" text-anchor="end">2</text><text x="39" y="68.2" class="t-dim" style="font-size:14px" text-anchor="end">3</text><text x="39" y="30.5" class="t-dim" style="font-size:14px" text-anchor="end">4</text><line x1="46" y1="176.3" x2="466" y2="176.3" class="s-line"/><line x1="256" y1="18" x2="256" y2="214" class="s-line"/><path d="M46,178.5l14,2 6.5,0.2 6.1,-0.4 11.2,-2 25.7,-7 7,-1 7,-0.1 7,0.9 7.4,2 7,2.7 15.9,7.1 7.9,2.7 8,1.1 3.7,-0.1 3.7,-0.7 4.2,-1.4 4.7,-2.3 4.7,-3.1 4.6,-4 8.9,-9.1 18.7,-21.7 9.3,-8.9 4.2,-3 4.2,-2.3 4.2,-1.3 4.2,-0.5 4.2,0.5 4.2,1.3 4.2,2.3 4.2,3 9.3,8.9 18.7,21.7 8.9,9.1 4.6,4 4.7,3.1 4.7,2.3 4.2,1.4 3.7,0.7 3.7,0.1 8,-1.1 7.9,-2.7 15.9,-7.1 7,-2.7 7.4,-2 7,-0.9 7,0.1 7,1 25.7,7 11.2,2 6.1,0.4 6.5,-0.2 14,-2" class="s-line" style="stroke:var(--text-dim);stroke-width:2"  clip-path="url(#f1503-clip)"/><path d="M46,180.3l4.4,-1.4 9.4,-6 2.1,-0.7 2.1,-0.3 2.3,0.5 2.3,1 9.8,6.8 2.6,0.8 2.3,0 4.2,-1.9 8.9,-7 2.1,-0.9 2.1,-0.3 2.3,0.5 2.4,1.3 9.8,8.5 2.3,1 2.1,0.2 2.1,-0.7 2.3,-1.5 9.4,-9.5 2.1,-1.1 2.1,-0.3 2.3,0.7 2.3,1.7 9.6,11.2 2.1,1.4 2.1,0.3 2.3,-0.8 2.4,-2.2 9.5,-13.5 2.1,-1.6 1.9,-0.4 2.3,0.9 2.6,2.8 7.5,13.8 2.3,3.5 2.1,1.9 1.9,0.4 2.3,-1.4 2.6,-3.9 7.2,-17.9 2.3,-5 2.1,-2.7 1.9,-0.7 1.4,0.8 1.2,1.5 2.8,6.4 7.7,29.6 2.3,7.3 2.1,3.7 0.9,0.5 1,-0.3 1.6,-2.5 1.4,-4.4 3,-16.4 3.5,-29.4 6.8,-70.6 2.8,-25.3 3.3,-20 1.6,-5 1.4,-1.4 1.4,1.4 1.6,5 3.3,20 2.8,25.3 6.8,70.6 3.5,29.4 3,16.4 1.4,4.4 1.6,2.5 1,0.3 0.9,-0.5 2.1,-3.7 2.3,-7.3 7.7,-29.6 2.8,-6.4 1.2,-1.5 1.4,-0.8 1.9,0.7 2.1,2.7 2.3,5 7.2,17.9 2.6,3.9 2.3,1.4 1.9,-0.4 2.1,-1.9 2.3,-3.5 7.5,-13.8 2.6,-2.8 2.3,-0.9 1.9,0.4 2.1,1.6 9.5,13.5 2.4,2.2 2.3,0.8 2.1,-0.3 2.1,-1.4 9.6,-11.2 2.3,-1.7 2.3,-0.7 2.1,0.3 2.1,1.1 9.4,9.5 2.3,1.5 2.1,0.7 2.1,-0.2 2.3,-1 9.8,-8.5 2.4,-1.3 2.3,-0.5 2.1,0.3 2.1,0.9 8.9,7 4.2,1.9 2.3,0 2.6,-0.8 9.8,-6.8 2.3,-1 2.3,-0.5 2.1,0.3 2.1,0.7 9.4,6 4.4,1.4" class="s-acc" style="stroke-width:2"  clip-path="url(#f1503-clip)"/><text x="294.5" y="129.2" class="t-math dim" style="font-size:15px" text-anchor="start">K = 4</text><text x="277" y="35" class="t-math acc" style="font-size:15px" text-anchor="start">K = 12</text><text x="466" y="262" class="t-math" style="font-size:16px" text-anchor="end">x</text></svg>
+      <figcaption><b>그림 15-3.</b> \(\lvert k\rvert &lt; K\)로 자른 평면파의 합 \(\int_{-K}^{K}\frac{dk}{2\pi}e^{ikx} = \sin Kx/\pi x\). \(K = 4\)(회색)에서 \(K = 12\)(색)로 키우면 가운데 봉우리의 높이 \(K/\pi\)는 커지고 폭 \(\pi/K\)는 좁아진다. 양옆의 진동은 포락선 \(1/\pi\lvert x\rvert\)이 \(K\)와 상관없이 그대로이고, 진동만 빨라진다. 그래도 매끄러운 함수와 곱해 적분하면 빠른 진동이 지워져 넓이 1만 원점에 남는다.</figcaption>
+    </figure>
+    <div class="box thm" id="thm-delta-fourier"><div class="box-h">델타 함수의 푸리에 표현</div>
+      <p>식 <a class="ref" href="#eq-delta-regularized"></a>의 어느 함수열로 읽든, 6장 <a href="ch06.html#def-dirac-delta">정의 6.4</a>의 뜻에서 다음이 성립한다.</p>
+      <div class="formula" id="eq-delta-fourier">\[ \int_{-\infty}^{\infty} e^{iku}\,dk = 2\pi\,\delta(u) \]<div class="where">\(u \to -u\)로 바꾸어도 같으므로 지수의 부호는 상관없다. 시간 변수로는 \(\int e^{i\omega t}\,dt = 2\pi\delta(\omega)\), \(\int e^{-i\omega t}\,d\omega = 2\pi\delta(t)\)이다.</div></div>
+      <p>따라서 식 <a class="ref" href="#eq-inversion-formal"></a>의 대괄호는 \(\delta(x - x')\)이고, 매끄럽고 절대 적분 가능한 \(f\)에서 역변환이 \(f\)를 돌려준다.</p>
+    </div>
+    <p>\(2\pi\)를 역변환의 \(dk\)에 붙인 이 책의 관례에서는 이 식이 가장 깔끔하다. \(\delta(x)\)의 변환이 꼭 1이기 때문이다.</p>
+
+    <h3 id="s3-pairs">델타 함수와 평면파의 변환</h3>
+    <p>식 <a class="ref" href="#eq-delta-fourier"></a>을 쓰면 절대 적분 가능하지 않은 함수에도 변환을 줄 수 있다. 상수 함수와 평면파는 끝없이 퍼져 있으므로 변환이 한 점에 몰린다.</p>
+    <div class="formula" id="eq-delta-pairs">\[ \begin{aligned} \delta(x - a) &\;\longleftrightarrow\; e^{-ika} \\ 1 &\;\longleftrightarrow\; 2\pi\,\delta(k) \\ e^{ik_0x} &\;\longleftrightarrow\; 2\pi\,\delta(k - k_0) \\ \cos k_0x &\;\longleftrightarrow\; \pi\big[\delta(k - k_0) + \delta(k + k_0)\big] \end{aligned} \]<div class="where">첫 줄은 거르기 성질이고, 나머지는 식 <a class="ref" href="#eq-delta-fourier"></a>에 이동 규칙을 쓴 것이다. 시간으로는 \(e^{-i\omega_0t} \longleftrightarrow 2\pi\delta(\omega - \omega_0)\)이다. 이 책의 관례에서 \(e^{-i\omega_0t}\)는 양의 진동수 \(\omega_0\)이다.</div></div>
+    <p>이제 주기 함수도 변환할 수 있다. 기본 각진동수를 \(\omega_r = 2\pi/T\)로 쓰면(14장의 \(\omega\)), 주기 신호 \(F(t) = \sum_n F_ne^{-in\omega_rt}\)를 항별로 변환해 다음을 얻는다.</p>
+    <div class="formula" id="eq-line-spectrum">\[ \tilde F(\omega) = \sum_{n=-\infty}^{\infty} 2\pi F_n\,\delta(\omega - n\omega_r) \]</div>
+    <p>주기 신호의 스펙트럼은 배음 위치에 선 \(2\pi F_n\delta\)들이 늘어선 <span class="term">선 스펙트럼</span> <span class="en">(line spectrum)</span>이다. 푸리에 급수는 푸리에 변환의 특별한 경우인 셈이다. 아래의 표에 이 장에서 얻은 변환을 모았다.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>\(f\)</th><th>\(\tilde f\)</th><th>식</th></tr></thead>
+      <tbody>
+        <tr><td>\(\delta(x)\)</td><td>\(1\)</td><td><a class="ref" href="#eq-delta-pairs"></a></td></tr>
+        <tr><td>\(1\)</td><td>\(2\pi\delta(k)\)</td><td><a class="ref" href="#eq-delta-pairs"></a></td></tr>
+        <tr><td>\(\lvert x\rvert &lt; a/2\)에서 1, 밖에서 0</td><td>\(a\,\dfrac{\sin(ka/2)}{ka/2}\)</td><td><a class="ref" href="#eq-single-pulse-ft"></a></td></tr>
+        <tr><td>\(e^{-x^2/2\sigma^2}\)</td><td>\(\sqrt{2\pi}\,\sigma\,e^{-\sigma^2k^2/2}\)</td><td><a class="ref" href="#eq-gaussian-ft"></a></td></tr>
+        <tr><td>\(e^{-\mu\lvert x\rvert}\)</td><td>\(\dfrac{2\mu}{\mu^2 + k^2}\)</td><td><a class="ref" href="#eq-lorentzian-ft"></a></td></tr>
+        <tr><td>\(\Theta(t)\,e^{-\gamma t}\) (시간)</td><td>\(\dfrac{1}{\gamma - i\omega}\)</td><td><a class="ref" href="#eq-exponential-ft"></a></td></tr>
+        <tr><td>\(e^{-i\omega_0t}\) (시간)</td><td>\(2\pi\delta(\omega - \omega_0)\)</td><td><a class="ref" href="#eq-delta-pairs"></a></td></tr>
+      </tbody>
+    </table></div>
+
+    <h3 id="s3-completeness">평면파의 직교성과 완비성</h3>
+    <p>9장의 말로 다시 읽어 보자. 함수의 내적 \(\langle f|g\rangle = \int f^*g\,dx\)(9장 <a href="ch09.html#eq-function-inner-product">식 (9.35)</a>, \(w = 1\))로 보면 변환은 평면파 \(e_k(x) = e^{ikx}\)와의 내적이다: \(\tilde f(k) = \langle e_k|f\rangle\). 평면파끼리의 내적은 식 <a class="ref" href="#eq-delta-fourier"></a>에서 바로 나온다.</p>
+    <div class="formula" id="eq-plane-wave-orthogonality">\[ \langle e_k|e_{k'}\rangle = \int_{-\infty}^{\infty} e^{-ikx}e^{ik'x}\,dx = 2\pi\,\delta(k - k') \]</div>
+    <p>그리고 역변환에 \(\tilde f(k) = \int e^{-ikx'}f(x')\,dx'\)를 넣은 식 <a class="ref" href="#eq-inversion-formal"></a>은 다음과 같다는 말이다.</p>
+    <div class="formula" id="eq-plane-wave-completeness">\[ \int_{-\infty}^{\infty}\frac{dk}{2\pi}\,e_k(x)\,e_k^*(x') = \delta(x - x') \]</div>
+    <p>이것을 9장 <a href="ch09.html#eq-completeness-delta">식 (9.40)</a>의 \(\sum_n u_n(x)u_n^*(x') = \delta(x - x')\)과 나란히 놓으면, 평면파는 번호 \(n\) 대신 연속 변수 \(k\)로 이름 붙인 기저이고 합 \(\sum_n\)이 적분 \(\int dk/2\pi\)로 바뀐 것뿐이다. 정규직교성의 \(\delta_{mn}\)은 \(2\pi\delta(k - k')\)이 된다. 디랙 표기로는 \(\langle x|k\rangle = e^{ikx}\)로 두고 \(\int\frac{dk}{2\pi}|k\rangle\langle k| = I\)로 쓴다. 9장 <a href="ch09.html#eq-completeness">식 (9.25)</a>의 완비성 관계 그대로다. 그래서 식 <a class="ref" href="#eq-plane-wave-completeness"></a>를 평면파의 <span class="term">완비성</span>이라 한다.</p>
+    <div class="callout deep" data-later="qm"><strong>평면파는 \(L^2\)의 원소가 아니다</strong><p>\(\langle e_k|e_k\rangle = 2\pi\delta(0)\)은 무한대이므로 평면파는 9장 <a href="ch09.html#def-l2">정의 9.9</a>의 제곱 적분 가능한 함수가 아니다. 길이가 1이 아니라 "델타로 규격화"되어 있다. 물리적으로는 무한히 퍼진 이상화이고, 실제 상태는 평면파를 겹친 파속이다. 이런 기저를 엄밀하게 다루는 틀은 이 책의 범위 밖이다(9장의 심화 상자). 양자역학 책은 운동량 고유 상태를 \(\langle x|p\rangle = e^{ipx/\hbar}/\sqrt{2\pi\hbar}\)로 규격화해 \(\langle p|p'\rangle = \delta(p - p')\)로 쓴다. 식 <a class="ref" href="#eq-ft-conventions"></a>의 넷째 줄과 같은 선택이다.</p></div>
+
+    <div class="box ex" id="ex-frequency-comb"><div class="box-h">광 주파수 빗</div>
+      <p>모드 잠금 레이저는 \(T = 10\ \text{ns}\)마다(반복률 \(f_r = 1/T = 100\ \text{MHz}\)) 똑같은 펄스를 낸다. 펄스 하나의 전기장은 \(p(t) = E_0\,e^{-t^2/2\tau_p^2}e^{-i\omega_ct}\)이고, \(\tau_p = 10\ \text{fs}\)(세기의 반치 전폭은 \(2\sqrt{\ln2}\,\tau_p = 16.7\ \text{fs}\)), 반송파 파장은 \(800\ \text{nm}\)이다. (가) 펄스열 \(E(t) = \sum_m p(t - mT)\)의 스펙트럼을 구하라. (나) 세기가 봉우리의 절반 이상인 선은 몇 개인가? (다) 펄스열을 \(1\ \text{s}\) 동안만 본다면 선 하나의 폭은 얼마인가?</p>
+      <p><b>풀이.</b> (가) 식 <a class="ref" href="#eq-ft-shift"></a>에서 \(p(t - mT) \longleftrightarrow e^{i\omega mT}\tilde p(\omega)\)이므로 \(\tilde E(\omega) = \tilde p(\omega)\sum_m e^{i\omega mT}\)이다. 이 합을 계산하려고 주기 \(T\)인 델타 함수의 열 \(\sum_m\delta(t - mT)\)를 생각하자. 14장 식 (14.13)으로 계수를 구하면 한 주기 안에 델타 하나만 있으므로 \(F_n = 1/T\)이다. 곧 \(\sum_m\delta(t - mT) = \tfrac1T\sum_ne^{-in\omega_rt}\)이다. 양변을 변환하면, 왼쪽은 식 <a class="ref" href="#eq-delta-pairs"></a>의 첫 줄(시간판 \(\delta(t - t_0) \longleftrightarrow e^{i\omega t_0}\))에서, 오른쪽은 식 <a class="ref" href="#eq-line-spectrum"></a>에서 다음을 얻는다.</p>
+      <div class="formula" id="eq-poisson-summation">\[ \sum_{m=-\infty}^{\infty} e^{i\omega mT} = \omega_r\sum_{n=-\infty}^{\infty}\delta(\omega - n\omega_r) \]<div class="where">\(\omega_r = 2\pi/T\)이다. 이 식을 <span class="term">푸아송 합 공식</span> <span class="en">(Poisson summation formula)</span>이라 한다. 시간에서 간격 \(T\)인 델타의 빗은 진동수에서 간격 \(2\pi/T\)인 델타의 빗이 된다.</div></div>
+      <p>따라서 \(\tilde E(\omega) = \omega_r\sum_n\tilde p(n\omega_r)\,\delta(\omega - n\omega_r)\)이다. 진동수 \(\nu_n = nf_r\)에 선들이 빗살처럼 늘어서고, 선의 세기는 펄스 하나의 스펙트럼 \(\tilde p\)가 정한다. 식 <a class="ref" href="#eq-line-spectrum"></a>과 비교하면 \(F_n = \tilde p(n\omega_r)/T\)이고, 이것은 식 <a class="ref" href="#eq-coefficients-as-samples"></a>이다. \(\tilde p\)는 식 <a class="ref" href="#eq-gaussian-ft"></a>와 변조 규칙에서 \(\tilde p(\omega) = \sqrt{2\pi}\,\tau_pE_0\,e^{-\tau_p^2(\omega - \omega_c)^2/2}\)이다.</p>
+      <p>(나) 선의 세기는 \(\lvert\tilde p\rvert^2 \propto e^{-\tau_p^2(\omega - \omega_c)^2}\)을 따른다. 절반이 되는 곳은 \(\tau_p\lvert\omega - \omega_c\rvert = \sqrt{\ln 2}\)이므로 그 사이의 폭은 \(\Delta\omega = 2\sqrt{\ln2}/\tau_p = 1.67 \times 10^{14}\ \text{s}^{-1}\), 진동수로 \(\Delta\nu = 26.5\ \text{THz}\)이다. 선 간격이 \(100\ \text{MHz}\)이므로 선의 개수는 \(26.5\ \text{THz}/100\ \text{MHz} \approx 2.7 \times 10^5\)개이다. 반송파 \(\nu_c = c/800\ \text{nm} = 374.7\ \text{THz}\) 근처의 선은 번호가 \(n \approx 3.7 \times 10^6\)이다.</p>
+      <p>(다) 펄스 \(M\)개만 더하면 \(\sum_{m=0}^{M-1}e^{i\omega mT}\)는 첫 항 1, 공비 \(e^{i\omega T}\)인 기하급수다(1장 <a href="ch01.html#eq-geometric-partial">식 (1.2)</a>). 크기의 제곱은 \(\sin^2(M\omega T/2)/\sin^2(\omega T/2)\)이고(2장 <a href="ch02.html#eq-grating-intensity">식 (2.35)</a>), 봉우리의 폭은 \(\Delta\omega \approx 2\pi/MT\), 곧 \(\Delta\nu \approx 1/MT\)이다. \(MT = 1\ \text{s}\)이면 선폭은 약 \(1\ \text{Hz}\)이다.</p>
+      <p><b>숫자로 보기.</b> \(375\ \text{THz}\)의 빛에서 \(1\ \text{Hz}\) 폭의 선이 \(100\ \text{MHz}\) 간격으로 26 THz에 걸쳐 늘어선다. 레이저의 반복률은 전자 회로로 셀 수 있는 마이크로파 진동수이므로, 이 빗은 광 진동수를 마이크로파 진동수에 이어 주는 자가 된다. 실제 레이저에서는 펄스마다 포락선에 대한 반송파의 위상이 조금씩 밀려 모든 선이 같은 양 \(f_0\)만큼 옮겨 가고 \(\nu_n = nf_r + f_0\)이 된다(Th. Udem, R. Holzwarth, T. W. Hänsch, Nature 416, 233 (2002)). 단위: \(\tau_p\Delta\omega\)는 차원이 없고 \(\Delta\nu/f_r\)은 개수다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 15.4 -->
+  <section id="s4">
+    <h2>합성곱 정리와 플랑슈렐 정리</h2>
+    <p>10장에서 선형계의 응답을 충격 응답과 힘의 합성곱 \(x = h * F\)로 썼다(<a href="ch10.html#eq-convolution-response">식 (10.29)</a>). 14장에서는 같은 진동자의 응답을 배음마다 응답 함수 \(\chi\)를 곱하는 것으로 썼다(<a href="ch14.html#eq-periodic-response">식 (14.33)</a>). 두 그림이 같은 내용이라는 것이 이 절의 첫 정리다. 시간에서의 합성곱은 진동수에서의 곱셈이다. 둘째 정리는 신호의 에너지를 시간에서 재든 진동수에서 재든 같다는 것이다.</p>
+
+    <h3 id="s4-convolution">합성곱 정리</h3>
+    <div class="box def" id="def-convolution"><div class="box-h">합성곱</div>
+      <p>두 함수 \(f\), \(g\)의 <span class="term">합성곱</span> <span class="en">(convolution)</span>은 다음 함수다.</p>
+      <div class="formula" id="eq-convolution-def">\[ (f * g)(x) = \int_{-\infty}^{\infty} f(x')\,g(x - x')\,dx' \]</div>
+      <p>\(x - x' = y\)로 치환하면 \(f * g = g * f\)이다. 결합 법칙 \((f * g) * h = f * (g * h)\)과 분배 법칙도 성립한다. \(\delta\)는 합성곱의 항등원이다: \(f * \delta = f\)(거르기 성질).</p>
+    </div>
+    <p>합성곱은 "\(g\)를 \(x'\)만큼 옮긴 것을 무게 \(f(x')\)로 겹친 것"이다. 측정 장치로 보면, 점 하나의 상이 \(g\)로 번지는 장치에 \(f\)를 넣었을 때 나오는 상이 \(f * g\)이다. 10장의 응답 \(x(t) = \int h(t - t')F(t')\,dt'\)도 같은 꼴이다.</p>
+    <div class="box thm" id="thm-convolution"><div class="box-h">합성곱 정리</div>
+      <p>\(f\), \(g\)가 절대 적분 가능하면 다음이 성립한다.</p>
+      <div class="formula" id="eq-convolution-theorem">\[ \begin{aligned} \widetilde{f * g}(k) &= \tilde f(k)\,\tilde g(k) \\ \widetilde{fg}(k) &= \frac{1}{2\pi}\,(\tilde f * \tilde g)(k) \end{aligned} \]<div class="where">둘째 줄의 합성곱은 \(k\)에 대한 것이다: \((\tilde f * \tilde g)(k) = \int\tilde f(k')\tilde g(k - k')\,dk'\). 둘째 줄은 \(\tilde f\), \(\tilde g\)도 절대 적분 가능할 때 성립한다. 시간 변환에서도 꼴이 같다.</div></div>
+    </div>
+    <p>증명은 짧다. 정의에 넣고 \(x - x' = y\)로 치환하면 지수가 \(e^{-ikx} = e^{-ikx'}e^{-iky}\)로 갈라진다.</p>
+    <div class="formula" id="eq-convolution-proof">\[ \begin{aligned} \widetilde{f * g}(k) &= \int dx\,e^{-ikx}\int dx'\,f(x')\,g(x - x') \\ &= \int dx'\,f(x')\,e^{-ikx'}\int dy\,g(y)\,e^{-iky} \end{aligned} \]</div>
+    <p>두 적분이 \(\tilde f\)와 \(\tilde g\)이다. 적분 순서를 바꾼 것은 \(\iint\lvert f(x')g(y)\rvert\,dx'\,dy\)가 유한하기 때문에 정당하다(푸비니 정리). 둘째 줄은 \(f\)와 \(g\)에 역변환을 넣고 식 <a class="ref" href="#eq-delta-fourier"></a>로 \(x\) 적분을 하면 나온다. \(2\pi\)가 둘째 줄에만 붙는 것은 이 책이 \(2\pi\)를 역변환에 두었기 때문이다. 대칭 관례에서는 첫 줄에 \(\sqrt{2\pi}\)가 붙는다.</p>
+    <p>가우스 함수끼리의 합성곱이 좋은 예다. 넓이 1이고 폭이 \(\sigma_1\), \(\sigma_2\)인 두 가우스 함수의 변환은 \(e^{-\sigma_1^2k^2/2}\)와 \(e^{-\sigma_2^2k^2/2}\)이고, 곱은 \(e^{-(\sigma_1^2 + \sigma_2^2)k^2/2}\)이다. 따라서</p>
+    <div class="formula" id="eq-gaussian-convolution">\[ \text{가우스}(\sigma_1) * \text{가우스}(\sigma_2) = \text{가우스}\Big(\sqrt{\sigma_1^2 + \sigma_2^2}\Big) \]</div>
+    <p>이다. 폭은 제곱으로 더해진다. 분광기의 분해능이 가우스 모양이면, 가우스 모양의 선을 그 분광기로 잰 결과의 폭은 \(\sqrt{\sigma_{\text{선}}^2 + \sigma_{\text{장치}}^2}\)이다. 로런츠 함수끼리는 폭이 그냥 더해진다(<a class="ref" href="#prob-voigt-widths"></a>).</p>
+
+    <h3 id="s4-response">응답 함수는 충격 응답의 변환이다</h3>
+    <p>감쇠 진동자 \(\ddot x + 2\gamma\dot x + \omega_0^2x = F(t)/m\)(10장 <a href="ch10.html#eq-damped-oscillator">식 (10.15)</a>)을 시간 변환하자. 식 <a class="ref" href="#eq-ft-derivative"></a>에서 \(d/dt \to -i\omega\)이므로 \((-\omega^2 - 2i\gamma\omega + \omega_0^2)\tilde x = \tilde F/m\), 곧</p>
+    <div class="formula" id="eq-oscillator-fourier-response">\[ \begin{aligned} \tilde x(\omega) &= \chi(\omega)\,\tilde F(\omega) \\ \chi(\omega) &= \frac{1}{m(\omega_0^2 - \omega^2 - 2i\gamma\omega)} \end{aligned} \]</div>
+    <p>이다. \(\chi\)는 14장 <a href="ch14.html#eq-response-function">식 (14.32)</a>의 응답 함수 그대로다. 한편 10장에서 응답은 \(x = h * F\)였으므로, 합성곱 정리에 따라 \(\tilde x = \tilde h\tilde F\)이다. 둘을 비교하면 \(\chi = \tilde h\)이다. 응답 함수는 충격 응답의 시간 변환이고, 10장 <a href="ch10.html#eq-laplace-fourier-link">식 (10.45)</a>에서 본 대로 전달 함수를 \(s = -i\omega\)에서 읽은 값 \(H(-i\omega)\)이기도 하다. 세 장의 결과가 이 책의 시간 변환 관례(\(e^{+i\omega t}\)) 하나로 맞물린다.</p>
+    <p>시간 영역으로 돌아가면 \(x(t) = \int\frac{d\omega}{2\pi}\chi(\omega)\tilde F(\omega)e^{-i\omega t}\)이다. 주기적인 힘이면 \(\tilde F\)가 식 <a class="ref" href="#eq-line-spectrum"></a>의 선 스펙트럼이고, 델타가 적분을 거르면 \(x(t) = \sum_n\chi(n\omega_r)F_ne^{-in\omega_rt}\)가 남는다. 14장 식 (14.33)이 다시 나온다. 거꾸로 \(\chi(\omega)\)를 역변환해 \(h(t)\)를 얻으려면 \(\chi\)의 극을 지나는 적분을 해야 한다. 극이 아래 반평면에 있어서 \(t &lt; 0\)에서 \(h = 0\)이 되는 과정은 19장의 <a href="ch19.html#ex-oscillator-response-contour">예제 19.7</a>에서, 이것을 일반화한 그린 함수는 20장의 <a href="ch20.html#eq-green-oscillator">진동자 그린 함수</a>에서 다룬다.</p>
+
+    <h3 id="s4-plancherel">플랑슈렐 정리</h3>
+    <div class="box thm" id="thm-plancherel"><div class="box-h">플랑슈렐 정리</div>
+      <p>\(f\), \(g\)가 제곱 적분 가능하면(9장의 \(L^2\)) 그 변환도 제곱 적분 가능하고 다음이 성립한다.</p>
+      <div class="formula" id="eq-plancherel">\[ \begin{aligned} \int_{-\infty}^{\infty}f^*(x)\,g(x)\,dx &= \int_{-\infty}^{\infty}\frac{dk}{2\pi}\,\tilde f^*(k)\,\tilde g(k) \\ \int_{-\infty}^{\infty}\lvert f(x)\rvert^2dx &= \int_{-\infty}^{\infty}\frac{dk}{2\pi}\,\lvert\tilde f(k)\rvert^2 \end{aligned} \]<div class="where">둘째 줄은 첫 줄에서 \(g = f\)로 둔 것이다. 시간 변환에서도 같은 꼴이다(\(dk/2\pi \to d\omega/2\pi\)). 파르스발 정리라고 부르는 책도 있다.</div></div>
+      <details class="proof"><summary>증명</summary>
+        <p>\(f\)와 \(g\)를 역변환으로 쓰고 식 <a class="ref" href="#eq-delta-fourier"></a>을 쓴다. \(\int f^*g\,dx = \int dx\int\frac{dk}{2\pi}\tilde f^*(k)e^{-ikx}\int\frac{dk'}{2\pi}\tilde g(k')e^{ik'x}\)에서 \(x\) 적분이 \(2\pi\delta(k' - k)\)이므로 \(k'\) 적분이 \(k' = k\)를 골라 오른쪽이 된다. \(L^2\) 함수 전체로 넓히는 엄밀한 논증(절대 적분 가능한 함수로 근사한 뒤 극한을 잡는 것)은 티치마시의 책 3장에 있다.</p>
+      </details>
+    </div>
+    <p>14장의 <a href="ch14.html#thm-parseval-series">파르스발 정리</a>(정리 14.5) \(\tfrac{1}{2L}\int\lvert f\rvert^2dx = \sum\lvert c_n\rvert^2\)에 \(c_n = (\Delta k/2\pi)\tilde f_L(k_n)\)을 넣으면 \(\int\lvert f\rvert^2dx = \sum_n\tfrac{\Delta k}{2\pi}\lvert\tilde f_L(k_n)\rvert^2\)이고, \(L \to \infty\)에서 식 <a class="ref" href="#eq-plancherel"></a>의 둘째 줄이 된다. 9장의 말로는 \(\{e^{ikx}\}\)라는 기저에서 길이를 잰 피타고라스 정리다. 물리로 읽으면 \(\int\lvert E(t)\rvert^2dt\)가 펄스의 에너지에 비례할 때, \(\lvert\tilde E(\omega)\rvert^2/2\pi\)는 단위 각진동수당 에너지, 곧 <span class="term">에너지 스펙트럼 밀도</span> <span class="en">(energy spectral density)</span>이다. 분광기가 재는 것이 이 양이다.</p>
+
+    <div class="box ex" id="ex-pulse-energy-transfer"><div class="box-h">펄스가 진동자에 남기는 에너지</div>
+      <p>10장의 진동자(\(m = 0.50\ \text{kg}\), \(\omega_0 = 20.0\ \text{s}^{-1}\), \(\gamma = 0.50\ \text{s}^{-1}\))가 정지해 있다가 가우스 모양의 힘 펄스 \(F(t) = F_0e^{-t^2/2\tau^2}\) (\(F_0 = 1.0\ \text{N}\))을 받는다. (가) 힘이 하는 일 전체를 스펙트럼으로 써라. (나) \(\gamma \to 0\)이면 진동자에 남는 에너지가 \(\lvert\tilde F(\omega_0)\rvert^2/2m\)임을 보여라. (다) \(\tau = 10, 50, 100, 150\ \text{ms}\)일 때 남는 에너지를 구하고, 같은 충격량을 순간에 준 경우와 비교하라.</p>
+      <p><b>풀이.</b> (가) 일은 \(W = \int F\dot x\,dt\)이다. \(F\)가 실수이므로 식 <a class="ref" href="#eq-plancherel"></a>의 첫 줄(시간판)에서 \(W = \int\frac{d\omega}{2\pi}\tilde F^*\tilde{\dot x}\)이고, 식 <a class="ref" href="#eq-oscillator-fourier-response"></a>과 도함수 규칙에서 \(\tilde{\dot x} = -i\omega\chi\tilde F\)이다. \(F\)가 실수라 \(\lvert\tilde F(\omega)\rvert^2\)은 짝함수이고, \(\chi(-\omega) = \chi(\omega)^*\)이므로 \(-i\omega\chi\)의 실수부 \(\omega\operatorname{Im}\chi\)는 짝함수, 허수부 \(-\omega\operatorname{Re}\chi\)는 홀함수다. 홀함수 부분은 적분하면 사라진다.</p>
+      <div class="formula" id="eq-pulse-energy-spectrum">\[ \begin{aligned} W &= \int_{-\infty}^{\infty}\frac{d\omega}{2\pi}\,\omega\operatorname{Im}\chi(\omega)\,\lvert\tilde F(\omega)\rvert^2 \\ \omega\operatorname{Im}\chi &= \frac{1}{m}\,\frac{2\gamma\omega^2}{(\omega_0^2 - \omega^2)^2 + 4\gamma^2\omega^2} \end{aligned} \]</div>
+      <p>진동자는 힘의 스펙트럼을 \(\omega\operatorname{Im}\chi\)라는 창으로 걸러 흡수한다.</p>
+      <p>(나) \(\omega\)가 \(\omega_0\) 근처이면 \(\omega_0^2 - \omega^2 \approx -2\omega_0(\omega - \omega_0)\), \(4\gamma^2\omega^2 \approx 4\gamma^2\omega_0^2\)이므로 \(\omega\operatorname{Im}\chi \approx \frac{1}{2m}\frac{\gamma}{(\omega - \omega_0)^2 + \gamma^2}\)이다. 이것은 6장 식 (6.41)의 로런츠 함수열에 \(\pi/2m\)을 곱한 것이고 폭이 \(\varepsilon = \gamma\)이다. \(\omega = -\omega_0\) 근처도 같다. 따라서 \(\gamma \to 0\)에서 \(\omega\operatorname{Im}\chi \to \frac{\pi}{2m}\big[\delta(\omega - \omega_0) + \delta(\omega + \omega_0)\big]\)이고</p>
+      <div class="formula" id="eq-pulse-energy-limit">\[ W = \frac{1}{2\pi}\,\frac{\pi}{2m}\,2\lvert\tilde F(\omega_0)\rvert^2 = \frac{\lvert\tilde F(\omega_0)\rvert^2}{2m} \]</div>
+      <p>이다. 감쇠가 없으니 이 일은 모두 진동자의 에너지로 남는다. 시간 영역에서 직접 확인할 수도 있다. \(\xi = \dot x - i\omega_0x\)로 두면 운동 방정식은 \(\dot\xi + i\omega_0\xi = F/m\)이 되고, 해는 \(\xi(t) = e^{-i\omega_0t}\int_{-\infty}^{t}\frac{F(t')}{m}e^{i\omega_0t'}dt'\)이다. 펄스가 지나간 뒤 에너지는 \(\tfrac m2\lvert\xi\rvert^2 = \tfrac m2(\dot x^2 + \omega_0^2x^2)\)이고 적분은 \(\tilde F(\omega_0)/m\)이므로 같은 결과다. 이 책의 시간 변환이 \(e^{+i\omega t}\)인 것이 여기서도 자연스럽게 나온다.</p>
+      <p><b>숫자로 보기.</b> (다) 식 <a class="ref" href="#eq-gaussian-ft"></a>에서 \(\tilde F(\omega) = \sqrt{2\pi}F_0\tau\,e^{-\omega^2\tau^2/2}\)이므로 \(W = (\pi F_0^2\tau^2/m)\,e^{-\omega_0^2\tau^2}\)이다. 충격량은 \(J = \tilde F(0) = \sqrt{2\pi}F_0\tau\)이고, 같은 충격량을 순간에 주면 에너지는 \(J^2/2m\)이다(10장의 <a href="ch10.html#ex-oscillator-impulse">예제 10.6</a>처럼 속도 \(J/m\)을 얻는다). 비 \(W/(J^2/2m) = e^{-\omega_0^2\tau^2}\)는 펄스 스펙트럼이 \(\omega_0\)에서 얼마나 남았는지다.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>\(\tau\)</th><th>\(\omega_0\tau\)</th><th>\(J\) (N·s)</th><th>\(J^2/2m\)</th><th>\(W\)</th></tr></thead>
+        <tbody>
+          <tr><td>10 ms</td><td>0.2</td><td>0.025</td><td>0.63 mJ</td><td>0.60 mJ</td></tr>
+          <tr><td>50 ms</td><td>1</td><td>0.125</td><td>15.7 mJ</td><td>5.78 mJ</td></tr>
+          <tr><td>100 ms</td><td>2</td><td>0.251</td><td>62.8 mJ</td><td>1.15 mJ</td></tr>
+          <tr><td>150 ms</td><td>3</td><td>0.376</td><td>141 mJ</td><td>0.017 mJ</td></tr>
+        </tbody>
+      </table></div>
+      <p>펄스가 \(1/\omega_0 = 50\ \text{ms}\)보다 훨씬 짧으면 충격으로 볼 수 있고, 훨씬 길면 충격량이 커도 진동자는 거의 에너지를 받지 않는다. 천천히 밀었다 놓으면 추가 힘을 따라 갔다가 그대로 제자리에 돌아오기 때문이다. \(\tau^2e^{-\omega_0^2\tau^2}\)를 \(\tau\)로 미분하면 남기는 에너지가 가장 큰 펄스 폭이 정확히 \(\tau = 1/\omega_0\)이다. 차원: \(\lvert\tilde F\rvert^2/m\)은 \((\text{N}\cdot\text{s})^2/\text{kg} = \text{J}\)이다.</p>
+      <p><b>다음 항은 몇 차인가.</b> 표는 \(\gamma \to 0\) 극한이다. 감쇠 \(\gamma = 0.50\ \text{s}^{-1}\)을 그대로 두고 식 <a class="ref" href="#eq-pulse-energy-spectrum"></a>을 수치 적분하면 \(\tau = 50\ \text{ms}\)에서 \(W = 5.58\ \text{mJ}\)로 극한과 3% 다르다. 그러나 \(\tau = 150\ \text{ms}\)에서는 \(0.138\ \text{mJ}\)로 극한의 8배다. 공명 성분 \(e^{-\omega_0^2\tau^2}\)가 너무 작아져서, 천천히 미는 동안 감쇠가 빼앗는 일이 앞서기 때문이다. 이때 \(W\)는 진동자에 남는 에너지가 아니라 힘이 한 일 전체다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 15.5 -->
+  <section id="s5">
+    <h2>폭과 대역폭</h2>
+    <p>지금까지 세 번 같은 일을 보았다. 펄스를 좁히면 스펙트럼의 첫 영점이 멀어지고(<a class="ref" href="#ex-single-pulse"></a>), 가우스 함수의 폭 \(\sigma\)는 변환에서 \(1/\sigma\)이 되며(그림 15-2), 수명이 짧은 원자는 넓은 선을 낸다(<a class="ref" href="#ex-lorentzian-line"></a>). 척도 성질 식 <a class="ref" href="#eq-ft-scaling"></a>을 보면 이유는 분명하다. 그러면 신호의 폭과 스펙트럼의 폭을 둘 다 마음대로 작게 할 수 있을까? 없다. 이 절에서는 두 폭의 곱에 하한이 있음을 증명한다.</p>
+
+    <h3 id="s5-width">폭을 정의하기</h3>
+    <div class="box def" id="def-rms-width"><div class="box-h">실효 폭</div>
+      <p>제곱 적분 가능한 함수 \(f\)에 대해 \(N = \int\lvert f\rvert^2dx\)로 두고, \(\lvert f(x)\rvert^2/N\)과 \(\lvert\tilde f(k)\rvert^2/2\pi N\)을 각각 \(x\)와 \(k\)의 확률 밀도처럼 본다(두 넓이가 1인 것은 플랑슈렐 정리 때문이다). 평균과 <span class="term">실효 폭</span> <span class="en">(rms width)</span>을 다음과 같이 정한다.</p>
+      <div class="formula" id="eq-rms-width">\[ \begin{aligned} \bar x &= \frac1N\int x\,\lvert f\rvert^2dx \\ \sigma_x^2 &= \frac1N\int(x - \bar x)^2\lvert f\rvert^2dx \\ \bar k &= \frac1N\int\frac{dk}{2\pi}\,k\,\lvert\tilde f\rvert^2 \\ \sigma_k^2 &= \frac1N\int\frac{dk}{2\pi}\,(k - \bar k)^2\lvert\tilde f\rvert^2 \end{aligned} \]</div>
+      <p>시간 신호의 \(\sigma_t\), \(\sigma_\omega\)도 같은 식으로 정한다.</p>
+    </div>
+    <p>이동 규칙(식 <a class="ref" href="#eq-ft-shift"></a>)에 따르면 \(f\)를 \(x\) 방향으로 옮겨도 \(\lvert\tilde f\rvert\)은 그대로이고, \(e^{ik_0x}\)를 곱해도 \(\lvert f\rvert\)은 그대로다. 그래서 \(\bar x = \bar k = 0\)인 경우만 보면 된다. 그때 \(k\) 쪽 폭은 \(x\) 쪽 적분으로 바꿀 수 있다. \(f'\)의 변환이 \(ik\tilde f\)이므로 플랑슈렐 정리에서</p>
+    <div class="formula" id="eq-width-k-derivative">\[ \sigma_k^2 = \frac1N\int\frac{dk}{2\pi}\,\lvert ik\tilde f\rvert^2 = \frac1N\int_{-\infty}^{\infty}\lvert f'(x)\rvert^2dx \]</div>
+    <p>이다. 파수 쪽 폭은 함수가 얼마나 가파르게 변하는가를 잰다.</p>
+
+    <h3 id="s5-inequality">폭-대역폭 부등식</h3>
+    <div class="box thm" id="thm-width-bandwidth"><div class="box-h">폭-대역폭 부등식</div>
+      <p>\(f\), \(xf\), \(f'\)이 제곱 적분 가능하고 \(\lvert x\rvert \to \infty\)에서 \(x\lvert f\rvert^2 \to 0\)이면</p>
+      <div class="formula" id="eq-bandwidth-relation">\[ \sigma_x\,\sigma_k \;\ge\; \frac12 \]<div class="where">시간 신호에서는 \(\sigma_t\,\sigma_\omega \ge \tfrac12\)이다.</div></div>
+      <p>이다. 등호는 \(f\)가 가우스 함수에 평면파를 곱한 꼴 \(f(x) = C\,e^{-(x - \bar x)^2/4\sigma_x^2}\,e^{i\bar kx}\)일 때, 그리고 그때만 성립한다.</p>
+    </div>
+    <p>증명이 이 절의 중심이다. \(\bar x = \bar k = 0\)이라 하자. 9장의 코시-슈바르츠 부등식(<a href="ch09.html#thm-cauchy-schwarz">정리 9.1</a>)을 두 함수 \(xf\)와 \(f'\)에 쓰면</p>
+    <div class="formula" id="eq-bandwidth-cs">\[ \begin{aligned} \Big\lvert\int x\,f^*f'\,dx\Big\rvert^2 &\le \int x^2\lvert f\rvert^2dx\int\lvert f'\rvert^2dx \\ &= N^2\sigma_x^2\sigma_k^2 \end{aligned} \]</div>
+    <p>이다. 마지막 등호는 식 <a class="ref" href="#eq-rms-width"></a>와 식 <a class="ref" href="#eq-width-k-derivative"></a>이다. 왼쪽은 실수부만 남겨도 작아질 뿐이다. 그런데 \((\lvert f\rvert^2)' = f^{*\prime}f + f^*f' = 2\operatorname{Re}(f^*f')\)이므로 실수부는 부분 적분으로 계산된다.</p>
+    <div class="formula" id="eq-bandwidth-real-part">\[ \begin{aligned} \operatorname{Re}\int x\,f^*f'\,dx &= \frac12\int x\,(\lvert f\rvert^2)'\,dx \\ &= \Big[\frac{x\lvert f\rvert^2}{2}\Big]_{-\infty}^{\infty} - \frac12\int\lvert f\rvert^2dx = -\frac N2 \end{aligned} \]</div>
+    <p>경계 항은 가정에 따라 0이다. 두 식을 합치면 \(N^2\sigma_x^2\sigma_k^2 \ge N^2/4\), 곧 식 <a class="ref" href="#eq-bandwidth-relation"></a>이다.</p>
+    <p>등호가 되려면 두 부등식이 모두 등호여야 한다. 코시-슈바르츠 부등식이 등호이려면 \(f' = \lambda xf\)인 상수 \(\lambda\)가 있어야 하고(9장 식 (9.6)의 등호 조건), 실수부만 남긴 단계가 등호이려면 \(\int xf^*f'\,dx = \lambda\int x^2\lvert f\rvert^2dx\)가 실수, 곧 \(\lambda\)가 실수여야 한다. \(f' = \lambda xf\)의 해는 \(f = Ce^{\lambda x^2/2}\)이고, 제곱 적분 가능하려면 \(\lambda &lt; 0\)이다. 곧 가우스 함수다. \(\bar x\), \(\bar k\)를 되살리면 정리의 꼴이 된다.</p>
+    <div class="callout warn"><strong>폭을 무엇으로 재는지 밝힌다</strong><p>부등식 <a class="ref" href="#eq-bandwidth-relation"></a>의 \(\tfrac12\)은 실효 폭(표준편차)에 대한 값이다. 실험에서는 흔히 반치 전폭(FWHM)을 쓰고, 그러면 숫자가 달라진다. 세기가 가우스 모양인 펄스의 반치 전폭 곱은 \(\Delta t\,\Delta\nu = 2\ln2/\pi = 0.441\)이다(<a class="ref" href="#ex-gaussian-packet"></a>). 수명 \(\tau\)인 로런츠 선은 \(\Delta\nu\,\tau = 1/2\pi = 0.159\)인데, 이때 \(\tau\)는 폭이 아니라 감쇠 시간이다. 게다가 로런츠 함수는 꼬리가 \(1/\omega^2\)로 줄어 \(\int\omega^2\lvert\tilde f\rvert^2d\omega\)가 발산하므로 실효 폭이 무한대다. 사각 펄스도 그렇다. 식 <a class="ref" href="#eq-width-k-derivative"></a>으로 보면 불연속점에서 \(f'\)이 델타 함수를 가져 \(\int\lvert f'\rvert^2dx\)가 무한대이기 때문이다. 이런 신호에서는 "곱이 1 정도"라는 어림만 의미가 있다.</p></div>
+
+    <div class="box ex" id="ex-gaussian-packet"><div class="box-h">가우스 파속과 짧은 빛 펄스</div>
+      <p>(가) 파속 \(\psi(x) = e^{-x^2/4\sigma_x^2}e^{ik_0x}\)의 변환과 두 실효 폭을 구하고, 곱이 최소임을 확인하라. (나) 반송파 파장 \(800\ \text{nm}\), 세기의 반치 전폭 \(\Delta t = 10\ \text{fs}\)인 가우스 레이저 펄스가 가져야 하는 스펙트럼의 반치 전폭을 진동수와 파장으로 구하라.</p>
+      <p><b>풀이.</b> (가) \(e^{-x^2/4\sigma_x^2}\)은 식 <a class="ref" href="#eq-gaussian-ft"></a>에서 \(\sigma^2 = 2\sigma_x^2\)인 경우이고, \(e^{ik_0x}\)는 스펙트럼을 \(k_0\)만큼 옮긴다.</p>
+      <div class="formula" id="eq-gaussian-packet-ft">\[ \begin{aligned} \tilde\psi(k) &= 2\sqrt\pi\,\sigma_x\,e^{-\sigma_x^2(k - k_0)^2} \\ \lvert\psi\rvert^2 &\propto e^{-x^2/2\sigma_x^2}, \quad \lvert\tilde\psi\rvert^2 \propto e^{-2\sigma_x^2(k - k_0)^2} \end{aligned} \]</div>
+      <p>\(\lvert\psi\rvert^2\)은 표준편차 \(\sigma_x\)인 정규분포이고, \(\lvert\tilde\psi\rvert^2\)은 \(e^{-(k - k_0)^2/2\sigma_k^2}\) 꼴로 \(\sigma_k = 1/2\sigma_x\)이다. 따라서 \(\sigma_x\sigma_k = \tfrac12\)이고, 부등식 <a class="ref" href="#eq-bandwidth-relation"></a>의 등호다. 이 책이 \(\psi\)의 지수에 \(4\sigma_x^2\)을 둔 것은 \(\lvert\psi\rvert^2\)의 표준편차가 \(\sigma_x\)가 되게 하려는 것이다.</p>
+      <p>(나) 시간에서 \(E(t) = e^{-t^2/4\sigma_t^2}e^{-i\omega_ct}\)이면 같은 계산으로 \(\sigma_\omega = 1/2\sigma_t\)이다. 세기의 가우스 함수에서 반치 전폭은 표준편차의 \(2\sqrt{2\ln2} = 2.355\)배이므로 \(\Delta t\,\Delta\omega = 8\ln2\,\sigma_t\sigma_\omega = 4\ln2\), 곧 \(\Delta t\,\Delta\nu = 2\ln2/\pi = 0.441\)이다.</p>
+      <p><b>숫자로 보기.</b> \(\Delta t = 10\ \text{fs}\)이면 \(\Delta\nu = 0.441/10\ \text{fs} = 44.1\ \text{THz}\)이다. 파장으로 바꾸면 \(\Delta\lambda = \lambda^2\Delta\nu/c = (800\ \text{nm})^2 \times 44.1\ \text{THz}/c = 94\ \text{nm}\)이다. 빨강에서 근적외선까지 걸치는 띠가 있어야 10 fs 펄스를 만들 수 있다. 이것은 하한이다. 스펙트럼의 성분들 사이에 위상이 어긋나 있으면(<a class="ref" href="#prob-pulse-dispersion"></a>) 같은 스펙트럼으로도 펄스가 더 길다. 하한을 채우는 펄스를 <span class="term">변환 한계 펄스</span> <span class="en">(transform-limited pulse)</span>라 한다. 차원: \(\Delta t\,\Delta\nu\)는 차원이 없다.</p>
+      <p><b>다음 항은 몇 차인가.</b> \(\Delta\lambda = \lambda^2\Delta\nu/c\)는 \(\lambda = c/\nu\)를 1차까지 전개한 것이다. 반치점이 \(\nu \pm \tfrac12\Delta\nu\)로 대칭이라 2차 항은 지워지고, 정확한 값은 \((\lambda^2\Delta\nu/c)/[1 - (\Delta\nu/2\nu)^2]\)이다. \(\Delta\nu/2\nu = 0.059\)이므로 보정은 0.35%이다.</p>
+    </div>
+    <p>양자역학에서는 \(p = \hbar k\)이므로 이 부등식이 \(\sigma_x\sigma_p \ge \hbar/2\)가 된다. 이 식을 측정의 한계로 읽는 일은 양자역학 책의 몫이다.</p>
+  </section>
+
+  <!-- ============================================================ 15.6 -->
+  <section id="s6">
+    <h2>3차원 푸리에 변환</h2>
+    <p>점전하의 퍼텐셜, 원자의 전자 구름, 결정의 원자 배열은 3차원 공간의 함수다. 1차원 변환을 세 방향에 한 번씩 하면 3차원 변환이 된다. 이 절의 목표는 쿨롱 퍼텐셜 \(1/r\)과 차폐된 퍼텐셜 \(e^{-\mu r}/r\)의 변환이다. 이 둘은 전자기학, 플라스마 물리, 핵물리, 양자장론이 운동량 공간에서 계산할 때 가장 먼저 쓰는 식이다.</p>
+
+    <h3 id="s6-definition">정의와 성질</h3>
+    <p>\(e^{-i\mathbf k\cdot\mathbf r} = e^{-ik_xx}e^{-ik_yy}e^{-ik_zz}\)이므로 세 1차원 변환을 겹치면 다음을 얻는다.</p>
+    <div class="formula" id="eq-ft-3d">\[ \begin{aligned} \tilde f(\mathbf k) &= \int d^3r\,f(\mathbf r)\,e^{-i\mathbf k\cdot\mathbf r} \\ f(\mathbf r) &= \int\frac{d^3k}{(2\pi)^3}\,\tilde f(\mathbf k)\,e^{i\mathbf k\cdot\mathbf r} \end{aligned} \]<div class="where">적분은 공간 전체다. 방향마다 \(1/2\pi\)가 하나씩 붙어 \((2\pi)^3\)이 된다. \(\mathbf k\)를 <span class="term">파수 벡터</span> <span class="en">(wave vector)</span>라 한다.</div></div>
+    <p>1차원의 성질이 방향마다 성립한다. 6장의 \(\delta^3(\mathbf r) = \delta(x)\delta(y)\delta(z)\)를 쓰면 식 <a class="ref" href="#eq-delta-fourier"></a>이 세 번 곱해져 다음이 된다.</p>
+    <div class="formula" id="eq-ft-3d-rules">\[ \begin{aligned} \int d^3k\,e^{i\mathbf k\cdot\mathbf r} &= (2\pi)^3\,\delta^3(\mathbf r) \\ \nabla f \;\longleftrightarrow\; i\mathbf k\,\tilde f, &\quad \nabla^2f \;\longleftrightarrow\; -k^2\tilde f \end{aligned} \]<div class="where">\(k = \lvert\mathbf k\rvert\)이다. 플랑슈렐 정리는 \(\int\lvert f\rvert^2d^3r = \int\frac{d^3k}{(2\pi)^3}\lvert\tilde f\rvert^2\)이다.</div></div>
+    <p>미분 연산자가 곱셈이 되므로 상수 계수 편미분방정식은 파수 공간에서 대수 방정식이다. 라플라시안이 \(-k^2\)이 된다는 것이 이 절의 계산을 이끈다.</p>
+
+    <h3 id="s6-radial">구대칭 함수의 변환</h3>
+    <div class="box thm" id="thm-radial-ft"><div class="box-h">구대칭 함수의 변환</div>
+      <p>\(f\)가 원점에서의 거리 \(r\)에만 기대면 \(\tilde f\)는 \(k = \lvert\mathbf k\rvert\)에만 기대고</p>
+      <div class="formula" id="eq-radial-ft">\[ \begin{aligned} \tilde f(k) &= \frac{4\pi}{k}\int_0^\infty r\,f(r)\,\sin kr\,dr \\ f(r) &= \frac{1}{2\pi^2r}\int_0^\infty k\,\tilde f(k)\,\sin kr\,dk \end{aligned} \]</div>
+      <p>이다. \(k \to 0\)에서는 \(\sin kr/kr = 1 - k^2r^2/6 + \cdots\)에서</p>
+      <div class="formula" id="eq-radial-small-k">\[ \tilde f(k) = \int f\,d^3r - \frac{k^2}{6}\int r^2f\,d^3r + O(k^4) \]</div>
+    </div>
+    <p>유도는 구면 좌표에서 한다. 적분 변수 \(\mathbf r\)의 극축을 \(\mathbf k\) 방향으로 잡으면 \(\mathbf k\cdot\mathbf r = kr\cos\theta\)이다. 6장 <a href="ch06.html#eq-volume-element-spherical">식 (6.15)</a>의 부피 요소 \(r^2\sin\theta\,dr\,d\theta\,d\phi\)를 쓰면 \(\phi\) 적분이 \(2\pi\)를 주고, \(\theta\) 적분은 \(u = \cos\theta\)로 치환해</p>
+    <div class="formula" id="eq-radial-angle-integral">\[ \int_0^\pi e^{-ikr\cos\theta}\sin\theta\,d\theta = \int_{-1}^{1}e^{-ikru}\,du = \frac{2\sin kr}{kr} \]</div>
+    <p>이다. 따라서 \(\tilde f = 2\pi\int_0^\infty r^2f(r)\,\frac{2\sin kr}{kr}\,dr\)이고 이것이 식 <a class="ref" href="#eq-radial-ft"></a>의 첫 줄이다. 역변환도 \(\mathbf r\)을 극축으로 잡아 같은 계산을 하면 \((2\pi)^{-3}\cdot 4\pi/r = 1/2\pi^2r\)이 앞에 붙는다. 식 <a class="ref" href="#eq-radial-small-k"></a>은 작은 \(k\)에서 변환이 전체 넓이와 둘째 모멘트, 곧 분포의 크기를 알려 준다는 말이다. 산란 실험에서 양성자나 원자핵의 전하 반지름을 재는 원리가 이것이다(<a class="ref" href="#prob-hydrogen-form-factor"></a>).</p>
+
+    <h3 id="s6-coulomb">유카와 퍼텐셜과 쿨롱 퍼텐셜</h3>
+    <p>\(f(r) = e^{-\mu r}/r\) (\(\mu > 0\))을 식 <a class="ref" href="#eq-radial-ft"></a>에 넣자. \(rf = e^{-\mu r}\)이므로 필요한 적분은 \(\int_0^\infty e^{-\mu r}\sin kr\,dr = \operatorname{Im}\int_0^\infty e^{-(\mu - ik)r}dr = \operatorname{Im}\frac{1}{\mu - ik} = \frac{k}{\mu^2 + k^2}\)이다.</p>
+    <div class="formula" id="eq-yukawa-ft">\[ \frac{e^{-\mu r}}{r} \;\longleftrightarrow\; \frac{4\pi}{k^2 + \mu^2} \]</div>
+    <p>이 퍼텐셜은 유카와가 핵력을 설명하려고 도입한 것이다(H. Yukawa, Proc. Phys.-Math. Soc. Japan 17, 48 (1935)). \(1/\mu\)이 힘이 미치는 거리이고, 힘을 나르는 입자의 질량 \(m\)과 \(\mu = mc/\hbar\)로 이어진다. 파이온(\(m_\pi c^2 = 139.6\ \text{MeV}\))이면 \(1/\mu = \hbar c/m_\pi c^2 = 197.3\ \text{MeV}\cdot\text{fm}/139.6\ \text{MeV} = 1.41\ \text{fm}\)이다.</p>
+    <p>\(\mu \to 0\)이면 쿨롱 퍼텐셜이다.</p>
+    <div class="formula" id="eq-coulomb-ft">\[ \frac1r \;\longleftrightarrow\; \frac{4\pi}{k^2} \]</div>
+    <p>\(1/r\)은 절대 적분 가능하지 않고, 식 <a class="ref" href="#eq-radial-ft"></a>에 바로 넣으면 \(\int_0^\infty\sin kr\,dr\)이라는 값이 없는 적분이 나온다. \(e^{-\mu r}\)을 곱해 수렴하게 만든 뒤 \(\mu \to 0\)으로 보내는 것은 15.3절에서 \(e^{-\varepsilon\lvert k\rvert}\)를 곱한 것과 같은 처방이다. 결과가 옳은지는 6장으로 확인한다. \(\nabla^2(1/r) = -4\pi\delta^3(\mathbf r)\)(6장 <a href="ch06.html#eq-laplacian-inverse-r">식 (6.54)</a>)을 식 <a class="ref" href="#eq-ft-3d-rules"></a>로 변환하면 \(-k^2\cdot 4\pi/k^2 = -4\pi\)이고, 오른쪽 \(-4\pi\delta^3\)의 변환과 같다.</p>
+    <p>그러면 푸아송 방정식 \(\nabla^2V = -\rho/\varepsilon_0\)은 파수 공간에서 한 줄로 풀린다.</p>
+    <div class="formula" id="eq-poisson-kspace">\[ \tilde V(\mathbf k) = \frac{\tilde\rho(\mathbf k)}{\varepsilon_0k^2} \]<div class="where">합성곱 정리로 돌아가면 \(V = \rho * \frac{1}{4\pi\varepsilon_0r}\), 곧 \(V(\mathbf r) = \int\frac{\rho(\mathbf r')\,d^3r'}{4\pi\varepsilon_0\lvert\mathbf r - \mathbf r'\rvert}\)이다. 쿨롱 법칙의 중첩이 합성곱이다.</div></div>
+    <p>점전하이면 \(\rho = q\delta^3(\mathbf r)\), \(\tilde\rho = q\)이고 \(\tilde V = q/\varepsilon_0k^2\)의 역변환은 식 <a class="ref" href="#eq-coulomb-ft"></a>에서 \(q/4\pi\varepsilon_0r\)이다. 5-1절의 관례 \(\nabla^2G = \delta^3\)으로 쓰면 \(\tilde G = -1/k^2\)이고 \(G = -1/4\pi r\)이다. 20장의 <a href="ch20.html#eq-green-poisson">푸아송 방정식의 그린 함수</a>가 이것이다.</p>
+
+    <div class="box ex" id="ex-yukawa"><div class="box-h">전해질 속 이온의 가려진 퍼텐셜</div>
+      <p>소금물 속에 전하 \(q\)인 이온이 하나 있다. 주위의 양이온과 음이온은 볼츠만 분포를 따라 이 이온을 둘러싸고, 그 결과 생기는 유도 전하 밀도는 \(eV \ll k_BT\)일 때 \(\rho_{\text{유도}} = -\varepsilon_r\varepsilon_0V/\lambda_D^2\)로 쓸 수 있다. 여기서 \(\varepsilon_r\)는 물의 비유전율이고</p>
+      <div class="formula" id="eq-debye-length">\[ \lambda_D = \sqrt{\frac{\varepsilon_r\varepsilon_0k_BT}{2ne^2}} \]<div class="where">\(n\)은 양이온(=음이온)의 수 밀도다. \(\lambda_D\)를 <span class="term">디바이 길이</span> <span class="en">(Debye length)</span>라 한다. \(\rho_{\text{유도}}\)는 \(e\,n(e^{-eV/k_BT} - e^{eV/k_BT}) = -2ne\sinh(eV/k_BT)\)를 1차까지 전개한 것이다.</div></div>
+      <p>이다. (가) 이온 둘레의 퍼텐셜 \(V(r)\)을 3차원 변환으로 구하라. (나) \(25\ ^\circ\text{C}\), \(0.10\ \text{mol/L}\) 소금물(\(\varepsilon_r = 78.4\)로 둔다)에서 \(\lambda_D\)를 구하고, \(r = 1.0\ \text{nm}\)에서 퍼텐셜이 맨 쿨롱 퍼텐셜의 몇 배인지 구하라.</p>
+      <p><b>풀이.</b> (가) 푸아송 방정식 \(\nabla^2V = -(q\delta^3 + \rho_{\text{유도}})/\varepsilon_r\varepsilon_0\)은 \(\nabla^2V - V/\lambda_D^2 = -q\delta^3(\mathbf r)/\varepsilon_r\varepsilon_0\)이 된다. 변환하면 \(-k^2\tilde V - \tilde V/\lambda_D^2 = -q/\varepsilon_r\varepsilon_0\)이므로</p>
+      <div class="formula" id="eq-screened-potential">\[ \tilde V(k) = \frac{q/\varepsilon_r\varepsilon_0}{k^2 + \lambda_D^{-2}} \;\Longrightarrow\; V(r) = \frac{q}{4\pi\varepsilon_r\varepsilon_0}\,\frac{e^{-r/\lambda_D}}{r} \]</div>
+      <p>이다. 역변환은 식 <a class="ref" href="#eq-yukawa-ft"></a>에서 \(\mu = 1/\lambda_D\)로 읽었다. 가까이서는 쿨롱 퍼텐셜이고, \(\lambda_D\)보다 멀면 지수적으로 사라진다. 파수 공간에서 중성도 확인할 수 있다. 이온과 유도 전하를 합친 밀도의 변환은 \(\varepsilon_r\varepsilon_0 k^2\tilde V = qk^2/(k^2 + \lambda_D^{-2})\)이고, \(k = 0\)에서의 값, 곧 전체 전하(식 <a class="ref" href="#eq-radial-small-k"></a>의 첫 항)가 0이다. 유도 전하가 정확히 \(-q\)이다.</p>
+      <p><b>숫자로 보기.</b> (나) \(n = 0.10 \times 10^3\ \text{mol/m}^3 \times N_A = 6.02 \times 10^{25}\ \text{m}^{-3}\)이다. \(\varepsilon_r\varepsilon_0k_BT = 78.4 \times 8.854 \times 10^{-12} \times 1.381 \times 10^{-23} \times 298 = 2.86 \times 10^{-30}\ \text{C}^2/\text{m}\)이고 \(2ne^2 = 3.09 \times 10^{-12}\ \text{C}^2/\text{m}^3\)이므로 \(\lambda_D = \sqrt{9.24 \times 10^{-19}\ \text{m}^2} = 0.96\ \text{nm}\)이다. \(r = 1.0\ \text{nm}\)에서 퍼텐셜은 맨 쿨롱 퍼텐셜의 \(e^{-1.0/0.96} = 0.35\)배다. 물속 이온의 정전기 상호작용은 1 nm 남짓만 지나면 크게 줄어든다. 단위: \(\varepsilon_0k_BT/ne^2\)은 \((\text{C}^2/\text{J}\cdot\text{m})\,\text{J}/(\text{m}^{-3}\text{C}^2) = \text{m}^2\)이다.</p>
+      <p><b>다음 항은 몇 차인가.</b> 1가 이온의 전해질이면 \(\sinh u = u + u^3/6 + \cdots\) (\(u = eV/k_BT\))이므로 버린 항은 \(u\)의 2차가 아니라 3차이고, 상대 크기는 \(u^2/6\)이다. \(r = 1.0\ \text{nm}\), \(q = e\)에서 \(u = \frac{e^2}{4\pi\varepsilon_r\varepsilon_0 k_BT\,r}\,e^{-r/\lambda_D} = 0.71 \times 0.35 = 0.25\)이므로 보정은 1% 정도다. 이온에 더 가까우면 선형화가 깨진다.</p>
+    </div>
+    <div class="callout deep" data-later="qm-grad"><strong>산란 진폭은 퍼텐셜의 변환이다</strong><p>퍼텐셜 \(U(\mathbf r)\)에 약하게 산란되는 입자의 산란 진폭은, 1차 근사(<span class="term">보른 근사</span> <span class="en">(Born approximation)</span>)에서 운동량 전달 \(\hbar\mathbf q\)에서의 변환 \(\tilde U(\mathbf q)\)에 비례한다. 유카와 퍼텐셜이면 \(1/(q^2 + \mu^2)\)이고, \(\mu \to 0\)이면 러더퍼드 산란의 \(1/q^4\) 단면적이 나온다. 이 계산은 대학원 양자역학 책의 몫이다. 결정의 엑스선 회절도 같다. 원자 배열이 3차원 델타의 빗이므로, 푸아송 합 공식(식 <a class="ref" href="#eq-poisson-summation"></a>)의 3차원판에 따라 산란은 역격자 점에서만 일어난다.</p></div>
+  </section>
+
+  <!-- ============================================================ 15.7 -->
+  <section id="s7">
+    <h2>회절, 스펙트럼, 이산 푸리에 변환</h2>
+    <p>푸리에 변환은 계산 도구이기 전에 자연이 직접 하는 일이다. 렌즈 없이 멀리 놓은 스크린에 비친 회절 무늬는 구멍 모양의 변환이고, 프리즘이나 회절격자가 펼친 스펙트럼은 빛 신호의 변환이다. 실험실에서는 그 일을 컴퓨터가 유한한 개수의 표본으로 대신한다. 이 절에서는 회절 무늬를 변환으로 읽고, 표본으로 계산한 스펙트럼의 한계를 본다.</p>
+
+    <h3 id="s7-fraunhofer">프라운호퍼 회절</h3>
+    <p>파장 \(\lambda\)(파수 \(k_0 = 2\pi/\lambda\))인 평면파가 \(x\)축 위의 가림막에 수직으로 들어온다. 가림막의 투과 함수를 \(A(x)\)라 하자(뚫린 곳에서 1, 막힌 곳에서 0). 하위헌스 원리에 따라 가림막 위의 점 \(x\)마다 구면파 \(e^{ik_0r}/r\)이 나온다. 각 \(\theta\) 방향으로 멀리 \(R\)만큼 떨어진 점까지의 거리는 \(r \approx R - x\sin\theta\)이므로, 그 점의 진폭은 다음과 같다.</p>
+    <div class="formula" id="eq-fraunhofer">\[ \begin{aligned} E(\theta) &\propto \frac{e^{ik_0R}}{R}\int A(x)\,e^{-ik_0x\sin\theta}\,dx \\ &= \frac{e^{ik_0R}}{R}\,\tilde A(q),\quad q = k_0\sin\theta \end{aligned} \]<div class="where">이 근사가 맞으려면 버린 위상 \(k_0x^2/2R\)이 구멍 전체에서 작아야 한다. 구멍의 폭을 \(a\)라 하면 \(a^2 \ll \lambda R\)이다. 이것을 <span class="term">프라운호퍼 조건</span> <span class="en">(Fraunhofer condition)</span>이라 한다.</div></div>
+    <p>먼 곳의 회절 진폭은 구멍의 투과 함수를 \(q = k_0\sin\theta\)에서 읽은 변환이다. 이 책의 공간 변환 \(e^{-ikx}\)가 경로 차의 부호와 그대로 맞는다. 스크린의 세기는 \(I \propto \lvert\tilde A(q)\rvert^2\)이다.</p>
+
+    <div class="box ex" id="ex-slit-diffraction"><div class="box-h">단일 슬릿과 이중 슬릿의 회절 무늬</div>
+      <p>(가) 폭 \(a\)인 슬릿 하나의 회절 세기를 구하라. (나) 폭 \(a\)인 슬릿 두 개의 중심이 \(d\)만큼 떨어져 있을 때의 세기를 합성곱 정리로 구하라. (다) \(\lambda = 532\ \text{nm}\), \(a = 12\ \mu\text{m}\), \(d = 60\ \mu\text{m}\)이고 스크린이 \(L = 1.5\ \text{m}\)에 있을 때, 단일 슬릿 무늬의 첫 어두운 곳과 첫 옆 봉우리의 위치, 이중 슬릿 무늬의 간격을 구하라.</p>
+      <p><b>풀이.</b> (가) \(A\)는 \(\lvert x\rvert &lt; a/2\)에서 1인 사각 함수이므로 식 <a class="ref" href="#eq-single-pulse-ft"></a>과 같은 계산으로 \(\tilde A(q) = a\,\sin(qa/2)/(qa/2)\)이다.</p>
+      <div class="formula" id="eq-single-slit-intensity">\[ I(\theta) = I_0\Big(\frac{\sin\beta}{\beta}\Big)^2,\quad \beta = \frac{qa}{2} = \frac{\pi a\sin\theta}{\lambda} \]</div>
+      <p>어두운 곳은 \(\beta = m\pi\) (\(m = \pm1, \pm2, \ldots\)), 곧 \(\sin\theta = m\lambda/a\)이다. 옆 봉우리는 \(\frac{d}{d\beta}(\sin\beta/\beta) = 0\), 곧 \(\tan\beta = \beta\)의 근이다. 첫 근은 \(\beta = 4.493\)이고 그 세기는 \(0.0472\,I_0\)이다.</p>
+      <p>(나) 이중 슬릿의 투과 함수는 슬릿 하나를 \(x = \pm d/2\)의 두 델타와 합성곱한 것이다: \(A_2 = A * [\delta(x - d/2) + \delta(x + d/2)]\). 합성곱 정리와 식 <a class="ref" href="#eq-delta-pairs"></a>에서 \(\tilde A_2 = \tilde A\,(e^{-iqd/2} + e^{iqd/2}) = 2\cos(qd/2)\,\tilde A\)이다.</p>
+      <div class="formula" id="eq-double-slit-intensity">\[ I_2(\theta) = 4I_0\cos^2\Big(\frac{\pi d\sin\theta}{\lambda}\Big)\Big(\frac{\sin\beta}{\beta}\Big)^2 \]</div>
+      <p>구멍의 배열(두 델타)이 빠른 \(\cos^2\) 무늬를, 구멍 하나의 모양이 느린 포락선을 정한다. 슬릿이 \(N\)개이면 두 델타 대신 \(N\)개의 델타가 들어가고, 그 변환은 2장 <a href="ch02.html#ex-grating-sum">예제 2.7</a>의 회절격자 합이 된다.</p>
+      <p><b>숫자로 보기.</b> (다) 각이 작으므로 스크린 위치는 \(y = L\tan\theta \approx L\sin\theta\)이다. 단일 슬릿의 첫 어두운 곳은 \(y_1 = \lambda L/a = 532\ \text{nm} \times 1.5\ \text{m}/12\ \mu\text{m} = 66.5\ \text{mm}\)이고, 가운데 밝은 띠의 전체 폭은 \(133\ \text{mm}\)이다. 첫 옆 봉우리는 \(y = (4.493/\pi)\,y_1 = 95.1\ \text{mm}\)에 있고 세기는 가운데의 4.7%다. 이중 슬릿 무늬의 간격은 \(\lambda L/d = 13.3\ \text{mm}\)이다. \(d/a = 5\)이므로 \(\cos^2\)의 5번째 밝은 무늬가 포락선의 영점과 겹쳐 사라지고, 가운데 띠 안에는 밝은 무늬가 \(m = -4, \ldots, 4\)의 9개 들어간다(그림 15-4). 슬릿이 좁을수록 무늬가 넓게 퍼지는 것은 폭-대역폭 관계 그대로다. 각의 폭 \(\lambda/a\)는 구멍 폭 \(a\)의 역수에 \(\lambda\)를 곱한 것이다.</p>
+      <p><b>다음 항은 몇 차인가.</b> 프라운호퍼 조건은 \(a^2/\lambda = 0.27\ \text{mm} \ll L = 1.5\ \text{m}\)이므로 잘 맞는다(이중 슬릿 전체의 폭 \(d + a\)로도 \(9.7\ \text{mm} \ll 1.5\ \text{m}\)). \(\sin\theta\)를 \(y/L\)로 쓴 오차는 \(\theta^2/2\) 정도이고, \(y_1\)에서 \(\theta = 0.044\)이므로 0.1%다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 260" role="img" aria-label="폭 12 마이크로미터인 슬릿 하나와 간격 60 마이크로미터인 슬릿 둘의 프라운호퍼 회절 세기. 이중 슬릿 무늬는 단일 슬릿의 sinc 제곱 포락선 안에 cos 제곱 무늬가 들어 있다"><defs><clipPath id="f1504-clip"><rect x="46" y="18" width="420" height="188"/></clipPath></defs><line x1="46" y1="18" x2="46" y2="206" class="s-grid"/><line x1="116" y1="18" x2="116" y2="206" class="s-grid"/><line x1="186" y1="18" x2="186" y2="206" class="s-grid"/><line x1="256" y1="18" x2="256" y2="206" class="s-grid"/><line x1="326" y1="18" x2="326" y2="206" class="s-grid"/><line x1="396" y1="18" x2="396" y2="206" class="s-grid"/><line x1="466" y1="18" x2="466" y2="206" class="s-grid"/><line x1="46" y1="206" x2="466" y2="206" class="s-grid"/><line x1="46" y1="119" x2="466" y2="119" class="s-grid"/><line x1="46" y1="31.9" x2="466" y2="31.9" class="s-grid"/><text x="46" y="226" class="t-dim" style="font-size:14px" text-anchor="middle">−150</text><text x="116" y="226" class="t-dim" style="font-size:14px" text-anchor="middle">−100</text><text x="186" y="226" class="t-dim" style="font-size:14px" text-anchor="middle">−50</text><text x="256" y="226" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="326" y="226" class="t-dim" style="font-size:14px" text-anchor="middle">50</text><text x="396" y="226" class="t-dim" style="font-size:14px" text-anchor="middle">100</text><text x="466" y="226" class="t-dim" style="font-size:14px" text-anchor="middle">150</text><text x="39" y="211" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="39" y="124" class="t-dim" style="font-size:14px" text-anchor="end">0.5</text><text x="39" y="36.9" class="t-dim" style="font-size:14px" text-anchor="end">1</text><line x1="46" y1="206" x2="466" y2="206" class="s-line"/><path d="M46,205.3l4.2,-0.6 8.9,1.3 20.8,0 3,-0.3 7.2,-1.7 2.1,0.3 4.2,1.5 1.8,0.2 2.2,-0.9 4.9,-4.5 2.3,-0.9 2.3,0.9 4.7,4.8 1.9,0.6 2.3,-1.3 4.7,-5.9 2.1,-0.9 1.9,0.9 4.8,5.8 2.3,1.4 1.9,-0.4 4.3,-3.3 2.3,-0.7 2,0.5 4.5,2.9 2.6,0.9 20.5,0.1 1.8,-0.5 1.5,-1.1 5.3,-7.6 1,-1.1 1.1,-0.4 0.8,0.3 1.1,1.1 4,8 0.9,1 0.9,0.3 1.4,-2 1.2,-4.3 5.1,-32.5 1.2,-5.1 1,-1.7 1.1,1.4 1.1,4.3 4.3,33.3 1.1,5.1 0.5,1.3 0.5,0.1 1.1,-3 1.2,-9.5 5.1,-73.2 1.2,-11.3 1,-3.5 0.6,0.7 0.5,2.2 1,9.1 4.6,73 1.2,12.4 0.6,2.6 0.5,0.6 1,-4.9 1.1,-12.9 5,-113.2 1.3,-16.8 0.5,-3.6 0.5,-1.2 0.6,1.2 0.5,3.6 1,13.9 4.7,111.4 1.3,17.6 0.5,3.8 0.5,1.1 1.1,-5.6 1,-15.6 4.7,-124.5 1.3,-20.9 0.7,-6.1 0.5,-1.4 0.5,1.4 0.7,6.1 1.3,20.9 4.7,124.5 1,15.6 1.1,5.6 0.5,-1.1 0.5,-3.8 1.2,-17.6 4.8,-111.4 1,-13.9 0.6,-3.6 0.5,-1.2 0.5,1.2 0.5,3.6 1.2,16.8 5.1,113.2 1.1,12.9 1,4.9 0.6,-0.6 0.5,-2.6 1.2,-12.4 4.5,-73 1.1,-9.1 0.5,-2.2 0.6,-0.7 1,3.5 1.2,11.3 5.1,73.2 1.2,9.5 1.1,3 0.5,-0.1 0.5,-1.3 1.1,-5.1 4.4,-33.3 1,-4.3 1,-1.4 1.1,1.7 1.2,5.1 5.1,32.5 1.2,4.3 1.4,2 0.9,-0.3 0.9,-1 4,-8 1.1,-1.1 0.8,-0.3 1.1,0.4 1,1.1 5.3,7.6 1.6,1.1 1.7,0.5 20.5,-0.1 2.6,-0.9 4.5,-2.9 2,-0.5 2.2,0.7 4.4,3.3 1.9,0.4 2.3,-1.4 4.7,-5.8 2,-0.9 2.1,0.9 4.7,5.9 2.3,1.3 1.9,-0.6 4.7,-4.8 2.3,-0.9 2.3,0.9 4.9,4.5 2.3,0.9 1.7,-0.2 4.2,-1.5 2.1,-0.3 7.2,1.7 3,0.3 20.8,0 8.9,-1.3 4.2,0.6" class="s-acc" style="stroke-width:1.6"  clip-path="url(#f1504-clip)"/><path d="M46,204.2l18.4,1.7 13.1,-0.2 11,-1.6 23.7,-5.3 5.7,-0.8 5.8,-0.2 10,1.1 21.5,6.1 4.2,0.8 4.2,0.2 3.7,-0.4 3.6,-1.1 3.2,-1.6 3.1,-2.2 5.3,-5.4 5.3,-7.5 5.2,-9.6 5.2,-11.8 9.5,-25.7 21,-64.8 4.7,-12.8 4.8,-11.1 4.7,-9 4.2,-5.9 2.6,-2.6 2.1,-1.4 2.1,-0.9 2.1,-0.3 2.1,0.3 2.1,0.9 2.1,1.4 2.6,2.6 4.2,5.9 4.8,9 4.7,11.1 4.7,12.8 21,64.8 9.5,25.7 5.2,11.8 5.2,9.6 5.3,7.5 5.3,5.4 3.1,2.2 3.2,1.6 3.6,1.1 3.7,0.4 4.2,-0.2 4.2,-0.8 21.5,-6.1 10,-1.1 5.8,0.2 5.8,0.8 23.6,5.3 11,1.6 13.1,0.2 18.4,-1.7" class="s-acc2" style="stroke-width:2" stroke-dasharray="6 4" clip-path="url(#f1504-clip)"/><text x="356.8" y="110.3" class="t-math acc2" style="font-size:15px" text-anchor="start">슬릿 하나 (포락선)</text><text x="53" y="80.7" class="t-acc" style="font-size:15px" text-anchor="start">슬릿 둘</text><text x="466" y="250" class="t-dim" style="font-size:14px" text-anchor="end">스크린 위치 y (mm)</text><text x="52" y="30" class="t-dim" style="font-size:14px" text-anchor="start">세기 I/I₀</text></svg>
+      <figcaption><b>그림 15-4.</b> \(\lambda = 532\ \text{nm}\), 스크린 거리 \(1.5\ \text{m}\)에서 폭 \(12\ \mu\text{m}\)인 슬릿 하나(파선, 포락선)와 간격 \(60\ \mu\text{m}\)인 슬릿 둘(실선)의 회절 세기. 이중 슬릿의 세기는 최댓값이 1이 되게 \(4I_0\)로 나누었다. 실선은 식 <a class="ref" href="#eq-double-slit-intensity"></a>, 파선은 식 <a class="ref" href="#eq-single-slit-intensity"></a>로 계산했다. \(y = \pm66.5\ \text{mm}\)에서 포락선이 0이 되어 \(\cos^2\) 무늬의 5번째 밝은 무늬가 지워진다.</figcaption>
+    </figure>
+    <div data-sim="double-slit" data-title="회절 무늬는 구멍의 푸리에 변환" data-note="해볼 것: 아래 그래프의 점선은 슬릿 하나의 변환 |Ã(q)|² ∝ sinc²(πay/λL)이고, 실선은 여기에 두 델타의 변환 cos²(πdy/λL)를 곱한 것입니다(합성곱 정리). 슬릿 폭 a를 줄이면 포락선이 넓어지고, 간격 d를 키우면 무늬가 촘촘해집니다. 둘 다 '좁을수록 넓게'인 폭-대역폭 관계입니다. d/a를 정수(예: d = 60 µm, a = 12 µm)로 맞추면 포락선의 영점에서 밝은 무늬가 빠지는 것을 확인하세요. 판독값 '포락선 안 밝은 무늬'는 포락선 영점에 놓인 무늬를 세지 않으므로, d/a가 정수가 아니면 2⌊d/a⌋ + 1, 정수이면 2(d/a) − 1입니다(기본값에서 9)."></div>
+
+    <h3 id="s7-dft">이산 푸리에 변환</h3>
+    <p>측정한 신호는 연속 함수가 아니라 간격 \(\Delta t\)로 찍은 유한 개의 숫자 \(x_n = x(n\Delta t)\) (\(n = 0, 1, \ldots, N - 1\))이다. 기록 시간은 \(T_{\text{rec}} = N\Delta t\)이다. 이 숫자들로 계산할 수 있는 변환은 다음과 같다.</p>
+    <div class="box def" id="def-dft"><div class="box-h">이산 푸리에 변환</div>
+      <p>\(N\)개의 복소수 \(x_0, \ldots, x_{N-1}\)의 <span class="term">이산 푸리에 변환</span> <span class="en">(discrete Fourier transform, DFT)</span>과 그 역변환을 다음과 같이 정한다.</p>
+      <div class="formula" id="eq-dft">\[ \begin{aligned} X_m &= \sum_{n=0}^{N-1} x_n\,e^{-2\pi imn/N} \\ x_n &= \frac1N\sum_{m=0}^{N-1} X_m\,e^{2\pi imn/N} \end{aligned} \]<div class="where">\(m = 0, \ldots, N - 1\)이다. 이것은 NumPy의 <code>numpy.fft.fft</code>를 비롯한 수치 라이브러리 대부분이 쓰는 꼴이다. \(X_{m+N} = X_m\)이므로 \(m\)은 \(N\)을 법으로 읽고, \(m = N - 1\)은 \(m = -1\)과 같다.</div></div>
+    </div>
+    <p>역변환이 맞는 것은 이산 직교성 때문이다.</p>
+    <div class="formula" id="eq-dft-orthogonality">\[ \sum_{n=0}^{N-1} e^{2\pi i(m - m')n/N} = \begin{cases} N, & m \equiv m' \pmod N \\ 0, & \text{그 밖} \end{cases} \]<div class="where">공비 \(e^{2\pi i(m - m')/N}\)인 기하급수(1장 식 (1.2))이고, \(m \not\equiv m'\)이면 공비가 1의 \(N\)제곱근이라 합이 0이다(2장 <a href="ch02.html#eq-roots-sum">식 (2.23)</a>).</div></div>
+    <p>DFT는 연속 변환의 리만 합이다. 기록 안에 신호가 다 들어 있으면, 각진동수 \(\omega_m = 2\pi m/T_{\text{rec}}\)에서</p>
+    <div class="formula" id="eq-dft-transform-link">\[ \tilde x(\omega_m) \approx \Delta t\sum_n x_n\,e^{i\omega_mn\Delta t} = \Delta t\,X_{-m} \]<div class="where">이 책의 시간 변환은 \(e^{+i\omega t}\)이므로 라이브러리의 \(X_m\)과는 번호가 뒤집힌다. 실수 신호이면 \(X_{-m} = X_m^*\)이므로 \(\lvert\tilde x(\omega_m)\rvert \approx \Delta t\,\lvert X_m\rvert\)이다. 공간 신호 \(f(n\Delta x)\)는 \(\tilde f(k_m) \approx \Delta x\,X_m\)으로 번호가 그대로 맞는다.</div></div>
+    <p>진동수 격자의 간격 \(\Delta\nu = 1/T_{\text{rec}}\)이 <span class="term">진동수 분해능</span> <span class="en">(frequency resolution)</span>이다. 기록이 길수록 스펙트럼을 촘촘히 본다. 다른 눈으로 보면 DFT는 기록을 한 주기로 삼은 푸리에 급수의 계수다. \(X_m/N\)은 14장 식 (14.10)의 \(c_m\)을 리만 합으로 근사한 것이다. 그래서 신호의 진동수가 \(\Delta\nu\)의 정수배가 아니면 주기 확장의 이음매가 끊어지고, 그 불연속 때문에 에너지가 이웃 진동수 칸으로 번진다(불연속이 있으면 계수가 \(1/n\)으로 천천히 준다는 14장 <a href="ch14.html#thm-coefficient-decay">정리 14.4</a>와 같은 이유). 이것을 <span class="term">스펙트럼 누설</span> <span class="en">(spectral leakage)</span>이라 한다. 기록의 양 끝을 매끄럽게 0으로 줄이는 <span class="term">창 함수</span> <span class="en">(window function)</span>를 곱하면 누설이 준다. 아래 코드는 가우스 함수의 표본으로 식 <a class="ref" href="#eq-dft-transform-link"></a>을 확인한다.</p>
+    <pre><code>import cmath, math
+N, dt = 64, 0.25                      # 표본 64개, 기록 16
+x = [math.exp(-((n - N//2)*dt)**2/2) for n in range(N)]
+for m in range(0, 9, 2):
+    X = sum(x[n]*cmath.exp(-2j*math.pi*m*n/N) for n in range(N))
+    w = 2*math.pi*m/(N*dt)
+    print(f"{w:5.2f}  {dt*abs(X):.6f}  {math.sqrt(2*math.pi)*math.exp(-w*w/2):.6f}")
+# 0.00  2.506628  2.506628
+# 0.79  1.841377  1.841377
+# 1.57  0.729963  0.729963
+# 2.36  0.156158  0.156158
+# 3.14  0.018027  0.018027</code></pre>
+    <p>가운데 열이 DFT로 구한 \(\Delta t\,\lvert X_m\rvert\), 오른쪽 열이 식 <a class="ref" href="#eq-gaussian-ft"></a>의 정확한 값이다. 여섯 자리까지 맞는다. 가우스 함수가 기록 안에서 충분히 0에 가깝고 매끄러워서, 리만 합이 아주 정확하기 때문이다. \(\lvert X_m\rvert\)만 비교한 것은 표본이 \(t = -8\)부터 시작해 이동 규칙의 위상 \(e^{i\omega_m\cdot 8}\)이 곱해지기 때문이다. DFT를 정의대로 계산하면 곱셈이 \(N^2\)번 필요하다. <span class="term">고속 푸리에 변환</span> <span class="en">(fast Fourier transform, FFT)</span>은 \(N\)이 2의 거듭제곱일 때 합을 짝수 번째와 홀수 번째로 되풀이해 나누어 \(N\log_2N\)번으로 줄인다(J. W. Cooley, J. W. Tukey, Math. Comput. 19, 297 (1965)). \(N = 10^6\)이면 5만 배다.</p>
+
+    <h3 id="s7-sampling">표본화와 겹침</h3>
+    <p>표본만으로는 구별할 수 없는 진동수가 있다. \(t_n = n\Delta t\)에서 \(e^{-i\omega t_n}\)과 \(e^{-i(\omega + 2\pi/\Delta t)t_n}\)은 \(e^{-2\pi in} = 1\)만큼 다르므로 같은 값이다. 표본화 진동수 \(f_s = 1/\Delta t\)의 정수배만큼 다른 진동수들은 표본에서 똑같아 보인다. 이것을 <span class="term">겹침</span> <span class="en">(aliasing)</span>이라 한다. 실수 신호에서는 \(\nu\)와 \(-\nu\)도 구별되지 않으므로, 표본으로 알아볼 수 있는 가장 높은 진동수는 다음과 같다.</p>
+    <div class="formula" id="eq-nyquist">\[ \nu_N = \frac{f_s}{2} = \frac{1}{2\Delta t} \]<div class="where">\(\nu_N\)을 <span class="term">나이퀴스트 진동수</span> <span class="en">(Nyquist frequency)</span>라 한다. 이보다 높은 진동수 \(\nu\)는 \(\lvert\nu - jf_s\rvert\)(\(j\)는 그 값이 \(\nu_N\) 이하가 되는 정수)로 잘못 읽힌다.</div></div>
+    <div class="box thm" id="thm-sampling"><div class="box-h">표본화 정리 <span class="en">(sampling theorem)</span></div>
+      <p>신호의 변환이 \(\lvert\omega\rvert \ge \pi/\Delta t\)에서 0이면(곧 모든 성분의 진동수가 \(\nu_N\)보다 낮으면), 간격 \(\Delta t\)의 표본이 신호를 완전히 정한다.</p>
+      <div class="formula" id="eq-sampling-interpolation">\[ x(t) = \sum_{n=-\infty}^{\infty} x(n\Delta t)\,\frac{\sin[\pi(t - n\Delta t)/\Delta t]}{\pi(t - n\Delta t)/\Delta t} \]</div>
+      <details class="proof"><summary>증명</summary>
+        <p>\(\tilde x(\omega)\)는 구간 \((-\pi/\Delta t, \pi/\Delta t)\) 밖에서 0이므로 그 구간에서 \(\omega\)의 푸리에 급수로 쓸 수 있다. 14장 식 (14.10)에서 \(x \to \omega\), \(L \to \pi/\Delta t\)로 두면 기저는 \(e^{in\Delta t\,\omega}\)이고 계수는 \(c_n = \frac{\Delta t}{2\pi}\int\tilde x(\omega)e^{-i\omega n\Delta t}d\omega = \Delta t\,x(n\Delta t)\)이다(식 <a class="ref" href="#eq-ft-pair"></a>의 시간 역변환). 이 급수를 역변환에 넣으면 \(x(t) = \sum_n\Delta t\,x(n\Delta t)\int_{-\pi/\Delta t}^{\pi/\Delta t}\frac{d\omega}{2\pi}e^{-i\omega(t - n\Delta t)}\)이고, 적분은 식 <a class="ref" href="#eq-delta-regularized"></a>의 셋째 줄에서 \(K = \pi/\Delta t\)로 둔 \(\sin[K(t - n\Delta t)]/\pi(t - n\Delta t)\)이다. \(\Delta t\)를 곱하면 정리의 식이 된다. 이 정리를 통신 이론에 세운 것은 섀넌이다(C. E. Shannon, Proc. IRE 37, 10 (1949)).</p>
+      </details>
+    </div>
+    <p>그래서 녹음 장치는 표본을 찍기 전에 \(\nu_N\)보다 높은 성분을 필터로 걸러 낸다. 겹쳐 들어온 성분은 나중에 지울 수 없다. CD는 \(f_s = 44.1\ \text{kHz}\)로 찍으므로 \(\nu_N = 22.05\ \text{kHz}\)로, 사람이 듣는 20 kHz보다 조금 높다.</p>
+    <div class="box ex" id="ex-stroboscope-aliasing"><div class="box-h">영화 속에서 거꾸로 도는 바퀴</div>
+      <p>바퀴 가장자리에 점 하나를 찍고 반시계 방향으로 초당 \(23\)바퀴 돌린다. 이것을 초당 \(24\)장 찍는 카메라로 찍으면 화면에서 점은 어떻게 움직이는가? 바퀴를 초당 \(12\)바퀴, \(25\)바퀴 돌리면 어떤가?</p>
+      <p><b>풀이.</b> 바퀴 중심을 원점으로 한 복소평면에서 점의 위치는 \(z(t) = Re^{2\pi i\nu t}\)이다(\(\nu = 23\ \text{s}^{-1}\)). \(t_n = n/f_s\) (\(f_s = 24\ \text{s}^{-1}\))에서 찍은 위치는</p>
+      <div class="formula" id="eq-stroboscope">\[ \begin{aligned} z_n &= Re^{2\pi i\cdot 23n/24} = Re^{2\pi in}\,e^{-2\pi in/24} \\ &= Re^{2\pi i(-1)n/24} \end{aligned} \]</div>
+      <p>이다. 이것은 \(\nu = -1\ \text{s}^{-1}\), 곧 시계 방향으로 초당 1바퀴 도는 점의 표본과 같다. 바퀴가 거꾸로 천천히 도는 것처럼 보인다. 일반적으로 보이는 회전수는 \(\nu - jf_s\)를 \(-f_s/2\)와 \(f_s/2\) 사이로 옮긴 값이다. \(25\ \text{s}^{-1}\)이면 \(+1\ \text{s}^{-1}\)로 같은 방향으로 천천히 돈다. \(12\ \text{s}^{-1}\)은 정확히 \(f_s/2\)이고, 한 장마다 점이 반대편으로 건너뛰어 어느 방향으로 도는지 알 수 없다. 나이퀴스트 진동수다.</p>
+      <p><b>숫자로 보기.</b> 점의 \(x\) 좌표 \(R\cos(2\pi\cdot 23t)\)만 본다면(그림 15-5) 표본은 \(\cos(2\pi\cdot 1\cdot t)\)와 같아서, \(+1\)과 \(-1\)도 구별되지 않는다. 실수 신호에서 구별할 수 있는 진동수가 \(0\)부터 \(f_s/2 = 12\ \text{s}^{-1}\)까지인 이유다. 복소 신호(\(x\)와 \(y\)를 함께 본 것)는 \(-12\)부터 \(12\)까지, 폭 \(f_s\)만큼을 구별한다. 단위: 회전수와 \(f_s\)는 모두 \(\text{s}^{-1}\)이다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 250" role="img" aria-label="23 Hz로 도는 점의 x 좌표 cos(2π·23t)를 초당 24번 찍으면 표본이 1 Hz 코사인 위에 놓인다"><defs><clipPath id="f1505-clip"><rect x="46" y="18" width="420" height="182"/></clipPath></defs><line x1="46" y1="18" x2="46" y2="200" class="s-grid"/><line x1="130" y1="18" x2="130" y2="200" class="s-grid"/><line x1="214" y1="18" x2="214" y2="200" class="s-grid"/><line x1="298" y1="18" x2="298" y2="200" class="s-grid"/><line x1="382" y1="18" x2="382" y2="200" class="s-grid"/><line x1="466" y1="18" x2="466" y2="200" class="s-grid"/><line x1="46" y1="182.5" x2="466" y2="182.5" class="s-grid"/><line x1="46" y1="112.5" x2="466" y2="112.5" class="s-grid"/><line x1="46" y1="42.5" x2="466" y2="42.5" class="s-grid"/><text x="46" y="220" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="130" y="220" class="t-dim" style="font-size:14px" text-anchor="middle">0.1</text><text x="214" y="220" class="t-dim" style="font-size:14px" text-anchor="middle">0.2</text><text x="298" y="220" class="t-dim" style="font-size:14px" text-anchor="middle">0.3</text><text x="382" y="220" class="t-dim" style="font-size:14px" text-anchor="middle">0.4</text><text x="466" y="220" class="t-dim" style="font-size:14px" text-anchor="middle">0.5</text><text x="39" y="187.5" class="t-dim" style="font-size:14px" text-anchor="end">−1</text><text x="39" y="117.5" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="39" y="47.5" class="t-dim" style="font-size:14px" text-anchor="end">1</text><line x1="46" y1="112.5" x2="466" y2="112.5" class="s-line"/><path d="M46,42.5l1.8,3.3 2.4,14.2 9,97.6 2.4,17.7 2.4,7.1 1.8,-2.3 2.4,-13.1 9.6,-102.6 2.4,-16.4 2.4,-5.5 1.8,3.6 2.4,14.5 9,97.7 2.4,17.4 2.4,6.8 1.8,-2.7 2.4,-13.4 9.6,-102.7 2.4,-16.1 1.2,-4 1.2,-1.1 2.4,6.7 2.4,17.2 9,97.8 2.4,14.6 1.8,3.7 2.4,-5.4 2.4,-16.2 9.6,-102.7 2.4,-13.2 1.8,-2.4 1.8,4.1 2.4,15.2 9,97.8 2.4,16.8 1.8,5.6 1.2,0.1 1.2,-2.9 2.4,-14.1 9,-97.6 2.4,-17.8 2.4,-7.2 1.8,2.3 2.4,12.9 9.6,102.6 2.4,16.5 1.8,5.3 0.6,0.3 1.2,-1.6 2.4,-11.8 9.6,-102.2 2.4,-17.5 2.4,-6.9 1.8,2.6 2.4,13.3 9,97.3 2.4,18.4 1.8,7.2 1.2,1.2 1.2,-1.8 2.4,-12.1 9.6,-102.4 2.4,-17.2 2.4,-6.5 1.2,1.2 1.2,4.1 2.4,16.1 9.6,102.7 2.4,13.3 1.2,2.4 1.2,-0.5 1.8,-6.2 2.4,-17.5 9,-97.7 2.4,-14.4 1.8,-3.5 2.4,5.6 2.4,16.5 9.6,102.6 2.4,12.9 1.8,2.3 2.4,-7.2 2.4,-17.8 9,-97.6 2.4,-14.1 1.8,-3.2 1.8,3.4 2.4,14.3 9,97.6 2.4,17.6 2.4,7 1.8,-2.4 2.4,-13.2 9.6,-102.7 2.4,-16.2 2.4,-5.4 1.8,3.7 2.4,14.6 9,97.8 2.4,17.2 1.8,6.1 1.2,0.4 1.2,-2.6 2.4,-13.5 9.6,-102.8 2.4,-15.9 1.2,-3.9 1.2,-1.1 2.4,6.8 2.4,17.4 9.6,102.2 2.4,11.9 1.2,1.7 1.2,-1.3 1.8,-7.4 2.4,-18.6 9,-97.2 2.4,-13.1 1.8,-2.3 2.4,7.1 2.4,17.7 9,97.6 2.4,14.2 1.8,3.3" class="s-line" style="stroke:var(--text-dim);stroke-width:1.2"  clip-path="url(#f1505-clip)"/><path d="M46,42.5l26.2,1.3 26.3,4 27.3,6.8 28.4,9.6 24.1,9.9 26.3,12.1 114.4,58.1 28.4,12.4 26.2,9.7 24.2,7.2 23,4.9 23.1,3.1 22.1,0.9" class="s-acc2" style="stroke-width:2" stroke-dasharray="6 4" clip-path="url(#f1505-clip)"/><circle cx="46" cy="42.5" r="4.5" class="f-acc"/><circle cx="81" cy="44.9" r="4.5" class="f-acc"/><circle cx="116" cy="51.9" r="4.5" class="f-acc"/><circle cx="151" cy="63" r="4.5" class="f-acc"/><circle cx="186" cy="77.5" r="4.5" class="f-acc"/><circle cx="221" cy="94.4" r="4.5" class="f-acc"/><circle cx="256" cy="112.5" r="4.5" class="f-acc"/><circle cx="291" cy="130.6" r="4.5" class="f-acc"/><circle cx="326" cy="147.5" r="4.5" class="f-acc"/><circle cx="361" cy="162" r="4.5" class="f-acc"/><circle cx="396" cy="173.1" r="4.5" class="f-acc"/><circle cx="431" cy="180.1" r="4.5" class="f-acc"/><circle cx="466" cy="182.5" r="4.5" class="f-acc"/><text x="260.2" y="27.1" class="t-acc" style="font-size:14px" text-anchor="start">표본 (초당 24번)</text><text x="130" y="193.7" class="t-math acc2" style="font-size:15px" text-anchor="start">겉보기 1 Hz</text><text x="466" y="242" class="t-dim" style="font-size:14px" text-anchor="end">시간 t (s)</text></svg>
+      <figcaption><b>그림 15-5.</b> 진동수 23 Hz인 \(\cos(2\pi\cdot 23t)\)(회색 실선)를 초당 24번 찍은 표본(점). 표본은 모두 겉보기 진동수 1 Hz의 \(\cos(2\pi t)\)(파선) 위에 놓인다. 표본만으로는 두 신호를 구별할 수 없다. 23 Hz는 나이퀴스트 진동수 12 Hz보다 높기 때문이다.</figcaption>
+    </figure>
+    <div data-sim="fft" data-title="이산 푸리에 변환으로 본 스펙트럼" data-note="해볼 것: 이 실험은 표본화 진동수 f_s = 128 Hz로 N = 256개를 찍습니다. 기록 시간이 2 s이므로 진동수 분해능은 1/T_rec = 0.5 Hz, 나이퀴스트 진동수는 64 Hz입니다. 막대의 높이는 진폭 2|X_m|/N입니다. 잡음을 0으로 두고 성분 주파수를 10.0 Hz처럼 0.5 Hz의 정수배로 두면 성분이 한 칸에만 떨어집니다. 10.25 Hz처럼 정수배가 아닌 값으로 두면 기록 끝에서 신호가 이어지지 않아 에너지가 이웃 칸으로 번지는 스펙트럼 누설이 생깁니다. 한 창(Hann)을 켜면 먼 칸의 누설이 크게 줄어드는 대신 봉우리가 세 칸으로 넓어집니다. 정수배 주파수에서는 봉우리가 대략 절반 높이가 되고 양옆 칸에 원래 높이의 4분의 1씩이 생깁니다. 스펙트럼이 창의 변환과 합성곱되기 때문입니다."></div>
+    <div class="callout tip"><strong>스펙트럼을 읽을 때 확인할 세 가지</strong><p>측정한 스펙트럼에서 봉우리를 보면 (1) 분해능 \(1/T_{\text{rec}}\)보다 좁은 구조는 볼 수 없고, (2) \(\nu_N\)보다 높은 성분이 겹쳐 들어왔을 수 있으며, (3) 봉우리 옆의 넓은 날개는 신호가 아니라 누설일 수 있다. 첫째는 폭-대역폭 관계(기록 시간이 분해능을 정한다), 둘째는 표본화 정리, 셋째는 창 함수와의 합성곱이다. </p></div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>이 책의 변환 쌍은 공간 \(\tilde f(k) = \int f\,e^{-ikx}dx\), \(f = \int\frac{dk}{2\pi}\tilde f\,e^{ikx}\), 시간 \(\tilde f(\omega) = \int f\,e^{+i\omega t}dt\), \(f = \int\frac{d\omega}{2\pi}\tilde f\,e^{-i\omega t}\)이다. \(2\pi\)는 역변환에 붙는다. 주기 \(T\)인 급수에서 \(T \to \infty\)로 보낸 극한이고, 계수는 변환의 표본이다: \(F_n = \tilde p(n\omega)/T\).</li>
+      <li>다른 관례로는 \(\hat f_{\text{대칭}} = \tilde f/\sqrt{2\pi}\), \(g_{\text{보아스}} = \tilde f/2\pi\), 신호처리 \(X(\nu) = \tilde x(-2\pi\nu)\), 양자역학 \(\phi(p) = \tilde\psi(p/\hbar)/\sqrt{2\pi\hbar}\)로 바꾼다.</li>
+      <li>이동은 위상(\(f(x - a) \to e^{-ika}\tilde f\)), 변조는 이동(\(e^{ik_0x}f \to \tilde f(k - k_0)\)), 척도는 폭의 역수(\(f(ax) \to \tilde f(k/a)/\lvert a\rvert\)), 미분은 곱셈(\(d/dx \to ik\), \(d/dt \to -i\omega\))이다. 기본 쌍: \(e^{-x^2/2\sigma^2} \leftrightarrow \sqrt{2\pi}\sigma e^{-\sigma^2k^2/2}\), \(e^{-\gamma\lvert t\rvert} \leftrightarrow 2\gamma/(\gamma^2 + \omega^2)\), \(\Theta(t)e^{-\gamma t} \leftrightarrow 1/(\gamma - i\omega)\).</li>
+      <li>\(\int e^{ikx}dk = 2\pi\delta(x)\)는 수렴 인자를 넣은 델타 함수열의 극한이다. 그래서 \(\delta \leftrightarrow 1\), \(e^{-i\omega_0t} \leftrightarrow 2\pi\delta(\omega - \omega_0)\), 주기 신호는 선 스펙트럼 \(\sum 2\pi F_n\delta(\omega - n\omega_r)\)이다. 평면파는 \(\langle e_k|e_{k'}\rangle = 2\pi\delta(k - k')\)로 규격화된 완비 기저다.</li>
+      <li>합성곱 정리 \(\widetilde{f * g} = \tilde f\tilde g\), \(\widetilde{fg} = \tilde f * \tilde g/2\pi\)와 플랑슈렐 정리 \(\int\lvert f\rvert^2dx = \int\frac{dk}{2\pi}\lvert\tilde f\rvert^2\). 진동자의 응답 함수 \(\chi(\omega)\)는 충격 응답의 변환이자 \(H(-i\omega)\)이며, 펄스가 남기는 에너지는 \(\lvert\tilde F(\omega_0)\rvert^2/2m\)이다.</li>
+      <li>폭-대역폭 부등식 \(\sigma_x\sigma_k \ge \tfrac12\) (\(\sigma_t\sigma_\omega \ge \tfrac12\))은 코시-슈바르츠 부등식에서 나오고, 등호는 가우스 파속뿐이다. 가우스 펄스의 반치 전폭 곱은 \(0.441\), 로런츠 선은 \(\Delta\omega = 1/\tau\)이다.</li>
+      <li>3차원 변환은 \(\int d^3r\,e^{-i\mathbf k\cdot\mathbf r}\), 역변환 \(\int d^3k/(2\pi)^3\)이고 \(\nabla^2 \to -k^2\)이다. 구대칭이면 \(\tilde f = \frac{4\pi}{k}\int rf\sin kr\,dr\). 유카와 \(e^{-\mu r}/r \leftrightarrow 4\pi/(k^2 + \mu^2)\), 쿨롱 \(1/r \leftrightarrow 4\pi/k^2\).</li>
+      <li>프라운호퍼 회절의 진폭은 구멍의 변환 \(\tilde A(k_0\sin\theta)\)이다. DFT \(X_m = \sum x_ne^{-2\pi imn/N}\)은 \(\tilde x(\omega_m) \approx \Delta t\,X_{-m}\)이고, 분해능은 \(1/T_{\text{rec}}\), 나이퀴스트 진동수는 \(f_s/2\)이다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. 이 책의 관례에서 \(\delta(x - a)\)의 푸리에 변환은?</p><div class="opts">
+        <button class="opt">\(e^{ika}\)</button>
+        <button class="opt" data-correct>\(e^{-ika}\)</button>
+        <button class="opt">\(e^{-ika}/2\pi\)</button>
+        <button class="opt">\(2\pi\delta(k - a)\)</button>
+      </div><div class="quiz-exp">거르기 성질로 \(\int\delta(x - a)e^{-ikx}dx = e^{-ika}\)이다. 이 책은 순변환에 상수를 붙이지 않으므로 \(1/2\pi\)가 없다. 보아스의 관례라면 \(e^{-ika}/2\pi\)가 된다.</div></div>
+      <div class="quiz-q"><p>2. \(f(x)\)의 변환이 \(\tilde f(k)\)일 때 \(f(3x)\)의 변환은?</p><div class="opts">
+        <button class="opt">\(3\tilde f(3k)\)</button>
+        <button class="opt">\(\tilde f(3k)/3\)</button>
+        <button class="opt" data-correct>\(\tilde f(k/3)/3\)</button>
+        <button class="opt">\(3\tilde f(k/3)\)</button>
+      </div><div class="quiz-exp">식 <a class="ref" href="#eq-ft-scaling"></a>에서 \(a = 3\)이다. 함수를 3배 좁히면 스펙트럼은 3배 넓어지고(\(k/3\)), 넓이가 \(1/3\)로 줄어 높이도 \(1/3\)이 된다.</div></div>
+      <div class="quiz-q"><p>3. 주기 \(T\)인 신호 \(F(t) = \sum_nF_ne^{-in\omega_rt}\) (\(\omega_r = 2\pi/T\))의 시간 변환 \(\tilde F(\omega)\)는?</p><div class="opts">
+        <button class="opt">\(\sum_nF_n\,\delta(\omega - n\omega_r)\)</button>
+        <button class="opt" data-correct>\(\sum_n2\pi F_n\,\delta(\omega - n\omega_r)\)</button>
+        <button class="opt">\(\sum_n2\pi F_n\,\delta(\omega + n\omega_r)\)</button>
+        <button class="opt">\(T\sum_nF_n\,\delta(\omega - n\omega_r)\)</button>
+      </div><div class="quiz-exp">이 책의 시간 변환에서 \(e^{-in\omega_rt} \leftrightarrow \int e^{-in\omega_rt}e^{i\omega t}dt = 2\pi\delta(\omega - n\omega_r)\)이다. 지수가 \(e^{-i\omega t}\)이므로 양의 \(n\)이 양의 진동수에 놓인다(식 <a class="ref" href="#eq-line-spectrum"></a>).</div></div>
+      <div class="quiz-q"><p>4. 이 책의 관례로 파동함수 \(\psi(x)\)의 변환 \(\tilde\psi(k)\)를 알고 있다. 양자역학의 유니타리 관례 \(\phi(p) = \frac{1}{\sqrt{2\pi\hbar}}\int\psi\,e^{-ipx/\hbar}dx\)로 쓴 운동량 파동함수는?</p><div class="opts">
+        <button class="opt">\(\tilde\psi(p)/\sqrt{2\pi\hbar}\)</button>
+        <button class="opt">\(\tilde\psi(p/\hbar)/2\pi\hbar\)</button>
+        <button class="opt" data-correct>\(\tilde\psi(p/\hbar)/\sqrt{2\pi\hbar}\)</button>
+        <button class="opt">\(\sqrt{2\pi\hbar}\,\tilde\psi(\hbar p)\)</button>
+      </div><div class="quiz-exp">\(e^{-ipx/\hbar} = e^{-ikx}\) (\(k = p/\hbar\))이므로 적분은 \(\tilde\psi(p/\hbar)\)이고, 앞의 상수만 남는다(식 <a class="ref" href="#eq-ft-conventions"></a>). 이렇게 정하면 \(\int\lvert\phi\rvert^2dp = \int\lvert\psi\rvert^2dx\)이다.</div></div>
+      <div class="quiz-q"><p>5. 들뜬 상태의 수명이 \(\tau = 10\ \text{ns}\)인 원자가 내는 선의 자연 선폭(세기의 반치 전폭)을 진동수로 쓰면?</p><div class="opts">
+        <button class="opt">\(100\ \text{MHz}\)</button>
+        <button class="opt">\(50\ \text{MHz}\)</button>
+        <button class="opt" data-correct>\(16\ \text{MHz}\)</button>
+        <button class="opt">\(8\ \text{MHz}\)</button>
+      </div><div class="quiz-exp">식 <a class="ref" href="#eq-lorentzian-line"></a>에서 \(\Delta\omega = 1/\tau = 10^8\ \text{s}^{-1}\)이고 \(\Delta\nu = \Delta\omega/2\pi = 15.9\ \text{MHz}\)이다. \(2\pi\)를 빠뜨리면 100 MHz라는 틀린 답이 나온다.</div></div>
+      <div class="quiz-q"><p>6. 표본화 진동수 \(100\ \text{Hz}\)로 찍은 실수 신호에 \(70\ \text{Hz}\) 성분이 있다. 스펙트럼에서 이 성분은 어디에 보이는가?</p><div class="opts">
+        <button class="opt">\(70\ \text{Hz}\)</button>
+        <button class="opt" data-correct>\(30\ \text{Hz}\)</button>
+        <button class="opt">\(20\ \text{Hz}\)</button>
+        <button class="opt">보이지 않는다</button>
+      </div><div class="quiz-exp">나이퀴스트 진동수는 \(50\ \text{Hz}\)이다. \(70\ \text{Hz}\)는 \(\lvert 70 - 100\rvert = 30\ \text{Hz}\)로 겹쳐 보인다(식 <a class="ref" href="#eq-nyquist"></a>). 표본만으로는 30 Hz 성분과 구별할 수 없다.</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-ft-convention-convert" data-level="1"><p>어떤 교재의 변환표에 "\(e^{-\lvert x\rvert}\)의 변환은 \(\sqrt{2/\pi}\,/(1 + k^2)\)"이라고 적혀 있다. (가) 이 교재는 어느 관례를 쓰는가? (나) 같은 함수의 변환을 이 책의 관례, 보아스의 관례, 진동수 관례(\(\int f(x)e^{-2\pi i\nu x}dx\))로 써라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>이 책의 관례로는 식 <a class="ref" href="#eq-lorentzian-ft"></a>에서 \(\mu = 1\)로 두어 \(\tilde f(k) = 2/(1 + k^2)\)이다. (가) \(2/(1 + k^2)\)를 \(\sqrt{2\pi}\)로 나누면 \(\sqrt{2/\pi}/(1 + k^2)\)이므로 대칭 관례다(라일리-홉슨-벤스). (나) 이 책: \(2/(1 + k^2)\). 보아스: \(2\pi\)로 나누어 \(1/\pi(1 + k^2)\). 진동수 관례: 지수가 \(e^{-ikx}\)에 \(k = 2\pi\nu\)를 넣은 것이므로 \(\tilde f(2\pi\nu) = 2/(1 + 4\pi^2\nu^2)\). 짝함수라 지수의 부호는 상관없다. 확인: 세 결과 모두 \(\nu\) 또는 \(k\)로 적분해 역변환의 상수를 곱하면 \(f(0) = 1\)이 된다. 예를 들어 이 책에서는 \(\int\frac{dk}{2\pi}\frac{2}{1 + k^2} = \frac{1}{\pi}\cdot\pi = 1\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-shifted-pulse" data-level="1"><p>시각 \(t_0\)을 중심으로 한 가우스 포락선에 반송파가 실린 펄스 \(f(t) = e^{-(t - t_0)^2/2\tau^2}e^{-i\omega_0t}\)의 시간 변환을 기본 성질만으로 구하라. \(\lvert\tilde f(\omega)\rvert\)이 \(t_0\)에 기대지 않음을 확인하고, 그 이유를 말로 설명하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(g(t) = e^{-t^2/2\tau^2}\)의 변환은 \(\tilde g = \sqrt{2\pi}\tau e^{-\tau^2\omega^2/2}\)이다(식 <a class="ref" href="#eq-gaussian-ft"></a>). 시간 이동 규칙으로 \(g(t - t_0) \leftrightarrow e^{i\omega t_0}\tilde g(\omega)\)이고, \(e^{-i\omega_0t}\)를 곱하면 \(\omega \to \omega - \omega_0\)이다(식 <a class="ref" href="#eq-ft-shift"></a>).</p>
+        <div class="formula">\[ \tilde f(\omega) = \sqrt{2\pi}\,\tau\,e^{-\tau^2(\omega - \omega_0)^2/2}\,e^{i(\omega - \omega_0)t_0} \]</div>
+        <p>두 규칙을 쓰는 순서를 바꾸어도 같다. 크기는 \(\sqrt{2\pi}\tau e^{-\tau^2(\omega - \omega_0)^2/2}\)로 \(t_0\)이 없다. 펄스를 언제 보내든 같은 진동수 성분으로 이루어지고, 늦게 보낸 효과는 진동수마다 위상이 \(\omega t_0\)씩 더 돈 것으로만 나타난다. 수치 적분(\(\tau = 1\), \(\omega_0 = 3\), \(t_0 = 2\), \(\omega = 2\))으로도 \(\tilde f = -0.6327 - 1.3824i\)로 이 식과 일치한다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-triangle-plancherel" data-level="2"><p>\(\Pi(x)\)를 \(\lvert x\rvert &lt; \tfrac12\)에서 1, 밖에서 0인 함수라 하자. (가) \(\Pi * \Pi\)가 삼각 함수 \(\Lambda(x) = \max(1 - \lvert x\rvert, 0)\)임을 보여라. (나) 합성곱 정리로 \(\tilde\Lambda(k)\)를 구하라. (다) 플랑슈렐 정리를 \(\Pi\)와 \(\Lambda\)에 써서 \(\int_{-\infty}^{\infty}\frac{\sin^2u}{u^2}du\)와 \(\int_{-\infty}^{\infty}\frac{\sin^4u}{u^4}du\)를 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \((\Pi * \Pi)(x) = \int\Pi(x')\Pi(x - x')\,dx'\)은 두 구간 \((-\tfrac12, \tfrac12)\)과 \((x - \tfrac12, x + \tfrac12)\)이 겹치는 길이다. \(0 \le x \le 1\)이면 겹침은 \((x - \tfrac12, \tfrac12)\)이고 길이 \(1 - x\)이다. 짝함수이고 \(\lvert x\rvert > 1\)이면 겹치지 않으므로 \(\Lambda(x)\)이다.</p>
+        <p>(나) \(\tilde\Pi(k) = \sin(k/2)/(k/2)\)이므로 \(\tilde\Lambda(k) = \big[\sin(k/2)/(k/2)\big]^2\)이다. 직접 적분해도 \(\int_{-1}^{1}(1 - \lvert x\rvert)\cos kx\,dx = 2(1 - \cos k)/k^2 = 4\sin^2(k/2)/k^2\)로 같다.</p>
+        <p>(다) \(\int\lvert\Pi\rvert^2dx = 1 = \int\frac{dk}{2\pi}\frac{\sin^2(k/2)}{(k/2)^2}\)에서 \(u = k/2\), \(dk = 2du\)로 바꾸면 \(\frac1\pi\int\frac{\sin^2u}{u^2}du = 1\), 곧 \(\int\frac{\sin^2u}{u^2}du = \pi\)이다. \(\int\Lambda^2dx = 2\int_0^1(1 - x)^2dx = \tfrac23\)이므로 같은 치환으로 \(\frac1\pi\int\frac{\sin^4u}{u^4}du = \frac23\), 곧 \(\int\frac{\sin^4u}{u^4}du = \frac{2\pi}{3}\)이다. 수치 적분으로 \(3.1416\)과 \(2.0944\)를 확인했다. 원시 함수 없이 플랑슈렐 정리만으로 얻은 값이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-elastic-string-load" data-level="2"><p>장력 \(T\)인 긴 줄이 탄성 기초 위에 놓여 있어서, 줄이 \(y\)만큼 처지면 단위 길이당 \(\kappa y\)의 복원력을 받는다. 원점에 무게 \(P\)를 매달면 처짐은 \(Ty'' - \kappa y = -P\delta(x)\)를 따른다. (가) 공간 변환으로 \(y(x)\)를 구하라. (나) \(T = 100\ \text{N}\), \(\kappa = 1.0 \times 10^4\ \text{N/m}^2\), \(P = 2.0\ \text{N}\)일 때 최대 처짐과, 처짐이 \(1/e\)로 주는 거리를 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(y'' \to -k^2\tilde y\)이므로 \(-(Tk^2 + \kappa)\tilde y = -P\), 곧 \(\tilde y = \frac{P/T}{k^2 + \mu^2}\) (\(\mu = \sqrt{\kappa/T}\))이다. 식 <a class="ref" href="#eq-lorentzian-ft"></a>의 공간판 \(e^{-\mu\lvert x\rvert} \leftrightarrow 2\mu/(k^2 + \mu^2)\)을 거꾸로 읽으면</p>
+        <div class="formula">\[ y(x) = \frac{P}{2T\mu}\,e^{-\mu\lvert x\rvert} = \frac{P}{2\sqrt{\kappa T}}\,e^{-\mu\lvert x\rvert} \]</div>
+        <p>이다. 확인: 원점 왼쪽에서 기울기는 \(+P/2T\), 오른쪽에서 \(-P/2T\)이므로 \(\Delta y' = -P/T\), 곧 \(T\,\Delta y' = -P\)이다. 이것은 방정식을 원점 둘레에서 적분한 것과 같다. 20장은 이런 해를 <a href="ch20.html#def-green-function">그린 함수</a>라 부른다.</p>
+        <p>(나) \(\mu = \sqrt{10^4/100} = 10\ \text{m}^{-1}\)이므로 처짐은 \(10\ \text{cm}\)마다 \(1/e\)로 준다. 최대 처짐은 \(P/2\sqrt{\kappa T} = 2.0/(2 \times 1000)\ \text{m} = 1.0\ \text{mm}\)이다. 차원: \(\sqrt{\kappa T}\)는 \(\sqrt{\text{N}^2/\text{m}^2} = \text{N/m}\)이므로 \(P/\sqrt{\kappa T}\)는 길이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-voigt-widths" data-level="2"><p>넓이가 1이고 반치 전폭이 \(\Gamma\)인 로런츠 함수를 \(L_\Gamma(\omega) = \frac1\pi\frac{\Gamma/2}{\omega^2 + \Gamma^2/4}\)로 쓴다. (가) \(L_\Gamma\)가 \(e^{-\Gamma\lvert t\rvert/2}/2\pi\)의 시간 변환임을 보이고, 합성곱 정리로 \(L_{\Gamma_1} * L_{\Gamma_2} = L_{\Gamma_1 + \Gamma_2}\)임을 보여라. (나) 자연 선폭 \(9.8\ \text{MHz}\)인 나트륨 선이 기체 속 충돌로 반치 전폭 \(20\ \text{MHz}\)의 로런츠 넓어짐을 더 받는다. 전체 선폭은? (다) \(500\ \text{K}\)의 나트륨 증기에서 도플러 넓어짐은 가우스 모양이고 표준편차가 \(\sigma_\nu = \nu_0\sqrt{k_BT/mc^2}\)이다(\(m = 22.99\ \text{u}\), \(\nu_0 = 508.8\ \text{THz}\)). 그 반치 전폭을 구하고 (나)와 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 식 <a class="ref" href="#eq-lorentzian-ft"></a>에서 \(\gamma = \Gamma/2\)이면 \(e^{-\Gamma\lvert t\rvert/2} \leftrightarrow \Gamma/(\omega^2 + \Gamma^2/4)\)이므로, \(2\pi\)로 나누면 \(L_\Gamma\)이다. 곱의 변환 규칙(식 <a class="ref" href="#eq-convolution-theorem"></a>의 둘째 줄) \(\widetilde{fg} = \tilde f * \tilde g/2\pi\)에 \(f = e^{-\Gamma_1\lvert t\rvert/2}/2\pi\), \(g = e^{-\Gamma_2\lvert t\rvert/2}/2\pi\)를 넣으면 \(L_{\Gamma_1} * L_{\Gamma_2} = 2\pi\,\widetilde{fg}\)이다. \(fg = e^{-(\Gamma_1 + \Gamma_2)\lvert t\rvert/2}/(2\pi)^2\)이므로 \(2\pi\,\widetilde{fg} = L_{\Gamma_1 + \Gamma_2}\)이다. 서로 독립인 감쇠 과정은 시간에서 곱해지고, 선폭은 그냥 더해진다.</p>
+        <p>(나) \(9.8 + 20 = 29.8\ \text{MHz}\)이다. 가우스 함수처럼 제곱해서 더하는 것이 아니다.</p>
+        <p>(다) \(mc^2 = 22.99 \times 931.494\ \text{MeV} = 2.142 \times 10^{10}\ \text{eV}\), \(k_BT = 0.0431\ \text{eV}\)이므로 \(\sqrt{k_BT/mc^2} = 1.42 \times 10^{-6}\)이고 \(\sigma_\nu = 722\ \text{MHz}\)이다. 반치 전폭은 \(2\sqrt{2\ln2}\,\sigma_\nu = 1.70\ \text{GHz}\)로, 로런츠 폭의 약 57배다. 실제 선 모양은 둘의 합성곱(<span class="term">포크트 함수</span> <span class="en">(Voigt profile)</span>)인데, 가운데는 도플러 가우스 함수가 정하고 먼 날개만 로런츠 함수의 \(1/\omega^2\) 꼬리가 정한다. 가우스 함수는 \(e^{-\omega^2}\)로 빨리 사라지기 때문이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-width-exponential" data-level="2"><p>\(f(x) = e^{-\lvert x\rvert}\)의 \(\sigma_x\)와 \(\sigma_k\)를 구하고 폭-대역폭 부등식을 확인하라. \(\sigma_k\)는 식 <a class="ref" href="#eq-width-k-derivative"></a>으로 \(x\) 공간에서 구한 뒤, \(\tilde f\)로 직접 계산해 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(N = \int e^{-2\lvert x\rvert}dx = 1\)이다. \(\sigma_x^2 = \int x^2e^{-2\lvert x\rvert}dx = 2\cdot\frac{2!}{2^3} = \frac12\)이다. \(f' = -\operatorname{sgn}(x)\,e^{-\lvert x\rvert}\)이므로 \(\lvert f'\rvert^2 = e^{-2\lvert x\rvert}\)이고 \(\sigma_k^2 = 1\)이다. 따라서 \(\sigma_x\sigma_k = 1/\sqrt2 = 0.707 > \tfrac12\)이다. \(k\) 공간에서는 \(\tilde f = 2/(1 + k^2)\)이고 \(\int\frac{dk}{2\pi}\frac{4k^2}{(1 + k^2)^2}\)을 계산해야 한다. \(k = \tan\phi\)로 치환하면 \(\frac{4}{2\pi}\int_{-\pi/2}^{\pi/2}\sin^2\phi\,d\phi = \frac{4}{2\pi}\cdot\frac\pi2 = 1\)로 같다. \(f\)는 원점에서 꺾이지만 불연속은 아니라서 \(f'\)이 유계이고 \(\sigma_k\)가 유한하다. 곱이 가우스 함수의 \(\tfrac12\)보다 41% 크다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-pulse-dispersion" data-level="3"><p>유리 속을 지나는 빛 펄스를 생각한다. 각진동수 \(\omega = \omega_0 + \Omega\)인 성분은 거리 \(z\)를 가는 동안 위상 \(e^{ik(\omega)z}\)를 얻고, \(k(\omega) \approx k_0 + k_1\Omega + \tfrac12k_2\Omega^2\)이다. 입사 펄스의 포락선이 \(A(0, t) = e^{-t^2/2\tau_0^2}\)이면, \(s = t - k_1z\)로 쓴 포락선은 \(A(z, s) = \int\frac{d\Omega}{2\pi}\tilde A(\Omega)\,e^{ik_2z\Omega^2/2}e^{-i\Omega s}\)이다. (가) \(\lvert A(z, s)\rvert\)이 폭 \(\tau(z) = \tau_0\sqrt{1 + (k_2z/\tau_0^2)^2}\)인 가우스 함수임을 보여라. (나) 세기의 반치 전폭이 10 fs인 펄스(\(\tau_0 = 6.0\ \text{fs}\))가 \(k_2 = 36\ \text{fs}^2/\text{mm}\)인 유리를 \(1\ \text{mm}\)와 \(10\ \text{mm}\) 지난 뒤의 반치 전폭을 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\tilde A(\Omega) = \sqrt{2\pi}\tau_0e^{-\tau_0^2\Omega^2/2}\)이므로 피적분 함수의 \(\Omega^2\) 항은 \(e^{-(\tau_0^2 - ik_2z)\Omega^2/2}\)이다. 식 <a class="ref" href="#eq-gaussian-ft"></a>는 \(\sigma^2\)이 실수부가 양인 복소수여도 성립한다(양변이 \(\sigma^2\)의 해석 함수이기 때문이다. 경로를 옮기는 계산은 <a href="ch19.html#ex-gaussian-contour-shift">19장 예제 19.2</a>). \(\sigma^2 = \tau_0^2 - ik_2z\)로 두고 역변환하면</p>
+        <div class="formula">\[ \begin{aligned} A(z, s) &= \frac{\tau_0}{\sqrt{\tau_0^2 - ik_2z}} \\ &\quad\times\exp\Big[-\frac{s^2}{2(\tau_0^2 - ik_2z)}\Big] \end{aligned} \]</div>
+        <p>이다. 크기는 \(\exp[-s^2\operatorname{Re}\frac{1}{2(\tau_0^2 - ik_2z)}] = \exp[-\frac{s^2\tau_0^2}{2(\tau_0^4 + k_2^2z^2)}]\)이므로 폭이 \(\tau(z)^2 = (\tau_0^4 + k_2^2z^2)/\tau_0^2\)인 가우스 함수다. 스펙트럼 \(\lvert\tilde A\rvert\)은 그대로인데 펄스가 길어졌다. 진동수마다 위상이 \(\Omega^2\)로 달라져(<span class="term">처프</span> <span class="en">(chirp)</span>) 폭-대역폭 부등식의 등호에서 멀어진 것이다. 수치 적분으로 \(z = 1\ \text{mm}\), \(s = \tau(z)\)에서 \(\lvert A\rvert/\lvert A(z, 0)\rvert = e^{-1/2}\)을 확인했다.</p>
+        <p>(나) \(\tau_0^2 = 36\ \text{fs}^2\)이므로 \(k_2z/\tau_0^2\)은 \(z = 1\ \text{mm}\)에서 1, \(10\ \text{mm}\)에서 10이다. 반치 전폭은 \(\tau\)에 비례하므로 \(10\ \text{fs}\times\sqrt2 = 14\ \text{fs}\)와 \(10\ \text{fs}\times\sqrt{101} = 100\ \text{fs}\)이다. 1 cm의 유리가 10 fs 펄스를 열 배로 늘인다. 단위: \(k_2z\)는 \(\text{fs}^2\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-hydrogen-form-factor" data-level="2"><p>수소 원자 바닥 상태의 전자 밀도는 \(\rho(r) = e^{-2r/a_0}/\pi a_0^3\)이다(넓이 1). (가) 유카와 변환 식 <a class="ref" href="#eq-yukawa-ft"></a>을 \(\mu\)로 미분해 \(\int e^{-\mu r}e^{-i\mathbf k\cdot\mathbf r}d^3r\)을 구하고, 이것으로 \(\tilde\rho(k)\)를 구하라. (나) 작은 \(k\)에서 전개해 식 <a class="ref" href="#eq-radial-small-k"></a>과 비교하고 \(\langle r^2\rangle\)을 읽어라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(e^{-\mu r} = -\frac{\partial}{\partial\mu}\frac{e^{-\mu r}}{r}\)이므로 변환은 \(-\frac{\partial}{\partial\mu}\frac{4\pi}{k^2 + \mu^2} = \frac{8\pi\mu}{(k^2 + \mu^2)^2}\)이다. \(\mu = 2/a_0\)을 넣고 \(1/\pi a_0^3\)을 곱하면</p>
+        <div class="formula">\[ \begin{aligned} \tilde\rho(k) &= \frac{1}{\pi a_0^3}\,\frac{16\pi/a_0}{(k^2 + 4/a_0^2)^2} \\ &= \frac{1}{(1 + k^2a_0^2/4)^2} \end{aligned} \]</div>
+        <p>이다. \(k = 0\)에서 1(전체 넓이)이고, \(k \gg 2/a_0\)이면 \(16/k^4a_0^4\)로 준다. 수치 적분(\(ka_0 = 0.5, 2\))으로 \(0.8858\), \(0.2500\)을 확인했다.</p>
+        <p>(나) \(\tilde\rho \approx 1 - k^2a_0^2/2\)이다. 식 <a class="ref" href="#eq-radial-small-k"></a>의 \(1 - k^2\langle r^2\rangle/6\)과 비교하면 \(\langle r^2\rangle = 3a_0^2\)이다. 직접 계산 \(\int r^2\rho\,d^3r = \frac{4}{a_0^3}\int_0^\infty r^4e^{-2r/a_0}dr = \frac{4}{a_0^3}\cdot\frac{4!\,a_0^5}{32} = 3a_0^2\)과 같다. 전자 산란에서 원자의 이 \(\tilde\rho\)를 <span class="term">형태 인자</span> <span class="en">(form factor)</span>라 한다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-missing-orders" data-level="1"><p>폭 \(a = 20\ \mu\text{m}\)인 슬릿 두 개가 중심 사이 \(d = 80\ \mu\text{m}\)로 떨어져 있고, \(\lambda = 633\ \text{nm}\)인 레이저를 비춘다. 스크린은 \(2.0\ \text{m}\)에 있다. 무늬 간격, 포락선의 첫 영점, 빠지는 차수, 가운데 띠 안의 밝은 무늬 개수를 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>식 <a class="ref" href="#eq-double-slit-intensity"></a>에서 밝은 무늬는 \(d\sin\theta = m\lambda\)이므로 간격은 \(\lambda L/d = 633\ \text{nm} \times 2.0\ \text{m}/80\ \mu\text{m} = 15.8\ \text{mm}\)이다. 포락선의 첫 영점은 \(\lambda L/a = 63.3\ \text{mm}\)이다. \(d/a = 4\)이므로 \(m = \pm4, \pm8, \ldots\)인 밝은 무늬가 포락선의 영점과 겹쳐 빠진다. 가운데 띠(\(\lvert y\rvert &lt; 63.3\ \text{mm}\)) 안에는 \(m = -3, \ldots, 3\)의 7개가 있다. 이중 슬릿 실험에서 \(\lambda = 633\ \text{nm}\), \(d = 80\ \mu\text{m}\), \(a = 20\ \mu\text{m}\), \(L = 2.0\ \text{m}\)으로 두면 판독값 '포락선 안 밝은 무늬'도 7이다. \(d/a\)가 정수이면 영점에 놓인 무늬를 빼므로 \(2(d/a) - 1\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-sampling-resolution" data-level="1"><p>진동 센서의 신호를 \(f_s = 1000\ \text{Hz}\)로 \(N = 400\)개 찍었다. (가) 기록 시간, 주파수 분해능, 나이퀴스트 진동수는? (나) 신호에 \(620\ \text{Hz}\) 성분이 있으면 스펙트럼의 어디에 보이는가? (다) \(150\ \text{Hz}\)와 \(151\ \text{Hz}\) 성분 가운데 스펙트럼 누설이 생기는 것은?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(T_{\text{rec}} = 400/1000 = 0.40\ \text{s}\), \(\Delta\nu = 1/T_{\text{rec}} = 2.5\ \text{Hz}\), \(\nu_N = 500\ \text{Hz}\)이다. (나) \(620\ \text{Hz} > \nu_N\)이므로 \(\lvert620 - 1000\rvert = 380\ \text{Hz}\)에 겹쳐 보인다. (다) \(150/2.5 = 60\)은 정수라 기록 안에 정확히 60주기가 들어가고 칸 하나에만 나타난다. \(151/2.5 = 60.4\)는 정수가 아니어서 주기 확장에 이음매가 생기고 이웃 칸으로 번진다. 두 성분을 가르려면 \(\Delta\nu &lt; 1\ \text{Hz}\), 곧 \(1\ \text{s}\) 이상 기록해야 한다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-poisson-coth" data-level="3"><p>푸아송 합 공식(식 <a class="ref" href="#eq-poisson-summation"></a>)을 공간 변수로 쓰면 \(\sum_{n}f(n) = \sum_m\tilde f(2\pi m)\)이다. (가) 이 꼴을 식 <a class="ref" href="#eq-poisson-summation"></a>에서 유도하라. (나) \(f(x) = 1/(x^2 + a^2)\) (\(a > 0\))에 써서 \(\sum_{n=-\infty}^{\infty}\frac{1}{n^2 + a^2} = \frac\pi a\coth\pi a\)를 보여라. (다) \(a \to 0\)의 전개로 \(\sum_{n\ge1}1/n^2\)을 얻어라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 식 <a class="ref" href="#eq-poisson-summation"></a>에서 \(T = 1\)로 두고 \(\omega \to -k\)로 바꾸면 \(\sum_me^{-ikm} = 2\pi\sum_n\delta(k - 2\pi n)\)이다(델타는 짝함수). 양변에 \(\tilde f(k)/2\pi\)를 곱해 \(k\)로 적분하면, 왼쪽은 역변환으로 \(\sum_mf(-m) = \sum_mf(m)\), 오른쪽은 \(\sum_n\tilde f(2\pi n)\)이다.</p>
+        <p>(나) 식 <a class="ref" href="#eq-lorentzian-ft"></a>의 공간판을 거꾸로 읽으면 \(1/(x^2 + a^2) \leftrightarrow (\pi/a)e^{-a\lvert k\rvert}\)이다(역변환 \(\int\frac{dk}{2\pi}\frac{\pi}{a}e^{-a\lvert k\rvert}e^{ikx} = \frac{1}{2a}\cdot\frac{2a}{a^2 + x^2}\)). 따라서</p>
+        <div class="formula">\[ \begin{aligned} \sum_n\frac{1}{n^2 + a^2} &= \frac\pi a\sum_me^{-2\pi a\lvert m\rvert} \\ &= \frac\pi a\,\frac{1 + e^{-2\pi a}}{1 - e^{-2\pi a}} = \frac\pi a\coth\pi a \end{aligned} \]</div>
+        <p>이다. 둘째 등호는 \(m \ge 1\)과 \(m \le -1\)의 기하급수 두 개에 \(m = 0\)을 더한 것이다. \(a = 1\)이면 \(3.15335\)이고 직접 더한 값과 맞는다.</p>
+        <p>(다) \(\coth u = 1/u + u/3 - u^3/45 + \cdots\)이므로 오른쪽은 \(1/a^2 + \pi^2/3 + O(a^2)\)이다. 왼쪽은 \(1/a^2 + 2\sum_{n\ge1}1/(n^2 + a^2)\)이므로 \(a \to 0\)에서 \(2\sum1/n^2 = \pi^2/3\), 곧 \(\sum_{n\ge1}1/n^2 = \pi^2/6\)이다. 14장 <a href="ch14.html#ex-basel-parseval">예제 14.7</a>에서 파르스발 정리로 얻은 값이 다른 길로 다시 나왔다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+</body>
+</html>
