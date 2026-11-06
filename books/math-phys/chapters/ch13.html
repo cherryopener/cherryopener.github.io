@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>13 베셀 함수와 직교 다항식 · 수리물리학</title>
+<meta name="description" content="원통·구면 좌표와 양자역학의 지름 방정식을 프로베니우스 방법으로 풀어 베셀·구면 베셀 함수, 에르미트·라게르 다항식을 얻고, 경계 조건이 고유값을 정하는 구조와 직교 다항식의 공통 성질을 유도한다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys" data-field="phys" data-chapter="ch13">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">13</span></div>
+    <h1 data-fill="chapter-title">베셀 함수와 직교 다항식</h1>
+    <p class="lead">12장에서는 구면 좌표의 각 부분을 풀어 르장드르 함수를 얻었다. 이 장에서는 나머지 자리에서 나오는 방정식을 같은 방법으로 푼다. 원통의 지름 방향에서는 베셀 함수가, 구의 지름 방향에서는 구면 베셀 함수가, 조화 진동자와 수소 원자에서는 에르미트 다항식과 라게르 다항식이 나온다. 함수는 넷이지만 줄거리는 하나다. 프로베니우스 급수로 해를 세우고, 원점과 무한대에서의 조건이 급수를 끊거나 영점을 골라 고유값을 정하며, 그렇게 고른 함수들은 가중 함수에 대해 서로 직교한다.</p>
+    <ul class="objectives">
+      <li>베셀 방정식을 프로베니우스 방법으로 풀어 \(J_\nu\)의 급수를 유도하고, 정수 차수에서 제2종 해 \(Y_n\)이 필요한 이유를 론스키안으로 설명하며, 한켈 함수와 변형 베셀 함수를 쓸 수 있다.</li>
+      <li>생성 함수에서 베셀 함수의 점화식을 유도하고, 작은 \(x\)와 큰 \(x\)의 꼴, 영점, 영점으로 만든 직교성으로 원통 공동과 원형 구멍의 회절을 계산할 수 있다.</li>
+      <li>구면 베셀 함수를 반정수 차수의 베셀 함수로 정의하고 초등 함수 꼴을 구해, 구형 우물 속 입자의 에너지 준위를 구할 수 있다.</li>
+      <li>조화 진동자와 수소 원자의 슈뢰딩거 방정식을 에르미트 방정식과 연관 라게르 방정식으로 바꾸고, 급수가 끊길 조건에서 에너지 양자화를 유도할 수 있다.</li>
+      <li>르장드르·에르미트·라게르 다항식의 로드리게스 공식, 직교성, 규격화, 세 항 점화식을 한 정리로 묶고, 교재마다 다른 관례를 서로 바꿔 쓸 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b>12장 (정칙 특이점, 결정 방정식, 푹스 정리, 르장드르 다항식의 생성 함수와 직교성 증명), 11장 (감마 함수, 반사 공식, 가우스 적분), 10장 (론스키안과 아벨 공식), 9장 (가중 함수가 있는 내적, 그람-슈미트 과정), 6장 (원통·구면 좌표의 라플라시안, 수소 원자의 지름 방정식). 슈뢰딩거 방정식은 학부 현대물리 수준이면 된다.</p>
+  </header>
+
+  <!-- ============================================================ 13.1 -->
+  <section id="s1">
+    <h2>베셀 방정식과 제1종 베셀 함수</h2>
+    <p>북의 가죽, 원통 도파관 속의 마이크로파, 망원경의 원형 구멍을 지나는 빛은 모두 원통 대칭인 파동이다. 이런 파동은 헬름홀츠 방정식 \(\nabla^2\psi + k^2\psi = 0\)을 만족한다(17장의 <a href="ch17.html#eq-helmholtz-equation">헬름홀츠 방정식</a>). 원통 좌표로 쓰면 지름 방향에 어떤 방정식이 남는지 보고, 그 방정식을 12장의 프로베니우스 방법으로 풀자.</p>
+
+    <h3 id="s1-origin">원통 좌표에서 나오는 방정식</h3>
+    <p>\(z\)에 무관한 파동을 생각하고 \(\psi = R(s)\,e^{im\phi}\)로 두자. 6장의 원통 좌표 라플라시안(<a href="ch06.html#eq-laplacian-cylindrical">식 (6.32)</a>)에 넣으면 \(\partial_\phi^2\)이 \(-m^2\)이 되어 \(\frac1s(sR')' - \frac{m^2}{s^2}R + k^2R = 0\)이 남는다. \(s^2\)을 곱하면</p>
+    <div class="formula" id="eq-cylindrical-radial">\[ s^2R'' + sR' + (k^2s^2 - m^2)R = 0 \]</div>
+    <p>이다. 한 바퀴 돌아 같은 점으로 오면 \(\psi\)가 같아야 하므로 \(e^{2\pi im} = 1\), 곧 \(m\)은 정수다. \(z\) 방향으로 \(e^{ik_zz}\)처럼 변하는 파동이면 \(k^2\)을 \(k^2 - k_z^2\)으로 바꾸면 된다. 이제 \(x = ks\)로 길이의 척도를 없애면 \(s\,d/ds = x\,d/dx\)이므로 식 <a class="ref" href="#eq-cylindrical-radial"></a>은 \(k\)가 사라진 꼴이 된다.</p>
+    <div class="box def" id="def-bessel-equation"><div class="box-h">베셀 방정식</div>
+      <p>실수 \(\nu \ge 0\)에 대해</p>
+      <div class="formula" id="eq-bessel-equation">\[ x^2y'' + xy' + (x^2 - \nu^2)\,y = 0 \]</div>
+      <p>을 \(\nu\)차 <span class="term">베셀 방정식</span> <span class="en">(Bessel's equation)</span>이라 한다. 원통 문제에서는 \(\nu = m\)이 정수이고, 구면 좌표(13.4절)에서는 \(\nu = l + \tfrac12\)인 반정수가 나온다.</p>
+    </div>
+    <p>표준형으로 쓰면 \(p = 1/x\), \(q = 1 - \nu^2/x^2\)이다. \(xp = 1\)과 \(x^2q = x^2 - \nu^2\)은 모든 \(x\)에서 해석적이므로 \(x = 0\)은 정칙 특이점이고(12장 <a href="ch12.html#def-regular-singular-point">정의 12.6</a>), 다른 특이점은 유한한 곳에 없다. 12장 끝에서 본 것처럼 \(p_0 = 1\), \(q_0 = -\nu^2\)이라 결정 방정식은 \(s^2 - \nu^2 = 0\)이고 지수는 \(\pm\nu\)다. 푹스 정리(12장 <a href="ch12.html#thm-frobenius">정리 12.9</a>)에 따라 프로베니우스 급수는 모든 \(x\)에서 수렴한다.</p>
+
+    <h3 id="s1-series">프로베니우스 급수</h3>
+    <p>\(y = \sum_n a_nx^{n+s}\)를 넣자. \(x^2y'' + xy' = \sum(n+s)^2a_nx^{n+s}\)이고 \(x^2y = \sum a_{n-2}x^{n+s}\)이므로, \(x^{n+s}\)의 계수를 모으면</p>
+    <div class="formula">\[ \big[(n + s)^2 - \nu^2\big]\,a_n = -a_{n-2} \]</div>
+    <p>이다(\(a_{-1} = a_{-2} = 0\)으로 둔다). 점화식이 두 칸씩 건너뛴다. \(s = \nu\)를 고르면 \((n + \nu)^2 - \nu^2 = n(n + 2\nu)\)이다. \(n = 1\)에서 \((1 + 2\nu)a_1 = 0\)이므로 \(a_1 = 0\)이고, 그래서 홀수 번째 계수가 모두 0이다. 짝수 번째는 \(n = 2k\)로 두면 \(a_{2k} = -a_{2k-2}/\big(4k(k + \nu)\big)\)이고, 이것을 \(k\)번 되풀이하면</p>
+    <div class="formula">\[ \begin{aligned} a_{2k} &= \frac{(-1)^k\,a_0}{4^kk!\,(\nu+1)(\nu+2)\cdots(\nu+k)} \\ &= \frac{(-1)^k\,\Gamma(\nu+1)\,a_0}{4^kk!\,\Gamma(\nu+k+1)} \end{aligned} \]</div>
+    <p>이다. 둘째 줄에서 11장의 \(\Gamma(z+1) = z\Gamma(z)\)(<a href="ch11.html#eq-gamma-recursion">식 (11.9)</a>)를 \(k\)번 썼다. 남은 상수 \(a_0\)을 \(1/\big(2^\nu\Gamma(\nu+1)\big)\)로 정하면 \(\Gamma(\nu+1)\)이 지워지고 \(x^\nu\)과 \(4^k\)이 \((x/2)^{2k+\nu}\)로 묶인다.</p>
+    <div class="box def" id="def-bessel-j"><div class="box-h">제1종 베셀 함수</div>
+      <p>다음 급수가 정하는 함수를 \(\nu\)차 <span class="term">제1종 베셀 함수</span> <span class="en">(Bessel function of the first kind)</span>라 한다.</p>
+      <div class="formula" id="eq-bessel-series">\[ J_\nu(x) = \sum_{k=0}^{\infty}\frac{(-1)^k}{k!\,\Gamma(k+\nu+1)}\Big(\frac{x}{2}\Big)^{2k+\nu} \]</div>
+      <p>이웃한 항의 비 \(x^2/\big(4(k+1)(k+\nu+1)\big)\)이 \(k \to \infty\)에서 0으로 가므로, 비 판정법에 따라 모든 \(x\)에서 수렴한다.</p>
+    </div>
+    <p>처음 몇 항을 쓰면 다음과 같다.</p>
+    <div class="formula" id="eq-bessel-j0-j1">\[ \begin{aligned} J_0(x) &= 1 - \frac{x^2}{4} + \frac{x^4}{64} - \frac{x^6}{2304} + \cdots \\ J_1(x) &= \frac x2 - \frac{x^3}{16} + \frac{x^5}{384} - \cdots \end{aligned} \]</div>
+    <p>\(J_0\)만 \(x = 0\)에서 1이고, \(\nu > 0\)이면 \(J_\nu\)은 \(x^\nu\)처럼 0에서 출발한다. 항을 하나씩 미분하면 \(J_0' = -J_1\)도 바로 보인다. \(\frac{d}{dx}\frac{(-1)^k(x/2)^{2k}}{(k!)^2} = \frac{(-1)^k(x/2)^{2k-1}}{(k-1)!\,k!}\)이고, \(k - 1 = j\)로 바꾸면 이것은 \(J_1\)의 \(j\)번째 항에 \(-1\)을 곱한 것이다. \(a_0\)을 이렇게 정한 이유는 13.3절에서 드러난다. 점화식과 생성 함수가 가장 간단해지고, 큰 \(x\)에서의 진폭이 \(\nu\)에 무관한 \(\sqrt{2/\pi x}\)가 된다.</p>
+
+    <h3 id="s1-negative">음의 차수와 정수 차수</h3>
+    <p>다른 지수 \(s = -\nu\)를 고르면 점화식은 \(n(n - 2\nu)a_n = -a_{n-2}\)이고, 결과는 식 <a class="ref" href="#eq-bessel-series"></a>에서 \(\nu\)를 \(-\nu\)로 바꾼 \(J_{-\nu}\)이다. \(\nu\)가 정수가 아니면 \(\Gamma(k - \nu + 1)\)이 모두 유한하고, \(J_{-\nu}\)은 \(x^{-\nu}\)으로 시작해 원점에서 발산하므로 \(J_\nu\)과 선형 독립이다. \(\nu\)가 반정수이면 \(n = 2\nu\)가 홀수라 \(n(n - 2\nu) = 0\)이 되는 단계가 홀수 번째 계수에서 생긴다. 그 단계의 오른쪽 \(-a_{n-2}\)도 0이라 모순이 없고 \(a_{2\nu}\)가 자유로워질 뿐인데, 그 자유는 \(J_\nu\)의 상수배를 더하는 것이고 0으로 두면 \(J_{-\nu}\)다. 12장 끝에서 말한 "반정수이면 로그가 붙지 않는다(\(C = 0\))"가 이것이다. 문제는 \(\nu\)가 정수일 때다.</p>
+    <div class="box thm" id="thm-bessel-integer-order"><div class="box-h">정수 차수의 \(J_{-n}\)</div>
+      <p>\(n\)이 양의 정수이면</p>
+      <div class="formula" id="eq-bessel-neg-integer">\[ J_{-n}(x) = (-1)^n J_n(x) \]</div>
+      <p>이다. 따라서 정수 차수에서 \(J_{-n}\)은 새 해가 아니다.</p>
+      <p><b>증명.</b> \(J_{-n}\)의 급수에서 \(k &lt; n\)인 항은 \(\Gamma(k - n + 1)\)의 인수가 0 이하의 정수라 감마 함수가 극을 갖는다(<a href="ch11.html#eq-gamma-poles">식 (11.14)</a>). 그래서 \(1/\Gamma\)가 0이 되어 그 항이 사라진다. 남은 항에서 \(k = j + n\)으로 바꾸면</p>
+      <div class="formula">\[ \begin{aligned} J_{-n}(x) &= \sum_{j=0}^\infty\frac{(-1)^{j+n}}{(j+n)!\,j!}\Big(\frac x2\Big)^{2j+n} \\ &= (-1)^nJ_n(x) \end{aligned} \]</div>
+      <p>이다. \(\square\)</p>
+    </div>
+    <p>결정 방정식의 두 근 \(\pm n\)의 차 \(2n\)이 정수라서 생긴 일이다. 원통 문제의 \(m\)은 언제나 정수이므로, 두 번째 해는 다른 방법으로 만들어야 한다(13.2절). 그 전에, 첫 번째 해만으로 풀리는 물리 문제를 하나 보자.</p>
+
+    <div class="box ex" id="ex-cylindrical-cavity"><div class="box-h">원통 공동의 가장 낮은 공진 진동수</div>
+      <p>반지름 \(a = 5.00\ \text{cm}\)인 금속 원통 공동 안에, 전기장이 축 방향 성분 \(E_z(s)\,e^{-i\omega t}\)만 갖고 \(\phi\)와 \(z\)에 무관한 모드가 있다. 도체 벽에서는 전기장의 접선 성분이 0이어야 한다. 이 모드의 가장 낮은 공진 진동수를 구하라. \(J_0\)의 첫 영점은 급수와 뉴턴 방법으로 구하라.</p>
+      <p><b>풀이.</b> 진공의 파동 방정식 \(\nabla^2E_z = c^{-2}\partial_t^2E_z\)에 \(e^{-i\omega t}\)를 넣으면 \(k = \omega/c\)인 헬름홀츠 방정식이 된다. \(m = 0\)이므로 지름 부분은 0차 베셀 방정식이고, 축(\(s = 0\))에서 유한한 해는 \(E_z = E_0J_0(ks)\)이다(다른 해는 13.2절에서 보듯 축에서 로그로 발산한다). 벽 \(s = a\)에서 \(E_z\)는 접선 성분이므로 \(J_0(ka) = 0\)이어야 한다. 가장 낮은 진동수는 첫 영점 \(\alpha_{01}\)에서 나온다.</p>
+      <p>\(J_0' = -J_1\)이므로 뉴턴 방법은 \(x \to x + J_0(x)/J_1(x)\)이다. 식 <a class="ref" href="#eq-bessel-j0-j1"></a>의 급수를 \(x = 2.4\)에서 계산하면 \((x/2)^{2k}/(k!)^2\)의 항이 \(1,\ -1.44,\ 0.5184,\ -0.0829,\ 0.0075,\ -0.0004, \ldots\)로 빠르게 줄어 \(J_0(2.4) = 0.00251\)이고, 같은 방법으로 \(J_1(2.4) = 0.5202\)이다. 한 걸음에</p>
+      <div class="formula">\[ \alpha_{01} \approx 2.4 + \frac{0.00251}{0.5202} = 2.40482 \]</div>
+      <p>이고, 한 번 더 하면 일곱째 자리만 바뀌어 \(\alpha_{01} = 2.404826\)이다. 따라서 \(\omega = c\,\alpha_{01}/a\)이다.</p>
+      <p><b>숫자로 보기.</b></p>
+      <div class="formula">\[ \begin{aligned} f &= \frac{c\,\alpha_{01}}{2\pi a} \\ &= \frac{(2.998 \times 10^8\ \text{m/s})(2.4048)}{2\pi\,(0.0500\ \text{m})} \\ &= 2.295 \times 10^9\ \text{Hz} \end{aligned} \]</div>
+      <p>이다. 단위는 \((\text{m/s})/\text{m} = \text{s}^{-1}\)이다. 이 모드의 진동수는 공동의 길이와 무관하다. 장이 \(z\)에 따라 변하지 않기 때문이다. 반지름을 키우면 진동수는 \(1/a\)로 줄어든다. \(ka = 2.405\)를 파장으로 쓰면 지름이 \(2a = 2(2.405)\lambda/2\pi = 0.766\lambda\)이다. 폭 \(L\)인 1차원 상자의 가장 낮은 모드(\(L = 0.5\lambda\))보다 크기가 커야 하는데, 장이 원 둘레 전체에서 0이 되어야 하기 때문이다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 13.2 -->
+  <section id="s2">
+    <h2>제2종 베셀 함수와 한켈 함수</h2>
+    <p>동축 케이블처럼 축이 영역 밖에 있는 문제나, 축에서 멀리 퍼져 나가는 파동을 다루려면 \(J_m\) 말고 두 번째 해가 필요하다. 정수 \(m\)에서는 \(J_{-m}\)이 그 역할을 못 하므로, 먼저 두 해가 독립인지 재는 도구를 마련한다.</p>
+
+    <h3 id="s2-wronskian">론스키안으로 독립성 재기</h3>
+    <p>10장의 아벨 공식(<a href="ch10.html#eq-abel-formula">식 (10.12)</a>)에 \(p = 1/x\)을 넣으면, 베셀 방정식의 어떤 두 해든 론스키안이 \(W(x) = C\,e^{-\ln x} = C/x\)이다. 상수 \(C\)만 구하면 된다. \(W\)가 정확히 \(C/x\)이므로 \(C\)는 \(x \to 0\)에서 첫 항만으로 구해도 정확하다. \(J_{\pm\nu} \approx (x/2)^{\pm\nu}/\Gamma(1 \pm \nu)\)이므로</p>
+    <div class="formula">\[ \begin{aligned} W[J_\nu, J_{-\nu}] &= J_\nu J_{-\nu}' - J_\nu'J_{-\nu} \\ &\approx \frac{-\nu - \nu}{x\,\Gamma(1+\nu)\Gamma(1-\nu)} \end{aligned} \]</div>
+    <p>이다. \(\Gamma(1+\nu) = \nu\Gamma(\nu)\)과 11장의 반사 공식 \(\Gamma(\nu)\Gamma(1-\nu) = \pi/\sin\nu\pi\)(<a href="ch11.html#eq-gamma-reflection">식 (11.15)</a>)를 쓰면 분모는 \(x\,\nu\pi/\sin\nu\pi\)이다.</p>
+    <div class="box thm" id="thm-bessel-wronskian"><div class="box-h">\(J_\nu\)과 \(J_{-\nu}\)의 론스키안</div>
+      <div class="formula" id="eq-bessel-wronskian-jj">\[ W[J_\nu, J_{-\nu}](x) = -\frac{2\sin\nu\pi}{\pi x} \]</div>
+      <p>따라서 \(J_\nu\)과 \(J_{-\nu}\)은 \(\nu\)가 정수가 아닐 때 선형 독립이고, 정수일 때 종속이다(10장 <a href="ch10.html#thm-wronskian-independence">정리 10.2</a>).</p>
+    </div>
+
+    <h3 id="s2-neumann">제2종 베셀 함수</h3>
+    <p>정수에서 0이 되는 \(\sin\nu\pi\)로 나누어 주면, 정수에서도 독립성을 잃지 않는 조합을 만들 수 있다.</p>
+    <div class="box def" id="def-bessel-y"><div class="box-h">제2종 베셀 함수</div>
+      <p>정수가 아닌 \(\nu\)에 대해</p>
+      <div class="formula" id="eq-bessel-y">\[ Y_\nu(x) = \frac{J_\nu(x)\cos\nu\pi - J_{-\nu}(x)}{\sin\nu\pi} \]</div>
+      <p>로 정하고, 정수 \(n\)에서는 \(Y_n = \lim_{\nu \to n}Y_\nu\)로 정한다. 이것을 \(\nu\)차 <span class="term">제2종 베셀 함수</span> <span class="en">(Bessel function of the second kind)</span> 또는 노이만 함수 \(N_\nu\)라 한다.</p>
+    </div>
+    <p>\(\nu \to n\)이면 분자가 \((-1)^nJ_n - J_{-n} = 0\)으로, 분모가 0으로 가므로 \(0/0\) 꼴이고 극한은 유한하다. 론스키안은</p>
+    <div class="formula">\[ W[J_\nu, Y_\nu] = -\frac{W[J_\nu, J_{-\nu}]}{\sin\nu\pi} = \frac{2}{\pi x} \]</div>
+    <p>이다. 오른쪽에 \(\nu\)가 없으므로 \(\nu \to n\)으로 보내도 그대로이고, 그래서 \(Y_n\)은 모든 정수 차수에서 \(J_n\)과 독립이다.</p>
+    <p>극한을 로피탈 정리로 계산하면 로그가 어디서 오는지 보인다. 분모의 도함수는 \(\pi\cos n\pi\)이므로 \(Y_n = \frac1\pi\big[\partial_\nu J_\nu - (-1)^n\partial_\nu J_{-\nu}\big]_{\nu=n}\)이다. 급수의 각 항에 있는 \((x/2)^{2k\pm\nu}\)을 \(\nu\)로 미분하면 \(\pm\ln(x/2)\)가 곱해지므로, 두 미분은 각각 \(\ln(x/2)\,J_n\)과 \(-\ln(x/2)\,J_{-n} = -(-1)^n\ln(x/2)\,J_n\)을 낳고(나머지는 \(1/\Gamma\)를 미분한 멱급수다), 합하면 \(Y_n\)에 \(\frac2\pi\ln(x/2)\,J_n\)이 들어간다. 푹스 정리의 말로는, \(n = 0\)은 결정 방정식의 중근이라 로그가 반드시 붙는 경우 3이고, \(n \ge 1\)은 근의 차가 정수인 경우 4에서 \(C \ne 0\)인 경우다.</p>
+    <p>\(n = 0\)이면 이것을 프로베니우스 방법으로 직접 확인할 수 있다. \(y = J_0\ln x + w\)를 베셀 연산자 \(\mathcal L = x^2\frac{d^2}{dx^2} + x\frac{d}{dx} + x^2\)에 넣으면 \(\mathcal L[J_0\ln x] = \ln x\,\mathcal L[J_0] + 2xJ_0' = 2xJ_0'\)이므로 \(\mathcal L[w] = -2xJ_0' = x^2 - \tfrac18x^4 + \cdots\)이다. \(w = \sum b_{2k}x^{2k}\)로 두면 \(\mathcal L[x^{2k}] = 4k^2x^{2k} + x^{2k+2}\)이라 \(4b_2 = 1\), \(16b_4 + b_2 = -\tfrac18\)이고, \(b_2 = \tfrac14\), \(b_4 = -\tfrac{3}{128}\)이다. 표준 정의는 이 해에 \(J_0\)의 상수배를 더해 다음 꼴로 맞춘 것이다.</p>
+    <div class="formula" id="eq-bessel-y0">\[ \begin{aligned} Y_0(x) &= \frac2\pi\Big[\ln\frac x2 + \gamma_E\Big]J_0(x) \\ &\quad + \frac2\pi\Big[\frac{x^2}{4} - \frac{3x^4}{128} + \cdots\Big] \end{aligned} \]<div class="where">\(\gamma_E = 0.5772\ldots\)는 오일러-마스케로니 상수다. 더한 상수배 \(\frac2\pi(\gamma_E - \ln2)J_0\)은 큰 \(x\)에서 \(Y_0\)이 \(J_0\)과 위상이 정확히 \(90°\) 어긋난 진동이 되도록 고른 것이다(13.3절).</div></div>
+    <p>\(Y_0\)은 원점에서 \(\frac2\pi\ln x\)처럼, \(Y_n\) (\(n \ge 1\))은 \(-\frac{(n-1)!}{\pi}(2/x)^n\)처럼 발산한다. 그래서 <b>축을 포함하는 영역에서는 \(Y\)를 버리고</b>, 동축 케이블처럼 축이 빠진 영역에서는 \(J\)와 \(Y\)를 함께 쓴다. 그림 13-1이 두 종류를 나란히 보여 준다.</p>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 400 270" role="img" aria-label="제1종 베셀 함수 J0, J1, J2의 그래프. J0만 원점에서 1이고 나머지는 0에서 시작하며, 모두 진폭이 줄어드는 진동을 한다"><defs><clipPath id="f1301-clip"><rect x="48" y="20" width="337" height="210"/></clipPath></defs><line x1="48" y1="230" x2="385" y2="230" class="s-grid"/><text x="40" y="235" class="t-dim" style="font-size:14px" text-anchor="end">−0.5</text><line x1="48" y1="160" x2="385" y2="160" class="s-grid"/><text x="40" y="165" class="t-dim" style="font-size:14px" text-anchor="end">0</text><line x1="48" y1="90" x2="385" y2="90" class="s-grid"/><text x="40" y="95" class="t-dim" style="font-size:14px" text-anchor="end">0.5</text><line x1="48" y1="20" x2="385" y2="20" class="s-grid"/><text x="40" y="25" class="t-dim" style="font-size:14px" text-anchor="end">1</text><line x1="48" y1="20" x2="48" y2="230" class="s-grid"/><text x="48" y="250" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><line x1="160.3" y1="20" x2="160.3" y2="230" class="s-grid"/><text x="160.3" y="250" class="t-dim" style="font-size:14px" text-anchor="middle">5</text><line x1="272.7" y1="20" x2="272.7" y2="230" class="s-grid"/><text x="272.7" y="250" class="t-dim" style="font-size:14px" text-anchor="middle">10</text><line x1="385" y1="20" x2="385" y2="230" class="s-grid"/><text x="385" y="250" class="t-dim" style="font-size:14px" text-anchor="middle">15</text><line x1="48" y1="160" x2="385" y2="160" class="s-line"/><line x1="48" y1="20" x2="48" y2="230" class="s-line"/><path d="M48,20l5.5,2.1 5.5,6.2 5.6,10.1 5.5,13.5 5.5,16.2 5.5,18.3 5.6,19.6 5.5,20 5.5,19.6 5.5,18.3 5.6,16.3 5.5,13.8 5.5,10.7 5.5,7.3 5.6,3.8 5.5,.3 5.5-3 5.5-5.9 5.6-8.4 5.5-10.2 5.5-11.4 5.5-11.9 5.6-11.7 5.5-10.8 5.5-9.3 5.5-7.4 5.6-5.1 5.5-2.7 5.5,0 5.5,2.4 5.6,4.6 5.5,6.5 5.5,8.1 5.5,8.9 5.6,9.4 5.5,9.2 5.5,8.5 5.5,7.4 5.6,5.8 5.5,3.9 5.5,1.8 5.5-.3 5.6-2.3 5.5-4.1 5.5-5.8 5.5-7 5.6-7.7 5.5-8 5.5-7.8 5.5-7.2 5.6-6.1 5.5-4.7 5.5-3.1 5.5-1.2 5.6,.5 5.5,2.4 5.5,4 5.5,5.3 5.6,6.3 5.5,6.9 5.5,7.1" class="s-acc" clip-path="url(#f1301-clip)"/><path d="M48,160l5.5-17.1 5.5-16.3 5.6-14.8 5.5-12.7 5.5-9.9 5.5-6.8 5.6-3.4 5.5,0 5.5,3.4 5.5,6.6 5.6,9.4 5.5,11.6 5.5,13.2 5.5,14.2 5.6,14.4 5.5,13.9 5.5,12.8 5.5,11 5.6,8.7 5.5,6.2 5.5,3.4 5.5,.5 5.6-2.2 5.5-4.8 5.5-7 5.5-8.6 5.6-9.8 5.5-10.4 5.5-10.3 5.5-9.7 5.6-8.5 5.5-6.9 5.5-5 5.5-2.8 5.6-.5 5.5,1.8 5.5,3.8 5.5,5.7 5.6,7.1 5.5,8 5.5,8.6 5.5,8.5 5.6,8.1 5.5,7 5.5,5.7 5.5,4 5.6,2.2 5.5,.2 5.5-1.7 5.5-3.5 5.6-5.1 5.5-6.2 5.5-7.1 5.5-7.5 5.6-7.5 5.5-6.9 5.5-6 5.5-4.9 5.6-3.3 5.5-1.6 5.5,.1" class="s-acc2" clip-path="url(#f1301-clip)"/><path d="M48,160l5.5-1.1 5.5-3 5.6-5 5.5-6.5 5.5-7.7 5.5-8.3 5.6-8.6 5.5-8.2 5.5-7.3 5.5-5.9 5.6-4.2 5.5-2.1 5.5,.2 5.5,2.6 5.6,4.9 5.5,7 5.5,8.9 5.5,10.5 5.6,11.4 5.5,11.9 5.5,11.8 5.5,11.3 5.6,10.1 5.5,8.4 5.5,6.6 5.5,4.2 5.6,1.9 5.5-.5 5.5-2.9 5.5-5 5.6-6.7 5.5-8.2 5.5-9 5.5-9.3 5.6-9.3 5.5-8.5 5.5-7.5 5.5-6 5.6-4.1 5.5-2.2 5.5,0 5.5,1.9 5.6,3.8 5.5,5.4 5.5,6.7 5.5,7.6 5.6,8 5.5,7.9 5.5,7.4 5.5,6.5 5.6,5.2 5.5,3.7 5.5,1.9 5.5,.1 5.6-1.6 5.5-3.4 5.5-4.8 5.5-5.9 5.6-6.7 5.5-7.1 5.5-7" class="s-line" style="stroke:var(--text);stroke-width:2" stroke-dasharray="6 4" clip-path="url(#f1301-clip)"/><text x="77.2" y="39.6" class="t-math acc" text-anchor="start"><tspan font-style="italic">J</tspan><tspan baseline-shift="sub" font-size="72%">0</tspan></text><text x="95.2" y="67.6" class="t-math acc2" text-anchor="start"><tspan font-style="italic">J</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan></text><text x="122.1" y="87.2" class="t-math" text-anchor="start"><tspan font-style="italic">J</tspan><tspan baseline-shift="sub" font-size="72%">2</tspan></text><text x="385" y="262" class="t-dim" text-anchor="end" style="font-size:14px;font-style:italic">x</text></svg><svg viewBox="0 0 400 270" role="img" aria-label="제2종 베셀 함수 Y0, Y1의 그래프. 원점에서 Y0은 로그로, Y1은 1/x처럼 음의 무한대로 발산하고, 멀리서는 J와 같은 진폭으로 진동한다"><defs><clipPath id="f1301-clip2"><rect x="48" y="20" width="337" height="210"/></clipPath></defs><line x1="48" y1="203.8" x2="385" y2="203.8" class="s-grid"/><text x="40" y="208.8" class="t-dim" style="font-size:14px" text-anchor="end">−1</text><line x1="48" y1="151.2" x2="385" y2="151.2" class="s-grid"/><text x="40" y="156.2" class="t-dim" style="font-size:14px" text-anchor="end">−0.5</text><line x1="48" y1="98.8" x2="385" y2="98.8" class="s-grid"/><text x="40" y="103.8" class="t-dim" style="font-size:14px" text-anchor="end">0</text><line x1="48" y1="46.2" x2="385" y2="46.2" class="s-grid"/><text x="40" y="51.2" class="t-dim" style="font-size:14px" text-anchor="end">0.5</text><line x1="48" y1="20" x2="48" y2="230" class="s-grid"/><text x="48" y="250" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><line x1="160.3" y1="20" x2="160.3" y2="230" class="s-grid"/><text x="160.3" y="250" class="t-dim" style="font-size:14px" text-anchor="middle">5</text><line x1="272.7" y1="20" x2="272.7" y2="230" class="s-grid"/><text x="272.7" y="250" class="t-dim" style="font-size:14px" text-anchor="middle">10</text><line x1="385" y1="20" x2="385" y2="230" class="s-grid"/><text x="385" y="250" class="t-dim" style="font-size:14px" text-anchor="middle">15</text><line x1="48" y1="98.8" x2="385" y2="98.8" class="s-line"/><line x1="48" y1="20" x2="48" y2="230" class="s-line"/><path d="M48.4,368l3.8-150.8 3.7-45.5 3.8-29.2 3.7-22.1 3.7-17.7 3.8-14.7 3.7-12.2 3.8-10 3.7-8 3.7-6 3.8-4.3 3.7-2.5 3.8-.9 3.7,.6 3.7,2 3.8,3.3 3.7,4.4 3.8,5.3 3.7,6.1 3.7,6.7 3.8,7.1 3.7,7.2 3.8,7.3 3.7,7 3.7,6.8 3.8,6.2 3.7,5.5 3.8,4.8 3.7,4 3.7,2.9 3.8,2.1 3.7,1 3.8,0 3.7-1 3.7-1.9 3.8-2.7 3.7-3.5 3.7-4.1 3.8-4.6 3.7-5 3.8-5.2 3.7-5.3 3.7-5.2 3.8-5 3.7-4.7 3.8-4.3 3.7-3.7 3.7-3.1 3.8-2.3 3.7-1.6 3.8-.8 3.7-.1 3.7,.8 3.8,1.5 3.7,2.2 3.8,2.8 3.7,3.3 3.7,3.8 3.8,4.1 3.7,4.3 3.8,4.4 3.7,4.3 3.7,4.2 3.8,3.9 3.7,3.6 3.8,3.1 3.7,2.5 3.7,2 3.8,1.3 3.7,.7 3.8,0 3.7-.7 3.7-1.4 3.8-1.9 3.7-2.4 3.7-2.9 3.8-3.3 3.7-3.6 3.8-3.7 3.7-3.9 3.7-3.8 3.8-3.6 3.7-3.4 3.8-3.1 3.7-2.7 3.7-2.2 3.8-1.7 3.7-1.2 3.8-.5 3.7,.1" class="s-acc" clip-path="url(#f1301-clip2)"/><path d="M49.1,530l3.8-106.5 3.7-130.2 3.7-51.7 3.8-29.1 3.7-20.1 3.7-15.8 3.7-13.6 3.8-12.4 3.7-11.6 3.7-11.1 3.8-10.5 3.7-10 3.7-9.3 3.8-8.7 3.7-7.9 3.7-7 3.8-6 3.7-4.9 3.7-3.9 3.8-2.7 3.7-1.6 3.7-.4 3.8,.7 3.7,1.7 3.7,2.8 3.8,3.6 3.7,4.3 3.7,5 3.8,5.5 3.7,5.8 3.7,6 3.7,6 3.8,6 3.7,5.6 3.7,5.2 3.8,4.7 3.7,4.1 3.7,3.4 3.8,2.5 3.7,1.7 3.7,.9 3.8,0 3.7-.9 3.7-1.6 3.8-2.4 3.7-3.1 3.7-3.7 3.8-4.1 3.7-4.4 3.7-4.7 3.8-4.7 3.7-4.7 3.7-4.6 3.7-4.3 3.8-3.9 3.7-3.4 3.7-2.9 3.8-2.2 3.7-1.5 3.7-.8 3.8-.1 3.7,.6 3.7,1.3 3.8,1.9 3.7,2.5 3.7,3 3.8,3.4 3.7,3.8 3.7,3.9 3.8,4.1 3.7,4 3.7,4 3.8,3.7 3.7,3.4 3.7,2.9 3.8,2.5 3.7,2 3.7,1.4 3.7,.7 3.8,.1 3.7-.5 3.7-1.1 3.8-1.7 3.7-2.2 3.7-2.6 3.8-3.1 3.7-3.3 3.7-3.5 3.8-3.6 3.7-3.6" class="s-acc2" clip-path="url(#f1301-clip2)"/><text x="101.9" y="33.6" class="t-math acc" text-anchor="start"><tspan font-style="italic">Y</tspan><tspan baseline-shift="sub" font-size="72%">0</tspan></text><text x="64.8" y="198.5" class="t-math acc2" text-anchor="start"><tspan font-style="italic">Y</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan></text><text x="385" y="262" class="t-dim" text-anchor="end" style="font-size:14px;font-style:italic">x</text></svg></div>
+      <figcaption><b>그림 13-1.</b> 왼쪽: 제1종 베셀 함수 \(J_0, J_1, J_2\)(점선). \(J_0\)만 원점에서 1이고 \(J_n\)은 \(x^n\)처럼 출발한다. 오른쪽: 제2종 베셀 함수 \(Y_0, Y_1\). 원점에서 \(Y_0\)은 로그로, \(Y_1\)은 \(-2/(\pi x)\)처럼 발산한다. 멀리서는 다섯 함수 모두 진폭이 \(\sqrt{2/\pi x}\)로 줄어드는 진동이다. 곡선은 식 <a class="ref" href="#eq-bessel-series"></a>의 급수와 \(Y_n\)의 적분 표현으로 계산했다.</figcaption>
+    </figure>
+
+    <h3 id="s2-hankel">한켈 함수와 변형 베셀 함수</h3>
+    <p>\(\cos x\)와 \(\sin x\)를 묶어 \(e^{\pm ix}\)를 만들듯이, \(J\)와 \(Y\)를 묶으면 한 방향으로 진행하는 파동이 된다.</p>
+    <div class="box def" id="def-hankel"><div class="box-h">한켈 함수</div>
+      <div class="formula" id="eq-hankel">\[ \begin{aligned} H_\nu^{(1)}(x) &= J_\nu(x) + iY_\nu(x) \\ H_\nu^{(2)}(x) &= J_\nu(x) - iY_\nu(x) \end{aligned} \]</div>
+      <p>를 제1종, 제2종 <span class="term">한켈 함수</span> <span class="en">(Hankel function)</span>라 한다.</p>
+    </div>
+    <p>13.3절에서 보이겠지만 큰 \(x\)에서 \(H_\nu^{(1)}(x) \approx \sqrt{2/\pi x}\,e^{i(x - \nu\pi/2 - \pi/4)}\)이다. 이 책의 시간 의존성 \(e^{-i\omega t}\)와 곱하면 \(H_\nu^{(1)}(ks)\,e^{-i\omega t} \propto e^{i(ks - \omega t)}/\sqrt s\)는 축에서 바깥으로 나가는 원통파이고, \(H_\nu^{(2)}\)는 들어오는 원통파다. 진폭이 \(1/\sqrt s\)로 줄어드는 것은 반지름 \(s\)인 원통면을 지나는 에너지 흐름 \(\propto \lvert\psi\rvert^2\cdot2\pi s\)가 일정해야 하기 때문이다.</p>
+    <p>헬름홀츠 방정식에서 \(k^2\)이 음수가 되는 경우도 흔하다. 원통 속 라플라스 방정식의 해가 \(z\)에 따라 \(\cos(kz)\)로 변하거나, 퍼텐셜이 지수적으로 가려지는 경우다. 그러면 지름 방정식은 \(x^2y'' + xy' - (x^2 + \nu^2)y = 0\)이 되고, 이것은 베셀 방정식에서 \(x\)를 \(ix\)로 바꾼 것이다.</p>
+    <div class="box def" id="def-modified-bessel"><div class="box-h">변형 베셀 함수</div>
+      <p>방정식 \(x^2y'' + xy' - (x^2 + \nu^2)y = 0\)의 두 해</p>
+      <div class="formula" id="eq-modified-bessel">\[ \begin{aligned} I_\nu(x) &= i^{-\nu}J_\nu(ix) \\ &= \sum_{k=0}^\infty\frac{(x/2)^{2k+\nu}}{k!\,\Gamma(k+\nu+1)} \\ K_\nu(x) &= \frac\pi2\,\frac{I_{-\nu}(x) - I_\nu(x)}{\sin\nu\pi} \end{aligned} \]</div>
+      <p>를 <span class="term">변형 베셀 함수</span> <span class="en">(modified Bessel function)</span>라 한다. 정수 차수의 \(K_n\)은 \(Y_n\)처럼 극한으로 정한다.</p>
+    </div>
+    <p>\(I_\nu\)의 급수는 항이 모두 양수이므로 진동하지 않고 커진다. 큰 \(x\)에서 \(I_\nu \approx e^x/\sqrt{2\pi x}\), \(K_\nu \approx \sqrt{\pi/2x}\,e^{-x}\)이다. 원점 근처에서는 \(K_0 \approx -\ln(x/2) - \gamma_E\), \(K_\nu \approx \tfrac12\Gamma(\nu)(2/x)^\nu\) (\(\nu > 0\))로 발산한다. \(K_\nu\)은 적분 표현 \(K_\nu(x) = \int_0^\infty e^{-x\cosh t}\cosh\nu t\,dt\)를 가지며, 여기서 \(K_0' = -K_1\)이 바로 나온다. 원점에서 유한해야 하면 \(I\)를, 무한히 먼 곳에서 0이어야 하면 \(K\)를 고른다.</p>
+
+    <div class="box ex" id="ex-screened-line-charge"><div class="box-h">가려진 선전하의 퍼텐셜</div>
+      <p>전해질이나 플라스마 속에 선전하 밀도 \(\lambda_q\)인 가는 도선이 \(z\)축을 따라 놓여 있다. 움직이는 이온이 퍼텐셜에 비례하는 전하 \(\rho_{\text{ind}} = -\varepsilon_0\phi/\lambda_D^2\)를 모은다고 하면(\(e\phi \ll k_BT\)에서 쓰는 디바이-휘켈 선형 근사, \(\lambda_D\)는 <span class="term">디바이 길이</span> <span class="en">(Debye length)</span>), 퍼텐셜은 \(\nabla^2\phi - \phi/\lambda_D^2 = -(\lambda_q/\varepsilon_0)\,\delta(x)\delta(y)\)를 만족한다. \(\phi(s)\)를 구하고, 반지름 \(s\)인 원통 안에 든 알짜 전하가 \(\lambda_q\)의 몇 배인지 \(s = \lambda_D, 3\lambda_D, 5\lambda_D\)에서 구하라.</p>
+      <p><b>풀이.</b> \(s > 0\)에서는 델타 함수가 0이므로, 식 <a href="ch06.html#eq-laplacian-cylindrical">(6.32)</a>의 \(s\) 부분만 남아 \(\phi'' + \phi'/s - \phi/\lambda_D^2 = 0\)이다. \(x = s/\lambda_D\)로 두면 \(x^2\phi'' + x\phi' - x^2\phi = 0\), 곧 \(\nu = 0\)인 변형 베셀 방정식이다. 일반해 \(AI_0 + BK_0\)에서 \(I_0\)은 무한히 커지므로 \(A = 0\)이다. \(B\)는 도선 바로 곁의 가우스 법칙에서 정한다. 아주 가는 원통(반지름 \(s\), 길이 1)을 지나는 전기 플럭스는 \(s \to 0\)에서 \(\lambda_q/\varepsilon_0\)이어야 한다. \(E_s = -\phi' = (B/\lambda_D)K_1(s/\lambda_D) \approx B/s\)이므로 \(2\pi sE_s \to 2\pi B = \lambda_q/\varepsilon_0\)이다.</p>
+      <div class="formula" id="eq-screened-line-potential">\[ \phi(s) = \frac{\lambda_q}{2\pi\varepsilon_0}\,K_0\Big(\frac{s}{\lambda_D}\Big) \]</div>
+      <p>도선 근처에서는 \(K_0 \approx -\ln(s/2\lambda_D) - \gamma_E\)이라 \(\phi \approx -\frac{\lambda_q}{2\pi\varepsilon_0}\ln s + \text{상수}\)로, 가리지 않은 선전하의 퍼텐셜과 같다. 멀리서는 \(e^{-s/\lambda_D}/\sqrt s\)로 사라진다. 반지름 \(s\)인 원통 안의 알짜 전하는 가우스 법칙으로 \(Q(s) = 2\pi s\,\varepsilon_0E_s\)이므로</p>
+      <div class="formula">\[ \frac{Q(s)}{\lambda_q} = \frac{s}{\lambda_D}\,K_1\Big(\frac{s}{\lambda_D}\Big) \]</div>
+      <p>이다. 도선의 전하에 그것을 가리는 이온 구름의 전하를 더한 값이다.</p>
+      <p><b>숫자로 보기.</b> \(K_1(1) = 0.6019\), \(K_1(3) = 0.04016\), \(K_1(5) = 0.004045\)이므로 \(Q/\lambda_q\)는 \(s = \lambda_D\)에서 \(0.602\), \(3\lambda_D\)에서 \(0.120\), \(5\lambda_D\)에서 \(0.020\)이다. 디바이 길이의 다섯 배 밖에서는 도선 전하의 98%가 가려져 보이지 않는다. 단위 확인: \(\lambda_q/\varepsilon_0\)은 \((\text{C/m})/(\text{C}/(\text{V}\cdot\text{m})) = \text{V}\)이고 \(K_0\)은 차원이 없다. \(s \to 0\)에서 \(xK_1(x) \to 1\)이라 \(Q \to \lambda_q\)인 것도 맞다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 13.3 -->
+  <section id="s3">
+    <h2>점화식, 영점, 점근 형태</h2>
+    <p>르장드르 다항식에서처럼, 베셀 함수의 성질도 생성 함수 하나에서 대부분 나온다. 이 절에서는 생성 함수에서 점화식과 적분 표현을 끌어내고, 원점과 무한대에서의 꼴, 영점과 직교성을 차례로 세운 뒤, 원형 구멍의 회절에 쓴다.</p>
+
+    <h3 id="s3-generating">생성 함수와 적분 표현</h3>
+    <div class="box thm" id="thm-bessel-generating"><div class="box-h">베셀 함수의 생성 함수</div>
+      <p>\(t \ne 0\)인 모든 \(t\)와 모든 \(x\)에 대해</p>
+      <div class="formula" id="eq-bessel-generating">\[ \exp\Big[\frac x2\Big(t - \frac1t\Big)\Big] = \sum_{n=-\infty}^{\infty}J_n(x)\,t^n \]</div>
+      <p><b>증명.</b> 왼쪽은 \(e^{xt/2}\cdot e^{-x/2t} = \sum_j\frac{(x/2)^jt^j}{j!}\sum_k\frac{(-1)^k(x/2)^kt^{-k}}{k!}\)이다. \(t^n\)은 \(j = n + k\)일 때 나오므로, 그 계수는 \(\sum_k\frac{(-1)^k}{(n+k)!\,k!}(x/2)^{n+2k}\)이다. \(n \ge 0\)이면 이것은 식 <a class="ref" href="#eq-bessel-series"></a>의 \(J_n\)이다. \(n &lt; 0\)이면 \(k \ge -n\)인 항만 남는데, 이것은 식 <a class="ref" href="#eq-bessel-series"></a>에 \(\nu = n\)을 넣은 \(J_n\)의 급수에서 \(1/\Gamma(k+n+1)\)이 0이 되는 \(k &lt; -n\) 항을 뺀 것과 같다. \(\square\)</p>
+    </div>
+    <p>\(t = e^{i\theta}\)로 두면 \(\frac x2(t - 1/t) = ix\sin\theta\)이므로</p>
+    <div class="formula" id="eq-jacobi-anger">\[ e^{ix\sin\theta} = \sum_{n=-\infty}^{\infty}J_n(x)\,e^{in\theta} \]</div>
+    <p>이다. \(J_n(x)\)은 주기 함수 \(e^{ix\sin\theta}\)의 복소 푸리에 계수다(14장의 <a href="ch14.html#def-fourier-series">푸리에 급수</a>). 계수 공식으로 거꾸로 쓰면 \(J_n = \frac{1}{2\pi}\int_{-\pi}^{\pi}e^{i(x\sin\theta - n\theta)}d\theta\)이고, 피적분 함수의 허수부는 \(\theta\)의 홀함수, 실수부는 짝함수이므로</p>
+    <div class="formula" id="eq-bessel-integral">\[ J_n(x) = \frac1\pi\int_0^\pi\cos(n\theta - x\sin\theta)\,d\theta \]</div>
+    <p>이다. 이 적분 표현에서 바로 \(\lvert J_n(x)\rvert \le 1\)이다. \(\theta\)를 \(\phi + \pi/2\)로 옮기면 \(\int_0^{2\pi}e^{iu\cos\phi}\,d\phi = 2\pi J_0(u)\)도 얻는다. 원형 구멍의 회절에서 쓸 식이다.</p>
+
+    <h3 id="s3-recurrence">점화식</h3>
+    <div class="box thm" id="thm-bessel-recurrence"><div class="box-h">베셀 함수의 점화식</div>
+      <p>모든 실수 \(\nu\)에 대해</p>
+      <div class="formula" id="eq-bessel-recurrence">\[ \begin{aligned} J_{\nu-1}(x) + J_{\nu+1}(x) &= \frac{2\nu}{x}\,J_\nu(x) \\ J_{\nu-1}(x) - J_{\nu+1}(x) &= 2J_\nu'(x) \end{aligned} \]</div>
+      <p>이고, 같은 내용을 다음처럼 쓸 수도 있다.</p>
+      <div class="formula" id="eq-bessel-power-derivatives">\[ \begin{aligned} \frac{d}{dx}\big[x^\nu J_\nu\big] &= x^\nu J_{\nu-1} \\ \frac{d}{dx}\big[x^{-\nu}J_\nu\big] &= -x^{-\nu}J_{\nu+1} \end{aligned} \]</div>
+      <p>\(Y_\nu\), \(H_\nu^{(1,2)}\)도 같은 점화식을 만족한다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>정수 차수는 생성 함수에서 곧장 나온다. \(G = \exp[\frac x2(t - 1/t)]\)를 \(t\)로 미분하면 \(\partial_tG = \frac x2(1 + t^{-2})G\)이고, 양변의 \(t^{n-1}\) 계수를 비교하면 \(nJ_n = \frac x2(J_{n-1} + J_{n+1})\)이다. \(x\)로 미분하면 \(\partial_xG = \frac12(t - t^{-1})G\)이고 \(t^n\)의 계수에서 \(J_n' = \frac12(J_{n-1} - J_{n+1})\)이다.</p>
+        <p>일반 \(\nu\)는 급수로 보인다. \(x^\nu J_\nu = \sum_k\frac{(-1)^kx^{2k+2\nu}}{2^{2k+\nu}k!\,\Gamma(k+\nu+1)}\)을 항별로 미분하면 \(2(k+\nu)/\Gamma(k+\nu+1) = 2/\Gamma(k+\nu)\)이므로</p>
+        <div class="formula">\[ \begin{aligned} \frac{d}{dx}\big[x^\nu J_\nu\big] &= x^\nu\sum_k\frac{(-1)^k(x/2)^{2k+\nu-1}}{k!\,\Gamma(k+\nu)} \\ &= x^\nu J_{\nu-1} \end{aligned} \]</div>
+        <p>이다. 둘째 식도 같은 방법으로 얻는다(\(k = 0\) 항이 사라지고 \(k \to k+1\)로 옮긴다). 두 식을 풀어 쓰면 \(J_\nu' + \frac\nu xJ_\nu = J_{\nu-1}\), \(J_\nu' - \frac\nu xJ_\nu = -J_{\nu+1}\)이고, 더하고 빼면 식 <a class="ref" href="#eq-bessel-recurrence"></a>가 된다. \(J_{-\nu}\)도 차수 \(\mu = -\nu\)에 대해 같은 식을 만족하고, \(\cos\big((\nu\pm1)\pi\big) = -\cos\nu\pi\), \(\sin\big((\nu\pm1)\pi\big) = -\sin\nu\pi\)이므로 식 <a class="ref" href="#eq-bessel-y"></a>의 조합 \(Y_\nu\)도 같은 점화식을 만족한다. 한켈 함수는 \(J\)와 \(Y\)의 선형 결합이다.</p>
+      </details>
+    </div>
+    <p>\(\nu = 0\)과 \(1\)을 넣으면 앞으로 자주 쓸 두 식이 나온다. 하나는 \(J_0' = -J_1\)이고, 다른 하나는 \(\frac{d}{dx}(xJ_1) = xJ_0\), 곧 \(\int_0^u xJ_0(x)\,dx = uJ_1(u)\)이다. 첫째 점화식은 낮은 차수에서 높은 차수를 만든다. 예를 들어 \(J_2 = \frac2xJ_1 - J_0\)이다.</p>
+
+    <h3 id="s3-asymptotic">작은 \(x\)와 큰 \(x\)에서의 꼴</h3>
+    <p>원점 근처의 꼴은 급수의 첫 항, 그리고 13.2절의 \(Y\)에서 읽는다.</p>
+    <div class="formula" id="eq-bessel-small-x">\[ \begin{aligned} J_\nu(x) &\approx \frac{1}{\Gamma(\nu+1)}\Big(\frac x2\Big)^\nu \\ Y_0(x) &\approx \frac2\pi\Big[\ln\frac x2 + \gamma_E\Big] \\ Y_\nu(x) &\approx -\frac{\Gamma(\nu)}{\pi}\Big(\frac2x\Big)^\nu \quad (\nu > 0) \end{aligned} \]</div>
+    <p>셋째 줄은 식 <a class="ref" href="#eq-bessel-y"></a>에서 발산하는 \(J_{-\nu}\)만 남기고 반사 공식을 쓴 것이다. 정수 \(n \ge 1\)에서는 \(\Gamma(n) = (n-1)!\)이다.</p>
+    <p>큰 \(x\)에서는 방정식부터 보자. \(y = u/\sqrt x\)로 두고 식 <a class="ref" href="#eq-bessel-equation"></a>에 넣으면 \(y'\) 항이 사라지고</p>
+    <div class="formula" id="eq-bessel-liouville">\[ u'' + \Big[1 - \frac{\nu^2 - \tfrac14}{x^2}\Big]u = 0 \]</div>
+    <p>이 된다. \(x \gg \nu\)이면 괄호가 1에 가까우므로 \(u \approx A\cos(x - \varphi_\nu)\)이고, 베셀 함수는 진폭이 \(1/\sqrt x\)로 줄어드는 단진동이 된다. \(\nu = \tfrac12\)이면 괄호가 정확히 1이라 \(J_{1/2}\)은 정확히 \(\sin x/\sqrt x\)의 상수배다(13.4절). 진폭 \(A\)와 위상 \(\varphi_\nu\)를 정하는 것이 다음 정리다.</p>
+    <div class="box thm" id="thm-bessel-asymptotic"><div class="box-h">베셀 함수의 점근 꼴</div>
+      <p>\(\nu\)를 고정하고 \(x \to \infty\)로 보내면</p>
+      <div class="formula" id="eq-bessel-asymptotic">\[ \begin{aligned} J_\nu(x) &\approx \sqrt{\frac{2}{\pi x}}\,\cos\Big(x - \frac{\nu\pi}{2} - \frac\pi4\Big) \\ Y_\nu(x) &\approx \sqrt{\frac{2}{\pi x}}\,\sin\Big(x - \frac{\nu\pi}{2} - \frac\pi4\Big) \\ H_\nu^{(1,2)}(x) &\approx \sqrt{\frac{2}{\pi x}}\,e^{\pm i(x - \nu\pi/2 - \pi/4)} \end{aligned} \]</div>
+      <p>이다. 오차는 진폭 \(\sqrt{2/\pi x}\)의 \(O(1/x)\)배다. 예를 들어 \(J_\nu\)의 다음 항은 \(-\frac{4\nu^2 - 1}{8x}\sin(x - \frac{\nu\pi}2 - \frac\pi4)\)에 같은 진폭을 곱한 것이다.</p>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>정수 차수에서 식 <a class="ref" href="#eq-bessel-integral"></a>를 \(J_n = \operatorname{Re}\frac1\pi\int_0^\pi e^{i(x\sin\theta - n\theta)}d\theta\)로 쓰자. \(x\)가 크면 \(x\sin\theta\)가 빠르게 변하는 곳의 기여는 서로 지워지고, 위상이 멈추는 \(\theta = \pi/2\) 근처만 남는다(<span class="term">정지 위상 근사</span> <span class="en">(stationary phase approximation)</span>). 거기서 \(u = \theta - \tfrac\pi2\)로 두면 \(x\sin\theta \approx x - \tfrac12xu^2\)이고, \(e^{-inu} \approx 1\)로 둔 오차는 \(u \sim x^{-1/2}\)라 끝점 기여와 같은 \(1/x\) 차수이므로</p>
+        <div class="formula">\[ \begin{aligned} J_n \approx \operatorname{Re}\Big[&\frac1\pi e^{i(x - n\pi/2)} \\ &\times\int_{-\infty}^{\infty}e^{-ixu^2/2}du\Big] \end{aligned} \]</div>
+        <p>이다. 마지막 적분은 프레넬 적분으로 \(\sqrt{2\pi/x}\,e^{-i\pi/4}\)이다. 19장 <a href="ch19.html#ex-fresnel-integral">예제 19.10</a>의 \(\int_{-\infty}^\infty e^{iv^2}dv = \sqrt\pi\,e^{i\pi/4}\)에서 \(v = u\sqrt{x/2}\)로 치환하고 켤레를 취한 것이다. 대입하면 \(\sqrt{2/\pi x}\cos(x - n\pi/2 - \pi/4)\)이다. 두 끝점 \(\theta = 0, \pi\)의 기여는 \(1/x\) 차수다.</p>
+        <p>다른 길로도 확인된다. 식 <a class="ref" href="#eq-bessel-liouville"></a>로 \(J_\nu \approx A\cos(x - \varphi_\nu)/\sqrt x\)라 하면, 큰 \(x\)에서 \(\frac\nu xJ_\nu\)은 \(J_\nu'\)보다 \(1/x\)만큼 작으므로 점화식에서 \(J_{\nu+1} \approx -J_\nu' \approx A\sin(x - \varphi_\nu)/\sqrt x\), 곧 \(\varphi_{\nu+1} = \varphi_\nu + \pi/2\)이다. 13.4절의 정확한 식 \(J_{1/2} = \sqrt{2/\pi x}\sin x\)에서 \(A = \sqrt{2/\pi}\), \(\varphi_{1/2} = \pi/2\)이고, 이것은 \(\varphi_\nu = \nu\pi/2 + \pi/4\)와 맞는다. \(Y_\nu\)의 꼴은 \(W[J_\nu, Y_\nu] = 2/(\pi x)\)와 식 <a class="ref" href="#eq-bessel-y"></a>에서 따라 나온다. 엄밀한 증명과 전체 점근급수는 아프켄(앞의 책) 12장에 있다.</p>
+      </details>
+    </div>
+    <p>\(Y_\nu\)을 식 <a class="ref" href="#eq-bessel-y"></a>처럼 정한 까닭이 여기서 보인다. 멀리서 \(J_\nu\)과 \(Y_\nu\)은 \(\cos\)과 \(\sin\)처럼 위상이 \(90°\) 어긋나고, \(H^{(1,2)}\)는 \(e^{\pm i(\cdot)}\)가 된다. \(x = 60\)에서 \(J_0\)의 정확한 값은 \(-0.09147\)이고 식 <a class="ref" href="#eq-bessel-asymptotic"></a>의 첫 줄은 \(-0.09157\)이다. 차이 \(1.0 \times 10^{-4}\)는 다음 항 \((1/8x)\times0.0472 = 0.98 \times 10^{-4}\)과 맞는다.</p>
+
+    <h3 id="s3-zeros">영점</h3>
+    <p>점근 꼴의 코사인이 0이 되는 곳에서 \(J_\nu\)의 \(n\)번째 양의 영점 \(\alpha_{\nu n}\)은 \((n + \tfrac\nu2 - \tfrac14)\pi\)에 다가가고, 영점 사이의 간격은 \(\pi\)에 다가간다. 정확한 값은 뉴턴 방법으로 구한다(<a class="ref" href="#ex-cylindrical-cavity"></a>).</p>
+    <div class="formula" id="eq-bessel-zeros">\[ \begin{array}{c|cccc} & n = 1 & 2 & 3 & 4 \\ \hline J_0 & 2.4048 & 5.5201 & 8.6537 & 11.7915 \\ J_1 & 3.8317 & 7.0156 & 10.1735 & 13.3237 \\ J_2 & 5.1356 & 8.4172 & 11.6198 & 14.7960 \end{array} \]</div>
+    <p>\(J_0\)의 근삿값 \((n - \tfrac14)\pi\)는 \(2.356, 5.498, 8.639, 11.781\)로, \(n = 1\)에서도 2% 안에 들고 \(n\)이 커질수록 더 맞는다. 표에서 \(J_0\)과 \(J_1\)의 영점은 서로 번갈아 나온다. 이것은 일반적으로 성립한다. \(x^{-\nu}J_\nu\)의 이웃한 두 양의 영점 사이에는 롤의 정리에 따라 도함수 \(-x^{-\nu}J_{\nu+1}\)의 영점이 있고, 반대로 \(x^{\nu+1}J_{\nu+1}\)의 이웃한 영점 사이에는 도함수 \(x^{\nu+1}J_\nu\)의 영점이 있다(식 <a class="ref" href="#eq-bessel-power-derivatives"></a>). 그래서 \(J_\nu\)과 \(J_{\nu+1}\)의 양의 영점은 엇갈려 놓인다.</p>
+    <p>영점은 원통 경계 문제의 고유값이다. 가장자리가 고정된 원형 막의 진동수는 \(\alpha_{mn}\)에 비례하고, 낮은 모드부터 진동수 비가 \(1 : 1.593 : 2.136 : 2.295\)(\(\alpha_{01}, \alpha_{11}, \alpha_{21}, \alpha_{02}\)의 비)이다. 정수배가 아니므로 북 소리는 현처럼 뚜렷한 음높이를 내지 않는다. 막의 운동 방정식을 풀어 이 모드들을 얻는 일은 17장에서 한다(<a href="ch17.html#eq-membrane-modes">17장의 원형 막 모드</a>, <a href="ch17.html#ex-drum-modes">원형 북의 배음</a>).<!-- sim: membrane-modes --></p>
+
+    <div class="box ex" id="ex-airy-disk"><div class="box-h">원형 구멍의 회절과 에어리 원반</div>
+      <p>파장 \(\lambda\)인 평면파가 지름 \(D = 2a\)인 원형 구멍에 수직으로 들어온다. 거리 \(L\)인 화면에서 \(D^2/\lambda L \ll 1\)일 때의 프라운호퍼 회절 세기 \(I(\theta)\)를 구하고, 첫 어두운 고리의 각 반지름, 그 안에 든 빛의 비율, 두 번째 밝은 고리의 세기를 구하라. 동공 지름 \(3.0\ \text{mm}\)인 눈과 지름 \(2.4\ \text{m}\)인 망원경에 \(\lambda = 550\ \text{nm}\)를 넣어라.</p>
+      <p><b>풀이.</b> 프라운호퍼 회절에서 방향 \(\theta\)의 진폭은 구멍 위에서 \(e^{-i\mathbf q\cdot\boldsymbol\rho}\)를 적분한 것이다. \(\mathbf q\)는 크기 \(q = k\sin\theta\)인 가로 방향 파수 벡터다(구멍 함수의 푸리에 변환이라는 관점은 15장의 <a href="ch15.html#ex-slit-diffraction">단일 슬릿 회절</a>에서 다룬다). 구멍 위의 점을 극좌표 \((\rho, \phi)\)로 쓰고 \(\phi\)를 \(\mathbf q\)에서 재면 \(\mathbf q\cdot\boldsymbol\rho = q\rho\cos\phi\)이고, 13.3절 앞에서 얻은 \(\int_0^{2\pi}e^{iu\cos\phi}d\phi = 2\pi J_0(u)\)와 \(J_0\)이 짝함수인 것을 쓰면</p>
+      <div class="formula">\[ \begin{aligned} U(\theta) &\propto \int_0^a\!\!\int_0^{2\pi}e^{-iq\rho\cos\phi}\,d\phi\,\rho\,d\rho \\ &= 2\pi\int_0^aJ_0(q\rho)\,\rho\,d\rho = \frac{2\pi a}{q}J_1(qa) \end{aligned} \]</div>
+      <p>이다. 마지막 등호는 \(\int_0^uxJ_0\,dx = uJ_1(u)\)이다. \(u = qa = \pi D\sin\theta/\lambda\)로 쓰고 \(J_1(u)/u \to \tfrac12\)인 \(\theta = 0\)의 값으로 나누면</p>
+      <div class="formula" id="eq-airy-pattern">\[ \frac{I(\theta)}{I_0} = \Big[\frac{2J_1(u)}{u}\Big]^2 \]</div>
+      <p>이다(\(u = \pi D\sin\theta/\lambda\)). 첫 어두운 고리는 \(J_1\)의 첫 영점 \(u = 3.8317\)에 있으므로</p>
+      <div class="formula">\[ \sin\theta_1 = \frac{3.8317}{\pi}\,\frac\lambda D = 1.220\,\frac\lambda D \]</div>
+      <p>이다. 같은 폭의 슬릿은 \((\sin u/u)^2\)이고 첫 영점이 \(u = \pi\), 곧 \(\sin\theta = \lambda/D\)이다. 원은 가장자리 쪽 폭이 좁아서 실질적인 폭이 \(D\)보다 작고, 그래서 회절 무늬가 더 넓다(그림 13-2).</p>
+      <p>안에 든 빛의 비율을 구하려면 \(\int_0^U(2J_1/u)^2u\,du\)가 필요하다. \(J_0' = -J_1\)과 \(J_1' = J_0 - J_1/u\)(식 <a class="ref" href="#eq-bessel-recurrence"></a>)에서 \(\frac{d}{du}(J_0^2 + J_1^2) = -2J_1^2/u\)이므로 이 적분은 \(2[1 - J_0(U)^2 - J_1(U)^2]\)이고, \(U \to \infty\)에서 2다. 따라서 반지름 \(U\) 안의 비율은 \(1 - J_0(U)^2 - J_1(U)^2\)이다. 두 번째 밝은 고리는 \(\frac{d}{du}(J_1/u) = -J_2/u\)가 0인 곳, 곧 \(J_2\)의 첫 영점 \(u = 5.1356\)에 있다.</p>
+      <p><b>숫자로 보기.</b> \(U = 3.8317\)에서 \(J_1 = 0\), \(J_0 = -0.4028\)이므로 첫 어두운 고리 안의 밝은 원반, 곧 <span class="term">에어리 원반</span> <span class="en">(Airy disk)</span>에 빛의 \(1 - 0.1622 = 83.8\%\)가 든다. 두 번째 밝은 고리의 세기는 \([2J_1(5.1356)/5.1356]^2 = 0.0175\), 곧 중심의 1.75%다. \(\lambda = 550\ \text{nm}\)에서 첫 어두운 고리의 각 반지름 \(\theta_1 \approx 1.220\lambda/D\)는 눈(\(D = 3.0\ \text{mm}\))이 \(2.24 \times 10^{-4}\ \text{rad}\), 망원경(\(D = 2.4\ \text{m}\))이 \(2.80 \times 10^{-7}\ \text{rad}\)이고, 각초로는 \(46''\)과 \(0.058''\)이다. 두 별이 이 각보다 가까우면 에어리 원반이 겹쳐 구별하기 어렵다(레일리 기준). \(u\)와 \(\lambda/D\)는 차원이 없고, \(D\)를 키우면 \(\theta_1\)이 \(1/D\)로 줄어든다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 280" role="img" aria-label="원형 구멍의 회절 세기 [2J1(u)/u]^2와 같은 폭 슬릿의 (sin u/u)^2 비교. 원형 구멍의 첫 어두운 고리는 u = 3.832로 슬릿의 π보다 바깥에 있고, 20배 확대한 곡선에서 두 번째 밝은 고리가 보인다"><defs><clipPath id="f1302-clip"><rect x="56" y="20" width="404" height="210"/></clipPath></defs><line x1="56" y1="230" x2="460" y2="230" class="s-grid"/><text x="48" y="235" class="t-dim" style="font-size:14px" text-anchor="end">0</text><line x1="56" y1="177.5" x2="460" y2="177.5" class="s-grid"/><text x="48" y="182.5" class="t-dim" style="font-size:14px" text-anchor="end">.25</text><line x1="56" y1="125" x2="460" y2="125" class="s-grid"/><text x="48" y="130" class="t-dim" style="font-size:14px" text-anchor="end">.5</text><line x1="56" y1="72.5" x2="460" y2="72.5" class="s-grid"/><text x="48" y="77.5" class="t-dim" style="font-size:14px" text-anchor="end">.75</text><line x1="56" y1="20" x2="460" y2="20" class="s-grid"/><text x="48" y="25" class="t-dim" style="font-size:14px" text-anchor="end">1</text><line x1="56" y1="20" x2="56" y2="230" class="s-grid"/><text x="56" y="250" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><line x1="157" y1="20" x2="157" y2="230" class="s-grid"/><text x="157" y="250" class="t-dim" style="font-size:14px" text-anchor="middle">3</text><line x1="258" y1="20" x2="258" y2="230" class="s-grid"/><text x="258" y="250" class="t-dim" style="font-size:14px" text-anchor="middle">6</text><line x1="359" y1="20" x2="359" y2="230" class="s-grid"/><text x="359" y="250" class="t-dim" style="font-size:14px" text-anchor="middle">9</text><line x1="460" y1="20" x2="460" y2="230" class="s-grid"/><text x="460" y="250" class="t-dim" style="font-size:14px" text-anchor="middle">12</text><line x1="56" y1="20" x2="56" y2="230" class="s-line"/><path d="M56,20l5.5,1.9 5.6,5.6 5.5,9 5.5,12.1 5.6,14.6 5.5,16.7 5.5,17.9 5.6,18.5 5.5,18.6 5.5,17.8 5.6,16.6 5.5,15 5.5,12.9 5.6,10.8 5.5,8.5 5.5,6.2 5.6,4.2 5.5,2.3 5.6,.8 5.5-.4 5.5-1.2 5.6-1.8 5.5-1.8 5.5-1.8 5.6-1.4 5.5-1 5.5-.5 5.6,.1 5.5,.6 5.5,1 5.6,1.2 5.5,1.5 5.5,1.4 5.6,1.3 5.5,1.2 5.5,.8 5.6,.6 5.5,.2 5.5-.1 5.6-.3 5.5-.5 5.5-.6 5.6-.6 5.5-.6 5.5-.4 5.6-.3 5.5-.1 5.5,.1 5.6,.3 5.5,.4 5.5,.5 5.6,.5 5.5,.5 5.5,.5 5.6,.3 5.5,.3 5.6,.1 5.5,0 5.5-.2 5.6-.2 5.5-.3 5.5-.3 5.6-.3 5.5-.2 5.5-.2 5.6,0 5.5,0 5.5,.1 5.6,.2 5.5,.2 5.5,.3 5.6,.2 5.5,.3" class="s-line" style="stroke:var(--text);stroke-width:1.5" stroke-dasharray="6 4" clip-path="url(#f1302-clip)"/><path d="M56,20l5.5,1.4 5.6,4.2 5.5,6.8 5.5,9.3 5.6,11.4 5.5,13.1 5.5,14.4 5.6,15.4 5.5,15.8 5.5,15.8 5.6,15.5 5.5,14.7 5.5,13.7 5.6,12.3 5.5,10.9 5.5,9.3 5.6,7.8 5.5,6.2 5.6,4.7 5.5,3.3 5.5,2.3 5.6,1.2 5.5,.5 5.5-.1 5.6-.5 5.5-.6 5.5-.8 5.6-.6 5.5-.6 5.5-.3 5.6-.2 5.5,.1 5.5,.2 5.6,.4 5.5,.4 5.5,.6 5.6,.5 5.5,.4 5.5,.4 5.6,.4 5.5,.2 5.5,.1 5.6,0 5.5-.1 5.5-.1 5.6-.1 5.5-.2 5.5-.1 5.6-.2 5.5,0 5.5-.1 5.6,0 5.5,.1 5.5,.1 5.6,.1 5.5,.1 5.6,.2 5.5,.1 5.5,.1 5.6,0 5.5,.1 5.5,0 5.6,0 5.5-.1 5.5,0 5.6-.1 5.5,0 5.5-.1 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0" class="s-acc" clip-path="url(#f1302-clip)"/><path d="M185,230l5.6-4.5 5.6-11 5.6-14.2 5.6-14.5 5.7-12.7 5.6-9.6 5.6-5.6 5.6-1.3 5.6,2.6 5.6,6 5.6,8.5 5.6,10 5.7,10.5 5.6,10.1 5.6,9 5.6,7.2 5.6,5.3 5.6,3.1 5.6,1.1 5.6-.6 5.7-2 5.6-2.8 5.6-3.3 5.6-3.1 5.6-2.6 5.6-2 5.6-.9 5.6,0 5.7,.9 5.6,1.7 5.6,2.2 5.6,2.6 5.6,2.6 5.6,2.5 5.6,2 5.6,1.5 5.7,1 5.6,.3 5.6-.2 5.6-.7 5.6-1.1 5.6-1.2 5.6-1.1 5.6-1.1 5.7-.8 5.6-.4 5.6-.1 5.6,.3 5.6,.6" class="s-acc" style="stroke-width:1.2" stroke-dasharray="2 3" clip-path="url(#f1302-clip)"/><circle cx="185" cy="230" r="3.5" class="f-acc"/><circle cx="161.8" cy="230" r="3.5" class="f-dim"/><text x="189" y="220" class="t-acc" text-anchor="start" style="font-size:14px">3.832</text><text x="157.8" y="220" class="t-dim" text-anchor="end" style="font-size:14px">π</text><text x="121.7" y="114.5" class="t" text-anchor="start" style="font-size:14px">원형 구멍</text><text x="101.5" y="171.2" class="t-dim" text-anchor="end" style="font-size:14px">슬릿</text><text x="244.5" y="141.8" class="t-acc" text-anchor="start" style="font-size:13px;font-weight:400">원형 구멍 ×20</text><text x="460" y="272" class="t-dim" text-anchor="end" style="font-size:14px">u = πD sin θ / λ</text><text x="64" y="14" class="t-dim" text-anchor="start" style="font-size:14px">세기 I / I₀</text></svg>
+      <figcaption><b>그림 13-2.</b> 원형 구멍의 회절 세기 \([2J_1(u)/u]^2\)(실선)과 같은 폭 슬릿의 \((\sin u/u)^2\)(점선). 가로축은 두 경우 모두 \(u = \pi D\sin\theta/\lambda\)이다. 원형 구멍의 첫 어두운 고리는 \(u = 3.832\)로 슬릿의 \(\pi\)보다 바깥에 있다. 짧은 점선은 원형 구멍의 세기를 20배 확대한 것으로, \(u = 5.14\)의 두 번째 밝은 고리가 보인다.</figcaption>
+    </figure>
+
+    <h3 id="s3-orthogonality">영점으로 만든 직교 함수</h3>
+    <p>원형 막처럼 반지름 \(a\)인 원판 위에서 가장자리가 0인 함수를 전개하려면, \(m\)을 고정하고 크기를 바꾼 \(J_m(\alpha_{mn}s/a)\) (\(n = 1, 2, \ldots\))를 기저로 쓴다. 이 함수들은 모두 \(s = a\)에서 0이다. 이들이 직교한다는 것이 다음 정리다. 증명은 12장에서 르장드르 다항식의 직교성을 보인 방법(<a href="ch12.html#thm-legendre-orthogonality">정리 12.5</a>)과 같다.</p>
+    <div class="box thm" id="thm-bessel-orthogonality"><div class="box-h">베셀 함수의 직교성</div>
+      <p>정수 \(m \ge 0\)(증명은 실수 차수 \(\nu > -1\)에서도 그대로 통한다)이고 \(\alpha_{mn}\)이 \(J_m\)의 \(n\)번째 양의 영점이면</p>
+      <div class="formula" id="eq-bessel-orthogonality">\[ \begin{aligned} &\int_0^aJ_m\Big(\frac{\alpha_{mn}s}{a}\Big)J_m\Big(\frac{\alpha_{mn'}s}{a}\Big)\,s\,ds \\ &\quad = \frac{a^2}{2}\big[J_{m+1}(\alpha_{mn})\big]^2\,\delta_{nn'} \end{aligned} \]</div>
+    </div>
+    <p><b>증명.</b> \(u(s) = J_m(\alpha s/a)\), \(v(s) = J_m(\beta s/a)\)는 식 <a class="ref" href="#eq-cylindrical-radial"></a>을 \(k = \alpha/a\), \(\beta/a\)로 만족한다. \(s\)로 나누어 쓰면 \((su')' + (\alpha^2s/a^2 - m^2/s)u = 0\)이고 \(v\)도 같다. 첫째에 \(v\), 둘째에 \(u\)를 곱해 빼면 \(m^2\) 항이 지워지고</p>
+    <div class="formula">\[ \frac{d}{ds}\Big[s\big(u'v - uv'\big)\Big] = \frac{\beta^2 - \alpha^2}{a^2}\,s\,uv \]</div>
+    <p>이다. 0에서 \(a\)까지 적분하자. 아래 끝에서는 \(s\)가 곱해져 있어 0이다. 위 끝에서는 \(\alpha, \beta\)가 모두 영점이면 \(u(a) = v(a) = 0\)이라 0이다. 따라서 \(\alpha \ne \beta\)이면 \(\int_0^auvs\,ds = 0\)이다.</p>
+    <p>규격화는 다른 항등식으로 구한다. \(y = J_m(x)\)에 대해 베셀 방정식에 \(2y'\)을 곱하면 \(2x^2y'y'' + 2xy'^2 = \frac{d}{dx}(xy')^2\)이고 \(2(x^2 - m^2)yy' = \frac{d}{dx}[(x^2 - m^2)y^2] - 2xy^2\)이므로</p>
+    <div class="formula">\[ \frac{d}{dx}\Big[(xy')^2 + (x^2 - m^2)\,y^2\Big] = 2x\,y^2 \]</div>
+    <p>이다. 0에서 영점 \(\alpha\)까지 적분하면 아래 끝의 괄호는 0이다(\(m = 0\)이면 \(x^2 - m^2 = 0\)이고, \(m \ge 1\)이면 \(J_m(0) = 0\)). 위 끝에서는 \(J_m(\alpha) = 0\)이고, 식 <a class="ref" href="#eq-bessel-power-derivatives"></a>의 둘째 줄에서 \(J_m(\alpha) = 0\)이면 \(J_m'(\alpha) = -J_{m+1}(\alpha)\)이다. 그래서 \(\int_0^\alpha xJ_m^2\,dx = \tfrac12\alpha^2J_{m+1}(\alpha)^2\)이고, \(x = \alpha s/a\)로 바꾸면 식 <a class="ref" href="#eq-bessel-orthogonality"></a>의 오른쪽이 된다. \(\square\)</p>
+    <p>가중 함수 \(s\)는 아무렇게나 붙은 것이 아니라 원판의 넓이 요소 \(s\,ds\,d\phi\)에서 온다. 그래서 원판 위의 함수 \(f(s)\)는</p>
+    <div class="formula" id="eq-fourier-bessel">\[ \begin{aligned} f(s) &= \sum_{n=1}^\infty c_nJ_m\Big(\frac{\alpha_{mn}s}{a}\Big) \\ c_n &= \frac{2}{a^2J_{m+1}(\alpha_{mn})^2} \\ &\quad\times\int_0^af(s)\,J_m\Big(\frac{\alpha_{mn}s}{a}\Big)s\,ds \end{aligned} \]</div>
+    <p>로 전개된다(<span class="term">푸리에-베셀 급수</span> <span class="en">(Fourier–Bessel series)</span>). 이 기저가 완비라는 것, 곧 제곱 적분 가능한 모든 \(f\)가 이렇게 전개된다는 것은 16장의 <a href="ch16.html#thm-sl-completeness">완비성 정리</a>가 보장한다. 증명에서 경계 항 \([s(u'v - uv')]\)이 사라진 것이 핵심이었는데, 16장은 이 구조를 스투름-리우빌 문제로 일반화한다(<a href="ch16.html#thm-sl-real-orthogonal">16장의 직교성 정리</a>). 경계에서 \(J_m\) 대신 \(J_m'\)이 0인 조건(노이만 조건)을 쓰면 \(J_m'\)의 영점으로 같은 일을 할 수 있다.</p>
+  </section>
+
+  <!-- ============================================================ 13.4 -->
+  <section id="s4">
+    <h2>구면 베셀 함수</h2>
+    <p>구 안에 갇힌 입자, 구형 공동 속의 소리, 원자핵에 부딪히는 중성자처럼 구면 대칭인 파동 문제에서는 3차원 헬름홀츠 방정식을 구면 좌표로 푼다. 각 부분은 12장의 구면 조화 함수가 맡고, 지름 부분에 베셀 방정식의 친척이 남는다.</p>
+
+    <h3 id="s4-equation">지름 방정식과 정의</h3>
+    <p>\(\psi = R(r)\,Y_l^m(\theta, \phi)\)를 \(\nabla^2\psi + k^2\psi = 0\)에 넣자. 6장에서 라플라시안을 \(\frac1r\partial_r^2r + \frac{1}{r^2}\Lambda\)로 나누었고(<a href="ch06.html#eq-laplacian-angular-split">식 (6.35)</a>), 12장에서 \(\Lambda Y_l^m = -l(l+1)Y_l^m\)임을 보였다(<a href="ch12.html#eq-ylm-eigen">식 (12.47)</a>). 그러면 지름 부분은</p>
+    <div class="formula" id="eq-spherical-radial">\[ R'' + \frac2rR' + \Big[k^2 - \frac{l(l+1)}{r^2}\Big]R = 0 \]</div>
+    <p>이다. \(x = kr\)로 두고 \(R = w/\sqrt x\)를 넣으면, 식 <a class="ref" href="#eq-bessel-liouville"></a>을 얻을 때와 같은 계산으로 \(x^2w'' + xw' + [x^2 - l(l+1) - \tfrac14]w = 0\)이 된다. \(l(l+1) + \tfrac14 = (l + \tfrac12)^2\)이므로 이것은 \(\nu = l + \tfrac12\)차 베셀 방정식이다.</p>
+    <div class="box def" id="def-spherical-bessel"><div class="box-h">구면 베셀 함수</div>
+      <p>정수 \(l \ge 0\)에 대해</p>
+      <div class="formula" id="eq-spherical-bessel-def">\[ \begin{aligned} j_l(x) &= \sqrt{\frac{\pi}{2x}}\,J_{l+1/2}(x) \\ y_l(x) &= \sqrt{\frac{\pi}{2x}}\,Y_{l+1/2}(x) \\ h_l^{(1,2)}(x) &= j_l(x) \pm i\,y_l(x) \end{aligned} \]</div>
+      <p>를 <span class="term">구면 베셀 함수</span> <span class="en">(spherical Bessel function)</span>, 구면 노이만 함수, 구면 한켈 함수라 한다. 이들은 식 <a class="ref" href="#eq-spherical-radial"></a>를 \(k = 1\)로 둔 방정식 \(x^2y'' + 2xy' + [x^2 - l(l+1)]y = 0\)의 해다.</p>
+    </div>
+
+    <h3 id="s4-elementary">초등 함수로 쓰기</h3>
+    <p>\(l = 0\)이면 식 <a class="ref" href="#eq-spherical-radial"></a>는 \(\frac1r(rR)'' + k^2R = 0\)이므로 \(rR = A\sin kr + B\cos kr\)이다. 급수 쪽에서도 확인해 보자. 11장의 \(\Gamma(n + \tfrac12) = \frac{(2n-1)!!}{2^n}\sqrt\pi\)(<a href="ch11.html#eq-gamma-half-integer">식 (11.11)</a>)에서 \(k!\,\Gamma(k + \tfrac32) = \frac{(2k+1)!}{2^{2k+1}}\sqrt\pi\)이므로</p>
+    <div class="formula">\[ \begin{aligned} J_{1/2}(x) &= \sum_k\frac{(-1)^k2^{2k+1}}{(2k+1)!\sqrt\pi}\Big(\frac x2\Big)^{2k+1/2} \\ &= \sqrt{\frac{2}{\pi x}}\sum_k\frac{(-1)^kx^{2k+1}}{(2k+1)!} \\ &= \sqrt{\frac{2}{\pi x}}\sin x \end{aligned} \]</div>
+    <p>이다. 같은 계산으로 \(J_{-1/2} = \sqrt{2/\pi x}\cos x\)이고, 식 <a class="ref" href="#eq-bessel-y"></a>에서 \(\cos(\pi/2) = 0\), \(\sin(\pi/2) = 1\)이라 \(Y_{1/2} = -J_{-1/2}\)이다. 높은 \(l\)은 식 <a class="ref" href="#eq-bessel-power-derivatives"></a>의 둘째 줄에서 얻는다. \(\nu = l + \tfrac12\)로 두고 \(\sqrt{\pi/2}\,x^{-1/2}\)을 곱하면 \((x^{-l}j_l)' = -x^{-l}j_{l+1}\)이고, 이것을 \(l\)번 되풀이하면 <span class="term">레일리 공식</span> <span class="en">(Rayleigh's formula)</span>이 나온다.</p>
+    <div class="formula" id="eq-rayleigh-formula">\[ \begin{aligned} j_l(x) &= (-x)^l\Big(\frac1x\frac{d}{dx}\Big)^l\frac{\sin x}{x} \\ y_l(x) &= -(-x)^l\Big(\frac1x\frac{d}{dx}\Big)^l\frac{\cos x}{x} \end{aligned} \]</div>
+    <div class="formula" id="eq-spherical-bessel-elementary">\[ \begin{aligned} j_0(x) &= \frac{\sin x}{x}, \quad y_0(x) = -\frac{\cos x}{x} \\ j_1(x) &= \frac{\sin x}{x^2} - \frac{\cos x}{x} \\ y_1(x) &= -\frac{\cos x}{x^2} - \frac{\sin x}{x} \end{aligned} \]</div>
+    <p>한 단계 더 가면 \(j_2 = (3/x^3 - 1/x)\sin x - 3\cos x/x^2\)이다. 반정수 차수의 베셀 함수는 이처럼 사인, 코사인과 \(1/x\)의 거듭제곱으로 끝난다. 식 <a class="ref" href="#eq-bessel-liouville"></a>의 괄호가 \(\nu = \tfrac12\)에서 정확히 1이 되는 것과 같은 이야기다.</p>
+    <div class="callout warn"><strong>\(y_l\)의 이름과 부호</strong><p>이 책은 \(y_0(x) = -\cos x/x\)를 기준으로 삼는다. 이것은 \(Y_{1/2}\)에서 나온 부호이고, 아프켄과 SciPy(<code>scipy.special.spherical_yn</code>)도 같다. 같은 함수를 \(n_l\)로 쓰는 교재가 있고, 그중에는 부호를 반대로 잡아 \(n_0 = +\cos x/x\)로 두는 정의도 있다. 다른 책의 식을 옮길 때는 \(y_0\)(또는 \(n_0\))이 무엇인지 먼저 확인한다. 부호가 바뀌면 \(h_l^{(1)} = j_l + iy_l\)의 꼴과 산란 위상 \(\tan\delta_l = j_l/y_l\)의 부호가 함께 바뀐다.</p></div>
+    <p>원점과 무한대의 꼴은 식 <a class="ref" href="#eq-bessel-small-x"></a>, <a class="ref" href="#eq-bessel-asymptotic"></a>에 \(\nu = l + \tfrac12\)를 넣고 \(\Gamma(l + \tfrac32) = (2l+1)!!\sqrt\pi/2^{l+1}\)을 쓰면 나온다.</p>
+    <div class="formula" id="eq-spherical-bessel-limits">\[ \begin{aligned} j_l &\approx \frac{x^l}{(2l+1)!!}, & y_l &\approx -\frac{(2l-1)!!}{x^{l+1}} \\ j_l &\approx \frac{\sin(x - l\pi/2)}{x}, & y_l &\approx -\frac{\cos(x - l\pi/2)}{x} \end{aligned} \]</div>
+    <p>첫 줄은 \(x \to 0\), 둘째 줄은 \(x \to \infty\)의 꼴이다(\((-1)!! = 1\)로 둔다). 따라서 \(h_l^{(1)}(x) \approx (-i)^{l+1}e^{ix}/x\)이고, \(e^{-i\omega t}\)와 곱하면 바깥으로 나가는 구면파다. 진폭이 \(1/r\)로 줄어 구면을 지나는 에너지 흐름 \(\propto r^2\lvert\psi\rvert^2\)이 일정하다. 원점 근처의 \(j_l \propto x^l\)은 원심력 장벽의 흔적이다. 각운동량이 큰 파동일수록 원점 근처에서 작으므로, 크기 \(a\)인 표적에 파수 \(k\)로 다가오는 파동은 \(ka \ll 1\)이면 \(l = 0\) 성분만 표적을 느낀다(<a class="ref" href="#prob-hard-sphere-phase"></a>). 평면파를 \(j_l\)과 르장드르 다항식으로 전개하는 <span class="term">부분파</span> <span class="en">(partial wave)</span> 전개와 산란 이론은 대학원 양자역학 책의 몫이다.</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 270" role="img" aria-label="구면 베셀 함수 j0, j1, j2. 원점에서 j0만 1이고, j_l은 x^l처럼 시작한다. 첫 영점 3.142, 4.493, 5.763에 점을 찍었다"><defs><clipPath id="f1303-clip"><rect x="56" y="20" width="404" height="200"/></clipPath></defs><line x1="56" y1="173.8" x2="460" y2="173.8" class="s-grid"/><text x="48" y="178.8" class="t-dim" style="font-size:14px" text-anchor="end">0</text><line x1="56" y1="96.9" x2="460" y2="96.9" class="s-grid"/><text x="48" y="101.9" class="t-dim" style="font-size:14px" text-anchor="end">.5</text><line x1="56" y1="20" x2="460" y2="20" class="s-grid"/><text x="48" y="25" class="t-dim" style="font-size:14px" text-anchor="end">1</text><line x1="56" y1="20" x2="56" y2="220" class="s-grid"/><text x="56" y="240" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><line x1="190.7" y1="20" x2="190.7" y2="220" class="s-grid"/><text x="190.7" y="240" class="t-dim" style="font-size:14px" text-anchor="middle">5</text><line x1="325.3" y1="20" x2="325.3" y2="220" class="s-grid"/><text x="325.3" y="240" class="t-dim" style="font-size:14px" text-anchor="middle">10</text><line x1="460" y1="20" x2="460" y2="220" class="s-grid"/><text x="460" y="240" class="t-dim" style="font-size:14px" text-anchor="middle">15</text><line x1="56" y1="173.8" x2="460" y2="173.8" class="s-line"/><line x1="56" y1="20" x2="56" y2="220" class="s-line"/><path d="M56,20l5.5,1.1 5.6,3.2 5.5,5.3 5.5,7.1 5.6,9 5.5,10.4 5.5,11.7 5.6,12.7 5.5,13.4 5.5,13.7 5.6,13.7 5.5,13.5 5.5,12.9 5.6,12.1 5.5,11.1 5.5,9.8 5.6,8.3 5.5,6.8 5.6,5.3 5.5,3.6 5.5,2 5.6,.6 5.5-.9 5.5-2.1 5.6-3.2 5.5-4 5.5-4.7 5.6-5 5.5-5.3 5.5-5.3 5.6-5 5.5-4.7 5.5-4.1 5.6-3.4 5.5-2.6 5.5-1.8 5.6-1 5.5,0 5.5,.7 5.6,1.5 5.5,2.1 5.5,2.6 5.6,3.1 5.5,3.3 5.5,3.4 5.6,3.4 5.5,3.2 5.5,3 5.6,2.5 5.5,2.1 5.5,1.5 5.6,1 5.5,.3 5.5-.3 5.6-.8 5.5-1.3 5.6-1.8 5.5-2.1 5.5-2.3 5.6-2.5 5.5-2.6 5.5-2.4 5.6-2.3 5.5-2.1 5.5-1.7 5.6-1.4 5.5-.9 5.5-.4 5.6,0 5.5,.5 5.5,.9 5.6,1.2 5.5,1.6" class="s-acc" clip-path="url(#f1303-clip)"/><path d="M56,173.8l5.5-10.4 5.6-10.3 5.5-9.7 5.5-8.9 5.6-8 5.5-6.8 5.5-5.4 5.6-4.1 5.5-2.5 5.5-.9 5.6,.5 5.5,2 5.5,3.4 5.6,4.7 5.5,5.7 5.5,6.5 5.6,7.2 5.5,7.7 5.6,7.8 5.5,7.8 5.5,7.6 5.6,7 5.5,6.5 5.5,5.6 5.6,4.7 5.5,3.7 5.5,2.6 5.6,1.5 5.5,.4 5.5-.6 5.6-1.5 5.5-2.4 5.5-3 5.6-3.6 5.5-3.9 5.5-4.2 5.6-4.2 5.5-4.1 5.5-3.8 5.6-3.4 5.5-2.8 5.5-2.3 5.6-1.6 5.5-.9 5.5-.2 5.6,.4 5.5,1.1 5.5,1.7 5.6,2.1 5.5,2.5 5.5,2.8 5.6,2.9 5.5,3 5.5,2.8 5.6,2.6 5.5,2.3 5.6,1.9 5.5,1.5 5.5,1 5.6,.4 5.5-.1 5.5-.5 5.6-1.1 5.5-1.4 5.5-1.8 5.6-2 5.5-2.2 5.5-2.2 5.6-2.3 5.5-2.1 5.5-1.9 5.6-1.7 5.5-1.3" class="s-acc2" clip-path="url(#f1303-clip)"/><path d="M56,173.8l5.5-.4 5.6-1.3 5.5-2 5.5-2.9 5.6-3.4 5.5-3.9 5.5-4.3 5.6-4.5 5.5-4.5 5.5-4.4 5.6-4.1 5.5-3.7 5.5-3.1 5.6-2.4 5.5-1.5 5.5-.7 5.6,.2 5.5,1.1 5.6,2.1 5.5,2.9 5.5,3.7 5.6,4.3 5.5,5 5.5,5.3 5.6,5.6 5.5,5.7 5.5,5.6 5.6,5.4 5.5,5 5.5,4.6 5.6,3.9 5.5,3.2 5.5,2.5 5.6,1.6 5.5,.8 5.5,0 5.6-.8 5.5-1.5 5.5-2.1 5.6-2.7 5.5-3 5.5-3.4 5.6-3.5 5.5-3.5 5.5-3.3 5.6-3.1 5.5-2.8 5.5-2.4 5.6-1.8 5.5-1.3 5.5-.6 5.6-.1 5.5,.4 5.5,1.1 5.6,1.5 5.5,1.9 5.6,2.2 5.5,2.4 5.5,2.6 5.6,2.5 5.5,2.5 5.5,2.3 5.6,2 5.5,1.7 5.5,1.3 5.6,.9 5.5,.4 5.5-.1 5.6-.5 5.5-.9 5.5-1.2 5.6-1.6 5.5-1.8" class="s-line" style="stroke:var(--text);stroke-width:2" stroke-dasharray="6 4" clip-path="url(#f1303-clip)"/><circle cx="140.6" cy="173.8" r="4" class="f-acc"/><circle cx="177" cy="173.8" r="4" class="f-acc2"/><circle cx="211.2" cy="173.8" r="4" class="f-dim"/><text x="80.2" y="27.7" class="t-math acc" text-anchor="start"><tspan font-style="italic">j</tspan><tspan baseline-shift="sub" font-size="72%">0</tspan></text><text x="126" y="96.9" class="t-math acc2" text-anchor="start"><tspan font-style="italic">j</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan></text><text x="177.2" y="123.1" class="t-math" text-anchor="start"><tspan font-style="italic">j</tspan><tspan baseline-shift="sub" font-size="72%">2</tspan></text><text x="140.6" y="256" class="t-acc" text-anchor="middle" style="font-size:13px">1s</text><text x="177" y="256" class="t-acc" text-anchor="middle" style="font-size:13px;fill:var(--accent-2)">1p</text><text x="217.2" y="256" class="t-dim" text-anchor="middle" style="font-size:13px">1d</text><text x="460" y="262" class="t-dim" text-anchor="end" style="font-size:14px;font-style:italic">x = kr</text></svg>
+      <figcaption><b>그림 13-3.</b> 구면 베셀 함수 \(j_0, j_1, j_2\)(점선). 원점에서 \(j_0\)만 1이고 \(j_l\)은 \(x^l/(2l+1)!!\)로 출발한다. 첫 영점 \(\pi = 3.142\), \(4.493\), \(5.763\)에 점을 찍었다. 구형 무한 우물에서 이 값들이 \(1s, 1p, 1d\) 준위를 정한다(<a class="ref" href="#ex-spherical-well"></a>).</figcaption>
+    </figure>
+
+    <div class="box ex" id="ex-spherical-well"><div class="box-h">구형 무한 우물 속 입자의 준위</div>
+      <p>질량 \(m\)인 입자가 반지름 \(a\)인 구 안에 갇혀 있고, 구 안에서는 퍼텐셜이 0, 밖에서는 무한대다. (가) 에너지 준위를 구면 베셀 함수의 영점으로 쓰고, 바닥 상태 에너지를 구하라. (나) 원자핵을 이런 우물로 어림해, \(a = 5.0\ \text{fm}\) 안의 중성자(\(mc^2 = 939.6\ \text{MeV}\))의 바닥 에너지와 낮은 준위의 순서를 구하라.</p>
+      <p><b>풀이.</b> (가) 구 안에서 슈뢰딩거 방정식은 \(-\frac{\hbar^2}{2m}\nabla^2\psi = E\psi\), 곧 \(k = \sqrt{2mE}/\hbar\)인 헬름홀츠 방정식이다. \(\psi = R(r)Y_l^m\)이면 \(R\)은 식 <a class="ref" href="#eq-spherical-radial"></a>를 만족하고, 원점에서 유한해야 하므로 \(y_l\)을 버려 \(R = j_l(kr)\)이다. 벽에서 \(\psi = 0\)이므로 \(j_l(ka) = 0\)이다. \(j_l\)의 \(n\)번째 영점을 \(\beta_{ln}\)이라 하면</p>
+      <div class="formula" id="eq-spherical-well-levels">\[ E_{nl} = \frac{\hbar^2\beta_{ln}^2}{2ma^2} \]</div>
+      <p>이다. 에너지가 \(Y_l^m\)의 \(m\)에 무관하므로 각 준위는 \(2l+1\)겹으로 겹친다. \(l = 0\)이면 \(j_0 = \sin x/x\)의 영점이 \(n\pi\)이므로 바닥 상태는 \(E_{10} = \hbar^2\pi^2/(2ma^2)\)이다. 이것은 폭 \(a\)인 1차원 상자의 바닥 에너지와 같다. \(l = 0\)에서 \(u = rR\)이 1차원 상자의 방정식을 만족하기 때문이다.</p>
+      <p>(나) <b>숫자로 보기.</b> \(\hbar c = 197.33\ \text{MeV}\cdot\text{fm}\)를 쓰면</p>
+      <div class="formula">\[ \begin{aligned} E_{1s} &= \frac{(\hbar c\,\pi/a)^2}{2mc^2} \\ &= \frac{(197.33 \times \pi/5.0)^2}{2 \times 939.6}\ \text{MeV} \\ &= 8.18\ \text{MeV} \end{aligned} \]</div>
+      <p>이다. 단위는 \((\text{MeV}\cdot\text{fm}/\text{fm})^2/\text{MeV} = \text{MeV}\)이다. 다른 준위는 \((\beta_{ln}/\pi)^2\)배다. 영점이 작은 순서로 \(1s\)(3.142), \(1p\)(4.493), \(1d\)(5.763), \(2s\)(6.283), \(1f\)(6.988), \(2p\)(7.725)이므로 에너지는 \(8.18,\ 16.7,\ 27.5,\ 32.7,\ 40.5,\ 49.5\ \text{MeV}\)이다. \(l\)이 \(n\)보다 먼저 올라가는 것은 수소 원자(13.6절)와 전혀 다르다. 각 준위에 스핀 두 상태까지 \(2(2l+1)\)개의 중성자를 채우면 누적 개수가 \(2, 8, 18, 20, 34, 40\)이다. 실제 원자핵에서 특별히 안정한 개수인 <span class="term">마법수</span> <span class="en">(magic number)</span> 2, 8, 20이 이 순서에 들어 있고, 28, 50, 82 같은 다음 마법수를 맞추려면 스핀-궤도 결합이 필요하다는 것이 껍질 모형의 출발점이다(M. G. Mayer, Phys. Rev. 75, 1969 (1949)).</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 13.5 -->
+  <section id="s5">
+    <h2>에르미트 다항식과 조화 진동자</h2>
+    <p>퍼텐셜의 바닥 근처는 거의 언제나 포물선이다. 그래서 분자의 진동, 결정의 포논, 이온 덫 속 이온, 전자기장의 한 모드가 모두 양자 조화 진동자로 기술된다. 이 절에서는 진동자의 슈뢰딩거 방정식을 에르미트 방정식으로 바꾸고, 파동함수가 규격화될 조건이 급수를 끊어 에너지를 양자화한다는 것을 보인다. 사다리 연산자를 쓰는 대수적 풀이는 양자역학 책의 몫이다.</p>
+
+    <div class="box ex" id="ex-qho-hermite"><div class="box-h">조화 진동자의 에너지 양자화</div>
+      <p>질량 \(m\), 각진동수 \(\omega\)인 진동자의 슈뢰딩거 방정식 \(-\frac{\hbar^2}{2m}\psi'' + \tfrac12m\omega^2x^2\psi = E\psi\)를 생각하자. (가) 무차원 변수로 바꾸고 \(\psi = h\,e^{-\xi^2/2}\)로 두어 \(h\)의 방정식을 구하라. (나) \(h\)의 멱급수가 끊기지 않으면 \(\psi\)를 규격화할 수 없음을 보이고, 에너지 준위를 구하라. (다) 질량 \(40\ \text{u}\)인 이온이 \(\omega/2\pi = 1.00\ \text{MHz}\)인 덫에 있을 때 \(\hbar\omega\)와 바닥 상태의 위치 퍼짐을 구하라.</p>
+      <p><b>풀이.</b> (가) 길이 척도 \(b = \sqrt{\hbar/m\omega}\)와 \(\xi = x/b\), \(\varepsilon = 2E/\hbar\omega\)를 쓰자. 방정식을 \(\hbar\omega/2\)로 나누면 \(-\frac{\hbar}{m\omega}\psi_{xx} + \frac{m\omega}{\hbar}x^2\psi = \varepsilon\psi\)이므로</p>
+      <div class="formula">\[ \psi'' + (\varepsilon - \xi^2)\,\psi = 0 \]</div>
+      <p>이다. \(\xi\)가 크면 \(\varepsilon\)을 무시할 수 있고, \(e^{\pm\xi^2/2}\)가 \((e^{\pm\xi^2/2})'' = (\xi^2 \pm 1)e^{\pm\xi^2/2} \approx \xi^2e^{\pm\xi^2/2}\)로 근사적인 해다. 줄어드는 쪽을 떼어 \(\psi = h(\xi)e^{-\xi^2/2}\)로 두면 \(\psi'' = (h'' - 2\xi h' + \xi^2h - h)e^{-\xi^2/2}\)이므로</p>
+      <div class="formula" id="eq-qho-hermite-equation">\[ h'' - 2\xi h' + (\varepsilon - 1)\,h = 0 \]</div>
+      <p>이다. 이것이 에르미트 방정식이다.</p>
+      <p>(나) \(\xi = 0\)은 정상점이므로 \(h = \sum a_k\xi^k\)로 둔다. \(\xi^k\)의 계수에서 \((k+2)(k+1)a_{k+2} - 2ka_k + (\varepsilon - 1)a_k = 0\), 곧</p>
+      <div class="formula" id="eq-hermite-series-recursion">\[ a_{k+2} = \frac{2k + 1 - \varepsilon}{(k+2)(k+1)}\,a_k \]</div>
+      <p>이다. 짝수 급수(\(a_0\)에서 시작)와 홀수 급수(\(a_1\)에서 시작)가 따로 나온다. 어느 급수도 끊기지 않으면 \(k > \varepsilon\)부터 계수의 부호가 같아지고 \(a_{k+2}/a_k \to 2/k\)이다. 비교 대상으로 \(e^{c\xi^2} = \sum_j c^j\xi^{2j}/j!\)을 보면 이웃 계수의 비가 \(c/(j+1) = 2c/(k+2)\)(\(k = 2j\))이다. \(\tfrac12 &lt; c &lt; 1\)인 \(c\)를 하나 고르면 충분히 큰 \(k\)에서 \(a_{k+2}/a_k > 2c/(k+2)\)이므로, 급수의 꼬리가 \(e^{c\xi^2}\)의 꼬리의 상수배보다 크다. 그러면 큰 \(\xi\)에서 \(\lvert\psi\rvert\)가 \(e^{(c - 1/2)\xi^2}\)보다 빨리 자라 \(\int\lvert\psi\rvert^2d\xi\)가 발산한다(홀수 급수는 \(\xi e^{c\xi^2}\)과 비교한다). 따라서 한 급수는 끊겨야 하고 다른 급수는 처음부터 없어야 한다. 식 <a class="ref" href="#eq-hermite-series-recursion"></a>에서 \(a_{n+2} = 0\)이 되려면 \(2n + 1 - \varepsilon = 0\)이다.</p>
+      <div class="formula" id="eq-qho-energy">\[ \begin{aligned} \varepsilon &= 2n + 1 \\ E_n &= \Big(n + \frac12\Big)\hbar\omega \end{aligned} \]</div>
+      <p>(\(n = 0, 1, 2, \ldots\)) 끊긴 다항식은 \(n = 0, 1, 2, 3\)에서 \(1\), \(\xi\), \(1 - 2\xi^2\), \(\xi - \tfrac23\xi^3\)이다. 최고차항의 계수를 \(2^n\)으로 맞춘 것이 아래의 에르미트 다항식 \(H_n\)이다.</p>
+      <p>(다) <b>숫자로 보기.</b> \(m = 40 \times 1.6605 \times 10^{-27}\ \text{kg} = 6.642 \times 10^{-26}\ \text{kg}\), \(\omega = 6.283 \times 10^6\ \text{s}^{-1}\)이면</p>
+      <div class="formula">\[ \begin{aligned} \hbar\omega &= hf \\ &= (6.626 \times 10^{-34}\ \text{J}\cdot\text{s})(1.00 \times 10^6\ \text{s}^{-1}) \\ &= 4.14 \times 10^{-9}\ \text{eV} \\ b &= \sqrt{\frac{\hbar}{m\omega}} = \sqrt{\frac{1.0546 \times 10^{-34}}{4.173 \times 10^{-19}}}\ \text{m} \\ &= 15.9\ \text{nm} \end{aligned} \]</div>
+      <p>이다. \(\hbar\omega/k_B = 48\ \mu\text{K}\)이므로, 이온을 바닥 상태 근처로 보내려면 마이크로켈빈 영역까지 식혀야 한다. 바닥 상태의 확률 밀도는 \(\lvert\psi_0\rvert^2 \propto e^{-x^2/b^2}\)이므로 위치의 표준편차는 \(b/\sqrt2 = 11.2\ \text{nm}\)이다. 단위: \(\sqrt{\text{J}\cdot\text{s}/(\text{kg}\cdot\text{s}^{-1})} = \sqrt{\text{kg}\cdot\text{m}^2/\text{kg}} = \text{m}\)이다.</p>
+    </div>
+
+    <h3 id="s5-hermite">에르미트 다항식</h3>
+    <div class="box def" id="def-hermite"><div class="box-h">에르미트 다항식</div>
+      <p>로드리게스 공식</p>
+      <div class="formula" id="eq-rodrigues-hermite">\[ H_n(x) = (-1)^n\,e^{x^2}\frac{d^n}{dx^n}e^{-x^2} \]</div>
+      <p>이 정하는 \(n\)차 다항식을 (물리학자의) <span class="term">에르미트 다항식</span> <span class="en">(Hermite polynomial)</span>이라 한다. 최고차항은 \(2^nx^n\)이고 \(H_n(-x) = (-1)^nH_n(x)\)이다.</p>
+    </div>
+    <p>\(e^{-x^2}\)을 한 번 미분할 때마다 \(-2x\)가 하나씩 곱해지므로 최고차항이 \((-2x)^n\)이고, \((-1)^n\)이 부호를 맞춘다. 처음 다섯 개는 다음과 같다.</p>
+    <div class="formula">\[ \begin{aligned} H_0 &= 1, \quad H_1 = 2x, \quad H_2 = 4x^2 - 2 \\ H_3 &= 8x^3 - 12x \\ H_4 &= 16x^4 - 48x^2 + 12 \end{aligned} \]</div>
+    <p>\(H_2 = -2(1 - 2x^2)\), \(H_3 = -12(x - \tfrac23x^3)\)이므로 <a class="ref" href="#ex-qho-hermite"></a>의 끊긴 다항식과 상수배만 다르다. 이것이 우연이 아님을 생성 함수로 보이자.</p>
+    <div class="box thm" id="thm-hermite-generating"><div class="box-h">에르미트 다항식의 생성 함수와 점화식</div>
+      <div class="formula" id="eq-hermite-generating">\[ e^{2xt - t^2} = \sum_{n=0}^{\infty}H_n(x)\,\frac{t^n}{n!} \]</div>
+      <div class="formula" id="eq-hermite-recurrence">\[ \begin{aligned} H_{n+1}(x) &= 2xH_n(x) - 2nH_{n-1}(x) \\ H_n'(x) &= 2nH_{n-1}(x) \end{aligned} \]</div>
+      <p><b>증명.</b> \(e^{2xt - t^2} = e^{x^2}e^{-(x-t)^2}\)이다. \(t = 0\) 둘레의 테일러 급수에서 \(t^n/n!\)의 계수는 \(e^{x^2}\partial_t^ne^{-(x-t)^2}\big|_{t=0}\)이고, \(e^{-(x-t)^2}\)은 \(x - t\)의 함수라 \(\partial_t = -\partial_x\)이므로 이것은 \(e^{x^2}(-1)^n\frac{d^n}{dx^n}e^{-x^2} = H_n\)이다. 생성 함수 \(G\)를 \(t\)로 미분하면 \(\partial_tG = (2x - 2t)G\)이고, 양변의 \(t^n/n!\) 계수를 비교하면 첫째 점화식이 나온다. \(x\)로 미분한 \(\partial_xG = 2tG\)에서는 \(H_n'/n! = 2H_{n-1}/(n-1)!\)이 나온다. \(\square\)</p>
+    </div>
+    <p>두 점화식을 합치면 \(H_{n+1} = 2xH_n - H_n'\)이다. 이것을 미분하고 왼쪽에 \(H_{n+1}' = 2(n+1)H_n\)을 넣으면</p>
+    <div class="formula" id="eq-hermite-equation">\[ H_n'' - 2xH_n' + 2nH_n = 0 \]</div>
+    <p>이다. 식 <a class="ref" href="#eq-qho-hermite-equation"></a>에서 \(\varepsilon - 1 = 2n\)인 경우이므로, \(H_n\)이 바로 끊긴 해다. 진동자의 \(n\)번째 고유함수는 \(H_n(\xi)e^{-\xi^2/2}\)의 상수배다.</p>
+    <div class="box thm" id="thm-hermite-orthogonality"><div class="box-h">에르미트 다항식의 직교성</div>
+      <div class="formula" id="eq-hermite-orthogonality">\[ \begin{aligned} &\int_{-\infty}^{\infty}H_m(x)H_n(x)\,e^{-x^2}dx \\ &\quad = \sqrt\pi\,2^nn!\,\delta_{mn} \end{aligned} \]</div>
+      <p><b>증명.</b> 생성 함수 두 개를 곱해 가중 함수와 함께 적분한다. 11장의 일반 가우스 적분(<a href="ch11.html#eq-gaussian-general">식 (11.6)</a>)을 \(a = 1\), \(b = 2(s + t)\)로 쓰면</p>
+      <div class="formula">\[ \begin{aligned} &\int e^{2xs - s^2}e^{2xt - t^2}e^{-x^2}dx \\ &\quad = \sqrt\pi\,e^{(s+t)^2 - s^2 - t^2} \\ &\quad = \sqrt\pi\sum_n\frac{2^n(st)^n}{n!} \end{aligned} \]</div>
+      <p>이다. 왼쪽은 \(\sum_{m,n}\frac{s^mt^n}{m!\,n!}\int H_mH_ne^{-x^2}dx\)이다. 오른쪽에는 \(s\)와 \(t\)의 지수가 같은 항만 있으므로 \(m \ne n\)이면 적분이 0이고, \(m = n\)이면 \(\frac{1}{(n!)^2}\int H_n^2e^{-x^2} = \frac{\sqrt\pi2^n}{n!}\)이다. \(\square\)</p>
+    </div>
+    <p>\(dx = b\,d\xi\)를 고려해 규격화하면 진동자의 정규직교 고유함수는</p>
+    <div class="formula" id="eq-qho-eigenfunctions">\[ \psi_n(x) = \frac{1}{\sqrt{2^nn!\sqrt\pi\,b}}\,H_n\Big(\frac xb\Big)\,e^{-x^2/2b^2} \]</div>
+    <p>이다. \(H_n\)의 영점은 모두 실수이고 \(n\)개이므로(13.7절) \(\psi_n\)은 마디가 \(n\)개다(그림 13-4).</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 300" role="img" aria-label="조화 진동자의 퍼텐셜 포물선과 n = 0부터 3까지의 에너지 준위, 각 준위 높이에 그린 고유함수. n번째 함수는 마디가 n개이고 고전적 전환점을 조금 넘어서 줄어든다"><defs><clipPath id="f1304-clip"><rect x="56" y="20" width="404" height="230"/></clipPath></defs><line x1="56" y1="250" x2="460" y2="250" class="s-grid"/><text x="48" y="255" class="t-dim" style="font-size:14px" text-anchor="end">0</text><line x1="56" y1="200" x2="460" y2="200" class="s-grid"/><text x="48" y="205" class="t-dim" style="font-size:14px" text-anchor="end">1</text><line x1="56" y1="150" x2="460" y2="150" class="s-grid"/><text x="48" y="155" class="t-dim" style="font-size:14px" text-anchor="end">2</text><line x1="56" y1="100" x2="460" y2="100" class="s-grid"/><text x="48" y="105" class="t-dim" style="font-size:14px" text-anchor="end">3</text><line x1="56" y1="50" x2="460" y2="50" class="s-grid"/><text x="48" y="55" class="t-dim" style="font-size:14px" text-anchor="end">4</text><line x1="78.4" y1="20" x2="78.4" y2="250" class="s-grid"/><text x="78.4" y="270" class="t-dim" style="font-size:14px" text-anchor="middle">−4</text><line x1="168.2" y1="20" x2="168.2" y2="250" class="s-grid"/><text x="168.2" y="270" class="t-dim" style="font-size:14px" text-anchor="middle">−2</text><line x1="258" y1="20" x2="258" y2="250" class="s-grid"/><text x="258" y="270" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><line x1="347.8" y1="20" x2="347.8" y2="250" class="s-grid"/><text x="347.8" y="270" class="t-dim" style="font-size:14px" text-anchor="middle">2</text><line x1="437.6" y1="20" x2="437.6" y2="250" class="s-grid"/><text x="437.6" y="270" class="t-dim" style="font-size:14px" text-anchor="middle">4</text><line x1="258" y1="20" x2="258" y2="250" class="s-line" style="stroke-dasharray:2 3"/><line x1="56" y1="250" x2="460" y2="250" class="s-line"/><path d="M56,-256.2l5.5,27.3 5.6,26.6 5.5,25.8 5.5,25.1 5.6,24.3 5.5,23.6 5.5,22.8 5.6,22 5.5,21.3 5.5,20.5 5.6,19.8 5.5,19 5.5,18.2 5.6,17.5 5.5,16.7 5.5,16 5.6,15.2 5.5,14.4 5.6,13.7 5.5,12.9 5.5,12.2 5.6,11.4 5.5,10.6 5.5,9.9 5.6,9.1 5.5,8.4 5.5,7.6 5.6,6.8 5.5,6.1 5.5,5.3 5.6,4.6 5.5,3.8 5.5,3 5.6,2.3 5.5,1.5 5.5,.8 5.6,0 5.5-.8 5.5-1.5 5.6-2.3 5.5-3 5.5-3.8 5.6-4.6 5.5-5.3 5.5-6.1 5.6-6.8 5.5-7.6 5.5-8.4 5.6-9.1 5.5-9.9 5.5-10.6 5.6-11.4 5.5-12.2 5.5-12.9 5.6-13.7 5.5-14.4 5.6-15.2 5.5-16 5.5-16.7 5.6-17.5 5.5-18.2 5.5-19 5.6-19.8 5.5-20.5 5.5-21.3 5.6-22 5.5-22.8 5.5-23.6 5.6-24.3 5.5-25.1 5.5-25.8 5.6-26.6 5.5-27.3" class="s-line" style="stroke:var(--text);stroke-width:2" clip-path="url(#f1304-clip)"/><line x1="56" y1="225" x2="460" y2="225" class="s-faint" stroke-dasharray="4 4"/><path d="M56,225l5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5-.1 5.5,0 5.6,0 5.5-.1 5.5-.1 5.6-.1 5.5-.2 5.5-.3 5.6-.3 5.5-.4 5.6-.4 5.5-.7 5.5-.7 5.6-.8 5.5-1.1 5.5-1.1 5.6-1.3 5.5-1.4 5.5-1.5 5.6-1.5 5.5-1.6 5.5-1.5 5.6-1.5 5.5-1.3 5.5-1.1 5.6-.9 5.5-.6 5.5-.4 5.6,0 5.5,.4 5.5,.6 5.6,.9 5.5,1.1 5.5,1.3 5.6,1.5 5.5,1.5 5.5,1.6 5.6,1.5 5.5,1.5 5.5,1.4 5.6,1.3 5.5,1.1 5.5,1.1 5.6,.8 5.5,.7 5.5,.7 5.6,.4 5.5,.4 5.6,.3 5.5,.3 5.5,.2 5.6,.1 5.5,.1 5.5,.1 5.6,0 5.5,0 5.5,.1 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0" class="s-acc" clip-path="url(#f1304-clip)"/><circle cx="213.1" cy="225" r="3" class="f-dim"/><circle cx="302.9" cy="225" r="3" class="f-dim"/><text x="458" y="219" class="t" text-anchor="end" style="font-size:14px">n = 0</text><line x1="56" y1="175" x2="460" y2="175" class="s-faint" stroke-dasharray="4 4"/><path d="M56,175l5.5,0 5.6,0 5.5,0 5.5,0 5.6,.1 5.5,0 5.5,0 5.6,.1 5.5,.1 5.5,.2 5.6,.2 5.5,.2 5.5,.4 5.6,.5 5.5,.5 5.5,.8 5.6,.9 5.5,1 5.6,1.3 5.5,1.3 5.5,1.5 5.6,1.6 5.5,1.7 5.5,1.6 5.6,1.4 5.5,1.2 5.5,.9 5.6,.5 5.5-.1 5.5-.6 5.6-1.3 5.5-1.9 5.5-2.4 5.6-3 5.5-3.3 5.5-3.6 5.6-3.6 5.5-3.6 5.5-3.3 5.6-3 5.5-2.4 5.5-1.9 5.6-1.3 5.5-.6 5.5-.1 5.6,.5 5.5,.9 5.5,1.2 5.6,1.4 5.5,1.6 5.5,1.7 5.6,1.6 5.5,1.5 5.5,1.3 5.6,1.3 5.5,1 5.6,.9 5.5,.8 5.5,.5 5.6,.5 5.5,.4 5.5,.2 5.6,.2 5.5,.2 5.5,.1 5.6,.1 5.5,0 5.5,0 5.6,.1 5.5,0 5.5,0 5.6,0 5.5,0" class="s-acc2" clip-path="url(#f1304-clip)"/><circle cx="180.3" cy="175" r="3" class="f-dim"/><circle cx="335.7" cy="175" r="3" class="f-dim"/><text x="458" y="169" class="t" text-anchor="end" style="font-size:14px">n = 1</text><line x1="56" y1="125" x2="460" y2="125" class="s-faint" stroke-dasharray="4 4"/><path d="M56,125l5.5,0 5.6-.1 5.5,0 5.5-.1 5.6,0 5.5-.1 5.5-.2 5.6-.2 5.5-.3 5.5-.5 5.6-.5 5.5-.7 5.5-.8 5.6-1.1 5.5-1.2 5.5-1.4 5.6-1.5 5.5-1.7 5.6-1.6 5.5-1.6 5.5-1.5 5.6-1.1 5.5-.7 5.5-.1 5.6,.6 5.5,1.3 5.5,2.1 5.6,2.7 5.5,3.4 5.5,3.8 5.6,4 5.5,4 5.5,3.6 5.6,3 5.5,2.1 5.5,1.1 5.6,0 5.5-1.1 5.5-2.1 5.6-3 5.5-3.6 5.5-4 5.6-4 5.5-3.8 5.5-3.4 5.6-2.7 5.5-2.1 5.5-1.3 5.6-.6 5.5,.1 5.5,.7 5.6,1.1 5.5,1.5 5.5,1.6 5.6,1.6 5.5,1.7 5.6,1.5 5.5,1.4 5.5,1.2 5.6,1.1 5.5,.8 5.5,.7 5.6,.5 5.5,.5 5.5,.3 5.6,.2 5.5,.2 5.5,.1 5.6,0 5.5,.1 5.5,0 5.6,.1 5.5,0" class="s-acc" clip-path="url(#f1304-clip)"/><circle cx="157.6" cy="125" r="3" class="f-dim"/><circle cx="358.4" cy="125" r="3" class="f-dim"/><text x="458" y="119" class="t" text-anchor="end" style="font-size:14px">n = 2</text><line x1="56" y1="75" x2="460" y2="75" class="s-faint" stroke-dasharray="4 4"/><path d="M56,75.1l5.5,0 5.6,.1 5.5,.1 5.5,.2 5.6,.2 5.5,.3 5.5,.4 5.6,.5 5.5,.7 5.5,.9 5.6,1.1 5.5,1.2 5.5,1.5 5.6,1.6 5.5,1.7 5.5,1.7 5.6,1.6 5.5,1.3 5.6,.9 5.5,.3 5.5-.3 5.6-1.2 5.5-2.1 5.5-2.8 5.6-3.6 5.5-4 5.5-4.2 5.6-4.1 5.5-3.5 5.5-2.7 5.6-1.5 5.5-.2 5.5,1.3 5.6,2.5 5.5,3.5 5.5,4.3 5.6,4.4 5.5,4.3 5.5,3.5 5.6,2.5 5.5,1.3 5.5-.2 5.6-1.5 5.5-2.7 5.5-3.5 5.6-4.1 5.5-4.2 5.5-4 5.6-3.6 5.5-2.8 5.5-2.1 5.6-1.2 5.5-.3 5.5,.3 5.6,.9 5.5,1.3 5.6,1.6 5.5,1.7 5.5,1.7 5.6,1.6 5.5,1.5 5.5,1.2 5.6,1.1 5.5,.9 5.5,.7 5.6,.5 5.5,.4 5.5,.3 5.6,.2 5.5,.2 5.5,.1 5.6,.1 5.5,0" class="s-acc2" clip-path="url(#f1304-clip)"/><circle cx="139.2" cy="75" r="3" class="f-dim"/><circle cx="376.8" cy="75" r="3" class="f-dim"/><text x="458" y="69" class="t" text-anchor="end" style="font-size:14px">n = 3</text><text x="267" y="37.5" class="t-math" text-anchor="start"><tspan font-style="italic">V</tspan> = ½<tspan font-style="italic">mω</tspan>²<tspan font-style="italic">x</tspan>²</text><text x="460" y="292" class="t-dim" text-anchor="end" style="font-size:14px;font-style:italic">x / b</text><text x="64" y="14" class="t-dim" text-anchor="start" style="font-size:14px">에너지 (ħω)</text></svg>
+      <figcaption><b>그림 13-4.</b> 조화 진동자의 퍼텐셜(실선 포물선)과 준위 \(E_n = (n + \tfrac12)\hbar\omega\)(점선), 각 준위 높이에 그린 고유함수 \(\psi_n\) (\(n = 0, 1, 2, 3\)). 작은 점은 고전적 전환점 \(x = \pm\sqrt{2n+1}\,b\)이다. 고유함수는 전환점을 조금 넘어서 들어간 뒤 \(e^{-x^2/2b^2}\)으로 줄어들고, \(n\)번째 함수는 마디가 \(n\)개다. 곡선은 식 <a class="ref" href="#eq-qho-eigenfunctions"></a>로 계산했다.</figcaption>
+    </figure>
+
+    <div class="box ex" id="ex-oscillator-matrix-elements"><div class="box-h">진동자의 위치 행렬 원소와 선택 규칙</div>
+      <p>(가) 식 <a class="ref" href="#eq-hermite-recurrence"></a>로 \(\langle n'|x|n\rangle = \int\psi_{n'}\,x\,\psi_n\,dx\)를 구하고, 전하를 띤 진동자가 쌍극자 복사로 바꿀 수 있는 준위를 말하라. (나) \(\langle n|x^2|n\rangle\)을 구하고 고전 진동과 비교하라. (다) <a class="ref" href="#ex-qho-hermite"></a>의 이온이 \(n = 10\)일 때 위치의 제곱 평균 제곱근을 구하라.</p>
+      <p><b>풀이.</b> (가) 첫째 점화식을 \(xH_n = \tfrac12H_{n+1} + nH_{n-1}\)로 쓰자. \(\psi_n = c_nH_n(\xi)e^{-\xi^2/2}\), \(c_n = (2^nn!\sqrt\pi\,b)^{-1/2}\)이면 \(c_n/c_{n+1} = \sqrt{2(n+1)}\), \(c_n/c_{n-1} = 1/\sqrt{2n}\)이므로</p>
+      <div class="formula" id="eq-oscillator-x-psi">\[ \begin{aligned} \frac xb\,\psi_n &= \sqrt{\frac{n+1}{2}}\,\psi_{n+1} \\ &\quad + \sqrt{\frac n2}\,\psi_{n-1} \end{aligned} \]</div>
+      <p>이다. 정규직교성에서 \(\langle n'|x|n\rangle\)은 \(n' = n \pm 1\)일 때만 0이 아니고, 값은 \(b\sqrt{(n+1)/2}\)과 \(b\sqrt{n/2}\)이다. 쌍극자 복사의 세기는 \(\lvert\langle n'|qx|n\rangle\rvert^2\)에 비례하므로 준위는 한 칸씩만 바뀌고(\(\Delta n = \pm1\)), 내는 빛의 진동수는 언제나 \(\omega\) 하나다.</p>
+      <p>(나) \(x\psi_n\)을 한 번 더 \(x\)로 곱해 \(\psi_n\)과 겹치면, 식 <a class="ref" href="#eq-oscillator-x-psi"></a>의 두 계수의 제곱의 합이 남는다.</p>
+      <div class="formula">\[ \begin{aligned} \langle n|x^2|n\rangle &= b^2\Big(\frac{n+1}{2} + \frac n2\Big) \\ &= b^2\Big(n + \frac12\Big) \end{aligned} \]</div>
+      <p>따라서 퍼텐셜 에너지의 기댓값은 \(\tfrac12m\omega^2b^2(n + \tfrac12) = \tfrac12E_n\)으로 전체 에너지의 절반이다. 에너지 \(E_n\)인 고전 진동자의 진폭은 \(A^2 = 2E_n/m\omega^2 = (2n+1)b^2\)이고 \(x^2\)의 시간 평균은 \(A^2/2\)이므로, 양자역학의 \(\langle x^2\rangle\)은 같은 에너지의 고전 시간 평균과 정확히 같다.</p>
+      <p>(다) <b>숫자로 보기.</b> \(b = 15.9\ \text{nm}\)이면 \(\sqrt{\langle x^2\rangle} = b\sqrt{10.5} = 51.5\ \text{nm}\)이고, 고전 진폭은 \(b\sqrt{21} = 72.8\ \text{nm}\)이다. 비 \(72.8/51.5 = \sqrt2\)는 사인 진동의 진폭과 제곱 평균 제곱근의 비다. 사다리 연산자로 같은 결과를 얻는 방법은 양자역학 책에서 다룬다.</p>
+    </div>
+    <div class="callout warn"><strong>에르미트 다항식의 두 관례</strong><p>이 책의 \(H_n\)은 가중 함수가 \(e^{-x^2}\)이고 최고차항이 \(2^nx^n\)인 물리학자의 관례다. 확률론과 통계에서는 가중 함수가 정규분포 \(e^{-x^2/2}\)이고 최고차항이 \(x^n\)인 \(He_n\)을 쓴다. 둘은 \(He_n(x) = 2^{-n/2}H_n(x/\sqrt2)\)로 이어지고, 예를 들어 \(He_2 = x^2 - 1\), \(He_3 = x^3 - 3x\)이다. 규격화도 \(\int He_mHe_ne^{-x^2/2}dx = \sqrt{2\pi}\,n!\,\delta_{mn}\)으로 다르다. SciPy에서는 <code>eval_hermite</code>가 \(H_n\), <code>eval_hermitenorm</code>이 \(He_n\)이다.</p></div>
+  </section>
+
+  <!-- ============================================================ 13.6 -->
+  <section id="s6">
+    <h2>라게르 다항식과 수소 원자</h2>
+    <p>6장에서 수소 원자의 슈뢰딩거 방정식을 지름 방정식으로 줄이고(<a href="ch06.html#eq-radial-schrodinger">식 (6.37)</a>), \(l = 0\)의 바닥 상태 \(u = re^{-r/a}\)만 맞혀 보았다. 일반적인 \(l\)과 들뜬 상태를 얻으려면 지름 방정식을 특수 함수의 방정식으로 바꾸어야 한다. 그 함수가 연관 라게르 다항식이다. 먼저 다항식을 세우고 수소 원자로 가자.</p>
+
+    <h3 id="s6-laguerre">라게르 방정식과 라게르 다항식</h3>
+    <p>다음 방정식을 생각하자.</p>
+    <div class="formula" id="eq-laguerre-equation">\[ xy'' + (1 - x)\,y' + \lambda y = 0 \]</div>
+    <p>표준형에서 \(xp = 1 - x\), \(x^2q = \lambda x\)이므로 \(x = 0\)은 정칙 특이점이고 \(p_0 = 1\), \(q_0 = 0\)이다. 결정 방정식 \(s^2 = 0\)이 중근이므로, 푹스 정리의 경우 3에 따라 원점에서 해석적인 해가 하나, \(\ln x\)가 붙는 해가 하나다. 해석적인 해 \(y = \sum a_kx^k\)를 넣으면 \(xy'' + y' = \sum(k+1)^2a_{k+1}x^k\)이므로</p>
+    <div class="formula" id="eq-laguerre-recursion">\[ a_{k+1} = \frac{k - \lambda}{(k+1)^2}\,a_k \]</div>
+    <p>이다. 급수가 끊기지 않으면 \(a_{k+1}/a_k \to 1/k\)로 \(e^x\)의 계수처럼 행동한다. 13.5절 <a class="ref" href="#ex-qho-hermite"></a> (나)와 같은 비교 논법으로, 급수는 \(c &lt; 1\)인 어떤 \(e^{cx}\)보다도 빨리 자란다. 물리에서는 이 해에 \(e^{-x/2}\)가 곱해지므로(뒤의 수소 원자), 끊기지 않으면 규격화할 수 없다. 끊길 조건은 \(\lambda = n\)이 0 이상의 정수인 것이다.</p>
+    <div class="box def" id="def-laguerre"><div class="box-h">라게르 다항식</div>
+      <p>\(n = 0, 1, 2, \ldots\)에 대해</p>
+      <div class="formula" id="eq-rodrigues-laguerre">\[ \begin{aligned} L_n(x) &= \frac{e^x}{n!}\frac{d^n}{dx^n}\big(x^ne^{-x}\big) \\ &= \sum_{k=0}^n\binom nk\frac{(-x)^k}{k!} \end{aligned} \]</div>
+      <p>를 <span class="term">라게르 다항식</span> <span class="en">(Laguerre polynomial)</span>이라 한다. \(L_n(0) = 1\)이고, \(L_n\)은 식 <a class="ref" href="#eq-laguerre-equation"></a>을 \(\lambda = n\)으로 만족한다.</p>
+    </div>
+    <p>둘째 줄은 라이프니츠 규칙에서 나온다. \(\frac{d^n}{dx^n}(x^ne^{-x}) = \sum_j\binom nj(x^n)^{(j)}(e^{-x})^{(n-j)}\)에서 \((x^n)^{(j)} = \frac{n!}{(n-j)!}x^{n-j}\)이고, \(k = n - j\)로 바꾸면 \(e^{-x}\sum_k\binom nk\frac{n!}{k!}(-1)^kx^k\)이다. 이 계수의 비 \(-\frac{n-k}{(k+1)^2}\)이 식 <a class="ref" href="#eq-laguerre-recursion"></a>의 \(\lambda = n\)과 같으므로, \(L_n\)이 바로 끊긴 해다.</p>
+    <div class="formula">\[ \begin{aligned} L_0 &= 1, \quad L_1 = 1 - x, \quad L_2 = 1 - 2x + \tfrac12x^2 \\ L_3 &= 1 - 3x + \tfrac32x^2 - \tfrac16x^3 \end{aligned} \]</div>
+    <p>9장의 <a href="ch09.html#prob-laguerre-gram-schmidt">문제 9.5</a>에서는 가중 함수 \(e^{-x}\)로 \(1, x, x^2\)에 그람-슈미트 과정을 적용해 \(e_0 = L_0\), \(e_1 = -L_1\), \(e_2 = L_2\)를 얻었다. 크기는 같고, 그람-슈미트는 최고차항을 양수로, 라게르 다항식은 \(L_n(0) = 1\)로 부호를 정해서 홀수 차에서 부호만 다르다. 직교성은 아래에서 일반 \(\alpha\)로 증명한다.</p>
+    <div class="box def" id="def-associated-laguerre"><div class="box-h">연관 라게르 다항식</div>
+      <p>\(\alpha > -1\)에 대해</p>
+      <div class="formula" id="eq-associated-laguerre">\[ \begin{aligned} L_n^{(\alpha)}(x) &= \frac{x^{-\alpha}e^x}{n!}\frac{d^n}{dx^n}\big(e^{-x}x^{n+\alpha}\big) \\ &= \sum_{k=0}^n\binom{n+\alpha}{n-k}\frac{(-x)^k}{k!} \end{aligned} \]</div>
+      <p>를 <span class="term">연관 라게르 다항식</span> <span class="en">(associated Laguerre polynomial)</span>이라 한다. 이항계수는 \(\binom{n+\alpha}{n-k} = \frac{\Gamma(n+\alpha+1)}{\Gamma(n-k+1)\,\Gamma(\alpha+k+1)}\)이다. \(L_n^{(0)} = L_n\)이고 \(L_n^{(\alpha)}(0) = \binom{n+\alpha}{n}\)이며, 다음 방정식을 만족한다.</p>
+      <div class="formula" id="eq-associated-laguerre-equation">\[ xy'' + (\alpha + 1 - x)\,y' + ny = 0 \]</div>
+    </div>
+    <p>낮은 차수는 \(L_0^{(\alpha)} = 1\), \(L_1^{(\alpha)} = 1 + \alpha - x\), \(L_2^{(\alpha)} = \tfrac12(\alpha+1)(\alpha+2) - (\alpha+2)x + \tfrac12x^2\)이다. \(\alpha = k\)가 정수이면 \(L_n^{(k)}\)는 \(L_{n+k}\)의 \(k\)계 도함수다.</p>
+    <div class="formula" id="eq-laguerre-derivative">\[ L_n^{(k)}(x) = (-1)^k\frac{d^k}{dx^k}L_{n+k}(x) \]</div>
+    <p>확인은 간단하다. \(L_{n+k} = \sum_j\binom{n+k}{j}\frac{(-x)^j}{j!}\)를 \(k\)번 미분하면 \(j \ge k\)인 항만 남아 \(\sum_j\binom{n+k}j\frac{(-1)^jx^{j-k}}{(j-k)!}\)이고, \(i = j - k\)로 바꾸고 \(\binom{n+k}{i+k} = \binom{n+k}{n-i}\)를 쓰면 \((-1)^kL_n^{(k)}\)이다. 이 관계를 보면 연관 라게르 방정식은 라게르 방정식을 \(k\)번 미분해 얻는 방정식이기도 하다.</p>
+
+    <div class="box thm" id="thm-laguerre-orthogonality"><div class="box-h">연관 라게르 다항식의 직교성</div>
+      <div class="formula" id="eq-laguerre-orthogonality">\[ \begin{aligned} &\int_0^\infty x^\alpha e^{-x}L_m^{(\alpha)}(x)L_n^{(\alpha)}(x)\,dx \\ &\quad = \frac{\Gamma(n+\alpha+1)}{n!}\,\delta_{mn} \end{aligned} \]</div>
+      <p>또 가중 함수에 \(x\)가 하나 더 붙은 적분은 다음과 같다.</p>
+      <div class="formula" id="eq-laguerre-second-moment">\[ \begin{aligned} &\int_0^\infty x^{\alpha+1}e^{-x}\big[L_n^{(\alpha)}(x)\big]^2dx \\ &\quad = (2n + \alpha + 1)\,\frac{\Gamma(n+\alpha+1)}{n!} \end{aligned} \]</div>
+      <details class="proof"><summary>증명</summary>
+        <p>\(m &lt; n\)이라 하고, \(q\)를 차수가 \(n\)보다 낮은 아무 다항식이라 하자. 로드리게스 공식으로 \(\int x^\alpha e^{-x}qL_n^{(\alpha)}dx = \frac1{n!}\int q\,\frac{d^n}{dx^n}(e^{-x}x^{n+\alpha})dx\)이다. 부분 적분을 \(n\)번 하면 \(\frac{(-1)^n}{n!}\int q^{(n)}e^{-x}x^{n+\alpha}dx = 0\)이다. 경계 항은 \(e^{-x}x^{n+\alpha}\)의 \(n-1\)계 이하 도함수가 \(e^{-x}x^{\alpha+1}\)을 인수로 가지므로 \(x = 0\)(\(\alpha > -1\))과 \(x = \infty\)에서 모두 0이다. \(q = L_m^{(\alpha)}\)로 두면 직교성이다. \(m = n\)이면 \(L_n^{(\alpha)}\) 가운데 최고차항 \((-1)^nx^n/n!\)만 남아 \(\frac{(-1)^n}{n!}\cdot\frac{(-1)^nn!}{n!}\int e^{-x}x^{n+\alpha}dx = \Gamma(n+\alpha+1)/n!\)이다.</p>
+        <p>둘째 식에는 점화식 \(xL_n^{(\alpha)} = -(n+1)L_{n+1}^{(\alpha)} + (2n+\alpha+1)L_n^{(\alpha)} - (n+\alpha)L_{n-1}^{(\alpha)}\)을 쓴다. 이것을 \(x^\alpha e^{-x}L_n^{(\alpha)}\)과 곱해 적분하면 직교성 때문에 가운데 항만 남는다. 점화식은 생성 함수 \(\sum_nL_n^{(\alpha)}(x)t^n = (1-t)^{-\alpha-1}e^{-xt/(1-t)}\)에서 나온다. 생성 함수 자체는 명시적 합에서 \(n - k = j\)로 두고 1장의 이항급수 \(\sum_j\binom{j+k+\alpha}{j}t^j = (1-t)^{-(k+\alpha+1)}\)(<a href="ch01.html#eq-binomial-series">식 (1.20)</a>을 음의 지수로 쓴 것)을 쓰면 \(\sum_k\frac{1}{k!}\big(\frac{-xt}{1-t}\big)^k(1-t)^{-\alpha-1}\)이 되어 얻는다. 이것을 \(t\)로 미분하면 \((1-t)^2\partial_tG = [(\alpha+1)(1-t) - x]G\)이고, \(t^n\)의 계수를 비교한 것이 위 점화식이다.</p>
+      </details>
+    </div>
+
+    <h3 id="s6-hydrogen">수소 원자의 지름 방정식</h3>
+    <div class="box ex" id="ex-hydrogen-laguerre"><div class="box-h">수소 원자의 에너지 준위</div>
+      <p>6장의 지름 방정식 <a href="ch06.html#eq-radial-schrodinger">(6.37)</a>에서 \(E &lt; 0\)인 속박 상태를 생각하자. (가) \(\kappa = \sqrt{-2m_eE}/\hbar\), \(\rho = 2\kappa r\)로 두고 \(u = \rho^{l+1}e^{-\rho/2}v(\rho)\)를 넣어 \(v\)의 방정식이 연관 라게르 방정식임을 보여라. (나) 급수가 끊길 조건에서 에너지 준위를 구하라. (다) 발머 계열의 첫 선(\(n = 3 \to 2\))의 파장을 구하라.</p>
+      <p><b>풀이.</b> (가) 6장의 보어 반지름 \(a = 4\pi\varepsilon_0\hbar^2/m_ee^2\)(<a href="ch06.html#eq-bohr-radius">식 (6.38)</a>)를 쓰면 \(\frac{2m_e}{\hbar^2}\frac{e^2}{4\pi\varepsilon_0} = \frac2a\)이므로, 지름 방정식에 \(-2m_e/\hbar^2\)을 곱하면 \(u'' = \big[\kappa^2 - \frac{2}{ar} + \frac{l(l+1)}{r^2}\big]u\)이다. \(\rho = 2\kappa r\)로 바꾸면 \(d^2/dr^2 = 4\kappa^2d^2/d\rho^2\)이므로</p>
+      <div class="formula" id="eq-hydrogen-rho">\[ \frac{d^2u}{d\rho^2} = \Big[\frac14 - \frac{\eta}{\rho} + \frac{l(l+1)}{\rho^2}\Big]u \]</div>
+      <p>이다. 여기서 \(\eta = 1/(\kappa a)\)는 이 예제에서만 쓰는 기호다. \(\rho \to \infty\)에서는 \(u \approx e^{\pm\rho/2}\)이고 줄어드는 쪽을 고른다. \(\rho = 0\)은 정칙 특이점이고 결정 방정식 \(s(s-1) = l(l+1)\)의 근은 \(l + 1\)과 \(-l\)이다. \(\rho^{-l}\)을 고르면 \(R = u/r \propto r^{-l-1}\)이 되는데, \(l \ge 1\)이면 \(\int R^2r^2dr\)이 원점에서 발산하고, \(l = 0\)이면 \(\nabla^2(1/r) = -4\pi\delta^3(\mathbf r)\)(6장 <a href="ch06.html#eq-laplacian-inverse-r">식 (6.54)</a>) 때문에 원점에서 방정식을 만족하지 않는다. 그래서 \(l + 1\)을 고른다. 이 두 행동을 떼어 \(u = f v\), \(f = \rho^{l+1}e^{-\rho/2}\)로 두자. \(f'/f = \frac{l+1}\rho - \frac12\)이고 \(f''/f = (f'/f)^2 + (f'/f)' = \frac{l(l+1)}{\rho^2} - \frac{l+1}{\rho} + \frac14\)이므로, \(u'' = f(v'' + 2\frac{f'}{f}v' + \frac{f''}fv)\)를 식 <a class="ref" href="#eq-hydrogen-rho"></a>과 같게 놓고 \(\rho/f\)를 곱하면</p>
+      <div class="formula" id="eq-hydrogen-laguerre-equation">\[ \rho v'' + (2l + 2 - \rho)\,v' + (\eta - l - 1)\,v = 0 \]</div>
+      <p>이다. 식 <a class="ref" href="#eq-associated-laguerre-equation"></a>에서 \(\alpha = 2l+1\), \(n \to \eta - l - 1\)로 둔 꼴이다.</p>
+      <p>(나) \(v\)를 멱급수로 풀면 계수의 비는 \(\frac{k + l + 1 - \eta}{(k+1)(k + 2l + 2)} \to \frac1k\)이므로, 끊기지 않으면 같은 비교 논법으로 \(v\)가 \(e^{c\rho}\) (\(c &lt; 1\))보다 빨리, \(u\)가 \(e^{(c - 1/2)\rho}\)보다 빨리 자라 규격화할 수 없다. 끊기려면 \(n_r = \eta - l - 1\)이 0 이상의 정수여야 한다. \(n = n_r + l + 1\)을 주양자수라 하면 \(\eta = n\), 곧 \(\kappa = 1/(na)\)이고</p>
+      <div class="formula" id="eq-hydrogen-energy">\[ E_n = -\frac{\hbar^2\kappa^2}{2m_e} = -\frac{\hbar^2}{2m_ea^2}\,\frac{1}{n^2} \]</div>
+      <p>이다(\(n = 1, 2, \ldots\)). \(l\)은 \(0\)부터 \(n - 1\)까지이고 각 \(l\)마다 \(m\)이 \(2l+1\)개이므로, 준위 \(E_n\)은 \(\sum_{l=0}^{n-1}(2l+1) = n^2\)겹으로 겹친다. 지름 함수 \(v = L_{n-l-1}^{(2l+1)}(\rho)\)는 \(n - l - 1\)차 다항식이므로 마디가 \(n - l - 1\)개다.</p>
+      <p>(다) <b>숫자로 보기.</b> \(\hbar^2/(2m_ea^2) = e^2/(8\pi\varepsilon_0a) = 13.61\ \text{eV}\)(6장)이므로 \(E_1 = -13.61\ \text{eV}\), \(E_2 = -3.401\ \text{eV}\), \(E_3 = -1.512\ \text{eV}\)이다. 발머 선의 광자 에너지는 \(E_3 - E_2 = 1.890\ \text{eV}\)이고</p>
+      <div class="formula">\[ \begin{aligned} \lambda &= \frac{hc}{E_3 - E_2} = \frac{1239.8\ \text{eV}\cdot\text{nm}}{1.890\ \text{eV}} \\ &= 656.1\ \text{nm} \end{aligned} \]</div>
+      <p>로 붉은 빛이다. 원자핵을 고정했으므로 \(m_e\) 대신 환산 질량 \(\mu = m_e/(1 + m_e/m_p)\)을 쓰면 에너지가 0.054% 작아져 진공 파장은 \(656.5\ \text{nm}\)가 된다. \(E\)가 \(l\)에 무관하다는 것, 곧 \(2s\)와 \(2p\)가 같은 에너지라는 것이 13.4절의 구형 우물과 크게 다른 점이다.</p>
+    </div>
+
+    <h3 id="s6-radial">지름 파동함수와 규격화</h3>
+    <p>끊긴 해를 모으면 \(u = rR\)에서 \(R_{nl}(r) = N_{nl}\,\rho^le^{-\rho/2}L_{n-l-1}^{(2l+1)}(\rho)\), \(\rho = 2r/na\)이다. 규격화 \(\int_0^\infty R^2r^2dr = 1\)에 \(r = na\rho/2\)를 넣으면 \(N^2(na/2)^3\int\rho^{2l+2}e^{-\rho}[L]^2d\rho = 1\)이다. 이 적분은 식 <a class="ref" href="#eq-laguerre-second-moment"></a>에서 \(\alpha = 2l+1\), 차수 \(n - l - 1\)로 둔 것이라 \(2n\,(n+l)!/(n-l-1)!\)이다. 따라서</p>
+    <div class="formula" id="eq-hydrogen-radial">\[ \begin{aligned} R_{nl}(r) &= \sqrt{\Big(\frac{2}{na}\Big)^3\frac{(n-l-1)!}{2n\,(n+l)!}} \\ &\quad \times\rho^le^{-\rho/2}L_{n-l-1}^{(2l+1)}(\rho), \quad \rho = \frac{2r}{na} \end{aligned} \]</div>
+    <p>이다. 가중 함수가 \(\rho^{2l+1}\)이 아니라 \(\rho^{2l+2}\)인 것은 부피 요소 \(r^2dr\)이 \(u^2 = r^2R^2\)에 이미 들어 있기 때문이다. 처음 몇 개를 쓰면 \(L_0^{(\alpha)} = 1\), \(L_1^{(1)} = 2 - \rho\)에서</p>
+    <div class="formula" id="eq-hydrogen-radial-table">\[ \begin{aligned} R_{10} &= \frac{2}{a^{3/2}}\,e^{-r/a} \\ R_{20} &= \frac{1}{\sqrt2\,a^{3/2}}\Big(1 - \frac{r}{2a}\Big)e^{-r/2a} \\ R_{21} &= \frac{1}{\sqrt{24}\,a^{3/2}}\,\frac ra\,e^{-r/2a} \end{aligned} \]</div>
+    <p>이다. \(R_{10}\)은 6장에서 맞힌 \(u = re^{-r/a}\)와 같다. 그림 13-5는 지름 확률 밀도 \(r^2R^2\)을 보여 준다. \(1s\)는 \(r = a\)에서, \(2p\)는 \(r^4e^{-r/a}\)이 최대인 \(r = 4a\)에서 가장 크다. \(2s\)는 \(r = 2a\)에 마디가 하나 있다.</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 280" role="img" aria-label="수소 원자 1s, 2s, 2p 상태의 지름 확률 밀도 r^2R^2. 1s는 r = a, 2p는 r = 4a에서 최대이고, 2s는 r = 2a에 마디가 하나 있다"><defs><clipPath id="f1305-clip"><rect x="56" y="20" width="404" height="210"/></clipPath></defs><line x1="56" y1="230" x2="460" y2="230" class="s-grid"/><text x="48" y="235" class="t-dim" style="font-size:14px" text-anchor="end">0</text><line x1="56" y1="160" x2="460" y2="160" class="s-grid"/><text x="48" y="165" class="t-dim" style="font-size:14px" text-anchor="end">.2</text><line x1="56" y1="90" x2="460" y2="90" class="s-grid"/><text x="48" y="95" class="t-dim" style="font-size:14px" text-anchor="end">.4</text><line x1="56" y1="20" x2="460" y2="20" class="s-grid"/><text x="48" y="25" class="t-dim" style="font-size:14px" text-anchor="end">.6</text><line x1="56" y1="20" x2="56" y2="230" class="s-grid"/><text x="56" y="250" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><line x1="157" y1="20" x2="157" y2="230" class="s-grid"/><text x="157" y="250" class="t-dim" style="font-size:14px" text-anchor="middle">5</text><line x1="258" y1="20" x2="258" y2="230" class="s-grid"/><text x="258" y="250" class="t-dim" style="font-size:14px" text-anchor="middle">10</text><line x1="359" y1="20" x2="359" y2="230" class="s-grid"/><text x="359" y="250" class="t-dim" style="font-size:14px" text-anchor="middle">15</text><line x1="460" y1="20" x2="460" y2="230" class="s-grid"/><text x="460" y="250" class="t-dim" style="font-size:14px" text-anchor="middle">20</text><line x1="56" y1="20" x2="56" y2="230" class="s-line"/><path d="M56,230l5.5-60.8 5.6-79.7 5.5-42.3 5.5-5 5.6,18.1 5.5,28.4 5.5,30.1 5.6,27.3 5.5,22.5 5.5,17.6 5.6,13.1 5.5,9.6 5.5,6.8 5.6,4.7 5.5,3.2 5.5,2.2 5.6,1.5 5.5,.9 5.6,.7 5.5,.4 5.5,.2 5.6,.2 5.5,.1 5.5,.1 5.6,0 5.5,.1 5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0" class="s-acc" clip-path="url(#f1305-clip)"/><path d="M56,230l5.5-7.4 5.6-8.6 5.5-2 5.5,3.6 5.6,6.1 5.5,5.4 5.5,2.7 5.6-.7 5.5-4 5.5-6.7 5.6-8.5 5.5-9.2 5.5-9.1 5.6-8.4 5.5-7.2 5.5-5.6 5.6-4 5.5-2.4 5.6-.8 5.5,.5 5.5,1.6 5.6,2.5 5.5,3.3 5.5,3.7 5.6,4 5.5,4.2 5.5,4.3 5.6,4.1 5.5,4 5.5,3.8 5.6,3.5 5.5,3.3 5.5,3 5.6,2.7 5.5,2.4 5.5,2.2 5.6,1.9 5.5,1.7 5.5,1.5 5.6,1.3 5.5,1.1 5.5,.9 5.6,.9 5.5,.7 5.5,.6 5.6,.5 5.5,.4 5.5,.4 5.6,.3 5.5,.2 5.5,.3 5.6,.1 5.5,.2 5.5,.1 5.6,.1 5.5,.1 5.6,.1 5.5,0 5.5,.1 5.6,0 5.5,.1 5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5,.1 5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0" class="s-acc2" clip-path="url(#f1305-clip)"/><path d="M56,230l5.5-.1 5.6-.7 5.5-2.1 5.5-4.1 5.6-6.1 5.5-7.5 5.5-8.4 5.6-8.6 5.5-8.2 5.5-7.3 5.6-6 5.5-4.5 5.5-3 5.6-1.5 5.5-.2 5.5,1.1 5.6,2.1 5.5,2.9 5.6,3.5 5.5,3.9 5.5,4.1 5.6,4.3 5.5,4.2 5.5,4.2 5.6,4 5.5,3.7 5.5,3.5 5.6,3.3 5.5,2.9 5.5,2.7 5.6,2.4 5.5,2.1 5.5,1.9 5.6,1.6 5.5,1.5 5.5,1.2 5.6,1.1 5.5,.9 5.5,.8 5.6,.7 5.5,.6 5.5,.5 5.6,.5 5.5,.3 5.5,.3 5.6,.3 5.5,.2 5.5,.2 5.6,.1 5.5,.1 5.5,.1 5.6,.1 5.5,.1 5.5,0 5.6,.1 5.5,0 5.6,.1 5.5,0 5.5,0 5.6,0 5.5,0 5.5,0 5.6,.1 5.5,0 5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0 5.5,0 5.6,0 5.5,0" class="s-line" style="stroke:var(--text);stroke-width:2" stroke-dasharray="6 4" clip-path="url(#f1305-clip)"/><text x="88.3" y="48" class="t-math acc" text-anchor="start">1s</text><text x="189.3" y="158.2" class="t-math acc2" text-anchor="start">2s</text><text x="116.6" y="153" class="t-math" text-anchor="start">2p</text><text x="460" y="272" class="t-dim" text-anchor="end" style="font-size:14px;font-style:italic">r / a</text><text x="64" y="14" class="t-dim" text-anchor="start" style="font-size:14px">r²R² (1/a)</text></svg>
+      <figcaption><b>그림 13-5.</b> 수소 원자의 지름 확률 밀도 \(r^2R_{nl}^2\) (단위 \(1/a\)). \(1s\)는 \(r = a\), \(2p\)(점선)는 \(r = 4a\)에서 최대이고, \(2s\)는 \(r = 2a\)에 마디가 있으며 바깥 봉우리가 \(r = 5.24a\)에 있다. 세 곡선 아래 넓이는 모두 1이다. 곡선은 식 <a class="ref" href="#eq-hydrogen-radial"></a>로 계산했다.</figcaption>
+    </figure>
+    <div class="callout warn"><strong>라게르 다항식의 옛 관례와 수소 원자의 규격화 상수</strong><p>이 책은 아프켄과 SciPy(<code>scipy.special.eval_genlaguerre(n, alpha, x)</code>)의 현대 관례 \(L_n(0) = 1\)을 쓴다. 오래된 양자역학 교재(예: L. I. Schiff, <i>Quantum Mechanics</i>, 3rd ed., McGraw-Hill 1968)는 \(1/n!\)이 없는 \(\mathsf L_q(x) = e^x\frac{d^q}{dx^q}(x^qe^{-x}) = q!\,L_q(x)\)를 쓰고, 연관 함수를 \(\mathsf L_q^p = \frac{d^p}{dx^p}\mathsf L_q\)로 정한다. 이때 위첨자 \(p\)는 미분 횟수이고, 아래첨자는 이 다항식의 차수 \(q - p\)가 아니라 미분하기 전 다항식의 차수 \(q\)다. 두 관례는</p>
+      <div class="formula">\[ \mathsf L_q^p(x) = (-1)^p\,q!\,L_{q-p}^{(p)}(x) \]</div>
+      <p>로 이어진다. 수소 원자에서는 \(p = 2l+1\), \(q = n+l\)이라 \(\mathsf L_{n+l}^{2l+1} = -(n+l)!\,L_{n-l-1}^{(2l+1)}\)이다. 그래서 옛 관례로 쓴 \(R_{nl}\)의 규격화 상수에는 식 <a class="ref" href="#eq-hydrogen-radial"></a>의 \((n+l)!\) 대신 \([(n+l)!]^3\)이 나오고, 다항식의 음의 부호를 지우는 \(-1\)이 앞에 붙기도 한다. 아래첨자로 \(n + l\)을 쓰는 표기와 \(n - l - 1\)을 쓰는 표기가 판과 교재에 따라 섞여 있으므로, 수소 원자의 식을 옮길 때는 \(L_1^{(1)}\)(또는 그에 해당하는 것)이 \(2 - x\)인지 먼저 확인한다.</p></div>
+  </section>
+
+  <!-- ============================================================ 13.7 -->
+  <section id="s7">
+    <h2>직교 다항식의 공통 구조</h2>
+    <p>르장드르, 에르미트, 라게르 다항식을 따로 다루었지만, 증명의 모양은 매번 같았다. 로드리게스 공식으로 정하고, 부분 적분을 \(n\)번 해서 낮은 차수와의 직교성을 보이고, 최고차항만으로 규격화를 계산했다. 이 절에서는 그 공통 구조를 한 정리로 세운다.</p>
+
+    <h3 id="s7-rodrigues">로드리게스 공식 하나로</h3>
+    <p>구간 \((a, b)\), 양의 가중 함수 \(w(x)\), 차수가 2 이하인 다항식 \(\sigma(x)\)(이 절에서만 쓰는 기호다)가 \((\sigma w)' = \tau w\)를 만족하고 \(\tau\)가 1차 다항식이라 하자. 그리고</p>
+    <div class="formula" id="eq-rodrigues-general">\[ p_n(x) = \frac{1}{K_n\,w(x)}\,\frac{d^n}{dx^n}\Big[w(x)\,\sigma(x)^n\Big] \]</div>
+    <p>로 정한다. \(K_n\)은 관례로 고르는 상수다. 세 가족의 자료는 다음과 같다.</p>
+    <div class="table-wrap"><table class="nowrap">
+      <thead><tr><th></th><th>\((a, b)\)</th><th>\(w(x)\)</th><th>\(\sigma\)</th><th>\(\tau\)</th><th>\(K_n\)</th><th>\(\lambda_n\)</th></tr></thead>
+      <tbody>
+        <tr><td>\(P_n\)</td><td>\((-1, 1)\)</td><td>\(1\)</td><td>\(1 - x^2\)</td><td>\(-2x\)</td><td>\((-2)^nn!\)</td><td>\(n(n+1)\)</td></tr>
+        <tr><td>\(H_n\)</td><td>\((-\infty, \infty)\)</td><td>\(e^{-x^2}\)</td><td>\(1\)</td><td>\(-2x\)</td><td>\((-1)^n\)</td><td>\(2n\)</td></tr>
+        <tr><td>\(L_n^{(\alpha)}\)</td><td>\((0, \infty)\)</td><td>\(x^\alpha e^{-x}\)</td><td>\(x\)</td><td>\(\alpha + 1 - x\)</td><td>\(n!\)</td><td>\(n\)</td></tr>
+      </tbody>
+    </table></div>
+    <p>르장드르의 \(K_n = (-2)^nn!\)은 12장의 \(\frac{1}{2^nn!}\frac{d^n}{dx^n}(x^2 - 1)^n\)(<a href="ch12.html#eq-rodrigues-legendre">식 (12.19)</a>)에서 \((x^2 - 1)^n = (-1)^n\sigma^n\)이기 때문이다. 에르미트와 라게르는 식 <a class="ref" href="#eq-rodrigues-hermite"></a>, <a class="ref" href="#eq-associated-laguerre"></a>과 그대로 같다. 마지막 열의 \(\lambda_n\)은 아래 정리 4에 나온다.</p>
+    <div class="box thm" id="thm-rodrigues-orthogonality"><div class="box-h">고전 직교 다항식의 공통 성질</div>
+      <p>위 조건에 더해, 모든 \(k \ge 0\)에 대해 \(\int_a^bx^kw\,dx\)가 유한하고 \(x^k\sigma(x)w(x)\)가 두 끝 \(a, b\)에서 0으로 간다고 하자. 그러면 식 <a class="ref" href="#eq-rodrigues-general"></a>의 \(p_n\)은 다음을 만족한다.</p>
+      <ol>
+        <li>\(p_n\)은 \(n\)차 이하의 다항식이다.</li>
+        <li>차수가 \(n\)보다 낮은 모든 다항식 \(q\)에 대해 \(\int_a^bp_n\,q\,w\,dx = 0\)이다.</li>
+        <li>\(p_n\)의 최고차항 계수를 \(k_n\)이라 하면 규격화는
+          <div class="formula" id="eq-rodrigues-norm">\[ \begin{aligned} h_n &= \int_a^bp_n^2\,w\,dx \\ &= \frac{(-1)^nn!\,k_n}{K_n}\int_a^bw\,\sigma^n\,dx \end{aligned} \]</div></li>
+        <li>\(p_n\)은 \(\sigma p'' + \tau p' + \lambda_np = 0\)을 만족하고, \(\lambda_n = -n\tau' - \tfrac12n(n-1)\sigma''\)이다.</li>
+      </ol>
+    </div>
+    <p><b>증명.</b> (1) \(m \ge 1\)이고 \(r\)이 다항식이면 \((\sigma w)' = \tau w\)에서</p>
+    <div class="formula">\[ \begin{aligned} &\frac{d}{dx}\big[w\sigma^mr\big] \\ &\quad = w\sigma^{m-1}\big[(\tau + (m-1)\sigma')r + \sigma r'\big] \end{aligned} \]</div>
+    <p>이다. 괄호는 \(r\)보다 차수가 많아야 1 높다. \(w\sigma^n\)에서 시작해 이것을 \(j\)번 쓰면 \((w\sigma^n)^{(j)} = w\sigma^{n-j}r_j\)이고 \(r_j\)는 \(j\)차 이하의 다항식이다. \(j = n\)이면 \(p_n = r_n/K_n\)이다.</p>
+    <p>(2) \(\int q\,(w\sigma^n)^{(n)}dx\)를 부분 적분하면 경계 항 \(\big[q^{(i)}(w\sigma^n)^{(n-1-i)}\big]_a^b = \big[q^{(i)}w\sigma^{i+1}r_{n-1-i}\big]_a^b\)이 나온다. 이것은 다항식 곱하기 \(\sigma w\)이므로 가정에 따라 0이다. \(n\)번 하면 \((-1)^n\int q^{(n)}w\sigma^ndx\)가 남는데, \(q\)의 차수가 \(n\)보다 낮으므로 \(q^{(n)} = 0\)이다.</p>
+    <p>(3) \(p_n = k_nx^n + (\text{낮은 차수})\)이고 낮은 차수 부분은 (2)에 따라 \(p_n\)과 직교하므로 \(h_n = k_n\int x^np_nw\,dx = \frac{k_n}{K_n}\int x^n(w\sigma^n)^{(n)}dx\)이다. (2)와 같은 부분 적분으로 \((-1)^nn!\int w\sigma^ndx\)가 된다.</p>
+    <details class="proof"><summary>(4)의 증명</summary>
+      <p>연산자 \(\mathcal Dp = \frac1w(\sigma wp')' = \sigma p'' + \tau p'\)를 생각하자. \(\sigma\)가 2차 이하, \(\tau\)가 1차 이하이므로 \(\mathcal D\)는 \(n\)차 이하의 다항식을 \(n\)차 이하의 다항식으로 보낸다. 또 두 다항식 \(f, g\)에 대해 \(\int g\,(\sigma wf')'dx = -\int\sigma wf'g'dx\)이고(경계 항 \(\sigma wf'g\)는 가정에 따라 0) 이것은 \(f\)와 \(g\)에 대해 대칭이므로 \(\int g\,\mathcal Df\,w\,dx = \int f\,\mathcal Dg\,w\,dx\)이다. 이제 차수가 \(n\)보다 낮은 \(q\)에 대해 \(\int q\,\mathcal Dp_n\,w = \int p_n\,\mathcal Dq\,w = 0\)이다. \(\mathcal Dq\)의 차수도 \(n\)보다 낮기 때문이다. 그러니 \(n\)차 이하인 \(\mathcal Dp_n\)은 낮은 차수 모두와 직교하고, 따라서 \(p_n\)의 상수배다. \(\mathcal Dx^n\)의 최고차항이 \(\big[\tfrac12n(n-1)\sigma'' + n\tau'\big]x^n\)이므로 그 상수가 \(-\lambda_n\)이다. 이것은 16장에서 일반적으로 다룰 "자기수반 연산자의 고유함수는 직교한다"의 다항식판이다(<a href="ch16.html#def-sturm-liouville">16장의 스투름-리우빌 문제</a>).</p>
+    </details>
+    <p>(4)의 \(\lambda_n\)을 표로 확인하자. 르장드르는 \(\tau' = -2\), \(\sigma'' = -2\)이므로 \(2n + n(n-1) = n(n+1)\)이다. 에르미트는 \(\sigma'' = 0\)이라 \(2n\), 라게르는 \(\tau' = -1\)이라 \(n\)이다. 셋 다 앞에서 얻은 방정식(12장 <a href="ch12.html#eq-legendre-equation">식 (12.11)</a>, 식 <a class="ref" href="#eq-hermite-equation"></a>, <a class="ref" href="#eq-associated-laguerre-equation"></a>)과 맞는다. 규격화 공식 <a class="ref" href="#eq-rodrigues-norm"></a>에 표의 값을 넣으면, 르장드르는 \(k_n = \frac{(2n)!}{2^n(n!)^2}\)과 \(\int_{-1}^1(1 - x^2)^ndx = \frac{2^{2n+1}(n!)^2}{(2n+1)!}\)에서, 에르미트는 \(k_n = 2^n\)과 \(\int e^{-x^2}dx = \sqrt\pi\)에서, 라게르는 \(k_n = (-1)^n/n!\)과 \(\int x^{n+\alpha}e^{-x}dx = \Gamma(n+\alpha+1)\)에서 다음 표가 나온다.</p>
+    <div class="formula" id="eq-orthopoly-table">\[ \begin{array}{c|ccc} & (a, b) & w(x) & h_n \\ \hline P_n & (-1, 1) & 1 & \dfrac{2}{2n+1} \\[6pt] H_n & (-\infty, \infty) & e^{-x^2} & \sqrt\pi\,2^nn! \\[6pt] L_n^{(\alpha)} & (0, \infty) & x^\alpha e^{-x} & \dfrac{\Gamma(n+\alpha+1)}{n!} \end{array} \]</div>
+    <p>12장의 <a href="ch12.html#eq-legendre-norm">식 (12.33)</a>, 식 <a class="ref" href="#eq-hermite-orthogonality"></a>, <a class="ref" href="#eq-laguerre-orthogonality"></a>을 한 번에 다시 얻었다. \(\sigma\)가 2차 이하인 이런 다항식 가운데 실수 구간에서 양의 가중 함수로 직교하는 것은 <span class="term">야코비 다항식</span> <span class="en">(Jacobi polynomial)</span>(르장드르와 체비쇼프가 그 특수한 경우), 라게르, 에르미트의 세 가족으로 모두 모인다(S. Bochner, Math. Z. 29, 730 (1929)). 그래서 이들을 <span class="term">고전 직교 다항식</span> <span class="en">(classical orthogonal polynomials)</span>이라 부른다.</p>
+
+    <h3 id="s7-recurrence">세 항 점화식과 영점</h3>
+    <div class="box thm" id="thm-three-term-recurrence"><div class="box-h">세 항 점화식과 영점</div>
+      <p>\(\{p_n\}\)이 가중 함수 \(w > 0\)에 대해 직교하고 \(p_n\)의 차수가 정확히 \(n\)이면</p>
+      <div class="formula" id="eq-three-term-recurrence">\[ xp_n = A_np_{n+1} + B_np_n + C_np_{n-1} \]</div>
+      <p>꼴의 <span class="term">세 항 점화식</span> <span class="en">(three-term recurrence relation)</span>이 있고(\(A_n, B_n, C_n\)은 상수), \(p_n\)은 \((a, b)\) 안에 서로 다른 실수 영점을 정확히 \(n\)개 갖는다.</p>
+      <p><b>증명.</b> \(xp_n\)은 \(n+1\)차이므로 \(p_0, \ldots, p_{n+1}\)로 전개된다. \(p_k\)의 계수는 \(\int p_k\,xp_n\,w\,dx/h_k\)인데(\(w > 0\)이라 \(h_k > 0\)이어서 나눌 수 있다), 이것은 \(\int(xp_k)\,p_n\,w\,dx\)이고 \(k + 1 &lt; n\)이면 \(xp_k\)의 차수가 \(n\)보다 낮아 0이다. 영점은 12장 <a href="ch12.html#thm-legendre-zeros">정리 12.6</a>과 같은 논법이다. \(p_n\)이 \((a, b)\)에서 부호를 바꾸는 점이 \(x_1, \ldots, x_j\) (\(j &lt; n\))뿐이라면 \(q = \prod(x - x_i)\)와의 곱 \(p_nqw\)가 부호를 바꾸지 않아 적분이 0이 아닌데, \(q\)의 차수가 \(n\)보다 낮으므로 직교성에 어긋난다. \(\square\)</p>
+    </div>
+    <p>세 가족의 점화식은 12장의 \((l+1)P_{l+1} = (2l+1)xP_l - lP_{l-1}\)(<a href="ch12.html#eq-legendre-recurrence">식 (12.25)</a>), 식 <a class="ref" href="#eq-hermite-recurrence"></a>의 \(xH_n = \tfrac12H_{n+1} + nH_{n-1}\), 그리고 <a class="ref" href="#thm-laguerre-orthogonality"></a>의 증명에 쓴 \(xL_n^{(\alpha)} = -(n+1)L_{n+1}^{(\alpha)} + (2n+\alpha+1)L_n^{(\alpha)} - (n+\alpha)L_{n-1}^{(\alpha)}\)이다. 물리에서 세 항 점화식은 위치 연산자 \(x\)의 행렬 원소가 이웃한 상태 사이에만 있다는 뜻이다(<a class="ref" href="#ex-oscillator-matrix-elements"></a>). 영점 정리는 진동자의 \(\psi_n\)이 마디를 \(n\)개, 수소 원자의 \(R_{nl}\)이 지름 마디를 \(n - l - 1\)개 갖는다는 것을 보장한다.</p>
+    <p>정리의 (2)에서 \(n\)차 직교 다항식은 상수배를 빼면 하나뿐이다. \(n\)차 이하 다항식 가운데 낮은 차수 모두와 직교하는 것은 한 방향뿐이기 때문이다. 그래서 \(1, x, x^2, \ldots\)에 가중 함수 \(w\)로 그람-슈미트 과정을 적용하면 언제나 같은 다항식이 규격화와 부호만 다르게 나온다. 9장에서 \(w = 1\)로 르장드르 다항식을(<a href="ch09.html#ex-legendre-gram-schmidt">예제 9.3</a>), \(w = e^{-x}\)로 라게르 다항식을(<a href="ch09.html#prob-laguerre-gram-schmidt">문제 9.5</a>, \(e_1 = -L_1\)) 얻은 것이 그 예다. 어느 상수배를 고르는가가 \(P_l(1) = 1\), 최고차항 \(2^n\), \(L_n(0) = 1\) 같은 관례다.</p>
+    <div class="callout tip"><strong>베셀 함수는 왜 이 표에 없는가</strong><p>베셀 함수의 직교성(식 <a class="ref" href="#eq-bessel-orthogonality"></a>)은 차수 \(m\)을 고정하고 인수의 크기 \(\alpha_{mn}s/a\)를 바꾼 함수들 사이의 것이다. 다항식처럼 차수가 다른 함수들의 직교성이 아니다. 그래도 증명의 핵심, 곧 경계 항이 사라져서 \((\text{고유값의 차}) \times \int uvw = 0\)이 되는 구조는 같다. 16장은 르장드르·에르미트·라게르·베셀과 푸리에 급수를 모두 스투름-리우빌 문제의 고유함수로 묶어 한 표로 정리한다(<a href="ch16.html#eq-sl-table">16장의 특수 함수 표</a>).</p></div>
+
+    <h3 id="s7-generating">생성 함수로 전개 계수 구하기</h3>
+    <p>생성 함수는 점화식과 규격화를 주는 데서 그치지 않는다. 생성 함수 자체가 "어떤 함수를 다항식으로 전개한 결과"이므로, 가중 함수를 곱한 꼴의 함수를 전개할 때 계수를 한 번에 준다.</p>
+    <div class="box ex" id="ex-sudden-displacement"><div class="box-h">덫이 갑자기 옮겨진 진동자</div>
+      <p><a class="ref" href="#ex-qho-hermite"></a>의 이온이 바닥 상태에 있을 때, 덫의 중심을 갑자기 \(d\)만큼 옮긴다. 옮긴 순간 이온의 파동함수는 그대로이다. 새 덫의 \(n\)번째 상태에 있을 확률 \(P_n\)을 구하라. \(d = 20\ \text{nm}\)일 때 \(P_0, P_1, P_2\)와 평균 에너지를 구하라.</p>
+      <p><b>풀이.</b> 새 덫의 중심을 원점으로 잡으면 이온의 파동함수는 \(\pi^{-1/4}e^{-(\xi - \xi_0)^2/2}\)이다(\(\xi_0 = d/b\), 이 예제에서는 \(\xi\)에 대해 규격화한다). 지수를 풀면 \(e^{-\xi^2/2}\,e^{\xi\xi_0 - \xi_0^2/2}\)이고, 생성 함수 <a class="ref" href="#eq-hermite-generating"></a>를 \(t = \xi_0/2\)로 쓰면 \(e^{\xi\xi_0 - \xi_0^2/4} = \sum_nH_n(\xi)(\xi_0/2)^n/n!\)이다. \(H_ne^{-\xi^2/2} = \sqrt{2^nn!\sqrt\pi}\,\psi_n\)이므로</p>
+      <div class="formula">\[ \begin{aligned} &\pi^{-1/4}e^{-(\xi-\xi_0)^2/2} \\ &\quad = e^{-\xi_0^2/4}\sum_{n=0}^\infty\frac{(\xi_0/\sqrt2)^n}{\sqrt{n!}}\,\psi_n(\xi) \end{aligned} \]</div>
+      <p>이다. 계수의 제곱이 확률이다.</p>
+      <div class="formula" id="eq-displaced-poisson">\[ \begin{aligned} P_n &= e^{-\bar n}\,\frac{\bar n^n}{n!} \\ \bar n &= \frac{\xi_0^2}{2} = \frac{d^2}{2b^2} \end{aligned} \]</div>
+      <p>평균이 \(\bar n\)인 푸아송 분포다. 평균 에너지는 \(\hbar\omega(\bar n + \tfrac12) = \tfrac12\hbar\omega + \tfrac12m\omega^2d^2\)이다(\(b^2 = \hbar/m\omega\)). 옮긴 순간 이온이 새 퍼텐셜에서 \(\tfrac12m\omega^2d^2\)만큼 높은 곳에 있게 되므로, 에너지 보존에서 기대되는 값과 같다.</p>
+      <p><b>숫자로 보기.</b> \(b = 15.9\ \text{nm}\), \(d = 20\ \text{nm}\)이면 \(\bar n = (20/15.9)^2/2 = 0.79\)이다. \(P_0 = e^{-0.79} = 0.45\), \(P_1 = 0.36\), \(P_2 = 0.14\)이고, 나머지 \(n \ge 3\)이 \(0.05\)다. 평균 에너지는 \(\hbar\omega \times 1.29 = 5.3\ \text{neV}\)이다. \(d\)가 \(b\)보다 훨씬 작으면 \(P_0 \approx 1 - d^2/2b^2\)으로 거의 바닥 상태에 남고, \(d \gg b\)이면 \(\bar n\)이 커져 고전적인 진동처럼 행동한다.</p>
+    </div>
+
+    <div class="callout deep" data-later="qm-grad"><strong>초기하 함수와 합류 초기하 함수</strong><p>12장 끝에서 본 가우스의 초기하 함수 \({}_2F_1\)에서 두 정칙 특이점을 합치면 쿠머의 방정식 \(xy'' + (c - x)y' - ay = 0\)이 된다. \(x = 0\)은 정칙 특이점, \(x = \infty\)는 비정칙 특이점이다. 지수 0인 해가 <span class="term">합류 초기하 함수</span> <span class="en">(confluent hypergeometric function)</span> \(M(a, c, x) = {}_1F_1(a; c; x) = \sum_k\frac{(a)_k}{(c)_k}\frac{x^k}{k!}\)이다. 식 <a class="ref" href="#eq-associated-laguerre-equation"></a>는 \(a = -n\), \(c = \alpha + 1\)인 쿠머 방정식이고, 그래서 \(L_n^{(\alpha)}(x) = \binom{n+\alpha}{n}M(-n, \alpha+1, x)\)이다. \(a\)가 음의 정수라 급수가 끊긴 것이다. 에르미트 다항식도 \(H_{2n}(x) = (-1)^n\frac{(2n)!}{n!}M(-n, \tfrac12, x^2)\), \(H_{2n+1}(x) = (-1)^n\frac{2(2n+1)!}{n!}\,x\,M(-n, \tfrac32, x^2)\)이고, 베셀 함수는 \(J_\nu(x) = \frac{(x/2)^\nu}{\Gamma(\nu+1)}{}_0F_1(;\nu+1;-x^2/4)\)이다. 수소 원자의 \(E > 0\)인 산란 상태에서는 \(a\)가 복소수가 되어 급수가 끊기지 않고, 그 해가 <span class="term">쿨롱 파동함수</span> <span class="en">(Coulomb wave function)</span>다. 이 함수들의 일반론과 산란 문제는 대학원 양자역학 책에서 다룬다.</p></div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>원통 좌표의 헬름홀츠 방정식은 지름 방향에 베셀 방정식 \(x^2y'' + xy' + (x^2 - \nu^2)y = 0\)을 남긴다. \(x = 0\)은 지수 \(\pm\nu\)인 정칙 특이점이고, 프로베니우스 급수 \(J_\nu = \sum_k\frac{(-1)^k}{k!\,\Gamma(k+\nu+1)}(x/2)^{2k+\nu}\)는 모든 \(x\)에서 수렴한다.</li>
+      <li>\(W[J_\nu, J_{-\nu}] = -2\sin\nu\pi/(\pi x)\)이므로 정수 차수에서는 \(J_{-n} = (-1)^nJ_n\)이 새 해가 아니다. 제2종 함수 \(Y_\nu = (J_\nu\cos\nu\pi - J_{-\nu})/\sin\nu\pi\)는 \(W[J_\nu, Y_\nu] = 2/(\pi x)\)로 언제나 독립이고, 정수 차수에서 \(\frac2\pi\ln(x/2)J_n\) 항을 가져 원점에서 발산한다. \(H^{(1,2)} = J \pm iY\)는 나가는·들어오는 원통파, \(I_\nu, K_\nu\)는 지수적으로 자라거나 줄어드는 해다.</li>
+      <li>생성 함수 \(e^{(x/2)(t - 1/t)} = \sum J_nt^n\)과 \(e^{ix\sin\theta} = \sum J_ne^{in\theta}\). 점화식 \(J_{\nu-1} + J_{\nu+1} = \frac{2\nu}xJ_\nu\), \(J_{\nu-1} - J_{\nu+1} = 2J_\nu'\), \((x^\nu J_\nu)' = x^\nu J_{\nu-1}\), \((x^{-\nu}J_\nu)' = -x^{-\nu}J_{\nu+1}\). 특히 \(J_0' = -J_1\).</li>
+      <li>작은 \(x\): \(J_\nu \approx (x/2)^\nu/\Gamma(\nu+1)\), \(Y_0 \approx \frac2\pi\ln x\). 큰 \(x\): \(J_\nu \approx \sqrt{2/\pi x}\cos(x - \nu\pi/2 - \pi/4)\), \(Y_\nu\)는 같은 꼴의 사인. 영점 \(\alpha_{01} = 2.405\), \(\alpha_{11} = 3.832\)이고 영점 간격은 \(\pi\)에 다가간다. 에어리 원반의 \(1.22\lambda/D\)는 \(3.832/\pi\)이다.</li>
+      <li>직교성 \(\int_0^aJ_m(\alpha_{mn}s/a)J_m(\alpha_{mn'}s/a)\,s\,ds = \frac{a^2}2J_{m+1}(\alpha_{mn})^2\delta_{nn'}\). 가중 함수 \(s\)는 원판의 넓이 요소에서 오고, 경계 항이 사라지는 것이 증명의 핵심이다.</li>
+      <li>구면 베셀 함수 \(j_l = \sqrt{\pi/2x}\,J_{l+1/2}\)는 초등 함수다: \(j_0 = \sin x/x\), \(y_0 = -\cos x/x\), \(j_l \approx x^l/(2l+1)!!\), \(j_l \approx \sin(x - l\pi/2)/x\). 구형 무한 우물의 준위는 \(E = \hbar^2\beta_{ln}^2/2ma^2\)(\(m\)은 질량)이다.</li>
+      <li>조화 진동자는 \(\psi = H_n(\xi)e^{-\xi^2/2}\), \(E_n = (n + \tfrac12)\hbar\omega\)이고, 수소 원자는 \(R_{nl} \propto \rho^le^{-\rho/2}L_{n-l-1}^{(2l+1)}(\rho)\), \(E_n = -13.6\ \text{eV}/n^2\)이다. 둘 다 끊기지 않는 급수가 \(e^{\xi^2}\)이나 \(e^\rho\)처럼 자라 규격화할 수 없다는 데서 양자화가 나온다.</li>
+      <li>고전 직교 다항식은 \(p_n = \frac{1}{K_nw}\frac{d^n}{dx^n}(w\sigma^n)\) 하나로 정해지고, 낮은 차수와의 직교성, 규격화 \(h_n\)(식 <a class="ref" href="#eq-orthopoly-table"></a>: \(\frac{2}{2n+1}\), \(\sqrt\pi\,2^nn!\), \(\Gamma(n+\alpha+1)/n!\)), 세 항 점화식, 영점 \(n\)개를 공통으로 갖는다. 이 책의 관례는 물리학자의 \(H_n\)(최고차항 \(2^nx^n\))과 \(L_n(0) = 1\)인 현대 라게르 다항식이다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. 원통 문제에서 차수 \(n\)이 정수일 때 \(J_{-n}\)을 두 번째 해로 쓸 수 없는 까닭은?</p><div class="opts">
+        <button class="opt">\(J_{-n}\)이 원점에서 발산하기 때문이다.</button>
+        <button class="opt">\(J_{-n}\)이 베셀 방정식을 만족하지 않기 때문이다.</button>
+        <button class="opt" data-correct>\(1/\Gamma(k - n + 1)\)이 \(k &lt; n\)에서 0이 되어 \(J_{-n} = (-1)^nJ_n\)이기 때문이다.</button>
+        <button class="opt">\(J_{-n}\)이 곧 \(Y_n\)이기 때문이다.</button>
+      </div><div class="quiz-exp">정수 차수에서 \(J_{-n}\)은 \(J_n\)의 상수배이고, 론스키안 \(-2\sin n\pi/(\pi x)\)도 0이다. 비정수 차수의 \(J_{-\nu}\)은 원점에서 발산하지만, 정수 차수의 \(J_{-n}\)은 오히려 유한하다. 독립인 두 번째 해는 극한으로 정한 \(Y_n\)이다.</div></div>
+      <div class="quiz-q"><p>2. 원형 구멍의 회절에서 첫 어두운 고리가 \(\sin\theta = 1.22\lambda/D\)에 있다. 1.22는 어디서 오는가?</p><div class="opts">
+        <button class="opt">\(J_0\)의 첫 영점 2.405를 2로 나눈 값</button>
+        <button class="opt" data-correct>\(J_1\)의 첫 영점 3.832를 \(\pi\)로 나눈 값</button>
+        <button class="opt">\(j_0\)의 첫 영점 \(\pi\)를 \(\sqrt{2}\pi\)로 나눈 값의 역수</button>
+        <button class="opt">\(\sqrt{3/2}\)</button>
+      </div><div class="quiz-exp">진폭은 \(2J_1(u)/u\)이고 \(u = \pi D\sin\theta/\lambda\)이다. \(u = 3.832\)에서 \(\sin\theta = 3.832\lambda/(\pi D) = 1.220\lambda/D\)이다. \(J_1\)이 나오는 것은 \(\int_0^uxJ_0\,dx = uJ_1(u)\) 때문이다.</div></div>
+      <div class="quiz-q"><p>3. 반지름 \(a\)인 구형 무한 우물에서 \(1p\) 준위의 에너지는 \(1s\) 준위의 몇 배인가?</p><div class="opts">
+        <button class="opt">2</button>
+        <button class="opt" data-correct>약 2.05</button>
+        <button class="opt">4</button>
+        <button class="opt">약 1.43</button>
+      </div><div class="quiz-exp">\(E \propto \beta^2\)이고 \(j_0\)의 첫 영점은 \(\pi\), \(j_1\)의 첫 영점은 \(4.493\)이므로 비는 \((4.493/\pi)^2 = 2.046\)이다. 1.43은 영점의 비 자체다. 4는 \(2s\) 준위(영점 \(2\pi\))의 비다.</div></div>
+      <div class="quiz-q"><p>4. 조화 진동자의 점화식 \(a_{k+2} = \frac{2k + 1 - \varepsilon}{(k+2)(k+1)}a_k\)에서 \(\varepsilon = 7\)이면?</p><div class="opts">
+        <button class="opt">짝수 급수가 6차에서 끊기고 \(E = 3.5\hbar\omega\)이다.</button>
+        <button class="opt" data-correct>홀수 급수가 \(\xi^3\)에서 끊기고 \(E = 3.5\hbar\omega\)이며, 짝수 급수는 \(a_0 = 0\)으로 없애야 한다.</button>
+        <button class="opt">두 급수가 모두 끊기므로 아무 \(a_0, a_1\)이나 된다.</button>
+        <button class="opt">\(E = 7\hbar\omega\)이다.</button>
+      </div><div class="quiz-exp">\(2k + 1 = 7\)이면 \(k = 3\)이므로 \(a_5 = 0\)이 되어 홀수 급수가 \(\xi^3\)에서 끊긴다(\(n = 3\)). 짝수 급수의 분자 \(2k + 1 - 7\)은 짝수 \(k\)에서 0이 되지 않으므로 끊기지 않고, 그래서 \(a_0 = 0\)이어야 한다. \(E = \varepsilon\hbar\omega/2 = 3.5\hbar\omega\)이다.</div></div>
+      <div class="quiz-q"><p>5. 옛 관례의 \(\mathsf L_2(x) = e^x\frac{d^2}{dx^2}(x^2e^{-x})\)는 무엇인가?</p><div class="opts">
+        <button class="opt">\(1 - 2x + \tfrac12x^2\)</button>
+        <button class="opt" data-correct>\(2 - 4x + x^2\)</button>
+        <button class="opt">\(2 - x\)</button>
+        <button class="opt">\(x^2 - 4x + 2\)를 \(\sqrt2\)로 나눈 것</button>
+      </div><div class="quiz-exp">\((x^2e^{-x})'' = (2 - 4x + x^2)e^{-x}\)이므로 \(\mathsf L_2 = 2 - 4x + x^2 = 2!\,L_2\)이다. 현대 관례의 \(L_2 = 1 - 2x + \tfrac12x^2\)은 여기에 \(1/2!\)을 곱해 \(L_2(0) = 1\)로 맞춘 것이다. \(2 - x\)는 \(L_1^{(1)}\)이다.</div></div>
+      <div class="quiz-q"><p>6. 수소 원자의 \(3d\) 상태(\(n = 3\), \(l = 2\))의 지름 함수 \(R_{32}\)는 \(r > 0\)에서 마디가 몇 개인가?</p><div class="opts">
+        <button class="opt" data-correct>0개</button>
+        <button class="opt">1개</button>
+        <button class="opt">2개</button>
+        <button class="opt">3개</button>
+      </div><div class="quiz-exp">\(R_{nl} \propto \rho^le^{-\rho/2}L_{n-l-1}^{(2l+1)}(\rho)\)이고 \(L_0^{(5)} = 1\)이라 영점이 없다. 13.7절의 영점 정리에 따라 \(L_k^{(\alpha)}\)은 \((0, \infty)\)에 영점이 정확히 \(k = n - l - 1\)개다. \(3s\)는 2개, \(3p\)는 1개다.</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-bessel-half-order" data-level="1"><p>(가) 급수 <a class="ref" href="#eq-bessel-series"></a>에서 \(J_{-1/2}(x) = \sqrt{2/\pi x}\cos x\)임을 보여라. (나) 점화식으로 \(J_{3/2}\)을 초등 함수로 써라. (다) \(J_{1/2}\)과 \(J_{-1/2}\)의 론스키안을 직접 계산해 식 <a class="ref" href="#eq-bessel-wronskian-jj"></a>과 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\Gamma(k + \tfrac12) = \frac{(2k-1)!!}{2^k}\sqrt\pi\)와 \((2k-1)!! = \frac{(2k)!}{2^kk!}\)에서 \(k!\,\Gamma(k + \tfrac12) = (2k)!\sqrt\pi/4^k\)이다. 따라서 \(k\)번째 항은 \(\frac{(-1)^k4^k}{(2k)!\sqrt\pi}(x/2)^{2k-1/2} = \sqrt{\frac{2}{\pi x}}\frac{(-1)^kx^{2k}}{(2k)!}\)이고, 합은 \(\sqrt{2/\pi x}\cos x\)이다.</p>
+        <p>(나) \(\nu = \tfrac12\)에서 \(J_{-1/2} + J_{3/2} = \frac1xJ_{1/2}\)이므로 \(J_{3/2} = \sqrt{\frac{2}{\pi x}}\Big(\frac{\sin x}{x} - \cos x\Big)\)이다. \(\sqrt{\pi/2x}\)를 곱하면 식 <a class="ref" href="#eq-spherical-bessel-elementary"></a>의 \(j_1\)이다.</p>
+        <p>(다) \(f = x^{-1/2}\), \(u = f\sin x\), \(v = f\cos x\)로 두면 \(uv' - u'v = f^2(-\sin^2x - \cos^2x) + ff'(\sin x\cos x - \sin x\cos x) = -1/x\)이다. 상수 \((2/\pi)\)를 곱하면 \(W = -2/(\pi x)\)이고, 식 <a class="ref" href="#eq-bessel-wronskian-jj"></a>에 \(\nu = \tfrac12\)를 넣은 \(-2\sin(\pi/2)/(\pi x)\)와 같다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-bessel-recurrence-values" data-level="1"><p>(가) \(J_1\)의 모든 영점 \(\alpha_{1n}\)에서 \(J_2(\alpha_{1n}) = -J_0(\alpha_{1n})\)임을 보여라. (나) \(J_3\)를 \(J_0, J_1\)로 써라. (다) \(J_0(2) = 0.22389\), \(J_1(2) = 0.57672\)에서 \(J_2(2)\)와 \(J_3(2)\)를 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 식 <a class="ref" href="#eq-bessel-recurrence"></a>의 첫 줄을 \(\nu = 1\)로 쓰면 \(J_0 + J_2 = \frac2xJ_1\)이고, \(J_1 = 0\)인 곳에서 \(J_2 = -J_0\)이다. 에어리 원반의 첫 어두운 고리(\(u = 3.832\))에서 \(J_2 = 0.4028\)인 것이 그 예다.</p>
+        <p>(나) \(J_2 = \frac2xJ_1 - J_0\)이고 \(\nu = 2\)에서 \(J_3 = \frac4xJ_2 - J_1 = \Big(\frac{8}{x^2} - 1\Big)J_1 - \frac4xJ_0\)이다.</p>
+        <p>(다) \(J_2(2) = 0.57672 - 0.22389 = 0.35283\), \(J_3(2) = (2 - 1)(0.57672) - 2(0.22389) = 0.12894\)이다. 급수로 계산한 값과 다섯째 자리까지 맞는다. 이처럼 차수를 올리는 점화식은 \(n &lt; x\)에서는 안정하지만, \(n\)이 \(x\)보다 훨씬 크면 \(J_n\)이 아주 작아져 뺄셈에서 유효숫자를 잃는다. 그때는 높은 차수에서 아래로 내려오며 계산한다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-waveguide-cutoff" data-level="2"><p>반지름 \(a = 1.00\ \text{cm}\)인 원형 금속 도파관 속의 TM 모드는 \(E_z = J_m(k_ss)e^{im\phi}e^{i(k_zz - \omega t)}\)이고, 벽에서 \(E_z = 0\)이다. (가) \(k_s\)와 \(k_z\)의 관계를 구하고, 모드 \((m, n)\)의 차단 진동수(이보다 낮으면 \(k_z\)가 허수가 되어 전파하지 못하는 진동수)를 구하라. (나) TM\(_{01}\), TM\(_{11}\), TM\(_{02}\)의 차단 진동수를 구하라. (다) \(f = 15\ \text{GHz}\)에서 전파하는 TM 모드와 그 관내 파장 \(2\pi/k_z\)를 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 파동 방정식에서 \(k_s^2 + k_z^2 = \omega^2/c^2\)이고, 지름 부분은 식 <a class="ref" href="#eq-cylindrical-radial"></a>에서 \(k \to k_s\)인 베셀 방정식이다. 벽 조건 \(J_m(k_sa) = 0\)에서 \(k_s = \alpha_{mn}/a\)이다. \(k_z^2 = \omega^2/c^2 - \alpha_{mn}^2/a^2 > 0\)이어야 하므로 \(f_c = c\,\alpha_{mn}/(2\pi a)\)이다.</p>
+        <p>(나) \(c/(2\pi a) = 4.771\ \text{GHz}\)이므로 TM\(_{01}\): \(4.771 \times 2.405 = 11.47\ \text{GHz}\), TM\(_{11}\): \(\times3.832 = 18.28\ \text{GHz}\), TM\(_{02}\): \(\times5.520 = 26.34\ \text{GHz}\)이다.</p>
+        <p>(다) 15 GHz는 TM\(_{01}\)의 차단 진동수보다만 높으므로 TM 모드 가운데 TM\(_{01}\)만 전파한다. \(\omega/c = 314.4\ \text{m}^{-1}\), \(\alpha_{01}/a = 240.5\ \text{m}^{-1}\)이므로 \(k_z = \sqrt{314.4^2 - 240.5^2} = 202.5\ \text{m}^{-1}\)이고, 관내 파장은 \(3.10\ \text{cm}\)로 자유 공간 파장 \(2.00\ \text{cm}\)보다 길다. 위상 속도 \(\omega/k_z\)는 \(c\)보다 크지만, 에너지는 군속도 \(c^2k_z/\omega &lt; c\)로 전달된다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-cylinder-cooling" data-level="2"><p>반지름 \(a = 2.0\ \text{cm}\)인 긴 원기둥(열확산도 \(D = 1.0 \times 10^{-7}\ \text{m}^2/\text{s}\))이 처음에 고르게 \(T_0\)이었다가, 시각 0부터 겉면이 \(T_w\)로 유지된다. 무차원 온도 \(u = (T - T_w)/(T_0 - T_w)\)는 \(u(s, t) = \sum_nc_nJ_0(\alpha_{0n}s/a)\,e^{-D\alpha_{0n}^2t/a^2}\)으로 쓸 수 있다(확산 방정식의 변수 분리는 17장). (가) 처음 조건 \(u(s, 0) = 1\)에서 \(c_n\)을 구하라. (나) \(c_1, c_2, c_3\)의 값을 구하라. (다) 가장 느린 두 모드의 시간 상수, 10분 뒤 중심의 \(u\), 중심의 \(u\)가 0.10이 되는 시각을 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 식 <a class="ref" href="#eq-fourier-bessel"></a>에서 \(m = 0\), \(f = 1\)이다. \(x = \alpha s/a\)로 바꾸면 \(\int_0^aJ_0(\alpha s/a)s\,ds = \frac{a^2}{\alpha^2}\int_0^\alpha xJ_0\,dx = \frac{a^2}{\alpha}J_1(\alpha)\)이므로 \(c_n = \dfrac{2}{\alpha_{0n}J_1(\alpha_{0n})}\)이다.</p>
+        <p>(나) \(J_1(2.4048) = 0.5191\), \(J_1(5.5201) = -0.3403\), \(J_1(8.6537) = 0.2715\)에서 \(c_1 = 1.602\), \(c_2 = -1.065\), \(c_3 = 0.851\)이다. 부호가 번갈고 크기가 \(1/\sqrt n\)쯤으로 천천히 줄어든다. 겉면에서 \(u\)가 1에서 0으로 뛰는 불연속이 있기 때문이다.</p>
+        <p>(다) \(\tau_n = a^2/(D\alpha_{0n}^2)\)이므로 \(\tau_1 = (4.0 \times 10^{-4})/(1.0 \times 10^{-7} \times 5.783) = 692\ \text{s}\), \(\tau_2 = 131\ \text{s}\)이다. 10분 뒤 중심에서는 \(1.602e^{-600/692} - 1.065e^{-600/131} = 0.673 - 0.011 = 0.66\)이다. 그 뒤로는 첫 모드만 남으므로 \(1.602e^{-t/692} = 0.10\)에서 \(t = 692\ln16.0 = 1.9 \times 10^3\ \text{s}\), 약 32분이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-bessel-parseval" data-level="2"><p>식 <a class="ref" href="#eq-jacobi-anger"></a>에 14장의 파르스발 정리(<a href="ch14.html#thm-parseval-series">정리 14.5</a>)를 적용해 \(J_0(x)^2 + 2\sum_{n\ge1}J_n(x)^2 = 1\)임을 보이고, 모든 \(x\)에서 \(\lvert J_n(x)\rvert \le 1/\sqrt2\) (\(n \ge 1\))임을 보여라. 또 \(\theta = 0\)을 넣어 \(J_0 + 2(J_2 + J_4 + \cdots) = 1\)을 얻어라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(e^{ix\sin\theta}\)는 주기 \(2\pi\)인 함수이고 푸리에 계수가 \(J_n(x)\)이다. 파르스발 정리는 \(\frac{1}{2\pi}\int_{-\pi}^{\pi}\lvert f\rvert^2d\theta = \sum_n\lvert c_n\rvert^2\)이고 \(\lvert e^{ix\sin\theta}\rvert = 1\)이므로 \(\sum_{n=-\infty}^\infty J_n^2 = 1\)이다. \(J_{-n}^2 = J_n^2\)(식 <a class="ref" href="#eq-bessel-neg-integer"></a>)이므로 \(J_0^2 + 2\sum_{n\ge1}J_n^2 = 1\)이다. 모든 항이 음이 아니므로 \(2J_n^2 \le 1\)이다. \(x = 2.7\)에서 수치로 더하면 \(1.000\)이 나온다. \(\theta = 0\)에서는 왼쪽이 1이고 오른쪽이 \(\sum_nJ_n = J_0 + \sum_{n\ge1}(1 + (-1)^n)J_n\)이므로 짝수 차수만 두 번씩 남는다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-spherical-bessel-j2" data-level="1"><p>레일리 공식 <a class="ref" href="#eq-rayleigh-formula"></a>으로 \(j_2\)를 구하고, \(x \to 0\)에서 \(j_2 \approx x^2/15\)임을 테일러 전개로 확인하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(\frac1x\frac{d}{dx}\frac{\sin x}{x} = \frac{x\cos x - \sin x}{x^3}\)이고, 한 번 더 하면 \(\frac{3\sin x - 3x\cos x - x^2\sin x}{x^5}\)이다. \((-x)^2 = x^2\)을 곱하면 \(j_2 = \Big(\frac{3}{x^3} - \frac1x\Big)\sin x - \frac{3\cos x}{x^2}\)이다. 전개하면 \(\frac{3\sin x}{x^3} = \frac3{x^2} - \frac12 + \frac{x^2}{40} - \cdots\), \(-\frac{\sin x}x = -1 + \frac{x^2}6 - \cdots\), \(-\frac{3\cos x}{x^2} = -\frac3{x^2} + \frac32 - \frac{x^2}8 + \cdots\)이다. \(1/x^2\) 항과 상수항은 지워지고 \(x^2\)의 계수는 \(\frac1{40} + \frac16 - \frac18 = \frac1{15}\)이다. 식 <a class="ref" href="#eq-spherical-bessel-limits"></a>의 \(x^l/(2l+1)!! = x^2/15\)와 같다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-hard-sphere-phase" data-level="2"><p>파수 \(k\)인 입자가 반지름 \(a\)인 단단한 구(안쪽 퍼텐셜 무한대)에 산란된다. 구 밖의 지름 함수를 \(R_l = A_l[j_l(kr)\cos\delta_l - y_l(kr)\sin\delta_l]\)로 쓴다. (가) 큰 \(r\)에서 \(R_l \propto \sin(kr - l\pi/2 + \delta_l)/kr\)임을 보이고 \(\tan\delta_l\)을 구하라. (나) \(\delta_0\)과, \(ka \ll 1\)에서 \(\delta_1\)을 구하라. (다) 전체 단면적(이 문제의 \(\sigma\)) \(\sigma = \frac{4\pi}{k^2}\sum_l(2l+1)\sin^2\delta_l\)을 \(ka = 0.10\)에서 \(\pi a^2\)과 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 식 <a class="ref" href="#eq-spherical-bessel-limits"></a>의 둘째 줄을 넣으면 \(j_l\cos\delta - y_l\sin\delta \approx [\sin\varphi\cos\delta + \cos\varphi\sin\delta]/x = \sin(\varphi + \delta)/x\) (\(\varphi = x - l\pi/2\))이다. 구 표면에서 \(R_l(a) = 0\)이므로 \(\tan\delta_l = j_l(ka)/y_l(ka)\)이다.</p>
+        <p>(나) \(l = 0\): \(\tan\delta_0 = (\sin x/x)/(-\cos x/x) = -\tan(ka)\)이므로 \(\delta_0 = -ka\)이다. 파동이 구의 반지름만큼 밀려난다. \(l = 1\): 작은 \(x\)에서 \(j_1 \approx x/3\), \(y_1 \approx -1/x^2\)이므로 \(\tan\delta_1 \approx -(ka)^3/3\)이다. \(ka = 0.10\)이면 \(\delta_0 = -0.100\ \text{rad}\), \(\delta_1 = -3.3 \times 10^{-4}\ \text{rad}\)이다.</p>
+        <p>(다) \(s\)파의 기여는 \(\frac{4\pi}{k^2}\sin^2(ka) = 4\pi a^2\frac{\sin^2(0.10)}{0.010} = 0.997 \times 4\pi a^2\)이고, \(p\)파는 \(3\sin^2\delta_1/\sin^2\delta_0 \approx 3 \times 10^{-5}\)배로 무시할 만하다. 따라서 \(\sigma \approx 4\pi a^2\), 곧 기하학적 단면적 \(\pi a^2\)의 4배다. 낮은 에너지에서 \(j_l \propto (kr)^l\) 때문에 \(l \ge 1\) 파동이 구 근처에 거의 오지 않는다는 것이 13.4절의 원심력 장벽이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-hermite-h5" data-level="1"><p>(가) 점화식 <a class="ref" href="#eq-hermite-recurrence"></a>로 \(H_5\)를 구하고 \(H_5' = 10H_4\)를 확인하라. (나) 가우스 적분 \(\int x^2e^{-x^2}dx = \sqrt\pi/2\), \(\int x^4e^{-x^2}dx = 3\sqrt\pi/4\)로 \(\int H_2^2e^{-x^2}dx\)를 직접 계산해 식 <a class="ref" href="#eq-hermite-orthogonality"></a>과 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(H_5 = 2xH_4 - 8H_3 = 32x^5 - 96x^3 + 24x - 64x^3 + 96x = 32x^5 - 160x^3 + 120x\)이다. \(H_5' = 160x^4 - 480x^2 + 120 = 10(16x^4 - 48x^2 + 12) = 10H_4\)이다.</p>
+        <p>(나) \((4x^2 - 2)^2 = 16x^4 - 16x^2 + 4\)이므로 적분은 \(16 \cdot \frac{3\sqrt\pi}4 - 16 \cdot \frac{\sqrt\pi}2 + 4\sqrt\pi = 8\sqrt\pi\)이다. 식 <a class="ref" href="#eq-hermite-orthogonality"></a>의 \(\sqrt\pi\,2^2\cdot2! = 8\sqrt\pi\)와 같다. 같은 방법으로 \(\int H_0H_2e^{-x^2} = 4\cdot\frac{\sqrt\pi}2 - 2\sqrt\pi = 0\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-half-oscillator" data-level="2"><p>\(x &lt; 0\)에는 넘을 수 없는 벽이 있고 \(x > 0\)에서는 \(V = \tfrac12m\omega^2x^2\)인 "반쪽 진동자"가 있다. (가) 허용되는 에너지 준위를 구하라. (나) \(\hbar\omega = 0.10\ \text{eV}\)일 때 가장 낮은 세 준위와, 바닥 상태에서 첫 들뜬 상태로 올리는 빛의 파장을 구하라. (다) 규격화된 고유함수를 \(\psi_n\)으로 써라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(x > 0\)에서는 진동자와 같은 방정식이고, 벽에서 \(\psi(0) = 0\)이어야 한다. 무한대에서 줄어드는 해는 <a class="ref" href="#ex-qho-hermite"></a>와 같은 이유로 \(H_n(\xi)e^{-\xi^2/2}\)뿐이고, \(H_n(0) = 0\)인 것은 홀수 \(n\)이다. 따라서 \(E = (n + \tfrac12)\hbar\omega\), \(n = 1, 3, 5, \ldots\), 곧 \(\tfrac32, \tfrac72, \tfrac{11}2\)배이고 간격은 \(2\hbar\omega\)이다.</p>
+        <p>(나) \(0.15\), \(0.35\), \(0.55\ \text{eV}\)이다. 첫 전이의 광자 에너지는 \(0.20\ \text{eV}\)이고 파장은 \(1239.8/0.20\ \text{nm} = 6.2\ \mu\text{m}\)로 중적외선이다.</p>
+        <p>(다) \(x > 0\)에서 \(\sqrt2\,\psi_n(x)\) (\(n\) 홀수), \(x &lt; 0\)에서 0이다. 홀함수의 제곱은 짝함수라 반직선 위의 적분이 전체의 절반이기 때문에 \(\sqrt2\)가 붙는다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-hydrogen-2p" data-level="2"><p>(가) 식 <a class="ref" href="#eq-hydrogen-radial"></a>에서 \(R_{21}\)을 구하라. (나) \(2p\) 전자를 찾을 확률이 가장 큰 반지름과 \(\langle r\rangle\)을 \(a = 0.0529\ \text{nm}\)로 구하라. (다) \(\langle 1/r\rangle\)을 구하고, 퍼텐셜 에너지의 기댓값이 \(2E_2\)임을 확인하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(n = 2\), \(l = 1\)이면 \(\rho = r/a\), \(L_0^{(3)} = 1\)이고 \(N^2 = (1/a)^3\cdot\frac{0!}{4\cdot3!} = \frac{1}{24a^3}\)이다. 따라서 \(R_{21} = \frac{1}{\sqrt{24}a^{3/2}}\frac rae^{-r/2a}\)로 식 <a class="ref" href="#eq-hydrogen-radial-table"></a>와 같다.</p>
+        <p>(나) \(r^2R^2 \propto r^4e^{-r/a}\)의 도함수가 0인 곳은 \(4/r = 1/a\), 곧 \(r = 4a = 0.212\ \text{nm}\)이다. \(\langle r\rangle = \frac{1}{24a^5}\int_0^\infty r^5e^{-r/a}dr = \frac{5!\,a^6}{24a^5} = 5a = 0.265\ \text{nm}\)이다(11장의 \(\int x^ne^{-x}dx = n!\)).</p>
+        <p>(다) \(\langle1/r\rangle = \frac{1}{24a^5}\int r^3e^{-r/a}dr = \frac{3!\,a^4}{24a^5} = \frac{1}{4a}\)이다. \(\langle V\rangle = -\frac{e^2}{4\pi\varepsilon_0}\frac1{4a} = -\frac{1.440}{4 \times 0.0529}\ \text{eV} = -6.80\ \text{eV}\)이고, \(2E_2 = -6.80\ \text{eV}\)와 같다. 쿨롱 퍼텐셜에서 성립하는 비리얼 정리 \(\langle V\rangle = 2E\)다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-3d-oscillator-laguerre" data-level="3"><p>3차원 등방 조화 진동자 \(V = \tfrac12m\omega^2r^2\)의 지름 방정식을 \(\xi = r/b\), \(\varepsilon = 2E/\hbar\omega\)로 쓰면 \(u'' + [\varepsilon - \xi^2 - l(l+1)/\xi^2]u = 0\)이다(\(u = rR\)). (가) \(u = \xi^{l+1}e^{-\xi^2/2}v(t)\), \(t = \xi^2\)으로 두어 \(v\)가 연관 라게르 방정식을 만족함을 보이고 \(\alpha\)를 구하라. (나) 에너지 준위를 구하라. (다) \(E = (N + \tfrac32)\hbar\omega\)인 준위의 겹침 수가 \((N+1)(N+2)/2\)임을 보이고, 직교 좌표에서 푼 \(n_x + n_y + n_z = N\)의 개수와 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(g = \xi^{l+1}e^{-\xi^2/2}\)이면 \(g'/g = \frac{l+1}\xi - \xi\), \(g''/g = \frac{l(l+1)}{\xi^2} - (2l+3) + \xi^2\)이다. \(u = gv\)를 넣고 \(g\)로 나누면 \(v_{\xi\xi} + 2\big(\frac{l+1}\xi - \xi\big)v_\xi + (\varepsilon - 2l - 3)v = 0\)이다. \(t = \xi^2\)이면 \(v_\xi = 2\xi v_t\), \(v_{\xi\xi} = 2v_t + 4tv_{tt}\)이므로, 4로 나누면</p>
+        <div class="formula">\[ tv_{tt} + \Big(l + \frac32 - t\Big)v_t + \frac{\varepsilon - 2l - 3}{4}\,v = 0 \]</div>
+        <p>이다. 식 <a class="ref" href="#eq-associated-laguerre-equation"></a>와 비교하면 \(\alpha = l + \tfrac12\), 차수 \(n_r = (\varepsilon - 2l - 3)/4\)이다.</p>
+        <p>(나) 끊기지 않으면 \(v \sim e^t = e^{\xi^2}\)이 되어 규격화할 수 없으므로 \(n_r = 0, 1, 2, \ldots\)이다. \(\varepsilon = 4n_r + 2l + 3\), 곧 \(E = (2n_r + l + \tfrac32)\hbar\omega\)이다. 해는 \(R \propto \xi^le^{-\xi^2/2}L_{n_r}^{(l+1/2)}(\xi^2)\)이다.</p>
+        <p>(다) \(N = 2n_r + l\)이므로 \(l = N, N-2, \ldots\)(0 또는 1까지)이고 각 \(l\)마다 \(2l + 1\)개다. \(N = 0, 1, 2, 3\)에서 \(1\), \(3\), \(5 + 1 = 6\), \(7 + 3 = 10\)개이고, 일반적으로 \(\sum(2l+1) = (N+1)(N+2)/2\)이다. 직교 좌표에서는 음이 아닌 정수 셋의 합이 \(N\)인 경우의 수 \(\binom{N+2}{2}\)이므로 같다. 두 풀이는 같은 고유 공간에서 다른 기저를 고른 것이다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>
