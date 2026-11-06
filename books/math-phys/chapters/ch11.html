@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>11 감마 함수와 특수 적분 · 수리물리학</title>
+<meta name="description" content="가우스 적분의 모멘트에서 감마·베타 함수와 n차원 공의 부피를 세우고, 라플라스 방법으로 스털링 공식을, 오차 함수로 확산과 정규분포의 꼬리를, 타원 적분으로 진자의 정확한 주기를 구한다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys" data-field="phys" data-chapter="ch11">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">11</span></div>
+    <h1 data-fill="chapter-title">감마 함수와 특수 적분</h1>
+    <p class="lead">기체 분자의 평균 속력, 고차원 공의 부피, 이상 기체의 엔트로피, 막대 속에서 열이 퍼지는 모양, 크게 흔들리는 진자의 주기는 모두 원시 함수를 기본 함수로 쓸 수 없는 적분으로 나타난다. 이 장은 이런 적분을 이름 붙은 몇 개의 함수, 곧 감마 함수, 베타 함수, 오차 함수, 타원 적분으로 정리하고, 큰 수가 들어간 적분을 어림하는 라플라스 방법을 세운다. 출발점은 3장의 가우스 적분이고, 1장에서 급수로 어림한 진자의 주기를 이 장에서 정확한 값으로 바꾼다.</p>
+    <ul class="objectives">
+      <li>가우스 적분의 모멘트와 일반 가우스 적분을 매개변수 미분과 완전제곱으로 계산하고, 맥스웰 분포의 평균 속력을 구할 수 있다.</li>
+      <li>감마 함수와 베타 함수의 성질(점화식, \(\Gamma(\tfrac12) = \sqrt\pi\), \(B = \Gamma\Gamma/\Gamma\))로 정적분을 계산하고 \(n\)차원 공의 부피를 유도할 수 있다.</li>
+      <li>라플라스 방법으로 스털링 공식을 유도하고, 입자 수가 큰 계의 엔트로피 계산에 쓸 수 있다.</li>
+      <li>오차 함수를 정의하고, 그 점근 꼴로 정규분포의 꼬리 확률과 확산 문제를 계산할 수 있다.</li>
+      <li>진자의 정확한 주기를 제1종 완전 타원 적분으로 쓰고, 진폭이 \(180^\circ\)에 다가갈 때의 로그 발산을 설명할 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b>1장(테일러 급수, 항별 적분, 진자 주기의 적분 <a href="ch01.html#eq-pendulum-integral">식 (1.36)</a>), 3장(가우스 적분 <a href="ch03.html#eq-gaussian-integral">식 (3.33)</a>, 극좌표의 넓이 요소, 적분 기호 안에서 미분하기). 복소수는 2장 수준이면 충분하다.</p>
+  </header>
+
+  <!-- ============================================================ 11.1 -->
+  <section id="s1">
+    <h2>가우스 적분과 그 모멘트</h2>
+    <p>3장의 <a href="ch03.html#ex-equipartition">예제 3.12</a>에서는 분배 함수를 \(\beta\)로 미분해 운동량 한 성분의 제곱 평균 \(\langle p_x^2\rangle = mk_BT\)를 얻었다. 그런데 기체에서 실제로 묻는 양은 그보다 다양하다. 분자의 평균 속력은 얼마인가? 속력이 어떤 값보다 큰 분자는 몇 %인가? 이런 양은 모두 "다항식 곱하기 가우스 함수"의 적분이다. 이 절에서는 그런 적분을 한꺼번에 처리하는 공식 두 개를 세운다.</p>
+    <div class="box math" id="math-gaussian-recall"><div class="box-h">가우스 적분 (3장)</div>
+      <p>\(I = \int_{-\infty}^\infty e^{-x^2}dx\)의 제곱을 평면 위의 적분으로 보고 극좌표 \(dx\,dy = r\,dr\,d\theta\)로 바꾸면 \(I^2 = 2\pi\int_0^\infty e^{-r^2}r\,dr = \pi\)이다. \(x\)를 \(\sqrt a\,x\)로 바꾸면</p>
+      <div class="formula">\[ \int_{-\infty}^{\infty} e^{-ax^2}\,dx = \sqrt{\frac{\pi}{a}} \quad (a > 0) \]</div>
+      <p>이다(<a href="ch03.html#eq-gaussian-scaled">3장 식 (3.34)</a>). 극좌표의 \(r\)이 원시 함수를 만들어 준다는 것이 요점이고, 이 장에서는 같은 요령을 두 번 더 쓴다(11.3절).</p>
+    </div>
+
+    <h3 id="s1-moments">짝수 모멘트: 매개변수로 미분하기</h3>
+    <p>\(I_m(a) = \int_{-\infty}^{\infty} x^m e^{-ax^2}\,dx\)라 하자. 피적분 함수가 \(m\)이 홀수이면 홀함수이므로 \(I_m = 0\)이다. 짝수일 때는 \(\partial_a e^{-ax^2} = -x^2 e^{-ax^2}\)라는 데 주목한다. \(\sqrt{\pi/a}\)를 \(a\)로 한 번 미분할 때마다 피적분 함수에 \(-x^2\)이 하나씩 붙는다. \(a \ge a_0 > 0\)에서 \(\lvert x^{2n}e^{-ax^2}\rvert \le x^{2n}e^{-a_0x^2}\)이고 이것이 적분 가능하므로, <a href="ch03.html#thm-leibniz-integral">3장 정리 3.6</a> 뒤의 조건에 따라 미분을 적분 안으로 넣어도 된다. 따라서</p>
+    <div class="formula">\[ I_{2n}(a) = \Big(-\frac{\partial}{\partial a}\Big)^n \sqrt{\frac{\pi}{a}} \]</div>
+    <p>이다. \(-\partial_a\)를 \(a^{-1/2}\)에 한 번 쓰면 \(\tfrac12 a^{-3/2}\), 두 번 쓰면 \(\tfrac12\cdot\tfrac32 a^{-5/2}\)이다. \(n\)번 쓰면 \(\tfrac12\cdot\tfrac32\cdots\tfrac{2n-1}{2}\,a^{-n-1/2}\)이 된다.</p>
+    <div class="formula" id="eq-gaussian-moments">\[ \int_{-\infty}^{\infty} x^{2n} e^{-ax^2}\,dx = \frac{(2n-1)!!}{(2a)^n}\sqrt{\frac{\pi}{a}} \]<div class="where">\(a > 0\), \(n = 0, 1, 2, \ldots\). \((2n-1)!! = 1\cdot3\cdot5\cdots(2n-1)\)이고 \((-1)!! = 1\)로 둔다. 처음 몇 개는 \(I_2 = \sqrt\pi/(2a^{3/2})\), \(I_4 = 3\sqrt\pi/(4a^{5/2})\), \(I_6 = 15\sqrt\pi/(8a^{7/2})\)이다.</div></div>
+    <p>답의 \(a\) 의존성은 차원만으로도 정해진다. \(ax^2\)이 차원이 없으므로 \(a\)의 차원은 \(1/(\text{길이})^2\)이고, 적분 \(\int x^{2n}\cdots dx\)의 차원은 \((\text{길이})^{2n+1}\)이다. 그러니 답은 \(a^{-(2n+1)/2}\)에 비례할 수밖에 없다. 공식이 정하는 것은 앞의 숫자뿐이다.</p>
+    <p>확률로 읽으면 뜻이 더 분명하다. 평균이 0이고 표준편차가 \(\sigma\)인 <span class="term">정규분포</span> <span class="en">(normal distribution)</span> \(p(x) = e^{-x^2/2\sigma^2}/\sqrt{2\pi\sigma^2}\)는 \(a = 1/2\sigma^2\)인 가우스 함수다. 식 <a class="ref" href="#eq-gaussian-moments"></a>을 \(\sqrt{2\pi\sigma^2} = \sqrt{\pi/a}\)로 나누면</p>
+    <div class="formula" id="eq-normal-moments">\[ \langle x^{2n}\rangle = (2n-1)!!\,\sigma^{2n}: \quad \langle x^2\rangle = \sigma^2,\ \ \langle x^4\rangle = 3\sigma^4 \]</div>
+    <p>이다. 비 \(\langle x^4\rangle/\langle x^2\rangle^2 = 3\)은 분포의 모양에만 기대는 수라서, 측정한 잡음이 가우스 분포인지 시험하는 데 쓰인다. 11.4절에서는 이 모멘트로 스털링 공식의 보정 항을 구한다.</p>
+
+    <h3 id="s1-half-line">반직선 위의 적분</h3>
+    <p>속력처럼 0 이상인 양의 평균에는 \(0\)부터 \(\infty\)까지의 적분이 나온다. 짝수 거듭제곱이면 식 <a class="ref" href="#eq-gaussian-moments"></a>의 절반이다. 홀수 거듭제곱은 \(s = x^2\), \(ds = 2x\,dx\)로 치환하면 지수 함수의 적분이 된다.</p>
+    <div class="formula" id="eq-gaussian-odd-half">\[ \int_0^\infty x^{2n+1}e^{-ax^2}\,dx = \frac12\int_0^\infty s^n e^{-as}\,ds = \frac{n!}{2a^{n+1}} \]</div>
+    <p>마지막 등호는 \(\int_0^\infty e^{-as}ds = 1/a\)를 \(a\)로 \(n\)번 미분해서 얻는다. 짝수 거듭제곱에서는 \((2n-1)!!\sqrt\pi\)가, 홀수 거듭제곱에서는 \(n!\)이 나왔다. 두 결과는 11.2절의 감마 함수 하나로 합쳐진다.</p>
+
+    <div class="box ex" id="ex-maxwell-speeds"><div class="box-h">맥스웰-볼츠만 속력 분포와 세 가지 대표 속력</div>
+      <p>온도 \(T\)인 기체에서 질량 \(m\)인 분자의 속도 세 성분은 서로 독립적으로 1차원 맥스웰 분포 \(\sqrt{m/2\pi k_BT}\;e^{-mv_x^2/2k_BT}\)를 따른다(<a href="ch01.html#ex-gaussian-series-integral">1장 예제 1.13</a>). (가) 속력 \(v = \lvert\mathbf v\rvert\)의 확률 밀도 \(F(v)\)를 구하라. (나) 가장 흔한 속력 \(v_p\), 평균 속력 \(\langle v\rangle\), 제곱 평균 제곱근 속력 \(v_{\text{rms}} = \sqrt{\langle v^2\rangle}\)를 구하라. (다) 300 K의 질소 분자(\(m = 28.01\ \text{u}\))에서 값을 계산하라.</p>
+      <p><b>풀이.</b> (가) \(a = m/2k_BT\)로 쓰자. 세 성분의 결합 확률 밀도는 \((a/\pi)^{3/2}e^{-av^2}\)이고 속도의 방향에 기대지 않는다. 속도 공간에서 속력이 \(v\)와 \(v + dv\) 사이인 곳은 두께 \(dv\)인 구 껍질이고, 그 부피는 \(4\pi v^2\,dv\)이다(구면 좌표의 부피 요소를 각도로 적분한 것, <a href="ch06.html#eq-volume-element-spherical">6장 식 (6.15)</a>). 따라서</p>
+      <div class="formula" id="eq-maxwell-speed-distribution">\[ F(v) = 4\pi\Big(\frac{a}{\pi}\Big)^{3/2} v^2 e^{-av^2}, \quad a = \frac{m}{2k_BT} \]</div>
+      <p>이다. 규격화를 확인하자. 식 <a class="ref" href="#eq-gaussian-moments"></a>의 절반에서 \(\int_0^\infty v^2e^{-av^2}dv = \sqrt\pi/(4a^{3/2})\)이므로 \(\int_0^\infty F\,dv = 4\pi\,\pi^{-3/2}\sqrt\pi/4 = 1\)이다.</p>
+      <p>(나) \(F'(v) = 0\)에서 \(2v - 2av^3 = 0\)이므로 \(v_p = 1/\sqrt a\)이다. 평균 속력에는 \(v^3\)의 적분이 필요하고, 식 <a class="ref" href="#eq-gaussian-odd-half"></a>에서 \(n = 1\)이면 \(\int_0^\infty v^3e^{-av^2}dv = 1/(2a^2)\)이다. \(\langle v^2\rangle\)에는 \(\int_0^\infty v^4e^{-av^2}dv = 3\sqrt\pi/(8a^{5/2})\)가 필요하다.</p>
+      <div class="formula">\[ \begin{aligned} \langle v\rangle &= 4\pi\Big(\frac{a}{\pi}\Big)^{3/2}\frac{1}{2a^2} = \frac{2}{\sqrt{\pi a}} \\ \langle v^2\rangle &= 4\pi\Big(\frac{a}{\pi}\Big)^{3/2}\frac{3\sqrt\pi}{8a^{5/2}} = \frac{3}{2a} \end{aligned} \]</div>
+      <p>\(a = m/2k_BT\)를 다시 넣으면</p>
+      <div class="formula" id="eq-maxwell-three-speeds">\[ \begin{aligned} v_p &= \sqrt{\frac{2k_BT}{m}}, \quad \langle v\rangle = \sqrt{\frac{8k_BT}{\pi m}} \\ v_{\text{rms}} &= \sqrt{\frac{3k_BT}{m}} \end{aligned} \]</div>
+      <p>이다. 비는 \(v_p : \langle v\rangle : v_{\text{rms}} = 1 : 2/\sqrt\pi : \sqrt{3/2} = 1 : 1.128 : 1.225\)이다. \(\tfrac12 m\langle v^2\rangle = \tfrac32 k_BT\)는 세 성분에 \(\tfrac12 k_BT\)씩 돌아가는 등분배와 맞는다. \(\langle v\rangle &lt; v_{\text{rms}}\)인 것은 \(\langle v^2\rangle - \langle v\rangle^2\)이 속력의 분산이라 양수이기 때문이다.</p>
+      <p><b>숫자로 보기.</b> (다) \(m = 28.01 \times 1.6605 \times 10^{-27}\ \text{kg} = 4.651 \times 10^{-26}\ \text{kg}\), \(k_BT = 4.142 \times 10^{-21}\ \text{J}\)이므로 \(\sqrt{k_BT/m} = 298.4\ \text{m/s}\)이다. 여기에 \(\sqrt2\), \(\sqrt{8/\pi}\), \(\sqrt3\)을 곱하면</p>
+      <div class="formula">\[ \begin{aligned} v_p &= 422\ \text{m/s}, \quad \langle v\rangle = 476\ \text{m/s} \\ v_{\text{rms}} &= 517\ \text{m/s} \end{aligned} \]</div>
+      <p>이다. 단위는 \(\sqrt{\text{J/kg}} = \sqrt{\text{m}^2/\text{s}^2} = \text{m/s}\)로 맞는다. 소리의 속력(300 K 공기에서 약 347 m/s)과 같은 크기인 것은 우연이 아니다. 소리는 분자의 충돌로 전해지기 때문이다.</p>
+    </div>
+
+    <h3 id="s1-general">일반 가우스 적분</h3>
+    <p>지수에 1차 항이 있는 적분은 완전제곱으로 바꾼다. \(-ax^2 + bx = -a\big(x - \tfrac{b}{2a}\big)^2 + \tfrac{b^2}{4a}\)이고, 적분 구간이 실수 전체이므로 \(x - b/2a\)를 새 변수로 잡아도 구간은 그대로다. 그래서 \(a > 0\)이고 \(b\)가 실수이면</p>
+    <div class="formula" id="eq-gaussian-general">\[ \int_{-\infty}^{\infty} e^{-ax^2 + bx}\,dx = \sqrt{\frac{\pi}{a}}\;e^{b^2/4a} \]</div>
+    <p>이다. 이 식은 \(b\)가 복소수여도 성립한다. 복소수 \(b\)로는 \(x\)를 복소수만큼 옮기는 치환을 할 수 없으므로(그렇게 하려면 19장의 경로 변형이 필요하다), 아래처럼 모멘트로 확인한다.</p>
+    <details class="proof"><summary>계산의 세부</summary>
+      <p>\(e^{bx} = \sum_{m\ge0} b^m x^m/m!\)을 넣는다. 절댓값을 씌운 급수의 합 \(e^{\lvert b\rvert\lvert x\rvert}e^{-ax^2}\)이 적분 가능하므로 항별로 적분해도 된다. 홀수 항은 0이고, 짝수 항에 식 <a class="ref" href="#eq-gaussian-moments"></a>을 쓰면</p>
+      <div class="formula">\[ \begin{aligned} \int e^{-ax^2+bx}dx &= \sum_{n\ge0}\frac{b^{2n}}{(2n)!}\frac{(2n-1)!!}{(2a)^n}\sqrt{\frac{\pi}{a}} \\ &= \sqrt{\frac{\pi}{a}}\sum_{n\ge0}\frac{1}{n!}\Big(\frac{b^2}{4a}\Big)^n \end{aligned} \]</div>
+      <p>이다. 두 번째 줄에서 \((2n)! = (2n-1)!!\cdot 2^n n!\)(홀수끼리, 짝수끼리 묶음)을 썼다. 마지막 합은 \(e^{b^2/4a}\)이다. 모든 단계가 복소수 \(b\)에서도 그대로이므로 식 <a class="ref" href="#eq-gaussian-general"></a>은 복소수 \(b\)에서도 성립한다.</p>
+    </details>
+    <p>가장 중요한 경우는 \(b = ik\)이다. <a href="ch02.html#eq-euler-formula">오일러 공식 (2.10)</a>에 따라 \(e^{ikx} = \cos kx + i\sin kx\)이므로</p>
+    <div class="formula" id="eq-gaussian-oscillating">\[ \int_{-\infty}^{\infty} e^{-ax^2}e^{ikx}\,dx = \sqrt{\frac{\pi}{a}}\;e^{-k^2/4a} \]</div>
+    <p>이다. 사인 부분은 홀함수라 0이고, 코사인 부분은 <a href="ch03.html#prob-gaussian-cosine">3장 문제 3.11</a>에서 미분방정식으로 구한 값과 같다. 가우스 함수에 진동하는 함수를 곱해 적분하면 다시 가우스 함수가 나온다. \(x\) 쪽 표준편차가 \(1/\sqrt{2a}\)이면 \(k\) 쪽 표준편차는 \(\sqrt{2a}\)이므로, 한쪽이 좁을수록 다른 쪽이 넓다(두 폭의 곱은 1). 15장에서 이것을 <a href="ch15.html#eq-gaussian-ft">가우스 함수의 푸리에 변환</a>으로 다시 만난다.</p>
+    <div class="callout tip"><strong>가우스 적분의 두 가지 요령</strong><p>다항식이 붙으면 지수의 계수 \(a\)로 미분하고, 1차 항이 붙으면 완전제곱을 한다. 둘을 함께 쓰면 \(\int x^2 e^{-ax^2+bx}dx = \partial_b^2\big(\sqrt{\pi/a}\,e^{b^2/4a}\big)\)처럼 \(b\)로 미분하는 길도 생긴다. \(e^{bx}\)의 평균 \(\langle e^{bx}\rangle\)을 \(b\)로 전개한 계수가 모멘트이므로, 식 <a class="ref" href="#eq-gaussian-general"></a>은 정규분포의 모든 모멘트를 한 줄에 담은 생성 함수다.</p></div>
+  </section>
+
+  <!-- ============================================================ 11.2 -->
+  <section id="s2">
+    <h2>감마 함수</h2>
+    <p>11.1절의 두 반직선 적분을 \(a = 1\)에서 \(s = x^2\)으로 치환하면 둘 다 \(\int_0^\infty s^p e^{-s}\,ds\) 꼴이 된다. 홀수 모멘트에서는 \(p\)가 정수이고 값이 \(p!\)이며, 짝수 모멘트에서는 \(p\)가 반정수이고 값에 \(\sqrt\pi\)가 들어 있다. 물리에서는 \(p\)가 정수도 반정수도 아닌 경우가 나온다. \(\lvert x\rvert^\nu\) 퍼텐셜 속 진동의 주기(11.3절, \(\Gamma(\tfrac14)\))나 \(t^{\nu}\)의 라플라스 변환이 그렇다. 그래서 이 적분 자체를 함수로 정의한다.</p>
+    <div class="box def" id="def-gamma"><div class="box-h">감마 함수</div>
+      <p>\(\operatorname{Re} z > 0\)인 복소수 \(z\)에 대해</p>
+      <div class="formula" id="eq-gamma-def">\[ \Gamma(z) = \int_0^\infty t^{z-1}e^{-t}\,dt \]</div>
+      <p>을 <span class="term">감마 함수</span> <span class="en">(gamma function)</span>라 한다. \(t \to \infty\)에서는 \(e^{-t}\)가 어떤 거듭제곱보다 빨리 줄고, \(t \to 0\)에서는 \(\lvert t^{z-1}\rvert = t^{\operatorname{Re}z - 1}\)이 \(\operatorname{Re} z > 0\)일 때만 적분 가능하므로 이 조건이 필요하다. 이 책에서는 \(\Gamma(n+1) = n!\)처럼 인수가 하나 밀리는 이 정의만 쓴다. 가우스가 쓴 \(\Pi(z) = \Gamma(z+1)\)은 쓰지 않는다.</p>
+    </div>
+
+    <h3 id="s2-recursion">점화식과 계승</h3>
+    <p>정의를 부분 적분하면 \(t^z\)의 미분이 \(zt^{z-1}\)이므로</p>
+    <div class="formula">\[ \Gamma(z+1) = \Big[-t^z e^{-t}\Big]_0^\infty + z\int_0^\infty t^{z-1}e^{-t}\,dt \]</div>
+    <p>이다. \(\operatorname{Re}z > 0\)이면 경계 항은 양 끝에서 모두 0이다. 따라서</p>
+    <div class="formula" id="eq-gamma-recursion">\[ \Gamma(z+1) = z\,\Gamma(z) \]</div>
+    <p>이다. \(\Gamma(1) = \int_0^\infty e^{-t}dt = 1\)이므로 \(\Gamma(2) = 1\), \(\Gamma(3) = 2\), \(\Gamma(4) = 3\cdot2\)이고, 일반적으로 \(\Gamma(n+1) = n!\)이다. 감마 함수는 계승을 정수가 아닌 수로 넓힌 것이고, \(0! = \Gamma(1) = 1\)이라는 약속도 여기서 자연스럽게 나온다.</p>
+    <p>반정수에서는 \(t = x^2\)로 치환하면 가우스 적분이 된다. \(dt = 2x\,dx\), \(t^{-1/2} = 1/x\)이므로</p>
+    <div class="formula" id="eq-gamma-half">\[ \Gamma\Big(\frac12\Big) = 2\int_0^\infty e^{-x^2}\,dx = \sqrt\pi \]</div>
+    <p>이다. 여기에 점화식을 거듭 쓰면 \(\Gamma(\tfrac32) = \tfrac12\sqrt\pi\), \(\Gamma(\tfrac52) = \tfrac34\sqrt\pi\), \(\Gamma(\tfrac72) = \tfrac{15}{8}\sqrt\pi\)이고, 일반적으로</p>
+    <div class="formula" id="eq-gamma-half-integer">\[ \Gamma\Big(n + \frac12\Big) = \frac{(2n-1)!!}{2^n}\sqrt\pi \]</div>
+    <p>이다. 이제 11.1절의 반직선 적분을 하나로 쓸 수 있다. \(t = ax^2\)으로 치환하면 \(x = (t/a)^{1/2}\), \(dx = dt/(2\sqrt{at})\)이므로, \(\mu > -1\)인 모든 실수 \(\mu\)에 대해</p>
+    <div class="formula" id="eq-gaussian-gamma">\[ \int_0^\infty x^\mu e^{-ax^2}\,dx = \frac{\Gamma\big(\frac{\mu+1}{2}\big)}{2a^{(\mu+1)/2}} \]</div>
+    <p>이다. \(\mu = 2n+1\)이면 \(\Gamma(n+1)/2a^{n+1}\)로 식 <a class="ref" href="#eq-gaussian-odd-half"></a>이 되고, \(\mu = 2n\)이면 식 <a class="ref" href="#eq-gamma-half-integer"></a>을 거쳐 식 <a class="ref" href="#eq-gaussian-moments"></a>의 절반이 된다. 같은 치환 \(t = su\)를 \(\int_0^\infty u^\nu e^{-su}du\)에 쓰면 \(t^\nu\)의 라플라스 변환이 \(\Gamma(\nu+1)/s^{\nu+1}\)(\(\nu > -1\))임도 바로 나온다. <a href="ch10.html#eq-laplace-table">10장의 변환 표 (10.43)</a>에서 \(\nu\)가 정수인 경우를 넓힌 것이다.</p>
+
+    <div class="box ex" id="ex-gamma-integrals"><div class="box-h">감마 함수로 정적분 계산하기</div>
+      <p>다음을 감마 함수로 계산하라. (가) \(\displaystyle\int_0^\infty e^{-x^3}dx\) (나) \(\displaystyle\int_0^\infty x^{3/2}e^{-2x}dx\) (다) \(\Gamma(-\tfrac52)\) (정의 바깥의 값은 아래의 점화식 확장을 쓴다.)</p>
+      <p><b>풀이.</b> (가) \(t = x^3\)이면 \(dx = \tfrac13 t^{-2/3}dt\)이므로 적분은 \(\tfrac13\Gamma(\tfrac13) = \Gamma(\tfrac43) = 0.8930\)이다. 마지막 등호는 점화식이다.</p>
+      <p>(나) \(t = 2x\)이면 \(\int_0^\infty (t/2)^{3/2}e^{-t}\,dt/2 = \Gamma(\tfrac52)/2^{5/2}\)이다. \(\Gamma(\tfrac52) = 3\sqrt\pi/4\)이므로 값은 \(3\sqrt\pi/(16\sqrt2) = 3\sqrt{2\pi}/32 = 0.2350\)이다.</p>
+      <p>(다) 점화식을 거꾸로 \(\Gamma(z) = \Gamma(z+1)/z\)로 쓰면 \(\Gamma(-\tfrac12) = \Gamma(\tfrac12)/(-\tfrac12) = -2\sqrt\pi\), \(\Gamma(-\tfrac32) = \tfrac43\sqrt\pi\), \(\Gamma(-\tfrac52) = -\tfrac{8}{15}\sqrt\pi = -0.9453\)이다. 음수 쪽으로 한 칸 갈 때마다 부호가 바뀐다.</p>
+    </div>
+
+    <h3 id="s2-negative">음수로 넓히기와 극</h3>
+    <p><a class="ref" href="#def-gamma"></a>의 적분은 \(\operatorname{Re}z \le 0\)에서 발산하지만, 점화식은 그렇지 않다. \(\Gamma(z) = \Gamma(z+1)/z\)를 정의로 삼으면 오른쪽은 \(-1 &lt; \operatorname{Re}z &lt; 0\)에서 의미가 있고, 이것을 되풀이하면 \(z = 0, -1, -2, \ldots\)를 뺀 모든 곳으로 넓어진다. 예제 (다)가 그 계산이다. 이렇게 넓힌 함수는 복소평면에서 해석 함수가 되는데, 이처럼 함수를 원래 정의역 밖으로 하나뿐인 방법으로 넓히는 것을 <span class="term">해석 접속</span> <span class="en">(analytic continuation)</span>이라 한다. 해석 함수의 뜻은 <a href="ch18.html#def-analytic">18장</a>에서 세운다.</p>
+    <p>\(z = 0\) 근처에서는 \(\Gamma(z) = \Gamma(1+z)/z\)이고 \(\Gamma(1+z) = 1 + \Gamma'(1)\,z + O(z^2)\)이다. \(\Gamma'(1) = -\gamma_E\)이므로(\(\gamma_E = 0.5772\ldots\)는 <span class="term">오일러-마스케로니 상수</span> <span class="en">(Euler–Mascheroni constant)</span>, 증명은 아프켄 13장)</p>
+    <div class="formula" id="eq-gamma-near-zero">\[ \Gamma(z) = \frac1z - \gamma_E + O(z) \]</div>
+    <p>이다. 같은 방법으로 \(z = -n\) 근처에서는 \(\Gamma(z) = \Gamma(z+n+1)/[z(z+1)\cdots(z+n)]\)에서 분모의 \(z + n\)만 0으로 가므로</p>
+    <div class="formula" id="eq-gamma-poles">\[ \Gamma(z) \approx \frac{(-1)^n}{n!\,(z+n)} \quad (z \to -n) \]</div>
+    <p>이다. 감마 함수는 0과 음의 정수에서 무한대가 되고, 그 곁에서 부호가 바뀐다(그림 11-1). 이런 점을 <span class="term">극</span> <span class="en">(pole)</span>이라 한다. 양의 실수에서는 \(x = 1.4616\)에서 가장 작은 값 \(0.8856\)을 갖고, 그 오른쪽에서는 계승처럼 빠르게 커진다.</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 300" role="img" aria-label="감마 함수의 그래프. 양의 실수에서 매끄럽게 정수점의 계승을 잇고, 0과 음의 정수에서 극을 갖는다"><defs><clipPath id="f1101-clip"><rect x="46" y="16" width="420" height="240"/></clipPath></defs><line x1="46" y1="256" x2="466" y2="256" class="s-line"/><line x1="46" y1="16" x2="46" y2="256" class="s-line"/><line x1="68.1" y1="16" x2="68.1" y2="256" class="s-grid"/><line x1="112.3" y1="16" x2="112.3" y2="256" class="s-grid"/><line x1="156.5" y1="16" x2="156.5" y2="256" class="s-grid"/><line x1="200.7" y1="16" x2="200.7" y2="256" class="s-grid"/><line x1="244.9" y1="16" x2="244.9" y2="256" class="s-grid"/><line x1="289.2" y1="16" x2="289.2" y2="256" class="s-grid"/><line x1="333.4" y1="16" x2="333.4" y2="256" class="s-grid"/><line x1="377.6" y1="16" x2="377.6" y2="256" class="s-grid"/><line x1="421.8" y1="16" x2="421.8" y2="256" class="s-grid"/><line x1="466" y1="16" x2="466" y2="256" class="s-grid"/><line x1="46" y1="256" x2="466" y2="256" class="s-grid"/><line x1="46" y1="216" x2="466" y2="216" class="s-grid"/><line x1="46" y1="176" x2="466" y2="176" class="s-grid"/><line x1="46" y1="136" x2="466" y2="136" class="s-grid"/><line x1="46" y1="96" x2="466" y2="96" class="s-grid"/><line x1="46" y1="56" x2="466" y2="56" class="s-grid"/><line x1="46" y1="16" x2="466" y2="16" class="s-grid"/><text x="68.1" y="276" class="t-dim" style="font-size:14px" text-anchor="middle">−4</text><text x="112.3" y="276" class="t-dim" style="font-size:14px" text-anchor="middle">−3</text><text x="156.5" y="276" class="t-dim" style="font-size:14px" text-anchor="middle">−2</text><text x="200.7" y="276" class="t-dim" style="font-size:14px" text-anchor="middle">−1</text><text x="244.9" y="276" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="289.2" y="276" class="t-dim" style="font-size:14px" text-anchor="middle">1</text><text x="333.4" y="276" class="t-dim" style="font-size:14px" text-anchor="middle">2</text><text x="377.6" y="276" class="t-dim" style="font-size:14px" text-anchor="middle">3</text><text x="421.8" y="276" class="t-dim" style="font-size:14px" text-anchor="middle">4</text><text x="466" y="276" class="t-dim" style="font-size:14px" text-anchor="middle">5</text><text x="39" y="261" class="t-dim" style="font-size:14px" text-anchor="end">−6</text><text x="39" y="221" class="t-dim" style="font-size:14px" text-anchor="end">−4</text><text x="39" y="181" class="t-dim" style="font-size:14px" text-anchor="end">−2</text><text x="39" y="141" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="39" y="101" class="t-dim" style="font-size:14px" text-anchor="end">2</text><text x="39" y="61" class="t-dim" style="font-size:14px" text-anchor="end">4</text><text x="39" y="21" class="t-dim" style="font-size:14px" text-anchor="end">6</text><line x1="46" y1="136" x2="466" y2="136" class="s-line"/><line x1="244.9" y1="16" x2="244.9" y2="256" class="s-acc2" stroke-dasharray="4 4" style="stroke-width:1.2"/><line x1="200.7" y1="16" x2="200.7" y2="256" class="s-acc2" stroke-dasharray="4 4" style="stroke-width:1.2"/><line x1="156.5" y1="16" x2="156.5" y2="256" class="s-acc2" stroke-dasharray="4 4" style="stroke-width:1.2"/><line x1="112.3" y1="16" x2="112.3" y2="256" class="s-acc2" stroke-dasharray="4 4" style="stroke-width:1.2"/><line x1="68.1" y1="16" x2="68.1" y2="256" class="s-acc2" stroke-dasharray="4 4" style="stroke-width:1.2"/><path d="M251.1,1l1.1,21.6 1.1,15.8 1.1,12.1 1.1,9.4 1.1,7.7 1.1,6.2 1.1,5.2 1.1,4.4 1.2,3.7 1.1,3.3 1.1,2.8 1.1,2.5 1.1,2.2 1.1,1.9 1.1,1.7 1.1,1.6 1.1,1.4 1.1,1.2 1.1,1.2 1.1,1 1.1,1 1.2,0.8 1.1,0.8 1.1,0.7 1.1,0.7 1.1,0.6 1.1,0.5 1.1,0.6 1.1,0.4 1.1,0.5 1.1,0.4 1.1,0.3 1.1,0.4 1.1,0.3 1.2,0.3 1.1,0.2 1.1,0.3 1.1,0.2 1.1,0.2 1.1,0.2 1.1,0.1 1.1,0.2 1.1,0.1 1.1,0.1 1.1,0.1 1.1,0.1 1.1,0.1 1.2,0.1 1.1,0 1.1,0 1.1,0.1 1.1,0 1.1,0 1.1,0 1.1,0 1.1,-0.1 1.1,0 1.1,-0.1 1.1,0 1.1,-0.1 1.2,-0.1 1.1,0 1.1,-0.1 1.1,-0.1 1.1,-0.2 1.1,-0.1 1.1,-0.1 1.1,-0.2 1.1,-0.1 1.1,-0.2 1.1,-0.2 1.1,-0.1 1.1,-0.2 1.2,-0.2 1.1,-0.3 1.1,-0.2 1.1,-0.2 1.1,-0.3 1.1,-0.2 1.1,-0.3 1.1,-0.3 1.1,-0.3 1.1,-0.3 1.1,-0.3 1.1,-0.3 1.1,-0.3 1.2,-0.4 1.1,-0.4 1.1,-0.3 1.1,-0.4 1.1,-0.5 1.1,-0.4 1.1,-0.4 1.1,-0.5 1.1,-0.4 1.1,-0.5 1.1,-0.5 1.1,-0.6 1.1,-0.5 1.2,-0.6 1.1,-0.6 1.1,-0.6 1.1,-0.6 1.1,-0.6 1.1,-0.7 1.1,-0.7 1.1,-0.7 1.1,-0.7 1.1,-0.8 1.1,-0.8 1.1,-0.8 1.1,-0.8 1.2,-0.9 1.1,-0.9 1.1,-1 1.1,-0.9 1.1,-1 1.1,-1.1 1.1,-1 1.1,-1.1 1.1,-1.2 1.1,-1.2 1.1,-1.2 1.1,-1.3 1.1,-1.3 1.2,-1.3 1.1,-1.4 1.1,-1.5 1.1,-1.5 1.1,-1.6 1.1,-1.6 1.1,-1.7 1.1,-1.7 1.1,-1.8 1.1,-1.8 1.1,-2 1.1,-2 1.1,-2 1.2,-2.2 1.1,-2.2 1.1,-2.3 1.1,-2.4 1.1,-2.5 1.1,-2.5 1.1,-2.7 1.1,-2.7 1.1,-2.9 1.1,-2.9 1.1,-3.1 1.1,-3.2 1.1,-3.3 1.2,-3.4 1.1,-3.6 1.1,-3.7 1.1,-3.8 1.1,-4 1.1,-4.1 1.1,-4.3" class="s-acc" style="stroke-width:2.6" clip-path="url(#f1101-clip)" fill="none"/><path d="M208,272l0.7,-10.8 0.7,-8.9 0.8,-7.4 0.7,-6.2 0.8,-5.2 0.7,-4.5 0.7,-3.8 0.8,-3.3 0.7,-2.8 0.8,-2.4 0.7,-2.1 0.8,-1.8 0.7,-1.5 0.7,-1.2 0.8,-1.1 0.7,-0.8 0.8,-0.6 0.7,-0.4 0.7,-0.2 0.8,-0.1 0.7,0.1 0.8,0.3 0.7,0.5 0.7,0.7 0.8,0.8 0.7,1.1 0.8,1.3 0.7,1.6 0.8,1.8 0.7,2.1 0.7,2.5 0.8,2.8 0.7,3.3 0.8,3.8 0.7,4.5 0.7,5.2 0.8,6.1 0.7,7.2 0.8,8.7 0.7,10.6" class="s-acc" style="stroke-width:2.6" clip-path="url(#f1101-clip)" fill="none"/><path d="M160.1,0.2l0.8,24 0.9,16 0.8,11.3 0.9,8.5 0.9,6.4 0.8,5.1 0.9,4 0.8,3.2 0.9,2.7 0.9,2.1 0.8,1.7 0.9,1.4 0.8,1.1 0.9,0.9 0.9,0.6 0.8,0.5 0.9,0.2 0.8,0 0.9,-0.1 0.8,-0.3 0.9,-0.4 0.9,-0.6 0.8,-0.8 0.9,-1 0.8,-1.2 0.9,-1.5 0.9,-1.6 0.8,-2 0.9,-2.2 0.8,-2.6 0.9,-3 0.9,-3.6 0.8,-4.1 0.9,-4.8 0.8,-5.7 0.9,-6.8 0.9,-8.2 0.8,-10.2 0.9,-12.7 0.8,-16.3" class="s-acc" style="stroke-width:2.6" clip-path="url(#f1101-clip)" fill="none"/><path d="M113.4,271.1l1,-61.3 1,-21.9 1,-11.2 1,-6.8 1,-4.4 1,-3.2 1,-2.3 1,-1.7 1,-1.3 1,-1 1,-0.7 1,-0.6 1,-0.4 1,-0.3 1,-0.2 1,0 1,0 1,0.1 1,0.3 1,0.3 1,0.4 1,0.5 1,0.7 1,0.8 1,0.9 1,1 1.1,1.3 1,1.5 1,1.7 1,2.1 1,2.4 1,3 1,3.6 1,4.5 1,5.7 1,7.4 1,9.9 1,14 1,21 1,35" class="s-acc" style="stroke-width:2.6" clip-path="url(#f1101-clip)" fill="none"/><path d="M68.4,1.4l1.1,105.9 1,12.1 1.1,4.6 1.1,2.4 1,1.5 1.1,0.9 1.1,0.7 1.1,0.5 1,0.4 1.1,0.2 1.1,0.2 1,0.2 1.1,0 1.1,0.1 1.1,0 1,0 1.1,-0.1 1.1,-0.1 1,-0.1 1.1,-0.1 1.1,-0.2 1.1,-0.3 1,-0.2 1.1,-0.3 1.1,-0.4 1,-0.5 1.1,-0.5 1.1,-0.6 1.1,-0.8 1,-0.9 1.1,-1.1 1.1,-1.4 1.1,-1.8 1,-2.3 1.1,-3.1 1.1,-4.5 1,-6.8 1.1,-11.3 1.1,-23 1.1,-69.6" class="s-acc" style="stroke-width:2.6" clip-path="url(#f1101-clip)" fill="none"/><path d="M46,137.2l0.5,0 0.6,0.1 0.5,0 0.6,0 0.5,0.1 0.6,0 0.5,0 0.6,0.1 0.5,0 0.6,0.1 0.5,0 0.6,0.1 0.5,0.1 0.5,0 0.6,0.1 0.5,0.1 0.6,0.1 0.5,0.1 0.6,0.2 0.5,0.1 0.6,0.1 0.5,0.2 0.6,0.2 0.5,0.2 0.5,0.3 0.6,0.2 0.5,0.4 0.6,0.3 0.5,0.5 0.6,0.5 0.5,0.7 0.6,0.8 0.5,1 0.6,1.4 0.5,1.9 0.6,2.7 0.5,4.2 0.5,7.8 0.6,18 0.5,90.9" class="s-acc" style="stroke-width:2.6" clip-path="url(#f1101-clip)" fill="none"/><circle cx="333.4" cy="116" r="4.5" class="f-acc"/><circle cx="377.6" cy="96" r="4.5" class="f-acc"/><circle cx="421.8" cy="16" r="4.5" class="f-acc"/><circle cx="289.2" cy="116" r="4.5" class="f-acc"/><circle cx="267.1" cy="100.6" r="4.5" class="f-dim"/><text x="272.4" y="85.6" class="t-math" style="font-size:15px" text-anchor="start">√π</text><text x="437.3" y="68" class="t-math acc" style="font-size:17px" text-anchor="start">Γ(x)</text><text x="412.9" y="21" class="t-mono" style="font-size:13px" text-anchor="end">3! = 6</text><text x="256" y="240" class="t-dim" style="font-size:13px" text-anchor="start">극: x = 0, −1, −2, …</text><text x="466" y="294" class="t-dim" style="font-size:14px" text-anchor="end">x</text></svg>
+      <figcaption><b>그림 11-1.</b> 실수축 위의 감마 함수 \(\Gamma(x)\). 강조색 점은 \(\Gamma(n+1) = n!\)(\(n = 0, \ldots, 3\)), 회색 점은 \(\Gamma(\tfrac12) = \sqrt\pi\)이다. 보조색 점선은 극 \(x = 0, -1, -2, -3, -4\)이고, 음수 쪽 곡선은 점화식 \(\Gamma(x) = \Gamma(x+1)/x\)로 넓힌 것이다. 곡선은 표준 라이브러리의 감마 함수 값으로 그렸다.</figcaption>
+    </figure>
+
+    <h3 id="s2-reflection">반사 공식</h3>
+    <p>\(\Gamma(z)\)와 \(\Gamma(1-z)\)의 곱은 놀랍도록 간단하다. \(z\)가 정수가 아니면</p>
+    <div class="formula" id="eq-gamma-reflection">\[ \Gamma(z)\,\Gamma(1-z) = \frac{\pi}{\sin\pi z} \]</div>
+    <p>이다. 이것을 <span class="term">반사 공식</span> <span class="en">(reflection formula)</span>이라 한다. \(z = \tfrac12\)이면 \(\Gamma(\tfrac12)^2 = \pi\)로 식 <a class="ref" href="#eq-gamma-half"></a>과 맞는다. 오른쪽은 정수에서 극을 갖는데, 왼쪽에서는 \(z = 0, -1, \ldots\)의 극은 \(\Gamma(z)\)가, \(z = 1, 2, \ldots\)의 극은 \(\Gamma(1-z)\)가 맡는다. 또 오른쪽은 0이 되는 곳이 없으므로 감마 함수는 어디서도 0이 아니다. 증명에는 복소 적분이 필요하므로 19장에서 열쇠 구멍 경로로 \(\int_0^\infty x^{a-1}/(1+x)\,dx\)를 계산해 <a href="ch19.html#ex-gamma-reflection">반사 공식을 증명</a>한다. 이 장에서는 11.6절에서 \(\Gamma(\tfrac14)\Gamma(\tfrac34) = \pi/\sin(\pi/4) = \pi\sqrt2\)로 한 번 쓴다.</p>
+
+    <div class="box ex" id="ex-stefan-boltzmann"><div class="box-h">흑체 복사의 에너지와 슈테판-볼츠만 상수</div>
+      <p>온도 \(T\)인 공동 속 복사의 에너지 밀도는 플랑크 분포에 따라</p>
+      <div class="formula">\[ u = \int_0^\infty \frac{8\pi h\nu^3}{c^3}\,\frac{d\nu}{e^{h\nu/k_BT} - 1} \]</div>
+      <p>이다. 진동수 \(\nu\) 근처의 모드 밀도 \(8\pi\nu^2/c^3\)에 <a href="ch01.html#ex-planck-mean-energy">1장 예제 1.5</a>의 진동자 평균 에너지를 곱한 것이다(바닥 에너지는 뺐다). (가) \(u = a_{\text{r}}T^4\)임을 보이고 상수 \(a_{\text{r}}\)를 구하라. (나) 흑체 표면이 단위 넓이당 내보내는 일률 \(\sigma T^4\)의 \(\sigma\)(<span class="term">슈테판-볼츠만 상수</span> <span class="en">(Stefan–Boltzmann constant)</span>)를 구하라. (이 예제의 \(\sigma\)는 슈테판-볼츠만 상수다. 이 장의 다른 곳에서 \(\sigma\)는 표준편차다.) (다) 태양의 광도를 계산하라.</p>
+      <p><b>풀이.</b> (가) \(x = h\nu/k_BT\)로 바꾸면</p>
+      <div class="formula">\[ u = \frac{8\pi(k_BT)^4}{h^3c^3}\int_0^\infty\frac{x^3\,dx}{e^x - 1} \]</div>
+      <p>이다. \(x > 0\)에서 \(1/(e^x - 1) = e^{-x}/(1 - e^{-x}) = \sum_{n\ge1}e^{-nx}\)이다(<a href="ch01.html#eq-geometric-series">기하급수 (1.3)</a>). 항이 모두 양수이므로 항별로 적분해도 되고, \(t = nx\)로 치환하면 \(\int_0^\infty x^3e^{-nx}dx = \Gamma(4)/n^4 = 6/n^4\)이다. 같은 계산을 거듭제곱 \(x^{s-1}\)로 하면</p>
+      <div class="formula" id="eq-bose-integral">\[ \int_0^\infty \frac{x^{s-1}}{e^x - 1}\,dx = \Gamma(s)\,\zeta(s) \quad (s > 1) \]<div class="where">\(\zeta(s) = \sum_{n=1}^\infty n^{-s}\)은 <span class="term">리만 제타 함수</span> <span class="en">(Riemann zeta function)</span>로, \(s > 1\)에서 수렴하는 p급수다(<a href="ch01.html#eq-p-series">1장 식 (1.7)</a>).</div></div>
+      <p>이다. \(s = 4\)이고 \(\zeta(4) = \pi^4/90\)이므로(14장의 푸리에 급수로 구할 수 있다) 적분은 \(6\pi^4/90 = \pi^4/15\)이다. 따라서</p>
+      <div class="formula">\[ u = a_{\text{r}}T^4, \quad a_{\text{r}} = \frac{8\pi^5k_B^4}{15\,h^3c^3} \]</div>
+      <p>(나) 모든 방향으로 속력 \(c\)로 날아가는 복사가 단위 넓이를 단위 시간에 지나며 나르는 에너지는 \(uc\)에 방향 평균 \(\frac{1}{4\pi}\int_{\text{반구}}\cos\theta\,d\Omega = \frac{2\pi}{4\pi}\int_0^{\pi/2}\cos\theta\sin\theta\,d\theta = \frac14\)을 곱한 것이다(\(\theta\)는 면의 법선과 이루는 각). 곧 \(\sigma T^4 = \tfrac{c}{4}u\)이고</p>
+      <div class="formula" id="eq-stefan-boltzmann">\[ \sigma = \frac{2\pi^5 k_B^4}{15\,h^3c^2} \]</div>
+      <p>이다. 단위는 \(\text{J}^4\text{K}^{-4}/(\text{J}^3\text{s}^3\cdot\text{m}^2\text{s}^{-2}) = \text{W}\,\text{m}^{-2}\text{K}^{-4}\)로 맞는다.</p>
+      <p><b>숫자로 보기.</b> \(k_B\), \(h\), \(c\)는 모두 정의값이므로 \(\sigma = 5.670\,374 \times 10^{-8}\ \text{W}\,\text{m}^{-2}\text{K}^{-4}\)는 정확히 정해진다. (다) 태양의 명목 유효 온도 \(T = 5772\ \text{K}\)와 반지름 \(R = 6.957 \times 10^8\ \text{m}\)(A. Prša et al., Astron. J. 152, 41 (2016))를 쓰면 표면의 일률은 \(\sigma T^4 = 6.294 \times 10^7\ \text{W/m}^2\)이고, 광도는 \(L = 4\pi R^2\sigma T^4 = 3.828 \times 10^{26}\ \text{W}\)이다. 같은 논문의 명목 광도와 같다. 세 명목값이 이 관계를 만족하도록 정해졌기 때문이다. 결과에 \(\Gamma(4) = 3!\)이 들어 있다는 점을 눈여겨보자. 복사 에너지가 \(T^4\)에 비례하는 것은 차원 분석으로도 나오지만, 앞의 숫자 \(\pi^4/15\)는 감마 함수와 제타 함수가 정한다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 11.3 -->
+  <section id="s3">
+    <h2>베타 함수와 n차원 구의 부피</h2>
+    <p>1장의 진자 문제에서는 \(\int_0^{\pi/2}\sin^4\phi\,d\phi = 3\pi/16\) 같은 적분을 썼다. 퍼텐셜이 \(\lvert x\rvert^\nu\)에 비례하는 진동자의 주기를 구하면 \(\int_0^1 du/\sqrt{1 - u^\nu}\)이 나오고, 기체 \(N\)개 입자의 상태 수를 세면 \(3N\)차원 공의 부피가 나온다. 이 셋은 모두 감마 함수 두 개의 곱으로 정리된다. 열쇠는 3장의 가우스 적분에서 쓴 극좌표 요령이다.</p>
+    <div class="box def" id="def-beta"><div class="box-h">베타 함수</div>
+      <p>\(p, q > 0\)에 대해</p>
+      <div class="formula" id="eq-beta-def">\[ B(p, q) = \int_0^1 t^{p-1}(1-t)^{q-1}\,dt \]</div>
+      <p>를 <span class="term">베타 함수</span> <span class="en">(beta function)</span>라 한다. \(t \to 1 - t\)로 바꾸면 \(B(p, q) = B(q, p)\)이다. \(t = \sin^2\theta\)(\(dt = 2\sin\theta\cos\theta\,d\theta\))로 바꾸면 삼각 함수 꼴이 되고, \(t = u/(1+u)\)로 바꾸면 무한 구간 꼴이 된다.</p>
+      <div class="formula" id="eq-beta-trig">\[ B(p, q) = 2\int_0^{\pi/2}\sin^{2p-1}\theta\,\cos^{2q-1}\theta\,d\theta \]</div>
+      <div class="formula" id="eq-beta-infinite">\[ B(p, q) = \int_0^\infty \frac{u^{p-1}}{(1+u)^{p+q}}\,du \]</div>
+    </div>
+
+    <h3 id="s3-beta-gamma">감마 함수와의 관계</h3>
+    <p>감마 함수 두 개를 곱해 평면 위의 적분으로 만들어 보자. 정의에서 \(t = x^2\)으로 바꾸면 \(\Gamma(p) = 2\int_0^\infty x^{2p-1}e^{-x^2}dx\)이다. 그러면</p>
+    <div class="formula">\[ \Gamma(p)\Gamma(q) = 4\int_0^\infty\!\!\int_0^\infty x^{2p-1}y^{2q-1}e^{-(x^2+y^2)}\,dx\,dy \]</div>
+    <p>이다. 적분 영역은 평면의 1사분면이다. 극좌표 \(x = r\cos\theta\), \(y = r\sin\theta\), \(dx\,dy = r\,dr\,d\theta\)(<a href="ch03.html#eq-polar-area-element">3장 식 (3.32)</a>)로 바꾸면 \(r\)과 \(\theta\)가 분리된다.</p>
+    <div class="formula">\[ \begin{aligned} \Gamma(p)\Gamma(q) &= \Big[2\int_0^\infty r^{2(p+q)-1}e^{-r^2}dr\Big] \\ &\quad\times\Big[2\int_0^{\pi/2}\cos^{2p-1}\theta\,\sin^{2q-1}\theta\,d\theta\Big] \end{aligned} \]</div>
+    <p>첫 괄호는 같은 치환으로 \(\Gamma(p+q)\)이고, 둘째 괄호는 식 <a class="ref" href="#eq-beta-trig"></a>에 따라 \(B(q, p) = B(p, q)\)이다.</p>
+    <div class="box thm" id="thm-beta-gamma"><div class="box-h">베타 함수와 감마 함수</div>
+      <p>\(p, q > 0\)이면</p>
+      <div class="formula" id="eq-beta-gamma">\[ B(p, q) = \frac{\Gamma(p)\,\Gamma(q)}{\Gamma(p+q)} \]</div>
+      <p>이다. 특히 \(p, q\)가 양의 정수이면 \(B(p, q) = (p-1)!\,(q-1)!/(p+q-1)!\)이다.</p>
+    </div>
+    <p>정수일 때는 손으로 확인할 수 있다. \(B(2, 3) = \int_0^1 t(1-t)^2dt = \tfrac12 - \tfrac23 + \tfrac14 = \tfrac{1}{12}\)이고, 공식으로는 \(1!\,2!/4! = 2/24\)이다.</p>
+
+    <div class="box ex" id="ex-trig-power-integrals"><div class="box-h">삼각 함수 거듭제곱의 적분</div>
+      <p>다음을 계산하라. (가) \(\int_0^{\pi/2}\sin^4\theta\,d\theta\) (나) \(\int_0^{\pi/2}\sin^2\theta\cos^4\theta\,d\theta\) (다) 일반적으로 \(\int_0^{\pi/2}\sin^{2n}\theta\,d\theta\)</p>
+      <p><b>풀이.</b> 식 <a class="ref" href="#eq-beta-trig"></a>에서 \(\sin\)의 지수가 \(2p - 1\), \(\cos\)의 지수가 \(2q - 1\)이다. (가) \(2p - 1 = 4\), \(2q - 1 = 0\)이므로 \(p = \tfrac52\), \(q = \tfrac12\)이고</p>
+      <div class="formula">\[ \frac12 B\Big(\frac52, \frac12\Big) = \frac{\Gamma(\frac52)\Gamma(\frac12)}{2\,\Gamma(3)} = \frac{\frac34\sqrt\pi\cdot\sqrt\pi}{2\cdot2} = \frac{3\pi}{16} \]</div>
+      <p>이다. <a href="ch01.html#eq-pendulum-k-series">1장 식 (1.37)</a>에서 쓴 값이다. (나) \(p = \tfrac32\), \(q = \tfrac52\)이므로 \(\Gamma(\tfrac32)\Gamma(\tfrac52)/(2\Gamma(4)) = (\tfrac12\sqrt\pi)(\tfrac34\sqrt\pi)/12 = \pi/32\)이다.</p>
+      <p>(다) \(p = n + \tfrac12\), \(q = \tfrac12\)이고 \(\Gamma(n+1) = n!\), 식 <a class="ref" href="#eq-gamma-half-integer"></a>, \((2n)!! = 2^n n!\)을 쓰면</p>
+      <div class="formula" id="eq-wallis">\[ \int_0^{\pi/2}\sin^{2n}\theta\,d\theta = \frac{\Gamma(n+\frac12)\sqrt\pi}{2\,n!} = \frac{\pi}{2}\,\frac{(2n-1)!!}{(2n)!!} \]</div>
+      <p>이다. 이것을 <span class="term">월리스 적분</span> <span class="en">(Wallis integral)</span>이라 한다. 부분 적분을 \(n\)번 되풀이해서 얻는 결과를 한 줄로 얻었다. 11.6절에서 타원 적분의 급수를 구할 때 쓴다.</p>
+    </div>
+
+    <div class="box ex" id="ex-quartic-oscillator"><div class="box-h">거듭제곱 퍼텐셜 속 진동의 주기와 4차 진동자</div>
+      <p>질량 \(m\)인 입자가 퍼텐셜 \(V(x) = c\lvert x\rvert^\nu\)(\(c, \nu > 0\)) 속에서 진폭 \(A\)로 진동한다. (가) 주기를 베타 함수로 나타내라. (나) 마찰 없는 수평면 위에서, 자연 길이가 \(l\)인 용수철 두 개(용수철 상수 \(k\))를 양쪽 벽에 매고 그 사이에 질량 \(m\)을 달았다. 벽 사이 거리는 \(2l\)이라 평형에서 용수철은 늘어나 있지 않다. 질량을 용수철과 수직으로 \(A\)만큼 당겼다 놓을 때 주기를 구하라. \(m = 0.10\ \text{kg}\), \(k = 40\ \text{N/m}\), \(l = 0.20\ \text{m}\), \(A = 5.0\ \text{cm}\)를 넣어라.</p>
+      <p><b>풀이.</b> (가) 에너지 보존으로 \(v = \sqrt{2(E - V)/m}\), \(E = cA^\nu\)이다. 0에서 \(A\)까지 가는 데 주기의 \(\tfrac14\)이 걸리므로 \(x = Au\)로 바꾸면</p>
+      <div class="formula">\[ T = 4\int_0^A\frac{dx}{v} = 4A\sqrt{\frac{m}{2E}}\int_0^1\frac{du}{\sqrt{1 - u^\nu}} \]</div>
+      <p>이다. \(t = u^\nu\)로 바꾸면 \(du = \tfrac1\nu t^{1/\nu - 1}dt\)이므로 남은 적분은 \(\tfrac1\nu B(\tfrac1\nu, \tfrac12)\)이다. \(E = cA^\nu\)를 넣으면</p>
+      <div class="formula" id="eq-power-law-period">\[ T = \frac{4}{\nu}\,B\Big(\frac1\nu, \frac12\Big)\sqrt{\frac{m}{2c}}\;A^{1-\nu/2} \]</div>
+      <p>이다. 확인: \(\nu = 2\), \(c = k/2\)이면 \(B(\tfrac12, \tfrac12) = \Gamma(\tfrac12)^2 = \pi\)이므로 \(T = 2\pi\sqrt{m/k}\)로 진폭과 상관없다. \(\nu \to \infty\)이면 사각 우물이 되고, \(\tfrac1\nu B(\tfrac1\nu,\tfrac12) = \Gamma(1 + \tfrac1\nu)\Gamma(\tfrac12)/\Gamma(\tfrac1\nu + \tfrac12) \to 1\)이므로 \(T \to 4A/v\)이다. 벽 사이를 일정한 속력으로 왕복하는 시간이다.</p>
+      <p>(나) 질량이 \(x\)만큼 비켜나면 용수철 하나의 길이는 \(\sqrt{l^2 + x^2}\)이다. <a href="ch01.html#eq-sqrt-expansions">1장 식 (1.22)</a>로 늘어난 길이를 전개하면 \(\sqrt{l^2+x^2} - l = x^2/2l - x^4/8l^3 + \cdots\)이므로, 두 용수철의 퍼텐셜은</p>
+      <div class="formula">\[ V = 2\cdot\frac{k}{2}\Big(\frac{x^2}{2l}\Big)^2 + O(x^6) = \frac{k}{4l^2}x^4 + O(x^6) \]</div>
+      <p>이다. 평형에서 용수철이 늘어나 있지 않으므로 \(x^2\) 항이 없다. \(\nu = 4\), \(c = k/4l^2\)를 식 <a class="ref" href="#eq-power-law-period"></a>에 넣으면 \(\sqrt{m/2c} = l\sqrt{2m/k}\)이고</p>
+      <div class="formula" id="eq-quartic-period">\[ \begin{aligned} T &= \sqrt2\,B\Big(\frac14, \frac12\Big)\frac{l}{A}\sqrt{\frac mk} \\ &= 7.416\,\frac{l}{A}\sqrt{\frac mk} \end{aligned} \]</div>
+      <p>이다. \(B(\tfrac14, \tfrac12) = \Gamma(\tfrac14)\Gamma(\tfrac12)/\Gamma(\tfrac34) = 3.6256 \times 1.7725/1.2254 = 5.2441\)을 썼다. 주기가 진폭에 반비례한다. 크게 흔들수록 빨리 돈다.</p>
+      <p><b>숫자로 보기.</b> \(\sqrt{m/k} = 0.050\ \text{s}\), \(l/A = 4.0\)이므로 \(T = 7.416 \times 4.0 \times 0.050\ \text{s} = 1.48\ \text{s}\)이다. 진폭을 2.5 cm로 줄이면 2.97 s가 된다. 같은 장치에서 용수철 방향으로 흔드는 진동은 조화 진동이고 주기가 \(2\pi\sqrt{m/2k} = 0.22\ \text{s}\)로 진폭과 상관없다. \(B\)는 차원이 없으므로 식 <a class="ref" href="#eq-quartic-period"></a>의 차원은 \(\sqrt{\text{kg}/(\text{N/m})} = \text{s}\)이다.</p>
+      <p><b>다음 항은 몇 차인가.</b> 버린 항 \(-kx^6/8l^4\)은 \(x^4\) 항보다 \((x/l)^2/2\)배 작다. 따라서 주기의 상대 오차는 \((A/l)^2 = 0.06\)의 차수다. 정확한 퍼텐셜 \(k(\sqrt{l^2+x^2} - l)^2\)로 수치 적분하면 주기가 \(1.51\ \text{s}\)로 1.8% 길다. 퍼텐셜이 4차식보다 조금 낮아 입자가 조금 느리게 움직이기 때문이다. 진폭이 2.5 cm이면 차이는 0.46%로, \((A/l)^2\)에 맞게 약 4분의 1로 준다.</p>
+    </div>
+
+    <h3 id="s3-sphere">n차원 공의 부피</h3>
+    <p>\(n\)차원 공간에서 원점으로부터 거리가 \(R\) 이하인 점들의 집합 \(x_1^2 + \cdots + x_n^2 \le R^2\)을 반지름 \(R\)인 \(n\)차원 공(속이 찬 구)이라 하고, 그 겉면을 \((n-1)\)차원 구면이라 한다. 부피를 \(V_n(R)\), 겉넓이를 \(S_n(R)\)이라 쓰자. 길이를 \(R\)배 하면 \(n\)차원 부피는 \(R^n\)배이므로 \(V_n(R) = C_nR^n\)이고, 공을 얇은 껍질로 쌓아 생각하면 \(dV_n = S_n\,dR\), 곧 \(S_n(R) = nC_nR^{n-1}\)이다. 상수 \(C_n\) 하나만 정하면 된다.</p>
+    <p>이번에도 가우스 적분을 두 가지로 계산한다. 직교 좌표에서는 \(n\)개의 1차원 적분의 곱이고, 지름 방향으로 보면 반지름 \(r\)인 껍질들의 합이다.</p>
+    <div class="formula">\[ \begin{aligned} \int_{\mathbb R^n} e^{-(x_1^2 + \cdots + x_n^2)}\,d^nx &= \big(\sqrt\pi\big)^n = \pi^{n/2} \\ \int_0^\infty e^{-r^2}\,S_n(r)\,dr &= nC_n\int_0^\infty r^{n-1}e^{-r^2}dr \end{aligned} \]</div>
+    <p>둘째 줄의 적분은 식 <a class="ref" href="#eq-gaussian-gamma"></a>에서 \(a = 1\), \(\mu = n - 1\)이므로 \(\Gamma(n/2)/2\)이다. 두 줄이 같으므로 \(nC_n\Gamma(n/2)/2 = \pi^{n/2}\)이고, 점화식 \(\tfrac n2\Gamma(\tfrac n2) = \Gamma(\tfrac n2 + 1)\)을 쓰면 \(C_n\)이 나온다.</p>
+    <div class="box thm" id="thm-sphere-volume"><div class="box-h">\(n\)차원 공의 부피와 겉넓이</div>
+      <div class="formula" id="eq-sphere-volume">\[ V_n(R) = \frac{\pi^{n/2}}{\Gamma\big(\frac n2 + 1\big)}\,R^n \]</div>
+      <div class="formula" id="eq-sphere-area">\[ S_n(R) = \frac{2\pi^{n/2}}{\Gamma\big(\frac n2\big)}\,R^{n-1} \]</div>
+      <p>확인: \(n = 1\)이면 \(V_1 = \sqrt\pi R/\Gamma(\tfrac32) = 2R\)(선분의 길이), \(S_1 = 2\)(양 끝점 두 개). \(n = 2\)이면 \(\pi R^2\)과 \(2\pi R\). \(n = 3\)이면 \(\Gamma(\tfrac52) = \tfrac34\sqrt\pi\)이므로 \(\tfrac43\pi R^3\)과 \(4\pi R^2\). \(n = 4\)이면 \(\tfrac12\pi^2R^4\)과 \(2\pi^2R^3\)이다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 280" role="img" aria-label="반지름 1인 n차원 공의 부피와 겉넓이를 n에 대해 그린 점 그래프. 부피는 n = 5에서, 겉넓이는 n = 7에서 가장 크고 그 뒤 0으로 줄어든다"><defs><clipPath id="f1102-clip"><rect x="46" y="18" width="420" height="210"/></clipPath></defs><line x1="46" y1="228" x2="466" y2="228" class="s-line"/><line x1="46" y1="18" x2="46" y2="228" class="s-line"/><line x1="46" y1="18" x2="46" y2="228" class="s-grid"/><line x1="148.4" y1="18" x2="148.4" y2="228" class="s-grid"/><line x1="250.9" y1="18" x2="250.9" y2="228" class="s-grid"/><line x1="353.3" y1="18" x2="353.3" y2="228" class="s-grid"/><line x1="455.8" y1="18" x2="455.8" y2="228" class="s-grid"/><line x1="46" y1="228" x2="466" y2="228" class="s-grid"/><line x1="46" y1="168" x2="466" y2="168" class="s-grid"/><line x1="46" y1="108" x2="466" y2="108" class="s-grid"/><line x1="46" y1="48" x2="466" y2="48" class="s-grid"/><text x="46" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="148.4" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">5</text><text x="250.9" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">10</text><text x="353.3" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">15</text><text x="455.8" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">20</text><text x="39" y="233" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="39" y="173" class="t-dim" style="font-size:14px" text-anchor="end">10</text><text x="39" y="113" class="t-dim" style="font-size:14px" text-anchor="end">20</text><text x="39" y="53" class="t-dim" style="font-size:14px" text-anchor="end">30</text><path d="M66.5,216 87,190.3 107.5,152.6 128,109.6 148.4,70.1 168.9,42 189.4,29.6 209.9,33.2 230.4,49.9 250.9,75 271.4,103.6 291.9,131.9 312.3,157 332.8,177.7 353.3,193.7 373.8,205.4 394.3,213.6 414.8,219.1 435.3,222.7 455.8,224.9" class="s-acc2" style="stroke-width:1.2" fill="none"/><path d="M66.5,216 87,209.2 107.5,202.9 128,198.4 148.4,196.4 168.9,197 189.4,199.7 209.9,203.6 230.4,208.2 250.9,212.7 271.4,216.7 291.9,220 312.3,222.5 332.8,224.4 353.3,225.7 373.8,226.6 394.3,227.2 414.8,227.5 435.3,227.7 455.8,227.8" class="s-acc" style="stroke-width:1.2" fill="none"/><rect x="63" y="212.5" width="7" height="7" class="f-acc2"/><rect x="83.5" y="186.8" width="7" height="7" class="f-acc2"/><rect x="104" y="149.1" width="7" height="7" class="f-acc2"/><rect x="124.5" y="106.1" width="7" height="7" class="f-acc2"/><rect x="144.9" y="66.6" width="7" height="7" class="f-acc2"/><rect x="165.4" y="38.5" width="7" height="7" class="f-acc2"/><rect x="185.9" y="26.1" width="7" height="7" class="f-acc2"/><rect x="206.4" y="29.7" width="7" height="7" class="f-acc2"/><rect x="226.9" y="46.4" width="7" height="7" class="f-acc2"/><rect x="247.4" y="71.5" width="7" height="7" class="f-acc2"/><rect x="267.9" y="100.1" width="7" height="7" class="f-acc2"/><rect x="288.4" y="128.4" width="7" height="7" class="f-acc2"/><rect x="308.8" y="153.5" width="7" height="7" class="f-acc2"/><rect x="329.3" y="174.2" width="7" height="7" class="f-acc2"/><rect x="349.8" y="190.2" width="7" height="7" class="f-acc2"/><rect x="370.3" y="201.9" width="7" height="7" class="f-acc2"/><rect x="390.8" y="210.1" width="7" height="7" class="f-acc2"/><rect x="411.3" y="215.6" width="7" height="7" class="f-acc2"/><rect x="431.8" y="219.2" width="7" height="7" class="f-acc2"/><rect x="452.3" y="221.4" width="7" height="7" class="f-acc2"/><circle cx="66.5" cy="216" r="4" class="f-acc"/><circle cx="87" cy="209.2" r="4" class="f-acc"/><circle cx="107.5" cy="202.9" r="4" class="f-acc"/><circle cx="128" cy="198.4" r="4" class="f-acc"/><circle cx="148.4" cy="196.4" r="4" class="f-acc"/><circle cx="168.9" cy="197" r="4" class="f-acc"/><circle cx="189.4" cy="199.7" r="4" class="f-acc"/><circle cx="209.9" cy="203.6" r="4" class="f-acc"/><circle cx="230.4" cy="208.2" r="4" class="f-acc"/><circle cx="250.9" cy="212.7" r="4" class="f-acc"/><circle cx="271.4" cy="216.7" r="4" class="f-acc"/><circle cx="291.9" cy="220" r="4" class="f-acc"/><circle cx="312.3" cy="222.5" r="4" class="f-acc"/><circle cx="332.8" cy="224.4" r="4" class="f-acc"/><circle cx="353.3" cy="225.7" r="4" class="f-acc"/><circle cx="373.8" cy="226.6" r="4" class="f-acc"/><circle cx="394.3" cy="227.2" r="4" class="f-acc"/><circle cx="414.8" cy="227.5" r="4" class="f-acc"/><circle cx="435.3" cy="227.7" r="4" class="f-acc"/><circle cx="455.8" cy="227.8" r="4" class="f-acc"/><text x="189.4" y="20" class="t-mono" style="font-size:13px" text-anchor="middle">S(7) = 33.07</text><text x="148.4" y="185.6" class="t-mono" style="font-size:13px" text-anchor="middle">V(5) = 5.26</text><text x="296" y="96" class="t-math acc2" style="font-size:16px" text-anchor="start">겉넓이 S</text><text x="234.5" y="205.2" class="t-math acc" style="font-size:16px" text-anchor="start">부피 V</text><text x="466" y="268" class="t-dim" style="font-size:14px" text-anchor="end">차원 n</text></svg>
+      <figcaption><b>그림 11-2.</b> 반지름 1인 \(n\)차원 공의 부피 \(V_n(1)\)(강조색 원)과 겉넓이 \(S_n(1)\)(보조색 네모). 부피는 \(n = 5\)에서, 겉넓이는 \(n = 7\)에서 가장 크고, 그 뒤로는 \(\Gamma(\tfrac n2 + 1)\)이 \(\pi^{n/2}\)보다 빨리 커져서 0으로 줄어든다. 값은 식 <a class="ref" href="#eq-sphere-volume"></a>와 <a class="ref" href="#eq-sphere-area"></a>으로 계산했다.</figcaption>
+    </figure>
+    <p>그림 11-2는 고차원의 낯선 성질을 보여 준다. 반지름 1인 공은 한 변이 2인 정육면체 \([-1, 1]^n\)에 꼭 들어가는데, 부피의 비 \(V_n(1)/2^n\)은 \(n = 3\)에서 0.52이지만 \(n = 10\)에서는 0.0025다. 고차원 정육면체의 부피는 대부분 모서리에 있다는 뜻이다. 공 안에서도 부피는 겉면 근처에 몰린다. 바깥쪽 두께 \(\varepsilon R\)인 껍질의 부피 비율은 \(1 - (1-\varepsilon)^n\)이므로, \(\varepsilon = 0.01\)이면 \(n = 3\)에서 3.0%이지만 \(n = 300\)에서 95%다. 11.4절에서 \(n = 3N \sim 10^{24}\)인 공을 다루는데, 그때는 사실상 모든 부피가 겉면에 있다.</p>
+    <div class="callout deep" data-later="qft"><strong>차원 정규화</strong><p>양자장론의 고리 적분에는 (시간 성분을 허수로 돌린 유클리드 운동량에서) \(\int d^dk\,(k^2 + \Delta)^{-n}\) 같은 적분이 나온다. 겉넓이 \(S_d(k)\)로 각도를 적분하고, 남은 지름 적분에 \(u = k^2/\Delta\)를 넣어 식 <a class="ref" href="#eq-beta-infinite"></a>을 쓰면</p>
+      <div class="formula">\[ \int\frac{d^dk}{(k^2 + \Delta)^n} = \frac{\pi^{d/2}\,\Gamma(n - \frac d2)}{\Gamma(n)}\,\Delta^{d/2 - n} \]</div>
+      <p>이다(식 <a class="ref" href="#eq-beta-infinite"></a>을 쓸 수 있는 \(0 &lt; d &lt; 2n\)에서 얻은 식이다). \(n = 2\), \(d = 4\)이면 \(\Gamma(0)\)이 되어 발산하는데, 이것은 적분이 큰 \(k\)에서 \(\int dk/k\)처럼 로그로 발산하기 때문이다. 오른쪽은 \(d\)의 함수로서 정수가 아닌 \(d\)에서도 의미가 있으므로, \(d = 4 - 2\varepsilon\)으로 두면 식 <a class="ref" href="#eq-gamma-near-zero"></a>에 따라 \(\Gamma(\varepsilon) = 1/\varepsilon - \gamma_E + O(\varepsilon)\)이 되어 발산이 극 \(1/\varepsilon\)으로 분리된다. 이 방법을 <span class="term">차원 정규화</span> <span class="en">(dimensional regularization)</span>라 하고, 양자장론 책에서 다룬다.</p></div>
+  </section>
+
+  <!-- ============================================================ 11.4 -->
+  <section id="s4">
+    <h2>스털링 공식과 라플라스 방법</h2>
+    <p>11.3절의 공 부피 식으로 기체 1몰의 상태 수를 세면 \(\Gamma(3N/2 + 1)\)과 \(N!\)이 나오는데, \(N = 6 \times 10^{23}\)이다. 이런 값은 직접 계산할 수 없고, 필요하지도 않다. 필요한 것은 \(N\)이 클 때 어떻게 행동하는가이다. <a href="ch01.html#s6">1장 끝의 심화 콜아웃</a>에서 미뤄 둔 스털링 공식을 이 절에서 유도한다. 방법은 "지수에 큰 수가 곱해진 적분은 봉우리 근처만 보면 된다"는 한 가지 생각이다.</p>
+    <div class="box def" id="def-asymptotic"><div class="box-h">점근적으로 같음</div>
+      <p>\(x \to \infty\)에서 \(\lim f(x)/g(x) = 1\)이면 \(f\)와 \(g\)가 <span class="term">점근적으로 같다</span> <span class="en">(asymptotically equal)</span>고 하고</p>
+      <div class="formula">\[ f(x) \sim g(x) \quad (x \to \infty) \]</div>
+      <p>로 쓴다. 상대 오차 \((f - g)/g\)가 0으로 간다는 뜻이고, 차이 \(f - g\) 자체는 0으로 가지 않아도 된다(예: \(x^2 + x \sim x^2\)). 또 급수 \(\sum_k a_kx^{-k}\)이 수렴하지 않더라도, 모든 \(N\)에서 \(f(x) - \sum_{k=0}^N a_kx^{-k} = O(x^{-N-1})\)(<a href="ch01.html#def-big-o">정의 1.5</a>)이면 \(f(x) \sim \sum_k a_kx^{-k}\)로 쓰고 이 급수를 \(f\)의 <span class="term">점근급수</span> <span class="en">(asymptotic series)</span>라 한다.</p>
+    </div>
+    <p>이 책에서 \(\sim\)은 "크기 정도가 같다"는 느슨한 뜻으로도 쓴다(예: \(\sim 10^{-10}\ \text{m}\)). 극한 \(x \to \infty\)이나 \(n \to \infty\)이 함께 적혀 있으면 <a class="ref" href="#def-asymptotic"></a>의 정확한 뜻이다.</p>
+
+    <h3 id="s4-laplace">라플라스 방법</h3>
+    <p>큰 수 \(N\)과 매끄러운 함수 \(f\), \(g\)에 대해 \(I(N) = \int_a^b g(x)\,e^{Nf(x)}\,dx\)를 생각하자. \(f\)가 구간 안쪽의 한 점 \(x_0\)에서만 가장 크다면, 피적분 함수는 \(x_0\)에서 떨어질수록 \(e^{N[f(x) - f(x_0)]}\)으로 줄어든다. \(N\)이 크면 이 비는 \(x_0\)의 좁은 근처를 빼고는 지수적으로 작다. 그 좁은 근처에서는 \(f\)를 2차까지 전개하면 충분하다. \(f'(x_0) = 0\), \(f''(x_0) &lt; 0\)이므로</p>
+    <div class="formula">\[ f(x) \approx f(x_0) - \frac12\lvert f''(x_0)\rvert\,(x - x_0)^2 \]</div>
+    <p>이고, 피적분 함수는 폭이 \(1/\sqrt{N\lvert f''(x_0)\rvert}\)인 가우스 함수가 된다. 이 폭 안에서 \(g\)는 거의 \(g(x_0)\)이다. 적분 구간을 \(-\infty\)부터 \(\infty\)까지 넓혀도 더해지는 것은 지수적으로 작은 양뿐이므로, <a href="ch03.html#eq-gaussian-scaled">3장 식 (3.34)</a>에서 \(a = N\lvert f''(x_0)\rvert/2\)로 두면 된다.</p>
+    <div class="box thm" id="thm-laplace-method"><div class="box-h">라플라스 방법 <span class="en">(Laplace's method)</span></div>
+      <p>\([a, b]\)에서 \(f\)는 두 번 연속 미분 가능하고, 안쪽의 한 점 \(x_0\)에서만 최댓값을 가지며 \(f''(x_0) &lt; 0\)이라 하자. \(g\)가 연속이고 \(g(x_0) \ne 0\)이면 \(N \to \infty\)에서</p>
+      <div class="formula" id="eq-laplace-method">\[ \int_a^b g(x)\,e^{Nf(x)}\,dx \sim g(x_0)\,e^{Nf(x_0)}\sqrt{\frac{2\pi}{N\lvert f''(x_0)\rvert}} \]</div>
+      <p>이다. 구간이 무한하면(\(a = -\infty\)나 \(b = \infty\)) 어떤 \(N\)에서 적분이 절대 수렴하고, \(x_0\)의 한 근처 밖에서 \(\sup f &lt; f(x_0)\)이어야 한다. \(f\)가 네 번, \(g\)가 두 번 연속 미분 가능하면 다음 보정은 상대적으로 \(O(1/N)\)이다.</p>
+    </div>
+    <p>왜 보정이 \(1/\sqrt N\)이 아니라 \(1/N\)인가? 폭이 \(1/\sqrt N\)인 영역에서 \(f\)의 3차 항 \(N(x-x_0)^3\)은 \(1/\sqrt N\) 크기이지만 홀함수라 적분에서 사라진다. 살아남는 첫 보정은 4차 항과 3차 항의 제곱에서 나오고, 둘 다 \(1/N\) 크기다. 아래 스털링 공식에서 이 계산을 직접 해 본다. 최댓값이 구간의 끝점에 있으면 가우스 함수의 절반만 남거나(\(f'(x_0) = 0\)인 경우) 지수 함수의 적분이 되므로(\(f'(x_0) \ne 0\)인 경우) 식 <a class="ref" href="#eq-laplace-method"></a>을 그대로 쓰면 안 된다.</p>
+
+    <h3 id="s4-stirling">스털링 공식</h3>
+    <p>\(n! = \Gamma(n+1) = \int_0^\infty e^{n\ln t - t}\,dt\)이다. 지수 \(n\ln t - t\)는 \(t = n\)에서 가장 크다. 봉우리의 위치가 \(n\)과 함께 움직이므로 \(t = nx\)로 바꿔 봉우리를 \(x = 1\)에 고정한다.</p>
+    <div class="formula" id="eq-factorial-laplace-form">\[ n! = n^{n+1}\int_0^\infty e^{n(\ln x - x)}\,dx \]</div>
+    <p>이제 라플라스 방법의 꼴이다. \(f(x) = \ln x - x\)이면 \(f'(x) = 1/x - 1\)이 \(x_0 = 1\)에서 0이고, \(f(1) = -1\), \(f''(1) = -1\)이다. 식 <a class="ref" href="#eq-laplace-method"></a>에 \(g = 1\)로 넣으면 \(n! \sim n^{n+1}e^{-n}\sqrt{2\pi/n}\)이다.</p>
+    <div class="box thm" id="thm-stirling"><div class="box-h">스털링 공식 <span class="en">(Stirling's formula)</span></div>
+      <div class="formula" id="eq-stirling">\[ n! \sim \sqrt{2\pi n}\,\Big(\frac{n}{e}\Big)^n \quad (n \to \infty) \]</div>
+      <p>더 정확하게는 다음 점근급수가 성립한다. 실수 \(x \to \infty\)에서 \(\Gamma(x+1)\)에도 그대로 쓸 수 있다.</p>
+      <div class="formula" id="eq-stirling-log">\[ \begin{aligned} \ln n! = {}&n\ln n - n + \frac12\ln(2\pi n) \\ &+ \frac{1}{12n} - \frac{1}{360n^3} + \cdots \end{aligned} \]</div>
+    </div>
+    <p>그림 11-3은 이 유도에서 일어나는 일을 보여 준다. \(e^{n(\ln x - x)}\)을 봉우리 높이로 나눈 \((xe^{1-x})^n\)은 \(n\)이 커질수록 \(x = 1\) 근처로 좁아지고, 폭 \(1/\sqrt n\)인 가우스 함수와 구별되지 않게 된다.</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 280" role="img" aria-label="n이 2, 10, 50일 때 정규화한 감마 함수의 피적분 함수와 그 가우스 근사. n이 커질수록 x = 1 근처의 좁은 봉우리가 되고 가우스 근사와 겹친다"><defs><clipPath id="f1103-clip"><rect x="46" y="18" width="420" height="210"/></clipPath></defs><line x1="46" y1="228" x2="466" y2="228" class="s-line"/><line x1="46" y1="18" x2="46" y2="228" class="s-line"/><line x1="46" y1="18" x2="46" y2="228" class="s-grid"/><line x1="116" y1="18" x2="116" y2="228" class="s-grid"/><line x1="186" y1="18" x2="186" y2="228" class="s-grid"/><line x1="256" y1="18" x2="256" y2="228" class="s-grid"/><line x1="326" y1="18" x2="326" y2="228" class="s-grid"/><line x1="396" y1="18" x2="396" y2="228" class="s-grid"/><line x1="466" y1="18" x2="466" y2="228" class="s-grid"/><line x1="46" y1="228" x2="466" y2="228" class="s-grid"/><line x1="46" y1="132.5" x2="466" y2="132.5" class="s-grid"/><line x1="46" y1="37.1" x2="466" y2="37.1" class="s-grid"/><text x="46" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="116" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">0.5</text><text x="186" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">1</text><text x="256" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">1.5</text><text x="326" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">2</text><text x="396" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">2.5</text><text x="466" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">3</text><text x="39" y="233" class="t-dim" style="font-size:14px" text-anchor="end">0</text><text x="39" y="137.5" class="t-dim" style="font-size:14px" text-anchor="end">0.5</text><text x="39" y="42.1" class="t-dim" style="font-size:14px" text-anchor="end">1</text><path d="M46,228l2.8,-0.5 2.8,-1.6 2.8,-2.4 2.8,-3.2 2.8,-3.8 2.8,-4.5 2.8,-4.9 2.8,-5.3 2.8,-5.7 2.8,-5.9 2.8,-6.2 2.8,-6.3 2.8,-6.4 2.8,-6.5 2.8,-6.5 2.8,-6.5 2.8,-6.4 2.8,-6.4 2.8,-6.3 2.8,-6.1 2.8,-6 2.8,-5.9 2.8,-5.7 2.8,-5.4 2.8,-5.3 2.8,-5.1 2.8,-4.9 2.8,-4.6 2.8,-4.5 2.8,-4.2 2.8,-3.9 2.8,-3.7 2.8,-3.5 2.8,-3.3 2.8,-3.1 2.8,-2.8 2.8,-2.5 2.8,-2.4 2.8,-2.1 2.8,-2 2.8,-1.7 2.8,-1.5 2.8,-1.3 2.8,-1.1 2.8,-1 2.8,-0.7 2.8,-0.6 2.8,-0.4 2.8,-0.2 2.8,-0.1 2.8,0.1 2.8,0.2 2.8,0.4 2.8,0.4 2.8,0.7 2.8,0.7 2.8,0.9 2.8,1 2.8,1 2.8,1.2 2.8,1.3 2.8,1.4 2.8,1.4 2.8,1.5 2.8,1.6 2.8,1.7 2.8,1.7 2.8,1.8 2.8,1.9 2.8,1.9 2.8,1.9 2.8,2 2.8,2 2.8,2.1 2.8,2.1 2.8,2.1 2.8,2.1 2.8,2.2 2.8,2.2 2.8,2.2 2.8,2.2 2.8,2.2 2.8,2.3 2.8,2.2 2.8,2.2 2.8,2.3 2.8,2.2 2.8,2.3 2.8,2.2 2.8,2.2 2.8,2.2 2.8,2.2 2.8,2.2 2.8,2.2 2.8,2.2 2.8,2.1 2.8,2.2 2.8,2.1 2.8,2.1 2.8,2.1 2.8,2 2.8,2 2.8,2.1 2.8,1.9 2.8,2 2.8,2 2.8,1.9 2.8,1.9 2.8,1.8 2.8,1.9 2.8,1.8 2.8,1.8 2.8,1.7 2.8,1.8 2.8,1.7 2.8,1.7 2.8,1.6 2.8,1.7 2.8,1.6 2.8,1.5 2.8,1.6 2.8,1.5 2.8,1.5 2.8,1.5 2.8,1.4 2.8,1.4 2.8,1.4 2.8,1.4 2.8,1.3 2.8,1.3 2.8,1.3 2.8,1.2 2.8,1.3 2.8,1.2 2.8,1.2 2.8,1.1 2.8,1.1 2.8,1.2 2.8,1 2.8,1.1 2.8,1 2.8,1.1 2.8,1 2.8,0.9 2.8,1 2.8,0.9 2.8,0.9 2.8,0.9 2.8,0.9 2.8,0.8" class="s-acc" style="stroke-width:2.4" clip-path="url(#f1103-clip)" fill="none"/><path d="M46,157.8l3.5,-3.6 3.5,-3.6 3.5,-3.7 3.5,-3.8 3.5,-3.9 3.5,-3.9 3.5,-4 3.5,-4 3.5,-4 3.5,-4.1 3.5,-4.1 3.5,-4.1 3.5,-4 3.5,-4.1 3.5,-4.1 3.5,-4 3.5,-4 3.5,-3.9 3.5,-3.8 3.5,-3.8 3.5,-3.6 3.5,-3.6 3.5,-3.5 3.5,-3.3 3.5,-3.2 3.5,-3 3.5,-2.9 3.5,-2.7 3.5,-2.5 3.5,-2.3 3.5,-2.2 3.5,-1.9 3.5,-1.8 3.5,-1.5 3.5,-1.2 3.5,-1.1 3.5,-0.8 3.5,-0.6 3.5,-0.4 3.5,-0.1 3.5,0.1 3.5,0.4 3.5,0.6 3.5,0.8 3.5,1.1 3.5,1.2 3.5,1.5 3.5,1.8 3.5,1.9 3.5,2.2 3.5,2.3 3.5,2.5 3.5,2.7 3.5,2.9 3.5,3 3.5,3.2 3.5,3.3 3.5,3.5 3.5,3.6 3.5,3.6 3.5,3.8 3.5,3.8 3.5,3.9 3.5,4 3.5,4 3.5,4.1 3.5,4.1 3.5,4 3.5,4.1 3.5,4.1 3.5,4.1 3.5,4 3.5,4 3.5,4 3.5,3.9 3.5,3.9 3.5,3.8 3.5,3.7 3.5,3.6 3.5,3.6 3.5,3.4 3.5,3.4 3.5,3.3 3.5,3.2 3.5,3.1 3.5,2.9 3.5,2.9 3.5,2.8 3.5,2.6 3.5,2.6 3.5,2.4 3.5,2.4 3.5,2.2 3.5,2.1 3.5,2.1 3.5,1.9 3.5,1.8 3.5,1.8 3.5,1.6 3.5,1.6 3.5,1.4 3.5,1.4 3.5,1.3 3.5,1.2 3.5,1.2 3.5,1.1 3.5,1 3.5,0.9 3.5,0.9 3.5,0.8 3.5,0.7 3.5,0.7 3.5,0.7 3.5,0.6 3.5,0.5 3.5,0.5 3.5,0.5 3.5,0.4 3.5,0.4 3.5,0.4" class="s-acc2" style="stroke-width:1.6" stroke-dasharray="5 4" clip-path="url(#f1103-clip)" fill="none"/><path d="M46,228l2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,-0.1 2.8,0 2.8,-0.1 2.8,-0.2 2.8,-0.4 2.8,-0.4 2.8,-0.7 2.8,-1 2.8,-1.3 2.8,-1.7 2.8,-2.2 2.8,-2.7 2.8,-3.2 2.8,-3.9 2.8,-4.6 2.8,-5.2 2.8,-5.8 2.8,-6.5 2.8,-7.2 2.8,-7.6 2.8,-8.2 2.8,-8.6 2.8,-9 2.8,-9.1 2.8,-9.3 2.8,-9.3 2.8,-9.2 2.8,-9.1 2.8,-8.7 2.8,-8.3 2.8,-7.9 2.8,-7.2 2.8,-6.7 2.8,-5.9 2.8,-5.2 2.8,-4.4 2.8,-3.7 2.8,-2.8 2.8,-1.9 2.8,-1.2 2.8,-0.4 2.8,0.4 2.8,1.1 2.8,1.8 2.8,2.4 2.8,3 2.8,3.6 2.8,4.1 2.8,4.5 2.8,4.8 2.8,5.2 2.8,5.5 2.8,5.7 2.8,5.8 2.8,5.9 2.8,6.1 2.8,6 2.8,6.1 2.8,6 2.8,5.9 2.8,5.9 2.8,5.7 2.8,5.5 2.8,5.4 2.8,5.3 2.8,5 2.8,4.9 2.8,4.6 2.8,4.4 2.8,4.3 2.8,4 2.8,3.8 2.8,3.6 2.8,3.3 2.8,3.2 2.8,3 2.8,2.8 2.8,2.6 2.8,2.5 2.8,2.2 2.8,2.1 2.8,2 2.8,1.8 2.8,1.7 2.8,1.5 2.8,1.5 2.8,1.3 2.8,1.2 2.8,1.1 2.8,1 2.8,0.9 2.8,0.9 2.8,0.7 2.8,0.8 2.8,0.6 2.8,0.6 2.8,0.5 2.8,0.5 2.8,0.4 2.8,0.4 2.8,0.4 2.8,0.3 2.8,0.3 2.8,0.3 2.8,0.2 2.8,0.2 2.8,0.2 2.8,0.2 2.8,0.1 2.8,0.2 2.8,0.1 2.8,0.1 2.8,0.1 2.8,0.1 2.8,0.1 2.8,0 2.8,0.1 2.8,0.1 2.8,0 2.8,0.1 2.8,0 2.8,0 2.8,0.1 2.8,0 2.8,0 2.8,0 2.8,0.1 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0.1 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0" class="s-acc" style="stroke-width:2.4" clip-path="url(#f1103-clip)" fill="none"/><path d="M46,226.7l3.5,-0.3 3.5,-0.5 3.5,-0.5 3.5,-0.7 3.5,-0.9 3.5,-1 3.5,-1.2 3.5,-1.4 3.5,-1.7 3.5,-2 3.5,-2.3 3.5,-2.7 3.5,-3.1 3.5,-3.5 3.5,-4 3.5,-4.5 3.5,-4.9 3.5,-5.6 3.5,-6 3.5,-6.6 3.5,-7.1 3.5,-7.6 3.5,-8 3.5,-8.4 3.5,-8.7 3.5,-9 3.5,-9.1 3.5,-9.1 3.5,-9.1 3.5,-8.9 3.5,-8.5 3.5,-8.1 3.5,-7.5 3.5,-6.8 3.5,-6 3.5,-5 3.5,-4 3.5,-2.9 3.5,-1.8 3.5,-0.6 3.5,0.6 3.5,1.8 3.5,2.9 3.5,4 3.5,5 3.5,6 3.5,6.8 3.5,7.5 3.5,8.1 3.5,8.5 3.5,8.9 3.5,9.1 3.5,9.1 3.5,9.1 3.5,9 3.5,8.7 3.5,8.4 3.5,8 3.5,7.6 3.5,7.1 3.5,6.6 3.5,6 3.5,5.6 3.5,4.9 3.5,4.5 3.5,4 3.5,3.5 3.5,3.1 3.5,2.7 3.5,2.3 3.5,2 3.5,1.7 3.5,1.4 3.5,1.2 3.5,1 3.5,0.9 3.5,0.7 3.5,0.5 3.5,0.5 3.5,0.3 3.5,0.3 3.5,0.2 3.5,0.2 3.5,0.1 3.5,0.2 3.5,0 3.5,0.1 3.5,0.1 3.5,0 3.5,0 3.5,0 3.5,0.1 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0" class="s-acc2" style="stroke-width:1.6" stroke-dasharray="5 4" clip-path="url(#f1103-clip)" fill="none"/><path d="M46,228l2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,-0.1 2.8,-0.1 2.8,-0.2 2.8,-0.3 2.8,-0.7 2.8,-1.2 2.8,-1.8 2.8,-2.8 2.8,-4 2.8,-5.7 2.8,-7.5 2.8,-9.7 2.8,-11.9 2.8,-14 2.8,-15.9 2.8,-17.2 2.8,-18 2.8,-17.9 2.8,-17 2.8,-15.2 2.8,-12.6 2.8,-9.4 2.8,-5.8 2.8,-1.9 2.8,1.9 2.8,5.4 2.8,8.5 2.8,11.1 2.8,13 2.8,14.2 2.8,14.9 2.8,14.9 2.8,14.5 2.8,13.6 2.8,12.6 2.8,11.3 2.8,10 2.8,8.6 2.8,7.3 2.8,6.1 2.8,5.1 2.8,4.1 2.8,3.3 2.8,2.5 2.8,2 2.8,1.6 2.8,1.2 2.8,0.9 2.8,0.6 2.8,0.5 2.8,0.3 2.8,0.3 2.8,0.2 2.8,0.1 2.8,0.1 2.8,0.1 2.8,0 2.8,0 2.8,0.1 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0 2.8,0" class="s-acc" style="stroke-width:2.4" clip-path="url(#f1103-clip)" fill="none"/><path d="M46,228l3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,-0.1 3.5,-0.1 3.5,-0.2 3.5,-0.3 3.5,-0.5 3.5,-0.9 3.5,-1.4 3.5,-2.2 3.5,-3.2 3.5,-4.7 3.5,-6.5 3.5,-8.7 3.5,-11.2 3.5,-13.8 3.5,-16.4 3.5,-18.6 3.5,-20 3.5,-20.4 3.5,-19.5 3.5,-17.2 3.5,-13.4 3.5,-8.6 3.5,-3 3.5,3 3.5,8.6 3.5,13.4 3.5,17.2 3.5,19.5 3.5,20.4 3.5,20 3.5,18.6 3.5,16.4 3.5,13.8 3.5,11.2 3.5,8.7 3.5,6.5 3.5,4.7 3.5,3.2 3.5,2.2 3.5,1.4 3.5,0.9 3.5,0.5 3.5,0.3 3.5,0.2 3.5,0.1 3.5,0.1 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0" class="s-acc2" style="stroke-width:1.6" stroke-dasharray="5 4" clip-path="url(#f1103-clip)" fill="none"/><text x="384.8" y="155" class="t-mono" style="font-size:13px" text-anchor="start">n = 2</text><text x="267.2" y="162.4" class="t-mono" style="font-size:13px" text-anchor="start">n = 10</text><text x="298" y="65.7" class="t-mono" style="font-size:13px" text-anchor="start">n = 50</text><line x1="295.2" y1="62.9" x2="207" y2="107.7" class="s-line" style="stroke-width:1"/><text x="466" y="268" class="t-dim" style="font-size:14px" text-anchor="end">x = t/n</text></svg>
+      <figcaption><b>그림 11-3.</b> 스털링 공식의 라플라스 방법. 강조색 실선은 \(n = 2, 10, 50\)일 때 \(t^ne^{-t}\)를 \(t = nx\)로 바꾸고 봉우리 높이로 나눈 \((xe^{1-x})^n\), 보조색 점선은 그 가우스 근사 \(e^{-n(x-1)^2/2}\)이다. \(n = 2\)에서는 곡선이 오른쪽으로 치우쳐 있지만(3차 항), \(n = 50\)에서는 거의 겹친다.</figcaption>
+    </figure>
+    <details class="proof"><summary>계산의 세부: \(1/12n\) 항</summary>
+      <p>\(x = 1 + u\)로 두고 \(f\)를 4차까지 전개하면 \(\ln(1+u) - (1+u) = -1 - \tfrac{u^2}{2} + \tfrac{u^3}{3} - \tfrac{u^4}{4} + O(u^5)\)이다. 가우스 부분 \(e^{-nu^2/2}\)를 남기고 나머지를 전개하면</p>
+      <div class="formula">\[ e^{n(u^3/3 - u^4/4)} = 1 + \frac{nu^3}{3} - \frac{nu^4}{4} + \frac{n^2u^6}{18} + \cdots \]</div>
+      <p>이다. 무게 \(e^{-nu^2/2}\)는 분산 \(\sigma^2 = 1/n\)인 정규분포이므로, 식 <a class="ref" href="#eq-normal-moments"></a>에서 \(\langle u^3\rangle = 0\), \(\langle u^4\rangle = 3/n^2\), \(\langle u^6\rangle = 15/n^3\)이다. 생략한 항(\(nu^5\), \(nu^6\), \(n^2u^7\) 등)은 홀수 차수라 0이거나 \(O(1/n^2)\)이다. 따라서 적분에 곱해지는 보정 인자는</p>
+      <div class="formula">\[ 1 - \frac{3n}{4n^2} + \frac{15n^2}{18n^3} = 1 + \Big(-\frac34 + \frac56\Big)\frac1n = 1 + \frac{1}{12n} \]</div>
+      <p>이고, 로그를 취하면 식 <a class="ref" href="#eq-stirling-log"></a>의 \(1/12n\)이 된다. 점근급수의 계수는 일반적으로 <a href="ch01.html#eq-bernoulli-expansion">1장 식 (1.33)</a>의 베르누이 수로 \(B_{2k}/[2k(2k-1)n^{2k-1}]\)이다(\(B_2 = \tfrac16\)에서 \(\tfrac{1}{12n}\), \(B_4 = -\tfrac{1}{30}\)에서 \(-\tfrac{1}{360n^3}\), 아프켄 13장). 베르누이 수가 계승처럼 커지므로 이 급수는 모든 \(n\)에서 발산한다.</p>
+    </details>
+    <p>작은 \(n\)에서도 공식은 놀랍도록 정확하다.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>\(n\)</th><th>\(n!\)</th><th>\(\sqrt{2\pi n}\,(n/e)^n\)</th><th>비</th><th>보정 후 오차</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>1</td><td>0.9221</td><td>1.0844</td><td>\(1.0 \times 10^{-3}\)</td></tr>
+        <tr><td>5</td><td>120</td><td>118.02</td><td>1.0168</td><td>\(1.2 \times 10^{-4}\)</td></tr>
+        <tr><td>10</td><td>3 628 800</td><td>3 598 696</td><td>1.0084</td><td>\(3.2 \times 10^{-5}\)</td></tr>
+        <tr><td>20</td><td>\(2.4329 \times 10^{18}\)</td><td>\(2.4228 \times 10^{18}\)</td><td>1.0042</td><td>\(8.3 \times 10^{-6}\)</td></tr>
+      </tbody>
+    </table></div>
+    <p>비에서 1을 뺀 값이 \(1/12n\)(0.083, 0.017, 0.0083, 0.0042)과 거의 같다. 비는 1로 가지만 차이 \(n! - \sqrt{2\pi n}(n/e)^n\)은 \(n = 20\)에서 \(10^{16}\)을 넘으며 한없이 커진다. <a class="ref" href="#def-asymptotic"></a>이 말하는 것이 바로 이것이다.</p>
+    <div class="callout warn"><strong>\(\ln N! \approx N\ln N - N\)은 언제 써도 되는가</strong><p>통계역학 책에서 흔히 쓰는 이 꼴은 \(\tfrac12\ln(2\pi N)\)을 버린 것이다. \(\ln N!\)에 대한 상대 오차는 \(N = 10\)에서 14%, \(N = 100\)에서 0.9%, \(N = 1000\)에서 0.07%이고, \(N = 6 \times 10^{23}\)이면 버린 항(약 28)이 \(N\ln N - N = 3.2 \times 10^{25}\)에 견줘 보이지 않는다. 그래서 입자 하나당 엔트로피처럼 \(\ln N!/N\)만 필요할 때는 충분하다. 그러나 \(N!\) 자체나 두 계승의 비(확률)를 구할 때는 \(\sqrt{2\pi N}\)이 그대로 답에 남으므로 버리면 안 된다(<a class="ref" href="#prob-stirling-binomial"></a>).</p></div>
+
+    <div class="box ex" id="ex-ideal-gas-phase-volume"><div class="box-h">이상 기체의 위상 공간 부피와 엔트로피</div>
+      <p>부피 \(V\)인 상자에 질량 \(m\)인 단원자 이상 기체 입자 \(N\)개가 있다. 에너지가 \(E\) 이하인 미시 상태의 수를 위상 공간 부피 \(\Phi(E)\)로 \(\Omega(E) = \Phi(E)/(N!\,h^{3N})\)이라 하자. (가) \(\Phi(E)\)를 구하라. (나) 스털링 공식으로 \(S = k_B\ln\Omega\)를 구하고, 3장의 자쿠르-테트로데 식 <a href="ch03.html#eq-sackur-tetrode">(3.22)</a>를 얻어라. (다) 아르곤(\(m = 39.948\ \text{u}\)), 298.15 K, 1 bar에서 몰 엔트로피를 계산하라.</p>
+      <p><b>풀이.</b> (가) 위치 \(3N\)개와 운동량 \(3N\)개로 된 \(6N\)차원 공간에서, 위치 적분은 입자마다 \(V\)이므로 \(V^N\)이다. 에너지 조건 \(\sum_{i=1}^{3N}p_i^2/2m \le E\)는 운동량 공간에서 반지름 \(\sqrt{2mE}\)인 \(3N\)차원 공이다. 식 <a class="ref" href="#eq-sphere-volume"></a>에서</p>
+      <div class="formula" id="eq-ideal-gas-phase-volume">\[ \Phi(E) = V^N\,\frac{\pi^{3N/2}(2mE)^{3N/2}}{\Gamma\big(\frac{3N}{2} + 1\big)} \]</div>
+      <p>이다. (나) 로그를 취하고 \(\ln N! = N\ln N - N + O(\ln N)\), \(\ln\Gamma(\tfrac{3N}2 + 1) = \tfrac{3N}{2}\ln\tfrac{3N}{2} - \tfrac{3N}{2} + O(\ln N)\)을 쓰면</p>
+      <div class="formula">\[ \begin{aligned} \ln\Omega &= N\ln V - \ln N! + \frac{3N}{2}\ln\frac{2\pi mE}{h^2} \\ &\quad - \ln\Gamma\Big(\frac{3N}{2} + 1\Big) \\ &= N\Big[\ln\frac VN + \frac32\ln\frac{4\pi mE}{3Nh^2} + \frac52\Big] \\ &\quad + O(\ln N) \end{aligned} \]</div>
+      <p>이다. 온도는 \(1/T = \partial S/\partial E = k_B\cdot 3N/2E\)에서 \(E = \tfrac32 Nk_BT\)이다. 그러면 \(4\pi mE/3Nh^2 = 2\pi mk_BT/h^2 = 1/\lambda^2\)이고(\(\lambda = h/\sqrt{2\pi mk_BT}\)), \(\tfrac32\ln(1/\lambda^2) = -\ln\lambda^3\)이므로</p>
+      <div class="formula">\[ S = Nk_B\Big[\ln\frac{V}{N\lambda^3} + \frac52\Big] \]</div>
+      <p>이다. 3장의 식 (3.22)와 같다. 상수 \(\tfrac52\)는 \(N!\)의 \(-N\)에서 1, \(\Gamma(\tfrac{3N}{2}+1)\)의 \(-\tfrac{3N}{2}\)에서 \(\tfrac32\)가 와서 생긴 것이다. 두 가지를 짚어 두자. 첫째, "\(E\) 이하"인 공 대신 두께 \(\Delta E\)인 껍질만 세어도 결과는 같다. 11.3절에서 본 것처럼 \(3N\)차원 공의 부피는 거의 모두 겉면에 있어서, 껍질의 부피 비율 \(1 - (1 - \Delta E/E)^{3N/2}\)이 \(\Delta E/E \gg 1/N\)이면 사실상 1이기 때문이다. 둘째, \(N!\)이 없으면 \(\ln(V/N)\) 대신 \(\ln V\)가 남아서, \(V\)와 \(N\)을 두 배로 해도 엔트로피가 두 배가 되지 않는다(깁스 역설). 같은 입자를 서로 바꾼 상태를 따로 세지 않는다는 양자역학의 요구가 \(N!\)을 정당화한다.</p>
+      <p><b>숫자로 보기.</b> (다) 아르곤은 \(m = 6.633 \times 10^{-26}\ \text{kg}\)이고 298.15 K에서 \(\lambda = 16.0\ \text{pm}\)이다. 원자 하나가 차지하는 부피는 \(V/N = k_BT/p = 4.116 \times 10^{-26}\ \text{m}^3\)이므로 \(V/N\lambda^3 = 1.006 \times 10^7\), 그 로그는 16.12이다.</p>
+      <div class="formula">\[ \begin{aligned} S &= R\,(16.12 + 2.50) \\ &= 154.85\ \text{J/(mol}\cdot\text{K)} \end{aligned} \]</div>
+      <p>이다. 아르곤의 표준 몰 엔트로피 표값 \(154.846 \pm 0.003\ \text{J/(mol}\cdot\text{K)}\)(J. D. Cox, D. D. Wagman, V. A. Medvedev, <i>CODATA Key Values for Thermodynamics</i>, Hemisphere 1989)과 같다. 단원자 기체의 표값은 바로 이 식에 원자 질량과 상수를 넣어 계산한 것이므로, 이 일치는 우리 계산의 검산이다. 0 K부터 열용량을 적분하는 열량 측정과 비교하는 일은 열역학 제3법칙의 시험이라 이 책의 범위 밖이다.</p>
+      <p><b>다음 항은 몇 차인가.</b> 버린 것은 \(\ln N!\)과 \(\ln\Gamma\)의 \(\tfrac12\ln(2\pi\cdot)\) 항들이고, 입자 하나당 \(\ln\Omega/N\)에 \(O(\ln N/N)\)의 보정을 준다. \(\ln\Gamma\)를 정확히 계산해 비교하면 \(\ln\Omega/N\)의 차이는 \(N = 100\)에서 0.066(괄호 안 값 18.62의 0.36%), \(N = 10^6\)에서 \(1.6 \times 10^{-5}\)이다. 1몰에서는 \(10^{-22}\)보다 작다.</p>
+    </div>
+    <div class="callout deep" data-later="qm-grad"><strong>복소평면의 안장점 방법</strong><p>\(f\)가 복소수 값을 가지면(예: \(\int e^{iN\phi(x)}dx\) 같은 진동 적분) 피적분 함수의 크기에 봉우리가 없어서 라플라스 방법을 바로 쓸 수 없다. 이때는 적분 경로를 복소평면에서 \(f'(z_0) = 0\)인 점 \(z_0\)을 지나도록 변형한다(<a href="ch19.html#thm-deformation">19장의 경로 변형 원리</a>). \(z_0\)은 \(\operatorname{Re} f\)의 안장점이고, \(\operatorname{Im} f\)가 일정한 방향으로 지나가면 그 방향에서 \(\operatorname{Re} f\)가 가장 빨리 줄어 다시 라플라스 방법이 된다. 결과는 식 <a class="ref" href="#eq-laplace-method"></a>에 위상 인자가 붙은 꼴이다. 이것을 <span class="term">최대 경사법</span> <span class="en">(method of steepest descent)</span>이라 하고, 에어리 함수의 점근 꼴, 경로 적분의 고전 극한(작용이 정상인 경로), 섭동급수의 큰 차수 행동을 구하는 데 쓴다. 실수축의 진동 적분을 \(\phi' = 0\)인 점 근처만으로 어림하는 것을 <span class="term">정상 위상법</span> <span class="en">(stationary phase method)</span>이라 한다.</p></div>
+  </section>
+
+  <!-- ============================================================ 11.5 -->
+  <section id="s5">
+    <h2>오차 함수</h2>
+    <p>가우스 함수를 실수 전체에서 적분하면 \(\sqrt\pi\)이지만, 유한한 구간에서 적분한 값은 기본 함수로 쓸 수 없다. 그런데 이 값은 물리 곳곳에 나온다. 1장의 <a href="ch01.html#ex-gaussian-series-integral">예제 1.13</a>에서 급수로 구한 "속도 성분이 어떤 범위 안에 있는 분자의 비율" 0.8427이 그 예이고, 측정값이 평균에서 \(3\sigma\) 넘게 벗어날 확률, 막대 한쪽 끝에서 들어온 열이 퍼진 모양도 같은 적분이다. 그래서 이 적분에 이름을 붙인다.</p>
+    <div class="box def" id="def-erf"><div class="box-h">오차 함수</div>
+      <div class="formula" id="eq-erf-def">\[ \operatorname{erf}x = \frac{2}{\sqrt\pi}\int_0^x e^{-t^2}\,dt \]</div>
+      <p>를 <span class="term">오차 함수</span> <span class="en">(error function)</span>라 하고, \(\operatorname{erfc}x = 1 - \operatorname{erf}x = \frac{2}{\sqrt\pi}\int_x^\infty e^{-t^2}dt\)를 <span class="term">여오차 함수</span> <span class="en">(complementary error function)</span>라 한다. 앞의 \(2/\sqrt\pi\)는 \(\operatorname{erf}(\infty) = 1\)이 되도록 고른 것이다. \(\operatorname{erf}\)는 홀함수이고, 도함수는 \(\frac{2}{\sqrt\pi}e^{-x^2}\)이다.</p>
+    </div>
+    <p>\(e^{-t^2}\)의 급수를 항별로 적분하면(<a href="ch01.html#eq-gauss-series-integral">1장 식 (1.35)</a>와 같은 계산)</p>
+    <div class="formula" id="eq-erf-series">\[ \operatorname{erf}x = \frac{2}{\sqrt\pi}\sum_{n=0}^\infty\frac{(-1)^n x^{2n+1}}{n!\,(2n+1)} \]</div>
+    <p>이다. 모든 \(x\)에서 수렴하지만, \(x\)가 크면 큰 항들이 서로 지워져야 해서 쓸모가 없다. 대표 값은 \(\operatorname{erf}0.5 = 0.5205\), \(\operatorname{erf}1 = 0.8427\), \(\operatorname{erf}2 = 0.9953\)이다.</p>
+
+    <h3 id="s5-normal">정규분포와의 관계</h3>
+    <p>평균 \(\mu\), 표준편차 \(\sigma\)인 정규분포에서 값이 \(\mu\)로부터 \(n\sigma\) 안에 있을 확률은 \(t = (x - \mu)/(\sqrt2\sigma)\)로 바꾸면 \(\frac{1}{\sqrt\pi}\int_{-n/\sqrt2}^{n/\sqrt2}e^{-t^2}dt\)이다. 통계학에서 쓰는 표준 정규분포의 누적 분포 함수 \(\Phi(z) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^z e^{-s^2/2}ds\)도 같은 방법으로 오차 함수로 바뀐다.</p>
+    <div class="formula" id="eq-erf-normal">\[ \begin{aligned} P(\lvert x - \mu\rvert &lt; n\sigma) &= \operatorname{erf}\frac{n}{\sqrt2} \\ \Phi(z) &= \frac12\Big[1 + \operatorname{erf}\frac{z}{\sqrt2}\Big] \end{aligned} \]</div>
+    <p>\(n = 1, 2, 3\)이면 68.27%, 95.45%, 99.73%이다. 1장 예제 1.13의 비율은 \(n = \sqrt2\)인 경우였다.</p>
+    <div class="callout warn"><strong>\(\operatorname{erf}\)와 \(\Phi\)는 \(\sqrt2\)만큼 어긋나 있다</strong><p>오차 함수는 \(e^{-t^2}\)을, 정규분포는 \(e^{-s^2/2}\)을 적분하므로 인수에 \(\sqrt2\)가 끼어든다. 표나 코드에서 "\(3\sigma\) 확률"을 찾을 때 \(\operatorname{erf}3 = 0.999\,978\)을 쓰면 틀린다. 맞는 값은 \(\operatorname{erf}(3/\sqrt2) = 0.9973\)이다. 또 한쪽 꼬리 \(P(x - \mu > n\sigma) = \tfrac12\operatorname{erfc}(n/\sqrt2)\)과 양쪽 꼬리 \(\operatorname{erfc}(n/\sqrt2)\)도 두 배 차이가 난다. 공학에서는 한쪽 꼬리를 \(Q(z) = 1 - \Phi(z)\)라는 이름으로 쓴다. 다른 책의 식을 옮길 때는 어느 함수, 어느 꼬리인지 먼저 확인한다.</p></div>
+
+    <div class="box ex" id="ex-diffusion-erf"><div class="box-h">온도가 다른 두 막대를 이었을 때 열의 퍼짐</div>
+      <p>옆면이 단열된 긴 구리 막대 두 개가 있다. 왼쪽 막대(\(x &lt; 0\))는 80 °C, 오른쪽 막대(\(x > 0\))는 20 °C이고, \(t = 0\)에 끝을 맞붙였다. 온도는 확산 방정식 \(\partial T/\partial t = D\,\partial^2T/\partial x^2\)(<a href="ch17.html#eq-diffusion-equation">17장</a>)을 따른다. (가) 해가</p>
+      <div class="formula" id="eq-diffusion-erf-solution">\[ T(x, t) = 50\ ^\circ\text{C} - 30\ ^\circ\text{C}\cdot\operatorname{erf}\frac{x}{2\sqrt{Dt}} \]</div>
+      <p>임을 보여라. (나) 이음매의 온도는 어떻게 되는가? (다) 60초 뒤 이음매에서 5.0 cm 떨어진 찬 막대 속의 온도는? 그 점이 35 °C가 되는 것은 언제인가?</p>
+      <p><b>풀이.</b> (가) 처음 조건(계단 모양)에는 길이의 척도가 없다. 문제에 있는 상수 가운데 길이를 만드는 것은 \(\sqrt{Dt}\)뿐이므로, 온도는 차원 없는 조합 \(\eta = x/(2\sqrt{Dt})\)만의 함수일 것이다. \(T = f(\eta)\)로 두면 \(\partial_t\eta = -\eta/2t\), \(\partial_x\eta = 1/(2\sqrt{Dt})\)이므로</p>
+      <div class="formula">\[ \frac{\partial T}{\partial t} = -\frac{\eta}{2t}f'(\eta), \quad \frac{\partial^2T}{\partial x^2} = \frac{f''(\eta)}{4Dt} \]</div>
+      <p>이다. 확산 방정식에 넣으면 \(t\)가 지워지고 상미분방정식 \(f'' + 2\eta f' = 0\)이 남는다. \(f'\)에 대한 1계 방정식이므로 \(f' = Ce^{-\eta^2}\)이고, 한 번 더 적분하면 \(f = A + B\operatorname{erf}\eta\)이다. \(t \to 0^+\)에서 \(x &lt; 0\)이면 \(\eta \to -\infty\), \(x > 0\)이면 \(\eta \to +\infty\)이므로 처음 조건은 \(A - B = 80\ ^\circ\text{C}\), \(A + B = 20\ ^\circ\text{C}\)이다. 따라서 \(A = 50\ ^\circ\text{C}\), \(B = -30\ ^\circ\text{C}\)이다.</p>
+      <p>(나) \(x = 0\)이면 \(\operatorname{erf}0 = 0\)이므로 이음매는 \(t > 0\)인 동안 줄곧 50 °C다. 두 막대가 같은 물질이라 열이 양쪽으로 똑같이 퍼지기 때문이다.</p>
+      <p><b>숫자로 보기.</b> (다) 구리의 열확산도는 \(D = k/\rho c = 401/(8933 \times 385)\ \text{m}^2/\text{s} = 1.17 \times 10^{-4}\ \text{m}^2/\text{s}\)이다(물성값은 F. P. Incropera et al., <i>Fundamentals of Heat and Mass Transfer</i>, 6th ed., Wiley 2007, 표 A.1). \(t = 60\ \text{s}\)이면 \(2\sqrt{Dt} = 0.168\ \text{m}\), \(\eta = 0.050/0.168 = 0.298\), \(\operatorname{erf}0.298 = 0.327\)이므로</p>
+      <div class="formula">\[ T = 50 - 30 \times 0.327 = 40.2\ ^\circ\text{C} \]</div>
+      <p>이다. 35 °C가 되려면 \(\operatorname{erf}\eta = 0.5\), 곧 \(\eta = 0.477\)이어야 하므로 \(t = (x/2\eta)^2/D = (0.050/0.954)^2/(1.17 \times 10^{-4})\ \text{s} = 23\ \text{s}\)이다. 거리가 두 배이면 걸리는 시간은 네 배다. 확산은 \(\sqrt t\)로 퍼지기 때문이다(그림 11-4). 단위 확인: \(Dt\)는 \(\text{m}^2\)이므로 \(\eta\)는 차원이 없다. 이 해는 막대가 무한히 길다고 본 것이므로, 퍼진 폭 \(2\sqrt{Dt}\)가 막대 길이보다 충분히 작은 동안 맞다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 280" role="img" aria-label="80도와 20도 구리 막대를 이은 뒤 1초, 10초, 60초의 온도 분포. 모두 이음매에서 50도를 지나는 오차 함수 꼴이고 폭이 시간의 제곱근으로 넓어진다"><defs><clipPath id="f1104-clip"><rect x="46" y="18" width="420" height="210"/></clipPath></defs><line x1="46" y1="228" x2="466" y2="228" class="s-line"/><line x1="46" y1="18" x2="46" y2="228" class="s-line"/><line x1="88" y1="18" x2="88" y2="228" class="s-grid"/><line x1="172" y1="18" x2="172" y2="228" class="s-grid"/><line x1="256" y1="18" x2="256" y2="228" class="s-grid"/><line x1="340" y1="18" x2="340" y2="228" class="s-grid"/><line x1="424" y1="18" x2="424" y2="228" class="s-grid"/><line x1="46" y1="213" x2="466" y2="213" class="s-grid"/><line x1="46" y1="153" x2="466" y2="153" class="s-grid"/><line x1="46" y1="93" x2="466" y2="93" class="s-grid"/><line x1="46" y1="33" x2="466" y2="33" class="s-grid"/><text x="88" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">−20</text><text x="172" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">−10</text><text x="256" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><text x="340" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">10</text><text x="424" y="248" class="t-dim" style="font-size:14px" text-anchor="middle">20</text><text x="39" y="218" class="t-dim" style="font-size:14px" text-anchor="end">20</text><text x="39" y="158" class="t-dim" style="font-size:14px" text-anchor="end">40</text><text x="39" y="98" class="t-dim" style="font-size:14px" text-anchor="end">60</text><text x="39" y="38" class="t-dim" style="font-size:14px" text-anchor="end">80</text><path d="M46,33L256,33 256,213 466,213" class="s-line" stroke-dasharray="4 4" fill="none"/><path d="M46,33l3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0.1 3.5,0.1 3.5,0.4 3.5,0.7 3.5,1.3 3.5,2.5 3.5,4.1 3.5,6.4 3.5,9.2 3.5,12.4 3.5,15.5 3.5,18 3.5,19.3 3.5,19.3 3.5,18 3.5,15.5 3.5,12.4 3.5,9.2 3.5,6.4 3.5,4.1 3.5,2.5 3.5,1.3 3.5,0.7 3.5,0.4 3.5,0.1 3.5,0.1 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0" class="s-acc2" style="stroke-width:2.4" clip-path="url(#f1104-clip)" fill="none"/><path d="M46,33l3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0.1 3.5,0 3.5,0 3.5,0 3.5,0.1 3.5,0 3.5,0.1 3.5,0.1 3.5,0.1 3.5,0.2 3.5,0.2 3.5,0.2 3.5,0.3 3.5,0.4 3.5,0.5 3.5,0.5 3.5,0.7 3.5,0.8 3.5,0.9 3.5,1.1 3.5,1.3 3.5,1.6 3.5,1.7 3.5,2 3.5,2.2 3.5,2.6 3.5,2.8 3.5,3.2 3.5,3.4 3.5,3.8 3.5,4.1 3.5,4.4 3.5,4.8 3.5,5 3.5,5.3 3.5,5.5 3.5,5.7 3.5,5.9 3.5,6.1 3.5,6.1 3.5,6.2 3.5,6.2 3.5,6.1 3.5,6.1 3.5,5.9 3.5,5.7 3.5,5.5 3.5,5.3 3.5,5 3.5,4.8 3.5,4.4 3.5,4.1 3.5,3.8 3.5,3.4 3.5,3.2 3.5,2.8 3.5,2.6 3.5,2.2 3.5,2 3.5,1.7 3.5,1.6 3.5,1.3 3.5,1.1 3.5,0.9 3.5,0.8 3.5,0.7 3.5,0.5 3.5,0.5 3.5,0.4 3.5,0.3 3.5,0.2 3.5,0.2 3.5,0.2 3.5,0.1 3.5,0.1 3.5,0.1 3.5,0 3.5,0.1 3.5,0 3.5,0 3.5,0 3.5,0.1 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0 3.5,0" class="s-acc" style="stroke-width:2.4" clip-path="url(#f1104-clip)" fill="none"/><path d="M46,36.1l3.5,0.3 3.5,0.3 3.5,0.4 3.5,0.3 3.5,0.4 3.5,0.4 3.5,0.4 3.5,0.5 3.5,0.5 3.5,0.5 3.5,0.5 3.5,0.6 3.5,0.7 3.5,0.6 3.5,0.7 3.5,0.8 3.5,0.7 3.5,0.9 3.5,0.8 3.5,1 3.5,0.9 3.5,1 3.5,1.1 3.5,1.1 3.5,1.2 3.5,1.2 3.5,1.2 3.5,1.3 3.5,1.4 3.5,1.4 3.5,1.5 3.5,1.5 3.5,1.6 3.5,1.7 3.5,1.6 3.5,1.8 3.5,1.8 3.5,1.8 3.5,1.9 3.5,2 3.5,2 3.5,2 3.5,2.1 3.5,2.1 3.5,2.2 3.5,2.2 3.5,2.3 3.5,2.3 3.5,2.3 3.5,2.4 3.5,2.3 3.5,2.5 3.5,2.4 3.5,2.5 3.5,2.4 3.5,2.5 3.5,2.5 3.5,2.6 3.5,2.5 3.5,2.5 3.5,2.5 3.5,2.5 3.5,2.6 3.5,2.5 3.5,2.5 3.5,2.4 3.5,2.5 3.5,2.4 3.5,2.5 3.5,2.3 3.5,2.4 3.5,2.3 3.5,2.3 3.5,2.3 3.5,2.2 3.5,2.2 3.5,2.1 3.5,2.1 3.5,2 3.5,2 3.5,2 3.5,1.9 3.5,1.8 3.5,1.8 3.5,1.8 3.5,1.6 3.5,1.7 3.5,1.6 3.5,1.5 3.5,1.5 3.5,1.4 3.5,1.4 3.5,1.3 3.5,1.2 3.5,1.2 3.5,1.2 3.5,1.1 3.5,1.1 3.5,1 3.5,0.9 3.5,1 3.5,0.8 3.5,0.9 3.5,0.7 3.5,0.8 3.5,0.7 3.5,0.6 3.5,0.7 3.5,0.6 3.5,0.5 3.5,0.5 3.5,0.5 3.5,0.5 3.5,0.4 3.5,0.4 3.5,0.4 3.5,0.3 3.5,0.4 3.5,0.3 3.5,0.3" class="s-line" style="stroke:var(--text);stroke-width:2.4" clip-path="url(#f1104-clip)" fill="none"/><line x1="62.8" y1="135" x2="96.4" y2="135" class="s-acc2" style="stroke-width:2.4"/><text x="104.8" y="138.9" class="t-math" style="font-size:15px" text-anchor="start">1 s</text><line x1="62.8" y1="153" x2="96.4" y2="153" class="s-acc" style="stroke-width:2.4"/><text x="104.8" y="156.9" class="t-math" style="font-size:15px" text-anchor="start">10 s</text><line x1="62.8" y1="171" x2="96.4" y2="171" class="s-line" style="stroke:var(--text);stroke-width:2.4"/><text x="104.8" y="174.9" class="t-math" style="font-size:15px" text-anchor="start">60 s</text><text x="54.4" y="24" class="t-dim" style="font-size:13px" text-anchor="start">t = 0</text><text x="466" y="268" class="t-dim" style="font-size:14px" text-anchor="end">이음매에서 거리 x (cm)</text><text x="52" y="220" class="t-dim" style="font-size:14px" text-anchor="start">온도 (°C)</text></svg>
+      <figcaption><b>그림 11-4.</b> 80 °C와 20 °C 구리 막대를 이은 뒤의 온도 분포 식 <a class="ref" href="#eq-diffusion-erf-solution"></a>(\(D = 1.17 \times 10^{-4}\ \text{m}^2/\text{s}\)). 회색 점선은 처음의 계단이고, 세 곡선은 범례대로 1 s(보조색), 10 s(강조색), 60 s(본문색) 뒤다. 모든 곡선이 이음매에서 50 °C를 지나고, 퍼진 폭 \(2\sqrt{Dt}\)는 2.2 cm, 6.8 cm, 16.8 cm로 \(\sqrt t\)에 비례한다.</figcaption>
+    </figure>
+    <p>오차 함수 해를 \(x\)로 미분하면 \(\partial T/\partial x \propto e^{-x^2/4Dt}/\sqrt{Dt}\)로, 한 점에 준 열이 퍼지는 모양인 <a href="ch20.html#eq-heat-kernel">열 핵</a>(20장)이다. 계단에 대한 응답이 점에 대한 응답의 적분이라는 것을 보여 준다.</p>
+
+    <h3 id="s5-asymptotic">큰 \(x\)의 점근 꼴</h3>
+    <p>\(\operatorname{erfc}x\)는 \(x\)가 클 때 아주 작고, 바로 그 꼬리가 물리에서 중요하다(드문 사건의 확률, 빠른 분자의 비율). 꼬리의 적분에서 \(e^{-t^2} = -\frac{1}{2t}\frac{d}{dt}e^{-t^2}\)로 보고 부분 적분하면</p>
+    <div class="formula">\[ \int_x^\infty e^{-t^2}dt = \frac{e^{-x^2}}{2x} - \int_x^\infty\frac{e^{-t^2}}{2t^2}\,dt \]</div>
+    <p>이다. 남은 적분은 \(1/2t^2\)만큼 작아졌다. 같은 일을 되풀이하면 다음 점근급수를 얻는다.</p>
+    <div class="box thm" id="thm-erfc-asymptotic"><div class="box-h">여오차 함수의 점근 꼴</div>
+      <div class="formula" id="eq-erfc-asymptotic">\[ \begin{aligned} \operatorname{erfc}x \sim \frac{e^{-x^2}}{x\sqrt\pi}\Big[&1 - \frac{1}{2x^2} + \frac{3}{(2x^2)^2} \\ &- \frac{15}{(2x^2)^3} + \cdots\Big] \end{aligned} \]</div>
+      <p>\(n\)번째 항은 \((-1)^n(2n-1)!!/(2x^2)^n\)이다. \(x > 0\)이면, \(N\)개 항에서 자를 때 오차의 크기는 처음 버린 항 이하이고 부호는 그 항과 같다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>\(J_k = \int_x^\infty e^{-t^2}t^{-2k}dt\)라 하자. \(t^{-2k-1}\cdot te^{-t^2}\)으로 보고 부분 적분하면 \(J_k = \dfrac{e^{-x^2}}{2x^{2k+1}} - \dfrac{2k+1}{2}J_{k+1}\)이다. \(J_0\)에서 시작해 \(N\)번 쓰면 \(J_0\)은 괄호 안 급수의 처음 \(N\)항에 \(e^{-x^2}/2x\)를 곱한 것에 나머지 \((-1)^N\frac{(2N-1)!!}{2^N}J_N\)을 더한 것이다. \(t \ge x\)이면 \(t^{-2N} \le x^{-2N-1}t\)이므로 \(0 &lt; J_N \le x^{-2N-1}\int_x^\infty te^{-t^2}dt = e^{-x^2}/(2x^{2N+1})\)이다. 따라서 나머지는 크기가 \(\frac{e^{-x^2}}{2x}\cdot\frac{(2N-1)!!}{(2x^2)^N}\) 이하이고 부호가 \((-1)^N\)이다. 이것은 처음 버린 항이다.</p>
+      </details>
+    </div>
+    <p>이웃한 항의 비는 \((2n+1)/2x^2\)이므로 \(n\)이 \(x^2\)을 넘으면 항이 다시 커진다. 급수는 모든 \(x\)에서 발산하지만, \(n \approx x^2\) 근처에서 자르면 오차가 가장 작다. \(x\)가 조금만 커도 처음 몇 항으로 충분하다.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>\(x\)</th><th>\(\operatorname{erfc}x\)</th><th>1항</th><th>2항</th><th>3항</th></tr></thead>
+      <tbody>
+        <tr><td>2</td><td>\(4.678 \times 10^{-3}\)</td><td>+10%</td><td>−3.4%</td><td>+1.8%</td></tr>
+        <tr><td>3</td><td>\(2.209 \times 10^{-5}\)</td><td>+5.1%</td><td>−0.77%</td><td>+0.20%</td></tr>
+        <tr><td>4</td><td>\(1.542 \times 10^{-8}\)</td><td>+3.0%</td><td>−0.26%</td><td>+0.04%</td></tr>
+      </tbody>
+    </table></div>
+    <p>오차의 부호가 번갈아 바뀌고 크기가 처음 버린 항 이하인 것을 확인할 수 있다.</p>
+
+    <div class="box ex" id="ex-jeans-escape"><div class="box-h">대기에서 탈출 속력보다 빠른 분자의 비율</div>
+      <p>지구 대기의 가장 바깥층(외기권)의 온도를 1000 K로 잡자. 맥스웰 분포 식 <a class="ref" href="#eq-maxwell-speed-distribution"></a>에서 속력이 지구의 탈출 속력 \(v_{\text{esc}} = \sqrt{2gR_\oplus}\)보다 큰 분자의 비율을 수소 원자, 헬륨 원자, 산소 원자에 대해 구하라.</p>
+      <p><b>풀이.</b> \(u = v/v_p\)(\(v_p = \sqrt{2k_BT/m}\))로 바꾸면 \(F(v)\,dv = \frac{4}{\sqrt\pi}u^2e^{-u^2}du\)이다. \(x = v_{\text{esc}}/v_p\)라 하고, \(u^2e^{-u^2} = u\cdot ue^{-u^2}\)으로 보고 부분 적분하면 \(\int_x^\infty u^2e^{-u^2}du = \tfrac12xe^{-x^2} + \tfrac12\int_x^\infty e^{-u^2}du\)이므로</p>
+      <div class="formula" id="eq-maxwell-tail">\[ P(v > v_{\text{esc}}) = \operatorname{erfc}x + \frac{2}{\sqrt\pi}\,x\,e^{-x^2} \]</div>
+      <p>이다. 큰 \(x\)에서는 식 <a class="ref" href="#eq-erfc-asymptotic"></a>의 첫 항을 넣어 \(P \approx \frac{2}{\sqrt\pi}xe^{-x^2}\big(1 + \frac{1}{2x^2}\big)\)이다. 지수 \(x^2 = mv_{\text{esc}}^2/2k_BT\)는 탈출에 필요한 운동 에너지와 \(k_BT\)의 비이고, 질량에 비례한다.</p>
+      <p><b>숫자로 보기.</b> \(v_{\text{esc}} = \sqrt{2 \times 9.81 \times 6.371 \times 10^6}\ \text{m/s} = 11.2\ \text{km/s}\)이다. 1000 K에서</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>원자</th><th>\(v_p\) (km/s)</th><th>\(x\)</th><th>\(P\)</th></tr></thead>
+        <tbody>
+          <tr><td>H</td><td>4.06</td><td>2.75</td><td>\(1.7 \times 10^{-3}\)</td></tr>
+          <tr><td>He</td><td>2.04</td><td>5.49</td><td>\(5.4 \times 10^{-13}\)</td></tr>
+          <tr><td>O</td><td>1.02</td><td>10.97</td><td>\(7 \times 10^{-52}\)</td></tr>
+        </tbody>
+      </table></div>
+      <p>이다. 질량이 16배인 산소는 \(x^2\)이 16배라 비율이 약 \(10^{48}\)배 작다. 수소는 꾸준히 우주로 빠져나가고 산소는 사실상 빠져나가지 못한다. 외기권 바닥(지상 약 500 km)에서는 탈출 속력이 4% 작아(10.8 km/s) 수소는 \(2.8 \times 10^{-3}\), 산소는 \(4.5 \times 10^{-48}\)이 되지만 결론은 그대로다. 이 비율은 탈출하는 빠르기 자체는 아니지만, 빠르기도 같은 인자 \(e^{-x^2}\)로 질량에 기댄다. 단위 확인: \(v_p\)는 \(\sqrt{\text{J/kg}} = \text{m/s}\)이므로 \(x\)는 차원이 없다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 11.6 -->
+  <section id="s6">
+    <h2>타원 적분과 큰 진폭의 진자</h2>
+    <p>1장의 <a href="ch01.html#ex-pendulum-period-series">예제 1.14</a>에서 진폭 \(\theta_0\)인 진자의 주기를 적분 <a href="ch01.html#eq-pendulum-integral">식 (1.36)</a>으로 쓰고, 그것을 급수 <a href="ch01.html#eq-pendulum-period-series">식 (1.38)</a> \(T = T_0(1 + \theta_0^2/16 + 11\theta_0^4/3072 + \cdots)\)로 어림했다. 급수는 작은 진폭에서 훌륭하지만, 진자를 거의 꼭대기에서 놓으면 주기가 한없이 길어지는 현상은 어느 차수에서도 보여 주지 못한다. 이 절에서는 그 적분 자체를 함수로 보고, 정확한 값과 꼭대기 근처의 행동을 구한다.</p>
+    <div class="box def" id="def-elliptic-integral"><div class="box-h">제1종 완전 타원 적분</div>
+      <p>\(0 \le k &lt; 1\)에 대해</p>
+      <div class="formula" id="eq-elliptic-k">\[ \begin{aligned} K(k) &= \int_0^{\pi/2}\frac{d\phi}{\sqrt{1 - k^2\sin^2\phi}} \\ &= \int_0^1\frac{dt}{\sqrt{(1-t^2)(1-k^2t^2)}} \end{aligned} \]</div>
+      <p>를 <span class="term">제1종 완전 타원 적분</span> <span class="en">(complete elliptic integral of the first kind)</span>이라 한다(둘째 줄은 \(t = \sin\phi\)). \(k\)를 <span class="term">모듈러스</span> <span class="en">(modulus)</span>, \(k' = \sqrt{1 - k^2}\)을 <span class="term">보모듈러스</span> <span class="en">(complementary modulus)</span>라 한다. 같은 꼴의 \(E(k) = \int_0^{\pi/2}\sqrt{1 - k^2\sin^2\phi}\,d\phi\)는 <span class="term">제2종 완전 타원 적분</span> <span class="en">(complete elliptic integral of the second kind)</span>이다. 타원의 둘레가 \(4aE(\varepsilon)\)(\(a\)는 긴반지름, \(\varepsilon\)은 이심률)로 쓰여서 "타원 적분"이라는 이름이 붙었다(<a class="ref" href="#prob-ellipse-perimeter"></a>).</p>
+    </div>
+    <p>1장의 식 (1.36)은 바로 이 함수다. \(\omega_0 = \sqrt{g/L}\), \(T_0 = 2\pi/\omega_0\)로 쓰면 진자의 정확한 주기는</p>
+    <div class="formula" id="eq-pendulum-period">\[ T = 4\sqrt{\frac Lg}\;K\Big(\sin\frac{\theta_0}{2}\Big), \quad \frac{T}{T_0} = \frac{2}{\pi}K(k) \]</div>
+    <p>이다. \(k = \sin(\theta_0/2)\)는 진폭이 \(0\)에서 \(180^\circ\)로 갈 때 0에서 1로 간다.</p>
+    <div class="callout warn"><strong>\(K(k)\)인가, \(K(m)\)인가</strong><p>이 책은 모듈러스 \(k\)를 인수로 쓴다. 그런데 SciPy의 <code>scipy.special.ellipk(m)</code>과 아브라모위츠-스티건의 표는 <span class="term">매개변수</span> <span class="en">(parameter)</span> \(m = k^2\)을 받고, 어떤 표는 모듈러스 각 \(\alpha\)(\(k = \sin\alpha\))를 받는다. 진폭 \(90^\circ\)의 진자라면 \(k = 1/\sqrt2\)이므로 코드에는 <code>ellipk(0.5)</code>를 넣어야 하고, <code>ellipk(0.7071)</code>을 넣으면 틀린 값 2.09가 나온다. 코드나 표를 쓸 때는 어느 인수를 받는지 먼저 확인한다.</p></div>
+
+    <h3 id="s6-series">급수와 정확한 값</h3>
+    <p>\((1 - w)^{-1/2} = \sum_n \frac{(2n-1)!!}{(2n)!!}w^n\)(<a href="ch01.html#eq-binomial-series">이항급수 (1.20)</a>)에 \(w = k^2\sin^2\phi\)를 넣고 항별로 적분한다. \(k &lt; 1\)이면 급수가 \(\phi\)에 대해 고르게 수렴하므로 항별 적분이 허용되고, 각 항에는 월리스 적분 식 <a class="ref" href="#eq-wallis"></a>가 나온다.</p>
+    <div class="formula" id="eq-elliptic-k-series">\[ \begin{aligned} K(k) &= \frac\pi2\sum_{n=0}^\infty\Big[\frac{(2n-1)!!}{(2n)!!}\Big]^2k^{2n} \\ &= \frac\pi2\Big[1 + \frac{k^2}{4} + \frac{9k^4}{64} + \frac{25k^6}{256} + \cdots\Big] \end{aligned} \]</div>
+    <p>이다. 처음 세 항은 <a href="ch01.html#eq-pendulum-k-series">1장 식 (1.37)</a>과 같고, 1장에서는 여기에 \(k^2 = \theta_0^2/4 - \theta_0^4/48 + \cdots\)를 넣어 식 (1.38)을 얻었다. 계수는 \(n\)이 커질 때 \(1/\pi n\)처럼만 줄어서, \(k\)가 1에 가까우면 수렴이 매우 느리다. \(90^\circ\)(\(k^2 = \tfrac12\))에서 일곱 항까지 더해도 \(T/T_0\)은 1.1797로 참값보다 0.05% 작다.</p>
+    <p>그런데 \(90^\circ\)에서는 정확한 값을 감마 함수로 쓸 수 있다.</p>
+
+    <div class="box ex" id="ex-pendulum-period"><div class="box-h">수평에서 놓은 진자의 주기</div>
+      <p>길이 \(L = 1.00\ \text{m}\)인 진자를 수평 위치(\(\theta_0 = 90^\circ\))에서 가만히 놓는다. (가) \(T/T_0 = \Gamma(\tfrac14)^2/(2\pi^{3/2})\)임을 보여라. (나) 주기를 계산하고, 1장의 4차 급수와 비교하라.</p>
+      <p><b>풀이.</b> (가) \(k = \sin45^\circ = 1/\sqrt2\)이다. 적분 \(\int_0^1 dx/\sqrt{1 - x^4}\)을 두 가지로 계산한다. 먼저 \(x = \cos\phi\)로 바꾸면 \(\sqrt{1 - x^4} = \sqrt{(1 - x^2)(1 + x^2)} = \sin\phi\sqrt{1 + \cos^2\phi}\)이고 \(dx = -\sin\phi\,d\phi\)이므로</p>
+      <div class="formula">\[ \begin{aligned} \int_0^1\frac{dx}{\sqrt{1 - x^4}} &= \int_0^{\pi/2}\frac{d\phi}{\sqrt{2 - \sin^2\phi}} \\ &= \frac{1}{\sqrt2}K\Big(\frac{1}{\sqrt2}\Big) \end{aligned} \]</div>
+      <p>이다. 다음으로 \(t = x^4\)으로 바꾸면 \(dx = \tfrac14t^{-3/4}dt\)이므로 적분은 \(\tfrac14B(\tfrac14, \tfrac12) = \tfrac14\Gamma(\tfrac14)\Gamma(\tfrac12)/\Gamma(\tfrac34)\)이다. 반사 공식 <a class="ref" href="#eq-gamma-reflection"></a>에서 \(\Gamma(\tfrac14)\Gamma(\tfrac34) = \pi/\sin(\pi/4) = \pi\sqrt2\)이므로 \(\Gamma(\tfrac34) = \pi\sqrt2/\Gamma(\tfrac14)\)이고, 적분은 \(\Gamma(\tfrac14)^2/(4\sqrt{2\pi})\)이다. 두 결과를 같게 놓으면</p>
+      <div class="formula" id="eq-elliptic-k-lemniscate">\[ K\Big(\frac{1}{\sqrt2}\Big) = \frac{\Gamma(\frac14)^2}{4\sqrt\pi} = 1.854\,075 \]</div>
+      <p>이고, 식 <a class="ref" href="#eq-pendulum-period"></a>에서 \(T/T_0 = \frac2\pi K = \Gamma(\tfrac14)^2/(2\pi^{3/2}) = 1.180\,341\)이다. 이 적분 \(\int_0^1 dx/\sqrt{1 - x^4} = 1.311\,03\)은 <a class="ref" href="#ex-quartic-oscillator"></a>의 4차 진동자에서 나온 것과 같은 수다.</p>
+      <p><b>숫자로 보기.</b> (나) \(T_0 = 2\pi\sqrt{1.00/9.81}\ \text{s} = 2.006\ \text{s}\)이므로 \(T = 2.368\ \text{s}\)이다. 작은 진폭의 주기보다 0.362 s, 곧 18.0% 길다. 1장의 급수 (1.38)은 1.1760으로 0.37% 모자라고, 첫 보정 \(1 + \theta_0^2/16\)만 쓰면 1.1542로 2.2% 모자란다. \(\Gamma(\tfrac14)\)는 차원이 없는 수이므로 \(T\)의 차원은 \(\sqrt{L/g}\)의 차원인 초다.</p>
+    </div>
+
+    <h3 id="s6-log">꼭대기 근처: 로그 발산</h3>
+    <p>\(\theta_0 \to 180^\circ\)이면 \(k \to 1\)이고, \(k = 1\)에서 피적분 함수 \(1/\sqrt{1 - \sin^2\phi} = 1/\cos\phi\)는 \(\phi = \pi/2\)에서 적분할 수 없게 커진다. 그래서 \(K(k)\)는 \(k \to 1\)에서 발산한다. 얼마나 빨리 발산하는지 구하자. \(\psi = \pi/2 - \phi\)로 바꾸면 \(1 - k^2\cos^2\psi = k'^2 + k^2\sin^2\psi\)이므로</p>
+    <div class="formula">\[ K(k) = \int_0^{\pi/2}\frac{d\psi}{\sqrt{k'^2 + k^2\sin^2\psi}} \]</div>
+    <p>이다. \(k'\)이 작을 때 이 적분은 두 영역으로 나뉜다. \(k' \ll \psi_1 \ll 1\)인 \(\psi_1\)을 하나 고르자. \(\psi &lt; \psi_1\)에서는 \(\sin\psi \approx \psi\), \(k \approx 1\)이고, \(\psi > \psi_1\)에서는 \(k'^2\)이 \(\sin^2\psi\)에 견줘 무시할 만하다.</p>
+    <div class="formula">\[ \begin{aligned} \int_0^{\psi_1}\frac{d\psi}{\sqrt{k'^2 + \psi^2}} &= \operatorname{arsinh}\frac{\psi_1}{k'} \approx \ln\frac{2\psi_1}{k'} \\ \int_{\psi_1}^{\pi/2}\frac{d\psi}{\sin\psi} &= -\ln\tan\frac{\psi_1}2 \approx \ln\frac2{\psi_1} \end{aligned} \]</div>
+    <p>첫 줄에서는 \(\operatorname{arsinh}y = \ln(y + \sqrt{1 + y^2}) \approx \ln 2y\)(\(y \gg 1\))를, 둘째 줄에서는 \(\tan(\psi_1/2) \approx \psi_1/2\)를 썼다. 두 영역을 더하면 임의로 고른 \(\psi_1\)이 지워진다.</p>
+    <div class="box thm" id="thm-elliptic-k-log"><div class="box-h">\(k \to 1\)에서 \(K(k)\)의 로그 발산</div>
+      <div class="formula" id="eq-elliptic-k-log">\[ K(k) = \ln\frac{4}{k'} + O\Big(k'^2\ln\frac1{k'}\Big), \quad k' = \sqrt{1 - k^2} \]</div>
+      <p>다음 항까지 쓰면 \(K = \ln\frac{4}{k'} + \frac{k'^2}{4}\big(\ln\frac4{k'} - 1\big) + \cdots\)이다. 아래 표의 \(150^\circ\)에서 이 두 항으로 계산한 \(T/T_0\)은 1.7615로, 정확한 값과 0.04% 다르다.</p>
+    </div>
+    <p>\(\psi_1\)이 지워진 것은 계산이 맞다는 신호다. 두 근사가 함께 맞는 겹치는 영역이 있기 때문이다. 진자에서는 \(k' = \cos(\theta_0/2) = \sin\big((\pi - \theta_0)/2\big) \approx (\pi - \theta_0)/2\)이므로, \(\delta = \pi - \theta_0\)이 작을 때</p>
+    <div class="formula" id="eq-pendulum-log-period">\[ T \approx \frac{4}{\omega_0}\ln\frac{8}{\pi - \theta_0} \]</div>
+    <p>이다. 이 식은 10장의 위상 평면 그림으로 읽을 수 있다. 꼭대기는 안장점이고, 그 근처에서 진자는 선형화한 운동 \(e^{\pm\omega_0t}\)를 따른다(<a href="ch10.html#ex-pendulum-fixed-points">예제 10.8</a>). 꼭대기에서 각도 \(\delta\)만큼 떨어진 곳에서 크기 1 정도까지 벗어나는 데 \(\frac{1}{\omega_0}\ln\frac1\delta\)이 걸리고, 다가올 때도 같은 시간이 걸린다. 한 주기에 꼭대기 근처를 두 번(양쪽 끝) 지나므로 모두 \(\frac{4}{\omega_0}\ln\frac1\delta\)이다. 식 <a class="ref" href="#eq-pendulum-log-period"></a>의 계수 \(4/\omega_0\)이 바로 이것이다. 로그 안의 8은 꼭대기에서 먼 부분의 운동이 정한다.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>진폭 \(\theta_0\)</th><th>\(T/T_0\) 정확한 값</th><th>1장 식 (1.38)</th><th>\(\frac2\pi\ln\frac{4}{k'}\)</th></tr></thead>
+      <tbody>
+        <tr><td>60°</td><td>1.0732</td><td>1.0728</td><td>0.9741</td></tr>
+        <tr><td>120°</td><td>1.3729</td><td>1.3431</td><td>1.3238</td></tr>
+        <tr><td>150°</td><td>1.7622</td><td>1.5966</td><td>1.7430</td></tr>
+        <tr><td>170°</td><td>2.4394</td><td>1.8277</td><td>2.4359</td></tr>
+        <tr><td>179°</td><td>3.9011</td><td>1.9511</td><td>3.9010</td></tr>
+      </tbody>
+    </table></div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 290" role="img" aria-label="진자 주기와 작은 진폭 주기의 비를 진폭에 대해 그린 그래프. 정확한 값은 180도에 다가가며 로그로 발산하고, 4차 급수는 큰 진폭에서 크게 모자라며, 로그 점근 꼴은 큰 진폭에서 정확한 값과 겹친다"><defs><clipPath id="f1105-clip"><rect x="46" y="18" width="420" height="220"/></clipPath></defs><line x1="46" y1="238" x2="466" y2="238" class="s-line"/><line x1="46" y1="18" x2="46" y2="238" class="s-line"/><line x1="46" y1="18" x2="46" y2="238" class="s-grid"/><line x1="116" y1="18" x2="116" y2="238" class="s-grid"/><line x1="186" y1="18" x2="186" y2="238" class="s-grid"/><line x1="256" y1="18" x2="256" y2="238" class="s-grid"/><line x1="326" y1="18" x2="326" y2="238" class="s-grid"/><line x1="396" y1="18" x2="396" y2="238" class="s-grid"/><line x1="466" y1="18" x2="466" y2="238" class="s-grid"/><line x1="46" y1="224.2" x2="466" y2="224.2" class="s-grid"/><line x1="46" y1="155.5" x2="466" y2="155.5" class="s-grid"/><line x1="46" y1="86.8" x2="466" y2="86.8" class="s-grid"/><line x1="46" y1="18" x2="466" y2="18" class="s-grid"/><text x="46" y="258" class="t-dim" style="font-size:14px" text-anchor="middle">0°</text><text x="116" y="258" class="t-dim" style="font-size:14px" text-anchor="middle">30°</text><text x="186" y="258" class="t-dim" style="font-size:14px" text-anchor="middle">60°</text><text x="256" y="258" class="t-dim" style="font-size:14px" text-anchor="middle">90°</text><text x="326" y="258" class="t-dim" style="font-size:14px" text-anchor="middle">120°</text><text x="396" y="258" class="t-dim" style="font-size:14px" text-anchor="middle">150°</text><text x="466" y="258" class="t-dim" style="font-size:14px" text-anchor="middle">180°</text><text x="39" y="229.2" class="t-dim" style="font-size:14px" text-anchor="end">1</text><text x="39" y="160.5" class="t-dim" style="font-size:14px" text-anchor="end">2</text><text x="39" y="91.8" class="t-dim" style="font-size:14px" text-anchor="end">3</text><text x="39" y="23" class="t-dim" style="font-size:14px" text-anchor="end">4</text><path d="M46,224.2l1.7,0 1.8,0 1.7,0 1.8,0 1.7,0 1.8,0 1.7,0 1.8,0 1.7,0 1.8,0 1.7,0 1.8,-0.1 1.7,0 1.8,0 1.7,0 1.8,0 1.7,-0.1 1.8,0 1.7,0 1.8,0 1.7,-0.1 1.8,0 1.7,0 1.8,-0.1 1.7,0 1.8,-0.1 1.7,0 1.8,0 1.7,-0.1 1.8,0 1.7,-0.1 1.8,0 1.7,-0.1 1.8,0 1.7,-0.1 1.8,0 1.7,-0.1 1.8,0 1.7,-0.1 1.8,0 1.7,-0.1 1.8,-0.1 1.7,0 1.8,-0.1 1.7,-0.1 1.8,0 1.7,-0.1 1.8,-0.1 1.7,-0.1 1.8,0 1.7,-0.1 1.8,-0.1 1.7,-0.1 1.8,-0.1 1.7,0 1.8,-0.1 1.7,-0.1 1.8,-0.1 1.7,-0.1 1.8,-0.1 1.7,-0.1 1.8,-0.1 1.7,-0.1 1.8,-0.1 1.7,-0.1 1.8,-0.1 1.7,-0.1 1.8,-0.1 1.7,-0.1 1.8,-0.1 1.7,-0.2 1.8,-0.1 1.7,-0.1 1.8,-0.1 1.7,-0.1 1.8,-0.2 1.7,-0.1 1.8,-0.1 1.7,-0.1 1.8,-0.2 1.7,-0.1 1.8,-0.2 1.7,-0.1 1.8,-0.1 1.7,-0.2 1.8,-0.1 1.7,-0.2 1.8,-0.1 1.7,-0.2 1.8,-0.1 1.7,-0.2 1.8,-0.2 1.7,-0.1 1.8,-0.2 1.7,-0.1 1.8,-0.2 1.7,-0.2 1.8,-0.2 1.7,-0.1 1.8,-0.2 1.7,-0.2 1.8,-0.2 1.7,-0.2 1.7,-0.2 1.8,-0.2 1.7,-0.2 1.8,-0.2 1.7,-0.2 1.8,-0.2 1.7,-0.2 1.8,-0.2 1.7,-0.2 1.8,-0.2 1.7,-0.2 1.8,-0.3 1.7,-0.2 1.8,-0.2 1.7,-0.3 1.8,-0.2 1.7,-0.2 1.8,-0.3 1.7,-0.2 1.8,-0.3 1.7,-0.2 1.8,-0.3 1.7,-0.3 1.8,-0.2 1.7,-0.3 1.8,-0.3 1.7,-0.2 1.8,-0.3 1.7,-0.3 1.8,-0.3 1.7,-0.3 1.8,-0.3 1.7,-0.3 1.8,-0.3 1.7,-0.3 1.8,-0.3 1.7,-0.4 1.8,-0.3 1.7,-0.3 1.8,-0.4 1.7,-0.3 1.8,-0.3 1.7,-0.4 1.8,-0.4 1.7,-0.3 1.8,-0.4 1.7,-0.4 1.8,-0.3 1.7,-0.4 1.8,-0.4 1.7,-0.4 1.8,-0.4 1.7,-0.4 1.8,-0.5 1.7,-0.4 1.8,-0.4 1.7,-0.5 1.8,-0.4 1.7,-0.5 1.8,-0.4 1.7,-0.5 1.8,-0.5 1.7,-0.5 1.8,-0.5 1.7,-0.5 1.8,-0.5 1.7,-0.5 1.8,-0.5 1.7,-0.6 1.8,-0.5 1.7,-0.6 1.8,-0.6 1.7,-0.6 1.8,-0.6 1.7,-0.6 1.8,-0.6 1.7,-0.6 1.8,-0.7 1.7,-0.6 1.8,-0.7 1.7,-0.7 1.8,-0.7 1.7,-0.7 1.8,-0.7 1.7,-0.8 1.8,-0.7 1.7,-0.8 1.8,-0.8 1.7,-0.8 1.8,-0.9 1.7,-0.8 1.8,-0.9 1.7,-0.9 1.8,-1 1.7,-0.9 1.8,-1 1.7,-1 1.8,-1 1.7,-1.1 1.8,-1.1 1.7,-1.1 1.8,-1.2 1.7,-1.2 1.7,-1.2 1.8,-1.3 1.7,-1.3 1.8,-1.4 1.7,-1.4 1.8,-1.5 1.7,-1.5 1.8,-1.6 1.7,-1.6 1.8,-1.8 1.7,-1.8 1.8,-1.9 1.7,-1.9 1.8,-2.1 1.7,-2.2 1.8,-2.3 1.7,-2.5 1.8,-2.6 1.7,-2.7 1.8,-3 1.7,-3.2 1.8,-3.4 1.7,-3.8 1.8,-4.1 1.7,-4.6 1.8,-5 1.7,-5.8 1.8,-6.7 1.7,-7.8 1.8,-9.6 1.7,-12.4 1.8,-17.2 1.7,-29 1.8,-121.3" class="s-acc" style="stroke-width:2.6" clip-path="url(#f1105-clip)" fill="none"/><path d="M46,224.2l7,0 7,0 7,-0.1 7,0 7,-0.1 7,-0.2 7,-0.1 7,-0.2 7,-0.2 7,-0.2 7,-0.3 7,-0.3 7,-0.3 7,-0.3 7,-0.4 7,-0.4 7,-0.4 7,-0.5 7,-0.4 7,-0.6 7,-0.5 7,-0.6 7,-0.6 7,-0.6 7,-0.7 7,-0.8 7,-0.7 7,-0.8 7,-0.9 7,-0.9 7,-0.9 7,-1 7,-1 7,-1 7,-1.2 7,-1.1 7,-1.2 7,-1.3 7,-1.3 7,-1.4 7,-1.5 7,-1.5 7,-1.6 7,-1.6 7,-1.7 7,-1.8 7,-1.8 7,-1.9 7,-2 7,-2.1 7,-2.1 7,-2.2 7,-2.3 7,-2.4 7,-2.5 7,-2.6 7,-2.7 7,-2.7 7,-2.9 7,-2.9" class="s-line" style="stroke:var(--text);stroke-width:1.6" stroke-dasharray="6 4" clip-path="url(#f1105-clip)" fill="none"/><path d="M92.7,231.7l2.2,-0.1 2.2,-0.1 2.2,0 2.1,-0.1 2.2,-0.1 2.2,-0.1 2.2,-0.1 2.2,0 2.2,-0.1 2.2,-0.1 2.2,-0.1 2.2,-0.1 2.2,-0.1 2.2,-0.1 2.2,-0.1 2.2,-0.2 2.2,-0.1 2.2,-0.1 2.2,-0.1 2.2,-0.1 2.2,-0.2 2.2,-0.1 2.2,-0.1 2.2,-0.2 2.2,-0.1 2.1,-0.2 2.2,-0.1 2.2,-0.2 2.2,-0.1 2.2,-0.2 2.2,-0.1 2.2,-0.2 2.2,-0.2 2.2,-0.1 2.2,-0.2 2.2,-0.2 2.2,-0.2 2.2,-0.2 2.2,-0.2 2.2,-0.2 2.2,-0.2 2.2,-0.2 2.2,-0.2 2.2,-0.2 2.2,-0.2 2.2,-0.2 2.2,-0.2 2.1,-0.3 2.2,-0.2 2.2,-0.2 2.2,-0.3 2.2,-0.2 2.2,-0.3 2.2,-0.2 2.2,-0.3 2.2,-0.2 2.2,-0.3 2.2,-0.3 2.2,-0.3 2.2,-0.2 2.2,-0.3 2.2,-0.3 2.2,-0.3 2.2,-0.3 2.2,-0.3 2.2,-0.3 2.2,-0.3 2.2,-0.4 2.1,-0.3 2.2,-0.3 2.2,-0.4 2.2,-0.3 2.2,-0.3 2.2,-0.4 2.2,-0.4 2.2,-0.3 2.2,-0.4 2.2,-0.4 2.2,-0.4 2.2,-0.4 2.2,-0.3 2.2,-0.5 2.2,-0.4 2.2,-0.4 2.2,-0.4 2.2,-0.4 2.2,-0.5 2.2,-0.4 2.2,-0.5 2.2,-0.4 2.1,-0.5 2.2,-0.5 2.2,-0.5 2.2,-0.5 2.2,-0.5 2.2,-0.5 2.2,-0.5 2.2,-0.5 2.2,-0.6 2.2,-0.5 2.2,-0.6 2.2,-0.6 2.2,-0.5 2.2,-0.6 2.2,-0.6 2.2,-0.6 2.2,-0.7 2.2,-0.6 2.2,-0.6 2.2,-0.7 2.2,-0.7 2.2,-0.7 2.1,-0.7 2.2,-0.7 2.2,-0.7 2.2,-0.8 2.2,-0.7 2.2,-0.8 2.2,-0.8 2.2,-0.8 2.2,-0.9 2.2,-0.8 2.2,-0.9 2.2,-0.9 2.2,-0.9 2.2,-0.9 2.2,-1 2.2,-1 2.2,-1 2.2,-1 2.2,-1.1 2.2,-1.1 2.2,-1.1 2.1,-1.2 2.2,-1.2 2.2,-1.2 2.2,-1.3 2.2,-1.3 2.2,-1.4 2.2,-1.4 2.2,-1.4 2.2,-1.5 2.2,-1.6 2.2,-1.6 2.2,-1.7 2.2,-1.8 2.2,-1.8 2.2,-1.9 2.2,-2 2.2,-2.1 2.2,-2.2 2.2,-2.4 2.2,-2.5 2.2,-2.6 2.2,-2.8 2.1,-3 2.2,-3.2 2.2,-3.5 2.2,-3.8 2.2,-4.1 2.2,-4.6 2.2,-5.1 2.2,-5.8 2.2,-6.7 2.2,-7.9 2.2,-9.6 2.2,-12.4 2.2,-17.4 2.2,-29.2 2.2,-130.7" class="s-acc2" style="stroke-width:1.8" stroke-dasharray="3 3" clip-path="url(#f1105-clip)" fill="none"/><circle cx="256" cy="211.9" r="4.5" class="f-acc"/><text x="251.3" y="198.1" class="t-mono" style="font-size:13px" text-anchor="end">90°: 1.1803</text><text x="396" y="52.4" class="t-math acc" style="font-size:15px" text-anchor="end">정확한 값</text><text x="433.3" y="206.4" class="t-math" style="font-size:15px" text-anchor="middle">4차 급수</text><text x="272.3" y="233.9" class="t-math acc2" style="font-size:15px" text-anchor="start">(2/π) ln(4/k′)</text><text x="466" y="278" class="t-dim" style="font-size:14px" text-anchor="end">진폭 θ₀</text><text x="52" y="32" class="t-dim" style="font-size:14px" text-anchor="start">T/T₀</text></svg>
+      <figcaption><b>그림 11-5.</b> 진자 주기와 작은 진폭 주기의 비 \(T/T_0 = \frac2\pi K(\sin\frac{\theta_0}2)\). 강조색 실선은 정확한 값, 본문색 점선('4차 급수')은 1장의 식 (1.38), 보조색 점선은 로그 점근 꼴 식 <a class="ref" href="#eq-elliptic-k-log"></a>이다. 급수는 \(120^\circ\)를 넘으면 크게 모자라고, 점근 꼴은 \(150^\circ\) 위에서 정확한 값과 겹친다. 곡선은 산술-기하 평균(아래 콜아웃)으로 \(K\)를 계산해 그렸다.</figcaption>
+    </figure>
+    <p><b>숫자로 보기.</b> \(179^\circ\)에서 놓은 진자의 주기는 \(3.90\,T_0\)이고, \(179.9^\circ\)이면 \(5.37\,T_0\)이다. 꼭대기와의 거리를 10분의 1로 줄일 때마다 주기가 \(\frac2\pi\ln10\,T_0 = 1.47\,T_0\)씩만 늘어난다. 주기를 \(10\,T_0\)으로 만들려면 \(\frac2\pi\ln\frac8\delta = 10\)에서 \(\delta = 8e^{-5\pi} = 1.2 \times 10^{-6}\ \text{rad}\)이어야 한다. 길이 1 m인 진자의 추를 꼭대기에서 1.2 μm 안에 놓아야 한다는 뜻이다.</p>
+    <div data-sim="pendulum" data-title="큰 진폭에서 길어지는 주기 — 4√(L/g)·K(sin(θ₀/2))" data-note="해볼 것: 감쇠 γ를 0으로 두고 처음 각도 θ₀를 90°, 150°, 170°, 179°로 바꿔 '측정 주기'와 '이론 주기'를 비교하세요. 이론 주기는 타원 적분 K로 계산한 값입니다. 90°에서는 작은 각 주기의 1.18배, 179°에서는 3.9배입니다. 위상 공간의 궤적이 분리선(점선)에 붙을수록 진자가 꼭대기 근처에서 오래 머뭅니다. 179°에서는 측정 주기가 나오기까지 20초쯤 기다리세요."></div>
+    <div class="callout tip"><strong>산술-기하 평균으로 \(K\)를 계산하기</strong><p>\(a_0 = 1\), \(b_0 = k'\)에서 시작해 \(a_{n+1} = (a_n + b_n)/2\), \(b_{n+1} = \sqrt{a_nb_n}\)을 되풀이하면 두 수열은 같은 극한 \(M(1, k')\)으로 가고, \(K(k) = \pi/[2M(1, k')]\)이다(가우스, J. M. Borwein, P. B. Borwein, <i>Pi and the AGM</i>, Wiley 1987, 1장). 한 번 되풀이할 때마다 맞는 자릿수가 대략 두 배가 되어, \(k = 0.9999\)에서도 여섯 번이면 배정밀도에 이른다. 급수 식 <a class="ref" href="#eq-elliptic-k-series"></a>으로는 여섯 자리를 맞추는 데만 4만 5천 항이 넘게 필요한 곳이다. 이 장의 진자 실험도 이 방법으로 이론 주기를 계산한다.</p>
+<pre><code>import math
+
+def ellipk(k):
+    """K(k), 인수는 모듈러스 k (SciPy의 m = k**2가 아님)"""
+    a, b = 1.0, math.sqrt(1 - k * k)
+    while abs(a - b) > 1e-15:
+        a, b = (a + b) / 2, math.sqrt(a * b)
+    return math.pi / (2 * a)
+
+for deg in (90, 150, 179):
+    k = math.sin(math.radians(deg) / 2)
+    print(deg, 2 / math.pi * ellipk(k))   # 1.180341, 1.762204, 3.901065
+print(math.gamma(0.25)**2 / (4 * math.sqrt(math.pi)), ellipk(2**-0.5))</code></pre></div>
+    <p>진자의 각도 \(\theta(t)\) 자체도 타원 적분을 뒤집은 함수, 곧 <span class="term">야코비 타원 함수</span> <span class="en">(Jacobi elliptic functions)</span> \(\operatorname{sn}\), \(\operatorname{cn}\)으로 닫힌 꼴로 쓸 수 있다. 이 책에서는 이름만 적어 둔다.</p>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>가우스 적분의 모멘트는 \(\sqrt{\pi/a}\)를 \(a\)로 미분해서 얻는다: \(\int_{-\infty}^\infty x^{2n}e^{-ax^2}dx = \frac{(2n-1)!!}{(2a)^n}\sqrt{\pi/a}\). 반직선의 홀수 모멘트는 \(n!/2a^{n+1}\)이다. 정규분포에서는 \(\langle x^{2n}\rangle = (2n-1)!!\,\sigma^{2n}\)이다.</li>
+      <li>일반 가우스 적분 \(\int e^{-ax^2+bx}dx = \sqrt{\pi/a}\,e^{b^2/4a}\)는 완전제곱으로 얻고, 복소수 \(b\)에서도 성립한다. \(b = ik\)이면 가우스 함수의 푸리에 변환이 된다. 맥스웰 분포의 대표 속력은 \(v_p : \langle v\rangle : v_{\text{rms}} = 1 : 2/\sqrt\pi : \sqrt{3/2}\)이다.</li>
+      <li>감마 함수 \(\Gamma(z) = \int_0^\infty t^{z-1}e^{-t}dt\)는 \(\Gamma(z+1) = z\Gamma(z)\), \(\Gamma(n+1) = n!\), \(\Gamma(\tfrac12) = \sqrt\pi\)를 만족하고, 점화식으로 넓히면 \(0, -1, -2, \ldots\)에서 극을 갖는다. 반사 공식 \(\Gamma(z)\Gamma(1-z) = \pi/\sin\pi z\)는 19장에서 증명한다.</li>
+      <li>베타 함수 \(B(p, q) = \int_0^1 t^{p-1}(1-t)^{q-1}dt = \Gamma(p)\Gamma(q)/\Gamma(p+q)\)는 삼각 함수 거듭제곱의 적분과 \(\lvert x\rvert^\nu\) 퍼텐셜의 주기를 계산한다.</li>
+      <li>\(n\)차원 공의 부피는 \(V_n(R) = \pi^{n/2}R^n/\Gamma(\tfrac n2 + 1)\), 겉넓이는 \(S_n(R) = 2\pi^{n/2}R^{n-1}/\Gamma(\tfrac n2)\)이다. 차원이 높으면 부피가 겉면 근처에 몰린다.</li>
+      <li>라플라스 방법: \(\int g\,e^{Nf}dx \sim g(x_0)e^{Nf(x_0)}\sqrt{2\pi/N\lvert f''(x_0)\rvert}\). 여기서 스털링 공식 \(n! \sim \sqrt{2\pi n}(n/e)^n\), \(\ln n! = n\ln n - n + \tfrac12\ln 2\pi n + \tfrac{1}{12n} - \cdots\)이 나오고, 이상 기체의 위상 공간 부피에 쓰면 자쿠르-테트로데 식이 된다.</li>
+      <li>오차 함수 \(\operatorname{erf}x = \frac{2}{\sqrt\pi}\int_0^x e^{-t^2}dt\)는 정규분포의 확률(\(P(\lvert x - \mu\rvert &lt; n\sigma) = \operatorname{erf}(n/\sqrt2)\))과 확산의 계단 응답을 준다. 큰 \(x\)에서 \(\operatorname{erfc}x \sim e^{-x^2}/(x\sqrt\pi)\)이고, 이 점근급수는 발산하지만 오차가 처음 버린 항 이하다.</li>
+      <li>진자의 정확한 주기는 \(T = 4\sqrt{L/g}\,K(\sin\frac{\theta_0}2)\)이다. \(90^\circ\)에서 \(T/T_0 = \Gamma(\tfrac14)^2/2\pi^{3/2} = 1.1803\)이고, \(\theta_0 \to 180^\circ\)에서 \(K \approx \ln(4/k')\)이므로 \(T \approx \frac{4}{\omega_0}\ln\frac{8}{\pi - \theta_0}\)로 로그 발산한다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. \(\displaystyle\int_{-\infty}^\infty x^4e^{-x^2}dx\)의 값은?</p><div class="opts">
+        <button class="opt">\(\sqrt\pi/2\)</button>
+        <button class="opt" data-correct>\(3\sqrt\pi/4\)</button>
+        <button class="opt">\(3\sqrt\pi/2\)</button>
+        <button class="opt">\(2\)</button>
+      </div><div class="quiz-exp">식 <a class="ref" href="#eq-gaussian-moments"></a>에서 \(a = 1\), \(n = 2\)이면 \(3!!/2^2\cdot\sqrt\pi = 3\sqrt\pi/4\)이다. \(\sqrt\pi\)를 \(a\)로 두 번 미분한 \(\tfrac12\cdot\tfrac32\sqrt\pi\)와 같다. \(\sqrt\pi/2\)는 \(x^2\)의 모멘트 \(I_2\)이다.</div></div>
+      <div class="quiz-q"><p>2. \(\Gamma(\tfrac72)\)의 값은?</p><div class="opts">
+        <button class="opt">\(3\sqrt\pi/4\)</button>
+        <button class="opt">\(5\sqrt\pi/4\)</button>
+        <button class="opt" data-correct>\(15\sqrt\pi/8\)</button>
+        <button class="opt">\(15\sqrt\pi/16\)</button>
+      </div><div class="quiz-exp">\(\Gamma(\tfrac72) = \tfrac52\cdot\tfrac32\cdot\tfrac12\,\Gamma(\tfrac12) = \tfrac{15}{8}\sqrt\pi\)이다. 점화식 \(\Gamma(z+1) = z\Gamma(z)\)를 세 번 쓴다. \(3\sqrt\pi/4\)는 \(\Gamma(\tfrac52)\)이다.</div></div>
+      <div class="quiz-q"><p>3. 반지름 1인 \(n\)차원 공의 부피 \(V_n(1)\)은 \(n \to \infty\)에서 어떻게 되는가?</p><div class="opts">
+        <button class="opt">한없이 커진다.</button>
+        <button class="opt">\(\pi\)로 간다.</button>
+        <button class="opt" data-correct>0으로 간다.</button>
+        <button class="opt">2와 0 사이를 오간다.</button>
+      </div><div class="quiz-exp">\(V_n(1) = \pi^{n/2}/\Gamma(\tfrac n2 + 1)\)에서 분모는 계승처럼 커지고 분자는 지수적으로만 커지므로 0으로 간다. 최댓값은 \(n = 5\)의 5.26이다(그림 11-2). 같은 공을 감싸는 정육면체의 부피 \(2^n\)과 비교하면 더 빨리 작아진다.</div></div>
+      <div class="quiz-q"><p>4. \(n! \sim \sqrt{2\pi n}\,(n/e)^n\)에 대한 설명으로 옳은 것은?</p><div class="opts">
+        <button class="opt">\(n\)이 커지면 두 쪽의 차이가 0으로 간다.</button>
+        <button class="opt" data-correct>두 쪽의 비는 1로 가지만 차이는 한없이 커진다.</button>
+        <button class="opt">\(n \ge 10\)이면 두 쪽이 정확히 같다.</button>
+        <button class="opt">\(n\)이 커지면 비가 \(1 + 1/12\)로 간다.</button>
+      </div><div class="quiz-exp">\(\sim\)은 비가 1로 간다는 뜻이다(<a class="ref" href="#def-asymptotic"></a>). 비는 \(1 + 1/12n + \cdots\)이므로, 차이는 대략 \(n!/12n\)이 되어 한없이 커진다. 그래도 상대 오차는 \(n = 10\)에서 0.8%에 불과하다.</div></div>
+      <div class="quiz-q"><p>5. 정규분포에서 값이 평균으로부터 \(2\sigma\) 안에 있을 확률은?</p><div class="opts">
+        <button class="opt">\(\operatorname{erf}2 = 0.9953\)</button>
+        <button class="opt" data-correct>\(\operatorname{erf}\sqrt2 = 0.9545\)</button>
+        <button class="opt">\(\operatorname{erf}1 = 0.8427\)</button>
+        <button class="opt">\(\tfrac12\operatorname{erfc}\sqrt2 = 0.0228\)</button>
+      </div><div class="quiz-exp">\(P(\lvert x - \mu\rvert &lt; n\sigma) = \operatorname{erf}(n/\sqrt2)\)이고 \(n = 2\)이면 \(\operatorname{erf}\sqrt2\)이다. 오차 함수는 \(e^{-t^2}\)을, 정규분포는 \(e^{-s^2/2}\)을 적분하므로 \(\sqrt2\)가 끼어든다. 마지막 보기는 \(2\sigma\)를 넘는 한쪽 꼬리의 확률이다.</div></div>
+      <div class="quiz-q"><p>6. 진폭 \(\theta_0\)을 \(180^\circ\)에 가깝게 할 때 진자의 주기는 \(\delta = \pi - \theta_0\)에 대해 어떻게 커지는가?</p><div class="opts">
+        <button class="opt">\(\delta \to 0\)이어도 \(2T_0\)을 넘지 않는다.</button>
+        <button class="opt">\(1/\delta\)에 비례해 커진다.</button>
+        <button class="opt" data-correct>\(\ln(1/\delta)\)에 비례해 커진다.</button>
+        <button class="opt">\(e^{1/\delta}\)처럼 커진다.</button>
+      </div><div class="quiz-exp">\(K(k) \approx \ln(4/k')\)이고 \(k' \approx \delta/2\)이므로 \(T \approx \frac{4}{\omega_0}\ln\frac8\delta\)이다. 꼭대기 근처에서 진자가 \(e^{\omega_0t}\)로 벗어나므로, 벗어나는 데 걸리는 시간이 거리의 로그에 비례한다. 1장의 급수는 \(\theta_0 = \pi\)에서도 유한한 값(약 1.97)을 주어 이 발산을 보지 못한다.</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-gaussian-practice" data-level="1"><p>다음을 계산하라. (가) \(\displaystyle\int_{-\infty}^\infty x^6e^{-x^2}dx\) (나) \(\displaystyle\int_0^\infty x^5e^{-x^2/2}dx\) (다) \(\displaystyle\int_{-\infty}^\infty x^2e^{-x^2+2x}dx\)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 식 <a class="ref" href="#eq-gaussian-moments"></a>에서 \(a = 1\), \(n = 3\)이므로 \(5!!\,\sqrt\pi/2^3 = 15\sqrt\pi/8 = 3.323\)이다.</p>
+        <p>(나) 식 <a class="ref" href="#eq-gaussian-odd-half"></a>에서 \(a = \tfrac12\), \(n = 2\)이므로 \(2!/(2\cdot(\tfrac12)^3) = 8\)이다.</p>
+        <p>(다) \(-x^2 + 2x = -(x - 1)^2 + 1\)이므로 \(y = x - 1\)로 두면 \(e\int(y+1)^2e^{-y^2}dy = e\big(\tfrac{\sqrt\pi}{2} + 0 + \sqrt\pi\big) = \tfrac32\sqrt\pi\,e = 7.227\)이다. 가운데 항 \(2ye^{-y^2}\)은 홀함수라 0이다. 식 <a class="ref" href="#eq-gaussian-general"></a>을 \(b\)로 두 번 미분해 \(b = 2\)를 넣어도 \(\sqrt\pi\,\partial_b^2e^{b^2/4} = \sqrt\pi(\tfrac12 + \tfrac{b^2}{4})e^{b^2/4} = \tfrac32\sqrt\pi\,e\)로 같다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-gamma-practice" data-level="1"><p>감마 함수로 다음을 구하라. (가) \(\Gamma(\tfrac92)\) (나) \(\displaystyle\int_0^1\sqrt{\ln(1/x)}\,dx\) (다) \(\displaystyle\int_0^\infty x^2e^{-\sqrt x}dx\) (라) \(\sqrt t\)의 라플라스 변환</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\Gamma(\tfrac92) = \tfrac72\cdot\tfrac52\cdot\tfrac32\cdot\tfrac12\sqrt\pi = \tfrac{105}{16}\sqrt\pi = 11.63\).</p>
+        <p>(나) \(x = e^{-t}\)로 두면 \(dx = -e^{-t}dt\)이고 \(x\)가 0에서 1로 갈 때 \(t\)는 \(\infty\)에서 0으로 간다. 적분은 \(\int_0^\infty t^{1/2}e^{-t}dt = \Gamma(\tfrac32) = \sqrt\pi/2\)이다.</p>
+        <p>(다) \(x = t^2\), \(dx = 2t\,dt\)이면 \(2\int_0^\infty t^5e^{-t}dt = 2\,\Gamma(6) = 240\)이다.</p>
+        <p>(라) \(\int_0^\infty t^{1/2}e^{-st}dt\)에서 \(u = st\)로 두면 \(\Gamma(\tfrac32)/s^{3/2} = \sqrt\pi/(2s^{3/2})\)이다(\(s > 0\)).</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-doppler-broadening" data-level="2"><p>기체 속 원자가 내는 빛은 원자가 시선 방향으로 움직이는 속도 \(v_x\) 때문에 파장이 \(\lambda = \lambda_0(1 + v_x/c)\)로 바뀐다(1차 도플러 효과). (가) \(v_x\)가 1차원 맥스웰 분포를 따를 때 선의 모양이 가우스 함수이고, 그 표준편차가 \(\sigma_\lambda = \lambda_0\sqrt{k_BT/mc^2}\)임을 보여라. (나) 반치폭(최댓값의 절반이 되는 두 파장 사이의 폭)이 \(2\sqrt{2\ln2}\,\sigma_\lambda\)임을 보여라. (다) 온도 \(1.00 \times 10^4\ \text{K}\)인 수소 기체의 \(H\alpha\)선(\(\lambda_0 = 656.28\ \text{nm}\))의 반치폭을 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 1차원 맥스웰 분포는 \(a = m/2k_BT\)인 가우스 함수이므로 식 <a class="ref" href="#eq-normal-moments"></a>에 따라 표준편차가 \(\sigma_v = \sqrt{k_BT/m}\)인 정규분포다. \(\lambda - \lambda_0 = \lambda_0v_x/c\)는 \(v_x\)에 상수를 곱한 것이므로 역시 정규분포이고, 표준편차는 \(\lambda_0\sigma_v/c = \lambda_0\sqrt{k_BT/mc^2}\)이다.</p>
+        <p>(나) \(e^{-y^2/2\sigma^2} = \tfrac12\)에서 \(y = \pm\sigma\sqrt{2\ln2}\)이므로 폭은 \(2\sqrt{2\ln2}\,\sigma = 2.355\,\sigma\)이다.</p>
+        <p>(다) \(m = 1.008\ \text{u} = 1.674 \times 10^{-27}\ \text{kg}\)이면 \(\sigma_v = \sqrt{k_BT/m} = 9.08\ \text{km/s}\)이고, \(\sigma_\lambda = 656.28\ \text{nm} \times 9.08 \times 10^3/(3.00 \times 10^8) = 0.0199\ \text{nm}\)이다. 반치폭은 \(2.355 \times 0.0199 = 0.047\ \text{nm}\)이다. 폭이 \(\sqrt{T/m}\)에 비례하므로 선폭을 재면 기체의 온도를 알 수 있다. 차원: \(k_BT/mc^2\)은 에너지의 비라 차원이 없다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-beta-practice" data-level="1"><p>베타 함수로 다음을 계산하라. (가) \(\displaystyle\int_0^1 x^2\sqrt{1 - x^2}\,dx\) (나) \(\displaystyle\int_0^{\pi/2}\sin^3\theta\cos^5\theta\,d\theta\) (다) \(\displaystyle\int_0^\infty\frac{dx}{(1+x^2)^3}\)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(x = \sin\theta\)이면 \(\int_0^{\pi/2}\sin^2\theta\cos^2\theta\,d\theta = \tfrac12B(\tfrac32, \tfrac32) = \Gamma(\tfrac32)^2/(2\Gamma(3)) = (\pi/4)/4 = \pi/16\)이다.</p>
+        <p>(나) 식 <a class="ref" href="#eq-beta-trig"></a>에서 \(2p - 1 = 3\), \(2q - 1 = 5\)이므로 \(\tfrac12B(2, 3) = \tfrac12\cdot\tfrac{1!\,2!}{4!} = \tfrac{1}{24}\)이다.</p>
+        <p>(다) \(u = x^2\), \(dx = du/(2\sqrt u)\)이면 \(\tfrac12\int_0^\infty u^{-1/2}(1+u)^{-3}du\)이다. 식 <a class="ref" href="#eq-beta-infinite"></a>에서 \(p = \tfrac12\), \(p + q = 3\)이므로 \(q = \tfrac52\)이고, 값은 \(\tfrac12\Gamma(\tfrac12)\Gamma(\tfrac52)/\Gamma(3) = \tfrac12\cdot\sqrt\pi\cdot\tfrac34\sqrt\pi/2 = 3\pi/16\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-high-dim-sphere" data-level="2"><p>(가) 반지름 1인 공과 그것을 감싸는 정육면체 \([-1, 1]^n\)의 부피 비를 \(n = 3\)과 \(n = 10\)에서 구하라. 정육면체 안에 점을 고르게 뿌려 공 안에 든 비율로 공의 부피를 재는 방법이 고차원에서 어떻게 되는가? (나) \(n\)개의 성분이 모두 표준 정규분포(평균 0, 분산 1)를 따르는 벡터의 길이 \(r\)의 확률 밀도는 \(r^{n-1}e^{-r^2/2}\)에 비례한다. 이것이 \(r_* = \sqrt{n-1}\)에서 가장 크고, 그 근처에서 표준편차 \(1/\sqrt2\)인 가우스 함수로 근사됨을 보여라. (다) 이상 기체 \(N\)개 입자의 운동량 성분 \(3N\)개는 서로 독립이고 각각 분산 \(mk_BT\)인 정규분포를 따른다. (나)를 써서 전체 운동 에너지의 상대 요동 \(\delta E/E\)를 구하고, 1몰에서 계산하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(V_n(1)/2^n\)은 \(n = 3\)에서 \((4\pi/3)/8 = 0.524\), \(n = 10\)에서 \(2.550/1024 = 0.0025\)이다. \(n = 10\)이면 뿌린 점 400개 가운데 하나만 공에 들어가므로, 같은 정밀도를 얻는 데 훨씬 많은 점이 필요하고 \(n\)이 더 크면 사실상 쓸 수 없다.</p>
+        <p>(나) 확률 밀도는 겉넓이 \(S_n(r) \propto r^{n-1}\)에 가우스 무게를 곱한 것이다. \(f(r) = (n-1)\ln r - r^2/2\)로 쓰면 \(f' = (n-1)/r - r = 0\)에서 \(r_* = \sqrt{n-1}\)이고, \(f''(r_*) = -(n-1)/r_*^2 - 1 = -2\)이다. 따라서 봉우리 근처에서 \(e^{f} \approx e^{f(r_*)}e^{-(r - r_*)^2}\)이고, 이것은 표준편차 \(1/\sqrt2\)인 가우스 함수다. 폭이 \(n\)과 상관없으므로 상대 폭 \(1/\sqrt{2(n-1)}\)은 \(n\)이 커지면 0으로 간다. 고차원 가우스 분포는 반지름 \(\sqrt n\)인 얇은 껍질에 몰려 있다.</p>
+        <p>(다) 운동량 벡터의 길이 \(P\)는 (나)에서 \(n = 3N\), 단위 \(\sqrt{mk_BT}\)로 잰 것이므로 \(\delta P/P \approx (1/\sqrt2)/\sqrt{3N}\)이다. \(E = P^2/2m\)이므로 \(\delta E/E = 2\,\delta P/P = \sqrt{2/3N}\)이다. 1몰이면 \(\sqrt{2/(3 \times 6.022 \times 10^{23})} = 1.1 \times 10^{-12}\)이다. 온도가 정해진 기체의 에너지가 사실상 하나의 값을 갖는 이유이고, <a class="ref" href="#ex-ideal-gas-phase-volume"></a>에서 에너지 껍질의 두께가 결과에 영향을 주지 않는 이유와 같다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-stirling-binomial" data-level="2"><p>자기장 속에 스핀 \(\tfrac12\)인 원자 \(N\)개가 있고, 그 가운데 \(n\)개가 위를 향한 상태의 수는 \(\Omega(n) = N!/[n!\,(N - n)!]\)이다. (가) \(\tfrac12\ln(2\pi\cdot)\) 항까지 쓴 스털링 공식으로 다음을 보여라(\(x = n/N\)).</p>
+      <div class="formula">\[ \begin{aligned} \ln\Omega \approx {}&N\big[-x\ln x - (1-x)\ln(1-x)\big] \\ &- \tfrac12\ln\big(2\pi Nx(1-x)\big) \end{aligned} \]</div>
+      <p>(나) \(N = 100\), \(n = 50\)에서 정확한 값과 비교하고, 둘째 줄을 버리면 얼마나 틀리는지 보여라. (다) \(n = N/2 + m\)(\(m \ll N\))이면 \(\Omega \approx 2^N\sqrt{2/\pi N}\,e^{-2m^2/N}\)임을 보이고, 위를 향한 스핀 수의 표준편차를 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 세 계승에 \(\ln k! \approx k\ln k - k + \tfrac12\ln 2\pi k\)를 쓴다. \(-k\) 항은 \(-N + n + (N - n) = 0\)으로 지워진다. 주된 항은 \(N\ln N - n\ln n - (N-n)\ln(N-n) = -n\ln\tfrac nN - (N-n)\ln\tfrac{N-n}{N}\)이고, 로그 항은 \(\tfrac12\ln\frac{2\pi N}{2\pi n\cdot 2\pi(N-n)} = -\tfrac12\ln\big(2\pi Nx(1-x)\big)\)이다.</p>
+        <p>(나) \(x = \tfrac12\)이면 첫 줄은 \(N\ln2\), 둘째 줄은 \(-\tfrac12\ln(50\pi)\)이므로 \(\Omega \approx 2^{100}/\sqrt{50\pi} = 1.0114 \times 10^{29}\)이다. 정확한 값 \(\binom{100}{50} = 1.0089 \times 10^{29}\)과 0.25% 다르다. 둘째 줄을 버리면 \(2^{100} = 1.27 \times 10^{30}\)으로 12.6배 커진다. 확률을 계산할 때 \(\sqrt{2\pi N}\)을 버리면 안 되는 이유다.</p>
+        <p>(다) \(h(x) = -x\ln x - (1-x)\ln(1-x)\)는 \(h(\tfrac12) = \ln 2\), \(h'(\tfrac12) = 0\), \(h''(\tfrac12) = -\tfrac1x - \tfrac{1}{1-x} = -4\)이므로 \(h(\tfrac12 + \varepsilon) \approx \ln2 - 2\varepsilon^2\)이다. \(\varepsilon = m/N\)을 넣으면 \(e^{Nh} \approx 2^Ne^{-2m^2/N}\)이고, 둘째 줄은 \(x \approx \tfrac12\)에서 \(-\tfrac12\ln(\pi N/2)\)이다. 따라서 \(\Omega \approx 2^N\sqrt{2/\pi N}\,e^{-2m^2/N}\)이다. 이것은 \(e^{-m^2/2\sigma^2}\)에서 \(\sigma^2 = N/4\)인 정규분포이므로 표준편차는 \(\sqrt N/2\)이다. \(N = 100\), \(m = 10\)이면 이 식은 \(1.369 \times 10^{28}\)이고 정확한 값 \(\binom{100}{60} = 1.375 \times 10^{28}\)과 0.4% 다르다. 자화의 상대 요동은 \(1/\sqrt N\)으로 준다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-sine-power-laplace" data-level="2"><p>\(I(N) = \int_0^\pi\sin^Nx\,dx\)라 하자. (가) \(I(N) = \sqrt\pi\,\Gamma(\frac{N+1}2)/\Gamma(\frac N2 + 1)\)임을 보여라. (나) 라플라스 방법으로 \(I(N) \sim \sqrt{2\pi/N}\)임을 보여라. (다) \(N = 10\)과 \(N = 100\)에서 두 값의 비를 구하고, 상대 오차가 \(N\)에 어떻게 기대는지 말하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 피적분 함수가 \(x = \pi/2\)에 대해 대칭이므로 \(I = 2\int_0^{\pi/2}\sin^Nx\,dx\)이다. 식 <a class="ref" href="#eq-beta-trig"></a>에서 \(2p - 1 = N\), \(2q - 1 = 0\)이므로 \(I = B(\tfrac{N+1}{2}, \tfrac12) = \Gamma(\tfrac{N+1}2)\Gamma(\tfrac12)/\Gamma(\tfrac N2 + 1)\)이다.</p>
+        <p>(나) \(\sin^Nx = e^{N\ln\sin x}\)이고 \(f(x) = \ln\sin x\)는 \(x_0 = \pi/2\)에서 최대 \(f = 0\), \(f'' = -1/\sin^2x_0 = -1\)이다. 식 <a class="ref" href="#eq-laplace-method"></a>에서 \(I \sim \sqrt{2\pi/N}\)이다.</p>
+        <p>(다) \(N = 10\)이면 정확한 값은 \(\pi\cdot 9!!/10!! = 63\pi/256 = 0.7731\)이고 근사는 \(0.7927\)이라 비는 0.9754이다. \(N = 100\)이면 비는 0.9975이다. 상대 오차가 \(1/4N\)(0.025, 0.0025)과 같아서 \(1/N\)에 비례한다. <a class="ref" href="#thm-laplace-method"></a>의 "다음 보정은 \(O(1/N)\)"과 맞는다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-five-sigma" data-level="2"><p>입자물리학에서는 배경 잡음만으로 측정값이 평균보다 \(5\sigma\) 이상 높게 나올 확률이 충분히 작을 때 새 입자를 "발견"했다고 말한다. 2012년 힉스 보손 발견도 이 기준으로 발표되었다(ATLAS 협력단, Phys. Lett. B 716, 1 (2012); CMS 협력단, Phys. Lett. B 716, 30 (2012)). (가) 한쪽 꼬리 확률 \(p = \tfrac12\operatorname{erfc}(5/\sqrt2)\)를 점근급수 식 <a class="ref" href="#eq-erfc-asymptotic"></a>의 1, 2, 3항으로 계산하라. 정확한 값은 \(2.867 \times 10^{-7}\)이다. (나) \(3\sigma\) 기준과 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(x = 5/\sqrt2 = 3.536\), \(2x^2 = 25\)이다. 첫 항은 \(\tfrac12 e^{-12.5}/(3.536\sqrt\pi) = 2.973 \times 10^{-7}\)(+3.7%), 둘째 항까지는 \(\times(1 - \tfrac{1}{25})\)로 \(2.855 \times 10^{-7}\)(−0.42%), 셋째 항까지는 \(\times(1 - \tfrac1{25} + \tfrac{3}{625})\)로 \(2.869 \times 10^{-7}\)(+0.08%)이다. 오차의 부호가 번갈아 바뀌고 크기가 처음 버린 항 이하다. 곧 \(p \approx 1/(350\text{만})\)이다.</p>
+        <p>(나) \(3\sigma\)이면 \(p = \tfrac12\operatorname{erfc}(3/\sqrt2) = 1.35 \times 10^{-3}\), 곧 741번에 한 번이다. \(5\sigma\)는 이보다 약 4700배 엄격하다. 지수 \(e^{-x^2}\)에서 \(x^2\)이 4.5에서 12.5로 커진 몫이 대부분이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-surface-heat-flux" data-level="2"><p>온도 \(T_0\)으로 고른 반무한 고체(\(x > 0\))의 표면 \(x = 0\)을 \(t = 0\)부터 온도 \(T_s\)로 유지한다. (가) \(T(x, t) = T_s + (T_0 - T_s)\operatorname{erf}\big(x/2\sqrt{Dt}\big)\)가 확산 방정식과 두 조건을 만족함을 보여라. (나) 표면으로 들어가는 열 흐름 밀도 \(q = -k\,\partial T/\partial x\vert_{x=0}\)와 시각 \(t\)까지 들어간 열 \(Q(t)\)(단위 넓이당)를 구하라. (다) 열전도도 \(k = 1.0\ \text{W/(m}\cdot\text{K)}\), 열확산도 \(D = 5.0 \times 10^{-7}\ \text{m}^2/\text{s}\)인 흙의 표면이 갑자기 20 K 더워졌다. 1시간 뒤의 \(q\), \(Q\), 열이 스며든 깊이 \(2\sqrt{Dt}\)를 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) <a class="ref" href="#ex-diffusion-erf"></a>에서 \(A + B\operatorname{erf}\eta\)가 확산 방정식을 만족함을 보였다. \(x = 0\)에서 \(\operatorname{erf}0 = 0\)이라 \(T = T_s\)이고, \(t \to 0^+\)이면 \(x > 0\)에서 \(\eta \to \infty\)라 \(T \to T_0\)이다.</p>
+        <p>(나) \(\partial_x\operatorname{erf}(x/2\sqrt{Dt}) = \frac{2}{\sqrt\pi}e^{-x^2/4Dt}\cdot\frac{1}{2\sqrt{Dt}}\)이므로</p>
+        <div class="formula">\[ \begin{aligned} q(t) &= \frac{k\,(T_s - T_0)}{\sqrt{\pi Dt}} \\ Q(t) &= 2k\,(T_s - T_0)\sqrt{\frac{t}{\pi D}} \end{aligned} \]</div>
+        <p>이다. \(Q\)는 \(q\)를 0부터 \(t\)까지 적분한 것이다. 확인: 고체에 쌓인 열 \(\rho c\int_0^\infty(T - T_0)\,dx = \rho c(T_s - T_0)\cdot2\sqrt{Dt}\int_0^\infty\operatorname{erfc}y\,dy\)이고 \(\int_0^\infty\operatorname{erfc}y\,dy = 1/\sqrt\pi\), \(\rho c = k/D\)이므로 같은 \(Q\)가 나온다.</p>
+        <p>(다) \(t = 3600\ \text{s}\)이면 \(\pi Dt = 5.65 \times 10^{-3}\ \text{m}^2\)이므로 \(q = 1.0 \times 20/0.0752 = 266\ \text{W/m}^2\), \(Q = 2qt = 1.9 \times 10^6\ \text{J/m}^2\), 깊이는 \(2\sqrt{Dt} = 8.5\ \text{cm}\)이다. 단위: \(\text{W/(m}\cdot\text{K)}\cdot\text{K}/\text{m} = \text{W/m}^2\). 열 흐름이 \(t^{-1/2}\)로 줄어드는 것은 표면 근처의 온도 기울기가 점점 완만해지기 때문이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-ellipse-perimeter" data-level="2"><p>(가) 긴반지름 \(a\), 이심률 \(\varepsilon\)인 타원의 둘레가 \(4aE(\varepsilon)\)임을 보여라. (힌트: \(x = a\sin\phi\), \(y = b\cos\phi\), \(b^2 = a^2(1 - \varepsilon^2)\).) (나) 이항급수와 월리스 적분으로 \(E(k) = \frac\pi2\big[1 - \frac{k^2}{4} - \frac{3k^4}{64} - \cdots\big]\)를 보여라. (다) 이심률이 0.2인 타원 궤도의 둘레는 같은 긴반지름을 가진 원 둘레의 몇 배인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(ds^2 = dx^2 + dy^2 = (a^2\cos^2\phi + b^2\sin^2\phi)\,d\phi^2 = a^2(1 - \varepsilon^2\sin^2\phi)\,d\phi^2\)이다. 네 사분면이 같으므로 둘레는 \(4a\int_0^{\pi/2}\sqrt{1 - \varepsilon^2\sin^2\phi}\,d\phi = 4aE(\varepsilon)\)이다.</p>
+        <p>(나) \(\sqrt{1 - w} = 1 - \tfrac w2 - \tfrac{w^2}{8} - \cdots\)에 \(w = k^2\sin^2\phi\)를 넣고, 식 <a class="ref" href="#eq-wallis"></a>에서 \(\int_0^{\pi/2}\sin^2 = \tfrac\pi4\), \(\int_0^{\pi/2}\sin^4 = \tfrac{3\pi}{16}\)을 쓰면 \(\tfrac\pi2 - \tfrac{k^2}{2}\cdot\tfrac\pi4 - \tfrac{k^4}{8}\cdot\tfrac{3\pi}{16} = \tfrac\pi2\big[1 - \tfrac{k^2}{4} - \tfrac{3k^4}{64}\big]\)이다.</p>
+        <p>(다) 비는 \(4aE(\varepsilon)/2\pi a = \tfrac2\pi E(\varepsilon) = 1 - 0.01 - 0.000075 = 0.98992\)이다. 수치 적분 값 0.989 924와 \(1.3 \times 10^{-6}\)만 다르다. 이 차이는 다음 항 \(-\tfrac{5k^6}{256} = -1.25 \times 10^{-6}\)이다. 이심률이 0.2여도 둘레는 원과 1%밖에 다르지 않다. 둘레의 보정이 \(\varepsilon^2\)부터 시작하기 때문이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-pendulum-near-top" data-level="3"><p>(가) 식 <a class="ref" href="#eq-elliptic-k-log"></a>에서 식 <a class="ref" href="#eq-pendulum-log-period"></a>을 유도하라. 진폭이 \(175^\circ\)일 때 이 근사와 정확한 값 \(T/T_0 = 2.8777\)을 비교하라. (나) 진폭이 \(179^\circ\) 근처일 때, 진폭을 \(\pm0.1^\circ\)의 정밀도로만 맞출 수 있다면 주기는 \(T_0\)의 몇 배만큼 흔들리는가? 정확한 값 \(T(179.1^\circ)/T_0 = 3.9681\), \(T(178.9^\circ)/T_0 = 3.8404\)과 비교하라. 이것이 꼭대기 근처에서 놓은 진자의 주기를 측정하기 어려운 이유와 어떻게 이어지는가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\delta = \pi - \theta_0\)이면 \(k' = \cos(\theta_0/2) = \sin(\delta/2) \approx \delta/2\)이므로 \(\ln(4/k') \approx \ln(8/\delta)\)이다. \(T = 4\sqrt{L/g}\,K = (4/\omega_0)K\)에 넣으면 식 <a class="ref" href="#eq-pendulum-log-period"></a>이 된다. \(T/T_0\)으로는 \(\frac2\pi\ln\frac8\delta\)이다. \(175^\circ\)이면 \(\delta = 0.08727\ \text{rad}\)이고 \(\frac2\pi\ln(91.67) = 2.8764\)이다. 정확한 값과 0.04% 다르다.</p>
+        <p>(나) \(T/T_0 \approx \frac2\pi\ln\frac8\delta\)를 미분하면 \(\frac{d(T/T_0)}{d\theta_0} = \frac{2}{\pi\delta}\)이다. \(\delta = 1^\circ\), \(\Delta\theta_0 = 0.1^\circ\)이면 \(\Delta(T/T_0) = \frac2\pi\cdot\frac{0.1}{1} = 0.064\)이다. 정확한 값으로는 \((3.9681 - 3.8404)/2 = 0.064\)로 같다. 주기 \(3.90\,T_0\)의 1.6%다. 꼭대기에 가까울수록 같은 각도 오차가 \(1/\delta\)배로 커지므로, 진폭이 조금만 흔들려도 주기가 크게 달라진다. 감쇠가 조금만 있어도 진폭이 매 주기 줄면서 주기가 눈에 띄게 짧아지는 것도 같은 이유다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+
+</body>
+</html>
