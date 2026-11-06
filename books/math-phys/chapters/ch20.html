@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>20 그린 함수 · 수리물리학</title>
+<meta name="description" content="점 원천의 응답인 그린 함수로 상미분방정식, 푸아송, 헬름홀츠, 확산, 파동 방정식을 풀고 인과율에서 크라머스-크로니히 관계를 유도한다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys" data-field="phys" data-chapter="ch20">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">20</span></div>
+    <h1 data-fill="chapter-title">그린 함수</h1>
+    <p class="lead">점전하 하나의 퍼텐셜을 알면 어떤 전하 분포의 퍼텐셜도 적분 하나로 얻는다. 이 생각을 선형 미분방정식 전체로 넓힌 것이 그린 함수다. 크기 1인 점 원천에 대한 응답 \(G\)를 한 번 구해 두면, 원천이 무엇이든 해는 \(G\)와 원천을 곱해 적분한 것이다. 이 장에서는 그린 함수를 네 가지 길로 만든다. 상미분방정식은 도약 조건으로, 경계가 있는 문제는 스투름-리우빌 고유함수 전개와 영상법으로, 경계가 없는 문제는 푸리에 변환과 \(i\varepsilon\) 처방으로 만든다. 6장의 델타, 15장의 푸리에 변환, 16장의 고유함수 전개, 19장의 유수 정리가 여기서 한자리에 모인다. 마지막에는 "원인보다 앞선 결과는 없다"는 인과율 하나에서 흡수와 굴절을 잇는 크라머스-크로니히 관계가 나온다.</p>
+    <ul class="objectives">
+      <li>점 원천의 응답으로 그린 함수를 정의하고, 도약 조건과 두 동차해로 경계값 문제와 초기값 문제의 그린 함수를 만들 수 있다.</li>
+      <li>스투름-리우빌 고유함수로 그린 함수를 전개하고, 그 극에서 공명을, 대칭성에서 상반성을 읽을 수 있다.</li>
+      <li>그린의 제2 항등식으로 경계값 문제의 적분 표현을 유도하고, 영상법으로 평면과 구의 디리클레 그린 함수를 만들 수 있다.</li>
+      <li>푸리에 변환과 \(i\varepsilon\) 처방으로 헬름홀츠, 확산, 파동 방정식의 그린 함수를 유도하고, 나가는 구면파, 열 핵, 지연 퍼텐셜의 뜻을 설명할 수 있다.</li>
+      <li>인과율에서 크라머스-크로니히 관계와 합 규칙을 유도하고, 흡수 스펙트럼에서 굴절률을 계산할 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b>6장(디랙 델타, \(\nabla^2(1/r) = -4\pi\delta^3\)), 10장(충격 응답과 합성곱), 15장(푸리에 변환의 관례), 16장(스투름-리우빌 문제와 완비성), 17장(라플라스·확산·파동 방정식), 19장(유수 정리, 주값, 소호츠키-플레멜 공식). 5장의 그린의 제1 항등식과 11장의 오차 함수도 쓴다.</p>
+  </header>
+
+  <!-- ============================================================ 20.1 -->
+  <section id="s1">
+    <h2>점 원천과 중첩</h2>
+    <p>빨랫줄에 셔츠 한 장을 걸면 줄은 셔츠가 걸린 점에서 꺾여 두 직선이 된다. 줄 자체의 무게는 줄 전체에 고르게 퍼진 하중이고, 줄은 포물선으로 처진다. 둘을 함께 걸면 처짐은 두 처짐의 합이다. 줄의 방정식이 선형이기 때문이다. 그러면 고르게 퍼진 하중도 아주 작은 점 하중들의 합으로 보고, 점 하중 하나에 대한 처짐을 더해서 얻을 수 있지 않을까? 6장에서 본 정전기학이 바로 이렇게 했다. 점전하 하나의 퍼텐셜 \(q/4\pi\varepsilon_0r\)을 겹쳐 쓴 쿨롱 퍼텐셜이 푸아송 방정식의 해였다(<a href="ch06.html#eq-poisson-superposition">6장 식 (6.57)</a>). 이 절에서는 이 생각을 일반적인 선형 미분방정식에 적용한다.</p>
+
+    <h3 id="s1-definition">그린 함수의 정의</h3>
+    <p>선형 미분 연산자 \(\mathcal L\)과 원천 \(f\)가 주어진 방정식 \(\mathcal Lu = f\)를 생각하자. 경계 조건(또는 초기 조건)은 동차라고 하자. 곧 두 해의 합과 상수배도 조건을 만족한다(예: \(u(0) = u(L) = 0\)). 원천을 6장 <a href="ch06.html#eq-delta-sifting">식 (6.42)</a>의 거르기 성질로 점 원천들의 합으로 쓴다.</p>
+    <div class="formula">\[ f(x) = \int f(x')\,\delta(x - x')\,dx' \]</div>
+    <p>이것은 "\(x'\)마다 세기 \(f(x')\,dx'\)인 점 원천을 놓는다"는 뜻이다. 점 원천 하나에 대한 응답을 구해 두면 선형성으로 나머지가 끝난다.</p>
+    <div class="box def" id="def-green-function"><div class="box-h">그린 함수</div>
+      <p>선형 미분 연산자 \(\mathcal L\)과 동차 경계 조건(또는 동차 초기 조건)이 주어졌다고 하자. 원천점 \(x'\)마다</p>
+      <div class="formula" id="eq-green-defining">\[ \mathcal L\,G(x, x') = \delta(x - x') \]</div>
+      <p>를 만족하고, \(x\)의 함수로서 주어진 동차 조건을 만족하는 함수 \(G(x, x')\)를 \(\mathcal L\)의 <span class="term">그린 함수</span> <span class="en">(Green's function)</span>라 한다. \(\mathcal L\)은 첫째 변수 \(x\)에 작용한다. \(x\)를 <span class="term">관측점</span> <span class="en">(field point)</span>, \(x'\)을 <span class="term">원천점</span> <span class="en">(source point)</span>이라 한다. 3차원에서는 \(\mathcal L\,G(\mathbf r, \mathbf r') = \delta^3(\mathbf r - \mathbf r')\)이고, 시간이 들어가면 우변이 \(\delta^3(\mathbf r - \mathbf r')\,\delta(t - t')\)이다.</p>
+    </div>
+    <p>그린 함수가 있으면 해는 바로 쓸 수 있다.</p>
+    <div class="formula" id="eq-green-solution">\[ u(x) = \int G(x, x')\,f(x')\,dx' \]<div class="where">적분은 문제의 정의역 전체다. 3차원이면 \(u(\mathbf r) = \int G(\mathbf r, \mathbf r')f(\mathbf r')\,d^3r'\)이다.</div></div>
+    <p>확인은 한 줄이다. \(\mathcal L\)은 \(x\)에만 작용하고 \(x'\)은 적분 변수이므로 적분 안으로 들어간다.</p>
+    <div class="formula">\[ \begin{aligned} \mathcal Lu(x) &= \int \mathcal L\,G(x, x')\,f(x')\,dx' \\ &= \int \delta(x - x')\,f(x')\,dx' = f(x) \end{aligned} \]</div>
+    <p>경계 조건도 저절로 맞는다. 모든 \(x'\)에서 \(G(\cdot, x')\)가 동차 조건을 만족하고, 동차 조건은 선형 결합에 대해 닫혀 있기 때문이다. 동차 문제(\(f = 0\))의 해가 0뿐이면 식 <a class="ref" href="#eq-green-solution"></a>가 유일한 해다. 경계에서 값이 0이 아닌 문제(비동차 경계 조건)는 20.4절에서 경계 항으로 다룬다.</p>
+    <div class="callout tip"><strong>그린 함수는 역행렬이다</strong><p>격자점 \(x_j\)에서 \(\mathcal L\)을 행렬 \(L_{ij}\)로 근사하면 \(\mathcal Lu = f\)는 \(\sum_jL_{ij}u_j = f_i\)이고 해는 \(u_i = \sum_j(L^{-1})_{ij}f_j\)이다. 식 <a class="ref" href="#eq-green-solution"></a>는 그 연속판이다. \(G(x, x')\)는 역행렬 \((L^{-1})_{ij}\)에, 델타 \(\delta(x - x')\)는 단위 행렬 \(\delta_{ij}\)에 해당한다. 그래서 \(G\)의 앞 변수는 행(관측점), 뒤 변수는 열(원천점)이다. \(G(x, x')\)는 "\(x'\)에 단위 원천을 놓을 때 \(x\)에서의 응답"으로 읽는다. 공학에서는 이것을 <span class="term">영향 함수</span> <span class="en">(influence function)</span>라고도 한다.</p></div>
+    <div class="callout warn"><strong>그린 함수의 부호와 \(4\pi\)는 교재마다 다르다</strong><p>이 책은 \(\mathcal LG = +\delta\)로 정한다. 그래서 \(\nabla^2G = \delta^3\)의 해는 \(G = -1/(4\pi\lvert\mathbf r - \mathbf r'\rvert)\)이다(6장 <a href="ch06.html#eq-laplacian-inverse-r">식 (6.54)</a>). 잭슨의 전자기학은 \(\nabla^2G = -4\pi\delta^3\)으로 정해 \(G = 1/\lvert\mathbf r - \mathbf r'\rvert\)이고, \(\mathcal LG = -\delta\)로 정하는 교재도 있다. 세 관례는 상수배만 다르므로 해 자체는 같지만, 다른 책의 그린 함수를 식 <a class="ref" href="#eq-green-solution"></a>에 그대로 넣으면 부호나 \(4\pi\)가 틀린다. 옮길 때는 정의 식부터 확인한다.</p></div>
+
+    <h3 id="s1-translation">경계가 없으면 합성곱이다</h3>
+    <p>계수가 상수이고 경계가 없으면(무한 구간, 무한 공간) 원천을 옮겨도 응답은 같은 모양으로 옮겨질 뿐이다. 그래서 \(G(x, x') = G(x - x')\)이고, 식 <a class="ref" href="#eq-green-solution"></a>는 합성곱 \(u = G * f\)가 된다. 10장의 응답 \(x = h * F\)(<a href="ch10.html#eq-convolution-response">식 (10.29)</a>)가 그 예다. 그러면 15장의 합성곱 정리(<a href="ch15.html#thm-convolution">정리 15.4</a>)에서 \(\tilde u = \tilde G\tilde f\)이다. 예를 들어 \(\mathcal L = d^2/dx^2 - \mu^2\)이면 도함수 규칙(<a href="ch15.html#eq-ft-derivative">식 (15.11)</a>)에서 \((-k^2 - \mu^2)\tilde G = 1\)이므로</p>
+    <div class="formula" id="eq-green-translation">\[ \begin{aligned} \tilde G(k) &= -\frac{1}{k^2 + \mu^2} \\ G(x - x') &= -\frac{e^{-\mu\lvert x - x'\rvert}}{2\mu} \end{aligned} \]</div>
+    <p>이다(<a href="ch15.html#eq-lorentzian-ft">식 (15.14)</a>의 공간판). 정리하면 그린 함수를 만드는 길은 문제의 모양에 따라 넷이다. 경계가 없으면 푸리에 변환(20.5절, 20.6절), 1차원의 경계값 문제는 두 동차해를 잇는 직접 구성(20.2절), 경계가 있는 일반적인 문제는 고유함수 전개(20.3절)와 영상법(20.4절)이다.</p>
+
+    <div class="box math" id="math-green-toolkit"><div class="box-h">이 장이 꺼내 쓰는 도구</div>
+      <ul>
+        <li><b>델타와 계단</b>(6장): 거르기 \(\int f(x')\delta(x - x')\,dx' = f(x)\), \(\Theta' = \delta\)(<a href="ch06.html#eq-step-derivative">식 (6.49)</a>), \(\delta(g(x)) = \sum_i\delta(x - x_i)/\lvert g'(x_i)\rvert\)(<a href="ch06.html#eq-delta-composition">식 (6.44)</a>), \(\nabla^2(1/r) = -4\pi\delta^3(\mathbf r)\)(<a href="ch06.html#eq-laplacian-inverse-r">식 (6.54)</a>).</li>
+        <li><b>푸리에 변환</b>(15장): \(\tilde f(k) = \int fe^{-ikx}dx\), \(f = \int\frac{dk}{2\pi}\tilde fe^{ikx}\), 시간은 \(e^{+i\omega t}\)(<a href="ch15.html#eq-ft-pair">식 (15.3)</a>). \(\int e^{iku}dk = 2\pi\delta(u)\)(<a href="ch15.html#eq-delta-fourier">식 (15.18)</a>). 지름 방향 변환(<a href="ch15.html#eq-radial-ft">식 (15.40)</a>).</li>
+        <li><b>고유함수</b>(16장): \(pW\)는 상수(<a href="ch16.html#eq-sl-pw-constant">식 (16.13)</a>), 완비성 \(\sum_nu_n(x)u_n^*(x')w(x') = \delta(x - x')\)(<a href="ch16.html#eq-sl-delta-completeness">식 (16.26)</a>).</li>
+        <li><b>복소 적분</b>(19장): 유수 정리, 조르당 보조정리(<a href="ch19.html#thm-jordan">정리 19.10</a>), 주값과 \(\mathcal P\int f\,dx = 2\pi i\sum_{\text{위}}\operatorname{Res} + \pi i\sum_{\text{실수축}}\operatorname{Res}\)(<a href="ch19.html#eq-pv-residue">식 (19.38)</a>), 소호츠키-플레멜 공식 \(1/(x \pm i\varepsilon) = \mathcal P(1/x) \mp i\pi\delta(x)\)(<a href="ch19.html#eq-sokhotski">식 (19.40)</a>).</li>
+      </ul>
+    </div>
+
+    <h3 id="s1-string">점 하중을 받은 줄</h3>
+    <p>처음의 빨랫줄로 돌아가 그린 함수를 힘의 평형에서 직접 구해 보자. 장력 \(T\)로 당겨진 줄의 처짐 \(y(x)\)를 아래쪽을 양으로 재고, 줄에 아래로 작용하는 단위 길이당 하중을 \(f(x)\)라 하자. 짧은 조각 \([x, x + dx]\)에서 오른쪽 끝의 장력은 아래 방향 성분 \(Ty'(x + dx)\)를, 왼쪽 끝의 장력은 \(-Ty'(x)\)를 준다(기울기가 작아 \(\sin \approx \tan\)). 평형이면 \(Ty''\,dx + f\,dx = 0\)이다.</p>
+    <div class="formula" id="eq-string-load">\[ -T\,\frac{d^2y}{dx^2} = f(x), \quad y(0) = y(L) = 0 \]</div>
+
+    <div class="box ex" id="ex-string-point-load"><div class="box-h">셔츠를 건 빨랫줄</div>
+      <p>길이 \(L = 10.0\ \text{m}\)인 빨랫줄이 장력 \(T = 200\ \text{N}\)으로 두 기둥 사이에 걸려 있다. 줄의 선밀도는 \(\mu = 0.050\ \text{kg/m}\)이다. \(x_0 = 4.0\ \text{m}\)에 무게 \(P = 5.0\ \text{N}\)인 젖은 셔츠를 건다. (가) 식 <a class="ref" href="#eq-string-load"></a>의 그린 함수를 힘의 평형으로 구하라. (나) 줄의 무게만으로 생기는 처짐을 그린 함수의 중첩으로 구하라. (다) 셔츠 아래의 처짐과 최대 처짐을 구하고, 작은 기울기 근사를 확인하라.</p>
+      <p><b>풀이.</b> (가) \(x'\)에 크기 1인 점 하중 \(f = \delta(x - x')\)를 건다. \(x \ne x'\)에서 \(y'' = 0\)이므로 줄은 직선이고, 양 끝에서 0이어야 하므로 \(x &lt; x'\)에서 \(y = Ax\), \(x > x'\)에서 \(y = B(L - x)\)이다. 줄이 끊어지지 않으므로 \(x'\)에서 연속이다: \(Ax' = B(L - x')\). 식 <a class="ref" href="#eq-string-load"></a>를 \(x'\) 둘레의 작은 구간에서 적분하면 \(-T[y'(x'^+) - y'(x'^-)] = 1\), 곧 \(-T(-B - A) = 1\)이다. 두 식을 풀면 \(A = (L - x')/TL\), \(B = x'/TL\)이다.</p>
+      <div class="formula" id="eq-string-green">\[ G(x, x') = \frac{x_&lt;\,(L - x_&gt;)}{TL} \]<div class="where">\(x_&lt; = \min(x, x')\), \(x_&gt; = \max(x, x')\). 꼭짓점이 \(x'\)인 삼각형이다. 단위는 \(\text{m/N}\)이다.</div></div>
+      <p>(나) 줄의 무게는 고른 하중 \(w_0 = \mu g\)이다. 식 <a class="ref" href="#eq-green-solution"></a>에서 적분을 \(x' &lt; x\)와 \(x' > x\)로 나누면</p>
+      <div class="formula">\[ \begin{aligned} y_w(x) &= \frac{w_0}{TL}\Big[(L - x)\!\int_0^x\!x'\,dx' \\ &\qquad + x\!\int_x^L\!(L - x')\,dx'\Big] \\ &= \frac{w_0}{TL}\Big[\frac{(L - x)x^2}{2} + \frac{x(L - x)^2}{2}\Big] \\ &= \frac{w_0\,x(L - x)}{2T} \end{aligned} \]</div>
+      <p>이다. 포물선이고, 직접 미분하면 \(-Ty_w'' = w_0\)이다. 셔츠의 처짐은 그린 함수에 \(P\)를 곱한 \(y_P = P\,G(x, x_0)\)이다.</p>
+      <p>(다) <b>숫자로 보기.</b> \(w_0 = 0.050 \times 9.81 = 0.491\ \text{N/m}\)이다. 줄만 있을 때 가운데 처짐은 \(w_0L^2/8T = 3.07\ \text{cm}\)이다. 셔츠 아래에서는</p>
+      <div class="formula">\[ \begin{aligned} y_P(x_0) &= \frac{5.0 \times 4.0 \times 6.0}{200 \times 10.0}\ \text{m} = 6.00\ \text{cm} \\ y_w(x_0) &= \frac{0.491 \times 4.0 \times 6.0}{2 \times 200}\ \text{m} = 2.94\ \text{cm} \end{aligned} \]</div>
+      <p>이고 합은 \(8.94\ \text{cm}\)이다(그림 20-1). 셔츠 바로 왼쪽의 기울기는 \(P(L - x_0)/TL + w_0(L - 2x_0)/2T = +0.0175\), 오른쪽은 \(-Px_0/TL + 0.0025 = -0.0075\)이다. 부호가 셔츠에서 바뀌므로 최대 처짐은 셔츠 아래의 \(8.94\ \text{cm}\)이고, 기울기의 도약은 \(-P/T = -0.025\)이다.</p>
+      <p><b>다음 항은 몇 차인가.</b> 장력의 수직 성분을 \(T\sin\alpha \approx T\tan\alpha\)로 쓴 근사의 상대 오차는 \(\alpha^2/2\) 정도이고, 여기서 가장 큰 기울기 \(0.0175\)이면 \(1.5 \times 10^{-4}\)이다. 처짐 때문에 줄이 늘어나 장력이 바뀌는 효과도 같은 2차다. 단위 확인: \(P/T\)는 차원이 없고 길이를 곱해 길이가 된다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 270" role="img" aria-label="빨랫줄의 처짐: 셔츠 하나가 만드는 삼각형, 줄 무게가 만드는 포물선, 둘의 합"><line x1="50" y1="216" x2="50" y2="36" class="s-grid"/><text x="50" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><line x1="132" y1="216" x2="132" y2="36" class="s-grid"/><text x="132" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">2</text><line x1="214" y1="216" x2="214" y2="36" class="s-grid"/><text x="214" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">4</text><line x1="296" y1="216" x2="296" y2="36" class="s-grid"/><text x="296" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">6</text><line x1="378" y1="216" x2="378" y2="36" class="s-grid"/><text x="378" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">8</text><line x1="460" y1="216" x2="460" y2="36" class="s-grid"/><text x="460" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">10</text><line x1="50" y1="36" x2="460" y2="36" class="s-grid"/><text x="42" y="41" class="t-dim" style="font-size:14px" text-anchor="end">0</text><line x1="50" y1="72" x2="460" y2="72" class="s-grid"/><text x="42" y="77" class="t-dim" style="font-size:14px" text-anchor="end">2</text><line x1="50" y1="108" x2="460" y2="108" class="s-grid"/><text x="42" y="113" class="t-dim" style="font-size:14px" text-anchor="end">4</text><line x1="50" y1="144" x2="460" y2="144" class="s-grid"/><text x="42" y="149" class="t-dim" style="font-size:14px" text-anchor="end">6</text><line x1="50" y1="180" x2="460" y2="180" class="s-grid"/><text x="42" y="185" class="t-dim" style="font-size:14px" text-anchor="end">8</text><line x1="50" y1="216" x2="460" y2="216" class="s-grid"/><text x="42" y="221" class="t-dim" style="font-size:14px" text-anchor="end">10</text><line x1="50" y1="36" x2="460" y2="36" class="s-line"/><line x1="50" y1="36" x2="50" y2="216" class="s-line"/><path d="M50,36 78.7,50.4 103.3,61 125.8,69.3 148.4,76.3 173,82.4 201.7,87.5 222.2,89.8 250.9,91.2 279.6,90.4 302.1,88.3 322.7,85.2 353.4,78.5 382.1,70 406.7,61 437.5,47.5 460,36" class="s-line" style="stroke-width:2" stroke-dasharray="6 4"/><path d="M50,36 214,144 460,36" class="s-acc2" style="stroke-width:2"/><path d="M50,36 70.5,60 91,82.9 113.5,106.8 129.9,123.3 150.4,143 173,163.4 197.6,184.1 214,197 230.4,191.2 250.9,183 277.6,170.6 310.4,152.9 337,136.4 371.9,112 400.6,89.5 425.2,68.5 460,36" class="s-acc" style="stroke-width:3"/><text x="222" y="215" class="t-acc" style="font-size:14px" text-anchor="start">합: 8.9 cm</text><text x="361.6" y="97.2" class="t-acc" style="font-size:13px;fill:var(--accent-2)" text-anchor="middle">셔츠 5 N</text><text x="390.3" y="53.1" class="t-dim" style="font-size:13px" text-anchor="middle">줄의 무게</text><polygon points="214,201 209,211 219,211" class="f-acc2"/><text x="460" y="262" class="t-dim" style="font-size:14px" text-anchor="end">위치 x (m)</text><text x="56" y="28" class="t-dim" style="font-size:14px" text-anchor="start">처짐 y (cm, 아래로)</text></svg>
+      <figcaption><b>그림 20-1.</b> 빨랫줄의 처짐(아래로 잼). "셔츠 5 N"은 점 하중의 그린 함수 \(P\,G(x, x_0)\)로 \(x_0 = 4\ \text{m}\)에서 꺾인 삼각형이고, "줄의 무게"(점선)는 그린 함수를 고른 하중으로 겹친 포물선이다. 굵은 선이 둘의 합이며 셔츠 아래에서 \(8.94\ \text{cm}\)이다. 곡선은 식 <a class="ref" href="#eq-string-green"></a>와 \(y_w = w_0x(L - x)/2T\)로 계산했다.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================================================ 20.2 -->
+  <section id="s2">
+    <h2>상미분방정식의 그린 함수</h2>
+    <p>앞 절의 줄에서 그린 함수를 만든 재료는 두 가지였다. 원천이 없는 곳에서는 동차 방정식의 해이고, 원천점에서는 연속이되 기울기가 정해진 만큼 꺾인다. 이 두 가지를 일반적인 2계 선형 방정식에 적용하면 그린 함수를 만드는 공식이 나온다. 연산자는 16장의 스투름-리우빌 꼴(<a href="ch16.html#eq-sl-form">식 (16.4)</a>에서 \(\lambda\) 항을 뺀 것)로 쓴다.</p>
+    <div class="formula" id="eq-sl-green-operator">\[ \mathcal Lu = \big(p(x)\,u'\big)' - q(x)\,u, \quad a \le x \le b \]<div class="where">2계 선형 방정식은 모두 적분 인자를 곱해 이 꼴로 바꿀 수 있다(<a href="ch16.html#eq-sl-integrating-factor">16장 식 (16.8)</a>). \(p\), \(p'\), \(q\)는 연속이고 \(p \ne 0\)이라 하자.</div></div>
+
+    <h3 id="s2-jump">도약 조건</h3>
+    <p>\(x \ne x'\)이면 \(\mathcal LG = 0\)이므로 \(G\)는 \(x'\)의 왼쪽과 오른쪽에서 각각 동차 방정식의 해다. 두 조각을 잇는 조건은 \(\mathcal LG = \delta(x - x')\)을 \(x'\) 둘레의 구간 \([x' - \varepsilon, x' + \varepsilon]\)에서 적분해서 얻는다.</p>
+    <div class="formula">\[ \Big[p\,\frac{\partial G}{\partial x}\Big]_{x'-\varepsilon}^{x'+\varepsilon} - \int_{x'-\varepsilon}^{x'+\varepsilon}q\,G\,dx = 1 \]</div>
+    <p>\(G\)가 유계이면 둘째 항은 \(\varepsilon \to 0\)에서 0이다. 또 \(G\) 자신은 \(x'\)에서 연속이어야 한다. \(G\)가 끊어지면 \(\partial_xG\)에 델타가 생기고 \((p\,\partial_xG)'\)에 델타의 도함수가 생기는데, 우변에는 그런 항이 없다. 따라서</p>
+    <div class="formula" id="eq-jump-condition">\[ \begin{aligned} G(x'^+, x') &= G(x'^-, x') \\ \frac{\partial G}{\partial x}\Big|_{x = x'^+} - \frac{\partial G}{\partial x}\Big|_{x = x'^-} &= \frac{1}{p(x')} \end{aligned} \]<div class="where">일반적인 꼴 \(a_2u'' + a_1u' + a_0u\)에서는 둘째 줄의 우변이 \(1/a_2(x')\)이다. 최고차 계수가 도약의 크기를 정한다.</div></div>
+    <p>빨랫줄은 \(p = -T\)인 경우라서 기울기가 \(-1/T\)만큼 꺾였다. 식 <a class="ref" href="#eq-jump-condition"></a>이 물리에서 말하는 것은 "점 원천은 해를 꺾지만 끊지 않는다"는 것이다. 점 하중은 줄을 꺾고, 망치는 진동자의 속도를 바꾸지만 위치를 순간 이동시키지 않는다.</p>
+
+    <h3 id="s2-bvp">경계값 문제: 두 동차해를 잇기</h3>
+    <div class="box thm" id="thm-green-bvp"><div class="box-h">경계값 문제의 그린 함수</div>
+      <p>식 <a class="ref" href="#eq-sl-green-operator"></a>의 \(\mathcal L\)에 분리된 동차 경계 조건 \(\alpha_1u(a) + \alpha_2u'(a) = 0\), \(\beta_1u(b) + \beta_2u'(b) = 0\)을 건다(<a href="ch16.html#def-self-adjoint-bc">정의 16.4</a>의 (가)). \(u_1\)은 \(\mathcal Lu_1 = 0\)이고 왼쪽 조건을 만족하는 0이 아닌 해, \(u_2\)는 \(\mathcal Lu_2 = 0\)이고 오른쪽 조건을 만족하는 0이 아닌 해이며, 둘이 선형 독립이라 하자. 그러면 그린 함수는 다음과 같다.</p>
+      <div class="formula" id="eq-green-bvp-construction">\[ \begin{aligned} G(x, x') &= \frac{u_1(x_&lt;)\,u_2(x_&gt;)}{p\,W} \\ W &= u_1u_2' - u_1'u_2 \end{aligned} \]</div>
+      <p>\(pW\)는 \(x\)와 상관없는 상수다(<a href="ch16.html#eq-sl-pw-constant">16장 식 (16.13)</a>). 그래서 \(G(x, x') = G(x', x)\)이다.</p>
+    </div>
+    <p><b>증명.</b> \(x &lt; x'\)이면 \(G\)는 왼쪽 조건을 만족하는 동차해이므로 \(G = A\,u_1(x)\)이다. 왼쪽 조건을 만족하는 해의 공간은 1차원이기 때문이다. 마찬가지로 \(x > x'\)이면 \(G = B\,u_2(x)\)이다. 계수 \(A\), \(B\)는 \(x'\)에 따라 달라도 된다. 식 <a class="ref" href="#eq-jump-condition"></a>의 두 조건은</p>
+    <div class="formula">\[ \begin{aligned} B\,u_2(x') - A\,u_1(x') &= 0 \\ B\,u_2'(x') - A\,u_1'(x') &= \frac{1}{p(x')} \end{aligned} \]</div>
+    <p>이다. \(A\), \(B\)에 대한 연립 일차 방정식이고 계수 행렬식은 \(-u_2u_1' + u_1u_2' = W(x')\)이다. 크라메르 공식에서 \(A = u_2(x')/(pW)\), \(B = u_1(x')/(pW)\)이고, 이것을 넣으면 식 <a class="ref" href="#eq-green-bvp-construction"></a>이다. 분모 \(pW\)는 16장에서 본 대로 상수이므로 \(x'\)에서 값을 매기든 \(x\)에서 매기든 같다. \(u_1\), \(u_2\)가 선형 독립이면 \(W \ne 0\)이다(<a href="ch10.html#thm-wronskian-independence">정리 10.2</a>). \(\square\)</p>
+    <p>빨랫줄로 확인하자. \(\mathcal L = -T\,d^2/dx^2\)이면 \(p = -T\), \(q = 0\)이고, \(u_1 = x\), \(u_2 = L - x\)이다. \(W = x \cdot (-1) - 1 \cdot (L - x) = -L\)이므로 \(pW = TL\)이고, 식 <a class="ref" href="#eq-green-bvp-construction"></a>은 식 <a class="ref" href="#eq-string-green"></a>와 같다.</p>
+    <div class="callout warn"><strong>두 경계 조건을 함께 만족하는 동차해가 있으면 그린 함수가 없다</strong><p>\(u_1\)과 \(u_2\)가 선형 종속이면 \(u_0 = u_1\)은 두 경계 조건을 모두 만족하는 0이 아닌 해, 곧 \(\mathcal L\)의 영 모드다. 그러면 \(W = 0\)이라 식 <a class="ref" href="#eq-green-bvp-construction"></a>이 무너진다. 이때 \(\mathcal Lu = f\)는 아무 \(f\)에나 풀리지 않는다. 양변에 \(u_0\)을 곱해 적분하고 16장의 그린 공식(<a href="ch16.html#eq-sl-green-formula">식 (16.12)</a>)으로 \(\mathcal L\)을 옮기면 경계 항이 사라져 \(\int_a^bu_0f\,dx = \int_a^bu\,\mathcal Lu_0\,dx = 0\)이어야 한다. 양 끝이 자유로운 줄(\(y'(0) = y'(L) = 0\), \(u_0 = 1\))은 알짜 하중 \(\int f\,dx\)가 0일 때만 평형에 있을 수 있다. 17장 <a href="ch17.html#eq-neumann-compatibility">식 (17.34)</a>의 노이만 조건의 양립 조건과 같은 이야기다. 20.3절에서는 이것이 공명으로 나타난다.</p></div>
+
+    <div class="box ex" id="ex-cooling-fin"><div class="box-h">가운데를 데운 구리 막대</div>
+      <p>길이 \(L = 0.40\ \text{m}\), 지름 \(d = 4.0\ \text{mm}\)인 구리 막대(열전도도 \(k = 400\ \text{W/(m}\cdot\text{K)}\))의 양 끝이 실온의 큰 물체에 물려 있다. 막대 옆면은 공기로 열을 잃고, 그 열전달 계수는 \(h = 10\ \text{W/(m}^2\cdot\text{K)}\)이다. 막대의 점 \(x_0\)에 감은 작은 가열기가 \(Q = 2.0\ \text{W}\)를 낸다. 실온보다 높은 온도를 \(\vartheta(x)\)라 하면 정상 상태에서 단면적 \(A\), 둘레 \(P_\perp\)인 막대의 열 균형은 \(kA\vartheta'' - hP_\perp\vartheta + Q\,\delta(x - x_0) = 0\), \(\vartheta(0) = \vartheta(L) = 0\)이다. (여기서 \(\mu\)는 선밀도가 아니라 아래에서 정의하는 감쇠 상수다.) (가) 그린 함수를 구하라. (나) \(x_0 = L/2\)일 때 가열기의 온도를 구하고, 옆면 손실이 없는 경우(\(QL/4kA\))와 비교하라. (다) 열의 몇 %가 양 끝으로 빠지는가?</p>
+      <p><b>풀이.</b> (가) \(kA\)로 나누면 \(\vartheta'' - \mu^2\vartheta = -(Q/kA)\,\delta(x - x_0)\)이고 \(\mu^2 = hP_\perp/kA = 4h/kd\)이다. \(\mathcal L = d^2/dx^2 - \mu^2\)(\(p = 1\), \(q = \mu^2\))의 동차해 중 \(u_1 = \sinh\mu x\)는 왼쪽 조건을, \(u_2 = \sinh\mu(L - x)\)는 오른쪽 조건을 만족한다. 쌍곡선 함수의 덧셈 정리에서 \(W = -\mu[\sinh\mu x\cosh\mu(L - x) + \cosh\mu x\sinh\mu(L - x)] = -\mu\sinh\mu L\)이므로</p>
+      <div class="formula" id="eq-fin-green">\[ G(x, x') = -\frac{\sinh(\mu x_&lt;)\,\sinh\mu(L - x_&gt;)}{\mu\sinh\mu L} \]</div>
+      <p>이고 \(\vartheta(x) = -(Q/kA)\,G(x, x_0)\)이다.</p>
+      <p>(나) \(x = x_0 = L/2\)이면 \(\sinh^2(\mu L/2)/\sinh\mu L = \tfrac12\tanh(\mu L/2)\)이므로 \(\vartheta(x_0) = Q\tanh(\mu L/2)/(2kA\mu)\)이다. \(\mu \to 0\)이면 \(\tanh u \approx u\)에서 \(\vartheta(x_0) \to QL/4kA\)이고, 이것은 빨랫줄의 식 <a class="ref" href="#eq-string-green"></a>와 같은 꼴이다(옆면 손실이 없으면 연산자가 같다).</p>
+      <p><b>숫자로 보기.</b> \(A = \pi d^2/4 = 1.257 \times 10^{-5}\ \text{m}^2\), \(kA = 5.03 \times 10^{-3}\ \text{W}\cdot\text{m/K}\), \(\mu^2 = 4 \times 10/(400 \times 0.0040)\ \text{m}^{-2} = 25\ \text{m}^{-2}\)이므로 \(\mu = 5.0\ \text{m}^{-1}\), \(\mu L = 2.0\)이다.</p>
+      <div class="formula">\[ \begin{aligned} \vartheta(x_0) &= \frac{2.0 \times \tanh 1.0}{2 \times 5.03 \times 10^{-3} \times 5.0}\ \text{K} \\ &= 30.3\ \text{K} \\ \frac{QL}{4kA} &= 39.8\ \text{K} \end{aligned} \]</div>
+      <p>옆면이 열을 내보내서 가열기 온도가 \(\tanh(1)/1 = 0.76\)배로 낮아진다. 단위는 \(\text{W}/(\text{W}\cdot\text{m}\cdot\text{K}^{-1}\cdot\text{m}^{-1}) = \text{K}\)이다.</p>
+      <p>(다) 왼쪽 끝으로 나가는 열은 \(kA\vartheta'(0) = Q\mu\sinh\mu(L - x_0)/(\mu\sinh\mu L) = Q/(2\cosh(\mu L/2))\)이고 오른쪽도 같다. 합은 \(Q/\cosh 1.0 = 1.30\ \text{W}\), 곧 \(65\%\)이고, 나머지 \(35\%\)가 옆면으로 나간다. 그림 20-2에서 가열점의 꺾임이 \(\vartheta'\)의 도약 \(-Q/kA\), 곧 들어온 열이 양쪽으로 나뉘는 것을 보여 준다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 270" role="img" aria-label="냉각 핀의 그린 함수: 가열점에서 꺾이는 온도 분포"><line x1="50" y1="36" x2="50" y2="216" class="s-grid"/><text x="50" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><line x1="152.5" y1="36" x2="152.5" y2="216" class="s-grid"/><text x="152.5" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">10</text><line x1="255" y1="36" x2="255" y2="216" class="s-grid"/><text x="255" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">20</text><line x1="357.5" y1="36" x2="357.5" y2="216" class="s-grid"/><text x="357.5" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">30</text><line x1="460" y1="36" x2="460" y2="216" class="s-grid"/><text x="460" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">40</text><line x1="50" y1="216" x2="460" y2="216" class="s-grid"/><text x="42" y="221" class="t-dim" style="font-size:14px" text-anchor="end">0</text><line x1="50" y1="171" x2="460" y2="171" class="s-grid"/><text x="42" y="176" class="t-dim" style="font-size:14px" text-anchor="end">10</text><line x1="50" y1="126" x2="460" y2="126" class="s-grid"/><text x="42" y="131" class="t-dim" style="font-size:14px" text-anchor="end">20</text><line x1="50" y1="81" x2="460" y2="81" class="s-grid"/><text x="42" y="86" class="t-dim" style="font-size:14px" text-anchor="end">30</text><line x1="50" y1="36" x2="460" y2="36" class="s-grid"/><text x="42" y="41" class="t-dim" style="font-size:14px" text-anchor="end">40</text><line x1="50" y1="216" x2="460" y2="216" class="s-line"/><line x1="50" y1="216" x2="50" y2="36" class="s-line"/><path d="M50,216 255,37 460,216" class="s-line" style="stroke-width:2" stroke-dasharray="6 4"/><path d="M50,216 121.8,174.6 147.4,158.8 175.6,140.4 196.1,126.2 221.7,107.1 255,79.6 288.3,107.1 313.9,126.2 334.4,140.4 362.6,158.8 388.2,174.6 460,216" class="s-acc" style="stroke-width:3"/><path d="M50,216 106.4,157.5 134.6,126.8 152.5,106.4 178.1,120.8 211.4,137.2 242.2,150.5 272.9,162.3 313.9,176.2 354.9,188.5 395.9,199.7 460,216" class="s-acc2" style="stroke-width:2.5"/><text x="316.5" y="58.5" class="t-acc" style="font-size:14px" text-anchor="start">x′ = L/2</text><text x="152.5" y="96.4" class="t-acc" style="font-size:14px;fill:var(--accent-2)" text-anchor="middle">x′ = L/4</text><text x="70.5" y="54" class="t-dim" style="font-size:13px" text-anchor="start">옆면 손실 없음(점선)</text><text x="460" y="262" class="t-dim" style="font-size:14px" text-anchor="end">위치 x (cm)</text><text x="56" y="28" class="t-dim" style="font-size:14px" text-anchor="start">온도 상승 ϑ (K)</text></svg>
+      <figcaption><b>그림 20-2.</b> 예제의 구리 막대(\(\mu L = 2\))에서 가열기 \(Q = 2.0\ \text{W}\)의 위치가 \(x' = L/2\)(굵은 선)와 \(x' = L/4\)일 때의 온도 분포 \(\vartheta = -(Q/kA)G(x, x')\). 두 조각 \(\sinh\mu x\)와 \(\sinh\mu(L - x)\)가 가열점에서 이어지며 꺾인다. 점선은 옆면 손실이 없을 때(\(\mu = 0\))의 삼각형이다. 식 <a class="ref" href="#eq-fin-green"></a>로 계산했다.</figcaption>
+    </figure>
+
+    <h3 id="s2-ivp">초기값 문제: 인과적 그린 함수</h3>
+    <p>시간에 대한 방정식에서는 조건이 모두 처음에 걸린다. 정지해 있던 계는 원천이 오기 전에는 움직이지 않으므로 \(t &lt; t'\)에서 \(G(t, t') = 0\)이다. 이것을 <span class="term">인과적</span> <span class="en">(causal)</span> 그린 함수라 한다. \(t > t'\)에서 \(G\)는 동차해이고, 식 <a class="ref" href="#eq-jump-condition"></a>에서 \(t = t'^+\)일 때 \(G = 0\), \(\partial_tG = 1\)이다(최고차 계수가 1인 \(\mathcal L = d^2/dt^2 + a_1(t)\,d/dt + a_0(t)\)). 두 동차해 \(u_1\), \(u_2\)로 이 조건을 맞추면</p>
+    <div class="formula" id="eq-green-ivp">\[ G(t, t') = \Theta(t - t')\,\frac{u_1(t')\,u_2(t) - u_1(t)\,u_2(t')}{W(t')} \]</div>
+    <p>이다. \(t = t'\)에서 분자는 0이고, \(t\)로 미분한 값은 \([u_1(t')u_2'(t') - u_1'(t')u_2(t')]/W(t') = 1\)이다. 이 핵은 10장 매개변수 변화법의 핵(<a href="ch10.html#eq-variation-parameters">식 (10.26)</a>)과 같다. 매개변수 변화법은 인과적 그린 함수로 푸는 것이었다.</p>
+    <p>감쇠 진동자 \(\mathcal L = d^2/dt^2 + 2\gamma\,d/dt + \omega_0^2\)(<a href="ch10.html#eq-damped-oscillator">10장 식 (10.15)</a>, \(\gamma &lt; \omega_0\))이면 \(u_1 = e^{-\gamma t}\cos\omega_dt\), \(u_2 = e^{-\gamma t}\sin\omega_dt\), \(W = \omega_de^{-2\gamma t}\)이다. 식 <a class="ref" href="#eq-green-ivp"></a>의 분자는 \(e^{-\gamma(t + t')}\sin\omega_d(t - t')\)이므로 \(G\)는 \(t - t'\)만의 함수가 된다.</p>
+    <div class="formula" id="eq-green-oscillator">\[ \begin{aligned} G(\tau) &= \Theta(\tau)\,\frac{e^{-\gamma\tau}\sin\omega_d\tau}{\omega_d}, \quad \tau = t - t' \\ \omega_d &= \sqrt{\omega_0^2 - \gamma^2} \end{aligned} \]</div>
+    <p>원천은 \(F/m\)이므로 \(x(t) = \int G(t - t')F(t')\,dt'/m\)이고, 10장의 충격 응답은 \(h = G/m\)(<a href="ch10.html#eq-impulse-response-oscillator">식 (10.28)</a>)이다. 19장 <a href="ch19.html#ex-oscillator-response-contour">예제 19.7</a>은 같은 결과를 응답 함수 \(\chi(\omega)\)의 역변환으로 얻었다. 거기서는 극이 아래 반평면에 있다는 사실이 \(\Theta(t)\)를 만들었고, 여기서는 초기 조건이 만들었다. 20.6절에서 이 두 길이 같은 이유를 일반적으로 본다. 과대 감쇠이면 \(\omega_d = i\kappa\)로 두어 \(\sin(i\kappa t)/i\kappa = \sinh\kappa t/\kappa\)이다.</p>
+    <div class="callout warn"><strong>인과적 그린 함수는 대칭이 아니다</strong><p>경계값 문제의 그린 함수 <a class="ref" href="#eq-green-bvp-construction"></a>은 \(G(x, x') = G(x', x)\)였다. 인과적 그린 함수는 \(G(t, t') \ne G(t', t)\)이다. 하나는 \(t > t'\)에서만, 다른 하나는 \(t &lt; t'\)에서만 0이 아니다. 두 조건을 모두 한쪽 끝(처음)에 걸었기 때문에 이 문제는 16장의 자기수반 조건을 만족하지 않는다. 대칭 대신 시간 이동 불변성 \(G(t, t') = G(t - t')\)이 있다. \(G(t', t)\)는 "나중의 원천이 먼저 반응을 일으키는" 앞선 그린 함수이고, 20.6절에서 다시 나온다.</p></div>
+  </section>
+
+  <!-- ============================================================ 20.3 -->
+  <section id="s3">
+    <h2>고유함수 전개로 만드는 그린 함수</h2>
+    <p>기타 줄의 한 점을 진동수 \(\omega\)로 흔든다고 하자. 20.2절의 방법으로 \(\omega\)마다 그린 함수를 만들 수 있지만, 그 식만 봐서는 "어느 진동수에서 줄이 크게 울리는가", "어느 모드가 울리는가"가 잘 보이지 않는다. 줄의 정규 모드로 전개하면 이 질문에 바로 답할 수 있다. 16장은 자기수반 연산자의 고유함수가 완비 직교 기저임을 보였다. 이 절에서는 그 기저로 그린 함수를 쓴다.</p>
+
+    <h3 id="s3-expansion">고유함수 전개</h3>
+    <p>16장의 스투름-리우빌 연산자 \(\mathcal L = -\frac1w[(p\,d/dx)' - q]\)(<a href="ch16.html#eq-sl-operator">식 (16.5)</a>)에 자기수반 경계 조건을 걸자. 고유값 \(\lambda_n\)은 실수이고 고유함수 \(u_n\)은 가중 함수 \(w\)에 대해 정규직교한다: \(\langle u_m|u_n\rangle = \int u_m^*u_nw\,dx = \delta_{mn}\)(<a href="ch16.html#thm-sl-real-orthogonal">정리 16.2</a>). 풀 문제는</p>
+    <div class="formula" id="eq-sl-inhomogeneous">\[ (\mathcal L - \lambda)\,u = f \]</div>
+    <p>이고 \(\lambda\)는 어느 고유값과도 다르다고 하자. 완비성(<a href="ch16.html#thm-sl-completeness">정리 16.3</a>)으로 \(u = \sum_nc_nu_n\)이라 쓰고 \(\mathcal L - \lambda\)를 걸면 \(\sum_n(\lambda_n - \lambda)c_nu_n = f\)이다. \(u_m\)과 내적하면 직교성 때문에 한 항만 남는다: \((\lambda_m - \lambda)c_m = \langle u_m|f\rangle\). 따라서</p>
+    <div class="formula">\[ u(x) = \sum_n\frac{u_n(x)}{\lambda_n - \lambda}\int u_n^*(x')\,f(x')\,w(x')\,dx' \]</div>
+    <p>이고, 합과 적분의 순서를 바꾸면 그린 함수가 보인다.</p>
+    <div class="box thm" id="thm-green-eigen"><div class="box-h">그린 함수의 고유함수 전개</div>
+      <p>위의 조건에서 \(\lambda\)가 고유값이 아니면</p>
+      <div class="formula" id="eq-green-eigen-expansion">\[ G(x, x'; \lambda) = \sum_n\frac{u_n(x)\,u_n^*(x')}{\lambda_n - \lambda} \]</div>
+      <p>는 \((\mathcal L - \lambda)G = \delta(x - x')/w(x')\)을 만족하고 경계 조건을 만족한다. 식 <a class="ref" href="#eq-sl-inhomogeneous"></a>의 해는 \(u(x) = \int G(x, x';\lambda)f(x')w(x')\,dx'\)이다.</p>
+    </div>
+    <p><b>증명.</b> 항마다 \((\mathcal L - \lambda)u_n = (\lambda_n - \lambda)u_n\)이므로 \((\mathcal L - \lambda)G = \sum_nu_n(x)u_n^*(x')\)이고, 이것은 16장의 완비성의 델타 꼴(<a href="ch16.html#eq-sl-delta-completeness">16장 식 (16.26)</a>)에서 \(\delta(x - x')/w(x')\)이다. 각 항이 경계 조건을 만족하므로 합도 만족한다. \(\square\)</p>
+    <p>가중 함수가 1이면 정의 식 <a class="ref" href="#eq-green-defining"></a> 그대로다. \(w \ne 1\)일 때 델타를 \(w\)로 나눈 것은 해를 16장의 내적(<a href="ch16.html#eq-sl-inner-product">식 (16.6)</a>)으로 쓰기 위해서다. 고유값이 실수이므로 \(\lambda\)가 실수이면</p>
+    <div class="formula" id="eq-green-reciprocity">\[ G(x, x') = G^*(x', x) \]<div class="where">자기수반 연산자와 실수 \(\lambda\)에 대해 성립한다. 고유함수가 실수이면(실수 계수, 분리된 정칙 조건) \(G(x, x') = G(x', x)\)이다.</div></div>
+    <p>가 바로 보인다. 이것을 <span class="term">상반성</span> <span class="en">(reciprocity)</span>이라 한다. "\(B\)에 하중을 걸고 \(A\)에서 잰 처짐은 \(A\)에 하중을 걸고 \(B\)에서 잰 처짐과 같다"는 구조 역학의 맥스웰-베티 상반 정리 <span class="en">(Maxwell–Betti reciprocal theorem)</span>가 그 예다. 20.2절의 식 <a class="ref" href="#eq-green-bvp-construction"></a>에서 본 대칭도 같은 것이고, 20.4절에서 3차원판을 증명한다.</p>
+    <div class="callout warn"><strong>20.2절과 이 절의 그린 함수는 부호가 반대다</strong><p>20.2절은 \(\mathcal L_{20.2} = (p\,d/dx)' - q\)를 썼고, 16장의 연산자는 \(\mathcal L = -\mathcal L_{20.2}/w\)이다. 그래서 \((\mathcal L - \lambda)u = f\)는 \((\mathcal L_{20.2} + \lambda w)u = -wf\)와 같고, 이 절의 \(G\)는 연산자 \(\mathcal L_{20.2} + \lambda w\)에 식 <a class="ref" href="#eq-green-bvp-construction"></a>을 적용한 것에 \(-1\)을 곱한 것이다. 빨랫줄(\(p = -T\))처럼 \(-d^2/dx^2\)이 앞에 오는 물리 연산자는 처음부터 이 절의 부호와 맞는다. 두 식을 섞어 쓸 때는 어느 연산자의 그린 함수인지 확인한다.</p></div>
+
+    <div class="box ex" id="ex-string-eigen-check"><div class="box-h">줄의 그린 함수를 모드로 펼치기</div>
+      <p>\(\mathcal L = -d^2/dx^2\), \(u(0) = u(L) = 0\)의 그린 함수 \(G = x_&lt;(L - x_&gt;)/L\)(식 <a class="ref" href="#eq-string-green"></a>에서 \(T = 1\))을 정규 모드로 전개하고, \(x = x' = L/2\)에서 \(\sum_{n\ge1}1/n^2\)을 구하라.</p>
+      <p><b>풀이.</b> 고유함수는 \(u_n = \sqrt{2/L}\sin k_nx\), 고유값은 \(\lambda_n = k_n^2\), \(k_n = n\pi/L\)이다. 식 <a class="ref" href="#eq-green-eigen-expansion"></a>에 \(\lambda = 0\)을 넣으면</p>
+      <div class="formula">\[ \frac{x_&lt;(L - x_&gt;)}{L} = \frac{2}{L}\sum_{n=1}^\infty\frac{\sin k_nx\,\sin k_nx'}{k_n^2} \]</div>
+      <p>이다. 직접 확인할 수도 있다. 삼각형 \(G(\cdot, x')\)의 사인 계수 \(\int_0^LG\sin k_nx\,dx\)에 \(\sin k_nx = -(\sin k_nx)''/k_n^2\)를 넣고 부분 적분을 두 번 하면 경계 항은 \(G\)와 \(\sin k_nx\)가 양 끝에서 0이라 사라지고, \(-G'' = \delta(x - x')\)만 남아 \(\sin k_nx'/k_n^2\)가 된다. \(x = x' = L/2\)이면 왼쪽은 \(L/4\)이고, \(\sin^2(n\pi/2)\)는 홀수 \(n\)에서만 1이다.</p>
+      <div class="formula">\[ \frac L4 = \frac{2L}{\pi^2}\sum_{n\ \text{홀수}}\frac{1}{n^2} \;\Longrightarrow\; \sum_{n\ \text{홀수}}\frac{1}{n^2} = \frac{\pi^2}{8} \]</div>
+      <p>짝수 항의 합은 전체 합 \(S\)의 \(1/4\)이므로 \(S - S/4 = \pi^2/8\), 곧 \(S = \pi^2/6\)이다. <b>숫자로 보기.</b> 홀수 항을 \(n = 1, 3, 5\)까지만 더하면 \(1 + 1/9 + 1/25 = 1.1511\)이고, \(\pi^2/8 = 1.2337\)의 93%다. 그린 함수가 꺾인 점에서 계수가 \(1/n^2\)로만 줄어들기 때문에 수렴이 느리다.</p>
+    </div>
+
+    <h3 id="s3-resonance">극과 공명</h3>
+    <p>식 <a class="ref" href="#eq-green-eigen-expansion"></a>을 복소수 \(\lambda\)의 함수로 보면, 고유값 \(\lambda_n\)마다 단순 극이 있고 그 유수는 \(-u_n(x)u_n^*(x')\)이다. 원천의 진동수를 고유 진동수에 맞추면 응답이 발산하는 것이 공명이고, 그 근처에서는 한 항이 나머지를 압도한다. 유수가 \(u_n(x')\)에 비례하므로, 원천을 모드 \(n\)의 마디에 두면 그 모드는 울리지 않는다.</p>
+    <div class="callout tip"><strong>완비성은 그린 함수의 유수의 합이다</strong><p>\(G(x, x';\lambda)\)를 \(\lambda\) 평면에서 모든 고유값을 감싸는 큰 원을 따라 적분하면, 19장의 유수 정리로 \(-\frac{1}{2\pi i}\oint G\,d\lambda = \sum_nu_n(x)u_n^*(x')\)이다. 큰 \(\lvert\lambda\rvert\)에서 \((\mathcal L - \lambda)^{-1} \approx -1/\lambda\)이므로 왼쪽은 형식적으로 \(\delta(x - x')/w\)이고, 완비성의 델타 꼴이 다시 나온다. 수렴을 다루려면 손이 많이 가지만, "그린 함수의 극은 스펙트럼이고 유수는 고유 공간으로의 투영"이라는 그림은 양자역학의 레졸벤트와 같다.</p></div>
+
+    <div class="box ex" id="ex-driven-string-point"><div class="box-h">한 점을 흔드는 기타 줄</div>
+      <p>길이 \(L = 0.650\ \text{m}\), 장력 \(T = 70.0\ \text{N}\)인 줄의 기본 진동수가 \(f_1 = 110\ \text{Hz}\)이다. 감쇠를 무시하고, \(x_0 = L/3\)에 진폭 \(F_0 = 0.010\ \text{N}\)인 힘 \(F_0e^{-i\omega t}\)을 준다. (가) 정상 상태의 진폭 \(Y(x)\)를 닫힌 꼴과 모드 전개 두 가지로 쓰라. (나) \(x_0\)에서의 진폭을 \(0\), \(100\), \(109\ \text{Hz}\)에서 구하고, \(109\ \text{Hz}\)에서는 첫 모드 한 항의 근사와 비교하라. (다) \(330\ \text{Hz}\)에서는 왜 공명이 없는가?</p>
+      <p><b>풀이.</b> (가) 줄의 운동 방정식 \(\mu\ddot y = Ty'' + F_0\delta(x - x_0)e^{-i\omega t}\)에 \(y = Y(x)e^{-i\omega t}\)를 넣고 \(T\)로 나누면</p>
+      <div class="formula">\[ \begin{aligned} -Y'' - k^2Y &= \frac{F_0}{T}\,\delta(x - x_0) \\ k = \frac{\omega}{c}, \quad c &= \sqrt{T/\mu} \end{aligned} \]</div>
+      <p>이다. 이 절의 꼴에서 \(\mathcal L = -d^2/dx^2\), \(\lambda = k^2\), \(w = 1\)이므로 \(Y = (F_0/T)\,G(x, x_0;k^2)\)이다. 모드 전개는 앞 예제의 고유함수로 \(G = (2/L)\sum_n\sin k_nx\sin k_nx'/(k_n^2 - k^2)\)이다. 닫힌 꼴은 \(\mathcal L_{20.2} = d^2/dx^2 + k^2\)에 식 <a class="ref" href="#eq-green-bvp-construction"></a>을 쓰고(\(u_1 = \sin kx\), \(u_2 = \sin k(L - x)\), \(W = -k\sin kL\)) 부호를 바꾼다.</p>
+      <div class="formula" id="eq-driven-string-green">\[ G(x, x'; k^2) = \frac{\sin kx_&lt;\,\sin k(L - x_&gt;)}{k\sin kL} \]</div>
+      <p>분모가 0인 \(kL = n\pi\)가 모드 전개의 극 \(k^2 = k_n^2\)과 같고, \(k \to 0\)이면 삼각형 \(x_&lt;(L - x_&gt;)/L\)로 돌아간다.</p>
+      <p>(나) <b>숫자로 보기.</b> \(c = 2Lf_1 = 143\ \text{m/s}\)이다. 정적 처짐은 \(Y_0 = F_0x_0(L - x_0)/TL = 2.06 \times 10^{-5}\ \text{m}\)이다. \(100\ \text{Hz}\)이면 \(kL = 2.856\)이고 식 <a class="ref" href="#eq-driven-string-green"></a>에서 \(Y(x_0) = 88.8\ \mu\text{m}\)(\(4.3Y_0\))이다. \(109\ \text{Hz}\)이면 \(Y(x_0) = 0.788\ \text{mm}\)(\(38Y_0\))이다. 첫 모드 한 항만 쓰면</p>
+      <div class="formula">\[ Y \approx \frac{F_0}{T}\,\frac{2}{L}\,\frac{\sin^2(\pi/3)}{k_1^2 - k^2} = 0.780\ \text{mm} \]</div>
+      <p>로 1% 작다. 나머지 모드의 몫은 대략 \((k_1^2 - k^2)/(k_n^2 - k_1^2)\)의 비율이라 공명에 가까울수록 작아진다. 단위: \(F_0/T\)는 차원이 없고 \(G\)는 길이다.</p>
+      <p>(다) \(3\)번 모드의 유수는 \(\sin^2(3\pi x_0/L) = \sin^2\pi = 0\)에 비례한다. \(x_0 = L/3\)이 \(3\)번 모드(\(330\ \text{Hz}\))의 마디이므로 힘이 그 모드에 일을 하지 못한다. 닫힌 꼴에서도 \(kL = 3\pi\)이면 분자의 \(\sin(kL/3)\)이 분모와 함께 0이 되어 유한하다. 흔드는 점 \(x_0\) 자체에서는 분자의 두 인자 \(\sin kx_0\)과 \(\sin k(L - x_0)\)이 모두 0이라 진폭이 0으로 떨어지고(그림 20-3에서 330 Hz의 골), 다른 점에서는 유한한 값이 남는다. 그림 20-3이 이것을 보여 준다. 실제 줄에는 감쇠가 있어서 극이 실수축에서 조금 벗어나고, 공명의 높이는 유한해진다(20.6절).</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 270" role="img" aria-label="한 점을 흔드는 현의 응답을 진동수에 대해 그린 그래프. 110, 220, 440 Hz에서 공명하고 330 Hz에서는 공명이 없다"><line x1="56" y1="36" x2="56" y2="216" class="s-grid"/><text x="56" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><line x1="137.6" y1="36" x2="137.6" y2="216" class="s-grid"/><text x="137.6" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">100</text><line x1="219.2" y1="36" x2="219.2" y2="216" class="s-grid"/><text x="219.2" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">200</text><line x1="300.8" y1="36" x2="300.8" y2="216" class="s-grid"/><text x="300.8" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">300</text><line x1="382.4" y1="36" x2="382.4" y2="216" class="s-grid"/><text x="382.4" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">400</text><line x1="464" y1="36" x2="464" y2="216" class="s-grid"/><text x="464" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">500</text><line x1="56" y1="216" x2="464" y2="216" class="s-grid"/><text x="48" y="221" class="t-dim" style="font-size:14px" text-anchor="end">0.01</text><line x1="56" y1="171" x2="464" y2="171" class="s-grid"/><text x="48" y="176" class="t-dim" style="font-size:14px" text-anchor="end">0.1</text><line x1="56" y1="126" x2="464" y2="126" class="s-grid"/><text x="48" y="131" class="t-dim" style="font-size:14px" text-anchor="end">1</text><line x1="56" y1="81" x2="464" y2="81" class="s-grid"/><text x="48" y="86" class="t-dim" style="font-size:14px" text-anchor="end">10</text><line x1="56" y1="36" x2="464" y2="36" class="s-grid"/><text x="48" y="41" class="t-dim" style="font-size:14px" text-anchor="end">100</text><line x1="56" y1="216" x2="464" y2="216" class="s-line"/><line x1="56" y1="216" x2="56" y2="36" class="s-line"/><path d="M56,126 69.1,125.7 85.4,124.4 105,120.8 114.8,117.6 121.3,114.5 124.6,112.6 131.1,107.1 134.3,103.1 138.8,94.8 142.2,82.7 144.5,62.9 145.5,36 M146,36 147.6,72.2 150.7,92.3 153.6,102.4 157.8,112.7 163.4,123.1 176.6,144.8 180.4,152.4 183.4,160 186.5,171.7 188.3,183.5 189.4,195.2 190.2,216 M191,216 192.6,187.4 194.5,174.1 197.2,164.2 199.8,157.5 203.4,150.8 219,129.5 223.7,121.9 227.4,114.1 231,102.3 232.5,94.4 234.2,78.7 235.4,36.1 M235.7,36 236.1,63.4 237.6,86.9 240.4,103.6 245.1,116.9 248.8,123.6 256.8,133.7 266.6,142.7 296,165.5 302.5,171.6 308.9,179 313.9,186.8 317.5,194.6 320,202.5 322.9,216 M327.9,216 330.4,203.8 333.8,193.9 337.4,187.3 342.3,180.6 348.7,174.3 358.5,167 381.4,153 391.2,146 397.7,140 401,136.1 405.9,128.1 410.2,116.1 413,100.2 414.3,80.6 415,36 M415.1,36 415.3,63.1 416.5,93.8 417.9,107.2 420.5,120.6 423.8,130.7 428.7,140.9 444.8,165.9 450.8,177.3 453.6,185.1 455.6,192.9 457,200.8 458.6,216 M461.2,216 464,194.4" class="s-acc" style="stroke-width:2.2"/><text x="145.8" y="30" class="t-acc" style="font-size:13px" text-anchor="middle">110</text><text x="235.5" y="30" class="t-acc" style="font-size:13px" text-anchor="middle">220</text><text x="415" y="30" class="t-acc" style="font-size:13px" text-anchor="middle">440</text><line x1="325.3" y1="36" x2="325.3" y2="216" class="s-acc2" stroke-dasharray="5 4"/><text x="330.3" y="54" class="t-dim" style="font-size:13px" text-anchor="start">330 Hz:</text><text x="330.3" y="70" class="t-dim" style="font-size:13px" text-anchor="start">x₀가 3번 모드의 마디</text><text x="464" y="262" class="t-dim" style="font-size:14px" text-anchor="end">진동수 f (Hz)</text><text x="62" y="52" class="t-dim" style="font-size:14px" text-anchor="start">|Y(x₀)| / Y₀</text></svg>
+      <figcaption><b>그림 20-3.</b> \(x_0 = L/3\)을 흔드는 기타 줄에서 그 점의 진폭을 정적 처짐 \(Y_0\)로 나눈 값(로그 눈금). 식 <a class="ref" href="#eq-driven-string-green"></a>로 계산했다. 극은 \(f_n = 110n\ \text{Hz}\)인데 \(330\ \text{Hz}\)(점선)에는 공명이 없다. 흔드는 점이 3번 모드의 마디라 유수가 0이기 때문이다. 공명과 공명 사이에서 진폭이 0으로 떨어지는 반공명이 생긴다.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================================================ 20.4 -->
+  <section id="s4">
+    <h2>푸아송 방정식과 영상법</h2>
+    <p>접지된 도체 근처에 점전하를 두면 퍼텐셜은 \(q/4\pi\varepsilon_0r\)이 아니다. 도체 표면에 전하가 유도되어 경계에서 \(V = 0\)을 맞추기 때문이다. 3차원에서는 20.2절처럼 두 동차해를 잇는 방법이 없다. 대신 경계 값과 원천을 함께 다루는 적분 공식을 그린의 제2 항등식에서 만들고, 경계에서 0이 되는 그린 함수를 기하학적인 방법으로 찾는다.</p>
+
+    <h3 id="s4-free">자유 공간의 그린 함수</h3>
+    <p>경계가 없는 공간에서 \(\nabla^2G = \delta^3(\mathbf r - \mathbf r')\)이고 무한대에서 0인 해는 6장의 \(\nabla^2(1/r) = -4\pi\delta^3\)에서 바로 나온다.</p>
+    <div class="formula" id="eq-green-poisson">\[ G_0(\mathbf r, \mathbf r') = -\frac{1}{4\pi\lvert\mathbf r - \mathbf r'\rvert} \]</div>
+    <p>15장에서는 같은 결과를 파수 공간에서 얻었다. \(\nabla^2 \to -k^2\)이므로 \(\tilde G_0 = -1/k^2\)이고, 이것을 <a href="ch15.html#eq-coulomb-ft">식 (15.44)</a>로 거꾸로 변환하면 식 <a class="ref" href="#eq-green-poisson"></a>이다. 정전기학에서는 \(\nabla^2V = -\rho/\varepsilon_0\)이므로 \(V = \int G_0(-\rho/\varepsilon_0)\,d^3r'\)이 쿨롱 퍼텐셜의 중첩이다. 5장의 헬름홀츠 정리(<a href="ch05.html#thm-helmholtz">정리 5.7</a>)의 증명도 이 식에 기댄다.</p>
+
+    <h3 id="s4-identity">그린의 제2 항등식과 적분 표현</h3>
+    <div class="box thm" id="thm-green-second-identity"><div class="box-h">그린의 제2 항등식</div>
+      <p>영역 \(V\)와 그 경계 \(S\)(바깥 법선 \(\hat{\mathbf n}\))에서 \(\phi\), \(\psi\)의 2계 편미분이 연속이면</p>
+      <div class="formula" id="eq-green-second-identity">\[ \begin{aligned} &\int_V\big(\phi\nabla^2\psi - \psi\nabla^2\phi\big)\,d^3r \\ &\quad = \oint_S\big(\phi\nabla\psi - \psi\nabla\phi\big)\cdot d\mathbf a \end{aligned} \]</div>
+      <p>이다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>5장의 제1 항등식(<a href="ch05.html#eq-green-first-identity">식 (5.29)</a>) \(\int_V(\phi\nabla^2\psi + \nabla\phi\cdot\nabla\psi)\,d^3r = \oint_S\phi\nabla\psi\cdot d\mathbf a\)에서 \(\phi\)와 \(\psi\)를 바꾼 식을 빼면 \(\nabla\phi\cdot\nabla\psi\)가 지워진다. 제1 항등식은 \(\nabla\cdot(\phi\nabla\psi) = \phi\nabla^2\psi + \nabla\phi\cdot\nabla\psi\)에 발산 정리를 쓴 것이다.</p>
+      </details>
+    </div>
+    <p>이 항등식은 16장의 라그랑주 항등식(<a href="ch16.html#eq-lagrange-identity">식 (16.11)</a>)의 3차원판이다. 둘 다 "\(\phi\mathcal L\psi - \psi\mathcal L\phi\)는 완전 미분이라 경계 항만 남는다"는 말이다.</p>
+    <p>경계 \(S\)에서 0이 되는 그린 함수를 <span class="term">디리클레 그린 함수</span> <span class="en">(Dirichlet Green's function)</span> \(G_D\)라 하자. 먼저 상반성을 보인다. \(\phi = G_D(\mathbf r', \mathbf r_1)\), \(\psi = G_D(\mathbf r', \mathbf r_2)\)를 \(\mathbf r'\)의 함수로 보고 식 <a class="ref" href="#eq-green-second-identity"></a>에 넣으면 경계에서 둘 다 0이라 우변이 0이고, 좌변은 델타가 걸러서 \(G_D(\mathbf r_2, \mathbf r_1) - G_D(\mathbf r_1, \mathbf r_2)\)이다. 따라서 \(G_D(\mathbf r_1, \mathbf r_2) = G_D(\mathbf r_2, \mathbf r_1)\)이고, 식 <a class="ref" href="#eq-green-reciprocity"></a>의 3차원판이다.</p>
+    <div class="box thm" id="thm-green-representation"><div class="box-h">푸아송 방정식의 적분 표현</div>
+      <p>\(V\) 안에서 \(\nabla^2u = s\)라 하자. \(G\)가 대칭인 그린 함수(\(G_0\) 또는 \(G_D\))이면</p>
+      <div class="formula" id="eq-green-representation">\[ \begin{aligned} u(\mathbf r) &= \int_VG(\mathbf r, \mathbf r')\,s(\mathbf r')\,d^3r' \\ &\quad + \oint_S\Big(u\,\frac{\partial G}{\partial n'} - G\,\frac{\partial u}{\partial n'}\Big)da' \end{aligned} \]</div>
+      <p>이다. \(\partial/\partial n' = \hat{\mathbf n}'\cdot\nabla'\)은 \(\mathbf r'\)에 대한 바깥 법선 미분이다. 특히 \(G = G_D\)이면 둘째 항의 \(G\)가 사라져 \(u(\mathbf r) = \int_VG_Ds\,d^3r' + \oint_Su\,\partial_{n'}G_D\,da'\)이다.</p>
+    </div>
+    <p><b>증명.</b> 식 <a class="ref" href="#eq-green-second-identity"></a>에 \(\phi = u(\mathbf r')\), \(\psi = G(\mathbf r, \mathbf r')\)을 넣고 \(\mathbf r'\)로 적분한다. 대칭성 때문에 \(\nabla'^2G(\mathbf r, \mathbf r') = \delta^3(\mathbf r' - \mathbf r)\)이므로 좌변은 \(u(\mathbf r) - \int_VGs\,d^3r'\)이다. 우변은 식의 둘째 항이다. \(\square\)</p>
+    <p>디리클레 문제에서는 경계의 값 \(u\)만 주어지면 해가 정해진다(17장 <a href="ch17.html#thm-uniqueness-laplace">정리 17.2</a>). 자유 공간의 \(G_0\)를 쓰면 경계에서 \(u\)와 \(\partial u/\partial n\)이 둘 다 필요해 보이는데, 둘은 독립이 아니다. \(G_D\)는 그중 \(\partial u/\partial n\)을 지워 주는 그린 함수다. \(G_D = G_0 + F\)로 쓰면 \(F\)는 \(V\) 안에서 \(\nabla^2F = 0\)이고 경계에서 \(F = -G_0\)인 조화 함수다. 문제는 그런 \(F\)를 찾는 것이다.</p>
+
+    <h3 id="s4-images">영상법</h3>
+    <p>\(F\)를 \(V\) 바깥에 둔 가짜 점전하의 퍼텐셜로 찾는 방법이 <span class="term">영상법</span> <span class="en">(method of images)</span>이다. 원천이 \(V\) 밖에 있으면 \(V\) 안에서 \(\nabla^2F = 0\)이 저절로 성립하므로, 경계에서 \(G_0 + F = 0\)이 되도록 가짜 전하의 위치와 크기만 고르면 된다.</p>
+    <p><b>평면.</b> \(V\)가 반공간 \(z > 0\)이면 원천점 \(\mathbf r' = (x', y', z')\)을 평면에 비춘 점 \(\mathbf r'_* = (x', y', -z')\)에 부호가 반대인 원천을 둔다.</p>
+    <div class="formula" id="eq-image-plane">\[ G_D(\mathbf r, \mathbf r') = -\frac{1}{4\pi}\Big(\frac{1}{\lvert\mathbf r - \mathbf r'\rvert} - \frac{1}{\lvert\mathbf r - \mathbf r'_*\rvert}\Big) \]<div class="where">평면 \(z = 0\) 위의 점은 \(\mathbf r'\)과 \(\mathbf r'_*\)에서 같은 거리에 있으므로 \(G_D = 0\)이다.</div></div>
+    <p>경계 항에 쓸 법선 미분을 구하자. \(V\)의 바깥 법선은 \(-\hat{\mathbf z}\)이므로 \(\partial_{n'} = -\partial_{z'}\)이다. \(\partial_{z'}\lvert\mathbf r - \mathbf r'\rvert^{-1} = (z - z')/\lvert\mathbf r - \mathbf r'\rvert^3\), \(\partial_{z'}\lvert\mathbf r - \mathbf r'_*\rvert^{-1} = -(z + z')/\lvert\mathbf r - \mathbf r'_*\rvert^3\)이고, \(z' = 0\)에서 두 거리는 같아 \(R^2 = (x - x')^2 + (y - y')^2 + z^2\)이다. 따라서 \(\partial_{n'}G_D = z/(2\pi R^3)\)이고, 원천이 없는 반공간(\(s = 0\))에서 식 <a class="ref" href="#eq-green-representation"></a>은</p>
+    <div class="formula" id="eq-poisson-kernel-plane">\[ u(x, y, z) = \frac{z}{2\pi}\iint\frac{u(x', y', 0)\,dx'\,dy'}{\big[(x - x')^2 + (y - y')^2 + z^2\big]^{3/2}} \]</div>
+    <p>이다. 평면 위의 값만으로 위쪽 공간 전체의 퍼텐셜이 정해진다. 무한히 먼 반구의 경계 항은 \(u\)가 멀리서 0으로 가면 사라진다. \(u = 1\)을 넣으면 적분은 \(\int_0^\infty z\,s\,ds/(s^2 + z^2)^{3/2} = 1\)이 되어 1을 돌려준다(연습문제).</p>
+
+    <div class="box ex" id="ex-disk-potential"><div class="box-h">접지판에 박힌 원판 전극</div>
+      <p>넓은 접지 금속판(\(z = 0\)) 한가운데에 반지름 \(a = 1.0\ \text{cm}\)인 원판 전극이 얇은 절연 고리로 끼워져 있고 전위가 \(V_0 = 100\ \text{V}\)이다. 판 위쪽에는 전하가 없다. 축(\(z\)축) 위의 퍼텐셜을 구하고, \(z = 1.0\ \text{cm}\)와 \(z = 10\ \text{cm}\)에서 계산하라. 먼 곳의 근사도 구하라.</p>
+      <p><b>풀이.</b> 식 <a class="ref" href="#eq-poisson-kernel-plane"></a>에서 \(x = y = 0\)이고 \(u(x', y', 0)\)은 원판 안에서 \(V_0\), 밖에서 0이다. 극좌표 \(s\)로 적분하면</p>
+      <div class="formula" id="eq-disk-axis">\[ \begin{aligned} V(z) &= \frac{z}{2\pi}\int_0^a\frac{V_0\,2\pi s\,ds}{(s^2 + z^2)^{3/2}} \\ &= V_0z\Big[-\frac{1}{\sqrt{s^2 + z^2}}\Big]_0^a \\ &= V_0\Big(1 - \frac{z}{\sqrt{z^2 + a^2}}\Big) \end{aligned} \]</div>
+      <p>이다. \(z \to 0\)이면 \(V_0\), \(z \to \infty\)이면 0으로 간다. 먼 곳에서는 \(z/\sqrt{z^2 + a^2} = (1 + a^2/z^2)^{-1/2} = 1 - a^2/2z^2 + 3a^4/8z^4 - \cdots\)이므로 \(V \approx V_0a^2/2z^2\)이다.</p>
+      <p><b>숫자로 보기.</b> \(z = 1.0\ \text{cm}\)이면 \(V = 100(1 - 1/\sqrt2)\ \text{V} = 29.3\ \text{V}\)이다. \(z = 10\ \text{cm}\)이면 정확한 값은 \(0.496\ \text{V}\), 근사는 \(0.500\ \text{V}\)이다. <b>다음 항은 몇 차인가.</b> 다음 항은 \(-\tfrac34(a/z)^2\)의 상대 보정, 곧 \(0.75\%\)이고 차이를 설명한다. 먼 곳의 \(1/z^2\)는 쌍극자의 장이다. 식 <a class="ref" href="#eq-poisson-kernel-plane"></a>의 핵이 쌍극자 층의 퍼텐셜이라 원판은 세기가 \(V_0\)에 비례하는 쌍극자 층과 같고, 전하로 보면 원판의 양전하와 판에 유도된 음전하의 합이 0이기 때문이다.</p>
+    </div>
+
+    <p><b>구.</b> 반지름 \(a\)인 접지 구의 바깥 \(V\)에 원천점 \(\mathbf r'\)(\(r' > a\))이 있다. 구 안의 점 \(\mathbf r'_* = (a^2/r'^2)\,\mathbf r'\)에 세기 \(-a/r'\)인 영상 원천을 두자. 구 위의 점 \(\mathbf P\)(\(\lvert\mathbf P\rvert = a\))에서</p>
+    <div class="formula">\[ \begin{aligned} \lvert\mathbf P - \mathbf r'_*\rvert^2 &= a^2 - \frac{2a^2}{r'^2}\mathbf P\cdot\mathbf r' + \frac{a^4}{r'^2} \\ &= \frac{a^2}{r'^2}\lvert\mathbf P - \mathbf r'\rvert^2 \end{aligned} \]</div>
+    <p>이다(마지막 등호는 \(\lvert\mathbf P\rvert^2 = a^2\)을 써서 \(a^2/r'^2\)을 묶은 것이다). 곧 구 위의 모든 점에서 두 거리의 비가 \(a/r'\)로 일정하다(그림 20-4). 따라서</p>
+    <div class="formula" id="eq-image-sphere">\[ G_D(\mathbf r, \mathbf r') = -\frac{1}{4\pi}\Big(\frac{1}{\lvert\mathbf r - \mathbf r'\rvert} - \frac{a/r'}{\lvert\mathbf r - \mathbf r'_*\rvert}\Big) \]</div>
+    <p>는 구 위에서 0이다. 영상점이 \(V\) 밖(구 안)에 있으므로 이것이 바깥 영역의 디리클레 그린 함수다. 같은 식이 안쪽 영역(\(r, r' &lt; a\))에서도 그대로 성립하고, 그때 영상점은 구 밖에 있다. 상반성 \(G_D(\mathbf r_1, \mathbf r_2) = G_D(\mathbf r_2, \mathbf r_1)\)은 식만 보면 분명하지 않지만, 앞의 일반 증명이 보장한다. 이 그린 함수와 식 <a class="ref" href="#eq-green-representation"></a>로 구 위의 값이 주어진 문제를 풀 수도 있다(연습문제의 평면판과 같은 계산).</p>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 300" role="img" aria-label="접지된 도체 구, 바깥의 점전하 q와 안쪽의 영상 전하 q′. 구 위의 점 P에서 두 전하까지 거리의 비는 a/d로 일정하다"><circle cx="150" cy="150" r="95" class="f-acc-soft" style="stroke-width:2"/><line x1="20" y1="150" x2="400" y2="150" class="s-faint"/><line x1="150" y1="150" x2="200.3" y2="69.4" class="s-line" stroke-dasharray="4 3"/><line x1="200.3" y1="69.4" x2="340" y2="150" class="s-acc"/><line x1="200.3" y1="69.4" x2="197.5" y2="150" class="s-acc2"/><circle cx="340" cy="150" r="6" class="f-acc"/><circle cx="197.5" cy="150" r="5" class="f-acc2"/><circle cx="150" cy="150" r="3" class="f-dim"/><circle cx="200.3" cy="69.4" r="4" class="f-dim"/><text x="144" y="170" class="t-math" style="font-size:16px" text-anchor="end">O</text><text x="340" y="176" class="t-math acc" style="font-size:17px" text-anchor="middle">q</text><text x="197.5" y="176" class="t-math acc2" style="font-size:17px" text-anchor="middle">q′</text><text x="196.3" y="59.4" class="t-math" style="font-size:17px" text-anchor="middle">P</text><text x="161.2" y="109.7" class="t-math dim" style="font-size:16px" text-anchor="end">a</text><line x1="150" y1="210" x2="197.5" y2="210" class="s-line"/><line x1="150" y1="205" x2="150" y2="215" class="s-line"/><line x1="197.5" y1="205" x2="197.5" y2="215" class="s-line"/><text x="173.8" y="230" class="t-dim" style="font-size:13px" text-anchor="middle">b = a²/d</text><line x1="150" y1="250" x2="340" y2="250" class="s-line"/><line x1="150" y1="245" x2="150" y2="255" class="s-line"/><line x1="340" y1="245" x2="340" y2="255" class="s-line"/><text x="245" y="270" class="t-math dim" style="font-size:16px" text-anchor="middle">d</text><text x="400" y="40" class="t" style="font-size:14px" text-anchor="end">PQ′ / PQ = a/d</text><text x="400" y="60" class="t" style="font-size:14px" text-anchor="end">q′ = −qa/d</text><text x="30" y="40" class="t-acc" style="font-size:14px" text-anchor="start">V = 0</text></svg></div>
+      <figcaption><b>그림 20-4.</b> 접지 구(반지름 \(a\))와 바깥의 점전하 \(q\)(거리 \(d\)), 영상 전하 \(q' = -qa/d\)(거리 \(b = a^2/d\)). 구 위의 어느 점 \(\mathbf P\)에서도 두 전하까지의 거리 비 \(\lvert\mathbf P\mathbf Q'\rvert/\lvert\mathbf P\mathbf Q\rvert\)가 \(a/d\)로 같아서 퍼텐셜이 0이다. 그림은 \(d = 2a\)이다.</figcaption>
+    </figure>
+
+    <div class="box ex" id="ex-image-sphere"><div class="box-h">접지된 도체 구 밖의 점전하</div>
+      <p>반지름 \(a = 10\ \text{cm}\)인 접지 도체 구의 중심에서 \(d = 20\ \text{cm}\) 떨어진 곳에 \(q = 1.0\ \text{nC}\)이 있다. (가) 영상 전하의 크기와 위치를 구하라. (나) 구에서 가장 먼 쪽, 중심에서 \(30\ \text{cm}\)인 축 위의 점의 퍼텐셜을 구하고, 구가 없을 때와 비교하라. (다) 점전하가 받는 힘을 구하라.</p>
+      <p><b>풀이.</b> (가) 퍼텐셜은 \(V = \int G_D(-\rho/\varepsilon_0)\,d^3r' = -(q/\varepsilon_0)\,G_D(\mathbf r, \mathbf r_q)\)이다. 식 <a class="ref" href="#eq-image-sphere"></a>에서</p>
+      <div class="formula">\[ \begin{aligned} V(\mathbf r) &= \frac{1}{4\pi\varepsilon_0}\Big(\frac{q}{\lvert\mathbf r - \mathbf r_q\rvert} + \frac{q'}{\lvert\mathbf r - \mathbf r_{q'}\rvert}\Big) \\ q' &= -\frac{qa}{d} \end{aligned} \]</div>
+      <p>이고 \(q'\)은 중심에서 \(b = a^2/d\)인 곳에 있다. \(q' = -0.50\ \text{nC}\), \(b = 5.0\ \text{cm}\)이다. 확인: 구의 꼭대기 \((0, a)\)에서 두 전하까지의 거리는 \(22.36\ \text{cm}\)와 \(11.18\ \text{cm}\)로 비가 \(1/2\)이고, \(q/22.36 + q'/11.18 = 0\)이다.</p>
+      <p>(나) <b>숫자로 보기.</b> 그 점은 \(q\)에서 \(10\ \text{cm}\), \(q'\)에서 \(25\ \text{cm}\) 떨어져 있다. 전하를 nC 단위로 넣으면 \(8.99 \times 10^9 \times 10^{-9} = 8.99\)이다.</p>
+      <div class="formula">\[ \begin{aligned} V &= 8.99\Big(\frac{1.0}{0.10} - \frac{0.50}{0.25}\Big)\ \text{V} \\ &= 71.9\ \text{V} \end{aligned} \]</div>
+      <p>구가 없으면 \(89.9\ \text{V}\)이다. 접지 구가 퍼텐셜을 20% 낮춘다.</p>
+      <p>(다) 구 밖의 장은 영상 전하가 만든 것과 같으므로, 점전하가 받는 힘은 \(q'\)이 당기는 힘이다.</p>
+      <div class="formula">\[ \begin{aligned} F &= \frac{q\lvert q'\rvert}{4\pi\varepsilon_0(d - b)^2} \\ &= \frac{8.99 \times 10^9 \times 0.50 \times 10^{-18}}{(0.15)^2}\ \text{N} \\ &= 2.0 \times 10^{-7}\ \text{N} \end{aligned} \]</div>
+      <p>구 쪽으로 당기는 힘이다. 차원: \(\text{N}\cdot\text{m}^2/\text{C}^2 \times \text{C}^2/\text{m}^2 = \text{N}\). \(d \to a\)이면 \(b \to a\), \(q' \to -q\)이 되어 평면의 영상(식 <a class="ref" href="#eq-image-plane"></a>)으로 돌아간다. 구 표면에 유도된 전하의 분포와 그 물리는 전자기학(<code>em</code>)에서 다룬다.</p>
+    </div>
+    <div class="callout deep"><strong>노이만 그린 함수</strong><p>경계에서 \(\partial u/\partial n\)이 주어진 문제에는 \(\partial G/\partial n' = 0\)인 그린 함수를 쓰고 싶지만, 그런 \(G\)는 없다. 발산 정리로 \(\oint\partial_{n'}G\,da' = \int\nabla'^2G\,d^3r' = 1\)이기 때문이다. 대신 경계 넓이 \(A_S\)에 대해 \(\partial_{n'}G_N = 1/A_S\)로 정하면, 식 <a class="ref" href="#eq-green-representation"></a>의 경계 항에서 \(u\)의 경계 평균이라는 상수만 남는다. 노이만 문제의 해가 상수만큼 정해지지 않는 것(17장)과 같은 사정이다.</p></div>
+  </section>
+
+  <!-- ============================================================ 20.5 -->
+  <section id="s5">
+    <h2>헬름홀츠 방정식과 확산 방정식</h2>
+    <p>스피커 하나가 내는 소리의 압력은 거리에 따라 어떻게 줄어드는가? 물속 한 점에 레이저로 준 열은 얼마나 빨리 퍼지는가? 두 질문 모두 경계가 없는 공간의 그린 함수로 답한다. 경계가 없으면 푸리에 변환이 가장 빠른 길이다. 다만 헬름홀츠 방정식에서는 변환한 그린 함수의 극이 적분 경로 위에 놓여, 19장의 \(i\varepsilon\) 처방으로 물리적인 해를 골라야 한다.</p>
+
+    <h3 id="s5-helmholtz">헬름홀츠 방정식: 극을 어느 쪽으로 비켜 가는가</h3>
+    <p>파동 방정식(<a href="ch17.html#eq-wave-equation">17장 식 (17.5)</a>)의 원천이 한 진동수 \(\omega\)로 진동하면 해도 \(\psi(\mathbf r)e^{-i\omega t}\) 꼴이고, 공간 부분은 헬름홀츠 방정식(<a href="ch17.html#eq-helmholtz-equation">식 (17.6)</a>)에 원천을 더한 \((\nabla^2 + k^2)\psi = s\)를 따른다(\(k = \omega/c\)). 그린 함수를 3차원 변환(<a href="ch15.html#eq-ft-3d">식 (15.38)</a>)으로 구하자. \(\nabla^2 \to -q^2\)이므로(\(\mathbf q\)는 변환 변수)</p>
+    <div class="formula" id="eq-helmholtz-fourier">\[ \tilde G(\mathbf q) = \frac{1}{k^2 - q^2} \]</div>
+    <p>이다. \(\tilde G\)가 \(q = \lvert\mathbf q\rvert\)에만 기대므로 지름 방향 역변환(<a href="ch15.html#eq-radial-ft">식 (15.40)</a>)을 쓴다. 피적분 함수가 \(q\)에 대해 짝함수이므로 적분을 실수축 전체로 넓히고, \(\sin qr = (e^{iqr} - e^{-iqr})/2i\)의 둘째 항을 \(q \to -q\)로 바꾸면 첫째 항과 같아진다.</p>
+    <div class="formula" id="eq-helmholtz-ieps">\[ \begin{aligned} G(r) &= \frac{1}{2\pi^2r}\int_0^\infty\frac{q\sin qr}{k^2 - q^2}\,dq \\ &= \frac{1}{4\pi^2ir}\int_{-\infty}^{\infty}\frac{q\,e^{iqr}}{k^2 - q^2}\,dq \end{aligned} \]</div>
+    <p>피적분 함수는 실수축 위의 \(q = \pm k\)에 극이 있어서 이 적분은 그대로는 뜻이 없다. 식 <a class="ref" href="#eq-helmholtz-fourier"></a>만으로는 해가 하나로 정해지지 않는다는 뜻이고, 실제로 \((\nabla^2 + k^2)\psi = 0\)에는 무한대에서 0으로 가는 해(\(\sin kr/r\))가 있다. 어떤 해를 고를지는 물리가 정한다. 매질이 약간 소리를 흡수한다고 하자. 그러면 파는 멀어지면서 조금씩 줄어든다. \(k\)를 \(k + i\varepsilon\)(\(\varepsilon > 0\))로 바꾸는 것이 그 효과이고, 극은 \(q = k + i\varepsilon\)(위 반평면)과 \(q = -k - i\varepsilon\)(아래 반평면)으로 옮겨진다. \(r > 0\)이면 \(e^{iqr}\)이 위 반평면에서 줄어들고 \(q/(k^2 - q^2) \to 0\)이므로, 조르당 보조정리(<a href="ch19.html#thm-jordan">정리 19.10</a>)로 위쪽 큰 반원의 기여가 사라진다. 위로 닫으면 \(q = k\)의 극 하나만 들어가고, 그 유수는 \(q\,e^{iqr}/[-(q - k)(q + k)]\big|_{q=k} = -e^{ikr}/2\)이다. 적분은 \(2\pi i(-e^{ikr}/2) = -i\pi e^{ikr}\)이고, \(\varepsilon \to 0\)으로 보내면</p>
+    <div class="formula" id="eq-green-helmholtz">\[ G_+(\mathbf r, \mathbf r') = -\frac{e^{ik\lvert\mathbf r - \mathbf r'\rvert}}{4\pi\lvert\mathbf r - \mathbf r'\rvert} \]</div>
+    <p>이다. \(e^{-i\omega t}\)를 곱하면 \(e^{i(kr - \omega t)}/r\), 곧 원천에서 밖으로 나가는 구면파이므로 \(G_+\)를 <span class="term">나가는 그린 함수</span> <span class="en">(outgoing Green's function)</span>라 한다. 직접 확인하자. \(e^{ikr}/r = 1/r + ik - k^2r/2 + \cdots\)에서 \(1/r\)만 원점에서 델타를 만들고(<a href="ch06.html#eq-laplacian-inverse-r">식 (6.54)</a>), \(r \ne 0\)에서는 6장의 지름 방향 라플라시안 \((1/r)(r\psi)''\)로 \(\nabla^2(e^{ikr}/r) = -k^2e^{ikr}/r\)이다. 합치면 \((\nabla^2 + k^2)(e^{ikr}/r) = -4\pi\delta^3\)이다.</p>
+    <p>다른 처방은 다른 해를 준다. \(k - i\varepsilon\)이면 들어오는 파 \(G_- = -e^{-ikr}/4\pi r\)이고, 주값으로 적분하면(<a href="ch19.html#eq-pv-residue">식 (19.38)</a>, 두 극의 유수의 합 \(-\cos kr\)) 정상파 \(G_{\mathcal P} = -\cos kr/4\pi r = \tfrac12(G_+ + G_-)\)이다. 셋의 차는 동차해 \(\sin kr/r\)의 상수배다. 나가는 해를 고르는 조건을 무한대에서의 <span class="term">복사 조건</span> <span class="en">(radiation condition)</span>이라 하고, 20.6절에서 이것이 인과율과 같은 조건임을 본다.</p>
+    <div class="callout tip"><strong>\(k\)를 바꾸면 다른 그린 함수들이 나온다</strong><p>\(k \to 0\)이면 식 <a class="ref" href="#eq-green-helmholtz"></a>는 푸아송 방정식의 \(-1/4\pi r\)(식 <a class="ref" href="#eq-green-poisson"></a>)이다. \(k = i\mu\)이면 \((\nabla^2 - \mu^2)G = \delta^3\)의 해 \(-e^{-\mu r}/4\pi r\), 곧 15장의 유카와·디바이 퍼텐셜(<a href="ch15.html#eq-yukawa-ft">식 (15.43)</a>)이다. 세 그린 함수는 한 함수 \(-e^{ikr}/4\pi r\)을 복소수 \(k\)의 서로 다른 값에서 본 것이다.</p></div>
+
+    <div class="box ex" id="ex-point-source-sound"><div class="box-h">작은 스피커가 내는 구면파</div>
+      <p>닫힌 상자에 든 작은 스피커의 진동판(넓이 \(S = 50\ \text{cm}^2\))이 \(f = 100\ \text{Hz}\), 변위 진폭 \(1.0\ \text{mm}\)로 움직인다. 공기의 밀도는 \(\rho_0 = 1.20\ \text{kg/m}^3\), 음속은 \(c = 343\ \text{m/s}\)이다. (가) 부피 원천 \(q(\mathbf r, t)\)(단위 부피당 단위 시간에 생기는 부피)가 있는 음향 방정식에서 압력의 그린 함수 해를 구하라. (나) \(1.0\ \text{m}\)에서 압력 진폭과 음압 수준, 내보내는 출력을 구하라.</p>
+      <p><b>풀이.</b> (가) 이 예제의 \(q\)는 앞에서 쓴 변환 변수가 아니라 부피 원천이다. 작은 진폭의 음파에서 밀도 변화 \(\rho'\), 속도 \(\mathbf v\), 압력 \(p = c^2\rho'\)은 연속 방정식 \(\partial_t\rho' + \rho_0\nabla\cdot\mathbf v = \rho_0q\)와 오일러 방정식 \(\rho_0\partial_t\mathbf v = -\nabla p\)를 따른다. 첫 식을 \(t\)로 미분하고 둘째 식의 발산을 빼면</p>
+      <div class="formula">\[ \nabla^2p - \frac{1}{c^2}\frac{\partial^2p}{\partial t^2} = -\rho_0\frac{\partial q}{\partial t} \]</div>
+      <p>이다. 스피커가 파장(\(3.43\ \text{m}\))보다 훨씬 작으면 점 원천 \(q = Q\,\delta^3(\mathbf r)e^{-i\omega t}\)으로 본다. \(Q\)는 부피 속도의 진폭(\(\text{m}^3/\text{s}\))이다. \(p = P(\mathbf r)e^{-i\omega t}\)를 넣으면 \((\nabla^2 + k^2)P = i\omega\rho_0Q\,\delta^3\)이고, 나가는 파를 골라</p>
+      <div class="formula" id="eq-point-source-pressure">\[ P(r) = i\omega\rho_0Q\,G_+ = -\frac{i\omega\rho_0Q}{4\pi r}\,e^{ikr} \]</div>
+      <p>이다. 실제 압력은 \(\operatorname{Re}(Pe^{-i\omega t}) = (\omega\rho_0Q/4\pi r)\sin(kr - \omega t)\)이다. 확인: \(kr \ll 1\)인 가까운 곳에서 공기는 압축되지 않는 유체처럼 \(v = Q/4\pi r^2\)로 흐르고, 오일러 방정식 \(-i\omega\rho_0v = -\partial_rP\)가 바로 이 \(P\)를 준다.</p>
+      <p>(나) <b>숫자로 보기.</b> 진동판 속도 진폭은 \(\omega\xi = 2\pi \times 100 \times 1.0 \times 10^{-3} = 0.628\ \text{m/s}\), \(Q = S\omega\xi = 3.14 \times 10^{-3}\ \text{m}^3/\text{s}\)이다. 진동판 반지름 약 \(4\ \text{cm}\)와 \(k = 1.83\ \text{m}^{-1}\)의 곱은 \(0.07\)이라 점 원천 근사가 좋다.</p>
+      <div class="formula">\[ \begin{aligned} \lvert P(1\ \text{m})\rvert &= \frac{628 \times 1.20 \times 3.14 \times 10^{-3}}{4\pi \times 1.0}\ \text{Pa} \\ &= 0.188\ \text{Pa} \end{aligned} \]</div>
+      <p>실효값은 \(0.133\ \text{Pa}\)이고 음압 수준은 \(20\log_{10}(0.133/20 \times 10^{-6}) = 76.5\ \text{dB}\)이다. 거리가 두 배가 되면 \(1/r\) 때문에 6 dB 준다. 먼 곳의 세기는 \(\lvert P\rvert^2/2\rho_0c\)이므로 출력은</p>
+      <div class="formula">\[ W = 4\pi r^2\frac{\lvert P\rvert^2}{2\rho_0c} = \frac{\omega^2\rho_0Q^2}{8\pi c} = 0.54\ \text{mW} \]</div>
+      <p>이다. 단위: \(\omega\rho_0Q/r\)은 \(\text{s}^{-1}\cdot\text{kg/m}^3\cdot\text{m}^3\text{/s}/\text{m} = \text{kg/(m}\cdot\text{s}^2) = \text{Pa}\)이다. 같은 부피 속도 \(Q\)에서 출력은 \(\omega^2\)에 비례하고, 같은 진동판 변위에서는 \(Q \propto \omega\)까지 더해 \(\omega^4\)에 비례한다. 작은 스피커가 낮은 음을 크게 내기 어려운 까닭이다.</p>
+    </div>
+
+    <h3 id="s5-diffusion">확산 방정식: 열 핵</h3>
+    <p>확산 방정식(<a href="ch17.html#eq-diffusion-equation">17장 식 (17.2)</a>)에 원천을 더한 \(\partial_tu - D\nabla^2u = s\)의 연산자는 \(\mathcal L = \partial_t - D\nabla^2\)이다. 정지한 매질에 \(t = 0\), 원점에 단위 원천을 준다: \(\mathcal LG = \delta^3(\mathbf r)\delta(t)\), \(t &lt; 0\)에서 \(G = 0\). 공간에 대해 푸리에 변환하면 \(\mathbf k\)마다 1계 방정식</p>
+    <div class="formula">\[ \frac{\partial\tilde G}{\partial t} + Dk^2\tilde G = \delta(t) \]</div>
+    <p>이 된다. 1계 방정식의 도약 조건은 \(\tilde G\) 자신이 \(t = 0\)에서 1만큼 뛰는 것이고(식 <a class="ref" href="#eq-jump-condition"></a>의 1계판), 그 뒤에는 동차해 \(e^{-Dk^2t}\)이다. 따라서 \(\tilde G = \Theta(t)e^{-Dk^2t}\)이다. 이것은 15장의 가우스 변환(<a href="ch15.html#eq-gaussian-ft">식 (15.12)</a>)에서 \(\sigma^2 = 2Dt\)로 둔 것이므로, 한 방향마다 \(e^{-x^2/4Dt}/\sqrt{4\pi Dt}\)로 돌아간다. 3차원 변환은 세 방향의 곱이다.</p>
+    <div class="formula" id="eq-heat-kernel">\[ G(\mathbf r, t) = \frac{\Theta(t)}{(4\pi Dt)^{3/2}}\,\exp\Big(-\frac{r^2}{4Dt}\Big) \]<div class="where">\(d\)차원에서는 앞의 지수 \(3/2\)가 \(d/2\)이다. \(\Theta(t)\)를 뺀 부분을 <span class="term">열 핵</span> <span class="en">(heat kernel)</span>이라 한다.</div></div>
+    <p>열 핵의 성질은 변환에서 바로 읽힌다. \(\mathbf k = 0\) 성분 \(\tilde G(0, t) = 1\)은 \(\int G\,d^3r = 1\), 곧 처음 준 열이 보존된다는 뜻이다. 한 방향의 분산은 \(\sigma^2 = 2Dt\)이다. 17장은 무작위 걸음에서 해를 구하지 않고 \(\langle x^2\rangle = 2Dt\)를 얻었는데(<a href="ch17.html#eq-diffusion-msd">식 (17.24)</a>), 열 핵은 그 분포 자체가 가우스 함수임을 보여 준다. 3차원에서는 \(\langle r^2\rangle = 6Dt\)이다. \(t \to 0^+\)이면 폭 \(\sqrt{2Dt}\)인 가우스 함수열이 되어 \(\delta^3(\mathbf r)\)로 간다(<a href="ch06.html#eq-delta-sequences">6장 식 (6.41)</a>).</p>
+    <p>시각 \(t = 0\)의 분포 \(u_0\)과 원천 \(s\)가 함께 있으면, 처음 분포는 \(t = 0\)에 준 원천 \(u_0(\mathbf r)\delta(t)\)와 같다. 그래서</p>
+    <div class="formula" id="eq-heat-ivp">\[ \begin{aligned} u(\mathbf r, t) &= \int G(\mathbf r - \mathbf r', t)\,u_0(\mathbf r')\,d^3r' \\ &\quad + \int_0^t\!\!\int G(\mathbf r - \mathbf r', t - t')\,s(\mathbf r', t')\,d^3r'\,dt' \end{aligned} \]</div>
+    <p>이다. 11장의 오차 함수 해(<a href="ch11.html#eq-diffusion-erf-solution">식 (11.35)</a>)는 계단 모양의 처음 분포에 대한 첫째 항이다(연습문제).</p>
+
+    <div class="box ex" id="ex-heat-pulse"><div class="box-h">물속 한 점에 준 열의 퍼짐</div>
+      <p>짧은 레이저 펄스가 물속의 한 점에 에너지 \(Q = 1.0\ \text{mJ}\)를 남긴다. 물의 열확산도는 \(D = 1.46 \times 10^{-7}\ \text{m}^2/\text{s}\), 부피 열용량은 \(\rho c_p = 4.18 \times 10^6\ \text{J/(m}^3\cdot\text{K)}\)이다. 대류는 무시한다. (가) 시각 \(t\)의 온도 상승을 쓰고, \(t = 0.1\), \(1\), \(10\ \text{s}\)에서 중심의 온도 상승과 한 방향의 폭 \(\sqrt{2Dt}\)를 구하라. (나) 중심에서 \(1.0\ \text{mm}\)인 점의 온도는 언제 가장 높고, 얼마나 오르는가?</p>
+      <p><b>풀이.</b> (가) 열 방정식 \(\rho c_p\partial_t\vartheta = k\nabla^2\vartheta + Q\delta^3(\mathbf r)\delta(t)\)(\(\vartheta\)는 주위보다 높은 온도)를 \(\rho c_p\)로 나누면 원천이 \((Q/\rho c_p)\delta^3\delta\)이므로</p>
+      <div class="formula" id="eq-heat-pulse-temp">\[ \vartheta(r, t) = \frac{Q}{\rho c_p}\,\frac{e^{-r^2/4Dt}}{(4\pi Dt)^{3/2}} \]</div>
+      <p>이다. 중심의 값은 \(t^{-3/2}\)로 줄고 폭은 \(t^{1/2}\)로 커진다. 중심값과 폭의 세제곱을 곱한 값이 일정한 것이 열의 보존이다.</p>
+      <p><b>숫자로 보기.</b> \(Q/\rho c_p = 2.39 \times 10^{-10}\ \text{K}\cdot\text{m}^3\)이다.</p>
+      <div class="formula">\[ \begin{array}{ccc} t\ (\text{s}) & \sqrt{2Dt}\ (\text{mm}) & \vartheta(0)\ (\text{K}) \\ \hline 0.1 & 0.171 & 3.04 \\ 1 & 0.540 & 0.096 \\ 10 & 1.71 & 0.0030 \end{array} \]</div>
+      <p>(나) \(r\)을 고정하고 \(\ln\vartheta = \text{상수} - \tfrac32\ln t - r^2/4Dt\)를 \(t\)로 미분해 0으로 두면 \(-3/2t + r^2/4Dt^2 = 0\), 곧 \(t^* = r^2/6D\)이다. 이 시각의 값은 \(\vartheta = (Q/\rho c_p)(3/2\pi e)^{3/2}/r^3\)이다. \(r = 1.0\ \text{mm}\)이면 \(t^* = 1.14\ \text{s}\), \(\vartheta_{\max} = 0.018\ \text{K}\)이다. 최고 온도가 \(1/r^3\)으로 줄어들므로, 레이저 가열은 초점 근처에만 머문다. 단위: \(Q/\rho c_p\)를 길이의 세제곱으로 나누어 K이다.</p>
+      <p>열 핵은 모든 \(r\)에서 \(t > 0\)이면 곧바로 0이 아니다. 확산 방정식에는 신호의 속력이 없다. 다만 \(r \gg \sqrt{2Dt}\)인 곳의 값은 \(e^{-r^2/4Dt}\)로 아주 작아서, 실제로 "열이 도착하는 시각"은 \(t \sim r^2/D\)로 정해진다. 20.6절의 파동 방정식은 이와 달리 날카로운 전선을 가진다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 270" role="img" aria-label="물속 한 점에 준 열이 퍼지는 모양: 시간이 지나면 봉우리가 낮아지고 넓어진다"><line x1="56" y1="36" x2="56" y2="216" class="s-grid"/><text x="56" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><line x1="137.6" y1="36" x2="137.6" y2="216" class="s-grid"/><text x="137.6" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">0.5</text><line x1="219.2" y1="36" x2="219.2" y2="216" class="s-grid"/><text x="219.2" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">1</text><line x1="300.8" y1="36" x2="300.8" y2="216" class="s-grid"/><text x="300.8" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">1.5</text><line x1="382.4" y1="36" x2="382.4" y2="216" class="s-grid"/><text x="382.4" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">2</text><line x1="464" y1="36" x2="464" y2="216" class="s-grid"/><text x="464" y="238" class="t-dim" style="font-size:14px" text-anchor="middle">2.5</text><line x1="56" y1="216" x2="464" y2="216" class="s-grid"/><text x="48" y="221" class="t-dim" style="font-size:14px" text-anchor="end">0</text><line x1="56" y1="156" x2="464" y2="156" class="s-grid"/><text x="48" y="161" class="t-dim" style="font-size:14px" text-anchor="end">0.1</text><line x1="56" y1="96" x2="464" y2="96" class="s-grid"/><text x="48" y="101" class="t-dim" style="font-size:14px" text-anchor="end">0.2</text><line x1="56" y1="36" x2="464" y2="36" class="s-grid"/><text x="48" y="41" class="t-dim" style="font-size:14px" text-anchor="end">0.3</text><line x1="56" y1="216" x2="464" y2="216" class="s-line"/><line x1="56" y1="216" x2="56" y2="36" class="s-line"/><path d="M56,52.6 62.5,53.5 69.1,56.2 75.6,60.5 82.1,66.3 88.6,73.5 98.4,86.4 134.3,141.8 144.1,155.8 153.9,168.4 167,182.5 176.8,191 189.8,199.7 199.6,204.5 209.4,208.1 225.7,212 238.8,213.8 258.4,215.2 307.3,216 464,216" class="s-acc2" style="stroke-width:2.5"/><path d="M56,158.2 65.8,158.6 78.8,160.1 91.9,162.8 101.7,165.5 114.8,169.7 160.4,187.4 186.6,196.7 212.7,204.1 242,209.8 278,213.6 320.4,215.4 464,216" class="s-acc" style="stroke-width:2.5"/><path d="M56,195.6 85.4,196.1 114.8,197.7 235.5,208.8 297.5,212.9 366.1,215.1 464,215.9" class="s-line" style="stroke:var(--text);stroke-width:2.2"/><text x="69.1" y="54.6" class="t-acc" style="font-size:13px;fill:var(--accent-2)" text-anchor="start">t = 0.5 s</text><text x="157.2" y="180.1" class="t-acc" style="font-size:13px" text-anchor="start">1 s</text><text x="260" y="202.6" class="t" style="font-size:13px" text-anchor="start">2 s</text><line x1="144.2" y1="216" x2="144.2" y2="181" class="s-acc" stroke-dasharray="4 3"/><text x="178.4" y="138" class="t-dim" style="font-size:13px" text-anchor="start">점선: √(2Dt) = 0.54 mm (1 s)</text><text x="464" y="262" class="t-dim" style="font-size:14px" text-anchor="end">중심에서의 거리 r (mm)</text><text x="62" y="28" class="t-dim" style="font-size:14px" text-anchor="start">온도 상승 ϑ (K)</text></svg>
+      <figcaption><b>그림 20-5.</b> 물속 한 점에 준 1.0 mJ의 열이 퍼지는 모양. 식 <a class="ref" href="#eq-heat-pulse-temp"></a>로 계산한 온도 상승을 중심에서의 거리에 대해 \(t = 0.5\), \(1\), \(2\ \text{s}\)에 그렸다. 봉우리는 \(t^{-3/2}\)로 낮아지고 폭은 \(\sqrt t\)로 넓어진다. 점선은 \(t = 1\ \text{s}\)의 한 방향 폭 \(\sqrt{2Dt} = 0.54\ \text{mm}\)이다.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================================================ 20.6 -->
+  <section id="s6">
+    <h2>지연 그린 함수, 인과율, 분산 관계</h2>
+    <p>안테나의 전류가 바뀌면 멀리 있는 수신기는 빛이 그 거리를 가는 시간만큼 뒤에 그것을 느낀다. 유리의 굴절률은 가시광에서 거의 흡수가 없는데도 진동수에 따라 바뀐다. 두 사실은 같은 원리, 곧 "원인보다 앞선 결과는 없다"에서 나온다. 이 절에서는 인과율을 그린 함수에 넣어 파동 방정식의 지연 그린 함수를 얻고, 응답 함수에 넣어 크라머스-크로니히 관계를 얻는다. 둘 다 19장에서 본 "인과적이면 위 반평면에서 해석적"이라는 동치가 열쇠다.</p>
+
+    <h3 id="s6-retarded">파동 방정식의 지연 그린 함수</h3>
+    <p>연산자 \(\mathcal L = \nabla^2 - c^{-2}\partial_t^2\)에 대해 \(\mathcal LG = \delta^3(\mathbf r - \mathbf r')\delta(t - t')\)이고 \(t &lt; t'\)에서 \(G = 0\)인 그린 함수를 <span class="term">지연 그린 함수</span> <span class="en">(retarded Green's function)</span>라 한다. \(\mathbf R = \mathbf r - \mathbf r'\), \(\tau = t - t'\)로 쓰자. 시간에 대해 변환하면(<a href="ch15.html#eq-ft-pair">식 (15.3)</a>, \(\partial_t \to -i\omega\)) \(\omega\)마다</p>
+    <div class="formula">\[ \Big(\nabla^2 + \frac{\omega^2}{c^2}\Big)\tilde G(\mathbf R, \omega) = \delta^3(\mathbf R) \]</div>
+    <p>이고, 해의 후보는 \(-e^{\pm i\omega R/c}/4\pi R\)이다. 어느 쪽인가? \(G\)가 \(\tau &lt; 0\)에서 0이면 \(\tilde G(\omega) = \int_0^\infty G\,e^{i\omega\tau}d\tau\)는 \(\operatorname{Im}\omega > 0\)에서도 수렴하고 해석적이다(19장 <a href="ch19.html#ex-oscillator-response-contour">예제 19.7</a>의 논리이고, 아래 식 <a class="ref" href="#eq-causal-analytic"></a>에서 다시 본다). \(\lvert e^{i\omega R/c}\rvert = e^{-R\operatorname{Im}\omega/c}\)는 위 반평면에서 유계이고 \(e^{-i\omega R/c}\)는 커지므로, 인과율은 \(+\)를 고른다. 실수 \(\omega > 0\)에서 이것은 나가는 파 \(G_+\)이고, 20.5절의 \(k + i\varepsilon\)은 \(\omega + i\varepsilon\)과 같은 처방이었다. 거꾸로 변환하면 15장의 \(\int e^{-i\omega u}d\omega = 2\pi\delta(u)\)(<a href="ch15.html#eq-delta-fourier">식 (15.18)</a>)에서</p>
+    <div class="formula" id="eq-green-wave-retarded">\[ \begin{aligned} G_{\text{ret}}(\mathbf R, \tau) &= -\frac{1}{4\pi R}\int\frac{d\omega}{2\pi}\,e^{-i\omega(\tau - R/c)} \\ &= -\frac{\delta(\tau - R/c)}{4\pi R} \end{aligned} \]</div>
+    <p>이다. 원천점에서 시각 \(t'\)에 낸 신호는 반지름 \(R = c(t - t')\)인 얇은 구 껍질 위에만 있다. 껍질 안쪽에는 아무것도 남지 않는다. \(-\delta(\tau + R/c)/4\pi R\)은 <span class="term">앞선 그린 함수</span> <span class="en">(advanced Green's function)</span>로, 같은 방정식을 풀지만 원인보다 먼저 반응한다.</p>
+    <p>같은 결과를 공간 변환으로 얻으면 진동자와의 관계가 보인다. \(\nabla^2 \to -q^2\)이므로 \(\mathbf q\)마다 \(\partial_\tau^2\tilde G + c^2q^2\tilde G = -c^2\delta(\tau)\)이다. 이것은 고유 진동수 \(cq\)인 감쇠 없는 진동자에 충격 \(-c^2\)을 준 것이므로, 식 <a class="ref" href="#eq-green-oscillator"></a>에서 \(\gamma \to 0^+\)로 보내면</p>
+    <div class="formula" id="eq-wave-mode-oscillator">\[ \tilde G_{\text{ret}}(q, \tau) = -c\,\Theta(\tau)\,\frac{\sin cq\tau}{q} \]</div>
+    <p>이다. 파동장은 \(\mathbf q\)마다 진동자 하나의 모임이고, 지연 그린 함수는 그 진동자들의 인과적 그린 함수를 겹친 것이다. 19장 <a href="ch19.html#ex-undamped-response">예제 19.12</a>에서 본 대로 주값 처방을 쓰면 지연과 앞선 응답을 반씩 섞은 것이 되어 인과율이 깨진다. 지름 방향 역변환(<a href="ch15.html#eq-radial-ft">식 (15.40)</a>)과 \(\int_0^\infty\sin aq\sin bq\,dq = \tfrac\pi2[\delta(a - b) - \delta(a + b)]\)(<a href="ch15.html#eq-delta-fourier">식 (15.18)</a>의 코사인판)을 쓰면 \(G = -\frac{c}{2\pi^2R}\cdot\frac\pi2\delta(c\tau - R) = -\delta(\tau - R/c)/4\pi R\)로 식 <a class="ref" href="#eq-green-wave-retarded"></a>이 다시 나온다.</p>
+    <p>로렌츠 게이지 <span class="en">(Lorenz gauge)</span>에서 전위는 \(\nabla^2V - c^{-2}\partial_t^2V = -\rho/\varepsilon_0\)을 따른다. 원천이 \(-\rho/\varepsilon_0\)이므로 \(V = \int G_{\text{ret}}(-\rho/\varepsilon_0)\,d^3r'\,dt'\)이고, 델타가 \(t'\) 적분을 거르면</p>
+    <div class="formula" id="eq-retarded-potential">\[ V(\mathbf r, t) = \frac{1}{4\pi\varepsilon_0}\int\frac{\rho\big(\mathbf r', t - \lvert\mathbf r - \mathbf r'\rvert/c\big)}{\lvert\mathbf r - \mathbf r'\rvert}\,d^3r' \]<div class="where">벡터 퍼텐셜은 같은 꼴로 \(\mathbf A = \frac{\mu_0}{4\pi}\int\mathbf J(\mathbf r', t_r)/\lvert\mathbf r - \mathbf r'\rvert\,d^3r'\)이다. \(t_r = t - \lvert\mathbf r - \mathbf r'\rvert/c\)를 <span class="term">지연 시각</span> <span class="en">(retarded time)</span>이라 한다.</div></div>
+    <p>이다. 이것을 <span class="term">지연 퍼텐셜</span> <span class="en">(retarded potential)</span>이라 한다. 쿨롱 퍼텐셜과 꼴이 같고, 다만 각 원천점의 전하를 그 점에서 빛이 출발해야 했던 시각에 잰다. 전하가 천천히 변하면(\(\lvert\mathbf r - \mathbf r'\rvert/c\)가 변화의 시간 척도보다 짧으면) 정전기의 식으로 돌아간다.</p>
+    <div class="callout deep" data-later="em-grad"><strong>움직이는 점전하와 복사</strong><p>식 <a class="ref" href="#eq-retarded-potential"></a>에 움직이는 점전하를 넣으면, 지연 시각을 정하는 방정식 \(t_r = t - \lvert\mathbf r - \mathbf r_q(t_r)\rvert/c\) 때문에 델타 함수의 합성 공식(<a href="ch06.html#eq-delta-composition">6장 식 (6.44)</a>)에서 인자 \(1/(1 - \hat{\mathbf n}\cdot\boldsymbol\beta)\)가 생긴다. 이것이 리에나르-비헤르트 퍼텐셜 <span class="en">(Liénard–Wiechert potential)</span>이고, 가속하는 전하가 \(1/r\)로 줄어드는 장, 곧 복사를 내는 것도 여기서 나온다. 대학원 전자기학에서 다룬다.</p></div>
+
+    <h3 id="s6-kk">인과율에서 분산 관계로</h3>
+    <p>진동자, 회로, 유전체처럼 선형이고 시간에 따라 성질이 바뀌지 않는 계는 충격 응답 \(h(t)\)로 \(x(t) = \int h(t - t')F(t')\,dt'\)라 쓸 수 있다(<a href="ch10.html#eq-convolution-response">10장 식 (10.29)</a>). 인과율은 \(t &lt; 0\)에서 \(h = 0\)이라는 것이다. 응답 함수는</p>
+    <div class="formula" id="eq-causal-analytic">\[ \chi(\omega) = \int_0^\infty h(t)\,e^{i\omega t}\,dt \]</div>
+    <p>이다. \(\omega = \omega_1 + i\omega_2\), \(\omega_2 > 0\)이면 \(\lvert e^{i\omega t}\rvert = e^{-\omega_2t} \le 1\)이므로, \(h\)가 절대 적분 가능하면 적분은 위 반평면 전체에서 수렴하고 \(\omega\)로 미분할 수 있다. 곧 <b>\(\chi\)는 위 반평면에서 해석적이다.</b> 또 \(h\)가 실수이므로 실수 \(\omega\)에서 \(\chi(-\omega) = \chi^*(\omega)\)이고, \(\operatorname{Re}\chi\)는 짝함수, \(\operatorname{Im}\chi\)는 홀함수다. 진동자의 \(\chi = 1/m(\omega_0^2 - \omega^2 - 2i\gamma\omega)\)(<a href="ch15.html#eq-oscillator-fourier-response">15장 식 (15.28)</a>)는 극이 아래 반평면에만 있어서 이 성질을 가진다.</p>
+    <div class="box thm" id="thm-kramers-kronig"><div class="box-h">크라머스-크로니히 관계</div>
+      <p>\(\chi(\omega)\)가 위 반평면에서 해석적이고 실수축까지 연속이며, 닫힌 위 반평면에서 \(\lvert\omega\rvert \to \infty\)일 때 고르게 0으로 간다고 하자. 그러면 실수 \(\omega\)에서</p>
+      <div class="formula" id="eq-kramers-kronig">\[ \begin{aligned} \operatorname{Re}\chi(\omega) &= \frac1\pi\,\mathcal P\!\int_{-\infty}^{\infty}\frac{\operatorname{Im}\chi(\omega')}{\omega' - \omega}\,d\omega' \\ \operatorname{Im}\chi(\omega) &= -\frac1\pi\,\mathcal P\!\int_{-\infty}^{\infty}\frac{\operatorname{Re}\chi(\omega')}{\omega' - \omega}\,d\omega' \end{aligned} \]</div>
+      <p>이다. 이런 관계를 <span class="term">분산 관계</span> <span class="en">(dispersion relation)</span>라 한다.</p>
+    </div>
+    <p><b>증명.</b> 실수 \(\omega\)와 \(\varepsilon > 0\)을 고정하고, 위 반평면의 점 \(\omega + i\varepsilon\)에 코시 적분 공식(<a href="ch19.html#thm-cauchy-integral">정리 19.5</a>)을 쓴다. 경로는 실수축의 \([-R, R]\)과 위쪽 큰 반원 \(C_R\)이다.</p>
+    <div class="formula">\[ \chi(\omega + i\varepsilon) = \frac{1}{2\pi i}\Big[\int_{-R}^{R} + \int_{C_R}\Big]\frac{\chi(\omega')\,d\omega'}{\omega' - \omega - i\varepsilon} \]</div>
+    <p>\(C_R\) 위에서 \(\lvert\chi\rvert \le M_R \to 0\)이고 \(\lvert\omega' - \omega - i\varepsilon\rvert \ge R - \lvert\omega\rvert - \varepsilon\)이므로, ML 부등식으로 그 기여는 \(\pi RM_R/(R - \lvert\omega\rvert - \varepsilon) \to 0\)이다. \(R \to \infty\) 다음 \(\varepsilon \to 0^+\)로 보내고, 소호츠키-플레멜 공식(<a href="ch19.html#eq-sokhotski">식 (19.40)</a>)을 \(x = \omega' - \omega\)에 대해 \(1/(x - i\varepsilon) \to \mathcal P(1/x) + i\pi\delta(x)\)로 쓴다.</p>
+    <div class="formula">\[ \chi(\omega) = \frac{1}{2\pi i}\,\mathcal P\!\int_{-\infty}^{\infty}\frac{\chi(\omega')\,d\omega'}{\omega' - \omega} + \frac12\chi(\omega) \]</div>
+    <p>따라서 \(\chi(\omega) = \frac{1}{i\pi}\mathcal P\int\chi(\omega')\,d\omega'/(\omega' - \omega)\)이다. \(1/i = -i\)를 곱해 실수부와 허수부를 나누면 식 <a class="ref" href="#eq-kramers-kronig"></a>이다. \(\square\) 같은 결과를 그림 20-6 (가)의 경로로 얻을 수도 있다. 실수축 위의 점 \(\omega\)를 위쪽 작은 반원 \(C_\varepsilon\)으로 비켜 가면 안에 극이 없으므로 \(0 = \mathcal P\int - i\pi\chi(\omega)\)이다(19장 <a href="ch19.html#thm-indentation">정리 19.11</a>).</p>
+    <p>실수 응답이면 짝·홀 성질로 적분을 양의 진동수로 접을 수 있다. 첫 식에서 \(\int_{-\infty}^0\)을 \(\omega' \to -\omega'\)으로 바꾸면 \(\operatorname{Im}\chi(\omega')[1/(\omega' - \omega) + 1/(\omega' + \omega)] = 2\omega'\operatorname{Im}\chi(\omega')/(\omega'^2 - \omega^2)\)이 되고, 둘째 식도 같다.</p>
+    <div class="formula" id="eq-kk-even-odd">\[ \begin{aligned} \operatorname{Re}\chi(\omega) &= \frac2\pi\,\mathcal P\!\int_0^\infty\frac{\omega'\operatorname{Im}\chi(\omega')}{\omega'^2 - \omega^2}\,d\omega' \\ \operatorname{Im}\chi(\omega) &= -\frac{2\omega}{\pi}\,\mathcal P\!\int_0^\infty\frac{\operatorname{Re}\chi(\omega')}{\omega'^2 - \omega^2}\,d\omega' \end{aligned} \]</div>
+    <p>물리적인 뜻은 이렇다. 15장에서 본 대로 계가 흡수하는 에너지는 \(\omega\operatorname{Im}\chi\)로 정해진다(<a href="ch15.html#eq-pulse-energy-spectrum">식 (15.30)</a>). 식 <a class="ref" href="#eq-kk-even-odd"></a>는 <b>모든 진동수의 흡수 스펙트럼을 알면 반응성 응답(굴절, 위상 지연)이 모든 진동수에서 정해진다</b>고 말한다. 어느 진동수에서도 흡수하지 않는 매질은 어느 진동수에서도 굴절하지 않는다(\(\operatorname{Re}\chi = 0\)). 그림 20-6 (나)는 진동자의 \(\operatorname{Im}\chi\)만 넣어 수치 적분한 \(\operatorname{Re}\chi\)가 정확한 값과 맞는 것을 보여 준다.</p>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 300" role="img" aria-label="크라머스-크로니히 관계를 얻는 적분 경로: 실수축에서 ω를 위쪽 작은 반원으로 비켜 가고 위 반평면의 큰 반원으로 닫는다"><text x="12" y="22" class="t" style="font-size:15px" text-anchor="start">(가) ω′ 평면</text><path d="M70,200 A120,120 0 0 1 310,200 Z" class="f-acc-soft" style="stroke:none;opacity:.6"/><line x1="20" y1="200" x2="360" y2="200" class="s-line"/><line x1="190" y1="40" x2="190" y2="285" class="s-line"/><text x="358" y="220" class="t-math" style="font-size:15px" text-anchor="end">Re ω′</text><text x="198" y="52" class="t-math" style="font-size:15px" text-anchor="start">Im ω′</text><path d="M70,200 L224,200 A16,16 0 0 1 256,200 L310,200 A120,120 0 0 0 70,200" class="s-acc" style="stroke-width:2.6"/><polygon points="150,200 138,195.5 138,204.5" class="f-acc"/><polygon points="290,200 278,195.5 278,204.5" class="f-acc"/><polygon points="183,80 195,75.5 195,84.5" class="f-acc"/><circle cx="240" cy="200" r="3.5" class="f-dim"/><text x="240" y="222" class="t-math" style="font-size:15px" text-anchor="middle">ω</text><text x="258" y="175" class="t-math" style="font-size:14px" text-anchor="start">C_ε</text><text x="300" y="100" class="t-math" style="font-size:14px" text-anchor="start">C_R</text><text x="110" y="150" class="t" style="font-size:14px" text-anchor="middle">χ 해석적</text><text x="190" y="272" class="t-dim" style="font-size:13px" text-anchor="middle">아래 반평면: χ의 극</text><path d="M114,240l10,10 M114,250l10,-10 M256,240l10,10 M256,250l10,-10" class="s-line" style="stroke:var(--text);stroke-width:2"/></svg><svg viewBox="0 0 380 300" role="img" aria-label="로런츠 진동자의 응답 함수 실수부와 허수부, 그리고 허수부에서 크라머스-크로니히 관계로 다시 계산한 실수부의 점"><text x="12" y="22" class="t" style="font-size:15px" text-anchor="start">(나) mω₀²χ(ω), γ = 0.1ω₀</text><line x1="46" y1="40" x2="46" y2="262" class="s-grid"/><text x="46" y="284" class="t-dim" style="font-size:14px" text-anchor="middle">0</text><line x1="110.4" y1="40" x2="110.4" y2="262" class="s-grid"/><text x="110.4" y="284" class="t-dim" style="font-size:14px" text-anchor="middle">0.5</text><line x1="174.8" y1="40" x2="174.8" y2="262" class="s-grid"/><text x="174.8" y="284" class="t-dim" style="font-size:14px" text-anchor="middle">1</text><line x1="239.2" y1="40" x2="239.2" y2="262" class="s-grid"/><text x="239.2" y="284" class="t-dim" style="font-size:14px" text-anchor="middle">1.5</text><line x1="303.6" y1="40" x2="303.6" y2="262" class="s-grid"/><text x="303.6" y="284" class="t-dim" style="font-size:14px" text-anchor="middle">2</text><line x1="368" y1="40" x2="368" y2="262" class="s-grid"/><text x="368" y="284" class="t-dim" style="font-size:14px" text-anchor="middle">2.5</text><line x1="46" y1="235.9" x2="368" y2="235.9" class="s-grid"/><text x="38" y="240.9" class="t-dim" style="font-size:14px" text-anchor="end">-2</text><line x1="46" y1="183.6" x2="368" y2="183.6" class="s-grid"/><text x="38" y="188.6" class="t-dim" style="font-size:14px" text-anchor="end">0</text><line x1="46" y1="131.4" x2="368" y2="131.4" class="s-grid"/><text x="38" y="136.4" class="t-dim" style="font-size:14px" text-anchor="end">2</text><line x1="46" y1="79.2" x2="368" y2="79.2" class="s-grid"/><text x="38" y="84.2" class="t-dim" style="font-size:14px" text-anchor="end">4</text><line x1="46" y1="183.6" x2="368" y2="183.6" class="s-line"/><line x1="46" y1="262" x2="46" y2="40" class="s-line"/><path d="M46,183.6 92.4,181.2 115.6,178.2 123.3,176.3 131,173.4 138.2,169.2 143.4,164.5 146.5,160.7 150.6,153.9 154.2,145.5 157.3,135.7 163,109.3 169.6,67.1 171.7,57.3 172.7,54.3 173.8,52.8 174.8,53.1 175.8,54.9 177.4,60.5 186.6,116.3 189.7,130.7 193.3,143.2 196.4,151.1 200,157.9 206.2,165.7 211.4,169.9 218.6,173.7 228.9,177 241.8,179.3 252.1,180.4 288.1,182.2 365.4,183.2" class="s-acc2" style="stroke-width:2.4"/><path d="M46,157.5 66.6,156.9 84.6,155.1 100.1,152.3 115.6,147.6 125.9,142.9 133.6,138 144.4,128.4 157.8,112.8 160.9,111.1 163,111.8 165,114.9 166.6,119.4 170.2,139.9 176.3,198.8 179.4,223.3 182.5,237.3 184.6,241.5 186.6,243 188.7,242.6 190.8,241 205.2,224.2 210.3,219.3 216,214.9 223.7,210.1 231.5,206.3 246.9,201 265,197 290.7,193.4 321.6,190.8 365.4,188.7" class="s-acc" style="stroke-width:2.4"/><circle cx="84.6" cy="155.1" r="4" class="f-surface" style="stroke:var(--text);stroke-width:1.6"/><circle cx="123.3" cy="144.2" r="4" class="f-surface" style="stroke:var(--text);stroke-width:1.6"/><circle cx="161.9" cy="111.3" r="4" class="f-surface" style="stroke:var(--text);stroke-width:1.6"/><circle cx="174.8" cy="183.6" r="4" class="f-surface" style="stroke:var(--text);stroke-width:1.6"/><circle cx="187.7" cy="242.9" r="4" class="f-surface" style="stroke:var(--text);stroke-width:1.6"/><circle cx="239.2" cy="203.4" r="4" class="f-surface" style="stroke:var(--text);stroke-width:1.6"/><circle cx="303.6" cy="192.2" r="4" class="f-surface" style="stroke:var(--text);stroke-width:1.6"/><text x="183.8" y="53.1" class="t-acc" style="font-size:14px;fill:var(--accent-2)" text-anchor="start">Im</text><text x="116.8" y="121" class="t-acc" style="font-size:14px" text-anchor="end">Re</text><text x="252.1" y="141.9" class="t" style="font-size:13px" text-anchor="start">○ 크라머스-크로니히</text><text x="368" y="217.6" class="t-dim" style="font-size:14px" text-anchor="end">ω/ω₀</text></svg></div>
+      <figcaption><b>그림 20-6.</b> (가) 크라머스-크로니히 관계를 얻는 경로. 실수축 위의 점 \(\omega\)를 작은 반원 \(C_\varepsilon\)으로 비켜 가고 큰 반원 \(C_R\)로 닫는다. 인과적인 \(\chi\)는 색칠한 위 반평면에서 해석적이고, 극(×)은 아래 반평면에 있다. (나) 감쇠 진동자(\(\gamma = 0.1\omega_0\))의 \(m\omega_0^2\chi\). 선은 정확한 실수부(Re)와 허수부(Im)이고, ○는 허수부만으로 식 <a class="ref" href="#eq-kk-even-odd"></a>의 첫 줄을 수치 적분한 값이다(상대 오차 0.2% 이하).</figcaption>
+    </figure>
+    <div class="callout warn"><strong>조건이 깨지는 경우: 도체와 상수 꼬리</strong><p>정리는 \(\chi\)가 실수축에서 유한하고 무한대에서 0으로 갈 것을 요구한다. 도체의 유전 함수에는 직류 전도도 때문에 \(i\sigma/\varepsilon_0\omega\) 항이 있어 \(\omega = 0\)에 극이 있다. 이때는 그 극을 빼고 나머지에 정리를 쓰거나, 극의 유수를 \(\pi i\)로 더한다(<a href="ch19.html#eq-pv-residue">19장 식 (19.38)</a>). 무한대에서 상수 \(\chi_\infty\)로 가면(예: 유전 함수 \(\varepsilon_r \to 1\)) \(\chi - \chi_\infty\)에 정리를 쓴다. 예제의 \(\varepsilon_r - 1\)이 그런 경우다.</p></div>
+
+    <h3 id="s6-sum-rules">합 규칙</h3>
+    <p>식 <a class="ref" href="#eq-kk-even-odd"></a>의 양 끝을 보면 \(\operatorname{Im}\chi\)의 적분에 대한 조건, 곧 <span class="term">합 규칙</span> <span class="en">(sum rule)</span>이 나온다. \(\omega = 0\)을 넣으면</p>
+    <div class="formula" id="eq-kk-static">\[ \chi(0) = \frac2\pi\int_0^\infty\frac{\operatorname{Im}\chi(\omega')}{\omega'}\,d\omega' \]</div>
+    <p>이다. 정적인 응답은 흡수 스펙트럼을 \(1/\omega'\)의 무게로 더한 것이다. 반대쪽 끝에서는 \(\omega\)가 \(\operatorname{Im}\chi\)가 큰 영역보다 훨씬 클 때 \(\omega'^2 - \omega^2 \approx -\omega^2\)이므로, \(\omega'\operatorname{Im}\chi\)가 적분 가능하면</p>
+    <div class="formula">\[ \operatorname{Re}\chi(\omega) \approx -\frac{2}{\pi\omega^2}\int_0^\infty\omega'\operatorname{Im}\chi(\omega')\,d\omega' \]</div>
+    <p>이다. 한편 높은 진동수의 \(\chi\)는 \(h\)의 \(t = 0^+\) 근처 모양만으로 정해진다. 식 <a class="ref" href="#eq-causal-analytic"></a>을 두 번 부분 적분하면(\(h\)는 \(t > 0\)에서 매끄럽고 무한대에서 줄어든다)</p>
+    <div class="formula" id="eq-high-frequency-chi">\[ \chi(\omega) = \frac{i\,h(0^+)}{\omega} - \frac{h'(0^+)}{\omega^2} + O(\omega^{-3}) \]</div>
+    <p>이다. 질량이 있는 진동자에서는 충격 직후 위치는 그대로이고 속도만 \(J/m\)이 되므로 \(h(0^+) = 0\), \(h'(0^+) = 1/m\)이다(식 <a class="ref" href="#eq-green-oscillator"></a>에서 \(G(0^+) = 0\), \(G'(0^+) = 1\)). 곧 아주 빠른 힘 앞에서 진동자는 용수철도 마찰도 느끼지 못하는 자유 질량 \(\chi \approx -1/m\omega^2\)이다. 두 식을 견주면</p>
+    <div class="formula" id="eq-oscillator-sum-rule">\[ \int_0^\infty\omega\operatorname{Im}\chi(\omega)\,d\omega = \frac{\pi}{2m} \]<div class="where">적분 범위는 \(0\)부터 \(\infty\)까지다. \(\omega\operatorname{Im}\chi\)가 짝함수이므로 \(-\infty\)부터 \(\infty\)까지 적분하면 \(\pi/m\)이다. \(\omega_0\)와 \(\gamma\)에 기대지 않는다.</div></div>
+    <p>을 얻는다. 직접 확인하면 \(\omega\operatorname{Im}\chi = (2\gamma/m)\,\omega^2/[(\omega_0^2 - \omega^2)^2 + 4\gamma^2\omega^2]\)이고, 이것을 \(0\)부터 \(\infty\)까지 적분하면 유수 정리로 \((2\gamma/m)\cdot\pi/4\gamma = \pi/2m\)이다(수치 적분으로도 확인했다). 같은 진동자에서 식 <a class="ref" href="#eq-kk-static"></a>은 \((2/\pi)(2\gamma/m)\cdot\pi/(4\gamma\omega_0^2) = 1/m\omega_0^2\), 곧 용수철 상수의 역수 \(1/k\)이다.</p>
+    <p>합 규칙 <a class="ref" href="#eq-oscillator-sum-rule"></a>에는 간단한 물리가 있다. 충격량 \(J\)인 힘 \(F = J\delta(t)\)의 스펙트럼은 \(\lvert\tilde F\rvert^2 = J^2\)이므로 15장의 흡수 식에서 진동자가 받는 에너지는 \(W = \frac{J^2}{2\pi}\int_{-\infty}^\infty\omega\operatorname{Im}\chi\,d\omega = J^2/2m\)이다. 이것은 맞은 직후의 운동 에너지다. 흡수선이 어디에 있든, 얼마나 넓든, 흡수의 총량은 관성 하나로 정해진다. 일반적으로 \(h(0^+) = 0\)인 인과적 응답에서는 \(\int_0^\infty\omega\operatorname{Im}\chi\,d\omega = \frac\pi2h'(0^+)\)이다.</p>
+
+    <div class="box ex" id="ex-lorentz-medium-kk"><div class="box-h">로런츠 진동자 기체의 흡수와 굴절률</div>
+      <p>묽은 기체의 분자마다 질량 \(m_e\), 전하 \(-e\)인 전자가 진동자(\(\omega_0\), \(\gamma\))로 묶여 있다고 하자. 분자의 수밀도는 \(N\)이다. (가) 유전 함수 \(\varepsilon_r(\omega)\)를 진동자의 \(\chi\)로 쓰고, 흡수 스펙트럼의 넓이 \(\int_0^\infty\omega\,\varepsilon_r''\,d\omega\)가 \(N\)만으로 정해짐을 보여라. (나) 흡수선이 좁으면(\(\gamma \ll \omega_0\)) 크라머스-크로니히 관계만으로 선에서 먼 곳의 굴절률을 구하라. (다) \(N = 2.69 \times 10^{25}\ \text{m}^{-3}\), \(\hbar\omega_0 = 10.0\ \text{eV}\)일 때 \(\omega = 0\)과 가시광 세 파장(656.3, 589.0, 486.1 nm)의 \(n - 1\)을 구하라.</p>
+      <p><b>풀이.</b> (가) 전기장 \(E\)를 받는 전자의 변위는 \(x = \chi\cdot(-eE)\)이고, 분극은 \(P = N(-e)x = Ne^2\chi E\)이다. \(P = \varepsilon_0(\varepsilon_r - 1)E\)이므로</p>
+      <div class="formula" id="eq-lorentz-epsilon">\[ \begin{aligned} \varepsilon_r(\omega) - 1 &= \frac{Ne^2}{\varepsilon_0}\chi(\omega) = \frac{\omega_p^2}{\omega_0^2 - \omega^2 - 2i\gamma\omega} \\ \omega_p^2 &= \frac{Ne^2}{\varepsilon_0m_e} \end{aligned} \]</div>
+      <p>이다. \(\varepsilon_r - 1\)은 인과적 응답 함수에 상수를 곱한 것이므로 식 <a class="ref" href="#eq-kramers-kronig"></a>와 합 규칙을 그대로 따른다. 식 <a class="ref" href="#eq-oscillator-sum-rule"></a>에 \(Ne^2/\varepsilon_0\)을 곱하면</p>
+      <div class="formula">\[ \int_0^\infty\omega\,\varepsilon_r''(\omega)\,d\omega = \frac{\pi}{2}\,\omega_p^2 = \frac{\pi Ne^2}{2\varepsilon_0m_e} \]</div>
+      <p>이다. 흡수 스펙트럼을 재면 진동하는 전자의 밀도를 셀 수 있다.</p>
+      <p>(나) 좁은 선은 양의 진동수에서 \(\varepsilon_r''(\omega') \approx A\,\delta(\omega' - \omega_0)\)이고, (가)에서 \(\omega_0A = \pi\omega_p^2/2\)이다. 식 <a class="ref" href="#eq-kk-even-odd"></a>의 첫 줄에 넣으면</p>
+      <div class="formula">\[ \varepsilon_r'(\omega) - 1 = \frac2\pi\,\frac{\omega_0A}{\omega_0^2 - \omega^2} = \frac{\omega_p^2}{\omega_0^2 - \omega^2} \]</div>
+      <p>로, 식 <a class="ref" href="#eq-lorentz-epsilon"></a>의 실수부에서 \(\gamma \to 0\)으로 보낸 것과 같다. 흡수선의 위치와 넓이만 알면 선에서 먼 곳의 굴절률이 모두 정해진다. 묽은 기체이면 \(n = \sqrt{\varepsilon_r} \approx 1 + (\varepsilon_r - 1)/2\)이다.</p>
+      <p>(다) <b>숫자로 보기.</b> \(\omega_p^2 = 2.69 \times 10^{25} \times (1.602 \times 10^{-19})^2/(8.854 \times 10^{-12} \times 9.109 \times 10^{-31})\ \text{s}^{-2} = 8.56 \times 10^{28}\ \text{s}^{-2}\), \(\omega_0 = 10.0\ \text{eV}/\hbar = 1.519 \times 10^{16}\ \text{s}^{-1}\)(파장 124 nm, 진공 자외선)이다.</p>
+      <div class="formula">\[ \begin{aligned} n(0) - 1 &= \frac{\omega_p^2}{2\omega_0^2} = 1.85 \times 10^{-4} \\ n(656.3\ \text{nm}) - 1 &= 1.92 \times 10^{-4} \\ n(589.0\ \text{nm}) - 1 &= 1.94 \times 10^{-4} \\ n(486.1\ \text{nm}) - 1 &= 1.98 \times 10^{-4} \end{aligned} \]</div>
+      <p>가시광에서는 흡수가 없는데도 굴절률이 1이 아니고, 파장이 짧을수록 커진다(정상 분산). 둘 다 자외선의 흡수선이 크라머스-크로니히 관계로 가시광까지 미친 결과다. 이 크기는 실제 공기의 \(n - 1\)(약 \(3 \times 10^{-4}\))과 같은 정도다. 흡수선 근처(그림 20-6 (나), \(\omega \approx \omega_0\))에서는 \(\varepsilon_r'\)이 진동수에 따라 줄어드는 비정상 분산이 생긴다. 차원 확인: \(\omega_p^2\)은 \(\text{m}^{-3}\cdot\text{C}^2/(\text{F/m}\cdot\text{kg}) = \text{s}^{-2}\)이다.</p>
+    </div>
+    <div class="callout deep" data-later="qm-grad"><strong>산란의 그린 함수: 리프만-슈윙거 방정식</strong><p>슈뢰딩거 방정식을 \((\nabla^2 + k^2)\psi = U(\mathbf r)\psi\)(\(U = 2mV/\hbar^2\))로 쓰고 퍼텐셜 항을 원천으로 보면, 나가는 그린 함수(식 <a class="ref" href="#eq-green-helmholtz"></a>)로 \(\psi = e^{i\mathbf k\cdot\mathbf r} + \int G_+(\mathbf r, \mathbf r')U(\mathbf r')\psi(\mathbf r')\,d^3r'\)이라는 적분 방정식을 얻는다. 리프만-슈윙거 방정식 <span class="en">(Lippmann–Schwinger equation)</span>이고, \(\psi\)를 오른쪽에 되풀이해 넣은 것이 보른 급수 <span class="en">(Born series)</span>다. 산란 진폭의 해석적 성질에서 나오는 분산 관계도 같은 계열이다. 대학원 양자역학에서 다룬다.</p></div>
+    <div class="callout deep" data-later="qft"><strong>전파 함수와 파인만의 \(i\varepsilon\)</strong><p>상대론적 장의 방정식에서도 그린 함수를 \(\omega\) 평면의 적분으로 쓰고, 두 극 \(\omega = \pm\omega_k\)을 어느 쪽으로 비켜 가는지가 그린 함수를 고른다. 둘 다 아래로 비켜 가면 이 절의 지연 그린 함수이고, 양의 진동수 극은 아래로, 음의 진동수 극은 위로 비켜 가면(\(\omega_k \to \omega_k - i\varepsilon\)) 파인만 전파 함수 <span class="en">(Feynman propagator)</span>가 된다. 그 해석은 양자장론에서 다룬다.</p></div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>그린 함수는 점 원천의 응답이다: \(\mathcal LG(x, x') = \delta(x - x')\)이고 동차 경계 조건을 만족하면, \(\mathcal Lu = f\)의 해는 \(u = \int G(x, x')f(x')\,dx'\)이다. 이 책은 \(\mathcal LG = +\delta\)로 정하므로 \(\nabla^2G = \delta^3\)의 해는 \(G = -1/4\pi\lvert\mathbf r - \mathbf r'\rvert\)이다. 경계가 없고 계수가 상수이면 \(G = G(x - x')\)이고 해는 합성곱이다.</li>
+      <li>2계 방정식 \((pu')' - qu\)의 그린 함수는 원천점에서 연속이고 기울기가 \(1/p\)만큼 뛴다. 경계값 문제에서는 \(G = u_1(x_&lt;)u_2(x_&gt;)/pW\)이고(\(pW\)는 상수), 두 경계 조건을 함께 만족하는 동차해가 있으면 그린 함수가 없다. 초기값 문제의 인과적 그린 함수는 \(\Theta(t - t')[u_1(t')u_2(t) - u_1(t)u_2(t')]/W(t')\)이고, 진동자는 \(G = \Theta(t)e^{-\gamma t}\sin\omega_dt/\omega_d\)이다.</li>
+      <li>자기수반 연산자의 그린 함수는 고유함수로 \(G = \sum_nu_n(x)u_n^*(x')/(\lambda_n - \lambda)\)이다. 고유값이 극이고 유수는 그 모드로의 투영이다. 원천을 모드의 마디에 두면 그 모드는 공명하지 않는다. 상반성 \(G(x, x') = G^*(x', x)\)가 성립한다.</li>
+      <li>그린의 제2 항등식 \(\int(\phi\nabla^2\psi - \psi\nabla^2\phi) = \oint(\phi\nabla\psi - \psi\nabla\phi)\cdot d\mathbf a\)에서 \(u = \int G_Ds + \oint u\,\partial_{n'}G_D\,da'\)이 나온다. 디리클레 그린 함수는 영상법으로 만든다: 평면은 거울상에 \(-1\)배, 반지름 \(a\)인 구는 \(\mathbf r'_* = (a^2/r'^2)\mathbf r'\)에 \(-a/r'\)배의 영상 원천.</li>
+      <li>헬름홀츠 방정식의 나가는 그린 함수는 \(G_+ = -e^{ik\lvert\mathbf r - \mathbf r'\rvert}/4\pi\lvert\mathbf r - \mathbf r'\rvert\)이다. 운동량 공간의 극 \(q = \pm k\)를 \(k + i\varepsilon\)으로 비켜 가서 얻고, 주값은 정상파를 준다.</li>
+      <li>확산 방정식의 그린 함수는 열 핵 \(\Theta(t)(4\pi Dt)^{-3/2}e^{-r^2/4Dt}\)이다. 넓이는 1로 보존되고 한 방향의 폭은 \(\sqrt{2Dt}\)이다. 파동 방정식의 지연 그린 함수는 \(-\delta(t - t' - R/c)/4\pi R\)이고, 지연 퍼텐셜은 각 원천점의 전하를 지연 시각 \(t - R/c\)에 잰 쿨롱 퍼텐셜이다.</li>
+      <li>인과적 응답 함수 \(\chi(\omega) = \int_0^\infty h(t)e^{i\omega t}dt\)는 위 반평면에서 해석적이고, 크라머스-크로니히 관계 \(\operatorname{Re}\chi = \frac1\pi\mathcal P\int\frac{\operatorname{Im}\chi(\omega')}{\omega' - \omega}d\omega'\), \(\operatorname{Im}\chi = -\frac1\pi\mathcal P\int\frac{\operatorname{Re}\chi(\omega')}{\omega' - \omega}d\omega'\)을 만족한다. 흡수 스펙트럼이 굴절을 정한다.</li>
+      <li>합 규칙: \(\chi(0) = \frac2\pi\int_0^\infty\operatorname{Im}\chi\,d\omega/\omega\), 그리고 질량 \(m\)인 진동자는 \(\int_0^\infty\omega\operatorname{Im}\chi\,d\omega = \pi/2m\)(\(-\infty\)부터는 \(\pi/m\))로 \(\omega_0\), \(\gamma\)와 상관없다. 기체의 흡수선 넓이는 전자 밀도 \(\int_0^\infty\omega\varepsilon_r''d\omega = \pi\omega_p^2/2\)를 준다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. 장력 \(50\ \text{N}\)인 줄에 무게 \(2.0\ \text{N}\)인 추를 한 점에 매달았다. 그 점에서 처짐 \(y\)(아래로 잼)의 기울기 \(y'\)은 왼쪽에서 오른쪽으로 갈 때 얼마나 바뀌는가?</p><div class="opts">
+        <button class="opt">\(+0.040\)</button>
+        <button class="opt" data-correct>\(-0.040\)</button>
+        <button class="opt">\(-0.020\)</button>
+        <button class="opt">바뀌지 않는다(처짐이 연속이므로).</button>
+      </div><div class="quiz-exp">\(-Ty'' = P\delta(x - x_0)\)을 \(x_0\) 둘레에서 적분하면 \(-T\Delta y' = P\), 곧 \(\Delta y' = -P/T = -0.040\)이다. 처짐 자체는 연속이고 기울기만 뛴다(식 <a class="ref" href="#eq-jump-condition"></a>, \(p = -T\)).</div></div>
+      <div class="quiz-q"><p>2. 경계값 문제 \(\mathcal Lu = (pu')' - qu = f\)에서 그린 함수 \(u_1(x_&lt;)u_2(x_&gt;)/pW\)를 만들 수 없는 경우는?</p><div class="opts">
+        <button class="opt">\(q\)가 음수인 곳이 있을 때</button>
+        <button class="opt">원천 \(f\)가 불연속일 때</button>
+        <button class="opt" data-correct>두 경계 조건을 함께 만족하는 0이 아닌 동차해가 있을 때</button>
+        <button class="opt">\(p\)가 상수가 아닐 때</button>
+      </div><div class="quiz-exp">그때는 \(u_1\)과 \(u_2\)가 비례해 \(W = 0\)이다. 그 동차해(영 모드) \(u_0\)에 대해 \(\int u_0f\,dx = 0\)일 때만 해가 있다. 고유함수 전개로 보면 \(\lambda\)가 고유값과 같아 분모가 0이 되는 공명이다.</div></div>
+      <div class="quiz-q"><p>3. 양 끝이 고정된 줄을 \(x_0 = L/4\)에서 흔든다. 진동수를 올리면서 볼 때 공명이 <b>일어나지 않는</b> 모드는? (\(n\)은 모드 번호)</p><div class="opts">
+        <button class="opt">\(n = 2\)</button>
+        <button class="opt">\(n = 3\)</button>
+        <button class="opt" data-correct>\(n = 4\)</button>
+        <button class="opt">모든 모드가 공명한다.</button>
+      </div><div class="quiz-exp">모드 \(n\)의 유수는 \(\sin^2(n\pi x_0/L) = \sin^2(n\pi/4)\)에 비례한다. \(n = 4, 8, \ldots\)이면 0이다. \(x_0 = L/4\)가 그 모드들의 마디이기 때문이다.</div></div>
+      <div class="quiz-q"><p>4. 시간 의존성을 \(e^{-i\omega t}\)로 쓸 때 \((\nabla^2 + k^2)G = \delta^3\)의 해 가운데 점 원천에서 밖으로 나가는 파를 나타내는 것은?</p><div class="opts">
+        <button class="opt" data-correct>\(-e^{ikr}/4\pi r\)</button>
+        <button class="opt">\(-e^{-ikr}/4\pi r\)</button>
+        <button class="opt">\(-\cos kr/4\pi r\)</button>
+        <button class="opt">\(-\sin kr/4\pi r\)</button>
+      </div><div class="quiz-exp">\(e^{ikr}e^{-i\omega t} = e^{i(kr - \omega t)}\)은 \(r\)이 커지는 쪽으로 간다. \(\cos kr\)은 주값 처방의 정상파이고, \(\sin kr/r\)은 원점에 원천이 없는 동차해라 델타를 만들지 않는다.</div></div>
+      <div class="quiz-q"><p>5. 물속 한 점에 준 열이 퍼진다. 시간이 4배 지나면 한 방향의 폭과 중심의 온도 상승은 각각 몇 배가 되는가?</p><div class="opts">
+        <button class="opt">폭 4배, 온도 \(1/64\)배</button>
+        <button class="opt" data-correct>폭 2배, 온도 \(1/8\)배</button>
+        <button class="opt">폭 2배, 온도 \(1/4\)배</button>
+        <button class="opt">폭 \(\sqrt2\)배, 온도 \(1/2\)배</button>
+      </div><div class="quiz-exp">폭은 \(\sqrt{2Dt} \propto t^{1/2}\)이고, 3차원 열 핵의 중심값은 \((4\pi Dt)^{-3/2} \propto t^{-3/2}\)이다. \(4^{-3/2} = 1/8\)이다. 1차원이면 \(1/2\)배다.</div></div>
+      <div class="quiz-q"><p>6. 질량 \(m = 0.10\ \text{kg}\)인 진동자의 응답 함수에 대해 \(\int_0^\infty\omega\operatorname{Im}\chi(\omega)\,d\omega\)의 값은? 감쇠율이 두 배가 되면 어떻게 되는가?</p><div class="opts">
+        <button class="opt">\(5.0\ \text{kg}^{-1}\), 두 배가 된다.</button>
+        <button class="opt" data-correct>\(15.7\ \text{kg}^{-1}\), 그대로다.</button>
+        <button class="opt">\(31.4\ \text{kg}^{-1}\), 절반이 된다.</button>
+        <button class="opt">\(\omega_0\)를 모르면 정할 수 없다.</button>
+      </div><div class="quiz-exp">합 규칙 <a class="ref" href="#eq-oscillator-sum-rule"></a>에서 \(\pi/2m = 15.7\ \text{kg}^{-1}\)이다. \(\omega_0\)와 \(\gamma\)에 기대지 않는다. 감쇠가 커지면 흡수선이 낮고 넓어지지만 넓이는 그대로다. 높은 진동수의 응답 \(-1/m\omega^2\)이 관성만으로 정해지기 때문이다.</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-hanging-wire" data-level="1"><p>길이 \(L\)인 강철선의 위 끝을 천장에 고정하고 아래 끝은 자유롭게 늘어뜨린다. 아래로 잰 위치를 \(x\), 늘어난 변위를 \(u(x)\)라 하면 \(-EAu'' = f\), \(u(0) = 0\), \(u'(L) = 0\)이다(\(E\)는 영률, \(A\)는 단면적, \(f\)는 단위 길이당 아래 방향 힘). (가) 식 <a class="ref" href="#eq-green-bvp-construction"></a>로 그린 함수를 구하라. (나) 자기 무게 \(f = \rho Ag\)로 늘어나는 길이 \(u(L)\)을 구하고, \(L = 100\ \text{m}\), \(\rho = 7850\ \text{kg/m}^3\), \(E = 200\ \text{GPa}\)이면 몇 mm인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\mathcal L = -EA\,d^2/dx^2\)이므로 \(p = -EA\)이다. 왼쪽 조건 \(u(0) = 0\)을 만족하는 해는 \(u_1 = x\), 오른쪽 조건 \(u'(L) = 0\)은 \(u_2 = 1\)이다. \(W = x \cdot 0 - 1 \cdot 1 = -1\), \(pW = EA\)이므로 \(G(x, x') = x_&lt;/EA\)이다. 물리적으로 \(x'\)에 단위 힘을 걸면 그 위쪽(\(x &lt; x'\))만 늘어나고 아래쪽은 그대로 따라 내려간다.</p>
+        <p>(나) \(u(L) = \int_0^LG(L, x')\rho Ag\,dx' = \int_0^Lx'\rho g/E\,dx' = \rho gL^2/2E\)이다. 숫자: \(7850 \times 9.81 \times 10^4/(2 \times 2.00 \times 10^{11})\ \text{m} = 1.9\ \text{mm}\)이다. 단면적과 상관없다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-maxwell-betti" data-level="1"><p><a class="ref" href="#ex-string-point-load"></a>의 빨랫줄(\(L = 10.0\ \text{m}\), \(T = 200\ \text{N}\), 줄의 무게는 무시)에서 (가) \(x = 4.0\ \text{m}\)에 \(5.0\ \text{N}\)을 걸 때 \(x = 7.0\ \text{m}\)의 처짐과 (나) \(x = 7.0\ \text{m}\)에 \(5.0\ \text{N}\)을 걸 때 \(x = 4.0\ \text{m}\)의 처짐을 구하라. 같은 이유를 설명하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>식 <a class="ref" href="#eq-string-green"></a>에서 두 경우 모두 \(x_&lt; = 4.0\ \text{m}\), \(x_&gt; = 7.0\ \text{m}\)이므로 처짐은 \(5.0 \times 4.0 \times 3.0/(200 \times 10.0)\ \text{m} = 3.0\ \text{cm}\)로 같다. 상반성 <a class="ref" href="#eq-green-reciprocity"></a>, 곧 \(G(x, x') = G(x', x)\) 때문이다. \(\mathcal L = -T\,d^2/dx^2\)이 고정 끝 조건에서 자기수반이라 그린 함수가 대칭이다. 구조 역학에서는 맥스웰-베티 상반 정리라 부른다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-coax-sheet" data-level="2"><p>안쪽 반지름 \(a\), 바깥 반지름 \(b\)인 동축 도체가 둘 다 접지되어 있고, 그 사이 반지름 \(s_0\)인 원통면에 면전하 밀도 \(\sigma\)가 있다. 축대칭이면 \(\nabla^2V = (1/s)(sV')' = -\sigma\delta(s - s_0)/\varepsilon_0\)이다. (가) \(\mathcal L = d/ds\,(s\,d/ds)\)의 그린 함수를 \(V(a) = V(b) = 0\)에 대해 구하라. (나) \(V(s)\)를 쓰고, \(s_0\)에서 \(V'\)의 도약이 가우스 법칙과 맞는지 확인하라. (다) \(a = 1.0\ \text{mm}\), \(b = 4.0\ \text{mm}\), \(s_0 = 2.0\ \text{mm}\), \(\sigma = 1.0\ \mu\text{C/m}^2\)이면 \(V(s_0)\)는?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 양변에 \(s\)를 곱하면 \((sV')' = -(\sigma s_0/\varepsilon_0)\,\delta(s - s_0)\)이고 \(p = s\), \(q = 0\)이다. 동차해는 \(1\)과 \(\ln s\)이므로 \(u_1 = \ln(s/a)\), \(u_2 = \ln(b/s)\)이다. \(W = \ln(s/a)(-1/s) - (1/s)\ln(b/s) = -\ln(b/a)/s\), \(pW = -\ln(b/a)\)이므로 \(G(s, s') = -\ln(s_&lt;/a)\ln(b/s_&gt;)/\ln(b/a)\)이다.</p>
+        <p>(나) \(V(s) = -(\sigma s_0/\varepsilon_0)G(s, s_0) = \dfrac{\sigma s_0}{\varepsilon_0}\dfrac{\ln(s_&lt;/a)\ln(b/s_&gt;)}{\ln(b/a)}\)이다. 도약 조건에서 \(\Delta(\partial_sG) = 1/p = 1/s_0\)이므로 \(\Delta V' = -\sigma/\varepsilon_0\), 곧 \(E_s = -V'\)이 면전하를 지나며 \(\sigma/\varepsilon_0\)만큼 커진다. 가우스 법칙과 같다.</p>
+        <p>(다) \(\sigma s_0/\varepsilon_0 = 10^{-6} \times 2.0 \times 10^{-3}/8.854 \times 10^{-12}\ \text{V} = 225.9\ \text{V}\)이고 \(\ln 2 \cdot \ln 2/\ln 4 = 0.3466\)이므로 \(V(s_0) = 78.3\ \text{V}\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-oscillator-initial" data-level="2"><p>감쇠 진동자 \(\ddot x + 2\gamma\dot x + \omega_0^2x = F/m\)이 \(t = 0\)에 \(x(0) = x_0\), \(\dot x(0) = v_0\)에서 출발한다. \(G\)가 식 <a class="ref" href="#eq-green-oscillator"></a>일 때 \(t > 0\)에서</p>
+      <div class="formula">\[ \begin{aligned} x(t) &= v_0G(t) + x_0\big[\dot G(t) + 2\gamma G(t)\big] \\ &\quad + \int_0^tG(t - t')\frac{F(t')}{m}\,dt' \end{aligned} \]</div>
+      <p>임을 보여라. 처음 조건이 어떤 원천과 같은지 해석하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(G\)와 \(\dot G\)는 \(t > 0\)에서 동차해이므로 앞의 두 항은 동차해이고, 셋째 항은 처음 값이 0인 특수해다. \(t = 0^+\)에서 \(G = 0\), \(\dot G = 1\)이고 방정식에서 \(\ddot G = -2\gamma\dot G - \omega_0^2G = -2\gamma\)이다. 따라서 \(x(0) = x_0 \cdot 1 = x_0\), \(\dot x(0) = v_0 \cdot 1 + x_0(-2\gamma + 2\gamma) = v_0\)이다. 해는 유일하므로 이것이 답이다.</p>
+        <p>해석: \(t = 0\)에 원천 \((v_0 + 2\gamma x_0)\delta(t) + x_0\delta'(t)\)를 준 것과 같다. 델타의 응답이 \(G\), 델타 도함수의 응답이 \(\dot G\)이기 때문이다. 처음 속도는 충격(\(m v_0\)의 충격량)으로, 처음 변위는 그 도함수 꼴의 원천으로 들어간다. 확산 방정식에서 처음 분포가 \(u_0\delta(t)\)로 들어간 것(식 <a class="ref" href="#eq-heat-ivp"></a>)과 같은 생각이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-green-third" data-level="2"><p><a class="ref" href="#ex-string-eigen-check"></a>의 전개를 \(x = x' = L/3\)에서 계산해 \(\sum_{3 \nmid n}1/n^2\)(3의 배수가 아닌 \(n\)에 대한 합)을 구하고, \(\sum_{n\ge1}1/n^2 = \pi^2/6\)과 맞는지 확인하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>왼쪽은 \(G(L/3, L/3) = (L/3)(2L/3)/L = 2L/9\)이다. 오른쪽은 \(\frac2L\sum_n\sin^2(n\pi/3)/k_n^2 = \frac{2L}{\pi^2}\sum_n\sin^2(n\pi/3)/n^2\)이고, \(\sin^2(n\pi/3)\)은 \(3 \nmid n\)이면 \(3/4\), \(3 \mid n\)이면 0이다. 따라서 \(\frac{2L}{9} = \frac{3L}{2\pi^2}\sum_{3\nmid n}\frac{1}{n^2}\), 곧 \(\sum_{3\nmid n}1/n^2 = 4\pi^2/27 = 1.462\)이다. 확인: 3의 배수 항의 합은 전체의 \(1/9\)이므로 \(\sum_{3\nmid n} = \frac89\cdot\frac{\pi^2}{6} = \frac{4\pi^2}{27}\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-poisson-kernel" data-level="2"><p>(가) 반공간의 핵 \(K = z/2\pi R^3\)(식 <a class="ref" href="#eq-poisson-kernel-plane"></a>)을 평면 전체에서 적분하면 1임을 보여라. 이것이 왜 당연한가? (나) 평면 \(z = 0\)의 반쪽 \(x' > 0\)이 전위 \(V_0\), 나머지 반쪽이 0일 때(두 판 사이에 아주 좁은 틈), \(x = 0\) 바로 위의 점 \((0, 0, z)\)에서 퍼텐셜은?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 극좌표로 \(\int_0^\infty\frac{z}{2\pi}\frac{2\pi s\,ds}{(s^2 + z^2)^{3/2}} = z\Big[-\frac{1}{\sqrt{s^2 + z^2}}\Big]_0^\infty = 1\)이다. 평면 전체가 \(u = 1\)이면 위쪽 공간의 해는 \(u = 1\)이어야 하기 때문이다(디리클레 문제의 유일성).</p>
+        <p>(나) \((0, 0, z)\)에서 핵은 \(x' \to -x'\)에 대해 대칭이므로 \(x' > 0\) 쪽의 적분은 (가)의 절반이다. \(V = V_0/2\)로 \(z\)와 상관없다. 틈 바로 위의 수직선은 전체 배치의 대칭면이라 퍼텐셜이 두 값의 평균이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-yukawa-green" data-level="2"><p>(가) \((\nabla^2 - \mu^2)G = \delta^3(\mathbf r)\)의 해가 \(G = -e^{-\mu r}/4\pi r\)임을 \(r \ne 0\)에서의 계산과 원점 근처의 전개로 보여라. (나) 이것이 식 <a class="ref" href="#eq-green-helmholtz"></a>에서 \(k = i\mu\)로 둔 것이고, 15장의 <a href="ch15.html#eq-yukawa-ft">식 (15.43)</a>과 맞음을 확인하라. (다) 15장 <a href="ch15.html#ex-yukawa">예제 15.6</a>의 디바이 길이 \(\lambda_D = 1/\mu\)로 가려진 전하 \(q\)의 퍼텐셜을 이 그린 함수로 쓰라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(r \ne 0\)에서 \(\nabla^2(e^{-\mu r}/r) = \frac1r\frac{d^2}{dr^2}e^{-\mu r} = \mu^2e^{-\mu r}/r\)이므로 \((\nabla^2 - \mu^2)(e^{-\mu r}/r) = 0\)이다. 원점 근처에서 \(e^{-\mu r}/r = 1/r - \mu + O(r)\)이고 \(1/r\)만 \(-4\pi\delta^3\)을 만든다. 따라서 \((\nabla^2 - \mu^2)(-e^{-\mu r}/4\pi r) = \delta^3\)이다.</p>
+        <p>(나) \(e^{ikr}\)에 \(k = i\mu\)를 넣으면 \(e^{-\mu r}\)이고, 연산자 \(\nabla^2 + k^2\)는 \(\nabla^2 - \mu^2\)이 된다. 변환으로는 \(\tilde G = 1/(k^2 - q^2) = -1/(q^2 + \mu^2)\)이고, 식 (15.43)의 \(e^{-\mu r}/r \leftrightarrow 4\pi/(q^2 + \mu^2)\)에 \(-1/4\pi\)를 곱한 것과 같다.</p>
+        <p>(다) 가려진 퍼텐셜은 \((\nabla^2 - \mu^2)V = -q\delta^3/\varepsilon_0\)을 따르므로 \(V = -(q/\varepsilon_0)G = q\,e^{-r/\lambda_D}/4\pi\varepsilon_0r\)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-heat-step-erf" data-level="2"><p>무한히 긴 막대의 처음 온도가 \(x &lt; 0\)에서 \(80\ ^\circ\text{C}\), \(x > 0\)에서 \(20\ ^\circ\text{C}\)이다. 1차원 열 핵과 식 <a class="ref" href="#eq-heat-ivp"></a>로 \(T(x, t)\)를 구하고, 11장 <a href="ch11.html#eq-diffusion-erf-solution">식 (11.35)</a>와 같음을 보여라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(T_0(x) = 80 - 60\,\Theta(x)\)(°C)이다. 상수 80은 넓이 1인 열 핵과 합성곱해도 그대로다. 계단 부분은</p>
+        <div class="formula">\[ \begin{aligned} &\int_0^\infty\frac{e^{-(x - x')^2/4Dt}}{\sqrt{4\pi Dt}}\,dx' \\ &\quad = \frac{1}{\sqrt\pi}\int_{-x/2\sqrt{Dt}}^{\infty}e^{-v^2}\,dv \end{aligned} \]</div>
+        <p>(치환 \(v = (x' - x)/2\sqrt{Dt}\))이고, 이것은 \(\tfrac12[1 + \operatorname{erf}(x/2\sqrt{Dt})]\)이다(<a href="ch11.html#def-erf">정의 11.4</a>). 따라서 \(T = 80 - 30[1 + \operatorname{erf}(x/2\sqrt{Dt})] = 50 - 30\operatorname{erf}(x/2\sqrt{Dt})\)(°C)로 11장의 해와 같다. 계단의 응답은 점 원천의 응답(열 핵)을 적분한 것이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-wave-1d" data-level="2"><p>(가) 1차원 파동 연산자 \(\partial_x^2 - c^{-2}\partial_t^2\)의 지연 그린 함수가 \(G = -\tfrac c2\Theta(c\tau - \lvert x\rvert)\)임을 공간 변환과 식 <a class="ref" href="#eq-wave-mode-oscillator"></a>의 1차원판으로 보여라. (\(\int_{-\infty}^\infty\sin(ak)\cos(bk)\,dk/k = \tfrac\pi2[\operatorname{sgn}(a + b) + \operatorname{sgn}(a - b)]\)를 써도 된다.) (나) 선밀도 \(\mu\), 장력 \(T\)인 긴 줄을 \(t = 0\)에 원점에서 망치로 쳐서 충격량 \(J\)를 주었다. 줄의 모양을 구하고 운동량이 \(J\)임을 확인하라. \(J = 1.0 \times 10^{-3}\ \text{N}\cdot\text{s}\), 예제의 기타 줄(\(\mu = 3.42\ \text{g/m}\), \(c = 143\ \text{m/s}\))이면 변위는?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 3차원과 같은 계산에서 \(\tilde G(k, \tau) = -c\,\Theta(\tau)\sin(ck\tau)/k\)이다. 거꾸로 변환하면 홀함수 부분은 사라지고 \(G = -\frac{c}{2\pi}\int\frac{\sin(ck\tau)\cos(kx)}{k}dk = -\frac{c}{2\pi}\cdot\frac\pi2[\operatorname{sgn}(c\tau + x) + \operatorname{sgn}(c\tau - x)]\)이다. 괄호는 \(\lvert x\rvert &lt; c\tau\)이면 2, 아니면 0이므로 \(G = -\tfrac c2\Theta(c\tau - \lvert x\rvert)\)이다.</p>
+        <p>(나) \(\mu\ddot y = Ty'' + J\delta(x)\delta(t)\)를 \(T\)로 나누면 \((\partial_x^2 - c^{-2}\partial_t^2)y = -(J/T)\delta\delta\)이므로 \(y = -(J/T)G = \frac{J}{2\mu c}\Theta(ct - \lvert x\rvert)\)이다(\(T = \mu c^2\)). 높이 \(J/2\mu c\)인 사각형이 양쪽으로 속력 \(c\)로 넓어진다. 달랑베르 해(<a href="ch17.html#eq-dalembert">17장 식 (17.18)</a>)에서 처음 속도가 \((J/\mu)\delta(x)\)인 경우와 같다. 운동량: \(\int\mu\dot y\,dx = \mu\frac{d}{dt}\Big(\frac{J}{2\mu c}2ct\Big) = J\). 숫자: \(J/2\mu c = 10^{-3}/(2 \times 3.42 \times 10^{-3} \times 143)\ \text{m} = 1.0\ \text{mm}\)이다. 1차원에서는 신호가 지나간 뒤에도 변위가 남는다(날카로운 호이겐스 원리가 3차원의 성질임을 보여 준다).</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-wave-2d" data-level="3"><p>\(z\)축을 따라 고르게 놓인 선 원천은 3차원 지연 그린 함수를 \(z'\)에 대해 적분한 2차원 그린 함수를 준다. \(s\)를 \(z\)축까지의 거리라 할 때, 6장의 <a href="ch06.html#eq-delta-composition">식 (6.44)</a>로</p>
+      <div class="formula">\[ G_2(s, \tau) = -\frac{c}{2\pi}\,\frac{\Theta(c\tau - s)}{\sqrt{c^2\tau^2 - s^2}} \]</div>
+      <p>임을 보여라. 신호가 지나간 뒤 어떤 일이 일어나는가? 3차원과 비교하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(R = \sqrt{s^2 + z'^2}\)이고 \(G_2 = -\int\frac{\delta(\tau - R/c)}{4\pi R}dz'\)이다. \(g(z') = \tau - \sqrt{s^2 + z'^2}/c\)의 근은 \(c\tau > s\)일 때 \(z' = \pm Z\), \(Z = \sqrt{c^2\tau^2 - s^2}\)이고 \(\lvert g'\rvert = \lvert z'\rvert/cR\)이다. 근에서 \(R = c\tau\)이므로 각 근의 기여는 \(\frac{1}{4\pi c\tau}\cdot\frac{c\cdot c\tau}{Z} = \frac{c}{4\pi Z}\)이고, 두 근을 더해 \(G_2 = -c/(2\pi Z)\)이다. \(c\tau &lt; s\)이면 근이 없어 0이다.</p>
+        <p>2차원 신호는 \(s = c\tau\)에서 시작한 뒤 \(1/\sqrt{c^2\tau^2 - s^2} \approx 1/c\tau\)로 천천히 줄어드는 꼬리를 남긴다. 선 원천의 더 먼 부분에서 오는 신호가 계속 늦게 도착하기 때문이다. 3차원의 \(\delta(\tau - R/c)\)는 꼬리가 없어서 짧은 소리는 짧게 들린다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-debye-kk" data-level="3"><p>극성 분자 액체의 분극을 디바이 이완 \(\chi(\omega) = \chi_0/(1 - i\omega\tau)\)로 모형화한다. (가) 이 \(\chi\)가 인과적임을 \(h(t)\)를 구해 보이고, 식 <a class="ref" href="#eq-kk-even-odd"></a>의 첫 줄이 성립함을 직접 적분으로 확인하라(\(\mathcal P\int_0^\infty d\omega'/(\omega'^2 - \omega^2) = 0\)을 써도 된다). (나) 정적 합 규칙 <a class="ref" href="#eq-kk-static"></a>을 확인하라. (다) \(\int_0^\infty\omega\operatorname{Im}\chi\,d\omega\)는 어떻게 되는가? 진동자와 무엇이 다른가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 극은 \(\omega = -i/\tau\)로 아래 반평면에 있다. \(h(t) = (\chi_0/\tau)\Theta(t)e^{-t/\tau}\)이면 \(\int_0^\infty he^{i\omega t}dt = (\chi_0/\tau)/(1/\tau - i\omega) = \chi\)이다. \(\operatorname{Im}\chi = \chi_0\omega\tau/(1 + \omega^2\tau^2)\)이다. \(a = 1/\tau\)로 쓰면 피적분 함수는 \(\frac{\chi_0}{\tau}\frac{\omega'^2}{(\omega'^2 + a^2)(\omega'^2 - \omega^2)}\)이고, 부분 분수 \(\frac{\omega'^2}{(\omega'^2 + a^2)(\omega'^2 - \omega^2)} = \frac{1}{a^2 + \omega^2}\Big[\frac{a^2}{\omega'^2 + a^2} + \frac{\omega^2}{\omega'^2 - \omega^2}\Big]\)에서 둘째 항의 주값 적분은 0, 첫째 항은 \(\pi a/2\)이다. 따라서 \(\frac2\pi\cdot\frac{\chi_0}{\tau}\cdot\frac{\pi a/2}{a^2 + \omega^2} = \frac{\chi_0}{1 + \omega^2\tau^2} = \operatorname{Re}\chi\)이다.</p>
+        <p>(나) \(\frac2\pi\int_0^\infty\frac{\chi_0\tau\,d\omega}{1 + \omega^2\tau^2} = \frac2\pi\cdot\chi_0\cdot\frac\pi2 = \chi_0 = \chi(0)\)이다.</p>
+        <p>(다) \(\omega\operatorname{Im}\chi \to \chi_0/\tau\)(상수)이므로 적분은 발산한다. 식 <a class="ref" href="#eq-high-frequency-chi"></a>에서 \(h(0^+) = \chi_0/\tau \ne 0\)이라 \(\chi\)가 \(1/\omega\)로만 줄어들기 때문이다. 디바이 모형에는 관성이 없어서 분극이 힘을 받는 순간 움직이기 시작한다. 실제 분자는 관성 모멘트가 있으므로 아주 높은 진동수에서는 \(\operatorname{Im}\chi\)가 더 빨리 줄어들고, 진동자 꼴의 합 규칙이 회복된다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+</body>
+</html>
