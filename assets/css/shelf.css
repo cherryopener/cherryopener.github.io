@@ -33,6 +33,9 @@ body.shelf {
 /* 서재 고유 강조색. 실험 한 개 보기처럼 분야(data-field)가 정해진 페이지는 분야색을 쓴다. */
 body.shelf:not([data-field]) { --accent: #3245c8; --accent-2: #c2410c; }
 :root[data-theme="dark"] body.shelf:not([data-field]) { --accent: #9fb0ff; --accent-2: #fb923c; }
+/* 홈 배경 양자장의 반입자 색 (입자는 --accent-2) */
+body.shelf { --qf-anti: #7c3aed; }
+:root[data-theme="dark"] body.shelf { --qf-anti: #c4b5fd; }
 
 /* 서재 상단바는 짙은 잉크색 */
 body.shelf .ls-topbar { background: rgba(24, 24, 30, .95); border-bottom-color: #34343c; color: #f2ede4; }

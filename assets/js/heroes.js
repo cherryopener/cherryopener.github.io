@@ -7,7 +7,7 @@
      <div class="hero-stage" data-hero="orbital"></div>   3D 수소 오비탈 전자 구름 (양자역학)
      <div class="hero-stage" data-hero="gauss"></div>     3D 2변량 정규 분포 곡면과 쌓이는 표본 (통계)
      <div class="hero-stage" data-hero="svd"></div>       3D 단위 구가 회전·늘이기·회전을 거쳐 타원체가 되는 특잇값 분해 (선형대수)
-     <canvas class="bg" data-hero="flow"></canvas>         2D 흐름장 입자 (서재 홈 배경)
+     <canvas class="bg" data-hero="qfield"></canvas>       2D 양자장: 출렁이는 점 격자 + 쌍생성·쌍소멸 (서재 홈 배경)
    three.js를 못 불러오면 조용히 안내 문구만 남긴다.
    ========================================================================== */
 (function () {
@@ -466,46 +466,201 @@
     }).catch(() => fail(el));
   }
 
-  /* ------------------------------------------------------------ 2D 흐름장 (서재 배경) */
-  function flow(canvas) {
-    const ctx = canvas.getContext("2d");
-    let w = 0, h = 0, dpr = 1, parts = [];
-    const N = 260;
-    function resize() {
-      const r = canvas.getBoundingClientRect();
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      w = r.width; h = r.height;
-      canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.fillStyle = VZ.color("bg"); ctx.fillRect(0, 0, w, h);
-      parts = Array.from({ length: N }, () => ({ x: Math.random() * w, y: Math.random() * h, life: Math.random() * 200 }));
-    }
-    const field = (x, y, t) => {
-      const s = 0.0042;
-      return Math.sin(x * s + t * 0.05) * 1.6 + Math.cos(y * s * 1.3 - t * 0.04) * 1.4 + Math.sin((x + y) * s * 0.7) * 1.1;
+  /* ------------------------------------------------------------ 2D 양자장 (서재 홈 배경)
+     · 점 격자 = 시공간. 잔잔한 파동이 늘 출렁이고, 쌍소멸 자리에서 둥근 물결(중력파처럼)이 퍼진다.
+       마우스(손가락)는 무거운 질량처럼 격자를 살짝 끌어당긴다.
+     · 쌍생성: 한 점에서 입자(주황 --accent-2)·반입자(보라 --qf-anti)가 반대 방향으로 튀어나와 거울처럼 휘는 원을 그리고,
+       한 바퀴 돌아 같은 자리에서 다시 만나 쌍소멸 → 번쩍 + 광자 두 개 + 격자 물결.
+     화면 밖이거나 탭이 숨으면 멈추고(VZ.loop), '동작 줄이기' 설정이면 한 장면만 그린다. */
+  function qfield(cv) {
+    const ctx = cv.getContext("2d");
+    if (!ctx) return;
+    const GAP = 30, TAU = Math.PI * 2;
+    let W = 0, H = 0, dpr = 1;
+    let col = { dot: "#9aa6bf", p: "#fdba74", a: "#c4b5fd", flash: "#fff" };
+    const readColors = () => {
+      const v = (n, d) => VZ.color(n) || d;
+      col = { dot: v("text-dim", col.dot), p: v("accent-2", col.p), a: v("qf-anti", col.a), flash: v("text", col.flash) };
     };
-    let t = 0;
-    function frame(dt) {
-      t += dt * 10;
-      const bg = VZ.color("bg");
-      ctx.fillStyle = VZ.alpha(bg, 0.06); ctx.fillRect(0, 0, w, h);
-      const a = VZ.color("accent"), b = VZ.color("accent-2");
-      parts.forEach((p, i) => {
-        const ang = field(p.x, p.y, t), vx = Math.cos(ang) * 0.9, vy = Math.sin(ang) * 0.9;
-        ctx.strokeStyle = VZ.alpha(i % 3 ? a : b, 0.28);
-        ctx.lineWidth = 1.1;
-        ctx.beginPath(); ctx.moveTo(p.x, p.y); p.x += vx; p.y += vy; ctx.lineTo(p.x, p.y); ctx.stroke();
-        if (--p.life < 0 || p.x < 0 || p.y < 0 || p.x > w || p.y > h) { p.x = Math.random() * w; p.y = Math.random() * h; p.life = 120 + Math.random() * 200; }
-      });
-    }
+    readColors();
+    window.addEventListener("ls:theme", () => requestAnimationFrame(() => { readColors(); if (reduced) draw(); }));
+
+    const resize = () => {
+      const r = cv.getBoundingClientRect();
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = r.width; H = r.height;
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
     resize();
-    if (window.ResizeObserver) new ResizeObserver(resize).observe(canvas);
-    window.addEventListener("ls:theme", () => requestAnimationFrame(() => { ctx.fillStyle = VZ.color("bg"); ctx.fillRect(0, 0, w, h); }));
-    if (reduced) { for (let i = 0; i < 300; i++) frame(0.016); return; }
-    VZ.loop(canvas, frame);
+
+    // 마우스 = 질량. 캔버스는 글자 아래에 깔려 있으니 창에서 받는다
+    const mouse = { x: -1e4, y: -1e4, m: 0 };
+    window.addEventListener("pointermove", (e) => {
+      const r = cv.getBoundingClientRect();
+      mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
+    }, { passive: true });
+    document.addEventListener("pointerleave", () => { mouse.x = mouse.y = -1e4; });
+
+    const pairs = [], ripples = [], photons = [];
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    const spawn = (t0 = 0) => {
+      const r = rnd(18, Math.min(70, H * 0.18));
+      const T = rnd(3.2, 6.5); // 한 바퀴 시간(초)
+      pairs.push({ x: rnd(20, W - 20), y: rnd(20, H * 0.85), dir: rnd(0, TAU), r, w: Math.random() < 0.5 ? 1 : -1, t: t0, T });
+    };
+    const maxPairs = () => Math.max(3, Math.round(W / 160));
+
+    // 입자 위치: 처음 속도 방향 dir, 원 중심은 옆으로 r. 반입자는 거울상 → 한 바퀴 뒤 출발점에서 다시 만남
+    const pos = (p, ph, anti) => {
+      const ux = Math.cos(p.dir), uy = Math.sin(p.dir);
+      const nx = -uy * p.w, ny = ux * p.w;
+      const along = p.r * Math.sin(ph), side = p.r * (1 - Math.cos(ph));
+      const s = anti ? -1 : 1;
+      return [p.x + s * along * ux + side * nx, p.y + s * along * uy + side * ny];
+    };
+
+    // 격자 점이 밀려난 양: 잔잔한 파동 + 물결 + 마우스 질량
+    const displace = (x, y, t) => {
+      let dx = 3 * Math.sin(x * 0.011 + t * 0.7) * Math.cos(y * 0.017 - t * 0.5);
+      let dy = 3 * Math.cos(x * 0.009 - t * 0.6 + y * 0.006) * Math.sin(y * 0.013 + t * 0.4);
+      let e = 0;
+      for (const r of ripples) {
+        const ddx = x - r.x, ddy = y - r.y, d = Math.hypot(ddx, ddy) || 1;
+        const k = d - r.t * 140; // 물결 앞머리까지의 거리
+        if (k > 40 || k < -160) continue;
+        const env = Math.exp(-(k * k) / 2600) * r.a * Math.exp(-r.t * 0.9);
+        const amp = 9 * env * Math.sin(k * 0.12);
+        dx += (amp * ddx) / d; dy += (amp * ddy) / d;
+        e += env;
+      }
+      if (mouse.m > 0.01) {
+        const ddx = mouse.x - x, ddy = mouse.y - y, d2 = ddx * ddx + ddy * ddy;
+        const pull = (mouse.m * 900) / (d2 + 2500); // 가까울수록 세게, 최대 약 9px
+        dx += ddx * pull; dy += ddy * pull;
+        e += (mouse.m * 1500) / (d2 + 2500);
+      }
+      return [dx, dy, e];
+    };
+
+    const drawGrid = (t) => {
+      ctx.fillStyle = col.dot;
+      const ox = (W % GAP) / 2, oy = (H % GAP) / 2;
+      for (let y = oy; y <= H; y += GAP) {
+        for (let x = ox; x <= W; x += GAP) {
+          const [dx, dy, e] = displace(x, y, t);
+          ctx.globalAlpha = Math.min(0.8, 0.28 + e * 0.5);
+          ctx.beginPath();
+          ctx.arc(x + dx, y + dy, 1.1 + Math.min(1.4, e * 1.2), 0, TAU);
+          ctx.fill();
+        }
+      }
+    };
+
+    const drawPair = (p) => {
+      const ph = Math.min(1, p.t / p.T) * TAU;
+      const trail = 2.4; // 꼬리 길이(라디안)
+      ctx.lineCap = "round";
+      for (const anti of [false, true]) {
+        const c = anti ? col.a : col.p;
+        ctx.strokeStyle = c;
+        const N = 22, from = Math.max(0, ph - trail);
+        let [px, py] = pos(p, from, anti);
+        for (let i = 1; i <= N; i++) {
+          const [qx, qy] = pos(p, from + ((ph - from) * i) / N, anti);
+          ctx.globalAlpha = 0.75 * Math.pow(i / N, 1.6);
+          ctx.lineWidth = 0.6 + 1.2 * (i / N);
+          ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(qx, qy); ctx.stroke();
+          px = qx; py = qy;
+        }
+        // 머리 (빛나는 점)
+        ctx.fillStyle = c;
+        ctx.globalAlpha = 0.25;
+        ctx.beginPath(); ctx.arc(px, py, 5, 0, TAU); ctx.fill();
+        ctx.globalAlpha = 0.95;
+        ctx.beginPath(); ctx.arc(px, py, 2, 0, TAU); ctx.fill();
+      }
+      // 막 태어난 순간 작은 빛
+      if (p.t < 0.35) {
+        ctx.globalAlpha = 0.5 * (1 - p.t / 0.35);
+        ctx.fillStyle = col.flash;
+        ctx.beginPath(); ctx.arc(p.x, p.y, 2 + p.t * 12, 0, TAU); ctx.fill();
+      }
+    };
+
+    const drawEffects = () => {
+      // 소멸 빛
+      for (const r of ripples) {
+        if (r.t > 0.5) continue;
+        const k = r.t / 0.5;
+        ctx.globalAlpha = 0.7 * (1 - k);
+        ctx.strokeStyle = col.flash; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.arc(r.x, r.y, 3 + k * 26, 0, TAU); ctx.stroke();
+        ctx.globalAlpha = 0.9 * (1 - k) * (1 - k);
+        ctx.fillStyle = col.flash;
+        ctx.beginPath(); ctx.arc(r.x, r.y, 4 * (1 - k) + 1, 0, TAU); ctx.fill();
+      }
+      // 광자: 물결선으로 날아가는 짧은 조각
+      ctx.strokeStyle = col.flash; ctx.lineWidth = 1.2;
+      for (const ph of photons) {
+        const L = 46, n = 18, px = -ph.dy, py = ph.dx;
+        ctx.globalAlpha = 0.6 * Math.max(0, 1 - ph.t / 1.6);
+        ctx.beginPath();
+        for (let i = 0; i <= n; i++) {
+          const s = (i / n) * L, w = 3.2 * Math.sin(s * 0.45 - ph.t * 30) * Math.sin((Math.PI * i) / n);
+          const x = ph.x - ph.dx * s + px * w, y = ph.y - ph.dy * s + py * w;
+          if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+        }
+        ctx.stroke();
+      }
+    };
+
+    let t = 0, spawnIn = 0.3;
+    const step = (dt) => {
+      t += dt;
+      mouse.m += ((mouse.x > -1e3 ? 1 : 0) - mouse.m) * Math.min(1, dt * 3);
+      for (const p of pairs) p.t += dt;
+      for (let i = pairs.length - 1; i >= 0; i--) {
+        const p = pairs[i];
+        if (p.t >= p.T) {
+          pairs.splice(i, 1);
+          ripples.push({ x: p.x, y: p.y, t: 0, a: 1 });
+          const a = rnd(0, TAU);
+          for (const s of [1, -1]) photons.push({ x: p.x, y: p.y, dx: s * Math.cos(a), dy: s * Math.sin(a), t: 0 });
+        }
+      }
+      for (const r of ripples) r.t += dt;
+      while (ripples.length && ripples[0].t > 4) ripples.shift();
+      for (const ph of photons) { ph.t += dt; ph.x += ph.dx * 260 * dt; ph.y += ph.dy * 260 * dt; }
+      while (photons.length && photons[0].t > 1.6) photons.shift();
+      spawnIn -= dt;
+      if (spawnIn <= 0 && pairs.length < maxPairs()) { spawn(); spawnIn = rnd(0.4, 1.4); }
+    };
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      drawGrid(t);
+      for (const p of pairs) drawPair(p);
+      drawEffects();
+      ctx.globalAlpha = 1;
+    }
+
+    // 처음부터 몇 쌍이 돌고 있게
+    for (let i = 0; i < Math.ceil(maxPairs() / 2); i++) spawn();
+    for (const p of pairs) p.t = rnd(0.1, 0.7) * p.T;
+
+    if (reduced) {
+      // 한 장면: 여러 단계의 쌍과 막 퍼지는 물결 하나
+      while (pairs.length < maxPairs()) { spawn(); const p = pairs[pairs.length - 1]; p.t = rnd(0.2, 0.85) * p.T; }
+      ripples.push({ x: W * 0.7, y: H * 0.4, t: 0.9, a: 1 });
+      draw();
+      if (window.ResizeObserver) new ResizeObserver(() => { resize(); draw(); }).observe(cv);
+      return;
+    }
+    if (window.ResizeObserver) new ResizeObserver(resize).observe(cv);
+    VZ.loop(cv, (dt) => { step(dt); draw(); });
   }
 
-  const HEROES = { network, loop, ribbons, orbits, orbital, gauss, svd, flow };
+  const HEROES = { network, loop, ribbons, orbits, orbital, gauss, svd, qfield };
   document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll("[data-hero]").forEach((el) => {
       const fn = HEROES[el.dataset.hero];
