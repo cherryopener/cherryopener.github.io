@@ -2245,27 +2245,37 @@
           ctx.setLineDash([4, 4]); ctx.strokeStyle = VZ.alpha(P.text, 0.45); VZ.contour(ctx, nx, ny, vals, 0, (i) => ((i + 0.5) / nx) * w, (j) => ((j + 0.5) / ny) * h); ctx.setLineDash([]);
         }
         if (st.lines) {
-          const src = Q.some((c) => c.q > 0) ? Q.filter((c) => c.q > 0) : Q, sign = Q.some((c) => c.q > 0) ? 1 : -1;
+          // 전기력선은 양전하와 음전하 모두에서 |q|에 비례하는 개수로 출발시킨다 (docs/SIM-PITFALLS.md 1절).
+          //  · 양전하: E 방향으로 추적. 음전하에 닿거나 화면 밖으로 나가면 끝.
+          //  · 음전하: −E 방향(거꾸로)으로 추적. 양전하에 닿은 선은 그 양전하가 이미 그렸으므로 버리고,
+          //    화면 밖으로 나가는 선만 남긴다. 화면 밖에서 돌아 들어오는 선이 빠지지 않게 하기 위해서다.
+          //  · 출발 각도는 음전하에서 거울상(−0.1)으로 잡아, 쌍극자 그림이 좌우 대칭이 되게 한다.
           const xm = 1.2, ym = 1.2 * ar;
           ctx.strokeStyle = P.text; ctx.fillStyle = P.text; ctx.lineWidth = 1.2;
-          src.forEach((c) => {
-            const n = 10 * Math.abs(c.q);
+          Q.forEach((c) => {
+            const sign = c.q > 0 ? 1 : -1, n = 10 * Math.abs(c.q);
             for (let k = 0; k < n; k++) {
-              const a = (k / n) * TAU + 0.1;
+              const a = (k / n) * TAU + sign * 0.1;
               let x = c.x + 0.035 * Math.cos(a), y = c.y + 0.035 * Math.sin(a);
-              ctx.beginPath(); ctx.moveTo(X(x), Y(y));
-              let mid = null;
+              const pts = [[x, y]];
+              let mid = null, hit = null;
               for (let s = 0; s < 700; s++) {
                 let [ex, ey] = E(x, y); let m = Math.hypot(ex, ey) || 1;
                 const hx = x + sign * 0.006 * (ex / m), hy = y + sign * 0.006 * (ey / m);
                 [ex, ey] = E(hx, hy); m = Math.hypot(ex, ey) || 1;
                 x += sign * 0.012 * (ex / m); y += sign * 0.012 * (ey / m);
-                ctx.lineTo(X(x), Y(y));
+                pts.push([x, y]);
                 if (s === 40) mid = [x, y, ex / m, ey / m];
-                if (Math.abs(x) > xm || Math.abs(y) > ym || Q.some((o) => o !== c && Math.hypot(x - o.x, y - o.y) < 0.03)) break;
+                if (Math.abs(x) > xm || Math.abs(y) > ym) break;
+                hit = Q.find((o) => o !== c && Math.hypot(x - o.x, y - o.y) < 0.03);
+                if (hit) break;
               }
+              if (sign < 0 && hit && hit.q > 0) continue; // 양전하에서 이미 그린 선
+              ctx.beginPath();
+              pts.forEach(([px, py], i) => (i ? ctx.lineTo(X(px), Y(py)) : ctx.moveTo(X(px), Y(py))));
               ctx.stroke();
-              if (mid) { const [mx, my, ux, uy] = mid, s2 = sign; VZ.arrow(ctx, X(mx), Y(my), X(mx + s2 * ux * 0.03), Y(my + s2 * uy * 0.03), 6); }
+              // 화살표는 언제나 E 방향
+              if (mid) { const [mx, my, ux, uy] = mid; VZ.arrow(ctx, X(mx), Y(my), X(mx + ux * 0.03), Y(my + uy * 0.03), 6); }
             }
           });
         }

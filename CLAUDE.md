@@ -9,6 +9,7 @@
 
 - [docs/DECISIONS.md](docs/DECISIONS.md): 저장소, 사진, 용량에 대해 정한 것
 - [docs/PLAN.md](docs/PLAN.md): 구축 순서와 현재 단계
+- [docs/SIM-PITFALLS.md](docs/SIM-PITFALLS.md): 실험 코드(`assets/sims/`)에서 실제로 저지른 실수와 고치는 법. 실험을 쓰거나 고치기 전에 읽습니다
 
 ## 1. 기본 원칙
 
