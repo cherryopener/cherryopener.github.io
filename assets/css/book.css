@@ -257,6 +257,16 @@ details.sol[open] { padding-bottom: 4px; }
 .ch-card.has-sims:hover { transform: none; }
 .ch-card.has-sims h3 a { color: inherit; }
 .ch-card.has-sims h3 a:hover { color: var(--accent); text-decoration: none; }
+/* 목차만 공개한 책(outline)의 장 카드: 링크가 아니다. 서랍·검색에서 #ch01로 오면 강조한다 */
+.ch-card.is-outline { min-height: 0; border-style: dashed; scroll-margin-top: 84px; }
+.ch-card.is-outline:hover { transform: none; border-color: var(--border); }
+.ch-card.is-outline:target { border-style: solid; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+/* 책 홈 히어로의 서재 경로 그림 */
+.hero-stage.series-map { display: flex; align-items: center; justify-content: center; padding: 10px; }
+.hero-stage.series-map svg { width: 100%; height: 100%; }
+.hero-stage.series-map a:hover rect { stroke: var(--accent); }
+.hero-stage.series-map .t-b, .hero-stage.series-map .t-acc { font-size: 16px; }
+.hero-stage.series-map .t-dim { font-size: 14px; }
 .ch-sims { list-style: none; margin: 2px 0 0; padding: 0; display: grid; gap: 6px; flex: 1; align-content: start; }
 .ch-sims a { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 10px; border: 1px solid transparent; background: var(--surface); color: var(--text); font-size: 14px; font-weight: 600; line-height: 1.35; }
 .ch-sims a:hover { text-decoration: none; border-color: var(--accent); }

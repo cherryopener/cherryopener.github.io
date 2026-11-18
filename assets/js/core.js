@@ -32,7 +32,8 @@
     b.chapters.forEach((c, i) => {
       c.book = b;
       c.index = i;
-      c.href = b.path + "chapters/" + c.slug + ".html";
+      // 목차만 공개한 책(outline)은 장 파일이 없으므로 책 홈의 그 장 카드로 보낸다
+      c.href = b.status === "outline" ? b.path + "index.html#" + c.slug : b.path + "chapters/" + c.slug + ".html";
       c.sims = c.sims || [];
     });
   });
@@ -204,7 +205,7 @@
     const tag = b.href ? "a" : "div";
     return `<${tag} class="book-card" ${b.href ? `href="${esc(LS.url(b.href))}"` : 'aria-disabled="true" tabindex="0"'} title="${esc(b.desc)}">
       ${LS.cover(b)}
-      <span class="meta"><b>${esc(b.title)}</b><span>${esc(b.fieldObj.name)} · ${b.status === "planned" ? "집필 예정" : `${n}개 챕터${sims ? ` · 실험 ${sims}개` : ""}`}</span></span>
+      <span class="meta"><b>${esc(b.title)}</b><span>${esc(b.fieldObj.name)} · ${b.status === "planned" ? "집필 예정" : b.status === "outline" ? `목차 ${n}장` : `${n}개 챕터${sims ? ` · 실험 ${sims}개` : ""}`}</span></span>
     </${tag}>`;
   };
 })();

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>수리물리학 (대학원) · 지식따개</title>
+<meta name="description" content="군과 표현론, 리 군과 리 대수, 다양체·미분 형식·접속·올다발, 힐베르트 공간의 연산자와 스펙트럼, 분포와 적분 방정식, 점근 해석과 안장점, 그리고 범함수 미적분·그라스만 적분·열핵 — 양자역학, 상대성이론, 양자장론, 함수적 RG가 공통으로 기대는 수학을 학부 『수리물리학』 위에 쌓습니다.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/book.css">
+<script defer src="../../data/site.js"></script>
+<script defer src="../../data/books.js"></script>
+<script defer src="../../assets/js/viz.js"></script>
+<script defer src="../../assets/js/core.js"></script>
+<script defer src="../../assets/js/lab.js"></script>
+<script defer src="../../assets/sims/dl.js"></script>
+<script defer src="../../assets/sims/ts.js"></script>
+<script defer src="../../assets/sims/phys.js"></script>
+<script defer src="../../assets/sims/math.js"></script>
+<script defer src="../../assets/js/book.js"></script>
+</head>
+<body data-root="../../" data-book="math-phys-grad" data-field="phys" data-page="book-home">
+<!-- 목차 공개(outline) 책의 홈. 이 파일은 가목차를 보여 주려고 만든 것이다(2026-11-18).
+     정식 기획(GUIDE.md) 때 다시 쓴다. 장 목록은 data/books.js가 기준이다. -->
+
+<section class="home-hero">
+  <div class="inner">
+    <div>
+      <div class="eyebrow" data-fill="book-en">Advanced Mathematical Physics</div>
+      <h1>대칭과 기하,<br><span class="grad">그리고 범함수</span></h1>
+      <p data-fill="book-desc">군과 표현론, 리 군과 리 대수, 다양체·미분 형식·접속·올다발, 힐베르트 공간의 연산자와 스펙트럼, 분포와 적분 방정식, 점근 해석과 안장점, 그리고 범함수 미적분·그라스만 적분·열핵 — 양자역학, 상대성이론, 양자장론, 함수적 RG가 공통으로 기대는 수학을 학부 『수리물리학』 위에 쌓습니다.</p>
+      <div class="cta">
+        <a class="btn primary big" href="#chapters">전체 목차 →</a>
+        <a class="btn ghost big" href="#map">이 책의 지도</a>
+      </div>
+      <div class="hero-badges"><span><b data-fill="part-count">5</b>부 <b data-fill="chapter-count">21</b>장</span><span>L4 고급</span><span data-fill="book-status">목차 공개</span></div>
+    </div>
+    <div class="hero-stage series-map">
+      <svg viewBox="0 0 540 400" role="img" aria-label="서재의 대학원 물리 경로: 학부 수리물리학에서 대학원 수리물리학, 양자역학과 전자기학, 양자장론과 상대성이론, 함수적 RG를 거쳐 점근적 안전성으로. 지금 책은 강조색 상자">
+        <defs><marker id="sm-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs>
+        <text x="20" y="20" class="t-dim">서재의 대학원 물리 경로 · 강조색이 이 책</text>
+        <path d="M270 70 V90" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M225 126 L170 146" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M315 126 L370 146" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M140 182 V202" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M400 182 V202" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M330 182 L215 202" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M140 238 V258" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M400 238 V258" class="s-acc flow-dash" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M190 294 L235 314" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M335 238 C 300 262, 296 290, 300 314" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <a href="../math-phys/index.html"><rect x="178" y="34" width="184" height="38" rx="10" class="f-surface"/><text x="270" y="59" text-anchor="middle" class="t-b">수리물리학 (학부)</text></a>
+        <g aria-current="page"><rect x="178" y="90" width="184" height="38" rx="10" class="f-acc-soft" stroke-width="2"/><text x="270" y="115" text-anchor="middle" class="t-acc">수리물리학 (대학원)</text></g>
+        <a href="../qm-grad/index.html"><rect x="48" y="146" width="184" height="38" rx="10" class="f-surface"/><text x="140" y="171" text-anchor="middle" class="t-b">양자역학 (대학원)</text></a>
+        <a href="../em-grad/index.html"><rect x="308" y="146" width="184" height="38" rx="10" class="f-surface"/><text x="400" y="171" text-anchor="middle" class="t-b">전자기학 (대학원)</text></a>
+        <a href="../qft/index.html"><rect x="48" y="202" width="184" height="38" rx="10" class="f-surface"/><text x="140" y="227" text-anchor="middle" class="t-b">양자장론</text></a>
+        <a href="../relativity/index.html"><rect x="308" y="202" width="184" height="38" rx="10" class="f-surface"/><text x="400" y="227" text-anchor="middle" class="t-b">상대성이론</text></a>
+        <a href="../frg/index.html"><rect x="48" y="258" width="184" height="38" rx="10" class="f-surface"/><text x="140" y="283" text-anchor="middle" class="t-b">함수적 RG</text></a>
+        <a href="../black-holes/index.html"><rect x="308" y="258" width="184" height="38" rx="10" class="f-surface" stroke-dasharray="5 4"/><text x="400" y="283" text-anchor="middle" class="t-b">블랙홀 (선택)</text></a>
+        <a href="../asymptotic-safety/index.html"><rect x="178" y="314" width="184" height="38" rx="10" class="f-surface"/><text x="270" y="339" text-anchor="middle" class="t-b">점근적 안전성</text></a>
+        <text x="20" y="384" class="t-dim">점선은 선택 책입니다. 선택:</text>
+        <a href="../cm-grad/index.html"><text x="182" y="384" class="t-acc">고전역학 (대학원) →</text></a>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="home-section" id="map">
+  <h2>이 책의 지도</h2>
+  <p class="sub">1부와 2부가 대칭과 기하의 언어를, 3부가 양자역학의 수학적 바탕을 세웁니다. 4부의 점근 해석은 경로적분의 준고전 근사로, 5부의 범함수 방법은 함수적 RG의 계산 도구로 바로 이어집니다. 전제: 학부 『수리물리학』 전체.</p>
+  <figure class="diagram scroll">
+    <svg viewBox="0 0 1100 420" role="img" aria-label="이 책의 구성: 1부 군과 표현, 2부 미분기하와 게이지 구조, 3부 함수 해석과 스펙트럼, 4부 점근 해석과 특수 함수, 5부 범함수 방법의 순서로 읽는다">
+      <defs><marker id="bm-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs>
+      <a href="#ch01"><g transform="translate(20,20)">
+        <rect width="220" height="150" rx="14" class="f-surface"/>
+        <text x="16" y="28" class="t-acc">1부 · 1–5장</text>
+        <text x="16" y="54" class="t-b">군과 표현</text>
+        <text x="16" y="82" class="t-dim">군과 표현론</text>
+        <text x="16" y="102" class="t-dim">리 군과 리 대수</text>
+        <text x="16" y="122" class="t-dim">SU(N)와 영 도표</text>
+        <text x="16" y="142" class="t-dim">로런츠 군과 스피너</text>
+      </g></a>
+      <path d="M244 95 H294" class="s-acc" marker-end="url(#bm-arr)"/>
+      <a href="#ch06"><g transform="translate(300,20)">
+        <rect width="220" height="150" rx="14" class="f-surface"/>
+        <text x="16" y="28" class="t-acc">2부 · 6–9장</text>
+        <text x="16" y="54" class="t-b">미분기하와 게이지 구조</text>
+        <text x="16" y="82" class="t-dim">다양체와 미분 형식</text>
+        <text x="16" y="102" class="t-dim">접속과 곡률</text>
+        <text x="16" y="122" class="t-dim">올다발과 게이지장</text>
+      </g></a>
+      <path d="M524 95 H574" class="s-acc" marker-end="url(#bm-arr)"/>
+      <a href="#ch10"><g transform="translate(580,20)">
+        <rect width="220" height="150" rx="14" class="f-surface"/>
+        <text x="16" y="28" class="t-acc">3부 · 10–13장</text>
+        <text x="16" y="54" class="t-b">함수 해석과 스펙트럼</text>
+        <text x="16" y="82" class="t-dim">비유계 연산자</text>
+        <text x="16" y="102" class="t-dim">스펙트럼 정리</text>
+        <text x="16" y="122" class="t-dim">분포 · 적분 방정식</text>
+      </g></a>
+      <path d="M804 95 H854" class="s-acc" marker-end="url(#bm-arr)"/>
+      <a href="#ch14"><g transform="translate(860,20)">
+        <rect width="220" height="150" rx="14" class="f-surface"/>
+        <text x="16" y="28" class="t-acc">4부 · 14–17장</text>
+        <text x="16" y="54" class="t-b">점근 해석과 특수 함수</text>
+        <text x="16" y="82" class="t-dim">점근 급수와 보렐 합</text>
+        <text x="16" y="102" class="t-dim">안장점 · 정상 위상</text>
+        <text x="16" y="122" class="t-dim">WKB · 초기하 함수</text>
+      </g></a>
+      <path d="M970 174 V244" class="s-acc" marker-end="url(#bm-arr)"/>
+      <a href="#ch18"><g transform="translate(860,250)">
+        <rect width="220" height="150" rx="14" class="f-acc-soft" stroke-width="2"/>
+        <text x="16" y="28" class="t-acc">5부 · 18–21장</text>
+        <text x="16" y="54" class="t-b">범함수 방법</text>
+        <text x="16" y="82" class="t-dim">범함수 미분과 Γ[φ]</text>
+        <text x="16" y="102" class="t-dim">det = exp Tr log</text>
+        <text x="16" y="122" class="t-dim">그라스만 · 초대각합</text>
+        <text x="16" y="142" class="t-dim">열핵과 Q-범함수</text>
+      </g></a>
+    </svg>
+    <figcaption><b>그림 0-1.</b> 다섯 부의 순서. 화살표는 읽는 순서이고, 강조색 상자(5부)는 『함수적 재규격화군』이 링크로 바로 쓰는 부입니다. 2부의 접속과 곡률은 『상대성이론』이, 3부의 스펙트럼 이론은 『양자역학 (대학원)』이, 1부의 로런츠 군과 스피너는 『양자장론』이 이어받습니다. 21장의 열핵은 8장의 곡률을 씁니다. 상자를 누르면 그 부의 첫 장 카드로 갑니다.</figcaption>
+  </figure>
+</section>
+
+<section class="home-section" id="chapters">
+  <h2>전체 목차</h2>
+  <p class="sub">아직 본문이 없는 가목차입니다. 장 제목과 설명은 정식 기획(GUIDE.md)에서 바뀔 수 있습니다.</p>
+  <div class="ch-grid" data-chapter-grid></div>
+</section>
+
+</body>
+</html>

@@ -60,7 +60,7 @@
     drawer.className = "ls-drawer";
     drawer.setAttribute("aria-label", "챕터 목록");
     drawer.innerHTML = `<a class="book-title" href="${url(book.path + "index.html")}">${esc(book.series)} · ${esc(book.title)}</a><h4>챕터</h4>
-      <ul class="ls-chlist">${book.chapters.map((c, i) => partHead(c, i, (n, p) => `<li class="part-h">${n}부 · ${esc(p.title)}</li>`) + `<li><a href="${url(c.href)}"${c === chapter ? ' class="active" aria-current="page"' : ""}><span class="num">${esc(c.num)}</span><span>${esc(c.title)}</span>${c.status === "slot" ? '<span class="pill slot">슬롯</span>' : ""}</a></li>`).join("")}</ul>
+      <ul class="ls-chlist">${book.chapters.map((c, i) => partHead(c, i, (n, p) => `<li class="part-h">${n}부 · ${esc(p.title)}</li>`) + `<li><a href="${url(c.href)}"${c === chapter ? ' class="active" aria-current="page"' : ""}><span class="num">${esc(c.num)}</span><span>${esc(c.title)}</span>${c.status === "slot" && book.status !== "outline" ? '<span class="pill slot">슬롯</span>' : ""}</a></li>`).join("")}</ul>
       <a class="back" href="${url("index.html")}">← 서재로</a><a class="back" style="border:0;margin-top:0" href="${url("lab/index.html")}">실험실 →</a>`;
     const back = document.createElement("div");
     back.className = "ls-drawer-backdrop";
@@ -240,6 +240,13 @@
         const head = partHead(c, i, (n, p) => `<div class="part-row"><span class="part-n">${n}부</span><div><h3>${esc(p.title)}</h3><p>${esc(p.desc || "")}</p></div></div>`);
         const sims = inside && window.Lab ? c.sims.map((id) => Lab.get(id)).filter(Boolean) : [];
         if (sims.length) return head + simsCard(c, sims);
+        // 목차만 공개한 책: 장 파일이 없으므로 카드는 링크가 아니고, 서랍·검색이 찾아올 수 있게 id를 단다
+        if (book.status === "outline") return head + `
+        <div class="ch-card is-outline" id="${esc(c.slug)}">
+          <span class="num"><span>CHAPTER ${esc(c.num)}</span></span>
+          <h3>${esc(c.title)}</h3>
+          <p>${esc(c.desc || "")}</p>
+        </div>`;
         return head + `
         <a class="ch-card${c.status === "slot" ? " is-slot" : ""}" href="${url(c.href)}">
           <span class="num"><span>${book.kind === "papers" ? "PAPER" : "CHAPTER"} ${esc(c.num)}</span>${c.status ? `<span class="pill${c.status === "slot" ? " slot" : c.status === "done" ? " acc" : ""}">${esc(LS.chapterStatusLabel(c))}</span>` : ""}</span>

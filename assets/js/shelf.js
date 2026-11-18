@@ -9,7 +9,7 @@
   const page = document.body.dataset.page;
   const sims = () => (window.Lab ? Lab.list() : []);
   const fieldOf = (id) => D.fieldById[id] || { name: id, color: "#888", colorDark: "#aaa" };
-  const order = { published: 0, writing: 1, planned: 2 };
+  const order = { published: 0, writing: 1, outline: 2, planned: 3 };
   const sortedBooks = () => D.books.slice().sort((a, b) => order[a.status] - order[b.status]);
 
   /* ------------------------------------------------------------ 머리말 */
@@ -40,7 +40,7 @@
 
   /* ------------------------------------------------------------ 홈 */
   function home() {
-    const books = D.books, nCh = books.reduce((s, b) => s + b.chapters.length, 0);
+    const books = D.books, nCh = books.reduce((s, b) => s + b.chapters.filter((c) => c.status !== "slot").length, 0); // 빈 슬롯(가목차)은 세지 않는다
     $("#hero-title").innerHTML = (S.heroTitle || ["", ""]).map((l, i) => (i === S.heroTitle.length - 1 ? `<em>${esc(l)}</em>` : esc(l))).join("<br>");
     $("#hero-text").textContent = S.heroText || S.description || "";
     if (S.heroEyebrow) $("#hero-eyebrow").textContent = S.heroEyebrow;
@@ -56,7 +56,7 @@
 
     // 분야 카드
     $("#field-cards").innerHTML = D.fields.map((f) => {
-      const live = f.books.filter((b) => b.status !== "planned").length;
+      const live = f.books.filter((b) => b.status === "writing" || b.status === "published").length;
       return `<a class="field-card" href="${url("library/index.html?field=" + f.id)}" style="--c-l:${f.color};--c-d:${f.colorDark || f.color}" data-tint><span class="en">${esc(f.en)}</span><b>${esc(f.name)}</b><p>${esc(f.desc || "")}</p><span class="count">책 ${f.books.length}권 (진행 ${live}) · 실험 ${sims().filter((s) => s.field === f.id).length}개</span></a>`;
     }).join("");
     $$("[data-tint]").forEach((el) => el.classList.add("tint"));

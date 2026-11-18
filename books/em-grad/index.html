@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>전자기학 (대학원) · 지식따개</title>
+<meta name="description" content="맥스웰 방정식을 다시 세우고 경계값 문제와 다중극, 매질 속 장, 도파관, 복사와 산란을 거쳐 — 공변 형식, 작용 원리와 에너지-운동량 텐서, 움직이는 전하의 복사, 복사 반작용, 자연 단위까지. SI로 쓰고 마지막에 양자장론의 표기로 넘깁니다.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/book.css">
+<script defer src="../../data/site.js"></script>
+<script defer src="../../data/books.js"></script>
+<script defer src="../../assets/js/viz.js"></script>
+<script defer src="../../assets/js/core.js"></script>
+<script defer src="../../assets/js/lab.js"></script>
+<script defer src="../../assets/sims/dl.js"></script>
+<script defer src="../../assets/sims/ts.js"></script>
+<script defer src="../../assets/sims/phys.js"></script>
+<script defer src="../../assets/sims/math.js"></script>
+<script defer src="../../assets/js/book.js"></script>
+</head>
+<body data-root="../../" data-book="em-grad" data-field="phys" data-page="book-home">
+<!-- 목차 공개(outline) 책의 홈. 이 파일은 가목차를 보여 주려고 만든 것이다(2026-11-18).
+     정식 기획(GUIDE.md) 때 다시 쓴다. 장 목록은 data/books.js가 기준이다. -->
+
+<section class="home-hero">
+  <div class="inner">
+    <div>
+      <div class="eyebrow" data-fill="book-en">Classical Electrodynamics</div>
+      <h1>경계값 문제에서<br><span class="grad">공변 장론까지</span></h1>
+      <p data-fill="book-desc">맥스웰 방정식을 다시 세우고 경계값 문제와 다중극, 매질 속 장, 도파관, 복사와 산란을 거쳐 — 공변 형식, 작용 원리와 에너지-운동량 텐서, 움직이는 전하의 복사, 복사 반작용, 자연 단위까지. SI로 쓰고 마지막에 양자장론의 표기로 넘깁니다.</p>
+      <div class="cta">
+        <a class="btn primary big" href="#chapters">전체 목차 →</a>
+        <a class="btn ghost big" href="#map">이 책의 지도</a>
+      </div>
+      <div class="hero-badges"><span><b data-fill="part-count">5</b>부 <b data-fill="chapter-count">16</b>장</span><span>L4 고급</span><span data-fill="book-status">목차 공개</span></div>
+    </div>
+    <div class="hero-stage series-map">
+      <svg viewBox="0 0 540 400" role="img" aria-label="서재의 대학원 물리 경로: 학부 수리물리학에서 대학원 수리물리학, 양자역학과 전자기학, 양자장론과 상대성이론, 함수적 RG를 거쳐 점근적 안전성으로. 지금 책은 강조색 상자">
+        <defs><marker id="sm-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs>
+        <text x="20" y="20" class="t-dim">서재의 대학원 물리 경로 · 강조색이 이 책</text>
+        <path d="M270 70 V90" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M225 126 L170 146" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M315 126 L370 146" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M140 182 V202" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M400 182 V202" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M330 182 L215 202" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M140 238 V258" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M400 238 V258" class="s-acc flow-dash" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M190 294 L235 314" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M335 238 C 300 262, 296 290, 300 314" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <a href="../math-phys/index.html"><rect x="178" y="34" width="184" height="38" rx="10" class="f-surface"/><text x="270" y="59" text-anchor="middle" class="t-b">수리물리학 (학부)</text></a>
+        <a href="../math-phys-grad/index.html"><rect x="178" y="90" width="184" height="38" rx="10" class="f-surface"/><text x="270" y="115" text-anchor="middle" class="t-b">수리물리학 (대학원)</text></a>
+        <a href="../qm-grad/index.html"><rect x="48" y="146" width="184" height="38" rx="10" class="f-surface"/><text x="140" y="171" text-anchor="middle" class="t-b">양자역학 (대학원)</text></a>
+        <g aria-current="page"><rect x="308" y="146" width="184" height="38" rx="10" class="f-acc-soft" stroke-width="2"/><text x="400" y="171" text-anchor="middle" class="t-acc">전자기학 (대학원)</text></g>
+        <a href="../qft/index.html"><rect x="48" y="202" width="184" height="38" rx="10" class="f-surface"/><text x="140" y="227" text-anchor="middle" class="t-b">양자장론</text></a>
+        <a href="../relativity/index.html"><rect x="308" y="202" width="184" height="38" rx="10" class="f-surface"/><text x="400" y="227" text-anchor="middle" class="t-b">상대성이론</text></a>
+        <a href="../frg/index.html"><rect x="48" y="258" width="184" height="38" rx="10" class="f-surface"/><text x="140" y="283" text-anchor="middle" class="t-b">함수적 RG</text></a>
+        <a href="../black-holes/index.html"><rect x="308" y="258" width="184" height="38" rx="10" class="f-surface" stroke-dasharray="5 4"/><text x="400" y="283" text-anchor="middle" class="t-b">블랙홀 (선택)</text></a>
+        <a href="../asymptotic-safety/index.html"><rect x="178" y="314" width="184" height="38" rx="10" class="f-surface"/><text x="270" y="339" text-anchor="middle" class="t-b">점근적 안전성</text></a>
+        <text x="20" y="384" class="t-dim">점선은 선택 책입니다. 선택:</text>
+        <a href="../cm-grad/index.html"><text x="182" y="384" class="t-acc">고전역학 (대학원) →</text></a>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="home-section" id="map">
+  <h2>이 책의 지도</h2>
+  <p class="sub">1~4부는 SI 단위로 쓰는 대학원 전자기학의 본론입니다. 5부는 공변 형식과 작용 원리로 장론의 언어를 세우고, 마지막 장에서 헤비사이드-로런츠 자연 단위로 바꿔 『양자장론』에 넘깁니다. 전제: 학부 『수리물리학』의 벡터 해석, 특수 함수, 그린 함수, 텐서.</p>
+  <figure class="diagram scroll">
+    <svg viewBox="0 0 1100 420" role="img" aria-label="이 책의 구성: 1부 정전기와 경계값 문제, 2부 정자기와 준정적 장, 3부 전자기파, 4부 복사, 5부 상대론적 전기역학의 순서로 읽는다">
+      <defs><marker id="bm-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs>
+      <a href="#ch01"><g transform="translate(20,20)">
+        <rect width="220" height="150" rx="14" class="f-surface"/>
+        <text x="16" y="28" class="t-acc">1부 · 1–4장</text>
+        <text x="16" y="54" class="t-b">정전기와 경계값 문제</text>
+        <text x="16" y="82" class="t-dim">맥스웰 방정식 (SI)</text>
+        <text x="16" y="102" class="t-dim">그린 함수와 영상법</text>
+        <text x="16" y="122" class="t-dim">직교 함수 전개</text>
+        <text x="16" y="142" class="t-dim">다중극과 유전체</text>
+      </g></a>
+      <path d="M244 95 H294" class="s-acc" marker-end="url(#bm-arr)"/>
+      <a href="#ch05"><g transform="translate(300,20)">
+        <rect width="220" height="150" rx="14" class="f-surface"/>
+        <text x="16" y="28" class="t-acc">2부 · 5–6장</text>
+        <text x="16" y="54" class="t-b">정자기와 준정적 장</text>
+        <text x="16" y="82" class="t-dim">벡터 퍼텐셜</text>
+        <text x="16" y="102" class="t-dim">자성체</text>
+        <text x="16" y="122" class="t-dim">유도와 표피 효과</text>
+      </g></a>
+      <path d="M524 95 H574" class="s-acc" marker-end="url(#bm-arr)"/>
+      <a href="#ch07"><g transform="translate(580,20)">
+        <rect width="220" height="150" rx="14" class="f-surface"/>
+        <text x="16" y="28" class="t-acc">3부 · 7–8장</text>
+        <text x="16" y="54" class="t-b">전자기파</text>
+        <text x="16" y="82" class="t-dim">프레넬 식</text>
+        <text x="16" y="102" class="t-dim">분산과 크라머스-크로니히</text>
+        <text x="16" y="122" class="t-dim">도파관과 공진기</text>
+      </g></a>
+      <path d="M804 95 H854" class="s-acc" marker-end="url(#bm-arr)"/>
+      <a href="#ch09"><g transform="translate(860,20)">
+        <rect width="220" height="150" rx="14" class="f-surface"/>
+        <text x="16" y="28" class="t-acc">4부 · 9–10장</text>
+        <text x="16" y="54" class="t-b">복사</text>
+        <text x="16" y="82" class="t-dim">지연 퍼텐셜</text>
+        <text x="16" y="102" class="t-dim">다중극 복사</text>
+        <text x="16" y="122" class="t-dim">산란과 회절</text>
+      </g></a>
+      <path d="M970 174 V244" class="s-acc" marker-end="url(#bm-arr)"/>
+      <a href="#ch11"><g transform="translate(860,250)">
+        <rect width="220" height="150" rx="14" class="f-acc-soft" stroke-width="2"/>
+        <text x="16" y="28" class="t-acc">5부 · 11–16장</text>
+        <text x="16" y="54" class="t-b">상대론적 전기역학</text>
+        <text x="16" y="82" class="t-dim">공변 전기역학</text>
+        <text x="16" y="102" class="t-dim">작용과 에너지-운동량</text>
+        <text x="16" y="122" class="t-dim">리에나르-비헤르트</text>
+        <text x="16" y="142" class="t-dim">복사 반작용 · 자연 단위</text>
+      </g></a>
+    </svg>
+    <figcaption><b>그림 0-1.</b> 다섯 부의 순서. 강조색 상자(5부)가 『상대성이론』과 『양자장론』이 이어받는 부분입니다. 3부의 크라머스-크로니히 관계와 4부의 지연 퍼텐셜은 학부 『수리물리학』 20장의 인과율과 그린 함수를 씁니다. 상자를 누르면 그 부의 첫 장 카드로 갑니다.</figcaption>
+  </figure>
+</section>
+
+<section class="home-section" id="chapters">
+  <h2>전체 목차</h2>
+  <p class="sub">아직 본문이 없는 가목차입니다. 장 제목과 설명은 정식 기획(GUIDE.md)에서 바뀔 수 있습니다.</p>
+  <div class="ch-grid" data-chapter-grid></div>
+</section>
+
+</body>
+</html>

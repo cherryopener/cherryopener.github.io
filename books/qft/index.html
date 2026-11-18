@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>양자장론 · 지식따개</title>
+<meta name="description" content="고전장론과 로런츠 군의 표현에서 출발해 정준 양자화와 경로적분, 파인만 도형, 1PI 유효 작용과 유효 퍼텐셜, 재규격화와 재규격화군, 유효 장론, QED, 비가환 게이지 이론과 BRST, 배경장 방법, 힉스 기구, 그리고 유클리드 장론과 이상까지 — 함수적 RG가 바로 쓰는 도구를 빠짐없이 세웁니다.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="../../assets/css/base.css">
+<link rel="stylesheet" href="../../assets/css/book.css">
+<script defer src="../../data/site.js"></script>
+<script defer src="../../data/books.js"></script>
+<script defer src="../../assets/js/viz.js"></script>
+<script defer src="../../assets/js/core.js"></script>
+<script defer src="../../assets/js/lab.js"></script>
+<script defer src="../../assets/sims/dl.js"></script>
+<script defer src="../../assets/sims/ts.js"></script>
+<script defer src="../../assets/sims/phys.js"></script>
+<script defer src="../../assets/sims/math.js"></script>
+<script defer src="../../assets/js/book.js"></script>
+</head>
+<body data-root="../../" data-book="qft" data-field="phys" data-page="book-home">
+<!-- 목차 공개(outline) 책의 홈. 이 파일은 가목차를 보여 주려고 만든 것이다(2026-11-18).
+     정식 기획(GUIDE.md) 때 다시 쓴다. 장 목록은 data/books.js가 기준이다. -->
+
+<section class="home-hero">
+  <div class="inner">
+    <div>
+      <div class="eyebrow" data-fill="book-en">Quantum Field Theory</div>
+      <h1>장의 양자화에서<br><span class="grad">유효 작용까지</span></h1>
+      <p data-fill="book-desc">고전장론과 로런츠 군의 표현에서 출발해 정준 양자화와 경로적분, 파인만 도형, 1PI 유효 작용과 유효 퍼텐셜, 재규격화와 재규격화군, 유효 장론, QED, 비가환 게이지 이론과 BRST, 배경장 방법, 힉스 기구, 그리고 유클리드 장론과 이상까지 — 함수적 RG가 바로 쓰는 도구를 빠짐없이 세웁니다.</p>
+      <div class="cta">
+        <a class="btn primary big" href="#chapters">전체 목차 →</a>
+        <a class="btn ghost big" href="#map">이 책의 지도</a>
+      </div>
+      <div class="hero-badges"><span><b data-fill="part-count">5</b>부 <b data-fill="chapter-count">21</b>장</span><span>L4 고급</span><span data-fill="book-status">목차 공개</span></div>
+    </div>
+    <div class="hero-stage series-map">
+      <svg viewBox="0 0 540 400" role="img" aria-label="서재의 대학원 물리 경로: 학부 수리물리학에서 대학원 수리물리학, 양자역학과 전자기학, 양자장론과 상대성이론, 함수적 RG를 거쳐 점근적 안전성으로. 지금 책은 강조색 상자">
+        <defs><marker id="sm-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs>
+        <text x="20" y="20" class="t-dim">서재의 대학원 물리 경로 · 강조색이 이 책</text>
+        <path d="M270 70 V90" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M225 126 L170 146" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M315 126 L370 146" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M140 182 V202" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M400 182 V202" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M330 182 L215 202" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M140 238 V258" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M400 238 V258" class="s-acc flow-dash" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M190 294 L235 314" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <path d="M335 238 C 300 262, 296 290, 300 314" class="s-acc" fill="none" marker-end="url(#sm-arr)"/>
+        <a href="../math-phys/index.html"><rect x="178" y="34" width="184" height="38" rx="10" class="f-surface"/><text x="270" y="59" text-anchor="middle" class="t-b">수리물리학 (학부)</text></a>
+        <a href="../math-phys-grad/index.html"><rect x="178" y="90" width="184" height="38" rx="10" class="f-surface"/><text x="270" y="115" text-anchor="middle" class="t-b">수리물리학 (대학원)</text></a>
+        <a href="../qm-grad/index.html"><rect x="48" y="146" width="184" height="38" rx="10" class="f-surface"/><text x="140" y="171" text-anchor="middle" class="t-b">양자역학 (대학원)</text></a>
+        <a href="../em-grad/index.html"><rect x="308" y="146" width="184" height="38" rx="10" class="f-surface"/><text x="400" y="171" text-anchor="middle" class="t-b">전자기학 (대학원)</text></a>
+        <g aria-current="page"><rect x="48" y="202" width="184" height="38" rx="10" class="f-acc-soft" stroke-width="2"/><text x="140" y="227" text-anchor="middle" class="t-acc">양자장론</text></g>
+        <a href="../relativity/index.html"><rect x="308" y="202" width="184" height="38" rx="10" class="f-surface"/><text x="400" y="227" text-anchor="middle" class="t-b">상대성이론</text></a>
+        <a href="../frg/index.html"><rect x="48" y="258" width="184" height="38" rx="10" class="f-surface"/><text x="140" y="283" text-anchor="middle" class="t-b">함수적 RG</text></a>
+        <a href="../black-holes/index.html"><rect x="308" y="258" width="184" height="38" rx="10" class="f-surface" stroke-dasharray="5 4"/><text x="400" y="283" text-anchor="middle" class="t-b">블랙홀 (선택)</text></a>
+        <a href="../asymptotic-safety/index.html"><rect x="178" y="314" width="184" height="38" rx="10" class="f-surface"/><text x="270" y="339" text-anchor="middle" class="t-b">점근적 안전성</text></a>
+        <text x="20" y="384" class="t-dim">점선은 선택 책입니다. 선택:</text>
+        <a href="../cm-grad/index.html"><text x="182" y="384" class="t-acc">고전역학 (대학원) →</text></a>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="home-section" id="map">
+  <h2>이 책의 지도</h2>
+  <p class="sub">1부는 고전장론과 자유장(그래서 『고전역학 (대학원)』 없이 읽을 수 있습니다), 2부는 경로적분과 유효 작용, 3부는 재규격화와 RG, 4부는 게이지 이론, 5부는 함수적 RG로 넘어가는 유클리드 장론입니다. 계량은 (−,+,+,+). 전제: 『양자역학 (대학원)』, 『전자기학 (대학원)』 5부, 『수리물리학 (대학원)』 1·5부, 『상대성이론』 1장.</p>
+  <figure class="diagram scroll">
+    <svg viewBox="0 0 1100 420" role="img" aria-label="이 책의 구성: 1부 고전장론과 자유장, 2부 경로적분과 섭동론, 3부 재규격화, 4부 게이지 이론, 5부 유클리드 장론으로의 순서로 읽는다">
+      <defs><marker id="bm-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs>
+      <a href="#ch01"><g transform="translate(20,20)">
+        <rect width="220" height="150" rx="14" class="f-surface"/>
+        <text x="16" y="28" class="t-acc">1부 · 1–4장</text>
+        <text x="16" y="54" class="t-b">고전장론과 자유장</text>
+        <text x="16" y="82" class="t-dim">뇌터 정리</text>
+        <text x="16" y="102" class="t-dim">로런츠 군과 장</text>
+        <text x="16" y="122" class="t-dim">정준 양자화</text>
+      </g></a>
+      <path d="M244 95 H294" class="s-acc" marker-end="url(#bm-arr)"/>
+      <a href="#ch05"><g transform="translate(300,20)">
+        <rect width="220" height="150" rx="14" class="f-surface"/>
+        <text x="16" y="28" class="t-acc">2부 · 5–8장</text>
+        <text x="16" y="54" class="t-b">경로적분과 섭동론</text>
+        <text x="16" y="82" class="t-dim">생성 범함수 Z[J]</text>
+        <text x="16" y="102" class="t-dim">파인만 도형과 LSZ</text>
+        <text x="16" y="122" class="t-dim">1PI 유효 작용 Γ[φ]</text>
+        <text x="16" y="142" class="t-dim">페르미온 경로적분</text>
+      </g></a>
+      <path d="M524 95 H574" class="s-acc" marker-end="url(#bm-arr)"/>
+      <a href="#ch09"><g transform="translate(580,20)">
+        <rect width="220" height="150" rx="14" class="f-surface"/>
+        <text x="16" y="28" class="t-acc">3부 · 9–12장</text>
+        <text x="16" y="54" class="t-b">재규격화</text>
+        <text x="16" y="82" class="t-dim">정규화와 반대항</text>
+        <text x="16" y="102" class="t-dim">재규격화군과 β 함수</text>
+        <text x="16" y="122" class="t-dim">유효 장론</text>
+      </g></a>
+      <path d="M804 95 H854" class="s-acc" marker-end="url(#bm-arr)"/>
+      <a href="#ch13"><g transform="translate(860,20)">
+        <rect width="220" height="150" rx="14" class="f-surface"/>
+        <text x="16" y="28" class="t-acc">4부 · 13–18장</text>
+        <text x="16" y="54" class="t-b">게이지 이론</text>
+        <text x="16" y="82" class="t-dim">QED와 그 1루프</text>
+        <text x="16" y="102" class="t-dim">양-밀스와 유령</text>
+        <text x="16" y="122" class="t-dim">BRST · ST 항등식</text>
+        <text x="16" y="142" class="t-dim">배경장 방법 · 힉스</text>
+      </g></a>
+      <path d="M970 174 V244" class="s-acc" marker-end="url(#bm-arr)"/>
+      <a href="#ch19"><g transform="translate(860,250)">
+        <rect width="220" height="150" rx="14" class="f-acc-soft" stroke-width="2"/>
+        <text x="16" y="28" class="t-acc">5부 · 19–21장</text>
+        <text x="16" y="54" class="t-b">유클리드 장론으로</text>
+        <text x="16" y="82" class="t-dim">윅 회전</text>
+        <text x="16" y="102" class="t-dim">유한 온도 맛보기</text>
+        <text x="16" y="122" class="t-dim">이상과 후지카와</text>
+      </g></a>
+    </svg>
+    <figcaption><b>그림 0-1.</b> 다섯 부의 순서. 강조색 상자(5부)는 『함수적 재규격화군』 1부로 넘기는 다리입니다. 그 밖에 7장(유효 작용), 11·12장(RG와 유효 장론), 15~17장(유령, BRST·ST 항등식, 배경장 방법), 21장(후지카와 방법과 열핵)을 함수적 RG와 점근적 안전성 책이 링크로 씁니다. 상자를 누르면 그 부의 첫 장 카드로 갑니다.</figcaption>
+  </figure>
+</section>
+
+<section class="home-section" id="chapters">
+  <h2>전체 목차</h2>
+  <p class="sub">아직 본문이 없는 가목차입니다. 장 제목과 설명은 정식 기획(GUIDE.md)에서 바뀔 수 있습니다.</p>
+  <div class="ch-grid" data-chapter-grid></div>
+</section>
+
+</body>
+</html>

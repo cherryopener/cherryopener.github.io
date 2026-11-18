@@ -146,7 +146,11 @@ git sparse-checkout set --no-cone '/*' '!/img/'
 | 6 | `asymptotic-safety` | 1부 곡률 공간의 양자장론 → 와인버그·Reuter → EH·f(R) 근사 → 중력-물질 → 열린 문제 → **연구로**(재현 패키지, 논문 쓰기) |
 | 선택 | `cm-grad`, `black-holes` | 필수 경로 밖. 고전장론과 뇌터 정리는 `qft` 1장이 직접 세움 |
 
-- 각 책의 참고서, 전제 장, 가목차는 `data/books.js`의 `plan` 필드에 적었습니다. 가목차는 정식 기획(GUIDE.md) 때 CLAUDE.md 4절의 기획 모델(L4: fable/high, L5: fable/xhigh)이 다듬습니다.
+- 각 책의 참고서와 전제 장은 `data/books.js`의 `plan` 필드에 적었습니다.
+- 가목차는 `chapters`(장 status `"slot"`)에 넣고, 책 status를 **`"outline"`(목차 공개)**으로 두었습니다(2026-11-18).
+  - 책 홈(`books/<id>/index.html`)에는 서재 경로 그림, 이 책의 지도, 전체 목차만 있습니다. 장 파일은 없습니다.
+  - 그래서 엔진은 outline 책의 장 링크를 책 홈의 그 장 카드(`index.html#ch01`)로 보냅니다. 홈의 "챕터 수"는 빈 슬롯을 세지 않습니다.
+  - 정식 기획(GUIDE.md) 때 CLAUDE.md 4절의 기획 모델(L4: fable/high, L5: fable/xhigh)이 가목차를 다듬고, 장 파일을 만든 뒤 책 status를 `"writing"`으로 바꿉니다. 책 홈도 그때 다시 씁니다.
 
 ### 7-3. 참고서 고르는 기준
 
