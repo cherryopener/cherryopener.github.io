@@ -1,0 +1,839 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>02 표현론 · 지식따개</title>
+<meta name="description" content="유한군의 표현이 유니타리이고 기약 표현으로 쪼개짐을 증명하고, 슈어 보조정리와 대직교 정리에서 지표의 직교성을 얻어 지표표, 결정장 속 준위의 갈라짐, 진동 모드, 선택 규칙을 손 계산과 코드로 정한다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys-grad" data-field="phys" data-chapter="ch02">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">02</span></div>
+    <h1 data-fill="chapter-title">표현론</h1>
+    <p class="lead">양자역학에서 대칭은 상태 공간 위의 유니타리 연산자로 작용하고, 군의 원소마다 행렬이 하나씩 붙는다. 이 장은 유한군에서 그런 행렬의 모임, 곧 표현을 더 쪼갤 수 없는 조각으로 나누는 이론을 처음부터 증명한다. 슈어 보조정리와 대직교 정리에서 지표의 직교성이 나오고, 행렬을 몰라도 지표만으로 표현을 분해하고, 결정장 속 준위가 어떻게 갈라지는지와 어떤 전이가 금지되는지를 계산한다. 1장에서 따로따로 본 축퇴의 논법, 번사이드 보조정리, 대칭화 사영이 모두 이 이론의 특수한 경우이고, 3장은 같은 이론을 합 대신 적분으로 리 군에 옮긴다.</p>
+    <ul class="objectives">
+      <li>유한군의 표현이 유니타리 표현과 동치이고 기약 표현의 직합으로 쪼개짐을 증명하고, 슈어 보조정리에서 대직교 정리를 유도할 수 있다.</li>
+      <li>지표의 직교성, 기약 표현의 수 = 켤레류의 수, \(\sum_r d_r^2 = \lvert G\rvert\)를 증명하고, 이것만으로 \(S_3\)와 정육면체 회전군 \(O\)의 지표표를 채울 수 있다.</li>
+      <li>중복도 공식과 사영 연산자로 표현을 분해하고, 회전군의 지표 \(\chi_l(\theta)\)로 결정장 속 \(l\) 준위의 갈라짐을 손과 코드로 계산할 수 있다.</li>
+      <li>텐서곱 표현의 지표로 분자의 진동 모드와 두 입자 상태를 분류할 수 있다.</li>
+      <li>해밀토니안과 교환하는 군의 기약 표현이 축퇴를 정한다는 정리를 증명하고, 텐서곱의 분해로 선택 규칙을 판정할 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b><a href="ch01.html#thm-rearrangement">1장의 재배열 정리</a>, <a href="ch01.html#def-conjugacy-class">켤레류</a>, <a href="ch01.html#def-homomorphism">준동형</a>, <a href="ch01.html#def-group-action">군의 작용</a>, <a href="../../math-phys/chapters/ch08.html#def-unitary-matrix">학부 8장의 유니타리 행렬</a>, <a href="../../math-phys/chapters/ch08.html#thm-spectral">스펙트럼 정리</a>, <a href="../../math-phys/chapters/ch09.html#def-inner-product">학부 9장의 내적</a>, <a href="../../math-phys/chapters/ch09.html#def-projector">사영 연산자</a>, <a href="../../math-phys/chapters/ch12.html#def-spherical-harmonics">학부 12장의 구면 조화 함수</a>. 이 책은 \(\hbar = c = 1\)로 쓰지만 이 장에는 \(\hbar\)가 나오지 않는다.</p>
+  </header>
+
+  <!-- ============================================================ 2.1 -->
+  <section id="s1">
+    <h2>표현과 유니타리성</h2>
+    <p>1장의 <a href="ch01.html#ex-triangle-ring-symmetry">예제 1.1</a>은 세 원자 고리의 해밀토니안 \(H\)와 교환하는 순열 행렬 \(P(\sigma)\)에서 고유값 \(t\)가 두 번 겹친다는 것을 끌어냈다. 그 논법은 \(P(r)\)과 \(P(s_1)\)이 교환하지 않는다는 사실 하나에 기댔고, 평면 \(x + y + z = 0\)을 손으로 찾아야 했다. 『양자역학 (대학원)』 10장의 축퇴 섭동론은 훨씬 큰 공간에서 같은 질문을 던진다. 대칭이 있는 해밀토니안의 준위는 몇 겹으로 겹치고, 섭동은 어느 상태끼리만 섞는가. 답은 군 \(G\)의 원소마다 붙는 행렬 \(P(\sigma)\)들의 모임이 어떤 조각으로 쪼개지는지에 있다. 이 절은 그런 행렬의 모임을 정의하고, 유한군에서는 언제나 유니타리 행렬로 고를 수 있음을 증명한다.</p>
+    <div class="box def" id="def-representation"><div class="box-h">표현과 동치</div>
+      <p>군 \(G\)의 <span class="term">표현</span> <span class="en">(representation)</span>은 \(G\)의 원소마다 복소 벡터 공간 \(V\)의 가역 선형 변환 \(D(g)\)를 하나씩 붙이는 사상으로, 곱을 곱으로 보내는 것이다.</p>
+      <div class="formula" id="eq-representation-homomorphism">\[ D(g)\,D(h) = D(gh), \quad g, h \in G \]</div>
+      <p>곧 \(D\)는 \(G\)에서 \(V\)의 가역 선형 변환들의 군으로 가는 준동형이다(<a href="ch01.html#def-homomorphism">1장의 준동형</a>). 따라서 \(D(e) = \mathbf 1\), \(D(g^{-1}) = D(g)^{-1}\)이다. \(V\)의 차원 \(d\)를 표현의 <span class="term">차원</span>이라 하고, 기저를 고르면 \(D(g)\)는 \(d \times d\) 가역 행렬이다. 모든 \(D(g)\)가 유니타리이면 <span class="term">유니타리 표현</span> <span class="en">(unitary representation)</span>이고, \(D\)가 단사이면 <span class="term">충실한 표현</span> <span class="en">(faithful representation)</span>이다. 같은 차원의 두 표현 \(D\), \(D'\)에 대해</p>
+      <div class="formula" id="eq-equivalence">\[ D'(g) = S\,D(g)\,S^{-1} \quad (\text{모든 } g \in G) \]</div>
+      <p>인 가역 행렬 \(S\) 하나가 있으면 두 표현은 <span class="term">동치</span> <span class="en">(equivalent)</span>라 하고 \(D \cong D'\)로 쓴다.</p>
+    </div>
+    <p>동치는 기저를 바꾼 것이다(<a href="../../math-phys/chapters/ch07.html#def-similarity">학부 7장의 닮음 변환</a> \(A' = S^{-1}AS\)에서 \(S\)를 \(S^{-1}\)로 바꾼 것). 같은 \(S\)가 모든 원소에 한꺼번에 쓰인다는 점이 중요하다. 원소마다 따로 대각화하는 것은 동치가 아니다. 1장에서 이미 표현을 여럿 만났다.</p>
+    <ul>
+      <li><b>자명 표현</b> <span class="en">(trivial representation)</span>: 모든 \(g\)에 \(D(g) = 1\)(1차원). 어느 군에나 있다.</li>
+      <li><b>부호 표현</b> <span class="en">(sign representation)</span>: \(S_n\)에서 \(D(\sigma) = \operatorname{sgn}\sigma\)(1차원). 1장의 <a href="ch01.html#ex-permutation-sign-particles">예제 1.6</a>은 \(S_n\)의 1차원 표현이 자명 표현과 부호 표현 둘뿐임을 보였다. 보손과 페르미온이 이 두 표현이다.</li>
+      <li><b>순열 표현</b> <span class="en">(permutation representation)</span>: 1장 식 <a href="ch01.html#eq-permutation-matrix">(1.4)</a>의 \(P(\sigma)\lvert i\rangle = \lvert\sigma(i)\rangle\)(\(S_3\)에서 3차원). \(P(\sigma)P(\tau) = P(\sigma\tau)\)가 식 <a class="ref" href="#eq-representation-homomorphism"></a>이다. 일반적으로 유한 집합 \(X\)에 작용하는 군은 \(X\)의 원소를 기저로 하는 공간에 같은 방법으로 순열 표현을 준다.</li>
+      <li><b>기하학적 표현</b>: 정삼각형의 대칭 변환을 평면의 \(2 \times 2\) 직교 행렬로 쓴 것. 자리 1을 \(y\)축 위에 두면(1장 그림 1-1)</li>
+    </ul>
+    <div class="formula" id="eq-s3-geometric">\[ \begin{gathered} D(r) = \begin{pmatrix} -\tfrac12 & -\tfrac{\sqrt3}{2} \\ \tfrac{\sqrt3}{2} & -\tfrac12 \end{pmatrix} \\ D(s_1) = \begin{pmatrix} -1 & 0 \\ 0 & 1 \end{pmatrix} \end{gathered} \]</div>
+    <p>이다. \(D(r)\)은 \(120^\circ\) 회전이고 \(D(s_1)\)은 \(y\)축에 대한 반사다. 나머지는 곱으로 정해진다: \(D(r^2) = D(r)^2\), 1장의 \(s_2 = r^2s_1\), \(s_3 = rs_1\)에서 \(D(s_2) = D(r)^2D(s_1)\), \(D(s_3) = D(r)D(s_1)\). 두 행렬 \(D(r)\), \(D(s_1)\)이 1장 식 <a href="ch01.html#eq-dihedral-relations">(1.3)</a>의 관계 \(r^3 = e\), \(s^2 = e\), \(srs^{-1} = r^{-1}\)를 만족하므로(\(D(s_1)D(r)D(s_1)\)은 회전 방향을 뒤집는다) 곱이 곱으로 간다.</p>
+    <p>함수 위의 작용도 표현이다. \(G\)가 공간에 작용하면 파동함수에 1장 식 <a href="ch01.html#eq-function-action">(1.21)</a>의 꼴로</p>
+    <div class="formula" id="eq-function-representation">\[ \big(U(g)\psi\big)(\mathbf r) = \psi\big(g^{-1}\mathbf r\big) \]</div>
+    <p>로 작용하고, 이것은 선형이며 1장에서 확인한 대로 \(U(g)U(h) = U(gh)\)이다. \(g\)가 회전이나 반사이면 부피를 보존하므로 \(\int\lvert\psi(g^{-1}\mathbf r)\rvert^2d^3r = \int\lvert\psi\rvert^2d^3r\), 곧 \(U(g)\)는 <a href="../../math-phys/chapters/ch09.html#def-l2">학부 9장의 \(L^2\)</a> 위의 유니타리 연산자다. 공간이 무한 차원이지만, 2.5절과 2.7절에서는 유한 차원의 불변 부분 공간(2.2절)으로 좁혀서 쓴다. 같은 에너지의 상태들, 같은 \(l\)의 구면 조화 함수들이 그런 공간이다.</p>
+
+    <h3 id="s1-unitary">유한군의 표현은 유니타리로 고를 수 있다</h3>
+    <p>위의 예는 모두 유니타리였다. 우연이 아니다. 유니타리가 아닌 표현도 기저를 잘 고르면 유니타리가 된다. 비결은 군 전체에 대한 평균이다.</p>
+    <div class="box thm" id="thm-unitarity-finite-group"><div class="box-h">유한군의 표현은 유니타리 표현과 동치다</div>
+      <p>유한군 \(G\)의 유한 차원 표현 \(D\)에 대해 \(S\,D(g)\,S^{-1}\)이 모든 \(g\)에서 유니타리인 가역 행렬 \(S\)가 있다. 곧 \(D\)는 유니타리 표현과 동치다. 더 구체적으로, \(V\)의 내적 \(\langle u\vert v\rangle\)에서 만든</p>
+      <div class="formula" id="eq-averaged-inner-product">\[ \langle u\vert v\rangle_G = \frac{1}{\lvert G\rvert}\sum_{g \in G}\langle D(g)u\,\vert\,D(g)v\rangle \]</div>
+      <p>도 내적이고, 모든 \(D(h)\)는 이 내적을 보존한다.</p>
+    </div>
+    <p><b>증명.</b> (1) <i>내적이다.</i> 합의 각 항이 왼쪽 자리에 켤레 선형, 오른쪽 자리에 선형이고 \(\langle v\vert u\rangle_G = \langle u\vert v\rangle_G^*\)이므로 합도 그렇다. \(u \ne 0\)이면 \(D(g)\)가 가역이라 모든 항이 양수이므로 \(\langle u\vert u\rangle_G > 0\)이다.</p>
+    <p>(2) <i>불변이다.</i> \(D(g)D(h) = D(gh)\)이고, \(g\)가 \(G\)를 한 번씩 돌면 \(gh\)도 \(G\)를 한 번씩 돈다(<a href="ch01.html#eq-rearrangement-sum">1장의 재배열 정리</a>). 따라서</p>
+    <div class="formula" id="eq-average-invariance">\[ \begin{aligned} \langle D(h)u\vert D(h)v\rangle_G &= \frac{1}{\lvert G\rvert}\sum_{g}\langle D(gh)u\vert D(gh)v\rangle \\ &= \frac{1}{\lvert G\rvert}\sum_{g'}\langle D(g')u\vert D(g')v\rangle = \langle u\vert v\rangle_G \end{aligned} \]</div>
+    <p>이다.</p>
+    <p>(3) <i>행렬로 옮긴다.</i> 정규 직교 기저(원래 내적)에서 \(\langle u\vert v\rangle = u^\dagger v\)로 쓰면 \(\langle u\vert v\rangle_G = u^\dagger Mv\)이고</p>
+    <div class="formula" id="eq-averaged-metric">\[ M = \frac{1}{\lvert G\rvert}\sum_{g \in G}D(g)^\dagger D(g) \]</div>
+    <p>이다. \(M\)은 에르미트이고 (1)에서 양의 정부호다. (2)는 행렬로 \(D(h)^\dagger MD(h) = M\)이다. <a href="../../math-phys/chapters/ch08.html#thm-spectral">학부 8장의 스펙트럼 정리</a>로 \(M = W\operatorname{diag}(\lambda_1, \ldots, \lambda_d)W^\dagger\)(\(W\) 유니타리, \(\lambda_i > 0\))라 쓰고 \(S = \operatorname{diag}(\lambda_1^{1/2}, \ldots, \lambda_d^{1/2})\,W^\dagger\)로 두면 \(S^\dagger S = M\)이다. \(D'(h) = SD(h)S^{-1}\)이라 하면</p>
+    <div class="formula">\[ \begin{aligned} D'(h)^\dagger D'(h) &= (S^{-1})^\dagger D(h)^\dagger S^\dagger S\,D(h)S^{-1} \\ &= (S^{-1})^\dagger\,M\,S^{-1} = (S^{-1})^\dagger S^\dagger S\,S^{-1} = \mathbf 1 \end{aligned} \]</div>
+    <p>이다. 둘째 등호에서 \(D(h)^\dagger MD(h) = M\)을 썼다. ∎</p>
+    <p>증명에서 쓴 것은 \(S^\dagger S = M\)뿐이므로, 그런 \(S\)는 무엇이든 된다. 군에 대한 평균과 재배열 정리, 이 두 가지가 이 장의 거의 모든 증명의 뼈대다.</p>
+
+    <div class="box ex" id="ex-unitarize-z2"><div class="box-h">유니타리가 아닌 \(\mathbb Z_2\) 표현을 유니타리로 바꾸기</div>
+      <p>\(\mathbb Z_2 = \{e, a\}\)(\(a^2 = e\))에서 \(D(e) = \mathbf 1\), \(D(a) = \begin{pmatrix} 1 & 2 \\ 0 & -1\end{pmatrix}\)로 둔다. (가) 표현임을 확인하라. (나) 식 <a class="ref" href="#eq-averaged-metric"></a>의 \(M\)을 구하고 \(S^\dagger S = M\)인 \(S\)로 \(D(a)\)를 유니타리로 바꿔라.</p>
+      <p><b>풀이.</b> (가) \(D(a)^2 = \begin{pmatrix} 1 & 2 - 2 \\ 0 & 1\end{pmatrix} = \mathbf 1 = D(e)\)이므로 곱의 규칙이 지켜진다. \(D(a)\)의 열벡터 \((1, 0)\)과 \((2, -1)\)은 서로 수직이 아니므로 유니타리가 아니다.</p>
+      <p>(나) \(D(a)^\dagger D(a) = \begin{pmatrix} 1 & 0 \\ 2 & -1\end{pmatrix}\begin{pmatrix} 1 & 2 \\ 0 & -1\end{pmatrix} = \begin{pmatrix} 1 & 2 \\ 2 & 5\end{pmatrix}\)이므로</p>
+      <div class="formula">\[ M = \frac12\left[\begin{pmatrix} 1 & 0 \\ 0 & 1\end{pmatrix} + \begin{pmatrix} 1 & 2 \\ 2 & 5\end{pmatrix}\right] = \begin{pmatrix} 1 & 1 \\ 1 & 3\end{pmatrix} \]</div>
+      <p>이다. 위삼각 행렬 \(S = \begin{pmatrix} 1 & 1 \\ 0 & \sqrt2\end{pmatrix}\)이면 \(S^\dagger S = \begin{pmatrix} 1 & 1 \\ 1 & 1 + 2\end{pmatrix} = M\)이다. \(S^{-1} = \begin{pmatrix} 1 & -1/\sqrt2 \\ 0 & 1/\sqrt2\end{pmatrix}\)이고</p>
+      <div class="formula">\[ \begin{aligned} SD(a)S^{-1} &= \begin{pmatrix} 1 & 1 \\ 0 & -\sqrt2\end{pmatrix}\begin{pmatrix} 1 & -1/\sqrt2 \\ 0 & 1/\sqrt2\end{pmatrix} \\ &= \begin{pmatrix} 1 & 0 \\ 0 & -1\end{pmatrix} \end{aligned} \]</div>
+      <p>이다. 유니타리일 뿐 아니라 대각 행렬이 되었다.</p>
+      <p><b>확인.</b> 닮음 변환은 대각합과 행렬식을 바꾸지 않는다. \(\operatorname{tr}D(a) = 0\), \(\det D(a) = -1\)이고 \(\operatorname{diag}(1, -1)\)도 그렇다. \(D(a)\)의 고유값이 \(\pm1\)이므로 유니타리로 바꾼 결과가 \(\operatorname{diag}(1, -1)\)과 유니타리 동치일 수밖에 없다.</p>
+      <p><b>어디에 쓰이나.</b> 대각이 된 것은 위삼각인 \(S\)가 불변 직선 \(e_1\)을 지켰기 때문이다(\(Se_1 = e_1\)이고 \(D(a)e_1 = e_1\)이다. 유니타리 행렬에서는 불변 부분 공간의 직교 여공간도 불변이다. 2.2절). 증명의 \(S\)처럼 다른 \(S\)를 고르면 유니타리이지만 대각이 아닐 수 있다. 아벨 군이면 언제나 대각으로 만드는 기저가 있다는 것, 곧 아벨 군의 기약 표현(2.2절)이 1차원이라는 것은 2.3절에서 증명한다. 이 예는 2차원 표현이 1차원 표현 둘(자명 표현과 \(a \mapsto -1\))로 쪼개진 것이다.</p>
+    </div>
+    <div class="callout tip"><strong>왜 유니타리인가</strong><p>양자역학의 대칭 변환은 전이 확률 \(\lvert\langle\phi\vert\psi\rangle\rvert^2\)을 보존해야 하고, 선형인 대칭 변환이면 유니타리여야 한다. <a class="ref" href="#thm-unitarity-finite-group"></a>은 유한군에서는 이것이 추가 조건이 아님을 말한다. 어떤 표현이든 내적을 바꾸면 유니타리이고, 그 내적은 식 <a class="ref" href="#eq-averaged-inner-product"></a>로 정해진다. 반유니타리인 시간 반전은 이 장의 표현에 들어가지 않는다(『양자역학 (대학원)』 7장).</p></div>
+  </section>
+
+  <!-- ============================================================ 2.2 -->
+  <section id="s2">
+    <h2>가약 표현과 기약 표현</h2>
+    <p>1장의 <a href="ch01.html#ex-triangle-ring-symmetry">예제 1.1</a>에서 순열 행렬 \(P(\sigma)\)는 모두 벡터 \((1, 1, 1)\)을 그대로 두었고, 그에 수직인 평면 \(x + y + z = 0\)을 평면으로 보냈다. 이 두 부분 공간에 맞춘 기저를 쓰면 여섯 행렬이 한꺼번에 \(1 \times 1\) 칸과 \(2 \times 2\) 칸으로 나뉜다. 3차원 표현이 1차원과 2차원 표현으로 쪼개진 것이다. 이 절은 표현을 언제 쪼갤 수 있는지, 그리고 더 쪼갤 수 없는 조각이 무엇인지를 정한다.</p>
+    <div class="box def" id="def-irreducible-representation"><div class="box-h">기약 표현과 완전 가약성</div>
+      <p>표현 \(D\)의 공간 \(V\)의 부분 공간 \(W\)가 모든 \(g\)에서 \(D(g)W \subseteq W\)를 만족하면 <span class="term">불변 부분 공간</span> <span class="en">(invariant subspace)</span>이라 한다. \(\{0\}\)과 \(V\)는 언제나 불변이다. 이 둘 말고 불변 부분 공간이 없는 표현을 <span class="term">기약 표현</span> <span class="en">(irreducible representation)</span>, 있는 표현을 <span class="term">가약 표현</span> <span class="en">(reducible representation)</span>이라 한다. 불변 부분 공간들의 <span class="term">직합</span> <span class="en">(direct sum)</span> \(V = W_1 \oplus \cdots \oplus W_k\)로 쓰이고 각 \(W_i\) 위의 표현 \(D_i\)가 기약이면 \(D\)는 <span class="term">완전 가약</span> <span class="en">(completely reducible)</span>이다. 기저를 \(W_i\)들에 맞추면 모든 행렬이 같은 꼴의 블록 대각 행렬이 된다.</p>
+      <div class="formula" id="eq-block-diagonal">\[ D(g) = \begin{pmatrix} D_1(g) & & \\ & \ddots & \\ & & D_k(g)\end{pmatrix} \]</div>
+      <p>이것을 직합 \(D = D_1 \oplus \cdots \oplus D_k\)로 쓴다. 서로 동치인 것끼리 모아</p>
+      <div class="formula" id="eq-irrep-decomposition">\[ D \cong \bigoplus_r m_r\,D^{(r)} \]</div>
+      <p>로 쓰고, \(m_r\)을 기약 표현 \(D^{(r)}\)의 <span class="term">중복도</span> <span class="en">(multiplicity)</span>라 한다. \(m_rD^{(r)}\)은 \(D^{(r)}\)을 \(m_r\)번 직합한 것이다.</p>
+    </div>
+    <p>1차원 표현은 언제나 기약이다. 1차원 공간의 부분 공간은 \(\{0\}\)과 자기 자신뿐이기 때문이다. 기약 표현에는 \(D^{(r)}\), 그 차원에는 \(d_r\)을 쓴다. \(r\)은 기약 표현의 이름이고, 점군에서는 <span class="term">멀리컨 기호</span> <span class="en">(Mulliken symbol)</span> \(A_1, A_2, E, T_1, T_2\)를 쓴다(2.4절).</p>
+    <div class="callout warn"><strong>같은 글자, 다른 뜻</strong><p>기약 표현의 이름은 \(r, s, t\)로 쓴다. 다른 교재는 \(\mu\), \(\alpha\), \(\Gamma^{(i)}\)를 많이 쓰지만, 이 책에서 \(\mu\)는 시공간 지수와 가중치, \(\alpha\)는 근이다. \(D(r)\)의 \(r\)은 군의 원소(정삼각형의 \(120^\circ\) 회전)이고, \(D^{(r)}\)의 위 첨자 \((r)\)은 기약 표현의 이름이다. 켤레류 \(C_i\)(아래 첨자는 번호)와 점군의 회전 \(C_n\)(아래 첨자는 회전의 차수), 순열 \(\sigma\)와 반사 \(\sigma_v\)도 글자가 같다. 헷갈릴 만한 곳에서는 그 자리에서 밝힌다.</p></div>
+    <p>불변 부분 공간 \(W\)가 하나 있다고 곧바로 쪼개지는 것은 아니다. 기저의 앞쪽을 \(W\)에 맞추면 \(D(g) = \begin{pmatrix} A(g) & B(g) \\ 0 & C(g)\end{pmatrix}\)의 블록 위삼각 꼴이 되는데, 블록 대각이 되려면 \(W\)를 보완하는 불변 부분 공간이 또 있어야 한다. 유한군에서는 그것이 언제나 있다.</p>
+    <div class="box thm" id="thm-complete-reducibility"><div class="box-h">마슈케 정리 <span class="en">(Maschke’s theorem)</span></div>
+      <p>유한군의 유한 차원 표현은 완전 가약이다. 유니타리 표현이면 불변 부분 공간 \(W\)의 직교 여공간 \(W^\perp\)도 불변이고, 기약 성분들을 서로 수직으로 고를 수 있다.</p>
+    </div>
+    <p><b>증명.</b> <a class="ref" href="#thm-unitarity-finite-group"></a>로 기저를 바꿔 \(D\)를 유니타리로 둔다. \(W\)가 불변이고 \(u \in W^\perp\)이면, 모든 \(w \in W\)에 대해</p>
+    <div class="formula" id="eq-orthogonal-complement-invariant">\[ \langle w\vert D(g)u\rangle = \langle D(g)^\dagger w\vert u\rangle = \langle D(g^{-1})w\vert u\rangle = 0 \]</div>
+    <p>이다. 둘째 등호는 유니타리성 \(D(g)^\dagger = D(g)^{-1} = D(g^{-1})\)이고, 셋째 등호는 \(D(g^{-1})w \in W\)이기 때문이다. 따라서 \(D(g)u \in W^\perp\)이고 \(W^\perp\)도 불변이다. 이제 차원에 대한 귀납법을 쓴다. \(V\)가 기약이면 끝이다. 아니면 자명하지 않은 불변 \(W\)가 있고 \(V = W \oplus W^\perp\)이며, 두 공간의 차원이 \(\dim V\)보다 작으므로 각각 기약 성분의 직교 직합으로 쓰인다. ∎</p>
+    <div class="callout warn"><strong>유한군이 아니면 깨진다</strong><p>덧셈군 \((\mathbb R, +)\)의 2차원 표현 \(D(a) = \begin{pmatrix} 1 & a \\ 0 & 1\end{pmatrix}\)을 보자. \(D(a)D(b) = D(a + b)\)이므로 표현이다. \(e_1 = (1, 0)\)이 펼치는 직선은 불변이지만, 이 직선을 보완하는 불변 직선은 없다. 불변 직선은 모든 \(D(a)\)의 공통 고유벡터가 펼치는데, \(a \ne 0\)인 \(D(a)\)의 고유벡터는 \(e_1\)의 상수배뿐이기 때문이다. 곧 가약이지만 완전 가약이 아니고, 마슈케 정리의 증명에서 보듯 유니타리 표현과 동치일 수도 없다. 무한히 많은 원소에 대한 평균 \(\frac{1}{\lvert G\rvert}\sum_g\)를 정의할 수 없는 것이 원인이다. 콤팩트 군에서는 합을 하르 측도에 대한 적분으로 바꿔 이 장의 결과가 그대로 살아난다(2.4절 끝, 3장).</p></div>
+
+    <div class="box ex" id="ex-s3-permutation-decomposition"><div class="box-h">\(S_3\)의 순열 표현의 분해</div>
+      <p>1장 식 <a href="ch01.html#eq-permutation-matrix">(1.4)</a>의 순열 표현 \(P\)(3차원)를 생각한다. (가) 불변 부분 공간을 찾아 \(P\)를 기약 표현의 직합으로 써라. (나) 2차원 성분이 식 <a class="ref" href="#eq-s3-geometric"></a>의 기하학적 표현과 같은 행렬을 주는 기저를 골라라.</p>
+      <p><b>풀이.</b> (가) 모든 \(P(\sigma)\)가 \(\mathbf u_0 = (1, 1, 1)/\sqrt3\)을 고정하므로 직선 \(L = \operatorname{span}\{\mathbf u_0\}\)은 불변이고, \(L\) 위에서는 자명 표현이다. \(P(\sigma)\)는 실수 직교 행렬, 곧 유니타리이므로 마슈케 정리의 증명에서 \(\Pi = L^\perp = \{x + y + z = 0\}\)도 불변이다. \(\Pi\)가 기약인 것은 1장 예제 1.1의 (다)에서 이미 보였다. 그곳에서 \(\Pi\) 안에 \(P(r)\)과 \(P(s_1)\)의 공통 고유벡터가 없음을 확인했고, 2차원 공간의 자명하지 않은 불변 부분 공간은 직선이므로 그런 직선이 없다. 따라서</p>
+      <div class="formula" id="eq-s3-permutation-decomposition">\[ P \cong (\text{자명 표현}) \oplus D_\Pi \]</div>
+      <p>이다. 2.4절의 이름으로는 \(P \cong A_1 \oplus E\)이다.</p>
+      <p>(나) \(s_1\)은 자리 2와 3을 맞바꾸므로, \(\Pi\) 안에서 \(s_1\)에 대해 반대칭인 벡터와 대칭인 벡터를 고른다.</p>
+      <div class="formula">\[ \begin{gathered} \mathbf u_1 = \frac{(0, -1, 1)}{\sqrt2} \\ \mathbf u_2 = \frac{(2, -1, -1)}{\sqrt6} \end{gathered} \]</div>
+      <p>\(P(s_1)\mathbf u_1 = -\mathbf u_1\), \(P(s_1)\mathbf u_2 = \mathbf u_2\)이다. \(P(r)\)은 성분 \((v_1, v_2, v_3)\)을 \((v_3, v_1, v_2)\)로 옮기므로(\(\lvert1\rangle \to \lvert2\rangle \to \lvert3\rangle \to \lvert1\rangle\)) \(P(r)\mathbf u_1 = (1, 0, -1)/\sqrt2\), \(P(r)\mathbf u_2 = (-1, 2, -1)/\sqrt6\)이다. 기저 성분을 내적으로 읽으면</p>
+      <div class="formula">\[ \begin{aligned} P(r)\mathbf u_1 &= -\tfrac12\,\mathbf u_1 + \tfrac{\sqrt3}{2}\,\mathbf u_2 \\ P(r)\mathbf u_2 &= -\tfrac{\sqrt3}{2}\,\mathbf u_1 - \tfrac12\,\mathbf u_2 \end{aligned} \]</div>
+      <p>이다. 예를 들어 첫 줄의 \(\mathbf u_2\) 성분은 \(\mathbf u_2\cdot(1, 0, -1)/\sqrt2 = (2 + 1)/\sqrt{12} = \sqrt3/2\)이다. 이 계수를 열로 세우면 \(D_\Pi(r)\)과 \(D_\Pi(s_1) = \operatorname{diag}(-1, 1)\)은 식 <a class="ref" href="#eq-s3-geometric"></a>의 두 행렬과 같다. 두 표현은 생성원에서 같으므로 모든 원소에서 같다.</p>
+      <p><b>확인.</b> 대각합을 비교한다. \(\operatorname{tr}P(\sigma)\)는 고정된 자리의 수이므로 \(e, r, s_1\)에서 \(3, 0, 1\)이다. 자명 표현의 \(1, 1, 1\)과 \(D_\Pi\)의 \(2, -1, 0\)(\(120^\circ\) 회전의 대각합 \(2\cos120^\circ = -1\), 반사의 대각합 0)을 더해도 \(3, 0, 1\)이다. 기하학적으로는 \(\Pi\)가 삼각형의 평면이다. 자리 1의 벡터 \(\lvert1\rangle\)을 \(\Pi\)에 사영하면 \(\lvert1\rangle - \tfrac13(1, 1, 1) = (2, -1, -1)/3\), 곧 \(\mathbf u_2\) 방향이라 자리 1이 \(y\)축 위에 놓인다.</p>
+      <p><b>어디에 쓰이나.</b> 2.3절의 슈어 보조정리를 이 분해에 쓰면, 예제 1.1의 고유값 \(t\)가 두 번 겹친다는 것이 한 줄로 나온다. 같은 분해를 학부 8장의 세 원자 고리와 2.6절의 진동 모드가 함께 쓴다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 2.3 -->
+  <section id="s3">
+    <h2>슈어 보조정리와 대직교 정리</h2>
+    <p><a class="ref" href="#ex-s3-permutation-decomposition"></a>에서 평면 \(\Pi\)가 기약임을 안다고 해서, 1장 예제 1.1의 \(H\)가 \(\Pi\) 위에서 상수배라는 결론이 저절로 나오지는 않는다. 그 사이를 잇는 것이 슈어 보조정리다. 기약 표현과 교환하는 행렬은 상수배뿐이고, 서로 다른 기약 표현 사이를 교환하며 잇는 행렬은 0뿐이다. 이 짧은 정리가 축퇴와 선택 규칙(2.7절)의 근거이고, 군에 대한 평균과 합치면 기약 표현의 행렬 원소들이 서로 직교한다는 대직교 정리가 나온다. 지표의 직교성(2.4절)과 사영 연산자(2.5절)는 모두 이 정리에서 따라 나온다.</p>
+    <div class="box thm" id="thm-schur-lemma"><div class="box-h">슈어 보조정리 <span class="en">(Schur’s lemma)</span></div>
+      <p>\(D^{(r)}\)과 \(D^{(s)}\)가 군 \(G\)의 기약 표현이고(공간 \(W_r\), \(W_s\)), 선형 사상 \(A : W_s \to W_r\)가 모든 \(g\)에서 다음을 만족한다고 하자.</p>
+      <div class="formula" id="eq-intertwiner">\[ D^{(r)}(g)\,A = A\,D^{(s)}(g) \]</div>
+      <ol type="i">
+        <li>\(A = 0\)이거나 \(A\)는 가역이다. 따라서 \(D^{(r)}\)과 \(D^{(s)}\)가 동치가 아니면 \(A = 0\)이다.</li>
+        <li>\(W_r\)이 유한 차원 복소 벡터 공간이고 \(s = r\)이면(곧 \(A\)가 \(D^{(r)}\)의 모든 행렬과 교환하면) \(A = \lambda\mathbf 1\)인 복소수 \(\lambda\)가 있다.</li>
+      </ol>
+    </div>
+    <p><b>증명.</b> (1) <i>핵은 불변이다.</i> \(Av = 0\)이면 \(A\,D^{(s)}(g)v = D^{(r)}(g)Av = 0\)이므로 \(D^{(s)}(g)v \in \operatorname{Ker}A\)이다. \(D^{(s)}\)가 기약이므로 \(\operatorname{Ker}A\)는 \(\{0\}\)이거나 \(W_s\) 전체다.</p>
+    <p>(2) <i>상도 불변이다.</i> \(D^{(r)}(g)Av = A\,D^{(s)}(g)v\)이므로 \(D^{(r)}(g)\)는 \(A\)의 상 \(\operatorname{Ran}A\)를 자기 자신으로 보낸다. \(D^{(r)}\)이 기약이므로 \(\operatorname{Ran}A\)는 \(\{0\}\)이거나 \(W_r\) 전체다.</p>
+    <p>(3) <i>i.</i> \(A \ne 0\)이면 \(\operatorname{Ker}A \ne W_s\)라 \(\operatorname{Ker}A = \{0\}\)(단사)이고, \(\operatorname{Ran}A \ne \{0\}\)이라 \(\operatorname{Ran}A = W_r\)(전사)이다. 곧 \(A\)는 가역이고 식 <a class="ref" href="#eq-intertwiner"></a>는 \(D^{(r)}(g) = AD^{(s)}(g)A^{-1}\), 곧 두 표현이 동치라는 뜻이다.</p>
+    <p>(4) <i>ii.</i> 복소 행렬 \(A\)의 특성 다항식 \(\det(A - \lambda\mathbf 1)\)은 복소수 근을 가지므로 \(A\)에는 고유값 \(\lambda\)가 적어도 하나 있다. \(A - \lambda\mathbf 1\)도 식 <a class="ref" href="#eq-intertwiner"></a>(\(s = r\))를 만족하고, 고유벡터를 0으로 보내므로 가역이 아니다. i에 따라 \(A - \lambda\mathbf 1 = 0\)이다. ∎</p>
+    <p>슈어 보조정리 ii의 첫 번째 쓰임: <b>아벨 군의 기약 표현은 모두 1차원이다.</b> 아벨 군에서는 \(D(h)\)가 모든 \(D(g)\)와 교환하므로(\(D(h)D(g) = D(hg) = D(gh) = D(g)D(h)\)) ii에 따라 \(D(h) = \lambda_h\mathbf 1\)이다. 그러면 모든 부분 공간이 불변이므로, 기약이려면 1차원이어야 한다. 예를 들어 위수 \(n\)인 순환군 \(\mathbb Z_n = \{e, a, \ldots, a^{n-1}\}\)의 1차원 표현은 \(a\)의 값 \(D(a) = \lambda\)로 정해지고 \(\lambda^n = D(a^n) = 1\)이므로</p>
+    <div class="formula" id="eq-cyclic-irreps">\[ D^{(k)}(a^m) = e^{2\pi ikm/n} \quad (k = 0, 1, \ldots, n - 1) \]</div>
+    <p>의 \(n\)개뿐이다. 고리 모양 분자의 회전 대칭(<a href="../../math-phys/chapters/ch08.html#ex-ring-rotation">학부 8장의 고리 분자</a>)과 결정의 병진 대칭(블로흐 정리)이 이 표현으로 상태를 분류한다(<a class="ref" href="#prob-ring-bloch"></a>).</p>
+    <p>두 번째 쓰임: <b>1장 예제 1.1을 다시 읽는다.</b> \(H\)는 모든 \(P(\sigma)\)와 교환한다. <a class="ref" href="#ex-s3-permutation-decomposition"></a>의 기저 \(\mathbf u_0, \mathbf u_1, \mathbf u_2\)에서 \(H\)의 \(\Pi \to L\) 블록 \(A\)(\(1 \times 2\))는 \(1 \cdot A = A\,D_\Pi(g)\)를 만족한다. \(P(g)\)가 블록 대각이므로 \(HP(g) = P(g)H\)의 \((L, \Pi)\) 블록을 읽은 것이다. 자명 표현과 \(D_\Pi\)는 차원이 달라 동치가 아니므로 i에 따라 \(A = 0\)이고, 같은 이유로 \(L \to \Pi\) 블록도 0이다. 남은 \(\Pi \to \Pi\) 블록은 기약 표현 \(D_\Pi\)와 교환하므로 ii에 따라 \(\lambda\mathbf 1\)이다. \(L\) 방향의 성분은 \(\langle\mathbf u_0\vert H\vert\mathbf u_0\rangle = -\tfrac t3\times6 = -2t\)이므로 대각합에서 \(-2t + 2\lambda = \operatorname{tr}H = 0\)이고 \(\lambda = t\)이다. 고유값 \(t\)가 두 번 겹친다는 것을 행렬을 대각화하지 않고 얻었다. 2.7절의 <a class="ref" href="#thm-degeneracy-irrep"></a>이 이 논법을 일반화한다.</p>
+    <div class="callout warn"><strong>슈어 보조정리 ii는 복소수 위에서만 성립한다</strong><p>\(\mathbb Z_3\)의 생성원을 평면의 \(120^\circ\) 회전으로 보내는 실수 2차원 표현을 보자. 실수 고유벡터가 없으므로 실수 벡터 공간에서는 불변 직선이 없어 기약이다. 그런데 모든 회전 행렬 \(R(\varphi)\)가 이 표현과 교환하므로 ii의 결론("상수배뿐")이 깨진다. 복소수로 넓히면 \((1, \mp i)/\sqrt2\)가 고유값 \(e^{\pm2\pi i/3}\)의 공통 고유벡터라 1차원 표현 둘(식 <a class="ref" href="#eq-cyclic-irreps"></a>의 \(k = 1, 2\))로 쪼개진다. 이 책의 표현은 모두 복소 벡터 공간 위에 둔다. 실수 해밀토니안에서 서로 켤레인 두 1차원 표현의 상태가 겹치는 것은 \(\mathbb Z_3\)가 강제하는 것이 아니라 시간 반전이 강제하는 것이다(<a class="ref" href="#prob-real-irrep-z3"></a>, 『양자역학 (대학원)』 7장).</p></div>
+    <p>세 번째 쓰임은 2.7절에서 필요하다. <b>동치인 유니타리 기약 표현은 유니타리 행렬로 동치다.</b> \(D\), \(D'\)이 유니타리 기약 표현이고 \(SD(g) = D'(g)S\)라 하자. 양변의 수반을 취하고 \(D(g)^\dagger = D(g^{-1})\)을 쓰면 \(D(g^{-1})S^\dagger = S^\dagger D'(g^{-1})\)이고, \(g\)를 \(g^{-1}\)로 바꾸면 \(S^\dagger D'(g) = D(g)S^\dagger\)이다. 따라서 \(S^\dagger S\,D(g) = S^\dagger D'(g)S = D(g)\,S^\dagger S\)이고, ii에 따라 \(S^\dagger S = c\mathbf 1\)이다. \(S^\dagger S\)는 양의 정부호이므로 \(c > 0\)이고, \(S/\sqrt c\)가 유니타리다.</p>
+
+    <h3 id="s3-orthogonality">대직교 정리</h3>
+    <p>이제 서로 동치가 아닌 유니타리 기약 표현을 하나씩 골라 목록 \(D^{(1)}, D^{(2)}, \ldots\)을 만든다. 같은 \(r\)은 같은 행렬을 뜻한다. <a class="ref" href="#thm-unitarity-finite-group"></a>에 따라 유니타리로 고를 수 있다.</p>
+    <div class="box thm" id="thm-great-orthogonality"><div class="box-h">대직교 정리 <span class="en">(great orthogonality theorem)</span></div>
+      <p>유한군 \(G\)의 서로 동치가 아닌 유니타리 기약 표현 \(D^{(r)}\)(차원 \(d_r\))에 대해</p>
+      <div class="formula" id="eq-great-orthogonality">\[ \begin{aligned} &\frac{1}{\lvert G\rvert}\sum_{g \in G}D^{(r)}_{ij}(g)^*\,D^{(s)}_{kl}(g) \\ &\quad= \frac{1}{d_r}\,\delta_{rs}\,\delta_{ik}\,\delta_{jl} \end{aligned} \]</div>
+      <p>이다.</p>
+    </div>
+    <p><b>증명.</b> (1) <i>평균으로 교환하는 행렬을 만든다.</i> 임의의 \(d_r \times d_s\) 행렬 \(X\)로</p>
+    <div class="formula" id="eq-averaged-intertwiner">\[ A_X = \frac{1}{\lvert G\rvert}\sum_{g \in G}D^{(r)}(g^{-1})\,X\,D^{(s)}(g) \]</div>
+    <p>를 만든다. 임의의 \(h\)에 대해 \(D^{(r)}(h^{-1})A_XD^{(s)}(h) = \frac{1}{\lvert G\rvert}\sum_gD^{(r)}((gh)^{-1})\,X\,D^{(s)}(gh)\)이고, 재배열 정리로 \(gh\)를 \(g\)로 바꾸면 \(A_X\)이다. 양변의 왼쪽에 \(D^{(r)}(h)\)를 곱하면 \(A_XD^{(s)}(h) = D^{(r)}(h)A_X\), 곧 \(A_X\)는 식 <a class="ref" href="#eq-intertwiner"></a>를 만족한다.</p>
+    <p>(2) <i>슈어 보조정리를 쓴다.</i> \(r \ne s\)이면 두 표현이 동치가 아니므로 \(A_X = 0\)이다. \(r = s\)이면 \(A_X = \lambda_X\mathbf 1\)이고, 대각합을 취하면 합의 각 항이 \(\operatorname{tr}\big(D(g)^{-1}XD(g)\big) = \operatorname{tr}X\)이므로 \(d_r\lambda_X = \operatorname{tr}X\)이다. 두 경우를 합치면</p>
+    <div class="formula" id="eq-averaged-intertwiner-value">\[ A_X = \delta_{rs}\,\frac{\operatorname{tr}X}{d_r}\,\mathbf 1 \]</div>
+    <p>이다.</p>
+    <p>(3) <i>성분을 읽는다.</i> \(X\)로 \((j, l)\) 성분만 1이고 나머지가 0인 행렬을 고르면 \(\operatorname{tr}X = \delta_{jl}\)이고, \(A_X\)의 \((i, k)\) 성분은 \(\frac{1}{\lvert G\rvert}\sum_gD^{(r)}_{ij}(g^{-1})D^{(s)}_{lk}(g)\)이다. 유니타리성에서 \(D^{(r)}_{ij}(g^{-1}) = \big(D^{(r)}(g)^\dagger\big)_{ij} = D^{(r)}_{ji}(g)^*\)이므로</p>
+    <div class="formula">\[ \begin{aligned} &\frac{1}{\lvert G\rvert}\sum_gD^{(r)}_{ji}(g)^*\,D^{(s)}_{lk}(g) \\ &\quad= \frac{1}{d_r}\,\delta_{rs}\,\delta_{jl}\,\delta_{ik} \end{aligned} \]</div>
+    <p>이다. 지수 이름을 \(i \leftrightarrow j\), \(k \leftrightarrow l\)로 바꾸면 식 <a class="ref" href="#eq-great-orthogonality"></a>이다. ∎</p>
+    <p>이 정리를 기하학적으로 읽자. 군 위의 복소 함수 \(f : G \to \mathbb C\)는 \(\lvert G\rvert\)차원 벡터이고, 내적을 \(\frac{1}{\lvert G\rvert}\sum_gf_1(g)^*f_2(g)\)로 두자. 식 <a class="ref" href="#eq-great-orthogonality"></a>는 함수 \(g \mapsto \sqrt{d_r}\,D^{(r)}_{ij}(g)\)들이 정규 직교라는 말이다. 기약 표현 \(r\) 하나가 이런 함수를 \(d_r^2\)개 주므로, 서로 직교인 벡터의 수는 공간의 차원을 넘을 수 없어 \(\sum_rd_r^2 \le \lvert G\rvert\)이다. 특히 유한군의 기약 표현은 동치를 빼고 유한 개다. 등호가 성립한다는 것은 2.4절에서 정칙 표현으로 증명한다.</p>
+
+    <div class="box ex" id="ex-great-orthogonality-s3"><div class="box-h">\(S_3\)의 2차원 표현에서 대직교 정리 확인</div>
+      <p>식 <a class="ref" href="#eq-s3-geometric"></a>의 기하학적 표현에서 여섯 행렬의 \((1, 1)\) 성분과 \((2, 2)\) 성분을 구하고, 대직교 정리의 \(\sum_g\lvert D_{11}\rvert^2\), \(\sum_gD_{11}D_{22}\), 그리고 자명 표현과의 직교성 \(\sum_gD_{11}\cdot1\)을 확인하라.</p>
+      <p><b>풀이.</b> \(D(r^2)\)은 \(240^\circ\) 회전이고, 1장의 \(s_2 = r^2s_1\), \(s_3 = rs_1\)에서 \(D(s_3) = D(r)D(s_1)\), \(D(s_2) = D(r^2)D(s_1)\)이다. 행렬 곱을 하면</p>
+      <div class="formula">\[ \begin{aligned} D(s_3) &= \begin{pmatrix} \tfrac12 & -\tfrac{\sqrt3}{2} \\ -\tfrac{\sqrt3}{2} & -\tfrac12\end{pmatrix} \\ D(s_2) &= \begin{pmatrix} \tfrac12 & \tfrac{\sqrt3}{2} \\ \tfrac{\sqrt3}{2} & -\tfrac12\end{pmatrix} \end{aligned} \]</div>
+      <p>이다. \(e, r, r^2, s_1, s_2, s_3\)의 순서로 \(D_{11} = 1, -\tfrac12, -\tfrac12, -1, \tfrac12, \tfrac12\)이고 \(D_{22} = 1, -\tfrac12, -\tfrac12, 1, -\tfrac12, -\tfrac12\)이다. 따라서</p>
+      <div class="formula">\[ \begin{aligned} \sum_g D_{11}^2 &= 1 + \tfrac14 + \tfrac14 + 1 + \tfrac14 + \tfrac14 \\ &= 3 \\ \sum_g D_{11}D_{22} &= 1 + \tfrac14 + \tfrac14 - 1 - \tfrac14 - \tfrac14 \\ &= 0 \\ \sum_g D_{11}\cdot 1 &= 1 - \tfrac12 - \tfrac12 - 1 + \tfrac12 + \tfrac12 \\ &= 0 \end{aligned} \]</div>
+      <p>이다. 식 <a class="ref" href="#eq-great-orthogonality"></a>의 오른쪽은 차례로 \(\lvert G\rvert/d_r = 6/2 = 3\), 0(\(\delta_{ik}\)에서 \(i = 1 \ne k = 2\)), 0(\(\delta_{rs}\)에서 \(r \ne s\))이므로 모두 맞는다.</p>
+      <p><b>확인.</b> 행렬이 실수라 켤레가 필요 없었다. \(D_{12}\)와 \(D_{21}\)까지 넣으면 \(\sqrt2\,D_{ij}\) 네 함수가 정규 직교이고, 여기에 자명 표현과 부호 표현(값 \(1, 1, 1, -1, -1, -1\))을 더하면 정규 직교인 함수가 \(4 + 1 + 1 = 6\)개다. \(S_3\) 위의 함수 공간이 6차원이므로 이 여섯 함수가 공간을 꽉 채운다. 2.4절의 \(\sum_rd_r^2 = \lvert G\rvert\)를 미리 본 것이다.</p>
+      <p><b>어디에 쓰이나.</b> 이 성분별 직교성의 대각합만 남긴 것이 2.4절의 지표의 직교성이고, 성분을 그대로 쓴 것이 2.5절의 사영 연산자다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 2.4 -->
+  <section id="s4">
+    <h2>지표와 지표표</h2>
+    <p>표현의 행렬은 기저에 따라 바뀌므로, 두 표현이 동치인지 행렬로 판정하려면 모든 원소에 한꺼번에 쓰이는 \(S\)를 찾아야 한다. 1장 1.3절은 대각합 \(\operatorname{tr}D(g)\)가 기저에도, 켤레 변환에도 바뀌지 않음을 미리 보였다. 이 절은 대각합만으로 표현을 동치까지 완전히 정할 수 있음을 증명한다. 그 결과 행렬을 하나도 구하지 않고 군의 기약 표현을 모두 나열하는 표, 곧 지표표를 만들 수 있다. 『양자역학 (대학원)』과 이 책의 뒤 장에서 대칭의 계산은 거의 모두 지표표 위에서 한다.</p>
+    <div class="box def" id="def-character"><div class="box-h">지표</div>
+      <p>표현 \(D\)의 <span class="term">지표</span> <span class="en">(character)</span>는 \(G\) 위의 함수 \(\chi(g) = \operatorname{tr}D(g)\)이다. 기약 표현 \(D^{(r)}\)의 지표는 \(\chi^{(r)}\)로 쓴다. 지표는 다음을 만족한다.</p>
+      <ol>
+        <li>동치인 표현은 지표가 같다: \(\operatorname{tr}(SDS^{-1}) = \operatorname{tr}D\).</li>
+        <li>켤레류 위에서 상수다: \(\chi(kgk^{-1}) = \chi(g)\). 켤레류마다 상수인 함수를 <span class="term">류 함수</span> <span class="en">(class function)</span>라 하고, 켤레류 \(C_i\) 위의 값을 \(\chi(C_i)\)로 쓴다.</li>
+        <li>\(\chi(e) = d\)(표현의 차원)이다.</li>
+        <li>유니타리 표현이면 \(\chi(g^{-1}) = \operatorname{tr}D(g)^\dagger = \chi(g)^*\)이다. <a class="ref" href="#thm-unitarity-finite-group"></a>과 1에 따라 유한군의 모든 지표가 이것을 만족한다.</li>
+        <li>직합의 지표는 지표의 합이다: \(\chi_{D_1 \oplus D_2} = \chi_{D_1} + \chi_{D_2}\).</li>
+      </ol>
+    </div>
+    <p>류 함수 사이의 내적을 다음과 같이 둔다. 왼쪽 자리에 켤레를 붙이는 것은 학부 9장의 내적과 같은 관례다.</p>
+    <div class="formula" id="eq-class-inner-product">\[ \begin{aligned} \langle\phi\vert\psi\rangle &= \frac{1}{\lvert G\rvert}\sum_{g \in G}\phi(g)^*\,\psi(g) \\ &= \frac{1}{\lvert G\rvert}\sum_i\lvert C_i\rvert\,\phi(C_i)^*\,\psi(C_i) \end{aligned} \]</div>
+    <div class="box thm" id="thm-character-orthogonality"><div class="box-h">지표의 직교성</div>
+      <p>유한군 \(G\)의 켤레류를 \(C_1, \ldots, C_k\), 동치류마다 하나씩 고른 기약 표현 전체를 \(D^{(r)}\)이라 하자.</p>
+      <ol type="i">
+        <li>(행의 직교성) \(\langle\chi^{(r)}\vert\chi^{(s)}\rangle = \delta_{rs}\).</li>
+        <li>기약 표현의 수는 켤레류의 수 \(k\)와 같다.</li>
+        <li>(열의 직교성) \(\displaystyle\sum_r\chi^{(r)}(C_i)^*\,\chi^{(r)}(C_j) = \frac{\lvert G\rvert}{\lvert C_i\rvert}\,\delta_{ij}\).</li>
+      </ol>
+    </div>
+    <p><b>i의 증명.</b> 지표는 기저에 무관하므로 \(D^{(r)}\)을 유니타리로 고른다. 식 <a class="ref" href="#eq-great-orthogonality"></a>에서 \(j = i\), \(l = k\)로 두고 \(i\)와 \(k\)에 대해 더하면 왼쪽은 \(\frac{1}{\lvert G\rvert}\sum_g\chi^{(r)}(g)^*\chi^{(s)}(g)\)이고, 오른쪽은 \(\frac{1}{d_r}\delta_{rs}\sum_{i,k}\delta_{ik} = \delta_{rs}\)이다. ∎</p>
+    <p>ii와 iii의 증명은 정칙 표현이 필요하므로 잠시 미루고, i에서 곧바로 나오는 것부터 보자. 표현 \(D\)가 식 <a class="ref" href="#eq-irrep-decomposition"></a>처럼 분해되면 지표는 \(\chi = \sum_rm_r\chi^{(r)}\)이고, \(\chi^{(s)}\)와 내적하면 i에 따라 \(m_s\)만 남는다.</p>
+    <div class="formula" id="eq-multiplicity-formula">\[ \begin{aligned} m_r &= \langle\chi^{(r)}\vert\chi\rangle \\ &= \frac{1}{\lvert G\rvert}\sum_i\lvert C_i\rvert\,\chi^{(r)}(C_i)^*\,\chi(C_i) \end{aligned} \]</div>
+    <p>이것이 <span class="term">중복도 공식</span>이다. 중복도가 지표로 정해지므로, <b>지표가 같은 두 표현은 동치다</b>(둘 다 같은 기약 표현을 같은 수만큼 직합한 것과 동치이기 때문이다). 같은 계산으로 \(\langle\chi\vert\chi\rangle = \sum_rm_r^2\)이므로 기약성을 지표 하나로 판정할 수 있다.</p>
+    <div class="formula" id="eq-irreducibility-criterion">\[ D \text{가 기약} \iff \langle\chi\vert\chi\rangle = 1 \]</div>
+    <p>예를 들어 \(S_3\)의 순열 표현은 \(\chi = (3, 0, 1)\)(켤레류 \(\{e\}, \{r, r^2\}, \{s_k\}\) 순서)이라 \(\langle\chi\vert\chi\rangle = \frac16(9 + 0 + 3) = 2 = 1^2 + 1^2\)이다. 기약 성분이 둘이고 각각 한 번씩이라는 <a class="ref" href="#ex-s3-permutation-decomposition"></a>의 결과를 지표만으로 다시 얻었다.</p>
+
+    <h3 id="s4-regular">정칙 표현</h3>
+    <div class="box def" id="def-regular-representation"><div class="box-h">정칙 표현</div>
+      <p>\(G\)의 원소 \(h\)마다 기저 벡터 \(\lvert h\rangle\)을 하나씩 두어 \(\lvert G\rvert\)차원 공간을 만들고</p>
+      <div class="formula" id="eq-regular-representation">\[ D_{\text{reg}}(g)\,\lvert h\rangle = \lvert gh\rangle \]</div>
+      <p>로 정한 표현을 <span class="term">정칙 표현</span> <span class="en">(regular representation)</span>이라 한다. 1장의 <a href="ch01.html#def-group-action">왼쪽 곱 작용</a>에서 만든 순열 표현이다.</p>
+    </div>
+    <p>예를 들어 \(\mathbb Z_2 = \{e, a\}\)의 정칙 표현은 기저 \(\lvert e\rangle, \lvert a\rangle\)에서 \(D_{\text{reg}}(a) = \begin{pmatrix}0 & 1\\1 & 0\end{pmatrix}\)이고, \((\lvert e\rangle \pm \lvert a\rangle)/\sqrt2\)가 자명 표현과 \(a \mapsto -1\)을 하나씩 준다. 아래에서 보듯 이것이 일반적이다.</p>
+    <p>\(D_{\text{reg}}(g)\)는 기저 벡터를 기저 벡터로 보내는 순열 행렬이고, 대각 성분 \(\langle h\vert D_{\text{reg}}(g)\vert h\rangle\)은 \(gh = h\)일 때만 1이다. \(gh = h\)는 \(g = e\)와 같으므로 지표는</p>
+    <div class="formula" id="eq-regular-character">\[ \begin{gathered} \chi_{\text{reg}}(e) = \lvert G\rvert \\ \chi_{\text{reg}}(g) = 0 \quad (g \ne e) \end{gathered} \]</div>
+    <p>이다. 중복도 공식으로 정칙 표현을 분해하면 \(m_r = \frac{1}{\lvert G\rvert}\chi^{(r)}(e)^*\lvert G\rvert = d_r\)이다. <b>모든 기약 표현이 정칙 표현 안에 자기 차원만큼 들어 있다.</b> 양변의 차원을 비교하면 다음을 얻는다.</p>
+    <div class="formula" id="eq-irrep-dimension-sum">\[ \sum_rd_r^2 = \lvert G\rvert \]</div>
+    <p><b>ii와 iii의 증명.</b> (1) 기약 표현의 지표들은 i에 따라 정규 직교이므로 일차 독립이고, 류 함수의 공간은 \(k\)차원이므로(켤레류마다 값 하나) 기약 표현은 많아야 \(k\)개다.</p>
+    <p>(2) 모든 \(\chi^{(r)}\)과 직교하는 류 함수 \(f\)를 생각한다. 표현 \(D\)마다 \(F_D = \sum_gf(g)^*D(g)\)로 두면, \(f\)가 류 함수이므로</p>
+    <div class="formula" id="eq-class-sum-commutes">\[ \begin{aligned} D(h)\,F_D\,D(h)^{-1} &= \sum_gf(g)^*D(hgh^{-1}) \\ &= \sum_{g'}f(h^{-1}g'h)^*D(g') = F_D \end{aligned} \]</div>
+    <p>이다(\(g' = hgh^{-1}\)도 \(G\)를 한 번씩 돈다). \(D = D^{(r)}\)이면 슈어 보조정리 ii로 \(F_{D^{(r)}} = \lambda\mathbf 1\)이고, 대각합에서 \(\lambda d_r = \sum_gf(g)^*\chi^{(r)}(g) = \lvert G\rvert\langle f\vert\chi^{(r)}\rangle = 0\)이므로 \(F_{D^{(r)}} = 0\)이다. 정칙 표현은 기약 표현의 직합과 동치이므로 \(F_{D_{\text{reg}}}\)도 블록마다 0, 곧 \(F_{D_{\text{reg}}} = 0\)이다.</p>
+    <p>(3) 이것을 \(\lvert e\rangle\)에 작용하면 \(F_{D_{\text{reg}}}\lvert e\rangle = \sum_gf(g)^*\lvert g\rangle = 0\)이고, \(\lvert g\rangle\)들이 일차 독립이므로 모든 \(g\)에서 \(f(g) = 0\)이다. 곧 기약 표현의 지표에 직교하는 류 함수는 0뿐이라 지표들이 류 함수의 공간 전체를 펼친다. (1)과 합쳐 기약 표현은 정확히 \(k\)개다(ii).</p>
+    <p>(4) \(k \times k\) 행렬 \(U_{ri} = \sqrt{\lvert C_i\rvert/\lvert G\rvert}\;\chi^{(r)}(C_i)\)의 행은 i에 따라 정규 직교이고, (3)에 따라 행렬이 정사각이므로 \(U\)는 유니타리다. 유니타리 행렬은 열도 정규 직교이므로 \(\sum_rU_{ri}^*U_{rj} = \delta_{ij}\)이고, 이것이 iii이다. ∎</p>
+
+    <h3 id="s4-table">지표표</h3>
+    <p>기약 표현을 행에, 켤레류를 열에 두고 \(\chi^{(r)}(C_i)\)를 적은 \(k \times k\) 표를 <span class="term">지표표</span> <span class="en">(character table)</span>라 한다. 열 머리에는 켤레류를 1장 1.7절처럼 크기와 대표로 "\(E,\ 2C_3,\ 3\sigma_v\)"처럼 적는다. <a class="ref" href="#thm-character-orthogonality"></a>와 식 <a class="ref" href="#eq-irrep-dimension-sum"></a>는 표에 대한 강한 제약이라, 작은 군에서는 행렬을 하나도 쓰지 않고 표를 채울 수 있다.</p>
+    <div class="callout warn"><strong>\(E\)가 세 가지 뜻으로 쓰인다</strong><p>점군의 관례에서 열 머리의 \(E\)는 항등 연산(켤레류 \(\{e\}\))이고, 행 머리의 \(E\)는 2차원 기약 표현의 멀리컨 기호다. 연습문제에서는 에너지도 \(E\)로 쓴다. 이 장은 \(S_3\)를 추상적인 군으로 다룰 때 항등원을 \(e\)로 쓰고, 표의 열 머리에서만 점군의 관례를 따른다. 멀리컨 기호에서 \(A\)와 \(B\)는 1차원(주축 둘레의 회전에 대해 \(A\)는 대칭, \(B\)는 반대칭), \(E\)는 2차원, \(T\)는 3차원이다.</p></div>
+
+    <div class="box calc" id="calc-s3-character-table"><div class="box-h">\(S_3 \cong C_{3v}\)의 지표표: 직교성만으로</div>
+      <p>행렬을 쓰지 않고, <a class="ref" href="#thm-character-orthogonality"></a>, 식 <a class="ref" href="#eq-irrep-dimension-sum"></a>, 1차원 표현이 준동형이라는 것만으로 \(S_3\)의 지표표를 채운다. \(S_3\)의 원소는 \(C_{3v}\)의 연산과 \(e \leftrightarrow E\), \(r, r^2 \leftrightarrow C_3, C_3^2\), \(s_k \leftrightarrow \sigma_v\)로 대응한다(1장 <a href="ch01.html#ex-molecule-point-groups">예제 1.7</a>).</p>
+      <p><b>계산.</b> (1) <i>기약 표현의 수.</i> 1장 <a href="ch01.html#calc-s3-table">손 계산 1.1</a>에서 켤레류는 \(\{e\}\), \(\{r, r^2\}\), \(\{s_1, s_2, s_3\}\)의 셋이고 크기는 1, 2, 3이다. 지표의 직교성 ii에 따라 기약 표현도 셋이다.</p>
+      <p>(2) <i>차원.</i> \(d_1^2 + d_2^2 + d_3^2 = 6\)이고 자명 표현이 \(d = 1\)이다. 남은 두 제곱의 합이 5인 양의 정수는 \(1^2 + 2^2\)뿐이므로 차원은 1, 1, 2다.</p>
+      <p>(3) <i>1차원 행.</i> 1차원 표현의 지표는 표현 그 자체라 준동형 \(\chi(gh) = \chi(g)\chi(h)\)이고 값은 0이 아니다. 류 함수이므로 \(\chi(r) = \chi(r^2) = \chi(r)^2\)에서 \(\chi(r) = 1\)이고, \(s^2 = e\)에서 \(\chi(s)^2 = 1\), 곧 \(\chi(s) = \pm1\)이다. 두 경우가 자명 표현 \(A_1\)과 부호 표현 \(A_2\)이고, 1장 예제 1.6의 결론(1차원 표현은 1과 \(\operatorname{sgn}\)뿐)과 같다.</p>
+      <p>(4) <i>2차원 행.</i> \(E\)의 행을 \((2, x, y)\)라 하자. 첫 열(\(\chi(e) = d_r\))과 다른 열의 직교성(지표의 직교성 iii)에서</p>
+      <div class="formula" id="eq-s3-column-orthogonality">\[ \begin{aligned} 1\cdot1 + 1\cdot1 + 2x &= 0 \\ 1\cdot1 + 1\cdot(-1) + 2y &= 0 \end{aligned} \]</div>
+      <p>이므로 \(x = -1\), \(y = 0\)이다.</p>
+      <div class="table-wrap"><table class="cayley">
+        <thead><tr><th>\(C_{3v}\)</th><th>\(E\)</th><th>\(2C_3\)</th><th>\(3\sigma_v\)</th></tr></thead>
+        <tbody>
+          <tr><th>\(A_1\)</th><td>\(1\)</td><td>\(1\)</td><td>\(1\)</td></tr>
+          <tr><th>\(A_2\)</th><td>\(1\)</td><td>\(1\)</td><td>\(-1\)</td></tr>
+          <tr><th>\(E\)</th><td>\(2\)</td><td>\(-1\)</td><td>\(0\)</td></tr>
+        </tbody>
+      </table></div>
+      <p class="calc-result"><b>결과.</b> 켤레류의 크기는 1, 2, 3이고 기약 표현은 셋, 차원은 1, 1, 2다. 지표표의 행은 \(A_1 = (1, 1, 1)\), \(A_2 = (1, 1, -1)\), \(E = (2, -1, 0)\)이고, 행과 열이 모두 <a class="ref" href="#thm-character-orthogonality"></a>를 만족한다. \(E\)의 행은 순열 표현의 지표 \((3, 0, 1)\)에서 자명 표현을 뺀 것과 같다.</p>
+      <p><b>확인.</b> (4)는 열의 직교성만 썼으므로 행의 직교성은 독립된 점검이다. \(\langle\chi_E\vert\chi_E\rangle = \frac16(1\cdot4 + 2\cdot1 + 3\cdot0) = 1\)이고 \(\langle\chi_{A_2}\vert\chi_E\rangle = \frac16(2 - 2 + 0) = 0\)이다. 또 \(E\)의 행은 <a class="ref" href="#ex-s3-permutation-decomposition"></a>에서 행렬로 구한 \(D_\Pi\)의 대각합 \(2, -1, 0\)과 같다. 열의 길이도 맞는다: \(C_3\) 열은 \(1 + 1 + 1 = 3 = 6/2\), \(\sigma_v\) 열은 \(1 + 1 + 0 = 2 = 6/3\)이다.</p>
+    </div>
+
+    <div class="box code" id="code-character-table-check" data-run="python" data-check="calc-s3-character-table">
+      <div class="box-h">순열군의 켤레류와 지표표의 직교성 검사</div>
+      <p><a class="ref" href="#calc-s3-character-table"></a>의 표를 직교성으로 검사한다. 순열과 곱은 1장 <a href="ch01.html#code-permutation-group">코드 1.1</a>의 관례를 따르고, 켤레류를 정의대로 구한 뒤 행과 열의 직교성을 분수로 정확히 확인한다. 그 다음 \(S_4\)의 지표표를 만든다. 1차원 둘(자명, 부호)과 순열 표현에서 자명 표현을 뺀 3차원 표현, 그것에 부호를 곱한 3차원 표현을 먼저 만들고, 남은 하나는 정칙 표현의 지표 식 <a class="ref" href="#eq-regular-character"></a>에서 나머지를 빼서 얻는다.</p>
+      <pre><code class="language-python">from fractions import Fraction
+from itertools import permutations
+from math import isqrt
+
+def mul(p, q):          # 곱 pq: q를 먼저, 그 다음 p (1장의 관례)
+    return tuple(p[i] for i in q)
+
+def inv(p):
+    return tuple(sorted(range(len(p)), key=lambda i: p[i]))
+
+def cycle_type(p):      # 순환 꼴: 순환의 길이를 큰 것부터
+    seen, lens = set(), []
+    for i in range(len(p)):
+        k = 0
+        while i not in seen:
+            seen.add(i); i = p[i]; k += 1
+        lens += [k] if k else []
+    return "+".join(map(str, sorted(lens, reverse=True)))
+
+def classes(G):         # 켤레류를 크기와 순환 꼴 순으로
+    out = []
+    for g in G:
+        if not any(g in c for c in out):
+            out.append({mul(mul(k, g), inv(k)) for k in G})
+    return sorted(out, key=lambda c: (len(c), cycle_type(min(c))))
+
+def check(T, sizes):    # S_n의 지표는 실수라 켤레를 생략한다
+    n, rows = sum(sizes), list(T.values())
+    for a in rows:      # 행: &lt;χ_r|χ_s&gt; = δ_rs
+        for b in rows:
+            s = sum(k * x * y for k, x, y in zip(sizes, a, b))
+            assert Fraction(s, n) == (a is b)
+    for i, si in enumerate(sizes):   # 열: Σ_r = |G|/|C_i| δ_ij
+        for j in range(len(sizes)):
+            col = sum(r[i] * r[j] for r in rows)
+            assert col == (Fraction(n, si) if i == j else 0)
+
+# 1) 손 계산 2.1: S_3. 열은 {e}, 3-순환 2개, 호환 3개
+C = classes(list(permutations(range(3))))
+sizes = [len(c) for c in C]
+assert sizes == [1, 2, 3]
+T3 = {"A1": [1, 1, 1], "A2": [1, 1, -1], "E": [2, -1, 0]}
+check(T3, sizes)
+ncyc = [len(cycle_type(min(c)).split("+")) for c in C]   # c(σ)
+assert [(-1) ** (3 - k) for k in ncyc] == T3["A2"]   # A2는 부호 표현
+fix = [sum(p[i] == i for i in range(3)) for p in map(min, C)]
+assert [f - 1 for f in fix] == T3["E"]   # 평면 표현 = 순열 - 자명
+print("S3", sizes, T3["E"])
+
+# 2) 넓히기: S_4. 1차원 둘, 순열 표현에서 3차원 둘을 만들고
+#    남은 하나는 정칙 표현에서 빼서 얻는다
+C = classes(list(permutations(range(4))))
+sizes, reps = [len(c) for c in C], [min(c) for c in C]
+sgn = [(-1) ** (4 - len(cycle_type(p).split("+"))) for p in reps]
+std = [sum(p[i] == i for i in range(4)) - 1 for p in reps]
+T4 = {"A1": [1] * 5, "A2": sgn, "T2": std,
+      "T1": [x * y for x, y in zip(std, sgn)]}
+dX = isqrt(24 - sum(r[0] ** 2 for r in T4.values()))   # Σ d² = |G|
+reg = [24, 0, 0, 0, 0]                                 # 정칙 표현
+T4["E"] = [(g - sum(r[0] * r[i] for r in T4.values())) // dX
+           for i, g in enumerate(reg)]
+check(T4, sizes)
+print("S4", sizes, [cycle_type(p) for p in reps])
+for name in ["A1", "A2", "E", "T1", "T2"]:
+    print(name, T4[name])</code></pre>
+      <pre class="code-out"><code>S3 [1, 2, 3] [2, -1, 0]
+S4 [1, 3, 6, 6, 8] ['1+1+1+1', '2+2', '2+1+1', '4', '3+1']
+A1 [1, 1, 1, 1, 1]
+A2 [1, 1, -1, -1, 1]
+E [2, 2, 0, 0, -1]
+T1 [3, -1, -1, 1, 0]
+T2 [3, -1, 1, -1, 0]</code></pre>
+      <p class="code-note">첫 줄은 \(S_3\)의 켤레류 크기 1, 2, 3과, 고정점의 수에서 1을 뺀 지표 \((2, -1, 0)\)이다. <a class="ref" href="#calc-s3-character-table"></a>의 표가 직교성 검사를 통과했고 \(E\)의 행이 "순열 표현 − 자명 표현"과 같다. 둘째 줄은 \(S_4\)의 켤레류 크기와 순환 꼴이다(항등, \((1\,2)(3\,4)\) 꼴, 호환, 4-순환, 3-순환). 나머지 다섯 줄이 \(S_4\)의 지표표이고 <code>check</code>를 통과했으므로 다섯 행이 모두 기약이며(식 <a class="ref" href="#eq-irreducibility-criterion"></a>) 서로 동치가 아니다. 정칙 표현에서 뺀 행의 차원은 \(\sqrt{24 - 1 - 1 - 9 - 9} = 2\)이다. 1장 <a href="ch01.html#ex-cube-rotations-s4">예제 1.5</a>의 동형 \(O \cong S_4\)에서 \((1\,2)(3\,4)\) 꼴은 면 축 \(180^\circ\), 호환은 모서리 축 \(180^\circ\), 4-순환은 면 축 \(90^\circ\), 3-순환은 대각선 축 \(120^\circ\)이므로 이 표가 곧 2.5절의 \(O\)의 지표표다. 이름 \(T_1\)은 3×3 회전 행렬의 대각합 \(1 + 2\cos\theta\)(모서리 축 \(180^\circ\)에서 \(-1\), 면 축 \(90^\circ\)에서 \(+1\))와 같은 행에 붙였다.</p>
+    </div>
+
+    <p><b>1장 문제 1.4를 다시 읽는다.</b> 유한 집합 \(X\)에 작용하는 \(G\)의 순열 표현에서 \(D(g)\)의 대각 성분은 \(g\)가 고정하는 점마다 1이므로 \(\chi(g) = \lvert X^g\rvert\)이다. 이 표현 안의 자명 표현은 모든 \(D(g)\)가 고정하는 벡터들이고, 그런 벡터는 궤도 위에서 상수인 함수 \(\sum_{x}c_x\lvert x\rangle\)(\(c_x\)가 궤도마다 상수)이므로 궤도마다 하나씩 독립이다. 따라서 중복도 공식에서</p>
+    <div class="formula" id="eq-burnside-multiplicity">\[ (\text{궤도의 수}) = m_{A_1} = \frac{1}{\lvert G\rvert}\sum_{g \in G}\lvert X^g\rvert \]</div>
+    <p>이고, 이것이 <a href="ch01.html#prob-burnside">1장 문제 1.4</a>의 번사이드 보조정리다. 1장에서 쌍을 두 번 세어 얻은 식이 "자명 표현의 중복도"라는 뜻을 얻었다. 정사각형 꼭짓점의 세 가지 색칠 21가지가 \(D_4\)의 81차원 순열 표현 안의 \(A_1\)의 중복도다.</p>
+
+    <div class="box thm" id="thm-compact-group-representations"><div class="box-h">콤팩트 군으로 넓히기</div>
+      <p>\(U(1)\), \(SU(2)\), \(SO(3)\)처럼 콤팩트한 행렬 리 군 \(G\)(3장)에는 \(G\) 위의 연속 함수 \(f\)에 대해</p>
+      <div class="formula" id="eq-haar-invariance">\[ \begin{gathered} \int_Gdg\,f(hg) = \int_Gdg\,f(gh) = \int_Gdg\,f(g) \\ \int_Gdg = 1 \end{gathered} \]</div>
+      <p>을 만족하는 적분, 곧 정규화된 <span class="term">하르 측도</span> <span class="en">(Haar measure)</span>가 하나 있다. 이 절과 앞 절의 \(\frac{1}{\lvert G\rvert}\sum_g\)를 \(\int_Gdg\)로 바꾸면, \(G\)의 유한 차원 연속 표현에 대해 다음이 그대로 성립한다. (가) 유니타리 표현과 동치이고 완전 가약이다. (나) 슈어 보조정리. (다) 대직교 정리와 지표의 행의 직교성 \(\int_Gdg\,\chi^{(r)}(g)^*\chi^{(s)}(g) = \delta_{rs}\), 중복도 공식. 기약 표현은 무한히 많고, <a class="ref" href="#thm-character-orthogonality"></a>의 ii와 iii 자리에는 페터-바일 정리가 들어선다(3장).</p>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>유니타리성, 마슈케 정리, 대직교 정리의 증명이 군에 대해 쓴 것은 세 가지뿐이다. 합이 원소의 재배열에 불변이고, \(\frac{1}{\lvert G\rvert}\)로 규격화되어 있고, 양수의 합은 양수라는 것이다. 식 <a class="ref" href="#eq-haar-invariance"></a>이 앞의 둘을 주고, 연속인 양의 함수의 적분이 양수라는 것이 셋째를 준다. 어려운 부분은 하르 측도가 있다는 것 자체(하르 정리)다. 리 군에서는 항등원의 접공간에 부피를 하나 정하고 그것을 왼쪽 곱으로 군 전체에 옮겨 만든다(6·7장의 말로는 왼쪽 불변 부피 형식). 가장 간단한 예는 \(U(1) = \{e^{i\theta}\}\)이다. \(dg = d\theta/2\pi\)이고, 아벨 군이라 기약 표현은 1차원 \(e^{in\theta}\)(\(n \in \mathbb Z\))이며, 행의 직교성 \(\int_0^{2\pi}\frac{d\theta}{2\pi}e^{-im\theta}e^{in\theta} = \delta_{mn}\)은 <a href="../../math-phys/chapters/ch14.html#eq-complex-fourier">학부 14장의 복소 푸리에 급수</a>의 직교성이다. \(SU(2)\)의 하르 측도와 지표의 직교성은 <a href="ch03.html#eq-haar-measure-su2">3장</a>에서 구한다. 하르 측도로 평균한 내적을 쓰는 완전 가약성의 증명은 B. C. Hall의 강의록 arXiv:math-ph/0005032 명제 5.17에 있다(그 강의록도 하르 측도의 존재는 증명 없이 쓴다).</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============================================================ 2.5 -->
+  <section id="s5">
+    <h2>표현의 분해와 사영 연산자</h2>
+    <p>전이 금속 이온 하나를 정팔면체의 꼭짓점에 놓인 음이온 여섯 개가 둘러싸고 있다. 자유 이온에서 다섯 겹으로 겹쳐 있던 \(d\) 준위(\(l = 2\))는 이 결정 속에서 몇 개로 갈라지는가. 주위의 이온이 만드는 이런 퍼텐셜을 <span class="term">결정장</span> <span class="en">(crystal field)</span>이라 한다. 자유 이온의 대칭은 회전군 \(SO(3)\)(3장) 전체이고 \(l\) 준위의 다섯 상태는 그 기약 표현을 이루지만, 결정 속에서 남는 대칭은 정육면체의 회전군 \(O\)(와 반전)뿐이다. 같은 다섯 상태가 \(O\)의 표현으로는 가약일 수 있다. 이 절은 이 질문을 셈으로 바꾼다. 회전의 지표 \(\chi_l(\theta)\)와 \(O\)의 지표표를 구하고, 중복도 공식으로 분해한다. 그 다음 사영 연산자로 각 성분에 속하는 상태를 직접 만든다. 갈라짐의 물리는 2.7절에서 본다.</p>
+
+    <h3 id="s5-rotation-character">회전의 지표 \(\chi_l(\theta)\)</h3>
+    <p>구면 조화 함수 \(Y_l^m\)(\(m = -l, \ldots, l\))이 펼치는 \(2l + 1\)차원 공간을 \(\mathcal H_l\)이라 하자. 회전 \(R\)은 함수에 식 <a class="ref" href="#eq-function-representation"></a>로 작용한다. 먼저 \(\mathcal H_l\)이 불변임을 보인다. 직교 행렬 \(R\)에 대해 \(f_R(\mathbf r) = f(R^{-1}\mathbf r)\)로 두면 연쇄 법칙으로 \(\partial_if_R = \sum_j(R^{-1})_{ji}(\partial_jf)(R^{-1}\mathbf r)\)이고, \(\sum_i(R^{-1})_{ji}(R^{-1})_{ki} = (R^{-1}R^{-\mathsf T})_{jk} = \delta_{jk}\)이므로 \(\nabla^2f_R = (\nabla^2f)_R\)이다. 회전은 \(r = \lvert\mathbf r\rvert\)도 바꾸지 않으므로, \(\nabla^2\)를 지름 부분과 각 부분 \(\Lambda/r^2\)로 나눈 꼴에서 각 연산자 \(\Lambda\)도 회전과 교환한다. \(\mathcal H_l\)은 \(\Lambda\)의 고유값 \(-l(l+1)\)의 고유 공간이므로(<a href="../../math-phys/chapters/ch12.html#eq-ylm-eigen">학부 12장의 \(\Lambda Y_l^m = -l(l+1)Y_l^m\)</a>) 회전이 \(\mathcal H_l\)을 자기 자신으로 보낸다. 곧 \(\mathcal H_l\)은 \(SO(3)\)의 \(2l + 1\)차원 표현이고, 그 부분군인 어느 점군의 표현이기도 하다.</p>
+    <p>지표를 구하자. \(z\)축 둘레 각 \(\theta\)의 회전 \(R_z(\theta)\)은 방위각을 \(\phi \mapsto \phi + \theta\)로 바꾸므로 \(R_z(\theta)^{-1}\)은 \(\phi\)를 \(\phi - \theta\)로 바꾼다. \(Y_l^m \propto e^{im\phi}\)이므로(<a href="../../math-phys/chapters/ch12.html#def-spherical-harmonics">학부 12장</a>) \(U(R_z(\theta))Y_l^m = e^{-im\theta}\,Y_l^m\), 곧 이 기저에서 대각 행렬이다(여기서 \(\theta\)는 회전각이고 구면 좌표의 극각이 아니다). 대각합은 등비급수다.</p>
+    <div class="formula" id="eq-rotation-character-l">\[ \begin{aligned} \chi_l(\theta) &= \sum_{m=-l}^{l}e^{-im\theta} = \frac{\sin\big((l + \tfrac12)\theta\big)}{\sin(\theta/2)} \\ &= 1 + 2\sum_{m=1}^{l}\cos m\theta \end{aligned} \]</div>
+    <p>1장의 <a href="ch01.html#ex-rotation-conjugacy">예제 1.3</a>에서 각이 같은 회전은 축과 상관없이 \(SO(3)\) 안에서 켤레였으므로, 지표는 축과 상관없이 회전각만의 함수다. 어느 축 둘레의 회전이든 식 <a class="ref" href="#eq-rotation-character-l"></a>을 그대로 쓴다. \(l = 1\)이면 \(\chi_1(\theta) = 1 + 2\cos\theta\)로 3×3 회전 행렬의 대각합과 같다. 3장은 이 식을 반정수 \(j\)로 넓힌다.</p>
+
+    <div class="box ex" id="ex-octahedral-character-table"><div class="box-h">정육면체 회전군 \(O\)의 지표표</div>
+      <p>1장 <a href="ch01.html#ex-cube-rotations-s4">예제 1.5</a>의 켤레류와 동형 \(O \cong S_4\)를 써서 \(O\)의 지표표를 채워라.</p>
+      <p><b>풀이.</b> 켤레류는 다섯이다. 항등 \(E\), 몸 대각선 축 \(\pm120^\circ\)(\(8C_3\)), 면 축 \(180^\circ\)(\(3C_2\), \(C_2 = C_4^2\)), 면 축 \(\pm90^\circ\)(\(6C_4\)), 모서리 축 \(180^\circ\)(\(6C_2'\))이다. 따라서 기약 표현은 다섯이고 차원의 제곱의 합은 24다.</p>
+      <ul>
+        <li>\(A_1\): 자명 표현.</li>
+        <li>\(A_2\): \(O \to S_4\) 다음에 부호를 취한 1차원 표현. 1장의 대응에서 \(C_3\)은 3-순환, \(C_2\)는 \((1\,2)(3\,4)\) 꼴로 짝순열이고, \(C_4\)는 4-순환, \(C_2'\)은 호환으로 홀순열이다. 값은 \((1, 1, 1, -1, -1)\)이다.</li>
+        <li>\(T_1\): 3×3 회전 행렬 자체. 지표는 \(1 + 2\cos\theta\)이므로 \((3, 0, -1, 1, -1)\)이다. \(\langle\chi\vert\chi\rangle = \frac{1}{24}(9 + 0 + 3 + 6 + 6) = 1\)이라 기약이다.</li>
+        <li>\(T_2\): \(\chi_{A_2}(g)\,D_{T_1}(g)\). 1차원 표현을 곱해도 곱의 규칙이 지켜지므로 표현이고, 지표는 \((3, 0, -1, -1, 1)\)이다. 노름이 1이고 \(T_1\)과 지표가 다르므로 새 기약 표현이다.</li>
+        <li>\(E\): 남은 차원은 \(\sqrt{24 - 1 - 1 - 9 - 9} = 2\)이다. 첫 열과 각 열의 직교성 \(1 + \chi_{A_2} + 2\chi_E + 3\chi_{T_1} + 3\chi_{T_2} = 0\)에서 \(\chi_E = (2, -1, 2, 0, 0)\)이다.</li>
+      </ul>
+      <div class="table-wrap"><table class="cayley">
+        <thead><tr><th>\(O\)</th><th>\(E\)</th><th>\(8C_3\)</th><th>\(3C_2\)</th><th>\(6C_4\)</th><th>\(6C_2'\)</th></tr></thead>
+        <tbody>
+          <tr><th>\(A_1\)</th><td>\(1\)</td><td>\(1\)</td><td>\(1\)</td><td>\(1\)</td><td>\(1\)</td></tr>
+          <tr><th>\(A_2\)</th><td>\(1\)</td><td>\(1\)</td><td>\(1\)</td><td>\(-1\)</td><td>\(-1\)</td></tr>
+          <tr><th>\(E\)</th><td>\(2\)</td><td>\(-1\)</td><td>\(2\)</td><td>\(0\)</td><td>\(0\)</td></tr>
+          <tr><th>\(T_1\)</th><td>\(3\)</td><td>\(0\)</td><td>\(-1\)</td><td>\(1\)</td><td>\(-1\)</td></tr>
+          <tr><th>\(T_2\)</th><td>\(3\)</td><td>\(0\)</td><td>\(-1\)</td><td>\(-1\)</td><td>\(1\)</td></tr>
+        </tbody>
+      </table></div>
+      <p><b>확인.</b> <a class="ref" href="#code-character-table-check"></a>이 \(S_4\)에서 따로 구한 표와 켤레류의 대응대로 같다. \(E\)는 \(3C_2\)에서 값이 차원과 같은 2이므로 \(C_2\) 셋을 항등 행렬로 보낸다(유니타리 행렬의 고유값은 절댓값이 1이라, 대각합이 차원과 같으려면 고유값이 모두 1이어야 한다). 곧 \(E\)의 핵은 \(\{E\} \cup 3C_2\)(\(S_4\)의 \(V_4\))를 품는다. 그런데 \(O\)가 세 좌표축을 순열하는 준동형 \(O \to S_3\)는 상이 \(S_3\) 전체이고 핵이 각 축을 제자리에 두는 회전 \(\{E\} \cup 3C_2\)이므로, \(E\)는 몫군 \(O/(\{E\} \cup 3C_2) \cong S_3\)의 2차원 표현이다. 실제로 \(E\)의 행을 \(E, C_3, C_4\)에서 읽으면 \(S_3\)의 \((2, -1, 0)\)이다.</p>
+      <p><b>어디에 쓰이나.</b> 이 표가 결정장 계산(<a class="ref" href="#calc-crystal-field-splitting"></a>, <a class="ref" href="#ex-crystal-field-d-orbitals"></a>)과 선택 규칙(<a class="ref" href="#ex-dipole-selection-rule"></a>)의 바탕이다.</p>
+    </div>
+
+    <div class="box calc" id="calc-crystal-field-splitting"><div class="box-h">결정장 속의 \(l = 2\): \(O\)의 기약 표현으로 분해</div>
+      <p>\(\mathcal H_2\)를 \(O\)의 표현으로 보고, 식 <a class="ref" href="#eq-rotation-character-l"></a>의 지표를 <a class="ref" href="#ex-octahedral-character-table"></a>의 켤레류에서 계산한 뒤 중복도 공식 <a class="ref" href="#eq-multiplicity-formula"></a>로 분해한다.</p>
+      <p><b>계산.</b> (1) <i>지표.</i> 켤레류의 회전각은 \(0, 120^\circ, 180^\circ, 90^\circ, 180^\circ\)이다. \(\chi_2(\theta) = 1 + 2\cos\theta + 2\cos2\theta\)에 넣으면</p>
+      <div class="formula" id="eq-d-orbital-character">\[ \begin{aligned} \chi_2(0) &= 1 + 2 + 2 = 5 \\ \chi_2(120^\circ) &= 1 - 1 - 1 = -1 \\ \chi_2(180^\circ) &= 1 - 2 + 2 = 1 \\ \chi_2(90^\circ) &= 1 + 0 - 2 = -1 \end{aligned} \]</div>
+      <p>이므로 \(E, 8C_3, 3C_2, 6C_4, 6C_2'\)의 순서로 \(\chi_2 = (5, -1, 1, -1, 1)\)이다.</p>
+      <p>(2) <i>중복도.</i> 지표가 모두 실수이므로 켤레가 필요 없다. 켤레류의 크기 \(1, 8, 3, 6, 6\)을 곱해 더하면</p>
+      <div class="formula" id="eq-d-orbital-multiplicities">\[ \begin{aligned} m_{A_1} &= \tfrac{1}{24}(5 - 8 + 3 - 6 + 6) = 0 \\ m_{A_2} &= \tfrac{1}{24}(5 - 8 + 3 + 6 - 6) = 0 \\ m_E &= \tfrac{1}{24}(10 + 8 + 6 + 0 + 0) = 1 \\ m_{T_1} &= \tfrac{1}{24}(15 + 0 - 3 - 6 - 6) = 0 \\ m_{T_2} &= \tfrac{1}{24}(15 + 0 - 3 + 6 + 6) = 1 \end{aligned} \]</div>
+      <p>이다.</p>
+      <p>(3) <i>\(l = 1\).</i> \(\chi_1 = (3, 0, -1, 1, -1)\)은 \(T_1\)의 행 그대로다.</p>
+      <p class="calc-result"><b>결과.</b> \(\chi_2 = (5, -1, 1, -1, 1)\)이고 \(\mathcal H_2 \cong E \oplus T_2\)이다(\(m_E = m_{T_2} = 1\), 나머지 0). \(\mathcal H_1 \cong T_1\)이다.</p>
+      <p><b>확인.</b> 차원은 \(2 + 3 = 5\)이고, \(\langle\chi_2\vert\chi_2\rangle = \frac{1}{24}(25 + 8 + 3 + 6 + 6) = 2 = 1^2 + 1^2\)이다. 지표 공식을 쓰지 않고 함수로도 확인한다. \(d\) 궤도를 실수 조화 다항식 \(xy, yz, zx, x^2 - y^2, 3z^2 - r^2\)(\(r^2Y_2^m\)들의 일차 결합)으로 쓰면, \(z\)축 둘레 \(90^\circ\) 회전 \(R\)에서 \(R^{-1}(x, y, z) = (y, -x, z)\)이므로 \(xy \mapsto -xy\), \(yz \mapsto -zx\), \(zx \mapsto yz\)이고 \(x^2 - y^2 \mapsto -(x^2 - y^2)\), \(3z^2 - r^2 \mapsto 3z^2 - r^2\)이다. 앞의 셋이 펼치는 공간의 대각합은 \(-1 = \chi_{T_2}(C_4)\), 뒤의 둘은 \(0 = \chi_E(C_4)\)이다.</p>
+    </div>
+
+    <div class="box code" id="code-irrep-decomposition" data-run="python" data-check="calc-crystal-field-splitting">
+      <div class="box-h">정육면체 회전군에서 \(l = 0, \ldots, 6\)의 분해표</div>
+      <p><a class="ref" href="#calc-crystal-field-splitting"></a>를 다시 한다. \(O\)를 \(z\)축과 \(x\)축 둘레 \(90^\circ\) 회전의 두 정수 행렬에서 생성하고(1장 <a href="ch01.html#prob-code-cube-matrices">문제 1.7</a>과 같은 방법), 켤레류를 정의대로 구해 크기와 회전각(\(\operatorname{tr}R = 1 + 2\cos\theta\))으로 이름 붙인다. <a class="ref" href="#ex-octahedral-character-table"></a>의 지표표를 입력하고, 생성한 군의 켤레류 크기로 행의 직교성을 검사한 뒤, 식 <a class="ref" href="#eq-rotation-character-l"></a>과 중복도 공식으로 \(l = 0, \ldots, 6\)을 분해한다.</p>
+      <pre><code class="language-python">from math import acos, cos, pi
+
+def mul(A, B):          # 3×3 정수 행렬의 곱 (행렬은 행의 튜플)
+    return tuple(tuple(sum(A[i][k] * B[k][j] for k in range(3))
+                       for j in range(3)) for i in range(3))
+
+def closure(gens):      # 생성원에서 곱을 거듭해 군 전체를 만든다
+    G = new = {((1, 0, 0), (0, 1, 0), (0, 0, 1))}
+    while new:
+        new = {mul(s, g) for g in new for s in gens} - G
+        G = G | new
+    return G
+
+def classes(G):         # 켤레류 {k g k⁻¹}. 회전 행렬이라 k⁻¹ = kᵀ
+    out = []
+    for g in sorted(G):
+        if not any(g in c for c in out):
+            out.append({mul(mul(k, g), tuple(zip(*k))) for k in G})
+    return out
+
+def trace(R):
+    return R[0][0] + R[1][1] + R[2][2]
+
+def chi_l(l, deg):      # χ_l(θ) = Σ_m e^{-imθ} = 1 + 2 Σ_m cos mθ
+    return 1 + 2 * sum(cos(m * deg * pi / 180) for m in range(1, l + 1))
+
+# 1) O를 z축, x축 둘레 90° 회전에서 만들고 켤레류를 (크기, 각)으로
+Rz = ((0, -1, 0), (1, 0, 0), (0, 0, 1))
+Rx = ((1, 0, 0), (0, 0, -1), (0, 1, 0))
+O = closure([Rz, Rx])
+cls = {}
+for c in classes(O):
+    R = min(c)
+    deg = round(acos((trace(R) - 1) / 2) * 180 / pi)  # tr = 1 + 2cos θ
+    assert abs(trace(R) - chi_l(1, deg)) &lt; 1e-12      # l = 1은 T1
+    cls[(len(c), deg)] = c
+keys = [(1, 0), (8, 120), (3, 180), (6, 90), (6, 180)]  # 표의 열 순서
+assert len(O) == 24 and sorted(cls) == sorted(keys)
+sizes = [s for s, _ in keys]
+table = {"A1": [1, 1, 1, 1, 1], "A2": [1, 1, 1, -1, -1],
+         "E": [2, -1, 2, 0, 0], "T1": [3, 0, -1, 1, -1],
+         "T2": [3, 0, -1, -1, 1]}          # 2.5절의 O의 지표표
+
+def decompose(chi):     # 중복도 공식 m_r = &lt;χ_r|χ&gt; (지표는 실수)
+    m = {}
+    for r, row in table.items():
+        x = sum(s * a * b for s, a, b in zip(sizes, row, chi)) / 24
+        assert abs(x - round(x)) &lt; 1e-10
+        if round(x):
+            m[r] = round(x)
+    return m
+
+assert all(decompose(row) == {r: 1} for r, row in table.items())
+
+# 2) 손 계산 2.2: l = 2의 지표와 분해
+chi2 = [chi_l(2, deg) for _, deg in keys]
+assert max(abs(x - y) for x, y in zip(chi2, [5, -1, 1, -1, 1])) &lt; 1e-12
+assert decompose(chi2) == {"E": 1, "T2": 1}
+assert decompose([chi_l(1, deg) for _, deg in keys]) == {"T1": 1}
+
+# 3) 넓히기: l = 0, ..., 6
+for l in range(7):
+    m = decompose([chi_l(l, deg) for _, deg in keys])
+    assert sum(table[r][0] * n for r, n in m.items()) == 2 * l + 1
+    print(l, " + ".join((f"{n}" if n &gt; 1 else "") + r
+                        for r, n in m.items()))</code></pre>
+      <pre class="code-out"><code>0 A1
+1 T1
+2 E + T2
+3 A2 + T1 + T2
+4 A1 + E + T1 + T2
+5 E + 2T1 + T2
+6 A1 + A2 + E + T1 + 2T2</code></pre>
+      <p class="code-note">각 줄은 \(l\)과 \(\mathcal H_l\)의 분해다. 차원의 합이 \(2l + 1\)인 것은 코드가 <code>assert</code>로 확인했다. 둘째와 셋째 줄이 <a class="ref" href="#calc-crystal-field-splitting"></a>의 \(T_1\)과 \(E \oplus T_2\)다. \(l = 3\)(\(f\) 궤도)은 \(1 + 3 + 3\)으로 세 준위로 갈라진다. 자명 표현 \(A_1\)은 \(l = 0\) 다음에 \(l = 4\)에서 처음 나타난다. 곧 \(O\)에 대해 불변인 구면 위의 함수 가운데 상수가 아닌 것은 \(l = 4\)에서 처음 나오고, 그것이 \(x^4 + y^4 + z^4 - \tfrac35r^4\)(\(r^4\)으로 나눈 것)이다. 2.7절에서 결정장의 퍼텐셜을 전개하면 \(l = 2\) 항이 없고 이 \(l = 4\) 항이 첫 비등방 항으로 나오는 이유가 이것이다. 높은 \(l\)에서 같은 기약 표현이 두 번 나오면(\(l = 5\)의 \(2T_1\)) 대칭만으로는 그 두 \(T_1\) 준위의 상태를 정할 수 없고, 2.7절의 \(m_r \times m_r\) 행렬을 풀어야 한다.</p>
+    </div>
+
+    <h3 id="s5-projector">사영 연산자</h3>
+    <p>중복도는 몇 개인지를 알려 줄 뿐, 어느 상태가 \(E\)이고 어느 상태가 \(T_2\)인지는 알려 주지 않는다. 대직교 정리의 대각합 대신 표현 행렬 자체에 지표를 곱해 평균하면, 각 성분으로 가는 사영이 나온다.</p>
+    <div class="box thm" id="thm-irrep-projector"><div class="box-h">기약 성분으로의 사영 연산자</div>
+      <p>유한군 \(G\)의 표현 \(D\)(공간 \(V\))와 기약 표현 \(D^{(r)}\)에 대해</p>
+      <div class="formula" id="eq-irrep-projector">\[ P^{(r)} = \frac{d_r}{\lvert G\rvert}\sum_{g \in G}\chi^{(r)}(g)^*\,D(g) \]</div>
+      <p>로 두자. \(V\)를 기약 부분 공간의 직합으로 쓰고, \(D^{(r)}\)과 동치인 것을 모두 모은 부분 공간을 \(V_r\)(\(r\) 성분)이라 하자. 그러면 (가) \(P^{(r)}\)은 \(V_r\) 위에서 항등이고 다른 \(V_s\)를 0으로 보낸다. 따라서 \((P^{(r)})^2 = P^{(r)}\), \(r \ne s\)이면 \(P^{(r)}P^{(s)} = 0\), \(\sum_rP^{(r)} = \mathbf 1\), \(\operatorname{tr}P^{(r)} = m_rd_r\)이다. 특히 \(V_r = \operatorname{Ran}P^{(r)}\)은 직합 분해를 어떻게 골랐는지와 상관없다. (나) \(D\)가 유니타리이면 \(P^{(r)\dagger} = P^{(r)}\)이다. (다) \(P^{(r)}\)은 모든 \(D(h)\)와 교환한다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>(가) 기약 부분 공간 \(W\)가 \(D^{(s)}\)과 동치이면, \(W\)의 기저를 잘 골라 \(D\)를 \(W\)로 제한한 행렬이 정확히 \(D^{(s)}(g)\)가 되게 할 수 있고, \(D^{(s)}\)은 유니타리로 골라 둔다. 그 기저에서 \(P^{(r)}\)의 \((k, l)\) 성분은 \(\chi^{(r)} = \sum_iD^{(r)}_{ii}\)와 식 <a class="ref" href="#eq-great-orthogonality"></a>로</p>
+        <div class="formula">\[ \begin{aligned} &\frac{d_r}{\lvert G\rvert}\sum_i\sum_gD^{(r)}_{ii}(g)^*D^{(s)}_{kl}(g) \\ &\quad= d_r\sum_i\frac{\delta_{rs}\delta_{ik}\delta_{il}}{d_r} = \delta_{rs}\,\delta_{kl} \end{aligned} \]</div>
+        <p>이다. 곧 \(P^{(r)}\)은 \(s = r\)인 \(W\) 위에서 항등이고 \(s \ne r\)인 \(W\)를 0으로 보낸다. 나머지 등식은 이것에서 바로 나오고, 대각합은 항등인 블록의 차원의 합 \(m_rd_r\)이다. \(P^{(r)}\)의 정의인 식 <a class="ref" href="#eq-irrep-projector"></a>이 분해를 쓰지 않으므로 그 상 \(V_r\)도 분해에 무관하다.</p>
+        <p>(나) \(D(g)^\dagger = D(g^{-1})\)이고 \(\chi^{(r)}(g) = \chi^{(r)}(g^{-1})^*\)이므로 \(P^{(r)\dagger} = \frac{d_r}{\lvert G\rvert}\sum_g\chi^{(r)}(g^{-1})^*D(g^{-1}) = P^{(r)}\)이다(\(g^{-1}\)도 \(G\)를 한 번씩 돈다). (다) 식 <a class="ref" href="#eq-class-sum-commutes"></a>과 같은 계산이다. \(\chi^{(r)}\)이 류 함수이기 때문이다.</p>
+      </details>
+    </div>
+    <p>쓰는 법은 간단하다. 아무 벡터 \(v\)에 \(P^{(r)}\)을 작용하면 \(r\) 성분의 벡터가 나온다(0일 수도 있다). 분자의 원자 궤도에서 대칭에 맞춘 조합을 만들 때, 그리고 2.6절에서 진동 모드를 만들 때 이렇게 한다. \(d_r > 1\)이면 \(D^{(r)}_{ii}(g)^*\)를 지표 대신 넣은 \(P^{(r)}_{ii} = \frac{d_r}{\lvert G\rvert}\sum_gD^{(r)}_{ii}(g)^*D(g)\)가 \(V_r\) 안에서 다시 "\(i\)번째 기저 벡터처럼 변환하는" 부분으로 사영한다. 증명은 위의 계산에서 \(\sum_i\)를 빼면 된다.</p>
+
+    <div class="box ex" id="ex-three-particle-decomposition"><div class="box-h">동일 입자 세 개의 상태 공간</div>
+      <p>1장 <a href="ch01.html#prob-identical-particle-counting">문제 1.6</a>의 \(V = (\mathbb C^d)^{\otimes3}\)에 \(S_3\)가 \(P_\sigma\)로 작용한다. (가) 그 문제의 대칭화 \(\mathcal S\)와 반대칭화 \(\mathcal A\)가 식 <a class="ref" href="#eq-irrep-projector"></a>의 사영 연산자의 특수한 경우임을 보여라. (나) 어느 쪽에도 속하지 않는 상태가 이루는 공간을 기약 표현으로 밝히고 그 차원을 구하라.</p>
+      <p><b>풀이.</b> (가) \(A_1\)은 \(d = 1\), \(\chi = 1\)이고 \(A_2\)는 \(d = 1\), \(\chi = \operatorname{sgn}\)이므로 식 <a class="ref" href="#eq-irrep-projector"></a>은 \(P^{(A_1)} = \frac16\sum_\sigma P_\sigma = \mathcal S\), \(P^{(A_2)} = \frac16\sum_\sigma\operatorname{sgn}\sigma\,P_\sigma = \mathcal A\)이다. 1장에서 따로 확인한 \(\mathcal S^2 = \mathcal S\), \(\mathcal A^2 = \mathcal A\)는 <a class="ref" href="#thm-irrep-projector"></a>의 (가)다.</p>
+      <p>(나) \(\sum_rP^{(r)} = \mathbf 1\)이므로 남은 공간은 \(\operatorname{Ran}(\mathbf 1 - \mathcal S - \mathcal A) = \operatorname{Ran}P^{(E)}\), 곧 \(E\) 성분이다. 직접 쓰면 \(\chi_E\)가 호환에서 0이므로 \(P^{(E)} = \frac26\big(2\cdot\mathbf 1 - P_r - P_{r^2}\big)\)이다. 1장 문제 1.6의 (가)에서 \(\chi_V(\sigma) = \operatorname{tr}P_\sigma = d^{\,c(\sigma)}\)이므로 \(e\), 3-순환, 호환에서 \(\chi_V = (d^3, d, d^2)\)이고, 중복도 공식에서</p>
+      <div class="formula" id="eq-three-particle-mixed">\[ \begin{aligned} m_E &= \tfrac16\big[2d^3 + 2(-1)d + 3\cdot0\cdot d^2\big] \\ &= \frac{d^3 - d}{3} \end{aligned} \]</div>
+      <p>이다. \(E\) 성분의 차원은 \(2m_E = \tfrac23(d^3 - d)\)로, \(d = 2\)에서 4, \(d = 3\)에서 16이다. 1장의 답 \(8 - 4 - 0 = 4\), \(27 - 10 - 1 = 16\)과 같다.</p>
+      <p><b>확인.</b> \(m_{A_1} = \frac16(d^3 + 2d + 3d^2)\), \(m_{A_2} = \frac16(d^3 + 2d - 3d^2)\)이고 \(m_{A_1} + m_{A_2} + 2m_E = \frac{2d^3 + 4d}{6} + \frac{4d^3 - 4d}{6} = d^3\)이다. \(d^3 - d = (d - 1)d(d + 1)\)은 연속한 세 정수의 곱이라 언제나 3의 배수이므로 \(m_E\)는 정수다.</p>
+      <p><b>어디에 쓰이나.</b> \(E\) 성분의 상태는 세 입자의 순열에 대해 보손도 페르미온도 아니어서 『양자역학 (대학원)』 15장이 물리적 상태에서 뺀다. 같은 공간을 \(SU(d)\)의 표현으로 읽으면 \(d = 3\)의 16차원이 4장 <a href="ch04.html#ex-quark-model-multiplets">\(\mathbf 3 \otimes \mathbf 3 \otimes \mathbf 3\)의 분해</a>에 나오는 팔중항 둘이고, \(S_n\)의 기약 표현이 <a href="ch04.html#def-young-diagram">4장의 영 도표</a>로 분류된다(\(E\)는 \([2, 1]\)).</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 2.6 -->
+  <section id="s6">
+    <h2>텐서곱 표현</h2>
+    <p>학부 8장의 세 원자 고리에서 전자의 상태는 원자마다 하나였고, 그 공간은 순열 표현이었다. 원자가 움직이는 진동에서는 "어느 원자가"와 "어느 방향으로"를 함께 정해야 하고, 두 입자의 상태에서는 "첫째 입자의 상태"와 "둘째 입자의 상태"를 함께 정해야 한다. 이런 공간은 두 공간의 텐서곱이고, 군은 두 인자에 동시에 작용한다. 2.7절의 선택 규칙에서도 연산자를 상태에 작용한 결과가 이런 곱으로 변환한다. 곱의 표현이 어떤 기약 표현으로 쪼개지는지는 지표의 곱 하나로 정해진다.</p>
+    <div class="box def" id="def-tensor-product-representation"><div class="box-h">텐서곱 표현</div>
+      <p>\(G\)의 두 표현 \(D\)(공간 \(V\), 기저 \(e_i\))와 \(D'\)(공간 \(V'\), 기저 \(f_a\))에 대해, 텐서곱 공간 \(V \otimes V'\)(기저 \(e_i \otimes f_a\), 차원 \(dd'\)) 위의 표현 \(D \otimes D'\)을 \((D \otimes D')(g)(v \otimes w) = D(g)v \otimes D'(g)w\)로 정한다. 성분으로는</p>
+      <div class="formula" id="eq-tensor-product-matrix">\[ (D \otimes D')_{ia,\,jb}(g) = D_{ij}(g)\,D'_{ab}(g) \]</div>
+      <p>이다. 이것을 <span class="term">텐서곱 표현</span> <span class="en">(tensor product representation)</span>이라 한다.</p>
+    </div>
+    <p>표현인지 확인하자. \(\sum_{j,b}D_{ij}(g)D'_{ab}(g)\,D_{jk}(h)D'_{bc}(h) = D_{ik}(gh)\,D'_{ac}(gh)\)이므로 곱의 규칙이 지켜진다. 두 인자가 유니타리이면 곱도 유니타리다. 대각합은 \(i = j\), \(a = b\)인 성분의 합이므로 지표는 곱이다.</p>
+    <div class="formula" id="eq-product-character">\[ \chi_{D \otimes D'}(g) = \chi_D(g)\,\chi_{D'}(g) \]</div>
+    <p>따라서 기약 표현의 곱 \(D^{(r)} \otimes D^{(s)}\)에 들어 있는 \(D^{(t)}\)의 중복도는 중복도 공식에서</p>
+    <div class="formula" id="eq-product-multiplicity">\[ m_t(r \otimes s) = \frac{1}{\lvert G\rvert}\sum_{g}\chi^{(t)}(g)^*\,\chi^{(r)}(g)\,\chi^{(s)}(g) \]</div>
+    <p>이다. 이것이 유한군의 "클렙시-고든 급수"이고, 3장의 <a href="ch03.html#thm-clebsch-gordan-series">\(j_1 \otimes j_2\)의 분해</a>는 \(SU(2)\)에서 같은 셈을 한 것이다. \(C_{3v} \cong S_3\)에서 보자. 1차원 표현을 곱하면 지표에 \(\pm1\)이 곱해질 뿐이므로 \(A_2 \otimes A_2 = A_1\), \(A_2 \otimes E \cong E\)(지표 \((2, -1, 0)\)에 \((1, 1, -1)\)을 곱해도 그대로)이다. \(E \otimes E\)는 지표가 \((4, 1, 0)\)이라</p>
+    <div class="formula" id="eq-s3-ee-decomposition">\[ \begin{aligned} m_{A_1} &= \tfrac16(4 + 2) = 1 \\ m_{A_2} &= \tfrac16(4 + 2) = 1 \\ m_E &= \tfrac16(8 - 2) = 1 \end{aligned} \]</div>
+    <p>이고, 곧 \(E \otimes E \cong A_1 \oplus A_2 \oplus E\)이다. 차원은 \(4 = 1 + 1 + 2\)이다.</p>
+
+    <h3 id="s6-symmetric">대칭 곱과 반대칭 곱</h3>
+    <p>같은 표현의 곱 \(V \otimes V\)에는 두 인자를 맞바꾸는 연산 \(\tau(v \otimes w) = w \otimes v\)가 있고, \(\tau\)는 \(D(g) \otimes D(g)\)와 교환한다. 그래서 \(\tau = +1\)인 <span class="term">대칭 곱</span> <span class="en">(symmetric square)</span> \(\operatorname{Sym}^2V\)와 \(\tau = -1\)인 <span class="term">반대칭 곱</span> <span class="en">(antisymmetric square)</span> \(\operatorname{Alt}^2V\)가 각각 불변이고, \(V \otimes V = \operatorname{Sym}^2V \oplus \operatorname{Alt}^2V\)이다. 두 부분의 지표는</p>
+    <div class="formula" id="eq-symmetric-square">\[ \chi_\pm(g) = \tfrac12\big[\chi(g)^2 \pm \chi(g^2)\big] \]</div>
+    <p>이다(\(+\)가 대칭, \(-\)가 반대칭). <b>증명.</b> \(D(g)\)는 유니타리라 대각화되므로 고유벡터 \(v_i\)와 고유값 \(\lambda_i\)를 고른다. \(\operatorname{Sym}^2V\)는 \(v_i \otimes v_j + v_j \otimes v_i\)(\(i \le j\)), \(\operatorname{Alt}^2V\)는 \(v_i \otimes v_j - v_j \otimes v_i\)(\(i &lt; j\))가 펼치고, 둘 다 고유값 \(\lambda_i\lambda_j\)의 고유벡터다. \(\sum_{i \le j}\lambda_i\lambda_j = \frac12\big[(\sum_i\lambda_i)^2 + \sum_i\lambda_i^2\big]\), \(\sum_{i &lt; j}\lambda_i\lambda_j = \frac12\big[(\sum_i\lambda_i)^2 - \sum_i\lambda_i^2\big]\)이고 \(\sum_i\lambda_i^2 = \operatorname{tr}D(g)^2 = \chi(g^2)\)이다. ∎</p>
+    <p>\(C_{3v}\)의 \(E \otimes E\)에서 \(g^2\)은 \(e \mapsto e\), \(C_3 \mapsto C_3^2\)(같은 켤레류), \(\sigma_v \mapsto e\)이므로 \(\chi_E(g^2) = (2, -1, 2)\)이고 \(\chi_+ = \frac12(4 + 2, 1 - 1, 0 + 2) = (3, 0, 1)\), \(\chi_- = (1, 1, -1)\)이다. 곧 \(\operatorname{Sym}^2E \cong A_1 \oplus E\), \(\operatorname{Alt}^2E \cong A_2\)이다. 정삼각형 분자에서 겹친 \(E\) 궤도에 전자 둘이 들어가면 전체 파동함수가 반대칭이어야 하므로(1장의 페르미온), 공간 부분이 대칭인 \(A_1 \oplus E\)는 스핀 단일항과, 반대칭인 \(A_2\)는 스핀 삼중항과 짝을 짓는다. 이런 셈을 『양자역학 (대학원)』 15장이 쓴다(<a class="ref" href="#prob-t2-two-electrons"></a>).</p>
+
+    <div class="box ex" id="ex-triangle-normal-modes"><div class="box-h">정삼각형 분자의 평면 진동 모드</div>
+      <p>같은 원자 세 개(질량 \(m\))가 정삼각형의 꼭짓점에 있고, 세 변이 용수철 상수 \(k\)인 용수철(자연 길이는 변의 길이)이다. 평면 안의 작은 진동만 본다. (가) 원자 세 개의 평면 변위 6개가 이루는 \(C_{3v}\)의 표현을 분해하라. (나) 병진과 회전을 빼고 진동 모드의 기약 표현을 정하라. (다) 진동수를 구하라.</p>
+      <p><b>풀이.</b> 평면 안의 운동만 보므로 분자 평면에 대한 반사 \(\sigma_h\)는 모든 변위를 그대로 둔다. 분자의 점군 \(D_{3h}\)는 \(C_{3v} \times \{E, \sigma_h\}\)이므로 \(C_{3v}\)의 원소만 보면 된다(평면 안에서 \(\sigma_v\)는 꼭짓점을 지나는 직선에 대한 반사다).</p>
+      <p>(가) 원자 \(k\)의 \(a\) 방향 변위를 \(\lvert k\rangle \otimes \hat{\mathbf e}_a\)로 쓴다. \(g\)는 원자 \(k\)를 \(g(k)\)로 옮기고 변위 벡터를 식 <a class="ref" href="#eq-s3-geometric"></a>의 \(2 \times 2\) 행렬로 돌리므로, 변위 공간은 순열 표현과 기하학적 표현(\(E\))의 텐서곱 \(P \otimes E\)다. 식 <a class="ref" href="#eq-product-character"></a>에서</p>
+      <div class="formula" id="eq-displacement-character">\[ \chi_{\text{disp}} = (3, 0, 1)\times(2, -1, 0) = (6, 0, 0) \]</div>
+      <p>이다. 이것은 식 <a class="ref" href="#eq-regular-character"></a>의 정칙 표현의 지표이므로 \(m_r = d_r\), 곧 \(P \otimes E \cong A_1 \oplus A_2 \oplus 2E\)이다.</p>
+      <p>(나) 세 원자를 같은 벡터만큼 옮기는 병진 2개는 벡터처럼 변환하므로 \(E\)이다. 무게 중심 둘레의 작은 회전(원자 \(k\)의 변위가 \(\hat{\mathbf z} \times \mathbf r_k\)에 비례)은 \(C_3\)로 돌려도 그대로이고 \(\sigma_v\)로 비추면 방향이 뒤집히므로 지표가 \((1, 1, -1)\), 곧 \(A_2\)이다. 이 강체 운동 셋은 용수철을 늘이지 않으므로 진동수가 0이다. 남는 진동 모드는</p>
+      <div class="formula" id="eq-triangle-vibrations">\[ \begin{aligned} \Gamma_{\text{vib}} &= (A_1 \oplus A_2 \oplus 2E) - (E \oplus A_2) \\ &= A_1 \oplus E \end{aligned} \]</div>
+      <p>이다. 모드는 셋이고, 하나는 겹치지 않고 둘은 겹친다. 평면 밖 변위 셋은 \(z\) 방향 병진 하나와 평면 안 축 둘레의 회전 둘이라 진동이 없다(세 원자의 \(z\) 변위는 언제나 \(x, y\)의 일차 함수로 쓰이므로 강체 운동이다). 곧 \(3\cdot3 - 6 = 3\)개의 진동 모드가 모두 평면 안에 있고, \(D_{3h}\)의 이름으로는 \(A_1' \oplus E'\)이다.</p>
+      <p>(다) \(A_1\) 모드는 원자 1을 바깥쪽으로 미는 변위에 \(P^{(A_1)}\)을 작용해 얻는다. 여섯 원소로 평균하면 세 원자가 모두 중심에서 같은 거리 \(\varepsilon\)만큼 바깥으로 움직이는 "숨쉬기" 모드다. 강체 운동에는 \(A_1\)이 없으므로 이것이 그대로 진동 모드다. 변의 길이는 외접원 반지름의 \(\sqrt3\)배이므로 용수철마다 \(\sqrt3\,\varepsilon\)만큼 늘어나고, 퍼텐셜 에너지는 \(3\times\frac12k(\sqrt3\,\varepsilon)^2 = \frac92k\varepsilon^2\), 운동 에너지는 \(3\times\frac12m\dot\varepsilon^2\)이다. 따라서 \(\omega_{A_1}^2 = 3k/m\)이다.</p>
+      <p>\(E\)의 진동수는 대각합으로 얻는다. 퍼텐셜 에너지를 \(\frac12\mathbf u^{\mathsf T}K\mathbf u\)로 쓰면, 용수철 \(ij\)가 늘어난 길이는 1차까지 \(\hat{\mathbf e}_{ij}\cdot(\mathbf u_j - \mathbf u_i)\)(\(\hat{\mathbf e}_{ij}\)는 \(i\)에서 \(j\)로 가는 단위 벡터)이므로, 용수철마다 원자 \(i\)와 \(j\)의 대각 블록에 \(k\,\hat{\mathbf e}_{ij}\hat{\mathbf e}_{ij}^{\mathsf T}\)(대각합 \(k\))를 하나씩 더한다. 용수철 셋이 \(\operatorname{tr}K = 6k\)를 준다. \(K\)는 대칭 연산과 교환하고(퍼텐셜이 대칭이므로) 강체 운동을 0으로 보내므로, 강체 운동에 수직인 3차원 공간 \(\Gamma_{\text{vib}}\)를 자기 자신으로 보낸다. 그 공간에서 \(E\)는 한 번 나오므로 \(K\)는 \(E\) 성분 위에서 상수배 \(m\omega_E^2\)이다(슈어 보조정리 ii, 또는 2.7절의 정리). 대각합을 비교하면 \(m(\omega_{A_1}^2 + 2\omega_E^2) = 6k\)이고</p>
+      <div class="formula" id="eq-triangle-frequencies">\[ \begin{gathered} \omega_{A_1}^2 = \frac{3k}{m} \\ \omega_E^2 = \frac{3k}{2m} \end{gathered} \]</div>
+      <p>이다. 그림 2-1이 세 모드를 보인다.</p>
+      <p><b>확인.</b> \(6 \times 6\) 행렬 \(K/m\)을 직접 대각화하면 고유값이 \(0, 0, 0, \tfrac32, \tfrac32, 3\)(단위 \(k/m\))이다. 겹친 두 \(E\) 모드는 그림 2-1의 (나)와 (다)처럼 원자 1을 지나는 \(\sigma_v\)에 대해 대칭인 것과 반대칭인 것으로 고를 수 있고, 둘 다 운동량의 합이 0이며 각운동량도 0이다.</p>
+      <p><b>어디에 쓰이나.</b> "변위 표현 = 순열 표현 ⊗ 벡터 표현, 그리고 강체 운동을 뺀다"는 셈은 분자 진동을 분류하는 표준 방법이다(<a class="ref" href="#prob-water-vibrations"></a>). <a href="../../math-phys/chapters/ch08.html#ex-triangle-ring">학부 8장의 세 원자 고리</a>에서 전자 준위는 순열 표현 \(P = A_1 \oplus E\)(\(-2t\)와 \(t, t\))였다. 진동도 \(A_1 \oplus E\)이지만, \(P \otimes E\)에서 강체 운동 \(E \oplus A_2\)를 뺀 것이라 출처가 다르다.</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 205" role="img" aria-label="정삼각형 분자의 세 진동 모드. 가는 숨쉬기 모드로 세 원자가 모두 바깥으로, 나와 다는 겹친 E 모드 둘이다"><defs><marker id="f0201-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs><polygon points="85,58 45.2,127 124.8,127" class="s-line" style="stroke-dasharray:4 3"/><polygon points="240,58 200.2,127 279.8,127" class="s-line" style="stroke-dasharray:4 3"/><polygon points="395,58 355.2,127 434.8,127" class="s-line" style="stroke-dasharray:4 3"/><circle cx="85" cy="58" r="7" class="f-dim"/><circle cx="45.2" cy="127" r="7" class="f-dim"/><circle cx="124.8" cy="127" r="7" class="f-dim"/><circle cx="240" cy="58" r="7" class="f-dim"/><circle cx="200.2" cy="127" r="7" class="f-dim"/><circle cx="279.8" cy="127" r="7" class="f-dim"/><circle cx="395" cy="58" r="7" class="f-dim"/><circle cx="355.2" cy="127" r="7" class="f-dim"/><circle cx="434.8" cy="127" r="7" class="f-dim"/><g class="s-acc" style="stroke-width:2.4"><line x1="85" y1="50" x2="85" y2="20" marker-end="url(#f0201-arr)"/><line x1="38.2" y1="131" x2="12.2" y2="146" marker-end="url(#f0201-arr)"/><line x1="131.8" y1="131" x2="157.8" y2="146" marker-end="url(#f0201-arr)"/><line x1="240" y1="50" x2="240" y2="20" marker-end="url(#f0201-arr)"/><line x1="207.1" y1="131" x2="233.1" y2="146" marker-end="url(#f0201-arr)"/><line x1="272.9" y1="131" x2="246.9" y2="146" marker-end="url(#f0201-arr)"/><line x1="387" y1="58" x2="357" y2="58" marker-end="url(#f0201-arr)"/><line x1="359.2" y1="120.1" x2="374.2" y2="94.1" marker-end="url(#f0201-arr)"/><line x1="438.8" y1="133.9" x2="453.8" y2="159.9" marker-end="url(#f0201-arr)"/></g><text x="99" y="62" class="t-dim">1</text><text x="254" y="62" class="t-dim">1</text><text x="409" y="50" class="t-dim">1</text><text x="85" y="178" class="t" text-anchor="middle">(가) <tspan class="t-math" font-style="italic">A</tspan><tspan class="t-math" baseline-shift="sub" font-size="72%">1</tspan></text><text x="240" y="178" class="t" text-anchor="middle">(나) <tspan class="t-math" font-style="italic">E</tspan>, <tspan class="t-math" font-style="italic">σ</tspan><tspan class="t-math" baseline-shift="sub" font-size="72%">v</tspan> 대칭</text><text x="395" y="178" class="t" text-anchor="middle">(다) <tspan class="t-math" font-style="italic">E</tspan>, <tspan class="t-math" font-style="italic">σ</tspan><tspan class="t-math" baseline-shift="sub" font-size="72%">v</tspan> 반대칭</text><text x="85" y="198" class="t-dim" text-anchor="middle"><tspan font-style="italic">ω</tspan>² = 3<tspan font-style="italic">k</tspan>/<tspan font-style="italic">m</tspan></text><text x="317" y="198" class="t-dim" text-anchor="middle"><tspan font-style="italic">ω</tspan>² = 3<tspan font-style="italic">k</tspan>/2<tspan font-style="italic">m</tspan></text></svg>
+      <figcaption><b>그림 2-1.</b> 정삼각형 분자의 평면 진동 모드. 화살표는 6×6 행렬을 대각화해 얻은 고유벡터의 변위이고, 세 모드 모두 원자마다 변위의 크기가 같다. 점선은 평형 위치의 용수철이고 1은 원자 1이다. (가) 숨쉬기 모드 \(A_1\). (나)와 (다)는 같은 진동수의 \(E\) 모드 둘로, 원자 1을 지나는 세로축에 대한 반사 \(\sigma_v\)에 대해 (나)는 대칭, (다)는 반대칭이다. 두 모드의 일차 결합도 모두 같은 진동수의 모드다.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================================================ 2.7 -->
+  <section id="s7">
+    <h2>대칭이 정하는 축퇴와 선택 규칙</h2>
+    <p>『양자역학 (대학원)』 10장의 축퇴 섭동론은 겹친 준위 안에서 섭동의 행렬을 대각화한다. 그 행렬이 얼마나 작은 조각으로 나뉘는지, 어떤 행렬 원소가 처음부터 0인지를 대칭이 정한다. 2.3절에서 세 원자 고리에 쓴 논법을 일반 정리로 세우고, 2.5절의 결정장 계산을 물리로 마무리한 뒤, 텐서곱의 분해로 전이의 선택 규칙을 판정한다.</p>
+    <p>먼저 대칭의 뜻을 정한다. 회전과 반사로 된 군 \(G\)가 퍼텐셜을 보존하면, 곧 모든 \(g\)에서 \(V(g^{-1}\mathbf r) = V(\mathbf r)\)이면, 해밀토니안 \(H = -\frac{1}{2m}\nabla^2 + V(\mathbf r)\)는 식 <a class="ref" href="#eq-function-representation"></a>의 \(U(g)\)와 교환한다. \((U(g)H\psi)(\mathbf r) = (H\psi)(g^{-1}\mathbf r)\)에서 2.5절의 \(\nabla^2f_R = (\nabla^2f)_R\)와 \(V(g^{-1}\mathbf r) = V(\mathbf r)\)을 쓰면 \(HU(g)\psi\)와 같기 때문이다. 이때 \(G\)를 \(H\)의 대칭 변환군이라 한다.</p>
+    <div class="box thm" id="thm-degeneracy-irrep"><div class="box-h">대칭 변환군의 기약 표현과 에너지 준위의 축퇴</div>
+      <p>유한군 \(G\)의 유니타리 표현 \(U\)가 유한 차원 내적 공간 \(V\)에 작용하고, 에르미트 연산자 \(H : V \to V\)가 모든 \(g\)에서 \(U(g)H = HU(g)\)를 만족한다고 하자.</p>
+      <ol type="i">
+        <li>\(H\)의 고유 공간은 불변이고, 고유값 \(\lambda\)의 고유 공간은 \(\bigoplus_rn_r(\lambda)D^{(r)}\)과 동치다. 따라서 \(\lambda\)의 축퇴는 \(\sum_rn_r(\lambda)\,d_r\), 곧 기약 표현의 차원의 합이다.</li>
+        <li>\(V \cong \bigoplus_rm_rD^{(r)}\)에 맞춘 정규 직교 기저 \(\lvert r\,a\,i\rangle\)(\(a = 1, \ldots, m_r\)은 몇 번째 사본인지, \(i = 1, \ldots, d_r\))를 \(U(g)\lvert r\,a\,i\rangle = \sum_j\lvert r\,a\,j\rangle D^{(r)}_{ji}(g)\)가 되게 고를 수 있고, 그 기저에서
+          <div class="formula" id="eq-wigner-block">\[ \langle r\,a\,i\vert H\vert s\,b\,j\rangle = \delta_{rs}\,\delta_{ij}\,h^{(r)}_{ab} \]</div>
+          이다. 곧 \(H\)의 고유값 문제는 기약 표현마다 \(m_r \times m_r\) 에르미트 행렬 \(h^{(r)}\)의 고유값 문제로 줄고, \(h^{(r)}\)의 고유값 하나하나가 \(d_r\)번 겹친 \(H\)의 고유값이다.</li>
+      </ol>
+      <p>\(V\)가 무한 차원이면 i은 유한 차원인 고유 공간마다, ii는 \(H\)와 \(U\)가 함께 보존하는 유한 차원 부분 공간(예: 섭동 전의 한 준위)마다 쓴다.</p>
+    </div>
+    <p><b>증명.</b> (1) <i>i.</i> \(H\psi = \lambda\psi\)이면 \(HU(g)\psi = U(g)H\psi = \lambda\,U(g)\psi\)이므로 고유 공간은 불변이고, 그 위의 \(U\)는 마슈케 정리로 기약 표현의 직합이다.</p>
+    <p>(2) <i>기저.</i> 마슈케 정리로 \(V\)를 서로 수직인 기약 부분 공간의 직합으로 쓴다. \(D^{(r)}\)과 동치인 부분 공간마다, 2.3절의 세 번째 쓰임(동치인 유니타리 기약 표현은 유니타리 행렬로 동치)에 따라 행렬이 정확히 \(D^{(r)}(g)\)가 되는 정규 직교 기저를 고른다.</p>
+    <p>(3) <i>블록.</i> \((r, a)\)와 \((s, b)\)를 고정하고 \(d_r \times d_s\) 행렬 \(M_{ij} = \langle r\,a\,i\vert H\vert s\,b\,j\rangle\)을 만든다. \(HU(g)\)의 행렬 원소는 \(\langle r\,a\,i\vert HU(g)\vert s\,b\,j\rangle = \sum_kM_{ik}D^{(s)}_{kj}(g)\)이다. 한편 \(U(g)^\dagger\lvert r\,a\,i\rangle = U(g^{-1})\lvert r\,a\,i\rangle = \sum_k\lvert r\,a\,k\rangle D^{(r)}_{ki}(g^{-1})\)이고 유니타리성에서 \(D^{(r)}_{ki}(g^{-1}) = D^{(r)}_{ik}(g)^*\)이므로</p>
+    <div class="formula" id="eq-wigner-block-derivation">\[ \begin{aligned} &\langle r\,a\,i\vert U(g)H\vert s\,b\,j\rangle \\ &\quad= \sum_kD^{(r)}_{ik}(g)\,M_{kj} \end{aligned} \]</div>
+    <p>이다(브라로 옮기면 계수에 켤레가 한 번 더 붙는다). \(U(g)H = HU(g)\)이므로 \(D^{(r)}(g)M = MD^{(s)}(g)\), 곧 \(M\)은 식 <a class="ref" href="#eq-intertwiner"></a>를 만족한다. 슈어 보조정리에 따라 \(r \ne s\)이면 \(M = 0\)이고, \(r = s\)이면(두 사본의 행렬이 같은 \(D^{(r)}\)이다) \(M = h^{(r)}_{ab}\mathbf 1\)이다. \(H\)가 에르미트이므로 \(h^{(r)}_{ba} = (h^{(r)}_{ab})^*\)이다.</p>
+    <p>(4) 이 기저에서 \(H\)는 \(r\)마다 "\(h^{(r)}\)을 \(d_r\)번 되풀이한" 블록이므로, \(h^{(r)}\)의 고유값마다 \(d_r\)개의 고유벡터가 있다. ∎</p>
+    <p>정리가 말하는 것은 <b>대칭이 강제하는 축퇴가 \(d_r\)</b>이라는 것이다. \(h^{(r)}\)의 고유값끼리, 또는 다른 \(r\)의 고유값과 우연히 같아서 더 겹치는 것을 <span class="term">우연 축퇴</span> <span class="en">(accidental degeneracy)</span>라 한다. 우연 축퇴는 흔히 아직 찾지 못한 더 큰 대칭의 신호다. 수소 원자에서 같은 \(n\)의 \(l\)이 다른 준위가 겹치는 것은 \(SO(3)\)만으로는 우연이지만 더 큰 \(SO(4)\) 대칭으로 설명된다(3장 <a href="ch03.html#ex-so4-su2-su2">\(\mathfrak{so}(4) \cong \mathfrak{su}(2) \oplus \mathfrak{su}(2)\)</a>, 『양자역학 (대학원)』 8장). 반대로 섭동이 대칭을 \(G_0\)에서 부분군 \(G\)로 줄이면, \(G_0\)의 기약 표현이던 준위가 \(G\)의 표현으로는 가약일 수 있고, 그 분해가 준위가 갈라지는 틀이다.</p>
+
+    <div class="box ex" id="ex-crystal-field-d-orbitals"><div class="box-h">정팔면체 결정장 속의 \(d\) 궤도</div>
+      <p>\(d\) 전자 하나를 가진 이온이 원점에 있고, 같은 음전하 여섯 개가 \(\pm a\hat{\mathbf x}\), \(\pm a\hat{\mathbf y}\), \(\pm a\hat{\mathbf z}\)에 있다. 전자가 느끼는 퍼텐셜 에너지를 \(V(\mathbf r) = \kappa\sum_{k=1}^6\lvert\mathbf r - \mathbf R_k\rvert^{-1}\)(\(\kappa > 0\)은 쿨롱 상수와 두 전하를 곱한 것)으로 두고 섭동으로 본다. (가) 1차 섭동에서 \(d\) 준위는 몇 개로, 각각 몇 겹으로 갈라지는가. (나) 각 준위에 속하는 실수 \(d\) 궤도를 찾아라. (다) 어느 준위가 위인지도 대칭이 정하는가.</p>
+      <p><b>풀이.</b> (가) 여섯 전하는 정육면체의 대칭 변환으로 서로 바뀌므로 \(V\)의 대칭 변환군은 \(O_h = O \times \{E, i\}\)이다(1장 1.7절). 자유 이온의 \(d\) 준위는 지름 부분이 같은 다섯 상태 \(R(r)Y_2^m\)이고, 이 공간으로 가는 사영 \(\Pi_2\)는 모든 회전·반전과 교환한다. 따라서 1차 섭동의 \(5 \times 5\) 행렬 \(\Pi_2V\Pi_2\)는 \(O_h\)와 교환한다. 반전은 \(Y_2^m\)에 \((-1)^2 = +1\)로 작용하므로 \(O\)만 보면 되고, <a class="ref" href="#calc-crystal-field-splitting"></a>에서 \(\mathcal H_2 \cong E \oplus T_2\)였다. 두 기약 표현이 한 번씩이므로 <a class="ref" href="#thm-degeneracy-irrep"></a>의 ii에서 \(m_r = 1\), 곧 \(h^{(r)}\)이 \(1 \times 1\)이고</p>
+      <div class="formula" id="eq-crystal-field-blocks">\[ \Pi_2V\Pi_2 = v_E\,\mathbf 1_E \oplus v_{T_2}\,\mathbf 1_{T_2} \]</div>
+      <p>이다. 준위는 2중과 3중의 둘로 갈라진다.</p>
+      <p>(나) \(T_2\): \(xy, yz, zx\). \(E\): \(x^2 - y^2, 3z^2 - r^2\). \(O\)는 \(z\)축의 \(C_4\)와 대각선 \((1, 1, 1)\)의 \(C_3\)(\(x \to y \to z \to x\))으로 생성되므로(\(C_3\)가 \(z\)축의 \(C_4\)를 다른 두 축으로 옮긴다) 두 생성원에서 불변이면 충분하다. \(C_4\)는 손 계산의 확인에서 보았다. \(C_3\)에서는 \(R^{-1}(x, y, z) = (y, z, x)\)이므로 \(xy \to yz \to zx \to xy\)이고</p>
+      <div class="formula">\[ \begin{aligned} x^2 - y^2 &\mapsto y^2 - z^2 \\ &= -\tfrac12(x^2 - y^2) - \tfrac12(3z^2 - r^2) \\ 3z^2 - r^2 &\mapsto 3x^2 - r^2 \\ &= \tfrac32(x^2 - y^2) - \tfrac12(3z^2 - r^2) \end{aligned} \]</div>
+      <p>이다. 두 공간이 불변이고, 대각합 \(0\)과 \(-\tfrac12 - \tfrac12 = -1\)은 \(\chi_{T_2}(C_3)\), \(\chi_E(C_3)\)과 같다.</p>
+      <p>(다) 대칭은 갈라지는 틀만 정하고 \(v_E\), \(v_{T_2}\)의 값은 정하지 않는다. \(V\)를 \(r \ll a\)에서 전개하면</p>
+      <div class="formula" id="eq-octahedral-potential">\[ \begin{aligned} \sum_{k=1}^{6}\frac{1}{\lvert\mathbf r - \mathbf R_k\rvert} &= \frac6a \\ &\quad + \frac{35}{4a^5}\Big(x^4 + y^4 + z^4 - \frac35r^4\Big) \\ &\quad + O(r^6) \end{aligned} \]</div>
+      <p>이다. 전개의 \(r^l\) 항은 \(l\)차 구면 조화 함수의 일차 결합이고 \(O_h\)에 대해 불변이어야 하므로, \(r\), \(r^2\), \(r^3\) 항이 없는 것은 <a class="ref" href="#code-irrep-decomposition"></a>에서 \(l = 1, 2, 3\)에 \(A_1\)이 없었기 때문이다. 상수 항 \(6\kappa/a\)는 모든 준위를 똑같이 옮기므로 빼고, 남은 부분의 고유값을 \(\varepsilon_E = v_E - 6\kappa/a\), \(\varepsilon_{T_2} = v_{T_2} - 6\kappa/a\)라 하자. 둘째 항의 각 부분은 \(l = 4\)의 조화 함수라 상수와 직교하므로, <a href="../../math-phys/chapters/ch12.html#thm-addition-theorem">학부 12장의 덧셈 정리</a> \(\sum_m\lvert Y_2^m\rvert^2 = 5/4\pi\)에서 다섯 상태에 대한 대각합이 0이다. 곧 \(2\varepsilon_E + 3\varepsilon_{T_2} = 0\)(무게 중심이 그대로)이다. 부호는 궤도의 모양에서 읽는다. 괄호 속 함수는 단위 구 위에서 좌표축 방향(전하 쪽)에서 \(1 - \tfrac35 = \tfrac25 > 0\)으로 가장 크고, \((1, 1, 0)/\sqrt2\) 방향에서 \(\tfrac12 - \tfrac35 = -\tfrac1{10}\)이다. 좌표축 쪽으로 뻗은 \(x^2 - y^2\), \(3z^2 - r^2\)가 밀려 올라가므로 \(E\)가 위다. 적분을 끝까지 하면(<a class="ref" href="#prob-code-crystal-field-matrix"></a>) 갈라짐은 \(\Delta = \varepsilon_E - \varepsilon_{T_2} = \tfrac53\kappa\langle r^4\rangle/a^5\)이고 \(\varepsilon_E = \tfrac35\Delta\), \(\varepsilon_{T_2} = -\tfrac25\Delta\)이다(그림 2-2).</p>
+      <p><b>확인.</b> \(2\cdot\tfrac35 - 3\cdot\tfrac25 = 0\)이다. 전개 식 <a class="ref" href="#eq-octahedral-potential"></a>의 둘째 항은 \(\nabla^2(x^4 + y^4 + z^4) = 12r^2\), \(\nabla^2r^4 = 20r^2\)이라 \(12 - \tfrac35\cdot20 = 0\), 곧 조화 함수이고 \(O_h\)에 대해 불변이다. <a class="ref" href="#code-irrep-decomposition"></a>의 \(l = 4\)에 \(A_1\)이 정확히 하나 있다는 것과 맞는다.</p>
+      <p><b>어디에 쓰이나.</b> 큰 대칭의 준위가 작은 대칭에서 갈라지는 틀을 제한한 표현의 분해로 읽는 방법을 『양자역학 (대학원)』 10장의 축퇴 섭동론이 쓴다. 대칭을 더 낮추면(정팔면체를 \(z\)축으로 늘이면) \(E\)와 \(T_2\)가 다시 갈라진다(<a class="ref" href="#prob-tetragonal-distortion"></a>).</p>
+    </div>
+    <figure class="diagram">
+      <svg viewBox="0 0 480 240" role="img" aria-label="자유 이온의 5중 d 준위가 정팔면체 결정장에서 위쪽 2중 E 준위와 아래쪽 3중 T2 준위로 갈라지는 준위 그림"><defs><marker id="f0202-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker></defs><line x1="152" y1="120" x2="296" y2="48" class="s-faint" stroke-dasharray="4 4"/><line x1="152" y1="120" x2="296" y2="168" class="s-faint" stroke-dasharray="4 4"/><line x1="292" y1="120" x2="408" y2="120" class="s-faint" stroke-dasharray="2 4"/><g style="stroke:var(--text);stroke-width:3"><line x1="30" y1="120" x2="50" y2="120"/><line x1="55" y1="120" x2="75" y2="120"/><line x1="80" y1="120" x2="100" y2="120"/><line x1="105" y1="120" x2="125" y2="120"/><line x1="130" y1="120" x2="150" y2="120"/></g><g class="s-acc" style="stroke-width:3"><line x1="300" y1="48" x2="345" y2="48"/><line x1="355" y1="48" x2="400" y2="48"/></g><g class="s-acc2" style="stroke-width:3"><line x1="300" y1="168" x2="330" y2="168"/><line x1="335" y1="168" x2="365" y2="168"/><line x1="370" y1="168" x2="400" y2="168"/></g><line x1="428" y1="117" x2="428" y2="52" class="s-line" marker-end="url(#f0202-arr)"/><line x1="428" y1="123" x2="428" y2="164" class="s-line" marker-end="url(#f0202-arr)"/><text x="436" y="90" class="t-math">0.6Δ</text><text x="436" y="150" class="t-math">0.4Δ</text><text x="350" y="32" class="t-math acc" text-anchor="middle"><tspan font-style="italic">E</tspan>:  <tspan font-style="italic">x</tspan><tspan baseline-shift="super" font-size="72%">2</tspan> − <tspan font-style="italic">y</tspan><tspan baseline-shift="super" font-size="72%">2</tspan>,  3<tspan font-style="italic">z</tspan><tspan baseline-shift="super" font-size="72%">2</tspan> − <tspan font-style="italic">r</tspan><tspan baseline-shift="super" font-size="72%">2</tspan></text><text x="350" y="194" class="t-math acc2" text-anchor="middle"><tspan font-style="italic">T</tspan><tspan baseline-shift="sub" font-size="72%">2</tspan>:  <tspan font-style="italic">xy</tspan>,  <tspan font-style="italic">yz</tspan>,  <tspan font-style="italic">zx</tspan></text><text x="90" y="146" class="t" text-anchor="middle">자유 이온 (5중)</text><text x="90" y="166" class="t-math" text-anchor="middle"><tspan font-style="italic">l</tspan> = 2</text><text x="350" y="226" class="t" text-anchor="middle">정팔면체 결정장 (2중 + 3중)</text></svg>
+      <figcaption><b>그림 2-2.</b> 정팔면체 결정장에서 갈라지는 \(d\) 준위. 짧은 선 하나가 상태 하나다. 대칭은 "2중 + 3중"이라는 틀만 정하고, 순서와 간격 \(\Delta\)는 <a class="ref" href="#ex-crystal-field-d-orbitals"></a>의 전개에서 나온다. 가로 점선은 갈라지기 전의 준위로, 두 준위의 무게 중심 \(2\cdot0.6\Delta = 3\cdot0.4\Delta\)가 그대로 남는다. 모든 준위의 공통 이동 \(6\kappa/a\)는 그리지 않았다.</figcaption>
+    </figure>
+
+    <h3 id="s7-selection">선택 규칙</h3>
+    <p>원자나 분자가 빛을 흡수해 상태 \(\lvert i\rangle\)에서 \(\lvert f\rangle\)으로 가는 전이의 세기는 1차 섭동에서 쌍극자 행렬 원소 \(\lvert\langle f\vert\mathbf r\vert i\rangle\rvert^2\)에 비례한다. 이 행렬 원소가 대칭 때문에 0이면 그 전이는 (이 차수에서) 금지된다. 어떤 행렬 원소가 대칭 때문에 0인지 정하는 규칙을 <span class="term">선택 규칙</span> <span class="en">(selection rule)</span>이라 한다. 연산자가 어떻게 변환하는지부터 정하자. 위치 연산자는 \(U(g)\,x_k\,U(g)^{-1} = \sum_lx_l\,R_{lk}(g)\)(\(R(g)\)는 3×3 직교 행렬)로 변환한다. 양변을 함수 \(\psi\)에 작용해 보면, 왼쪽은 \((R^{-1}\mathbf r)_k\,\psi(\mathbf r) = \sum_lR_{lk}x_l\psi(\mathbf r)\)이다. 일반적으로 연산자 묶음 \(O_1, \ldots, O_{d_s}\)가</p>
+    <div class="formula" id="eq-tensor-operator-finite">\[ U(g)\,O_k\,U(g)^{-1} = \sum_lO_l\,D^{(s)}_{lk}(g) \]</div>
+    <p>를 만족하면 "\(D^{(s)}\)처럼 변환하는 연산자"라 한다. 위치 연산자는 벡터 표현, \(O\)에서는 \(T_1\)처럼 변환한다.</p>
+    <div class="box thm" id="thm-finite-group-selection-rule"><div class="box-h">선택 규칙</div>
+      <p>유한군 \(G\)의 유니타리 표현 \(U\)가 \(V\)에 작용한다. 연산자 \(O_k\)가 식 <a class="ref" href="#eq-tensor-operator-finite"></a>처럼 \(D^{(s)}\)로, 벡터 \(\lvert t\,j\rangle\)(\(j = 1, \ldots, d_t\))가 \(U(g)\lvert t\,j\rangle = \sum_m\lvert t\,m\rangle D^{(t)}_{mj}(g)\)처럼 \(D^{(t)}\)로 변환하고, \(\lvert\phi\rangle\)이 \(r\) 성분 \(V_r\)의 벡터라 하자. \(D^{(s)} \otimes D^{(t)}\)가 \(D^{(r)}\)을 품지 않으면, 곧</p>
+      <div class="formula" id="eq-selection-rule-multiplicity">\[ \begin{aligned} &m_r(s \otimes t) \\ &\quad= \frac{1}{\lvert G\rvert}\sum_g\chi^{(r)}(g)^*\chi^{(s)}(g)\chi^{(t)}(g) = 0 \end{aligned} \]</div>
+      <p>이면 모든 \(k, j\)에서 \(\langle\phi\vert O_k\vert t\,j\rangle = 0\)이다.</p>
+    </div>
+    <p><b>증명.</b> (1) \(w_{kj} = O_k\lvert t\,j\rangle\)로 두면 \(U(g)w_{kj} = \big(U(g)O_kU(g)^{-1}\big)U(g)\lvert t\,j\rangle = \sum_{l,m}w_{lm}D^{(s)}_{lk}(g)D^{(t)}_{mj}(g)\)이다. 식 <a class="ref" href="#eq-tensor-product-matrix"></a>와 비교하면, \(e_k \otimes e_j \mapsto w_{kj}\)로 정한 선형 사상 \(\Phi : \mathbb C^{d_s} \otimes \mathbb C^{d_t} \to V\)는 \(U(g)\Phi = \Phi\,(D^{(s)} \otimes D^{(t)})(g)\)를 만족한다.</p>
+    <p>(2) 사영 연산자(식 <a class="ref" href="#eq-irrep-projector"></a>)는 표현 행렬의 같은 일차 결합이므로 \(P^{(r)}_V\Phi = \Phi P^{(r)}_{s\otimes t}\)이다. \(m_r(s \otimes t) = 0\)이면 \(D^{(s)} \otimes D^{(t)}\)에 \(r\) 성분이 없으므로 \(P^{(r)}_{s\otimes t} = 0\)이고, 따라서 \(P^{(r)}_Vw_{kj} = 0\)이다.</p>
+    <p>(3) \(\lvert\phi\rangle \in V_r\)이므로 \(P^{(r)}_V\lvert\phi\rangle = \lvert\phi\rangle\)이고, <a class="ref" href="#thm-irrep-projector"></a>의 (나)에서 \(P^{(r)}_V\)는 에르미트다. \(\langle\phi\vert w_{kj}\rangle = \langle P^{(r)}_V\phi\vert w_{kj}\rangle = \langle\phi\vert P^{(r)}_Vw_{kj}\rangle = 0\)이다. ∎</p>
+    <p>\(m_r(s \otimes t) = 1\)이면 행렬 원소 \(d_rd_sd_t\)개가 상수 하나로 정해진다. \(\lvert t\,j\rangle\)와 \(\lvert r\,i\rangle\)을 하나의 사본에서 고르면, 행렬 원소들이 정하는 사상 \(\mathbb C^{d_s} \otimes \mathbb C^{d_t} \to \mathbb C^{d_r}\)(\(\lvert r\,i\rangle\)이 펼치는 사본의 좌표)가 군과 교환하고, 슈어 보조정리로 그런 사상의 공간이 \(m_r(s \otimes t)\)차원이기 때문이다. \(SU(2)\)에서 이것이 3장의 <a href="ch03.html#thm-wigner-eckart">위그너-에카르트 정리</a>다.</p>
+
+    <div class="box ex" id="ex-dipole-selection-rule"><div class="box-h">\(d\) 궤도 사이의 쌍극자 전이</div>
+      <p><a class="ref" href="#ex-crystal-field-d-orbitals"></a>의 두 준위 \(E\)와 \(T_2\) 사이의 쌍극자 전이를 판정하라. (가) 대칭을 \(O\)로만 보면 허용되는가. (나) 반전을 넣은 \(O_h\)에서는 어떤가.</p>
+      <p><b>풀이.</b> (가) \(\mathbf r\)은 \(T_1\), 처음 상태는 \(E\)이므로 \(T_1 \otimes E\)를 분해한다. 지표는 \((3, 0, -1, 1, -1)\times(2, -1, 2, 0, 0) = (6, 0, -2, 0, 0)\)이고, 식 <a class="ref" href="#eq-selection-rule-multiplicity"></a>에서</p>
+      <div class="formula" id="eq-t1-times-e">\[ \begin{aligned} m_{T_1} = m_{T_2} &= \tfrac1{24}\big(6\cdot3 + 3\cdot(-2)(-1)\big) \\ &= 1 \end{aligned} \]</div>
+      <p>이고 나머지는 0이다(\(A_1\): \(\tfrac1{24}(6 - 6) = 0\), \(E\): \(\tfrac1{24}(12 - 12) = 0\)). \(T_1 \otimes E \cong T_1 \oplus T_2\)가 \(T_2\)를 품으므로 \(O\)만으로는 전이가 금지되지 않는다.</p>
+      <p>(나) \(O_h = O \times \{E, i\}\)의 기약 표현은 \(O\)의 기약 표현 \(D^{(r)}\)마다 둘이다. \(i\)를 \(+\mathbf 1\)로 보내는 \(r_g\)와 \(-\mathbf 1\)로 보내는 \(r_u\)이다. 이 열 개는 지표의 노름이 1이고 서로 직교하며(합의 항도 위수도 두 배가 된다), 켤레류가 \(O\)의 켤레류마다 \(C\)와 \(iC\)로 열 개이므로 지표의 직교성 ii에 따라 이것이 전부다. \(d\) 궤도는 2차 다항식이라 반전에서 그대로이므로 \(E_g\), \(T_{2g}\)이고, \(\mathbf r\)은 부호가 바뀌므로 \(T_{1u}\)이다. 곱의 지표는 \(i\)가 붙은 원소에서 \((+1)(-1) = -1\)이 곱해지므로 \(T_{1u} \otimes E_g \cong T_{1u} \oplus T_{2u}\)이다. \(T_{2g}\)가 없으므로 \(\langle T_{2g}\vert\mathbf r\vert E_g\rangle = 0\), 곧 금지다.</p>
+      <p><b>확인.</b> 반전만으로도 같은 결론이 나온다. 피적분 함수 \(\psi_f^*\,\mathbf r\,\psi_i\)는 \(\mathbf r \to -\mathbf r\)에서 \((+1)(-1)(+1) = -1\)배가 되므로 전 공간 적분이 0이다. 짝성이 같은 상태 사이의 쌍극자 전이가 금지된다는 이 규칙을 <span class="term">라포르트 규칙</span> <span class="en">(Laporte rule)</span>이라 한다. <a class="ref" href="#thm-finite-group-selection-rule"></a>는 같은 결론을 \(g\)·\(u\)의 이름표로 낸다.</p>
+      <p><b>어디에 쓰이나.</b> 실제 정팔면체 착물에서 \(d\)–\(d\) 흡수가 약한 것은 이 전이가 금지되어 있고, 분자 진동이 반전 대칭을 잠깐 깨뜨릴 때만 조금 허용되기 때문이다. 『양자역학 (대학원)』 6장은 같은 판정을 회전군 전체로 넓혀 각운동량의 선택 규칙을 얻는다.</p>
+    </div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>표현은 준동형 \(D(g)D(h) = D(gh)\)이고, 동치는 모든 원소에 한꺼번에 쓰는 기저 변환 \(SD(g)S^{-1}\)이다. 유한군의 표현은 평균 내적 \(\langle u\vert v\rangle_G = \frac{1}{\lvert G\rvert}\sum_g\langle D(g)u\vert D(g)v\rangle\)으로 유니타리가 되고, 불변 부분 공간의 직교 여공간도 불변이라 기약 표현의 직합으로 쪼개진다(마슈케 정리). \((\mathbb R, +)\)의 \(a \mapsto \begin{pmatrix}1 & a\\0 & 1\end{pmatrix}\)처럼 무한군에서는 깨질 수 있다.</li>
+      <li>슈어 보조정리: 기약 표현 사이를 교환하며 잇는 사상은 0이거나 가역이고, 복소 기약 표현과 교환하는 행렬은 \(\lambda\mathbf 1\)뿐이다. 그래서 아벨 군의 기약 표현은 1차원이고, \(\mathbb Z_n\)은 \(a^m \mapsto e^{2\pi ikm/n}\)의 \(n\)개다.</li>
+      <li>대직교 정리 \(\frac{1}{\lvert G\rvert}\sum_gD^{(r)}_{ij}(g)^*D^{(s)}_{kl}(g) = \frac{1}{d_r}\delta_{rs}\delta_{ik}\delta_{jl}\). 증명은 \(\sum_gD(g^{-1})XD(g)\)가 교환한다는 것과 슈어 보조정리뿐이다.</li>
+      <li>지표 \(\chi(g) = \operatorname{tr}D(g)\)는 류 함수이고 표현을 동치까지 정한다. 행의 직교성 \(\langle\chi^{(r)}\vert\chi^{(s)}\rangle = \delta_{rs}\), 열의 직교성 \(\sum_r\chi^{(r)}(C_i)^*\chi^{(r)}(C_j) = \frac{\lvert G\rvert}{\lvert C_i\rvert}\delta_{ij}\), 기약 표현의 수 = 켤레류의 수, 정칙 표현에서 \(m_r = d_r\)이라 \(\sum_rd_r^2 = \lvert G\rvert\). \(C_{3v} \cong S_3\)는 \(A_1, A_2, E\), \(O \cong S_4\)는 \(A_1, A_2, E, T_1, T_2\).</li>
+      <li>중복도 \(m_r = \langle\chi^{(r)}\vert\chi\rangle\), 기약 ⇔ \(\langle\chi\vert\chi\rangle = 1\), 사영 \(P^{(r)} = \frac{d_r}{\lvert G\rvert}\sum_g\chi^{(r)}(g)^*D(g)\). 번사이드 보조정리는 순열 표현의 \(m_{A_1}\)이고, 대칭화·반대칭화는 \(S_n\)의 \(P^{(A_1)}\), \(P^{(A_2)}\)다.</li>
+      <li>회전의 지표 \(\chi_l(\theta) = \dfrac{\sin((l + \frac12)\theta)}{\sin(\theta/2)}\)는 축과 무관하다. 정육면체 대칭에서 \(l = 2\)는 \(E \oplus T_2\)(\(x^2 - y^2, 3z^2 - r^2\)와 \(xy, yz, zx\))로 갈라지고, 정팔면체 결정장에서 \(\varepsilon_E = \tfrac35\Delta\), \(\varepsilon_{T_2} = -\tfrac25\Delta\)(무게 중심 규칙)이다. \(O\)에 불변인 비등방 함수는 \(l = 4\)에서 처음 나온다.</li>
+      <li>텐서곱의 지표는 곱 \(\chi_D\chi_{D'}\)이고, 같은 표현의 대칭·반대칭 곱은 \(\chi_\pm(g) = \frac12[\chi(g)^2 \pm \chi(g^2)]\)이다. 분자의 변위 표현은 순열 표현 ⊗ 벡터 표현이고, 정삼각형 분자의 평면 진동은 \(A_1 \oplus E\)(\(\omega^2 = 3k/m\), \(3k/2m\))다.</li>
+      <li>\(U(g)H = HU(g)\)이면 \(\langle r\,a\,i\vert H\vert s\,b\,j\rangle = \delta_{rs}\delta_{ij}h^{(r)}_{ab}\): 대칭이 강제하는 축퇴는 \(d_r\)이고 그 이상은 우연 축퇴다. 선택 규칙: \(m_r(s \otimes t) = \frac{1}{\lvert G\rvert}\sum_g\chi^{(r)*}\chi^{(s)}\chi^{(t)} = 0\)이면 \(\langle r\vert O^{(s)}\vert t\rangle = 0\). \(O_h\)에서 \(d\)–\(d\) 쌍극자 전이는 금지된다(라포르트 규칙).</li>
+    </ol>
+    <div class="callout deep" data-later="qm-grad"><strong>다음에 쓰이는 곳: 『양자역학 (대학원)』</strong><p>6장(각운동량 합성)은 <a class="ref" href="#thm-finite-group-selection-rule"></a>의 회전군 판, 곧 3장의 위그너-에카르트 정리로 선택 규칙을 얻는다. 7장(이산 대칭)은 패리티의 \(g\)·\(u\) 이름표, \(\mathbb Z_N\)의 표현(식 <a class="ref" href="#eq-cyclic-irreps"></a>)에서 나오는 블로흐 정리, 시간 반전이 서로 켤레인 표현을 겹치게 하는 것(<a class="ref" href="#prob-real-irrep-z3"></a>)을 쓴다. 10장(시간 무관 섭동론)은 <a class="ref" href="#thm-degeneracy-irrep"></a>의 블록 꼴(식 <a class="ref" href="#eq-wigner-block"></a>)로 축퇴 섭동의 행렬을 줄이고, 결정장처럼 대칭이 줄 때 갈라지는 틀을 제한한 표현의 분해로 읽는다. 15장(동일 입자)은 사영(식 <a class="ref" href="#eq-irrep-projector"></a>)의 \(\mathcal S\), \(\mathcal A\)와 대칭·반대칭 곱(식 <a class="ref" href="#eq-symmetric-square"></a>)으로 두 입자의 스핀과 공간 상태를 짝짓는다.</p></div>
+    <div class="callout deep" data-later="qft"><strong>다음에 쓰이는 곳: 『양자장론』</strong><p>2장(로런츠 군의 표현과 장)은 "장은 로런츠 군의 표현이고 입자는 기약 표현"이라는 말을 이 장의 정의(<a class="ref" href="#def-representation"></a>, <a class="ref" href="#def-irreducible-representation"></a>)와 텐서곱의 분해로 쓴다. 이 장의 증명은 군에 대한 평균에 기대므로 콤팩트 군까지는 그대로 넘어가지만(<a class="ref" href="#thm-compact-group-representations"></a>), 로런츠 군은 콤팩트가 아니어서 자명하지 않은 유한 차원 유니타리 표현이 없다. 이 책 5장의 스피너 표현에서 부스트 행렬이 유니타리가 아닌 것이 그 예다.</p></div>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. 순환군 \(\mathbb Z_6\)의 기약 표현(동치를 빼고)에 대해 옳은 것은?</p><div class="opts">
+        <button class="opt">2차원 표현 셋</button>
+        <button class="opt">1차원 둘, 2차원 하나</button>
+        <button class="opt" data-correct>1차원 여섯</button>
+        <button class="opt">1차원 둘뿐</button>
+      </div><div class="quiz-exp">아벨 군이라 슈어 보조정리 ii로 기약 표현은 모두 1차원이고, 켤레류가 원소마다 하나씩 여섯이라 기약 표현도 여섯이다. \(a \mapsto e^{2\pi ik/6}\)(\(k = 0, \ldots, 5\))이고 \(\sum d_r^2 = 6\)도 맞는다. 실수 표현만 보면 \(k\)와 \(6 - k\)가 묶인 2차원 회전 표현이 생기지만, 복소수 위에서는 가약이다.</div></div>
+      <div class="quiz-q"><p>2. 위수 8이고 켤레류가 5개인 군(예: 1장의 \(D_4\))의 기약 표현의 차원은?</p><div class="opts">
+        <button class="opt" data-correct>1, 1, 1, 1, 2</button>
+        <button class="opt">1, 1, 2, 2, 2</button>
+        <button class="opt">1, 1, 1, 1, 4</button>
+        <button class="opt">2, 2, 2, 2, 2</button>
+      </div><div class="quiz-exp">기약 표현은 켤레류와 같은 5개이고 \(\sum d_r^2 = 8\)이다. 자명 표현이 1이므로 나머지 넷의 제곱의 합이 7이어야 하고, 양의 정수로는 \(1 + 1 + 1 + 4\)뿐이다. 1, 1, 1, 1, 4는 제곱의 합이 20이다.</div></div>
+      <div class="quiz-q"><p>3. \(C_{3v}\)의 어떤 표현의 지표가 \((E, 2C_3, 3\sigma_v) = (4, 1, 0)\)이다. 분해는?</p><div class="opts">
+        <button class="opt">\(E \oplus E\)</button>
+        <button class="opt">\(A_1 \oplus A_1 \oplus E\)</button>
+        <button class="opt" data-correct>\(A_1 \oplus A_2 \oplus E\)</button>
+        <button class="opt">기약이다</button>
+      </div><div class="quiz-exp">중복도 공식에서 \(m_{A_1} = \frac16(4 + 2 + 0) = 1\), \(m_{A_2} = \frac16(4 + 2 - 0) = 1\), \(m_E = \frac16(8 - 2) = 1\)이다. \(\langle\chi\vert\chi\rangle = \frac16(16 + 2) = 3\)이라 기약이 아니다. \(E \oplus E\)라면 지표가 \((4, -2, 0)\)이어야 한다. 이 지표는 \(E \otimes E\)의 것이다.</div></div>
+      <div class="quiz-q"><p>4. 대칭 변환군이 \(O\)인 계에서 어떤 준위가 4중으로 겹쳐 있다. <a class="ref" href="#thm-degeneracy-irrep"></a>이 말하는 것은?</p><div class="opts">
+        <button class="opt">4차원 기약 표현이 있어야 한다</button>
+        <button class="opt" data-correct>대칭 \(O\)만으로는 4중 축퇴가 강제되지 않으므로, 우연 축퇴이거나 더 큰 대칭이 있다</button>
+        <button class="opt">계산이 틀렸다. 축퇴는 1, 2, 3만 가능하다</button>
+        <button class="opt">\(T_1\)과 \(T_2\)가 섞인 상태다</button>
+      </div><div class="quiz-exp">\(O\)의 기약 표현은 1, 2, 3차원뿐이므로 4중 준위의 고유 공간은 \(A_1 \oplus T_2\)나 \(E \oplus E\) 같은 둘 이상의 기약 표현의 직합이다. 정리는 축퇴가 \(d_r\)들의 합이라는 것만 말하고, \(d_r\)보다 큰 축퇴는 대칭이 강제하지 않는다. 수소 원자의 \(l\) 축퇴처럼 숨은 대칭의 신호인 경우가 많다.</div></div>
+      <div class="quiz-q"><p>5. \(O_h\)에서 \(E_g\) 상태와 \(T_{1u}\) 상태 사이의 쌍극자 전이(\(\mathbf r\)은 \(T_{1u}\))는?</p><div class="opts">
+        <button class="opt">짝성이 달라 금지된다</button>
+        <button class="opt" data-correct>\(T_{1u} \otimes E_g \cong T_{1u} \oplus T_{2u}\)가 \(T_{1u}\)를 품으므로 허용된다</button>
+        <button class="opt">\(E\)는 2차원이고 \(T_1\)은 3차원이라 금지된다</button>
+        <button class="opt">\(O\)에서는 허용되지만 \(O_h\)에서는 금지된다</button>
+      </div><div class="quiz-exp"><a class="ref" href="#ex-dipole-selection-rule"></a>의 계산에서 \(T_1 \otimes E \cong T_1 \oplus T_2\)이고, \(u \otimes g = u\)이므로 \(T_{1u} \otimes E_g \cong T_{1u} \oplus T_{2u}\)이다. 끝 상태 \(T_{1u}\)가 들어 있으므로 금지되지 않는다. 짝성이 다른 상태 사이의 전이는 라포르트 규칙이 허용하는 경우다. 차원이 달라도 텐서곱에는 다른 차원의 성분이 들어 있을 수 있다.</div></div>
+      <div class="quiz-q"><p>6. 덧셈군 \((\mathbb R, +)\)의 표현 \(D(a) = \begin{pmatrix}1 & a\\0 & 1\end{pmatrix}\)에 대해 옳은 것은?</p><div class="opts">
+        <button class="opt">기약이다</button>
+        <button class="opt">완전 가약이다</button>
+        <button class="opt" data-correct>가약이지만 완전 가약이 아니다</button>
+        <button class="opt">평균 내적으로 유니타리로 만들 수 있다</button>
+      </div><div class="quiz-exp">\(e_1\)이 펼치는 직선이 불변이라 가약이다. 그러나 이 직선을 보완하는 불변 직선은 없다. 불변 직선은 모든 \(D(a)\)의 공통 고유벡터가 펼치는데 \(a \ne 0\)이면 고유벡터가 \(e_1\)의 상수배뿐이다. 원소가 무한히 많아 \(\frac{1}{\lvert G\rvert}\sum_g\)로 평균을 낼 수 없고, 유니타리 표현과 동치라면 마슈케 정리로 완전 가약이어야 하므로 유니타리로 만들 수도 없다.</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-c3v-selection" data-level="1"><p>\(C_{3v}\) 분자(\(z\)축이 \(C_3\) 축)에서 \(z\)는 \(A_1\), \((x, y)\)는 \(E\)처럼 변환한다. 바닥 상태가 \(A_1\)일 때 \(A_1\), \(A_2\), \(E\) 상태로 가는 쌍극자 전이 각각에 대해 \(z\) 편광과 \((x, y)\) 편광이 허용되는지 <a class="ref" href="#thm-finite-group-selection-rule"></a>로 판정하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(A_1\)은 자명 표현이라 \(D^{(s)} \otimes A_1 \cong D^{(s)}\)이다. \(z\) 편광은 \(A_1 \otimes A_1 = A_1\)이므로 \(A_1\)로만 갈 수 있고, \((x, y)\) 편광은 \(E \otimes A_1 = E\)이므로 \(E\)로만 갈 수 있다. \(A_2\)로 가는 전이는 두 편광 모두에서 금지다. 정리하면 \(A_1 \to A_1\)은 \(z\), \(A_1 \to E\)는 \((x, y)\)로 허용되고 \(A_1 \to A_2\)는 금지다. 확인: \(A_2\)는 \(\sigma_v\)에서 부호가 바뀌므로, 바닥 상태와 \(z\)(둘 다 \(\sigma_v\)에서 그대로)의 곱과 \(A_2\) 상태를 곱한 피적분 함수는 \(\sigma_v\)에서 부호가 바뀌어 적분이 0이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-water-vibrations" data-level="2"><p>물 분자 \(\mathrm{H_2O}\)(\(C_{2v}\), 분자 평면은 \(yz\), 1장 <a href="ch01.html#ex-molecule-point-groups">예제 1.7</a>)에 대해 (가) 지표표를 만들고 \(x, y, z\)와 회전 \(R_x, R_y, R_z\)가 어느 기약 표현인지 정하라. 멀리컨 관례대로 \(\sigma_v(xz)\)에서 대칭인 1차원 표현에 아래 첨자 1을 붙인다. (나) 원자 셋의 3차원 변위 9개가 이루는 표현을 분해하고, 진동 모드의 기약 표현을 구하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(C_{2v}\)는 아벨 군이라 기약 표현은 1차원 넷이고, 모든 원소의 제곱이 \(E\)라 지표는 \(\pm1\)이다. \(C_2\)와 \(\sigma_v(xz)\)의 부호를 정하면 \(\sigma_v'(yz) = C_2\sigma_v(xz)\)의 부호가 곱으로 정해진다(열은 \(E, C_2, \sigma_v(xz), \sigma_v'(yz)\)).</p>
+        <div class="table-wrap"><table class="cayley">
+          <thead><tr><th>\(C_{2v}\)</th><th>\(E\)</th><th>\(C_2\)</th><th>\(\sigma_v(xz)\)</th><th>\(\sigma_v'(yz)\)</th><th>기저</th></tr></thead>
+          <tbody>
+            <tr><th>\(A_1\)</th><td>\(1\)</td><td>\(1\)</td><td>\(1\)</td><td>\(1\)</td><td>\(z\)</td></tr>
+            <tr><th>\(A_2\)</th><td>\(1\)</td><td>\(1\)</td><td>\(-1\)</td><td>\(-1\)</td><td>\(R_z\)</td></tr>
+            <tr><th>\(B_1\)</th><td>\(1\)</td><td>\(-1\)</td><td>\(1\)</td><td>\(-1\)</td><td>\(x\), \(R_y\)</td></tr>
+            <tr><th>\(B_2\)</th><td>\(1\)</td><td>\(-1\)</td><td>\(-1\)</td><td>\(1\)</td><td>\(y\), \(R_x\)</td></tr>
+          </tbody>
+        </table></div>
+        <p>1장의 대각 행렬 \(C_2 = \operatorname{diag}(-1, -1, 1)\), \(\sigma_v(xz) = \operatorname{diag}(1, -1, 1)\), \(\sigma_v'(yz) = \operatorname{diag}(-1, 1, 1)\)의 대각 성분을 읽으면 \(x\)는 \((1, -1, 1, -1) = B_1\), \(y\)는 \((1, -1, -1, 1) = B_2\), \(z\)는 \(A_1\)이다. 회전(축 벡터)은 반사에서 \(\det = -1\)이 한 번 더 곱해지므로 \(R_z = (1, 1, -1, -1) = A_2\), \(R_x = (1, -1, -1, 1) = B_2\), \(R_y = (1, -1, 1, -1) = B_1\)이다.</p>
+        <p>(나) 변위의 지표는 (움직이지 않는 원자의 수) × (벡터 표현의 지표)이다. 움직이지 않는 원자는 \(E\): 3, \(C_2\): 1(산소), \(\sigma_v(xz)\): 1(이 면은 두 수소를 맞바꾼다), \(\sigma_v'(yz)\): 3이고 벡터 표현의 지표는 \((3, -1, 1, 1)\)이므로 \(\chi_{\text{disp}} = (9, -1, 1, 3)\)이다. 중복도는 \(m_{A_1} = \frac14(9 - 1 + 1 + 3) = 3\), \(m_{A_2} = \frac14(9 - 1 - 1 - 3) = 1\), \(m_{B_1} = \frac14(9 + 1 + 1 - 3) = 2\), \(m_{B_2} = \frac14(9 + 1 - 1 + 3) = 3\)이다. 병진 \(A_1 + B_1 + B_2\)와 회전 \(A_2 + B_1 + B_2\)를 빼면 \(\Gamma_{\text{vib}} = 2A_1 \oplus B_2\)이다. \(3 \times 3 - 6 = 3\)개로 맞고, 두 \(A_1\)은 대칭 늘임과 굽힘, \(B_2\)는 반대칭 늘임이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-real-irrep-z3" data-level="2"><p>(가) \(\mathbb Z_3\)의 생성원 \(a\)를 실수 회전 행렬 \(R(120^\circ)\)으로 보내는 표현이 실수 위에서 기약임을 보이고, 이 표현과 교환하는 실수 \(2 \times 2\) 행렬을 모두 구하라. (나) 복소수 위에서 1차원 표현 둘로 분해하고, 두 지표가 서로 켤레임을 확인하라. (다) 학부 8장의 세 원자 고리(자리마다 상태 하나)에서 \(C\)와 교환하는 실수 대칭 행렬은 \(a\mathbf 1 + b(C + C^{-1})\)뿐이라 반사 대칭도 저절로 가짐을 보여라. 그 다음 \(C_3\) 대칭만 있고 거울 대칭은 없는 실수 퍼텐셜(예: 바람개비 모양) 속의 입자에서, \(C_3\)의 고유값이 \(\omega = e^{2\pi i/3}\)과 \(\omega^2\)인 상태가 여전히 겹치는 이유를 설명하라. (→ 『양자역학 (대학원)』 7장)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 실수 불변 직선은 \(R(120^\circ)\)의 실수 고유벡터인데, 고유값 \(e^{\pm2\pi i/3}\)이 실수가 아니므로 없다. \(X = \begin{pmatrix}a & b\\c & d\end{pmatrix}\)가 \(R = \begin{pmatrix}c_0 & -s_0\\s_0 & c_0\end{pmatrix}\)(\(s_0 = \sin120^\circ \ne 0\))와 교환하는 조건을 계산하면 \((XR - RX)_{11} = s_0(b + c) = 0\), \((XR - RX)_{12} = s_0(d - a) = 0\)이므로 \(X = \begin{pmatrix}a & b\\-b & a\end{pmatrix}\), 곧 \(a\mathbf 1 - bJ\)(\(J\)는 \(90^\circ\) 회전)이다. 교환하는 행렬이 2차원만큼 있어 슈어 보조정리 ii의 결론이 실수 위에서는 깨진다.</p>
+        <p>(나) \((1, \mp i)/\sqrt2\)는 \(R(\theta)\)의 고유값 \(e^{\pm i\theta}\)의 고유벡터이므로 \(a \mapsto e^{2\pi i/3}\)과 \(a \mapsto e^{-2\pi i/3}\)의 1차원 표현 둘로 쪼개진다. 지표 \(e^{\pm2\pi im/3}\)은 서로 켤레이고, 합 \(2\cos(2\pi m/3)\)이 원래 표현의 대각합이다.</p>
+        <p>(다) \(C\)의 고유값 \(1, \omega, \omega^2\)이 모두 다르므로 \(C\)와 교환하는 행렬은 \(C\)의 고유벡터를 고유벡터로 가지고, 그런 행렬은 \(C\)의 다항식 \(X = a\mathbf 1 + bC + cC^2\)이다. \(C^{\mathsf T} = C^{-1} = C^2\)이므로 \(X^{\mathsf T} = a\mathbf 1 + bC^2 + cC\)이고, 실수 대칭이려면 \(b = c\)(실수)이다. 곧 \(X = a\mathbf 1 + b(C + C^{-1})\)이고, \(SCS^{-1} = C^{-1}\)인 반사 \(S\)와 저절로 교환한다. 자리마다 상태가 하나인 고리로는 "\(C_3\)만 있고 반사는 없는" 실수 해밀토니안을 만들 수 없다. 바람개비 퍼텐셜에서는 \(H = -\frac{1}{2m}\nabla^2 + V(\mathbf r)\)가 실수이고 \(U(C_3)\)도 실수 함수를 실수 함수로 보낸다. \(H\psi = E\psi\), \(U(C_3)\psi = \omega\psi\)이면 켤레를 취해 \(H\psi^* = E\psi^*\), \(U(C_3)\psi^* = \omega^2\psi^*\)이다. \(\psi\)와 \(\psi^*\)는 \(U(C_3)\)의 고유값이 달라 일차 독립이므로 \(E\)는 두 번 겹친다. 서로 켤레인 두 1차원 표현을 이어 붙이는 것은 \(\mathbb Z_3\)가 아니라 복소켤레, 곧 스핀이 없는 입자의 시간 반전이다. 반사도 시간 반전도 깨뜨리면 축퇴가 풀린다(<a class="ref" href="#prob-ring-bloch"></a>의 (다)).</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-ring-bloch" data-level="2"><p>같은 원자 \(N\)개의 고리(<a href="../../math-phys/chapters/ch08.html#ex-ring-rotation">학부 8장의 고리 분자</a>)에서 \(C\)는 원자를 한 칸씩 옮기는 행렬 \((C\mathbf v)_j = v_{j-1}\)이다(지수는 \(N\)으로 나눈 나머지). (가) 상태 공간 \(\mathbb C^N\)을 \(\mathbb Z_N\)의 기약 표현으로 분해하고, \(C\)와 교환하는 해밀토니안이면 어느 것이든 \(\mathbf f_k = (1, \omega^k, \ldots, \omega^{(N-1)k})/\sqrt N\)(\(\omega = e^{2\pi i/N}\))이 고유벡터임을 보여라. (나) \(H = -t(C + C^{-1})\)의 고유값을 구하고, 반사까지 넣은 대칭이 \(E_k = E_{N-k}\)를 강제함을 보여라. (다) 결합에 위상을 넣은 \(H_\varphi = -t(e^{i\varphi}C + e^{-i\varphi}C^{-1})\)(고리를 꿰는 자기 선속에 해당)에서 축퇴가 어떻게 되는가. (→ 『양자역학 (대학원)』 7장)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \((C\mathbf f_k)_j = (\mathbf f_k)_{j-1} = \omega^{-k}(\mathbf f_k)_j\)이므로 \(\mathbf f_k\)는 \(a \mapsto \omega^{-k}\)인 1차원 표현을 이룬다. \(\mathbb Z_N\)은 원자 자리에 왼쪽 곱으로 작용하므로 이 공간은 정칙 표현이고, 1차원 기약 표현 \(N\)개가 한 번씩 들어 있다. <a class="ref" href="#thm-degeneracy-irrep"></a>의 ii에서 모든 \(m_r = 1\)이므로 \(C\)와 교환하는 \(H\)는 \(\mathbf f_k\) 기저에서 대각 행렬이다. 이것이 유한한 고리에서의 블로흐 정리다.</p>
+        <p>(나) \(E_k = \langle\mathbf f_k\vert H\vert\mathbf f_k\rangle = -t(\omega^{-k} + \omega^k) = -2t\cos(2\pi k/N)\)이다. 반사 \(S\lvert j\rangle = \lvert -j\rangle\)은 \(SCS^{-1} = C^{-1}\)을 만족하므로 \(H\)와 교환하고, \(S\mathbf f_k = \mathbf f_{-k}\)이다. 따라서 \(H\mathbf f_{-k} = SH\mathbf f_k = E_k\mathbf f_{-k}\)이고 \(E_{N-k} = E_k\)이다. 군의 말로는 이면체군 \(D_N\)의 2차원 기약 표현이 \(\mathbf f_k\)와 \(\mathbf f_{-k}\)를 묶는다(\(k \ne 0, N/2\)).</p>
+        <p>(다) \(H_\varphi\)는 여전히 \(C\)와 교환하므로 \(\mathbf f_k\)가 고유벡터이고 \(E_k(\varphi) = -t(e^{i\varphi}\omega^{-k} + e^{-i\varphi}\omega^k) = -2t\cos(2\pi k/N - \varphi)\)이다. 그런데 \(SH_\varphi S^{-1} = H_{-\varphi} \ne H_\varphi\)이고 \(H_\varphi\)는 실수 행렬도 아니다. \(E_k - E_{-k} = -4t\sin(2\pi k/N)\sin\varphi\)이므로 \(\varphi \notin \pi\mathbb Z\)이면 \(\pm k\) 쌍(\(k \ne 0, N/2\))은 갈라진다. 그러나 다른 쌍이 새로 겹칠 수 있다. 코사인의 두 인수가 같거나 부호만 다를 조건에서, \(k \ne k'\)일 때 \(E_k = E_{k'}\)은 \(\varphi \equiv \pi(k + k')/N \pmod\pi\)와 같다. 따라서 \(\varphi = \pi m/N\)(\(m\)은 정수)이면 \(k + k' \equiv m \pmod N\)인 쌍이 다시 겹치고, \(\varphi\)가 \(\pi/N\)의 정수배가 아닐 때에만 \(N\)개 준위가 모두 다르다. 예를 들어 \(N = 3\), \(\varphi = \pi/3\)이면 \(-t, -t, 2t\)이다. 이때 남는 대칭은 시간 반전과 게이지 변환을 합친 것이다. 게이지 변환 \(\lvert j\rangle \mapsto e^{2ij\varphi}\lvert j\rangle\)은 \(H_\varphi^* = H_{-\varphi}\)를 \(H_\varphi\)로 되돌리는데, 고리를 한 바퀴 돌아 어긋나지 않으려면 \(e^{2iN\varphi} = 1\), 곧 \(N\varphi \in \pi\mathbb Z\)여야 한다. \(N = 3\), \(\varphi = 0\)이면 \(-2t, t, t\)로 1장 예제 1.1과 같다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-tetragonal-distortion" data-level="2"><p>정팔면체를 \(z\)축 방향으로 늘이면 대칭이 \(O\)에서 \(z\)축을 보존하는 회전의 부분군 \(D_4\)(위수 8: \(E\), \(C_2(z)\), \(2C_4(z)\), \(x\)·\(y\)축의 \(2C_2'\), \(xy\) 평면 대각선 축의 \(2C_2''\))로 준다. (가) \(D_4\)의 지표표를 만들어라. 1차원 표현은 \(C_4\)에서 대칭이면 \(A\), 반대칭이면 \(B\)이고, \(C_2'\)에서 대칭이면 아래 첨자 1이다. (나) \(O\)의 \(E\)와 \(T_2\)를 \(D_4\)로 제한해 분해하고 각 성분의 \(d\) 궤도를 정하라. (→ 『양자역학 (대학원)』 10장)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 켤레류가 다섯(1장 <a href="ch01.html#calc-d4-classes">손 계산 1.2</a>)이고 \(\sum d_r^2 = 8\)이므로 차원은 1, 1, 1, 1, 2다. 1차원 표현에서 \(C_4\)와 \(C_4^{-1}\)이 같은 켤레류이므로 \(\chi(C_4) = \chi(C_4^{-1}) = \chi(C_4)^{-1}\), 곧 \(\chi(C_4) = \pm1\)이고, \(C_2'^{\,2} = E\)에서 \(\chi(C_2') = \pm1\)이다. 1차원 표현은 이 두 부호로 정해지고, \(C_2 = C_4^2\)에서 \(\chi(C_2) = 1\), 대각선 축의 회전이 \(C_4C_2'\)이므로 \(\chi(C_2'') = \chi(C_4)\chi(C_2')\)이다. 2차원 \(E\)는 첫 열과의 직교성에서 \((2, -2, 0, 0, 0)\)이다.</p>
+        <div class="table-wrap"><table class="cayley">
+          <thead><tr><th>\(D_4\)</th><th>\(E\)</th><th>\(C_2\)</th><th>\(2C_4\)</th><th>\(2C_2'\)</th><th>\(2C_2''\)</th></tr></thead>
+          <tbody>
+            <tr><th>\(A_1\)</th><td>\(1\)</td><td>\(1\)</td><td>\(1\)</td><td>\(1\)</td><td>\(1\)</td></tr>
+            <tr><th>\(A_2\)</th><td>\(1\)</td><td>\(1\)</td><td>\(1\)</td><td>\(-1\)</td><td>\(-1\)</td></tr>
+            <tr><th>\(B_1\)</th><td>\(1\)</td><td>\(1\)</td><td>\(-1\)</td><td>\(1\)</td><td>\(-1\)</td></tr>
+            <tr><th>\(B_2\)</th><td>\(1\)</td><td>\(1\)</td><td>\(-1\)</td><td>\(-1\)</td><td>\(1\)</td></tr>
+            <tr><th>\(E\)</th><td>\(2\)</td><td>\(-2\)</td><td>\(0\)</td><td>\(0\)</td><td>\(0\)</td></tr>
+          </tbody>
+        </table></div>
+        <p>(나) \(O\) 안에서 \(C_2(z)\)와 \(C_2'\)(\(x\)·\(y\)축)은 면 축 \(180^\circ\)인 \(3C_2\)에, \(C_4(z)\)는 \(6C_4\)에, \(C_2''\)(\((1, \pm1, 0)\) 축)은 모서리 축 \(180^\circ\)인 \(6C_2'\)에 속한다. 따라서 \(D_4\)의 열 순서로 \(\chi_E = (2, 2, 0, 2, 0)\), \(\chi_{T_2} = (3, -1, -1, -1, 1)\)이다. 크기 \(1, 1, 2, 2, 2\)로 중복도 공식을 쓰면</p>
+        <div class="formula">\[ \begin{aligned} E &\to A_1 \oplus B_1 \\ T_2 &\to B_2 \oplus E \end{aligned} \]</div>
+        <p>이다. 예를 들어 \(E\)에서 \(m_{A_1} = \frac18(2 + 2 + 0 + 4 + 0) = 1\), \(T_2\)에서 \(m_E = \frac18(6 + 2) = 1\)이다. 궤도로는 \(3z^2 - r^2\)이 \(D_4\)의 모든 원소에서 불변이라 \(A_1\), \(x^2 - y^2\)은 \(C_4\)에서 부호가 바뀌고 \(C_2(x)\)에서 그대로라 \(B_1\), \(xy\)는 둘 다에서 부호가 바뀌어 \(B_2\), \((yz, zx)\)는 \(E\)이다. 다섯 겹이던 \(d\) 준위가 \(1 + 1 + 1 + 2\)의 네 준위가 된다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-ammonia-orbitals" data-level="2"><p>암모니아(\(C_{3v}\), \(z\)축이 \(C_3\) 축)의 수소 1s 궤도 \(h_1, h_2, h_3\)와 질소의 2s, \(2p_x\), \(2p_y\), \(2p_z\) 궤도를 생각한다. (가) 일곱 궤도가 펼치는 공간을 기약 표현으로 분해하라. (나) 사영 연산자로 수소 궤도의 대칭에 맞춘 조합을 만들어라. (다) 해밀토니안의 \(7 \times 7\) 행렬이 어떤 블록으로 나뉘는지, 고유값이 몇 개이고 각각 몇 겹인지 정하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 수소 궤도는 순열 표현 \((3, 0, 1) = A_1 \oplus E\)이다. 2s는 \(A_1\), \(2p_z\)는 \(z\)처럼 \(A_1\), \((2p_x, 2p_y)\)는 \(E\)이다. 합쳐서 \(3A_1 \oplus 2E\)이고 차원은 \(3 + 4 = 7\)이다.</p>
+        <p>(나) \(P^{(A_1)}h_1 = \frac16\sum_gU(g)h_1 = \frac13(h_1 + h_2 + h_3)\)이다. \(E\)에서는 \(\chi_E\)가 \(\sigma_v\)에서 0이고 \(C_3\), \(C_3^2\)에서 \(-1\)이므로 \(P^{(E)}h_1 = \frac26\big(2h_1 - h_2 - h_3\big) = \frac13(2h_1 - h_2 - h_3)\)이다. 같은 식으로 \(P^{(E)}h_2 = \frac13(2h_2 - h_1 - h_3)\)이고, 둘을 정리해(겹침 적분을 무시하고) \(\mathrm H_1\)을 지나는 \(\sigma_v\)에 대칭인 \((2h_1 - h_2 - h_3)/\sqrt6\)과 반대칭인 \((h_2 - h_3)/\sqrt2\)를 얻는다.</p>
+        <p>(다) <a class="ref" href="#thm-degeneracy-irrep"></a>의 ii에서 \(A_1\) 블록은 \(m_{A_1} = 3\)이라 \(3 \times 3\)(2s, \(2p_z\), \(h_1 + h_2 + h_3\))이고, \(E\) 블록은 \(m_E = 2\)라 \(2 \times 2\)(\(2p\) 하나와 그와 같은 행렬로 변환하는 수소 조합 하나)가 똑같은 모양으로 두 번 나온다. 서로 다른 블록 사이의 행렬 원소는 0이다. 고유값은 \(A_1\)에서 겹치지 않는 셋, \(E\)에서 두 번씩 겹친 둘로 \(3 + 2\times2 = 7\)이다. \(7 \times 7\) 문제가 \(3 \times 3\)과 \(2 \times 2\)로 줄었다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-t2-two-electrons" data-level="3"><p>\(O\)에서 \(T_2 \otimes T_2\)를 대칭 곱과 반대칭 곱으로 나누어 각각 분해하라. \(t_2\) 궤도(\(xy, yz, zx\))에 전자 두 개가 들어갈 때 스핀 단일항과 삼중항은 각각 어느 공간 기약 표현과 짝을 짓는가. 상태의 수를 세어 확인하라. (→ 『양자역학 (대학원)』 15장)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(\chi_{T_2} = (3, 0, -1, -1, 1)\)이므로 \(\chi^2 = (9, 0, 1, 1, 1)\)이다. \(g^2\)은 \(E \mapsto E\), \(C_3 \mapsto C_3^2\)(같은 켤레류), \(C_2 \mapsto E\), \(C_4 \mapsto C_2\), \(C_2' \mapsto E\)이므로 \(\chi(g^2) = (3, 0, 3, -1, 3)\)이다. 식 <a class="ref" href="#eq-symmetric-square"></a>에서</p>
+        <div class="formula">\[ \begin{aligned} \chi_+ &= \tfrac12(12, 0, 4, 0, 4) \\ &= (6, 0, 2, 0, 2) \\ \chi_- &= \tfrac12(6, 0, -2, 2, -2) \\ &= (3, 0, -1, 1, -1) \end{aligned} \]</div>
+        <p>이다. \(\chi_-\)는 \(T_1\)의 행 그대로다. \(\chi_+\)는 \(m_{A_1} = \frac1{24}(6 + 6 + 12) = 1\), \(m_E = \frac1{24}(12 + 12) = 1\), \(m_{T_2} = \frac1{24}(18 - 6 + 12) = 1\)이고 \(A_2\), \(T_1\)은 0이다. 곧 \(\operatorname{Sym}^2T_2 \cong A_1 \oplus E \oplus T_2\)(6차원), \(\operatorname{Alt}^2T_2 \cong T_1\)(3차원)이다.</p>
+        <p>전자는 페르미온이라 전체 상태가 반대칭이어야 한다. 스핀 단일항은 반대칭이므로 공간 부분이 대칭인 \(A_1, E, T_2\)와, 스핀 삼중항은 대칭이므로 공간 부분이 반대칭인 \(T_1\)과 짝을 짓는다. 상태의 수는 \(6 \times 1 + 3 \times 3 = 15\)이고, 스핀 궤도 6개에서 전자 둘을 고르는 \(\binom62 = 15\)와 같다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-code-three-particles" data-level="2"><p>[코드] <a class="ref" href="#code-character-table-check"></a>의 함수로 \((\mathbb C^d)^{\otimes n}\) 위의 \(S_n\) 표현(지표 \(d^{\,c(\sigma)}\))을 \(n = 3, 4\), \(d = 1, \ldots, 4\)에서 분해하라. \(n = 3\)에서 식 <a class="ref" href="#eq-three-particle-mixed"></a>을 확인하고, \(n = 4\)에서 차원의 합이 \(d^4\)인지 확인하라. (→ 4장)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p><a class="ref" href="#code-character-table-check"></a> 끝에 덧붙인다. <code>classes</code>, <code>cycle_type</code>, 표 <code>T3</code>, <code>T4</code>를 그대로 쓴다. 순환의 수 \(c(\sigma)\)는 순환 꼴 문자열의 항의 수다.</p>
+        <pre><code class="language-python"># 코드 2.1 끝에 덧붙인다: (C^d)^{⊗n}의 지표는 d^{c(σ)}
+def tensor_power(n, T, d):
+    C = classes(list(permutations(range(n))))
+    chi = [d ** len(cycle_type(min(c)).split("+")) for c in C]
+    N = sum(map(len, C))
+    return {r: Fraction(sum(len(c) * x * y
+                            for c, x, y in zip(C, row, chi)), N)
+            for r, row in T.items()}
+
+for d in range(1, 5):
+    m3, m4 = tensor_power(3, T3, d), tensor_power(4, T4, d)
+    assert m3["E"] == Fraction(d**3 - d, 3)       # 식 (2.31)
+    assert sum(T4[r][0] * m for r, m in m4.items()) == d**4
+    print(d, [int(m3[r]) for r in T3],
+          [int(m4[r]) for r in ["A1", "A2", "E", "T1", "T2"]])</code></pre>
+        <pre class="code-out"><code>1 [1, 0, 0] [1, 0, 0, 0, 0]
+2 [4, 0, 2] [5, 0, 1, 0, 3]
+3 [10, 1, 8] [15, 0, 6, 3, 15]
+4 [20, 4, 20] [35, 1, 20, 15, 45]</code></pre>
+        <p>(<a class="ref" href="#code-character-table-check"></a>의 출력 일곱 줄 뒤에 이 네 줄이 붙는다.) 각 줄은 \(d\), \(n = 3\)의 \((m_{A_1}, m_{A_2}, m_E)\), \(n = 4\)의 \((m_{A_1}, m_{A_2}, m_E, m_{T_1}, m_{T_2})\)이다. \(n = 3\)의 \(d = 2, 3\)은 <a class="ref" href="#ex-three-particle-decomposition"></a>의 \(m_E = 2, 8\)이다. \(n = 4\)의 \(d = 2\)에서 \(5 + 1\cdot2 + 3\cdot3 = 16\)이다. 중복도가 \(d\)에 따라 1, 4, 10, 20(완전 대칭)처럼 자라는 것은 4장에서 \(SU(d)\) 기약 표현의 차원으로 읽는다. 영 도표로는 \(A_1 = [4]\), \(T_2 = [3, 1]\), \(E = [2, 2]\), \(T_1 = [2, 1, 1]\), \(A_2 = [1, 1, 1, 1]\)이고, \(d = 2\)에서 행이 셋 이상인 도표의 중복도가 0인 것과 맞는다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-code-crystal-field-matrix" data-level="3"><p>[코드] 식 <a class="ref" href="#eq-octahedral-potential"></a>의 둘째 항의 각 부분 \(Q = x^4 + y^4 + z^4 - \tfrac35r^4\)을 \(d\) 궤도 기저(\(xy, yz, zx, x^2 - y^2, 3z^2 - r^2\)) 위에서 단위 구 위의 적분으로 행렬로 만들어라. 단항식의 적분 \(\frac{1}{4\pi}\int x^ay^bz^c\,d\Omega = \frac{(a-1)!!\,(b-1)!!\,(c-1)!!}{(a+b+c+1)!!}\)(\(a, b, c\)가 모두 짝수일 때, 아니면 0)을 분수로 정확히 써라. 비대각 성분이 0이고 대각 성분이 \(E\)와 \(T_2\)에서 각각 같음을 확인하고, <a class="ref" href="#ex-crystal-field-d-orbitals"></a>의 \(\Delta = \tfrac53\kappa\langle r^4\rangle/a^5\)를 얻어라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>다항식을 단항식의 지수 \((a, b, c)\)에서 계수로 가는 사전으로 쓴다. \(Q = \tfrac25\sum x^4 - \tfrac65\sum x^2y^2\)이다. 행렬 원소 \(\langle d_i\vert Q\vert d_j\rangle / \langle d_i\vert d_i\rangle\)이 \(r^4\)을 뺀 각 부분의 값이고, 실제 에너지는 여기에 \(\kappa\,\tfrac{35}{4a^5}\langle r^4\rangle\)을 곱한 것이다(\(\langle r^4\rangle\)은 지름 함수에 대한 평균).</p>
+        <pre><code class="language-python">from fractions import Fraction as F
+
+def dfact(n):           # 이중 계승 n!!, (-1)!! = 1
+    return 1 if n &lt;= 0 else n * dfact(n - 2)
+
+def sphere(a, b, c):    # ∫ x^a y^b z^c dΩ / 4π
+    if a % 2 or b % 2 or c % 2:
+        return F(0)
+    return F(dfact(a - 1) * dfact(b - 1) * dfact(c - 1),
+             dfact(a + b + c + 1))
+
+def pmul(p, q):         # 다항식은 {(a, b, c): 계수}
+    out = {}
+    for (a, b, c), u in p.items():
+        for (e, f, g), v in q.items():
+            k = (a + e, b + f, c + g)
+            out[k] = out.get(k, 0) + u * v
+    return out
+
+def integ(p):           # 단위 구 위의 평균
+    return sum(v * sphere(*k) for k, v in p.items())
+
+d = {"xy": {(1, 1, 0): 1}, "yz": {(0, 1, 1): 1},
+     "zx": {(1, 0, 1): 1}, "x2-y2": {(2, 0, 0): 1, (0, 2, 0): -1},
+     "3z2-r2": {(0, 0, 2): 2, (2, 0, 0): -1, (0, 2, 0): -1}}
+# Q = x⁴+y⁴+z⁴ - (3/5)r⁴ = (2/5)Σx⁴ - (6/5)Σx²y²
+Q = {k: F(2, 5) for k in [(4, 0, 0), (0, 4, 0), (0, 0, 4)]}
+Q.update({k: F(-6, 5) for k in [(2, 2, 0), (2, 0, 2), (0, 2, 2)]})
+
+for i in d:             # 비대각 성분은 모두 0이다
+    for j in d:
+        if i != j:
+            assert integ(pmul(d[i], d[j])) == 0
+            assert integ(pmul(pmul(d[i], Q), d[j])) == 0
+eps = {i: integ(pmul(pmul(d[i], Q), d[i])) / integ(pmul(d[i], d[i]))
+       for i in d}
+for i, e in eps.items():
+    print(i, e)
+eE, eT = eps["x2-y2"], eps["xy"]
+assert eps["3z2-r2"] == eE and eps["yz"] == eps["zx"] == eT
+assert 2 * eE + 3 * eT == 0                   # 무게 중심
+print("Delta =", F(35, 4) * (eE - eT), "* kappa &lt;r^4&gt; / a^5")</code></pre>
+        <pre class="code-out"><code>xy -8/105
+yz -8/105
+zx -8/105
+x2-y2 4/35
+3z2-r2 4/35
+Delta = 5/3 * kappa &lt;r^4&gt; / a^5</code></pre>
+        <p>\(T_2\)의 세 궤도는 \(-\tfrac{8}{105}\), \(E\)의 두 궤도는 \(+\tfrac{4}{35} = \tfrac{12}{105}\)이고 \(2\cdot12 - 3\cdot8 = 0\)이다. 비대각 성분이 0인 것은 이 기저가 이미 \(E\)와 \(T_2\)로 나뉘어 있고 각 기약 표현이 한 번씩이기 때문이다(<a class="ref" href="#thm-degeneracy-irrep"></a>의 ii). \(\tfrac{35}{4}\big(\tfrac{12}{105} + \tfrac{8}{105}\big) = \tfrac{35}{4}\cdot\tfrac{20}{105} = \tfrac53\)이므로 \(\Delta = \tfrac53\kappa\langle r^4\rangle/a^5\), \(\varepsilon_E = \kappa\langle r^4\rangle/a^5 = \tfrac35\Delta\), \(\varepsilon_{T_2} = -\tfrac23\kappa\langle r^4\rangle/a^5 = -\tfrac25\Delta\)이다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+</body>
+</html>

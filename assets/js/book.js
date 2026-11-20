@@ -127,6 +127,7 @@
   /* ------------------------------------------------------------ 교과서 번호: 정의·정리·예제·수학 상자, 식, 연습문제, 상호 참조 */
   // <div class="box def|thm|ex|math" id="…"><div class="box-h">이름</div>…</div> → "정의 1.2"를 앞에 붙인다 (종류마다 따로 센다)
   // <div class="box post" id="post-…"> (공준) → "공준 1"처럼 장 번호 없이 센다 (공준은 책 전체에서 한 벌이다)
+  // <div class="box calc" id="calc-…"> (손 계산) · <div class="box code" id="code-…" data-check="calc-…"> (코드) → "손 계산 1.1", "코드 1.1"
   // <div class="formula" id="eq-…">\[ … \]</div> → KaTeX \tag로 (1.3)을 단다. id가 없는 식은 번호 없음
   // <div class="prob" id="…"> (연습문제) → "문제 1.4", data-level="1~3"이면 별표
   // <a class="ref" href="#id"></a> → 비어 있으면 위 번호로 채운다 (식은 "(1.3)"만, 앞에 "식"은 본문에 쓴다)
@@ -134,7 +135,7 @@
     const main = $("main.chapter");
     if (!main || !chapter) return;
     const n = Number(chapter.num), label = {}, count = {};
-    const KIND = { def: "정의", thm: "정리", ex: "예제", math: "수학 상자", post: "공준", gram: "문법", dia: "대화", expr: "표현" };
+    const KIND = { def: "정의", thm: "정리", ex: "예제", math: "수학 상자", post: "공준", gram: "문법", dia: "대화", expr: "표현", calc: "손 계산", code: "코드" };
     $$(".box", main).forEach((b) => {
       const k = Object.keys(KIND).find((x) => b.classList.contains(x));
       if (!k) return;

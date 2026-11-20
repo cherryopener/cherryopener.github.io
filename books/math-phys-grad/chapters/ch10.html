@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10 힐베르트 공간과 연산자 · 지식따개</title>
+<meta name="description" content="힐베르트 공간의 완비성에서 출발해 비유계 연산자의 정의역과 수반을 정의하고, 결손 지수와 폰 노이만 정리로 구간·반직선의 운동량, 로빈 경계 조건, 역제곱 퍼텐셜의 자기수반 확장을 구한다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys-grad" data-field="phys" data-chapter="ch10">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">10</span></div>
+    <h1 data-fill="chapter-title">힐베르트 공간과 연산자</h1>
+    <p class="lead">학부 9장은 운동량 연산자가 경계 조건에 따라 고유값을 갖기도 하고 하나도 갖지 않기도 한다는 것을 보이고, 그 까닭을 "에르미트"와 "자기수반"의 차이로 미뤄 두었다. 이 장은 힐베르트 공간의 완비성과 리스 표현 정리에서 출발해 비유계 연산자의 정의역과 수반을 정확히 정의하고, 그 차이를 세운다. 대칭 연산자를 자기수반으로 넓힐 수 있는지, 몇 가지로 넓힐 수 있는지는 결손 지수라는 두 정수가 정하고, 그 선택은 고리를 꿰는 자기 플럭스, 벽의 접촉 상호작용, 역제곱 퍼텐셜의 척도 같은 물리량으로 나타난다. 11장의 스펙트럼 정리와 『양자역학 (대학원)』의 관측 가능량은 모두 이 장의 자기수반 연산자 위에 선다.</p>
+    <ul class="objectives">
+      <li>노름 공간의 완비성을 판정하고, 사영 정리와 리스 표현 정리로 유계 연산자의 수반을 만들 수 있다.</li>
+      <li>헬링거-퇴플리츠 정리에서 정의역이 왜 필요한지 설명하고, 부분 적분으로 미분 연산자의 수반과 그 정의역을 구할 수 있다.</li>
+      <li>대칭 연산자, 자기수반 연산자, 본질적 자기수반 연산자를 구별하고, \(\operatorname{Ran}(A \pm i) = \mathcal H\) 판정법으로 자기수반성을 증명할 수 있다.</li>
+      <li>결손 지수를 계산하고 폰 노이만의 확장 정리로 자기수반 확장의 가족을 경계 조건으로 쓸 수 있다(구간과 반직선의 운동량, 반직선의 \(-d^2/dx^2\)).</li>
+      <li>이차 형식과 하디 부등식으로 해밀토니안이 아래로 유계인지 판정하고, 역제곱 퍼텐셜의 문턱 \(g = \tfrac14\)과 수소 원자의 자기수반성(카토-렐리히 정리)을 설명할 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b><a href="../../math-phys/chapters/ch09.html#def-inner-product">학부 9장의 내적</a>, <a href="../../math-phys/chapters/ch09.html#def-l2">\(L^2\)</a>, <a href="../../math-phys/chapters/ch09.html#def-adjoint">수반</a>, <a href="../../math-phys/chapters/ch09.html#def-hermitian-operator">에르미트 연산자</a>와 <a href="../../math-phys/chapters/ch09.html#eq-boundary-term">경계 항</a>, <a href="../../math-phys/chapters/ch09.html#ex-momentum-hermitian">운동량 연산자의 예</a>, <a href="../../math-phys/chapters/ch16.html#def-self-adjoint-bc">학부 16장의 자기수반 경계 조건</a>, <a href="../../math-phys/chapters/ch15.html#thm-plancherel">학부 15장의 플랑슈렐 정리</a>. 이 장은 \(\hbar = 1\)로 쓰고, 운동 에너지는 \(2m = 1\)로 두어 \(-d^2/dx^2\)로 쓴다.</p>
+  </header>
+
+  <!-- ============================================================ 10.1 -->
+  <section id="s1">
+    <h2>바나흐 공간과 힐베르트 공간</h2>
+    <p>학부 9장은 \(L^2\)를 내적 공간으로 쓰면서 이 공간이 "완비"하다는 것을 심화 상자에서 이름만 말하고 넘어갔다. 그런데 고유함수 전개의 부분합, 섭동 급수의 부분합, 에너지를 점점 낮추는 시험 함수의 열처럼 "수렴할 것처럼 보이는" 열의 극한이 공간 안에 있다는 보장이 그 완비성이다. 리스 표현 정리(10.2절), 폰 노이만의 확장 정리(10.5절), 11장의 <a href="ch11.html#thm-spectral-unbounded">스펙트럼 정리</a>는 모두 증명 어딘가에 이 단계를 품고 있다. 이 절은 완비성을 정의하고, 완비성이 처음 쓰이는 사영 정리를 증명한다.</p>
+
+    <h3 id="s1-banach">노름과 완비성</h3>
+    <div class="box def" id="def-banach-space"><div class="box-h">노름 공간과 바나흐 공간</div>
+      <p>복소 벡터 공간 \(V\)의 원소마다 실수 \(\lVert v\rVert\)를 주는 함수가 다음을 만족하면 <span class="term">노름</span> <span class="en">(norm)</span>이라 한다.</p>
+      <ol>
+        <li>\(\lVert v\rVert \ge 0\)이고, \(\lVert v\rVert = 0\)은 \(v = 0\)일 때뿐이다.</li>
+        <li>\(\lVert cv\rVert = \lvert c\rvert\,\lVert v\rVert\) (\(c \in \mathbb C\)).</li>
+        <li>\(\lVert u + v\rVert \le \lVert u\rVert + \lVert v\rVert\).</li>
+      </ol>
+      <p>노름이 있는 벡터 공간을 <span class="term">노름 공간</span>이라 한다. 열 \(v_1, v_2, \ldots\)이 \(m, n \to \infty\)에서 \(\lVert v_m - v_n\rVert \to 0\)을 만족하면 <span class="term">코시 열</span> <span class="en">(Cauchy sequence)</span>이라 하고, 모든 코시 열이 \(V\) 안의 원소로 수렴하면 \(V\)가 <span class="term">완비</span> <span class="en">(complete)</span>하다고 한다. 완비한 노름 공간을 <span class="term">바나흐 공간</span> <span class="en">(Banach space)</span>이라 한다.</p>
+    </div>
+    <p>유한 차원 공간은 어떤 노름을 주어도 완비하다. 성분마다 실수의 완비성을 쓰면 되기 때문이다. 무한 차원에서는 노름을 고르는 일이 공간을 고르는 일이 된다. 같은 연속 함수의 모임 \(C[0, 1]\)에 두 노름을 생각하자.</p>
+    <ul>
+      <li><b>최대 노름</b> \(\lVert f\rVert_\infty = \max_{x}\lvert f(x)\rvert\). 이 노름의 코시 열은 고르게 수렴하고, 연속 함수의 고른 극한은 연속이다. 따라서 \(C[0, 1]\)은 최대 노름으로 바나흐 공간이다.</li>
+      <li><b>\(L^2\) 노름</b> \(\lVert f\rVert = \big(\int_0^1\lvert f\rvert^2dx\big)^{1/2}\). 이 노름으로는 완비하지 않다. 아래 예제가 반례다.</li>
+    </ul>
+    <p>수열의 공간도 같다. \(\sum_n\lvert c_n\rvert^p &lt; \infty\)인 복소수열 \((c_0, c_1, \ldots)\)의 공간 \(\ell^p\)는 노름 \(\big(\sum\lvert c_n\rvert^p\big)^{1/p}\)으로 바나흐 공간이다(\(1 \le p &lt; \infty\)). 양자역학에서 쓰는 것은 \(p = 2\)뿐이다.</p>
+
+    <div class="box ex" id="ex-continuous-functions-incomplete"><div class="box-h">\(L^2\) 노름을 준 연속 함수 공간의 구멍</div>
+      <p>\(n \ge 2\)마다 연속 함수 \(f_n\)을 \(x \le \tfrac12\)에서 0, \(\tfrac12 \le x \le \tfrac12 + \tfrac1n\)에서 \(n(x - \tfrac12)\), 그 위에서 1로 정한다(그림 10-1). (가) \(f_n\)이 \(L^2\) 노름의 코시 열임을 보여라. (나) 이 열이 \(C[0, 1]\) 안의 어떤 연속 함수로도 \(L^2\) 노름에서 수렴하지 않음을 보여라.</p>
+      <p><b>풀이.</b> (가) 계단 함수 \(\Theta(x - \tfrac12)\)와의 차는 \([\tfrac12, \tfrac12 + \tfrac1n]\)에서만 0이 아니다. \(t = x - \tfrac12\)로 두면</p>
+      <div class="formula" id="eq-ramp-step-distance">\[ \lVert f_n - \Theta(x - \tfrac12)\rVert^2 = \int_0^{1/n}(1 - nt)^2\,dt = \frac{1}{3n} \]</div>
+      <p>이다. 삼각 부등식으로 \(\lVert f_m - f_n\rVert \le (3m)^{-1/2} + (3n)^{-1/2} \to 0\)이므로 코시 열이다.</p>
+      <p>(나) 어떤 연속 함수 \(g\)에 대해 \(\lVert f_n - g\rVert \to 0\)이라 하자. 그러면 \(\lVert g - \Theta(x - \tfrac12)\rVert \le \lVert g - f_n\rVert + \lVert f_n - \Theta(x - \tfrac12)\rVert \to 0\)이므로 \(\int_0^1\lvert g - \Theta(x - \tfrac12)\rvert^2dx = 0\)이다. \(g\)가 연속이므로, \(\lvert g(x_0)\rvert > 0\)인 점 \(x_0 &lt; \tfrac12\)이 있다면 그 근처의 작은 구간에서 \(\lvert g\rvert\)가 양수로 머물러 적분이 양수가 된다. 따라서 \([0, \tfrac12)\)에서 \(g = 0\)이고, 같은 논법으로 \((\tfrac12, 1]\)에서 \(g = 1\)이다. 이런 \(g\)는 \(x = \tfrac12\)에서 연속일 수 없다. 모순이다.</p>
+      <p><b>확인.</b> 두 원소 사이의 거리를 직접 계산하면 \(\lVert f_n - f_{2n}\rVert^2 = \tfrac{1}{24n} + \tfrac{1}{24n} = \tfrac{1}{12n}\)이다(\([\tfrac12, \tfrac12 + \tfrac1{2n}]\)에서 차가 \(-nt\), 그 위 \(\tfrac{1}{2n}\) 길이에서 \(nt - 1\)). 이것은 식 <a class="ref" href="#eq-ramp-step-distance"></a>의 두 거리 \(\tfrac{1}{3n}\), \(\tfrac{1}{6n}\)과 삼각 부등식 \(\sqrt{1/12n} \le \sqrt{1/3n} + \sqrt{1/6n}\)에 맞는다.</p>
+      <p><b>어디에 쓰이나.</b> 이런 코시 열의 극한을 모두 넣어 구멍을 메운 공간이 \(L^2(0, 1)\)이다. 10.7절은 이차 형식의 정의역을 같은 방법으로 형식의 노름으로 메우고, 그 극한에서도 경계 조건 \(\psi(0) = 0\)이 살아남는다는 것을 본다.</p>
+    </div>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 300" role="img" aria-label="구간 0에서 1의 연속 함수 f2, f4, f8이 x = 1/2에서 0에서 1로 뛰는 계단 함수로 다가가는 그림"><line x1="50" y1="250" x2="408" y2="250" class="s-line"/><line x1="50" y1="250" x2="50" y2="44" class="s-line"/><line x1="225" y1="250" x2="225" y2="60" class="s-acc" stroke-dasharray="4 4" style="stroke-width:1.5"/><path d="M225,250 L400.0,60 L400,60" class="s-acc2"/><path d="M225,250 L312.5,60 L400,60" class="s-acc2"/><path d="M225,250 L268.8,60 L400,60" class="s-acc2"/><path d="M50,250 L225,250" class="s-acc2"/><path d="M50,250 L225,250 M225,60 L400,60" class="s-acc" style="stroke-width:3.5" opacity="0.55"/><text x="236" y="103" class="t-math acc2"><tspan font-style="italic">f</tspan><tspan baseline-shift="sub" font-size="72%">8</tspan></text><text x="284" y="146" class="t-math acc2"><tspan font-style="italic">f</tspan><tspan baseline-shift="sub" font-size="72%">4</tspan></text><text x="284" y="205" class="t-math acc2"><tspan font-style="italic">f</tspan><tspan baseline-shift="sub" font-size="72%">2</tspan></text><text x="232" y="50" class="t-math acc"><tspan font-style="italic">Θ</tspan>(<tspan font-style="italic">x</tspan> − ½)</text><text x="50" y="270" class="t-math" text-anchor="middle">0</text><text x="225" y="270" class="t-math" text-anchor="middle">½</text><text x="400" y="270" class="t-math" text-anchor="middle">1</text><text x="412" y="255" class="t-math"><tspan font-style="italic">x</tspan></text><text x="42" y="255" class="t-math" text-anchor="end">0</text><text x="42" y="65" class="t-math" text-anchor="end">1</text><line x1="46" y1="60" x2="54" y2="60" class="s-line"/></svg></div>
+      <figcaption><b>그림 10-1.</b> <a class="ref" href="#ex-continuous-functions-incomplete"></a>의 연속 함수 \(f_2\), \(f_4\), \(f_8\)(이름을 단 가는 선)과 계단 함수 \(\Theta(x - \tfrac12)\)(굵은 선). 경사 구간의 폭이 \(1/n\)로 줄면서 \(L^2\) 거리는 식 <a class="ref" href="#eq-ramp-step-distance"></a>처럼 0으로 가지만, 극한은 연속 함수가 아니다. 최대 노름으로 재면 \(\lVert f_n - f_{2n}\rVert_\infty = \tfrac12\)이라 코시 열도 아니다.</figcaption>
+    </figure>
+
+    <h3 id="s1-hilbert">힐베르트 공간</h3>
+    <div class="box def" id="def-hilbert-space"><div class="box-h">힐베르트 공간</div>
+      <p>내적 \(\langle\phi|\psi\rangle\)(<a href="../../math-phys/chapters/ch09.html#def-inner-product">학부 9장의 내적</a>. 왼쪽 자리에 켤레 선형)이 있는 복소 벡터 공간이 노름 \(\lVert\psi\rVert = \sqrt{\langle\psi|\psi\rangle}\)으로 완비하면 <span class="term">힐베르트 공간</span> <span class="en">(Hilbert space)</span>이라 하고 \(\mathcal H\)로 쓴다. 부분집합 \(D\)가 <span class="term">조밀하다</span> <span class="en">(dense)</span>는 것은 모든 \(\psi \in \mathcal H\)가 \(D\) 안의 열의 극한이라는 뜻이고, \(D\)의 열의 극한을 모두 모은 것을 \(D\)의 <span class="term">닫힘</span> \(\bar D\)라 한다. 셀 수 있는 조밀한 부분집합이 있으면 <span class="term">분해 가능</span> <span class="en">(separable)</span>하다고 한다.</p>
+      <p>예: \(\mathbb C^n\), \(\ell^2\)(\(\langle c|d\rangle = \sum_nc_n^*d_n\)), \(L^2(a, b)\)와 \(L^2(\mathbb R^d)\)(\(\langle f|g\rangle = \int f^*g\)). 이 서재에 나오는 힐베르트 공간은 모두 분해 가능하다.</p>
+    </div>
+    <p>내적이 주는 노름은 <span class="term">평행사변형 법칙</span> <span class="en">(parallelogram law)</span></p>
+    <div class="formula" id="eq-parallelogram-law">\[ \lVert\phi + \psi\rVert^2 + \lVert\phi - \psi\rVert^2 = 2\lVert\phi\rVert^2 + 2\lVert\psi\rVert^2 \]</div>
+    <p>을 만족한다. 왼쪽을 내적으로 펼치면 교차 항 \(\pm2\operatorname{Re}\langle\phi|\psi\rangle\)이 지워지기 때문이다. 거꾸로 이 법칙을 만족하는 노름은 내적에서 온다(요르단-폰 노이만 정리. 내적은 편극 항등식으로 노름에서 되찾는다). 최대 노름은 이 법칙을 깨므로(<a class="ref" href="#prob-parallelogram-sup-norm"></a>) \(C[0, 1]\)은 바나흐 공간이지만 힐베르트 공간은 아니다. 힐베르트 공간이 바나흐 공간보다 쓰기 좋은 이유는 모두 식 <a class="ref" href="#eq-parallelogram-law"></a>에서 나온다. 바로 아래 사영 정리가 그 첫 예다.</p>
+    <div class="callout warn"><strong>내적의 어느 자리가 선형인가</strong><p>이 책의 내적은 학부 책과 같이 왼쪽 자리에 켤레 선형, 오른쪽 자리에 선형이다: \(\langle c\phi|\psi\rangle = c^*\langle\phi|\psi\rangle\). 수학 교재 가운데에는 내적을 \((\cdot, \cdot)\)로 쓰고 왼쪽 자리에 선형으로 정하는 것이 많다. 그런 책의 정리를 옮길 때는 \(\langle\phi|A\psi\rangle\) 같은 식에서 두 자리를 바꿔 읽어야 한다. 이 장이 진술을 대조한 테셸의 교재(G. Teschl, <i>Mathematical Methods in Quantum Mechanics</i>, AMS GSM 99, 2009의 저자 누리집 판)는 이 책과 같은 관례를 쓴다. 이 장이 적는 테셸의 정리 번호는 이 1판의 것이고, 2판(GSM 157)은 번호가 다르다.</p></div>
+    <div class="callout deep"><strong>이 책이 세우지 않는 것: 르베그 적분</strong><p>\(L^2\)의 원소는 엄밀하게는 "거의 어디서나" 같은 함수들의 묶음이고 적분은 르베그 적분이다. 이 장은 르베그 적분을 세우지 않고 결과 셋만 쓴다. (1) <b>리스-피셔 정리</b>: \(L^p(a, b)\)는 완비하다(\(1 \le p &lt; \infty\)). (2) 양 끝 근처에서(무한 구간이면 먼 곳에서도) 0인 매끄러운 함수의 공간 \(C_c^\infty(a, b)\)는 \(L^2(a, b)\)에서 조밀하다. (3) \(\int\lvert f\rvert^2 = 0\)이면 \(f\)는 영벡터다. 증명은 테셸 정리 0.30과 0.36에 있다. 그래서 \(L^2\)의 원소에는 "한 점에서의 값"이 없고, 이것이 10.3절에서 경계 조건을 어디에 걸 수 있는지를 정한다.</p></div>
+
+    <h3 id="s1-projection">사영 정리</h3>
+    <p>\(\mathcal H\)의 부분집합 \(M\)에 대해 모든 \(\phi \in M\)과 직교하는 \(\psi\)의 모임 \(M^\perp\)을 <span class="term">직교 여공간</span> <span class="en">(orthogonal complement)</span>이라 한다. 내적의 연속성 때문에 \(M^\perp\)은 언제나 닫힌 부분 공간이다. 부분 공간이 <span class="term">닫혀 있다</span>는 것은 그 안의 열이 수렴하면 극한도 그 안에 있다는 뜻이다.</p>
+    <div class="box thm" id="thm-projection"><div class="box-h">사영 정리 <span class="en">(projection theorem)</span></div>
+      <p>\(M\)이 힐베르트 공간 \(\mathcal H\)의 닫힌 부분 공간이면, 모든 \(\psi \in \mathcal H\)에 대해 \(\lVert\psi - \psi_M\rVert = \inf_{\phi \in M}\lVert\psi - \phi\rVert\)인 \(\psi_M \in M\)이 하나뿐이고 \(\psi - \psi_M \in M^\perp\)이다. 따라서 \(\mathcal H = M \oplus M^\perp\)이고 \((M^\perp)^\perp = M\)이다. \(P_M\psi = \psi_M\)을 \(M\) 위로의 <span class="term">직교 사영</span>이라 한다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>(1) <i>가장 가까운 점이 있다.</i> \(d = \inf_{\phi \in M}\lVert\psi - \phi\rVert\)로 두고 \(\lVert\psi - \phi_n\rVert \to d\)인 \(\phi_n \in M\)을 고른다. 식 <a class="ref" href="#eq-parallelogram-law"></a>를 \(\psi - \phi_m\)과 \(\psi - \phi_n\)에 쓰면</p>
+        <div class="formula">\[ \begin{aligned} \lVert\phi_m - \phi_n\rVert^2 &= 2\lVert\psi - \phi_m\rVert^2 \\ &\quad + 2\lVert\psi - \phi_n\rVert^2 \\ &\quad - 4\lVert\psi - \phi_{mn}\rVert^2 \end{aligned} \]</div>
+        <p>이다(\(\phi_{mn} = \tfrac12(\phi_m + \phi_n)\)). \(\phi_{mn} \in M\)이므로 마지막 항은 \(4d^2\) 이상이고, 오른쪽은 \(2d^2 + 2d^2 - 4d^2 = 0\) 이하로 간다. 곧 \(\phi_n\)은 코시 열이다. \(\mathcal H\)가 완비하므로 극한 \(\psi_M\)이 있고, \(M\)이 닫혀 있으므로 \(\psi_M \in M\)이다. 노름의 연속성으로 \(\lVert\psi - \psi_M\rVert = d\)이다. 같은 식에 가장 가까운 점 두 개를 넣으면 둘의 거리가 0이 되므로 하나뿐이다.</p>
+        <p>(2) <i>직교한다.</i> \(\chi = \psi - \psi_M\), \(\phi \in M\), 실수 \(t\)에 대해 \(\psi_M + t\langle\phi|\chi\rangle\phi \in M\)이므로 \(d^2 \le \lVert\chi - t\langle\phi|\chi\rangle\phi\rVert^2 = d^2 - 2t\lvert\langle\phi|\chi\rangle\rvert^2 + t^2\lvert\langle\phi|\chi\rangle\rvert^2\lVert\phi\rVert^2\)이다. 작은 \(t > 0\)에서 이것이 성립하려면 \(\langle\phi|\chi\rangle = 0\)이어야 한다.</p>
+        <p>(3) \(M \subset (M^\perp)^\perp\)는 정의에서 나온다. \(\chi \in (M^\perp)^\perp\)이면 \(\chi - \chi_M\)은 \(M^\perp\)에 들고, 동시에 \(\chi\)와 \(\chi_M\)이 모두 \((M^\perp)^\perp\)에 드므로 \((M^\perp)^\perp\)에도 든다. 자기 자신과 직교하므로 \(\chi = \chi_M \in M\)이다.</p>
+      </details>
+    </div>
+    <p>완비성은 (1)에서, 닫힘은 그 바로 뒤에서 쓰였다. 둘 가운데 하나라도 없으면 정리가 깨진다. <a class="ref" href="#ex-continuous-functions-incomplete"></a>의 공간에서 \([0, \tfrac12]\)에서 0인 연속 함수의 모임 \(M\)(그 공간 안에서 닫혀 있다)과 \(\psi = 1\)을 보면, \(\lVert 1 - f_n\rVert^2 = \tfrac12 + \tfrac{1}{3n}\)이 하한 \(\tfrac12\)로 가지만 하한을 주는 점은 공간 밖의 \(\Theta(x - \tfrac12)\)뿐이다. 정리의 \((M^\perp)^\perp = M\)은 10.3절과 10.4절에서 여러 번 쓴다. 닫히지 않은 부분 공간 \(D\)에서는 \((D^\perp)^\perp = \bar D\)이고, 특히 \(D\)가 조밀하면 \(D^\perp = \{0\}\)이다.</p>
+
+    <h3 id="s1-basis">정규직교 기저</h3>
+    <p>분해 가능한 힐베르트 공간에는 셀 수 있는 정규직교 기저 \(\{e_n\}\)이 있다. 조밀한 열에 그람-슈미트 과정(<a href="../../math-phys/chapters/ch09.html#eq-gram-schmidt">학부 9장의 그람-슈미트 과정</a>)을 쓰면 된다. 이때 모든 \(\psi\)는 \(\psi = \sum_n\langle e_n|\psi\rangle e_n\)으로 쓰이고 파르스발 등식 \(\lVert\psi\rVert^2 = \sum_n\lvert\langle e_n|\psi\rangle\rvert^2\)이 성립한다(<a href="../../math-phys/chapters/ch09.html#eq-parseval-general">학부 9장의 파르스발 등식</a>).</p>
+    <p>그러면 \(\psi \mapsto (\langle e_0|\psi\rangle, \langle e_1|\psi\rangle, \ldots)\)는 \(\mathcal H\)에서 \(\ell^2\)로 가는, 내적을 보존하는 단사다. 전사인 데에 완비성이 쓰인다. \((c_n) \in \ell^2\)이면 부분합 \(S_N = \sum_{n \le N}c_ne_n\)은 \(\lVert S_M - S_N\rVert^2 = \sum_{N &lt; n \le M}\lvert c_n\rvert^2\)에서 코시 열이고, 그 극한이 \(\mathcal H\) 안에 있다는 것을 완비성이 보장한다. 따라서 무한 차원의 분해 가능한 힐베르트 공간은 모두 \(\ell^2\)와 유니타리 동형이다(테셸 정리 1.6). 행렬 역학과 파동 역학이 같은 이론인 수학적 이유가 이것이다. 반대로 말하면 힐베르트 공간 자체에는 물리가 없고, 물리는 그 위의 연산자, 특히 연산자의 정의역에 있다.</p>
+    <p>무한 차원에서는 단위 공이 콤팩트하지 않다. 정규직교 기저의 원소들은 서로 \(\sqrt2\)만큼 떨어져 있어 수렴하는 부분열이 없기 때문이다. 유한 차원의 "유계 열에는 수렴하는 부분열이 있다"를 대신하는 연산자의 부류가 11장의 <a href="ch11.html#def-compact-operator">콤팩트 연산자</a>다.</p>
+  </section>
+
+  <!-- ============================================================ 10.2 -->
+  <section id="s2">
+    <h2>유계 연산자</h2>
+    <p>양자역학의 연산자 가운데 시간 전개 \(e^{-iHt}\), 사영, 회전, 병진은 어떤 상태에 작용해도 노름을 키우지 않는다. 이런 연산자는 무한 차원에서도 거의 행렬처럼 다룰 수 있다. 공간 전체에서 정의되고, 수반이 저절로 있고, 더하고 곱해도 같은 부류에 머문다. 이 절은 그 부류를 정의하고, 수반이 있다는 것을 리스 표현 정리에서 끌어낸다. 이 논법은 10.3절에서 비유계 연산자의 수반을 정의할 때 거의 그대로 다시 쓰인다. 절의 끝에서 헬링거-퇴플리츠 정리가 반대 방향의 경계를 긋는다. 위치·운동량·해밀토니안은 이 부류에 들 수 없다.</p>
+
+    <div class="box def" id="def-bounded-operator"><div class="box-h">유계 연산자와 연산자 노름</div>
+      <p>\(\mathcal H\) 전체에서 정의된 선형 사상 \(A : \mathcal H \to \mathcal H\)가 어떤 상수 \(C\)에 대해 모든 \(\psi\)에서 \(\lVert A\psi\rVert \le C\lVert\psi\rVert\)를 만족하면 <span class="term">유계 연산자</span> <span class="en">(bounded operator)</span>라 한다. 그런 \(C\) 가운데 가장 작은 것</p>
+      <div class="formula" id="eq-operator-norm">\[ \lVert A\rVert = \sup_{\psi \ne 0}\frac{\lVert A\psi\rVert}{\lVert\psi\rVert} \]</div>
+      <p>을 <span class="term">연산자 노름</span>이라 한다. 유계 연산자 전체를 \(\mathcal B(\mathcal H)\)로 쓴다.</p>
+    </div>
+    <p>유계인 것과 연속인 것은 같다. 유계이면 \(\lVert A\psi - A\phi\rVert \le \lVert A\rVert\,\lVert\psi - \phi\rVert\)이므로 연속이다. 거꾸로 \(A\)가 0에서 연속이면 \(\lVert\chi\rVert \le \delta\)일 때 \(\lVert A\chi\rVert \le 1\)인 \(\delta > 0\)이 있고, \(\chi = \delta\psi/\lVert\psi\rVert\)로 두면 \(\lVert A\psi\rVert \le \lVert\psi\rVert/\delta\)이다. 그래서 유계 연산자는 극한과 순서를 바꿀 수 있다: \(\psi_n \to \psi\)이면 \(A\psi_n \to A\psi\)이다. 연산자 노름은 \(\lVert AB\rVert \le \lVert A\rVert\,\lVert B\rVert\)를 만족하고, \(\mathcal B(\mathcal H)\)는 이 노름으로 바나흐 공간이다(테셸 정리 0.24).</p>
+    <p>두 가지 예를 보자. (1) 유계 연속 함수 \(f\)를 곱하는 연산자 \((M_f\psi)(x) = f(x)\psi(x)\)는 \(L^2(\mathbb R)\)에서 \(\lVert M_f\psi\rVert \le \sup\lvert f\rvert\,\lVert\psi\rVert\)이므로 유계이고, \(\lvert f\rvert\)가 최댓값에 가까운 곳에 몰린 \(\psi\)를 넣으면 \(\lVert M_f\rVert = \sup\lvert f\rvert\)임을 안다. (2) 핵이 \(\iint\lvert K(x, y)\rvert^2dx\,dy &lt; \infty\)인 적분 연산자 \((K\psi)(x) = \int K(x, y)\psi(y)\,dy\)는 코시-슈바르츠 부등식 \(\lvert(K\psi)(x)\rvert^2 \le \int\lvert K(x, y)\rvert^2dy\;\lVert\psi\rVert^2\)을 \(x\)로 적분해</p>
+    <div class="formula" id="eq-hilbert-schmidt-bound">\[ \lVert K\rVert \le \Big(\iint\lvert K(x, y)\rvert^2\,dx\,dy\Big)^{1/2} \]</div>
+    <p>을 얻는다. 13장의 <a href="ch13.html#def-fredholm-equation">프레드홀름 방정식</a>과 학부 20장의 그린 함수로 만든 적분 연산자가 이 부류다.</p>
+
+    <h3 id="s2-riesz">리스 표현 정리</h3>
+    <p>\(\mathcal H\)에서 \(\mathbb C\)로 가는 선형 사상을 <span class="term">선형 범함수</span> <span class="en">(linear functional)</span>라 한다. 고정된 \(\phi\)로 만든 \(\psi \mapsto \langle\phi|\psi\rangle\)은 코시-슈바르츠 부등식에서 노름이 \(\lVert\phi\rVert\)인 유계 범함수다. 학부 9장에서 이것을 브라 \(\langle\phi|\)라 불렀다(<a href="../../math-phys/chapters/ch09.html#def-ket-bra">학부 9장의 브라와 켓</a>). 힐베르트 공간에서는 유계 범함수가 모두 이런 꼴이다.</p>
+    <div class="box thm" id="thm-riesz-representation"><div class="box-h">리스 표현 정리 <span class="en">(Riesz representation theorem)</span></div>
+      <p>\(\ell\)이 힐베르트 공간 \(\mathcal H\) 위의 유계 선형 범함수이면, 모든 \(\psi \in \mathcal H\)에서 \(\ell(\psi) = \langle\phi_\ell|\psi\rangle\)인 \(\phi_\ell \in \mathcal H\)이 하나뿐이고 \(\lVert\phi_\ell\rVert = \lVert\ell\rVert\)이다.</p>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>\(\ell = 0\)이면 \(\phi_\ell = 0\)이다. 아니면 \(\operatorname{Ker}\ell\)은 (\(\ell\)이 연속이므로) 닫힌 진부분 공간이고, <a class="ref" href="#thm-projection"></a>에서 \(\operatorname{Ker}\ell\)에 직교하는 단위 벡터 \(u\)가 있다. 모든 \(\psi\)에서 \(\ell(\psi)u - \ell(u)\psi\)는 \(\ell\)을 씌우면 0이므로 \(\operatorname{Ker}\ell\)에 들고, \(u\)와 직교한다. 곧 \(0 = \ell(\psi) - \ell(u)\langle u|\psi\rangle\)이므로 \(\phi_\ell = \ell(u)^*u\)이다. 두 벡터가 같은 범함수를 주면 그 차가 모든 \(\psi\)와 직교하므로 0이다. 엄밀한 증명은 테셸 정리 1.8에 있다.</p>
+      </details>
+    </div>
+    <p>이 정리는 "모든 브라는 어떤 켓의 짝"이라는 학부 9장의 그림이 유계 범함수에 대해서만 옳다는 뜻이기도 하다. 점 \(x_0\)에서 값을 읽는 \(\psi \mapsto \psi(x_0)\)는 유계가 아니다. 연속 함수 \(f_n(x) = \max(0, 1 - n\lvert x - x_0\rvert)\)는 \(f_n(x_0) = 1\)이지만 \(\lVert f_n\rVert^2 = \tfrac{2}{3n} \to 0\)이기 때문이다. 그래서 \(\langle x_0|\)은 \(L^2\)의 브라가 아니고 \(\lvert x_0\rangle\)도 \(L^2\)의 원소가 아니다. 이런 대상을 다루는 틀은 12장의 <a href="ch12.html#def-rigged-hilbert-space">리그드 힐베르트 공간</a>이다.</p>
+
+    <h3 id="s2-adjoint">유계 연산자의 수반</h3>
+    <div class="box thm" id="thm-bounded-adjoint"><div class="box-h">유계 연산자의 수반</div>
+      <p>\(A \in \mathcal B(\mathcal H)\)이면 모든 \(\phi, \psi \in \mathcal H\)에서</p>
+      <div class="formula" id="eq-bounded-adjoint">\[ \langle\phi|A\psi\rangle = \langle A^\dagger\phi|\psi\rangle \]</div>
+      <p>인 \(A^\dagger \in \mathcal B(\mathcal H)\)가 하나뿐이다. 또 \(\lVert A^\dagger\rVert = \lVert A\rVert\), \((A^\dagger)^\dagger = A\), \((AB)^\dagger = B^\dagger A^\dagger\)이다.</p>
+    </div>
+    <p><b>증명.</b> (1) <i>존재.</i> \(\phi\)를 고정하면 \(\ell_\phi(\psi) = \langle\phi|A\psi\rangle\)은 선형이고 \(\lvert\ell_\phi(\psi)\rvert \le \lVert\phi\rVert\,\lVert A\rVert\,\lVert\psi\rVert\)이므로 유계다. <a class="ref" href="#thm-riesz-representation"></a>에서 \(\ell_\phi(\psi) = \langle\eta|\psi\rangle\)인 \(\eta\)가 하나뿐이고, 이것을 \(A^\dagger\phi\)로 정의한다. \(\phi \mapsto A^\dagger\phi\)가 선형인 것은 유일성에서 나온다. \(\ell_{\phi_1 + c\phi_2} = \ell_{\phi_1} + c^*\ell_{\phi_2}\)이고(왼쪽 자리의 켤레 선형), \(\langle A^\dagger\phi_1 + cA^\dagger\phi_2|\psi\rangle\)도 같은 범함수이기 때문이다.</p>
+    <p>(2) <i>노름.</i> 식 <a class="ref" href="#eq-bounded-adjoint"></a>에 \(\psi = A^\dagger\phi\)를 넣으면 \(\lVert A^\dagger\phi\rVert^2 = \langle\phi|AA^\dagger\phi\rangle \le \lVert\phi\rVert\,\lVert A\rVert\,\lVert A^\dagger\phi\rVert\)이므로 \(\lVert A^\dagger\phi\rVert \le \lVert A\rVert\,\lVert\phi\rVert\)이다. 곧 \(A^\dagger\)는 유계이고 \(\lVert A^\dagger\rVert \le \lVert A\rVert\)이다.</p>
+    <p>(3) <i>나머지.</i> 식 <a class="ref" href="#eq-bounded-adjoint"></a>의 켤레를 취하면 \(\langle\psi|A^\dagger\phi\rangle = \langle A\psi|\phi\rangle\)이고, 이것은 \(A\)가 \(A^\dagger\)의 수반이라는 식이다. 유일성에서 \((A^\dagger)^\dagger = A\)이고, (2)를 \(A^\dagger\)에 쓰면 \(\lVert A\rVert \le \lVert A^\dagger\rVert\)이다. 곱의 규칙은 \(\langle\phi|AB\psi\rangle = \langle A^\dagger\phi|B\psi\rangle = \langle B^\dagger A^\dagger\phi|\psi\rangle\)이다. ∎</p>
+    <p>증명의 핵심은 (1)에서 "\(\psi \mapsto \langle\phi|A\psi\rangle\)이 유계 범함수"라는 것이었다. \(A\)가 유계이므로 모든 \(\phi\)에서 이것이 성립했다. \(A\)가 유계가 아니면 이 범함수가 유계인 \(\phi\)만 골라 \(A^\dagger\)의 정의역으로 삼게 된다. 그것이 10.3절의 정의다. 유계 연산자에서 \(A^\dagger = A\)이면 <span class="term">에르미트</span> 또는 자기수반이라 하고, \(U^\dagger U = UU^\dagger = 1\)이면 <span class="term">유니타리</span>라 한다. 유계 연산자에는 정의역의 문제가 없으므로 이 두 말은 학부 9장의 것과 같은 뜻이다.</p>
+    <div class="callout warn"><strong>\(A^\dagger\)와 \(A^*\)</strong><p>이 책은 수반을 \(A^\dagger\)로, 복소켤레를 \(A^*\)로 쓴다. 수학 교재(테셸 등)는 수반을 \(A^*\)로 쓰고 복소켤레를 \(\bar A\)나 \(A^*\)로 쓰는데, 이 책에서 \(\bar A\)는 10.3절의 닫힘이다. 그런 책의 "\(A = A^*\)"는 이 책의 \(A = A^\dagger\)이다. 행렬에서는 어느 쪽이든 켤레 전치다.</p></div>
+
+    <div class="box ex" id="ex-shift-operator"><div class="box-h">\(\ell^2\)의 자리 옮김 연산자</div>
+      <p>\(\ell^2\)에서 \(S(c_0, c_1, c_2, \ldots) = (0, c_0, c_1, \ldots)\)로 정의한 <span class="term">자리 옮김 연산자</span> <span class="en">(shift operator)</span> \(S\)를 생각한다. (가) \(S^\dagger\)를 구하라. (나) \(S^\dagger S\)와 \(SS^\dagger\)를 구하고, \(S\)가 노름을 보존하지만 유니타리가 아님을 보여라. (다) \(S\)와 \(S^\dagger\)의 고유값을 모두 구하라.</p>
+      <p><b>풀이.</b> (가) \(\langle d|Sc\rangle = \sum_{n \ge 1}d_n^*c_{n-1} = \sum_{m \ge 0}d_{m+1}^*c_m\)이므로 \(S^\dagger(d_0, d_1, \ldots) = (d_1, d_2, \ldots)\), 곧 첫 성분을 버리고 왼쪽으로 옮기는 연산자다.</p>
+      <p>(나) \(S^\dagger Sc = c\)이므로 \(S^\dagger S = 1\)이고 \(\lVert Sc\rVert = \lVert c\rVert\)이다. 반면 \(SS^\dagger(d_0, d_1, \ldots) = (0, d_1, d_2, \ldots)\)이므로 \(SS^\dagger = 1 - \lvert e_0\rangle\langle e_0\rvert\)이다. \(S\)의 치역은 \(e_0\)에 직교하는 벡터뿐이라 \(S\)는 전사가 아니고 유니타리가 아니다. 유한 차원에서는 노름을 보존하는 선형 사상이 단사이므로 차원을 세면 전사이고, 따라서 유니타리다. 무한 차원에서는 "한 칸씩 옮겨 자리를 하나 비우는" 일이 가능하다.</p>
+      <p>(다) \(Sc = \lambda c\)이면 성분으로 \(0 = \lambda c_0\), \(c_{n-1} = \lambda c_n\)이다. \(\lambda = 0\)이면 모든 \(c_n = 0\)이고, \(\lambda \ne 0\)이면 \(c_0 = 0\)에서 차례로 \(c_n = 0\)이다. \(S\)에는 고유값이 없다. \(S^\dagger d = \lambda d\)는 \(d_{n+1} = \lambda d_n\), 곧 \(d = d_0(1, \lambda, \lambda^2, \ldots)\)이고 \(\lVert d\rVert^2 = \lvert d_0\rvert^2/(1 - \lvert\lambda\rvert^2)\)이 유한하려면 \(\lvert\lambda\rvert &lt; 1\)이어야 한다. 열린 단위 원판의 모든 복소수가 \(S^\dagger\)의 고유값이고, 고유 공간은 각각 1차원이다.</p>
+      <p><b>확인.</b> \(\lambda = 0\)의 고유벡터는 \(e_0\)이고, 이것은 (나)에서 \(S\)의 치역에서 빠진 방향 \(\operatorname{Ker}S^\dagger = \operatorname{span}\{e_0\}\)과 같다. \(\lVert S\rVert = \lVert S^\dagger\rVert = 1\)이므로 고유값의 크기가 1보다 작은 것은 \(\lvert\lambda\rvert\,\lVert d\rVert = \lVert S^\dagger d\rVert \le \lVert d\rVert\)와 맞는다.</p>
+      <p><b>어디에 쓰이나.</b> 조화 진동자의 수 상태에서 \(S^\dagger = \sum_n\lvert n\rangle\langle n + 1\rvert\)는 소멸 연산자 \(a = S^\dagger\sqrt N\)의 "위상 부분"이고, 유니타리가 아니므로 \(S^\dagger = e^{i\varphi}\)인 에르미트 위상 연산자 \(\varphi\)는 없다. 10.6절의 <a class="ref" href="#ex-momentum-half-line"></a>는 이 예의 연속 판이다.</p>
+    </div>
+
+    <h3 id="s2-hellinger-toeplitz">헬링거-퇴플리츠 정리</h3>
+    <div class="box thm" id="thm-hellinger-toeplitz"><div class="box-h">헬링거-퇴플리츠 정리 <span class="en">(Hellinger–Toeplitz theorem)</span></div>
+      <p>선형 사상 \(A\)가 힐베르트 공간 \(\mathcal H\) 전체에서 정의되어 있고 모든 \(\phi, \psi \in \mathcal H\)에서 \(\langle\phi|A\psi\rangle = \langle A\phi|\psi\rangle\)이면 \(A\)는 유계다.</p>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>먼저 \(A\)의 그래프가 닫혀 있음을 보인다. \(\psi_n \to \psi\)이고 \(A\psi_n \to \eta\)이면, 모든 \(\phi\)에서 \(\langle\phi|\eta\rangle = \lim\langle\phi|A\psi_n\rangle = \lim\langle A\phi|\psi_n\rangle = \langle A\phi|\psi\rangle = \langle\phi|A\psi\rangle\)이므로 \(\eta = A\psi\)이다. 대칭성 덕분에 \(A\)를 왼쪽 자리로 옮겨 극한을 취할 수 있었다. 그 다음 <b>닫힌 그래프 정리</b>(공간 전체에서 정의된 닫힌 연산자는 유계다)를 쓴다. 출처: 테셸 정리 2.8(닫힌 그래프)과 정리 2.9, F. Gieres, Rep. Prog. Phys. 63, 1893 (2000), arXiv:quant-ph/9907069의 2.2.3절 정리 1.</p>
+      </details>
+    </div>
+    <p>위치 \(x\), 운동량 \(-i\,d/dx\), 해밀토니안 \(-d^2/dx^2 + V\)는 기댓값이 실수라는 뜻에서 대칭이고, 10.3절에서 보듯 유계가 아니다. 정리의 대우에 따르면 이런 연산자는 \(L^2\) 전체에서 정의될 수 없다. 공간의 일부, 곧 <b>정의역</b>에서만 정의할 수 있고, 어느 부분을 고르는가가 연산자의 일부가 된다. 정준 교환 관계도 같은 결론을 준다. \([X, P] = i\)를 만족하는 두 연산자는 둘 다 유계일 수 없다(<a class="ref" href="#prob-ccr-unbounded"></a>). 양자역학은 처음부터 비유계 연산자의 이론이다.</p>
+  </section>
+
+  <!-- ============================================================ 10.3 -->
+  <section id="s3">
+    <h2>비유계 연산자와 정의역</h2>
+    <p>학부 9장은 수반을 "\(A\)의 정의역의 모든 \(v\)와 \(A^\dagger\)의 정의역의 모든 \(u\)에서 \(\langle u|Av\rangle = \langle A^\dagger u|v\rangle\)"로 정의했다(<a href="../../math-phys/chapters/ch09.html#eq-adjoint-definition">학부 9장의 수반의 정의</a>). 그런데 \(A^\dagger\)의 정의역이 무엇인지는 말하지 않았다. 헬링거-퇴플리츠 정리에 따르면 물리의 연산자는 어차피 공간 전체에서 정의될 수 없으므로, 이 빈칸을 채우지 않으면 "에르미트"라는 말부터 뜻이 정해지지 않는다. 이 절은 연산자를 정의역과 함께 정의하고, 수반의 정의역을 리스 표현 정리로 정확히 정한다. 그 다음 구간 \([0, 1]\)의 운동량에서 수반과 닫힘을 끝까지 계산한다. 이 계산이 10.4~10.6절의 모든 예의 원형이다.</p>
+
+    <div class="box ex" id="ex-position-momentum-unbounded"><div class="box-h">위치와 운동량은 유계가 아니다</div>
+      <p>\(L^2(\mathbb R)\)에서 \((X\psi)(x) = x\psi(x)\), \(P\psi = -i\psi'\)로 둔다. (가) 가우스 함수 \(\psi_\sigma(x) = (2\pi\sigma^2)^{-1/4}e^{-x^2/4\sigma^2}\)에 대해 \(\lVert X\psi_\sigma\rVert\)와 \(\lVert P\psi_\sigma\rVert\)를 구하고, \(X\)와 \(P\)가 유계가 아님을 보여라. (나) \(\psi(x) = (1 + x^2)^{-1/2}\)이 \(L^2(\mathbb R)\)의 원소이지만 \(x\psi(x)\)는 아님을 보여라.</p>
+      <p><b>풀이.</b> (가) \(\lvert\psi_\sigma\rvert^2\)은 분산이 \(\sigma^2\)인 정규 분포이므로 \(\lVert\psi_\sigma\rVert = 1\)이고 \(\lVert X\psi_\sigma\rVert^2 = \int x^2\lvert\psi_\sigma\rvert^2dx = \sigma^2\)이다. \(\psi_\sigma' = -\tfrac{x}{2\sigma^2}\psi_\sigma\)이므로 \(\lVert P\psi_\sigma\rVert^2 = \tfrac{1}{4\sigma^4}\int x^2\lvert\psi_\sigma\rvert^2dx = \tfrac{1}{4\sigma^2}\)이다. 따라서</p>
+      <div class="formula" id="eq-gaussian-position-momentum">\[ \begin{aligned} \lVert X\psi_\sigma\rVert &= \sigma \\ \lVert P\psi_\sigma\rVert &= \frac{1}{2\sigma} \end{aligned} \]</div>
+      <p>이다. \(\sigma \to \infty\)에서 \(\lVert X\psi_\sigma\rVert/\lVert\psi_\sigma\rVert \to \infty\)이고 \(\sigma \to 0\)에서 \(\lVert P\psi_\sigma\rVert/\lVert\psi_\sigma\rVert \to \infty\)이므로, 식 <a class="ref" href="#eq-operator-norm"></a>의 상한은 둘 다 무한대다.</p>
+      <p>(나) \(\lVert\psi\rVert^2 = \int\frac{dx}{1 + x^2} = \pi\)이다. 반면 \(\lvert x\psi\rvert^2 = \frac{x^2}{1 + x^2} \to 1\)\((\lvert x\rvert \to \infty)\)이므로 적분이 발산한다. \(X\)는 이 \(\psi\)에 작용할 수 없다.</p>
+      <p><b>확인.</b> 식 <a class="ref" href="#eq-gaussian-position-momentum"></a>에서 \(\lVert X\psi_\sigma\rVert\,\lVert P\psi_\sigma\rVert = \tfrac12\)이다. \(\langle X\rangle = \langle P\rangle = 0\)이므로 이것은 \(\Delta x\,\Delta p = \tfrac12\), 곧 가우스 파속이 불확정성 관계의 등호를 이룬다는 잘 알려진 결과다. 차원도 맞는다: \(\hbar = 1\)에서 \(\sigma\)는 길이, \(1/\sigma\)는 운동량이다.</p>
+      <p><b>어디에 쓰이나.</b> 『양자역학 (대학원)』 1장은 불확정성 관계를 증명하는데, 그 증명에는 \(\psi\)가 두 연산자의 정의역에 모두 든다는 가정이 들어간다. 2장은 위치와 운동량을 이 정의역 위에서 정의하고 가우스 파속을 다룬다.</p>
+    </div>
+
+    <h3 id="s3-domain">정의역과 수반</h3>
+    <div class="box def" id="def-operator-domain"><div class="box-h">정의역과 확장</div>
+      <p>\(\mathcal H\)의 선형 부분 공간 \(\mathcal D(A)\)와 선형 사상 \(A : \mathcal D(A) \to \mathcal H\)의 쌍을 <span class="term">연산자</span>라 하고, \(\mathcal D(A)\)를 <span class="term">정의역</span> <span class="en">(domain)</span>이라 한다. \(\mathcal D(A)\)가 \(\mathcal H\)에서 조밀하면 \(A\)는 <span class="term">조밀하게 정의되었다</span> <span class="en">(densely defined)</span>고 한다. 치역은 \(\operatorname{Ran}A = \{A\psi : \psi \in \mathcal D(A)\}\), 핵은 \(\operatorname{Ker}A = \{\psi \in \mathcal D(A) : A\psi = 0\}\)이다(적분 연산자의 핵 \(K(x, y)\)와는 다른 뜻이다).</p>
+      <p>두 연산자는 정의역과 작용이 모두 같을 때만 같다. \(\mathcal D(A) \subset \mathcal D(B)\)이고 \(\mathcal D(A)\) 위에서 \(B\psi = A\psi\)이면 \(B\)를 \(A\)의 <span class="term">확장</span> <span class="en">(extension)</span>이라 하고 \(A \subset B\)로 쓴다.</p>
+    </div>
+    <p>예를 들어 <a class="ref" href="#ex-position-momentum-unbounded"></a>의 \(X\)는 \(\mathcal D(X) = \{\psi \in L^2(\mathbb R) : x\psi \in L^2(\mathbb R)\}\)에서 정의된다. 이 정의역은 \(C_c^\infty(\mathbb R)\)을 품으므로 조밀하다(10.1절의 심화). 같은 식 \(-i\,d/dx\)를 \(C_c^\infty(\mathbb R)\)에서 정의한 것과 더 넓은 공간에서 정의한 것은 서로 다른 연산자이고, 첫째는 둘째의 제한이다. 이 장의 주제는 "같은 식, 다른 정의역"이 언제 같은 물리를 주고 언제 다른 물리를 주는가이다.</p>
+    <div class="box def" id="def-adjoint-unbounded"><div class="box-h">비유계 연산자의 수반</div>
+      <p>\(A\)가 조밀하게 정의된 연산자일 때, \(\psi \mapsto \langle\phi|A\psi\rangle\)이 \(\mathcal D(A)\) 위에서 유계인 \(\phi\)를 모두 모은 것을 \(\mathcal D(A^\dagger)\)로 둔다. \(\phi \in \mathcal D(A^\dagger)\)이면</p>
+      <div class="formula" id="eq-adjoint-unbounded">\[ \langle\phi|A\psi\rangle = \langle\eta|\psi\rangle \]</div>
+      <p>가 모든 \(\psi \in \mathcal D(A)\)에서 성립하는 \(\eta \in \mathcal H\)가 하나뿐이고, \(A^\dagger\phi = \eta\)로 정의한다. 이 \(A^\dagger\)를 \(A\)의 <span class="term">수반</span> <span class="en">(adjoint)</span>이라 한다.</p>
+    </div>
+    <p>\(\eta\)가 있고 하나뿐인 이유는 이렇다. \(\ell(\psi) = \langle\phi|A\psi\rangle\)이 조밀한 \(\mathcal D(A)\) 위에서 유계이면 \(\psi_n \to \psi\)인 열로 \(\ell(\psi) = \lim\ell(\psi_n)\)을 정해 \(\mathcal H\) 전체로 넓힐 수 있고(\(\lvert\ell(\psi_m) - \ell(\psi_n)\rvert \le \lVert\ell\rVert\,\lVert\psi_m - \psi_n\rVert\)), 넓힌 범함수에 <a class="ref" href="#thm-riesz-representation"></a>를 쓰면 \(\eta\)가 나온다. 두 벡터가 식 <a class="ref" href="#eq-adjoint-unbounded"></a>을 만족하면 그 차가 조밀한 집합과 직교하므로 0이다(10.1절). <b>조밀성이 없으면 수반이 정의되지 않는다.</b> 그래서 \(\mathcal D(A^\dagger)\)는 "\(A\)를 내적의 왼쪽 자리로 옮기는 식이 성립할 수 있는 가장 넓은 곳"이다.</p>
+
+    <div class="box def" id="def-closed-operator"><div class="box-h">닫힌 연산자와 닫힘</div>
+      <p>연산자 \(A\)의 <span class="term">그래프</span> \(\Gamma(A) = \{(\psi, A\psi) : \psi \in \mathcal D(A)\}\)가 \(\mathcal H \oplus \mathcal H\)에서 닫혀 있으면 \(A\)를 <span class="term">닫힌 연산자</span> <span class="en">(closed operator)</span>라 한다. 곧 \(\psi_n \in \mathcal D(A)\), \(\psi_n \to \psi\), \(A\psi_n \to \eta\)이면 언제나 \(\psi \in \mathcal D(A)\)이고 \(A\psi = \eta\)이다. \(\Gamma(A)\)의 닫힘이 어떤 연산자의 그래프이면 \(A\)를 <span class="term">닫을 수 있다</span> <span class="en">(closable)</span>고 하고, 그 연산자를 \(A\)의 <span class="term">닫힘</span> <span class="en">(closure)</span> \(\bar A\)라 한다.</p>
+    </div>
+    <p>닫힘은 \(A\)가 이미 정한 것만 담는다. \(\bar A\psi\)는 \(\psi\)에 다가가는 \(\mathcal D(A)\)의 열을 써서 \(A\)의 값들의 극한으로 정해지기 때문이다. 그래서 물리적으로는 \(A\)와 \(\bar A\)를 구별할 필요가 없고, 정리를 진술할 때는 닫힌 연산자를 쓴다. 유계 연산자는 닫혀 있다. 비유계 연산자를 닫으면 정의역이 넓어지지만 공간 전체가 되지는 않는다(공간 전체에서 정의된 닫힌 연산자는 유계라는 닫힌 그래프 정리 때문이다).</p>
+    <div class="box thm" id="thm-adjoint-properties"><div class="box-h">수반의 성질</div>
+      <p>\(A\)가 조밀하게 정의된 연산자이면 다음이 성립한다.</p>
+      <ol>
+        <li>\(A^\dagger\)는 닫혀 있다.</li>
+        <li>\(A \subset B\)이면 \(B^\dagger \subset A^\dagger\)이다. 확장할수록 수반은 줄어든다.</li>
+        <li>\(\operatorname{Ker}A^\dagger = (\operatorname{Ran}A)^\perp\)이다.</li>
+        <li>복소수 \(z\)에 대해 \((A + z)^\dagger = A^\dagger + z^*\)이다(정의역은 \(\mathcal D(A^\dagger)\) 그대로).</li>
+        <li>\(A\)를 닫을 수 있는 것은 \(\mathcal D(A^\dagger)\)가 조밀할 때이고, 이때 \(\bar A = A^{\dagger\dagger}\), \((\bar A)^\dagger = A^\dagger\)이다.</li>
+      </ol>
+      <details class="proof"><summary>증명</summary>
+        <p>1. \(\phi_n \in \mathcal D(A^\dagger)\), \(\phi_n \to \phi\), \(A^\dagger\phi_n \to \eta\)이면 모든 \(\psi \in \mathcal D(A)\)에서 \(\langle\phi|A\psi\rangle = \lim\langle\phi_n|A\psi\rangle = \lim\langle A^\dagger\phi_n|\psi\rangle = \langle\eta|\psi\rangle\)이다. 곧 \(\phi \in \mathcal D(A^\dagger)\), \(A^\dagger\phi = \eta\)이다.</p>
+        <p>2. \(\phi \in \mathcal D(B^\dagger)\)이면 \(\psi \mapsto \langle\phi|B\psi\rangle\)이 \(\mathcal D(B)\)에서 유계이므로 그 부분집합 \(\mathcal D(A)\)에서도 유계이고, 거기서 이 범함수는 \(\langle\phi|A\psi\rangle\)이다. 따라서 \(\phi \in \mathcal D(A^\dagger)\)이고, 조밀한 \(\mathcal D(A)\) 위에서 \(\langle A^\dagger\phi|\psi\rangle = \langle B^\dagger\phi|\psi\rangle\)이므로 \(A^\dagger\phi = B^\dagger\phi\)이다.</p>
+        <p>3. \(\phi \in \operatorname{Ker}A^\dagger\)는 모든 \(\psi \in \mathcal D(A)\)에서 \(\langle\phi|A\psi\rangle = 0\)이라는 뜻이고, 이것은 \(\phi \perp \operatorname{Ran}A\)와 같다. 거꾸로 \(\phi \perp \operatorname{Ran}A\)이면 범함수 \(\langle\phi|A\,\cdot\,\rangle = 0\)은 유계이므로 \(\phi \in \mathcal D(A^\dagger)\), \(A^\dagger\phi = 0\)이다.</p>
+        <p>4. \(\langle\phi|(A + z)\psi\rangle = \langle\phi|A\psi\rangle + \langle z^*\phi|\psi\rangle\)이고 둘째 항은 언제나 유계다. 왼쪽 자리가 켤레 선형이라 \(z\)가 \(z^*\)로 바뀐다.</p>
+        <p>5. 그래프의 직교 여공간으로 증명한다. 테셸 보조정리 2.4에 있다.</p>
+      </details>
+    </div>
+
+    <h3 id="s3-interval">구간의 미분 연산자</h3>
+    <p>경계 조건은 어디에 걸리는가. \(L^2\)의 원소에는 점에서의 값이 없으므로 "\(\psi(0) = 0\)"은 \(L^2\)의 원소에 대해서는 뜻이 없다. 뜻이 있으려면 정의역이 연속 함수로 이루어져야 한다. 미분 연산자에 자연스러운 정의역이 마침 그런 공간이다.</p>
+    <div class="box def" id="def-sobolev-h1"><div class="box-h">소볼레프 공간 \(H^1\)과 \(H^2\)</div>
+      <p>유계 구간 \((a, b)\)에서, 상수 \(c\)와 \(\chi \in L^2(a, b)\)로 \(\psi(x) = c + \int_a^x\chi(t)\,dt\)라 쓸 수 있는 함수 \(\psi\)의 공간을 <span class="term">소볼레프 공간</span> <span class="en">(Sobolev space)</span> \(H^1(a, b)\)라 하고 \(\psi' = \chi\)로 둔다. \(\psi\)와 \(\psi'\)이 모두 \(H^1\)에 들면 \(\psi \in H^2(a, b)\)이다. 반직선 \((0, \infty)\)나 실수축 \(\mathbb R\)에서는 모든 유계 부분 구간에서 위의 꼴이고 \(\psi, \psi' \in L^2\)인 것을 \(H^1(0, \infty)\), \(H^1(\mathbb R)\)로 쓰고, \(H^2\)도 같은 방법으로 정한다.</p>
+    </div>
+    <p>\(H^1\)의 원소는 연속이다. 코시-슈바르츠 부등식으로 \(\lvert\psi(x) - \psi(y)\rvert = \lvert\int_y^x\psi'\rvert \le \lvert x - y\rvert^{1/2}\lVert\psi'\rVert\)이기 때문이다. 그래서 \(\psi(a)\), \(\psi(b)\)가 뜻을 갖고, 부분 적분 \(\int_a^b\phi^*\psi' = [\phi^*\psi]_a^b - \int_a^b\phi^{*\prime}\psi\)가 \(\phi, \psi \in H^1\)에서 성립한다. 연속인 구간별 \(C^1\) 함수는 모두 \(H^1\)에 들고, 계단 함수는 들지 않는다.</p>
+    <div class="box thm" id="thm-du-bois-reymond"><div class="box-h">뒤부아레몽 보조정리</div>
+      <p>\(u \in L^2(0, 1)\)이 모든 \(\chi \in C_c^\infty(0, 1)\)에서 \(\langle u|\chi'\rangle = 0\)을 만족하면 \(u\)는 상수다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>\(W = \{\chi' : \chi \in C_c^\infty(0, 1)\}\)로 두자. \(W\)는 \(\int_0^1\rho = 0\)인 \(\rho \in C_c^\infty(0, 1)\)의 모임과 같다. \(\int\chi' = \chi(1) - \chi(0) = 0\)이고, 거꾸로 그런 \(\rho\)에서 \(\chi(x) = \int_0^x\rho\)는 0 근처와 (\(\int\rho = 0\)이므로) 1 근처에서 0인 매끄러운 함수이기 때문이다. 이제 \(W\)의 닫힘이 \(\{1\}^\perp\)임을 보인다. \(W \subset \{1\}^\perp\)이고 \(\{1\}^\perp\)은 닫혀 있다. 거꾸로 \(f \perp 1\)이면 \(C_c^\infty\)의 조밀성으로 \(\rho_n \to f\)인 \(\rho_n\)을 고르고, \(\int\rho_0 = 1\)인 \(\rho_0 \in C_c^\infty(0, 1)\)를 하나 고정해 \(\rho_n - (\int\rho_n)\rho_0 \in W\)를 만든다. \(\int\rho_n = \langle1|\rho_n\rangle \to \langle1|f\rangle = 0\)이므로 이 열은 \(f\)로 간다. 따라서 \(u \perp W\)이면 \(u \perp \{1\}^\perp\)이고, <a class="ref" href="#thm-projection"></a>의 \((M^\perp)^\perp = M\)에서 \(u \in \operatorname{span}\{1\}\)이다.</p>
+      </details>
+    </div>
+    <div class="box thm" id="thm-momentum-interval-adjoint"><div class="box-h">구간 \([0, 1]\)의 운동량: 수반과 닫힘</div>
+      <p>\(L^2(0, 1)\)에서 \(P_{\min} = -i\,d/dx\), \(\mathcal D(P_{\min}) = C_c^\infty(0, 1)\)로 두고, 같은 식을 \(\mathcal D(P_{\max}) = H^1(0, 1)\)에서 정의한 것을 \(P_{\max}\)라 하자. 그러면</p>
+      <ol>
+        <li>\(P_{\min}^\dagger = P_{\max}\)이다.</li>
+        <li>\(P_{\min}\)을 닫을 수 있고, 그 닫힘 \(P_0 = \bar P_{\min}\)은 \(\mathcal D(P_0) = \{\psi \in H^1(0, 1) : \psi(0) = \psi(1) = 0\}\)에서 \(-i\,d/dx\)이다.</li>
+        <li>\(P_0^\dagger = P_{\max}\)이다.</li>
+      </ol>
+    </div>
+    <p><b>증명.</b> (1) <i>\(H^1 \subset \mathcal D(P_{\min}^\dagger)\).</i> \(\phi \in H^1(0, 1)\), \(\psi \in C_c^\infty(0, 1)\)이면 \(\psi\)가 양 끝 근처에서 0이라 부분 적분의 경계 항이 없다.</p>
+    <div class="formula" id="eq-momentum-weak-adjoint">\[ \begin{aligned} \langle\phi|-i\psi'\rangle &= -i\int_0^1\phi^*\psi'\,dx = i\int_0^1\phi^{*\prime}\psi\,dx \\ &= \langle-i\phi'|\psi\rangle \end{aligned} \]</div>
+    <p>오른쪽은 \(\psi\)에 대해 유계이므로 \(\phi \in \mathcal D(P_{\min}^\dagger)\)이고 \(P_{\min}^\dagger\phi = -i\phi'\)이다.</p>
+    <p>(2) <i>\(\mathcal D(P_{\min}^\dagger) \subset H^1\).</i> \(\phi \in \mathcal D(P_{\min}^\dagger)\), \(\eta = P_{\min}^\dagger\phi\)로 두고 \(\Phi(x) = i\int_0^x\eta(t)\,dt\)를 만든다. \(\Phi \in H^1\)이고 \(-i\Phi' = \eta\)이므로, (1)에서 모든 \(\psi \in C_c^\infty\)에 대해 \(\langle\Phi|P_{\min}\psi\rangle = \langle\eta|\psi\rangle = \langle\phi|P_{\min}\psi\rangle\)이다. 곧 \(\langle\phi - \Phi|\psi'\rangle = 0\)이고, <a class="ref" href="#thm-du-bois-reymond"></a>에서 \(\phi - \Phi = c\)는 상수다. 따라서 \(\phi = \Phi + c \in H^1\)이고 \(-i\phi' = \eta\)이다. (1)과 (2)가 정리의 1이다.</p>
+    <p>(3) <i>닫힘.</i> \(\mathcal D(P_{\max}) = H^1\)은 \(C_c^\infty\)를 품으므로 조밀하고, <a class="ref" href="#thm-adjoint-properties"></a>의 5에서 \(P_0 = \bar P_{\min} = P_{\min}^{\dagger\dagger} = P_{\max}^\dagger\)이다. \(P_{\min} \subset P_{\max}\)이므로 성질 2에서 \(P_{\max}^\dagger \subset P_{\min}^\dagger = P_{\max}\)이고, 따라서 \(\phi \in \mathcal D(P_{\max}^\dagger)\)는 \(H^1\)에 들고 \(P_{\max}^\dagger\phi = -i\phi'\)이다. 이제 \(\phi, \psi \in H^1\)에서 경계 항까지 남긴 부분 적분(<a href="../../math-phys/chapters/ch09.html#eq-momentum-boundary">학부 9장의 운동량의 경계 항</a>)은</p>
+    <div class="formula" id="eq-momentum-boundary-form">\[ \begin{aligned} &\langle\phi|P_{\max}\psi\rangle - \langle P_{\max}\phi|\psi\rangle \\ &\quad = -i\big(\phi^*(1)\psi(1) - \phi^*(0)\psi(0)\big) \end{aligned} \]</div>
+    <p>이다. \(\phi \in \mathcal D(P_{\max}^\dagger)\)이면 왼쪽이 모든 \(\psi \in H^1\)에서 0이어야 한다. \(\psi = x\)와 \(\psi = 1 - x\)를 넣으면 \(\phi(1) = 0\), \(\phi(0) = 0\)이다. 거꾸로 \(\phi(0) = \phi(1) = 0\)인 \(\phi \in H^1\)은 오른쪽을 0으로 만들므로 \(\mathcal D(P_{\max}^\dagger)\)에 든다. 이것이 정리의 2다.</p>
+    <p>(4) 성질 5의 \((\bar A)^\dagger = A^\dagger\)에서 \(P_0^\dagger = P_{\min}^\dagger = P_{\max}\)이다. ∎</p>
+    <p>\(P_{\min}\)은 물리학자가 "경계에서 떨어진 매끄러운 함수에 \(-i\,d/dx\)를 쓴다"고 할 때의 연산자이고, 경계에 대한 정보가 하나도 없다. 닫힘 \(P_0\)의 조건 \(\psi(0) = \psi(1) = 0\)은 \(C_c^\infty\) 함수가 끝에서 0이라는 사실의 흔적일 뿐 새로 고른 것이 아니다. 반면 \(\mathcal D(P_{\max}) = H^1\)의 원소는 경계값 \((\psi(0), \psi(1)) \in \mathbb C^2\)을 마음대로 가질 수 있다. 두 정의역 사이에 끼인 이 2차원이 10.5절에서 결손 지수 \(n_+ + n_- = 1 + 1\)로 다시 나온다.</p>
+  </section>
+
+  <!-- ============================================================ 10.4 -->
+  <section id="s4">
+    <h2>대칭 연산자와 자기수반 연산자</h2>
+    <p>학부 9장의 <a href="../../math-phys/chapters/ch09.html#ex-momentum-hermitian">운동량 연산자의 예</a> (나)에서, 양 끝이 고정된 구간의 \(\hat p\)는 \(\langle f|\hat pg\rangle = \langle\hat pf|g\rangle\)을 만족하는데도 고유함수가 하나도 없었다. 그 연산자가 <a class="ref" href="#thm-momentum-interval-adjoint"></a>의 \(P_0\)이다. 이제 무엇이 모자랐는지 말할 수 있다. \(P_0\)의 수반은 \(P_0\)보다 훨씬 큰 \(P_{\max}\)이다. "왼쪽으로 옮겨도 같은 식"이라는 조건은 \(P_0 \subset P_0^\dagger\)만 말하고, 두 정의역이 같다는 것은 말하지 않는다. 이 절은 이 둘을 구별하는 정의를 세우고, 자기수반성을 판정하는 기본 정리를 증명한다.</p>
+
+    <div class="box def" id="def-symmetric-operator"><div class="box-h">대칭 연산자</div>
+      <p>조밀하게 정의된 연산자 \(A\)가 모든 \(\phi, \psi \in \mathcal D(A)\)에서 \(\langle\phi|A\psi\rangle = \langle A\phi|\psi\rangle\)을 만족하면 <span class="term">대칭 연산자</span> <span class="en">(symmetric operator)</span>라 한다. 이것은 \(A \subset A^\dagger\)와 같다.</p>
+    </div>
+    <p>같다는 것을 확인하자. \(A\)가 대칭이면 \(\phi \in \mathcal D(A)\)마다 \(\psi \mapsto \langle\phi|A\psi\rangle = \langle A\phi|\psi\rangle\)이 유계이므로 \(\phi \in \mathcal D(A^\dagger)\)이고 \(A^\dagger\phi = A\phi\)이다. 거꾸로 \(A \subset A^\dagger\)이면 \(\phi \in \mathcal D(A)\)에서 \(\langle\phi|A\psi\rangle = \langle A^\dagger\phi|\psi\rangle = \langle A\phi|\psi\rangle\)이다. 대칭 연산자는 \(\mathcal D(A^\dagger) \supset \mathcal D(A)\)가 조밀하므로 언제나 닫을 수 있고(<a class="ref" href="#thm-adjoint-properties"></a>의 5), 닫힘도 대칭이다.</p>
+    <div class="box def" id="def-self-adjoint-operator"><div class="box-h">자기수반 연산자</div>
+      <p>조밀하게 정의된 연산자 \(A\)가 \(A = A^\dagger\), 곧 \(\mathcal D(A) = \mathcal D(A^\dagger)\)이고 그 위에서 \(A\psi = A^\dagger\psi\)이면 <span class="term">자기수반 연산자</span> <span class="en">(self-adjoint operator)</span>라 한다.</p>
+    </div>
+    <p>자기수반 연산자는 닫혀 있고(수반은 닫혀 있다), 대칭인 확장을 더 갖지 않는다. \(A = A^\dagger\)이고 \(A \subset B\)인 대칭 연산자 \(B\)가 있으면 \(B \subset B^\dagger \subset A^\dagger = A\)이므로 \(B = A\)이다. 대칭 연산자를 넓히면 수반이 줄어들고(<a class="ref" href="#thm-adjoint-properties"></a>의 2), 둘이 만나는 곳이 자기수반 연산자다. 10.5절은 그 만나는 곳이 있는지, 몇 군데인지를 묻는다.</p>
+    <div class="callout warn"><strong>"에르미트", "대칭", "자기수반"</strong><p>학부 9장은 <a href="../../math-phys/chapters/ch09.html#def-hermitian-operator">에르미트(자기수반) 연산자</a>를 "정의역의 모든 벡터에서 \(\langle u|Av\rangle = \langle Au|v\rangle\)"로 정의했다. 이것은 이 장의 <b>대칭</b> 연산자다. 물리 교재의 "에르미트"는 보통 둘을 구별하지 않는다. 이 책은 10장부터 비유계 연산자에 대해 "대칭"과 "자기수반"만 쓰고, "에르미트"는 행렬과 유계 연산자에만 쓴다. 유계 연산자에서는 정의역이 공간 전체라 세 말이 같은 뜻이다.</p></div>
+
+    <div class="box thm" id="thm-symmetric-real-eigenvalues"><div class="box-h">대칭 연산자의 기댓값과 고유값</div>
+      <p>\(A\)가 대칭이면 모든 \(\psi \in \mathcal D(A)\)에서 \(\langle\psi|A\psi\rangle\)은 실수이고, 고유값은 모두 실수이며, 서로 다른 고유값의 고유벡터는 직교한다. 또 \(z = \lambda + i\mu\)(\(\lambda, \mu\) 실수)에 대해</p>
+      <div class="formula" id="eq-symmetric-lower-bound">\[ \begin{aligned} \lVert(A - z)\psi\rVert^2 &= \lVert(A - \lambda)\psi\rVert^2 + \mu^2\lVert\psi\rVert^2 \\ &\ge \mu^2\lVert\psi\rVert^2 \end{aligned} \]</div>
+      <p>이므로 \(\mu \ne 0\)이면 \(A - z\)는 단사다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>\(\langle\psi|A\psi\rangle = \langle A\psi|\psi\rangle = \langle\psi|A\psi\rangle^*\)이다. 고유값과 직교성은 학부 9장의 <a href="../../math-phys/chapters/ch09.html#thm-hermitian-operator-eigen">에르미트 연산자의 고유값과 고유벡터</a>와 같은 증명이다. 그 증명은 정의역 안의 벡터만 썼다. 식 <a class="ref" href="#eq-symmetric-lower-bound"></a>은 \(\lVert(A - \lambda)\psi - i\mu\psi\rVert^2\)을 펼친 것이다. 교차 항 \(2\operatorname{Re}\langle(A - \lambda)\psi|{-i\mu}\psi\rangle = 2\mu\operatorname{Re}\big(-i\langle\psi|(A - \lambda)\psi\rangle\big)\)은 \(\langle\psi|(A - \lambda)\psi\rangle\)이 실수이므로 0이다.</p>
+      </details>
+    </div>
+    <p>이 정리는 \(A\)에 대한 것이지 \(A^\dagger\)에 대한 것이 아니다. 다음 예가 그 차이를 보인다.</p>
+
+    <div class="box ex" id="ex-dirichlet-momentum-adjoint"><div class="box-h">양 끝을 고정한 운동량의 수반은 모든 복소수를 고유값으로 갖는다</div>
+      <p><a class="ref" href="#thm-momentum-interval-adjoint"></a>의 \(P_0\)에 대해 (가) \(P_0\)이 대칭이고 닫혀 있지만 자기수반이 아님을 보여라. (나) \(P_0\)과 \(P_0^\dagger = P_{\max}\)의 고유값을 모두 구하라.</p>
+      <p><b>풀이.</b> (가) 정리에서 \(P_0\)은 닫혀 있고 \(P_0 \subset P_{\max} = P_0^\dagger\)이므로 대칭이다. 상수 함수 1은 \(H^1(0, 1)\)에 들지만 양 끝에서 0이 아니므로 \(\mathcal D(P_0)\)에 들지 않는다. 정의역이 다르므로 \(P_0 \ne P_0^\dagger\)이다.</p>
+      <p>(나) \(-i\phi' = z\phi\)의 해는 \(\phi = Ce^{izx}\)이다. 구간 \([0, 1]\)에서 \(e^{izx}\)는 어떤 복소수 \(z\)에서도 유계이고 매끄러우므로 \(H^1\)에 든다. 따라서 <b>모든 \(z \in \mathbb C\)가 \(P_{\max}\)의 고유값</b>이고, 고유 공간은 각각 1차원이다. 반면 \(\lvert e^{izx}\rvert = e^{-x\operatorname{Im}z}\)은 0이 되지 않으므로 \(\phi(0) = \phi(1) = 0\)을 만족하는 해는 \(C = 0\)뿐이다. \(P_0\)에는 고유값이 없다.</p>
+      <p><b>확인.</b> \(\mu = \operatorname{Im}z \ne 0\)이면 \(\lVert e^{izx}\rVert^2 = \int_0^1e^{-2\mu x}dx = \tfrac{1 - e^{-2\mu}}{2\mu}\)로 유한하다. 복소 고유값이 <a class="ref" href="#thm-symmetric-real-eigenvalues"></a>과 모순되지 않는 것은 \(P_{\max}\)가 대칭이 아니기 때문이다. \(\psi = e^{-x}\)(\(z = i\))를 식 <a class="ref" href="#eq-momentum-boundary-form"></a>에 넣으면 \(\langle\psi|P_{\max}\psi\rangle - \langle P_{\max}\psi|\psi\rangle = -i(e^{-2} - 1) \ne 0\)이고, 이것은 \(2i\operatorname{Im}\langle\psi|P_{\max}\psi\rangle = 2i\lVert\psi\rVert^2 = i(1 - e^{-2})\)과 같다. \(z = \pm i\)의 고유함수 \(e^{\mp x}\)는 10.5절에서 결손 벡터로 다시 나온다.</p>
+      <p><b>어디에 쓰이나.</b> \(\operatorname{Ran}(P_0 - z)^\perp = \operatorname{Ker}(P_{\max} - z^*) \ne \{0\}\)(<a class="ref" href="#thm-adjoint-properties"></a>의 3)이므로 \(P_0 - z\)는 어떤 \(z\)에서도 전사가 아니고, 11장의 말로 \(P_0\)의 <a href="ch11.html#def-spectrum">스펙트럼</a>은 복소평면 전체다. 『양자역학 (대학원)』 1장이 관측 가능량을 대칭 연산자가 아니라 자기수반 연산자로 정하는 이유다.</p>
+    </div>
+    <div class="callout warn"><strong>기댓값이 실수라고 관측 가능량은 아니다</strong><p>\(P_0\)은 정의역의 모든 \(\psi\)에서 \(\langle\psi|P_0\psi\rangle\)이 실수다. 물리학자의 기준으로는 "에르미트"다. 그러나 고유벡터가 없고, 스펙트럼이 \(\mathbb C\) 전체이고, 11장의 <a href="ch11.html#thm-stone">스톤 정리</a>에서 보듯 시간 전개 \(e^{-itP_0}\)를 만들 수 없다. 이 결함은 계산을 더 조심해서 고쳐지지 않는다. 연산자를 정의하는 정보, 곧 경계에서 무엇을 요구하는가가 빠져 있기 때문이다. 그 정보를 채우는 방법이 10.5절의 자기수반 확장이다.</p></div>
+
+    <h3 id="s4-criterion">자기수반성의 판정</h3>
+    <p>\(A = A^\dagger\)를 직접 확인하려면 \(\mathcal D(A^\dagger)\)를 계산해야 하는데, 이것은 대개 어렵다. 다음 정리는 문제를 방정식 \((A^\dagger \mp i)\phi = 0\)의 풀이로 바꾼다. 미분 연산자에서는 이것이 상미분방정식이다.</p>
+    <div class="box thm" id="thm-self-adjoint-criterion"><div class="box-h">자기수반성의 기본 판정법</div>
+      <p>\(A\)가 대칭이면 다음 셋은 동치다.</p>
+      <ol>
+        <li>\(A\)는 자기수반이다.</li>
+        <li>\(A\)는 닫혀 있고 \(\operatorname{Ker}(A^\dagger - i) = \operatorname{Ker}(A^\dagger + i) = \{0\}\)이다.</li>
+        <li>\(\operatorname{Ran}(A + i) = \operatorname{Ran}(A - i) = \mathcal H\)이다.</li>
+      </ol>
+    </div>
+    <p><b>증명.</b> 1 ⇒ 2. 수반은 닫혀 있으므로 \(A = A^\dagger\)는 닫혀 있다. \(A^\dagger\phi = \pm i\phi\)이면 \(A\phi = \pm i\phi\)인데, <a class="ref" href="#thm-symmetric-real-eigenvalues"></a>에서 대칭 연산자의 고유값은 실수이므로 \(\phi = 0\)이다.</p>
+    <p>2 ⇒ 3. <a class="ref" href="#thm-adjoint-properties"></a>의 3과 4에서</p>
+    <div class="formula" id="eq-range-kernel-deficiency">\[ \operatorname{Ran}(A \pm i)^\perp = \operatorname{Ker}\big((A \pm i)^\dagger\big) = \operatorname{Ker}(A^\dagger \mp i) \]</div>
+    <p>이므로 \(\operatorname{Ran}(A \pm i)\)는 조밀하다. 이제 닫혀 있음을 보인다. \(\chi_n = (A + i)\psi_n \to \chi\)이면 식 <a class="ref" href="#eq-symmetric-lower-bound"></a>(\(z = -i\))에서 \(\lVert\psi_m - \psi_n\rVert \le \lVert\chi_m - \chi_n\rVert\)이므로 \(\psi_n\)은 코시 열이고 어떤 \(\psi\)로 간다. 그러면 \(A\psi_n = \chi_n - i\psi_n\)도 수렴하고, \(A\)가 닫혀 있으므로 \(\psi \in \mathcal D(A)\), \((A + i)\psi = \chi\)이다. 조밀하고 닫힌 부분 공간은 \(\mathcal H\) 전체다. \(A - i\)도 같다.</p>
+    <p>3 ⇒ 1. \(A \subset A^\dagger\)이므로 \(\mathcal D(A^\dagger) \subset \mathcal D(A)\)만 보이면 된다. \(\phi \in \mathcal D(A^\dagger)\)를 잡자. \(\operatorname{Ran}(A - i) = \mathcal H\)이므로 \((A - i)\psi = (A^\dagger - i)\phi\)인 \(\psi \in \mathcal D(A)\)가 있다. \(A\psi = A^\dagger\psi\)이므로 \((A^\dagger - i)(\phi - \psi) = 0\)이다. 그런데 식 <a class="ref" href="#eq-range-kernel-deficiency"></a>에서 \(\operatorname{Ker}(A^\dagger - i) = \operatorname{Ran}(A + i)^\perp = \mathcal H^\perp = \{0\}\)이므로 \(\phi = \psi \in \mathcal D(A)\)이다. ∎</p>
+    <p>\(\pm i\) 대신 \(\pm i\mu\)(\(\mu > 0\))를 써도 된다. \(A/\mu\)에 정리를 쓰면 되기 때문이다. 대칭 연산자 \(A\)의 닫힘 \(\bar A\)에 정리를 쓰면, \((\bar A)^\dagger = A^\dagger\)이고 \(\operatorname{Ran}(\bar A \pm i)\)가 \(\operatorname{Ran}(A \pm i)\)의 닫힘이므로 다음을 얻는다: <b>\(\bar A\)가 자기수반일 필요충분조건은 \(\operatorname{Ker}(A^\dagger \mp i) = \{0\}\), 곧 \(\operatorname{Ran}(A \pm i)\)가 조밀한 것</b>이다.</p>
+    <div class="box def" id="def-essentially-self-adjoint"><div class="box-h">본질적 자기수반</div>
+      <p>대칭 연산자 \(A\)의 닫힘 \(\bar A\)가 자기수반이면 \(A\)를 <span class="term">본질적 자기수반</span> <span class="en">(essentially self-adjoint)</span>이라 한다. 이때 \(A\)의 자기수반 확장은 \(\bar A\) 하나뿐이다.</p>
+    </div>
+    <p>마지막 주장을 확인하자. \(B\)가 \(A\)의 자기수반 확장이면 \(B\)는 닫혀 있으므로 \(\bar A \subset B\)이고, 수반을 취하면 \(B = B^\dagger \subset (\bar A)^\dagger = \bar A\)이다. 따라서 \(B = \bar A\)이다. 본질적 자기수반이라는 것은 <b>매끄러운 함수 위에 식만 적어도 물리가 하나로 정해진다</b>는 뜻이다. 반대로 본질적 자기수반이 아니면 식만으로는 연산자가 정해지지 않고, 무엇인가를 더 골라야 한다.</p>
+
+    <h3 id="s4-examples">자기수반인 연산자들</h3>
+    <div class="box thm" id="thm-multiplication-self-adjoint"><div class="box-h">곱셈 연산자와 실수축의 운동량</div>
+      <ol>
+        <li>실숫값 함수 \(f\)에 대해 곱셈 연산자 \(M_f\), \(\mathcal D(M_f) = \{\psi \in L^2 : f\psi \in L^2\}\)는 자기수반이다. 특히 \(L^2(\mathbb R)\)의 위치 \(X = M_x\)는 자기수반이다.</li>
+        <li>\(L^2(\mathbb R)\)에서 \(-i\,d/dx\)를 \(C_c^\infty(\mathbb R)\) 위에서 정의한 연산자는 본질적 자기수반이고, 그 닫힘은 \(\mathcal D(P) = H^1(\mathbb R)\) 위의 \(P = -i\,d/dx\)다.</li>
+      </ol>
+      <details class="proof"><summary>증명</summary>
+        <p>1. \(\psi \in L^2\)에서 \(\lvert f\rvert \le n\)인 곳만 남긴 \(\psi_n\)은 \(\mathcal D(M_f)\)에 들고 \(\psi\)로 가므로 정의역은 조밀하다. \(f\)가 실수이므로 \(M_f\)는 대칭이다. \(\chi \in L^2\)에 대해 \(\psi = \chi/(f \pm i)\)로 두면 \(\lvert\psi\rvert \le \lvert\chi\rvert\), \(\lvert f\psi\rvert \le \lvert\chi\rvert\)이므로 \(\psi \in \mathcal D(M_f)\)이고 \((M_f \pm i)\psi = \chi\)이다. <a class="ref" href="#thm-self-adjoint-criterion"></a>의 3에서 \(M_f\)는 자기수반이다.</p>
+        <p>2. <a class="ref" href="#thm-momentum-interval-adjoint"></a>의 (1), (2)를 모든 유계 구간에서 되풀이하면, 이 연산자의 수반은 \(H^1(\mathbb R)\) 위의 \(-i\,d/dx\)다. \((A^\dagger \mp i)\phi = 0\)의 해는 \(\phi = Ce^{\mp x}\)이고, 실수축 전체에서는 \(C = 0\)일 때만 \(L^2\)에 든다. 판정법에서 닫힘 \(\bar A\)가 자기수반이므로 \(\bar A = (\bar A)^\dagger = A^\dagger\), 곧 \(H^1(\mathbb R)\) 위의 \(P\)다.</p>
+      </details>
+    </div>
+    <p>푸리에 변환(<a href="../../math-phys/chapters/ch15.html#thm-plancherel">학부 15장의 플랑슈렐 정리</a>로 \((2\pi)^{-d/2}\)를 붙이면 유니타리)은 \(\mathbb R^d\)의 라플라시안 \(-\nabla^2\)을 곱셈 연산자 \(k^2\)로 바꾼다. 그래서 <a class="ref" href="#thm-multiplication-self-adjoint"></a>의 1에서 \(-\nabla^2\)은 \(H^2(\mathbb R^d) = \{\psi \in L^2 : k^2\tilde\psi \in L^2\}\)(푸리에 변환으로 정의한다. \(d = 1\)이면 <a class="ref" href="#def-sobolev-h1"></a>의 \(H^2\)와 같다)에서 자기수반이고, \(C_c^\infty(\mathbb R^d)\) 위에서 본질적 자기수반이다(테셸 정리 7.8과 보조정리 7.9). 실수축 전체나 \(\mathbb R^d\) 전체에서는 위치, 운동량, 자유 해밀토니안이 모두 매끄러운 함수 위에서 본질적 자기수반이다. 물리학자가 정의역을 신경 쓰지 않고도 맞는 답을 얻어 온 것은 이 때문이다. 문제는 경계, 퍼텐셜의 특이점, 고리처럼 위상이 자명하지 않은 공간에서 생긴다. 다음 절이 그 경우들이다.</p>
+  </section>
+
+  <!-- ============================================================ 10.5 -->
+  <section id="s5">
+    <h2>결손 지수와 폰 노이만 정리</h2>
+    <p>10.4절의 판정법에 따르면 닫힌 대칭 연산자가 자기수반이 되지 못하게 막는 것은 \(A^\dagger\phi = \pm i\phi\)의 해다(<a class="ref" href="#ex-dirichlet-momentum-adjoint"></a>에서는 \(e^{\mp x}\)). 해가 있으면 연산자를 넓혀 해를 정의역에 일부 끌어들여야 하는데, 모두 끌어들이면 대칭성이 깨진다. 그 사이의 길이 몇 갈래인지를 해 공간의 차원이 정한다. 이 절은 그 차원을 결손 지수로 정의하고, 폰 노이만의 정리로 확장을 모두 구한 뒤, 구간의 운동량에서 확장의 매개변수가 물리적으로 무엇인지 본다. 끝이 하나뿐인 반직선은 10.6절에서 본다.</p>
+
+    <div class="box def" id="def-deficiency-indices"><div class="box-h">결손 공간과 결손 지수</div>
+      <p>닫힌 대칭 연산자 \(A\)에 대해</p>
+      <div class="formula" id="eq-deficiency-subspaces">\[ \begin{aligned} K_\pm &= \operatorname{Ker}(A^\dagger \mp i) \\ n_\pm &= \dim K_\pm \end{aligned} \]</div>
+      <p>를 각각 <span class="term">결손 공간</span> <span class="en">(deficiency subspaces)</span>과 <span class="term">결손 지수</span> <span class="en">(deficiency indices)</span>라 하고 \((n_+, n_-)\)로 적는다. 닫히지 않은 대칭 연산자에는 그 닫힘의 결손 지수를 쓴다(\((\bar A)^\dagger = A^\dagger\)이므로 같은 값이다).</p>
+    </div>
+    <p>식 <a class="ref" href="#eq-range-kernel-deficiency"></a>에서 \(K_\pm = \operatorname{Ran}(A \pm i)^\perp\)이므로 "결손"은 \(A \pm i\)의 치역이 모자란 차원이다. 닫힌 대칭 연산자에서 \(n_+ = n_- = 0\)은 자기수반과 같다(<a class="ref" href="#thm-self-adjoint-criterion"></a>). \(\pm i\) 대신 위 반평면의 어떤 \(z\)를 써도 \(\dim\operatorname{Ker}(A^\dagger - z) = n_+\)이고 아래 반평면에서는 \(n_-\)이다(테셸 2.6절, G. Bonneau, J. Faraut, G. Valent, Am. J. Phys. 69, 322 (2001), arXiv:quant-ph/0103153의 4절). 차원이 있는 문제에서는 \(\pm i\mu\)로 단위를 맞춰도 된다.</p>
+    <div class="callout warn"><strong>결손 지수의 부호 배정</strong><p>이 책은 \(n_+ = \dim\operatorname{Ker}(A^\dagger - i)\)로 정한다. 테셸(\(d_\pm\)로 씀)과 보노 외(위 반평면의 \(z\)로 \(n_+\))도 같다. 반대로 정하는 교재가 있어서, 같은 연산자의 결손 지수가 \((1, 0)\)으로도 \((0, 1)\)로도 적힌다. 연산자의 부호를 바꿔도 순서가 바뀐다. 반직선의 \(-i\,d/dx\)는 이 책에서 \((1, 0)\)이고 \(+i\,d/dx\)는 \((0, 1)\)이다. 정리에 중요한 것은 \(n_+ = n_-\)인지뿐이다.</p></div>
+    <p>결손 공간은 수반의 정의역에서 \(A\)의 정의역을 뺀 나머지를 정확히 채운다.</p>
+    <div class="box thm" id="thm-von-neumann-formula"><div class="box-h">폰 노이만의 첫째 공식</div>
+      <p>닫힌 대칭 연산자 \(A\)에서</p>
+      <div class="formula" id="eq-von-neumann-formula">\[ \begin{aligned} \mathcal D(A^\dagger) &= \mathcal D(A) \dotplus K_+ \dotplus K_- \\ A^\dagger(\psi + \phi_+ + \phi_-) &= A\psi + i\phi_+ - i\phi_- \end{aligned} \]</div>
+      <p>이다. 여기서 \(\dotplus\)는 직합(분해가 하나뿐이라는 뜻)이고 직교 분해는 아니다.</p>
+      <details class="proof"><summary>증명</summary>
+      <p>\(A\)가 닫혀 있으므로 <a class="ref" href="#thm-self-adjoint-criterion"></a>의 증명(2 ⇒ 3의 둘째 부분)에서 \(\operatorname{Ran}(A + i)\)는 닫혀 있고, <a class="ref" href="#thm-projection"></a>에서 \(\mathcal H = \operatorname{Ran}(A + i) \oplus K_+\)이다. \(\phi \in \mathcal D(A^\dagger)\)에 대해 \((A^\dagger + i)\phi = (A + i)\psi + \chi\)(\(\psi \in \mathcal D(A)\), \(\chi \in K_+\))로 나눈다. \(A^\dagger\chi = i\chi\)이므로 \(\chi = (A^\dagger + i)\tfrac{\chi}{2i}\)이고, 따라서 \((A^\dagger + i)\big(\phi - \psi - \tfrac{\chi}{2i}\big) = 0\), 곧 \(\phi - \psi - \tfrac{\chi}{2i} \in K_-\)이다. 분해가 하나뿐임을 보이자. \(\psi + \phi_+ + \phi_- = 0\)에 \(A^\dagger + i\)를 씌우면 \((A + i)\psi + 2i\phi_+ = 0\)이고, 두 항은 서로 직교하는 부분 공간에 있으므로 각각 0이다. 식 <a class="ref" href="#eq-symmetric-lower-bound"></a>에서 \(\psi = 0\)이고, 그러면 \(\phi_- = 0\)이다.</p>
+    </details>
+    </div>
+    <p>미분 연산자에서 \(\mathcal D(A^\dagger)/\mathcal D(A)\)의 차원 \(n_+ + n_-\)는 경계에서 마음대로 줄 수 있는 자료의 수다. <a class="ref" href="#thm-momentum-interval-adjoint"></a>의 \(P_0\)에서는 \((\psi(0), \psi(1))\)의 두 복소수였다.</p>
+
+    <div class="box thm" id="thm-von-neumann-extensions"><div class="box-h">폰 노이만의 확장 정리 <span class="en">(von Neumann’s extension theorem)</span></div>
+      <p>\(A\)가 결손 지수 \((n_+, n_-)\)인 닫힌 대칭 연산자이면 다음이 성립한다.</p>
+      <ol>
+        <li>\(A\)가 자기수반 확장을 가질 필요충분조건은 \(n_+ = n_-\)이다.</li>
+        <li>이때 자기수반 확장은 유니타리 사상 \(U : K_+ \to K_-\)와 일대일로 대응한다. \(U\)에 대응하는 확장 \(A_U\)는
+          <div class="formula" id="eq-extension-domain">\[ \begin{aligned} &\mathcal D(A_U) = \{\psi + \phi + U\phi : \\ &\quad \psi \in \mathcal D(A),\ \phi \in K_+\} \\ &A_U(\psi + \phi + U\phi) \\ &\quad = A\psi + i\phi - iU\phi \end{aligned} \]</div>
+          이다. \(n_+ = n_- = n\)이면 확장의 가족은 \(n \times n\) 유니타리 행렬의 군 \(U(n)\)으로 매겨진다.</li>
+        <li>\(n_+ = n_- = 0\)이면 \(A\) 자신이 자기수반이고 확장은 하나뿐이다.</li>
+      </ol>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p><i>케일리 변환.</i> \(\lambda \mapsto (\lambda - i)/(\lambda + i)\)는 실수축을 단위원으로 보낸다. 같은 일을 연산자에 한다. 식 <a class="ref" href="#eq-symmetric-lower-bound"></a>에서 \(\lVert(A + i)\psi\rVert = \lVert(A - i)\psi\rVert\)이므로 \(V = (A - i)(A + i)^{-1}\)은 \(\operatorname{Ran}(A + i)\)에서 \(\operatorname{Ran}(A - i)\)로 가는 노름 보존 사상이고, \(A = i(1 + V)(1 - V)^{-1}\)로 되돌아온다. \(A\)의 대칭 확장은 \(V\)의 노름 보존 확장이 되고, 자기수반 확장은 \(V\)를 \(\mathcal H\) 전체의 유니타리 사상으로 넓힌 것이 된다. 남은 일은 \(\operatorname{Ran}(A + i)^\perp = K_+\)을 \(\operatorname{Ran}(A - i)^\perp = K_-\)로 유니타리하게 보내는 것이고, 두 차원이 같을 때만 가능하다.</p>
+        <p><i>식 <a class="ref" href="#eq-extension-domain"></a>가 대칭인 이유.</i> \(\chi = \psi + \phi + U\phi\)에 대해 \(\langle\chi|A_U\chi\rangle\)을 펼치고 \(\langle\phi|A\psi\rangle = \langle A^\dagger\phi|\psi\rangle = -i\langle\phi|\psi\rangle\), \(\langle U\phi|A\psi\rangle = i\langle U\phi|\psi\rangle\)을 쓰면, 허수부로 남는 것은 \(\lVert\phi\rVert^2 - \lVert U\phi\rVert^2\)뿐이다. \(U\)가 노름을 보존하므로 0이다. 출처: 테셸 정리 2.25와 정리 2.26(테셸의 매개변수 \(V_1\)은 이 책의 \(-U\)), 보노 외의 4절 정리 1.</p>
+      </details>
+    </div>
+    <p>결손 지수가 같은지는 계산하지 않고 알 수 있는 경우가 많다. 복소켤레 \(C\psi = \psi^*\)가 정의역을 보존하고 \(AC = CA\)이면 \(A^\dagger\)도 \(C\)와 교환하고(수반의 정의에 \(\langle C\phi|C\psi\rangle = \langle\psi|\phi\rangle\)을 쓴다), \(A^\dagger\phi = i\phi\)에서 \(A^\dagger C\phi = -iC\phi\)이므로 \(C\)가 \(K_+\)을 \(K_-\)로 일대일로 보낸다. 곧 \(n_+ = n_-\)이다(테셸 정리 2.28). 실수 계수 미분 연산자 \(-d^2/dx^2 + V(x)\)는 언제나 이 경우다. 반면 \(-i\,d/dx\)는 켤레를 취하면 부호가 바뀌므로 이 논법이 통하지 않고, 실제로 반직선에서 결손 지수가 다르다(<a class="ref" href="#ex-momentum-half-line"></a>).</p>
+
+    <h3 id="s5-interval">구간의 운동량: 확장의 가족</h3>
+    <div class="box calc" id="calc-momentum-interval-extensions"><div class="box-h">구간 \([0, 1]\)의 운동량: 결손 지수, 확장의 가족, 스펙트럼</div>
+      <p><a class="ref" href="#thm-momentum-interval-adjoint"></a>의 \(P_0\)에 <a class="ref" href="#def-deficiency-indices"></a>과 <a class="ref" href="#thm-von-neumann-extensions"></a>를 써서 자기수반 확장을 모두 구하고, 각 확장의 고유값을 구한다.</p>
+      <p><b>계산.</b> (1) <i>결손 공간.</i> \(P_0^\dagger = P_{\max}\)이므로 \(K_+\)는 \(-i\phi' = i\phi\), 곧 \(\phi' = -\phi\)의 해 \(\phi_+ = e^{-x}\)로 생성되고, \(K_-\)는 \(\phi' = \phi\)의 해 \(\phi_- = e^{x}\)로 생성된다. 둘 다 \(H^1(0, 1)\)에 든다. 결손 지수는 \((1, 1)\)이다.</p>
+      <p>(2) <i>유니타리 사상.</i> 노름은</p>
+      <div class="formula" id="eq-interval-deficiency-norms">\[ \begin{aligned} \lVert e^{-x}\rVert^2 &= \frac{1 - e^{-2}}{2} \\ \lVert e^{x}\rVert^2 &= \frac{e^2 - 1}{2} = e^2\,\lVert e^{-x}\rVert^2 \end{aligned} \]</div>
+      <p>이므로, 노름을 보존하는 \(U : K_+ \to K_-\)는 실수 \(\beta\)로 \(Ue^{-x} = e^{i\beta}e^{-1}e^{x}\)이다. 식 <a class="ref" href="#eq-extension-domain"></a>에서 확장 \(P_\beta\)의 정의역은 \(\psi_0 + c\big(e^{-x} + e^{i\beta - 1}e^{x}\big)\)(\(\psi_0 \in \mathcal D(P_0)\), \(c \in \mathbb C\))이다.</p>
+      <p>(3) <i>경계 조건.</i> \(\psi_0\)은 양 끝에서 0이므로 \(\psi(0) = c(1 + e^{i\beta - 1})\), \(\psi(1) = c(e^{-1} + e^{i\beta})\)이고</p>
+      <div class="formula">\[ \frac{\psi(1)}{\psi(0)} = \frac{e^{-1} + e^{i\beta}}{1 + e^{i\beta - 1}} = e^{i\beta}\,\frac{1 + e^{-1 - i\beta}}{1 + e^{-1 + i\beta}} \]</div>
+      <p>이다. 오른쪽 분수의 분자는 분모의 켤레이므로 크기가 1이다. 따라서</p>
+      <div class="formula" id="eq-interval-twisted-bc">\[ \begin{aligned} \psi(1) &= e^{i\theta}\psi(0) \\ \theta &= \beta - 2\arg\big(1 + e^{-1 + i\beta}\big) \end{aligned} \]</div>
+      <p>이다. 거꾸로 \(\psi(1) = e^{i\theta}\psi(0)\)인 \(\psi \in H^1\)은 \(c = \psi(0)/(1 + e^{i\beta - 1})\)로 두면(\(\lvert e^{i\beta - 1}\rvert &lt; 1\)이라 분모는 0이 아니다) \(\psi - c(e^{-x} + e^{i\beta - 1}e^x)\)가 \(x = 0\)에서 0이고, 두 함수의 경계값 비가 같으므로 \(x = 1\)에서도 0이다. 곧 \(\mathcal D(P_\beta) = \{\psi \in H^1(0, 1) : \psi(1) = e^{i\theta}\psi(0)\}\)이다. 이 확장을 \(P_\theta\)로 부른다.</p>
+      <p>(4) <i>스펙트럼.</i> \(-i\psi' = \lambda\psi\)의 해 \(e^{i\lambda x}\)가 경계 조건을 만족하려면 \(e^{i\lambda} = e^{i\theta}\)이어야 하므로</p>
+      <div class="formula" id="eq-interval-spectrum">\[ \begin{aligned} \lambda_n &= 2\pi n + \theta \\ \psi_n(x) &= e^{i(2\pi n + \theta)x} \end{aligned} \]</div>
+      <p>이다(\(n \in \mathbb Z\)). \(\psi_n = e^{i\theta x}e^{2\pi inx}\)이고 \(\{e^{2\pi inx}\}\)이 \(L^2(0, 1)\)의 정규직교 기저이므로(학부 14장의 푸리에 급수), \(\{\psi_n\}\)도 정규직교 기저다.</p>
+      <p class="calc-result"><b>결과.</b> 결손 지수는 \((1, 1)\), \(K_+ = \operatorname{span}\{e^{-x}\}\), \(K_- = \operatorname{span}\{e^x\}\)이고 \(\lVert e^x\rVert/\lVert e^{-x}\rVert = e\)이다. 유니타리 사상 \(U = e^{i\beta}\)(규격화한 기저에서)는 경계 조건 \(\psi(1) = e^{i\theta}\psi(0)\)을 주고, \(\theta(0) = 0\)(주기 조건), \(\theta(\pi) = \pi\)(반주기 조건), \(\theta(\tfrac\pi2) = \tfrac\pi2 - 2\arctan e^{-1} = 0.8658\)이다. \(\theta\)는 \(\beta\)의 증가 함수이고 \(\beta\)가 \(0\)에서 \(2\pi\)까지 갈 때 정확히 한 바퀴 돈다. 확장 \(P_\theta\)의 고유값은 \(2\pi n + \theta\)(\(n \in \mathbb Z\))다.</p>
+      <p><b>확인.</b> \(r = e^{-1}\)로 두고 \(\arg(1 + re^{i\beta}) = \arctan\frac{r\sin\beta}{1 + r\cos\beta}\)을 미분하면 \(\frac{d\theta}{d\beta} = \frac{1 - r^2}{1 + r^2 + 2r\cos\beta} > 0\)이다. 이것은 푸아송 핵이고 \([0, 2\pi]\)에서 적분하면 \(2\pi\)이므로 한 바퀴다(그림 10-3 (가)). 차원도 맞는다(그림 10-2). \(\mathcal D(P_0) \subset \mathcal D(P_\theta) \subset \mathcal D(P_{\max})\)의 두 단계는 각각 1차원이고 합이 \(n_+ + n_- = 2\)이다(식 <a class="ref" href="#eq-von-neumann-formula"></a>). \(\theta = 0\)은 학부 9장의 고리 위 운동량 \(p_n = 2\pi n\)(<a href="../../math-phys/chapters/ch09.html#eq-ring-momentum">학부 9장의 식</a>, \(L = 1\))이다.</p>
+    </div>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 310" role="img" aria-label="정의역의 포함 관계. 가장 바깥 상자는 수반의 정의역 H1, 그 안에 자기수반 확장의 정의역 세 개가 꽃잎처럼 겹치고, 가운데 작은 원이 디리클레 정의역"><rect x="14" y="36" width="392" height="262" rx="16" class="f-elev"/><text x="30" y="62" class="t-math"><tspan font-style="italic">D</tspan>(<tspan font-style="italic">P</tspan><tspan baseline-shift="sub" font-size="72%">0</tspan><tspan baseline-shift="super" font-size="72%">†</tspan>) = <tspan font-style="italic">H</tspan><tspan baseline-shift="super" font-size="72%">1</tspan>(0, 1)</text><text x="30" y="84" class="t-dim">경계값 (ψ(0), ψ(1))에 조건이 없다</text><ellipse cx="210" cy="190" rx="140" ry="30" transform="rotate(-25 210 190)" class="s-acc" fill="none"/><ellipse cx="210" cy="190" rx="140" ry="30" transform="rotate(0 210 190)" class="s-acc" fill="none"/><ellipse cx="210" cy="190" rx="140" ry="30" transform="rotate(25 210 190)" class="s-acc" fill="none"/><text x="342.9" y="135.8" class="t-math acc">θ<tspan baseline-shift="sub" font-size="72%">1</tspan></text><text x="356.0" y="195.0" class="t-math acc">θ<tspan baseline-shift="sub" font-size="72%">2</tspan></text><text x="342.9" y="254.2" class="t-math acc">θ<tspan baseline-shift="sub" font-size="72%">3</tspan></text><circle cx="210" cy="190" r="22" class="f-acc2-soft" style="stroke-width:1.5"/><text x="30" y="268" class="t acc" style="fill:var(--accent)">타원: <tspan class="t-math" style="fill:var(--accent)"><tspan font-style="italic">D</tspan>(<tspan font-style="italic">P</tspan><tspan baseline-shift="sub" font-size="72%">θ</tspan>)</tspan>, ψ(1) = e<tspan baseline-shift="super" font-size="72%">iθ</tspan>ψ(0)</text><text x="30" y="288" class="t" style="fill:var(--accent-2)">원: <tspan class="t-math" style="fill:var(--accent-2)"><tspan font-style="italic">D</tspan>(<tspan font-style="italic">P</tspan><tspan baseline-shift="sub" font-size="72%">0</tspan>)</tspan>, ψ(0) = ψ(1) = 0</text></svg></div>
+      <figcaption><b>그림 10-2.</b> 구간 운동량의 정의역. 바깥 상자 \(\mathcal D(P_0^\dagger) = H^1(0, 1)\)은 경계값 \((\psi(0), \psi(1))\)에 조건이 없고, 가운데 원 \(\mathcal D(P_0)\)은 그것을 \((0, 0)\)으로 묶는다. 확장의 정의역 \(\mathcal D(P_\theta)\)(타원)는 원을 품고 경계값이 직선 \(\psi(1) = e^{i\theta}\psi(0)\) 위에 있다. 서로 다른 \(\theta\)의 타원은 원에서만 겹치고, 원에서 타원으로, 타원에서 상자로 1차원씩 더해져 \(n_+ + n_- = 2\)가 된다.</figcaption>
+    </figure>
+    <p>매개변수 \(\theta\)는 무엇인가. 둘레가 1인 고리 위의 전하 \(q\)와, 고리를 꿰는 자기 플럭스 \(\Phi\)를 생각하자. 고리 위에는 자기장이 없지만 벡터 퍼텐셜을 고리를 따라 상수 \(A = \Phi\)로 잡을 수 있다. 주기 조건 위의 해밀토니안 \((P - qA)^2\)에서 \(\psi = e^{iqAx}\varphi\)로 바꾸면 \((P - qA)\psi = e^{iqAx}P\varphi\)이므로 해밀토니안은 \(P^2\)이 되고, 경계 조건이 \(\varphi(1) = e^{-iq\Phi}\varphi(0)\)으로 꼬인다. 곧 <b>\(\theta = -q\Phi\)</b>(\(2\pi\)의 정수배를 빼고)이고, 확장 \(P_\theta\)들은 퍼텐셜을 없앤 게이지에서 본, 서로 다른 플럭스가 꿰인 같은 고리다. 장이 없는 곳의 플럭스에 따라 에너지 \((2\pi n + \theta)^2\)이 바뀌는 이것이 아하로노프-봄 효과의 원형이다(9장의 <a href="ch09.html#ex-aharonov-bohm-holonomy">아하로노프-봄 홀로노미</a>). 결정 속 전자에서는 같은 \(\theta\)가 블로흐 위상이다.</p>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 270" role="img" aria-label="결손 공간 사이의 유니타리 사상의 위상 베타와 경계 조건의 위상 세타의 관계. 0에서 2파이까지 단조 증가하는 곡선"><text x="12" y="20" class="t">(가) 유니타리 사상의 위상 β → θ</text><line x1="60" y1="235" x2="366" y2="235" class="s-line"/><line x1="60" y1="235" x2="60" y2="38" class="s-line"/><line x1="60" y1="235" x2="360" y2="45" class="s-faint" stroke-dasharray="5 4"/><path d="M60,235 L97.6,223.5 L123.2,214.1 L144.2,204.1 L153.2,198.7 L162.3,192.5 L175.8,181.2 L188.6,167.7 L199.1,154.7 L223.9,121.4 L236.7,106.4 L251,92.8 L266.8,81.3 L283.3,72 L302.9,63.5 L326.2,55.2 L360,45" class="s-acc" style="stroke-width:2.5"/><circle cx="60" cy="235" r="3.5" class="f-acc"/><circle cx="210" cy="140" r="3.5" class="f-acc"/><circle cx="360" cy="45" r="3.5" class="f-acc"/><circle cx="135.0" cy="208.8" r="3.5" class="f-acc2"/><text x="139.0" y="198.8" class="t-math acc2" style="font-size:14px">β = π/2</text><text x="216" y="156" class="t-dim">반주기</text><text x="66" y="226" class="t-dim">주기</text><text x="60.0" y="253" class="t-math" text-anchor="middle">0</text><text x="52" y="240.0" class="t-math" text-anchor="end">0</text><text x="210.0" y="253" class="t-math" text-anchor="middle">π</text><text x="52" y="145.0" class="t-math" text-anchor="end">π</text><text x="360.0" y="253" class="t-math" text-anchor="middle">2π</text><text x="52" y="50.0" class="t-math" text-anchor="end">2π</text><text x="366" y="252" class="t-math"><tspan font-style="italic">β</tspan></text><text x="66" y="44" class="t-math"><tspan font-style="italic">θ</tspan></text></svg><svg viewBox="0 0 380 270" role="img" aria-label="경계 조건의 위상 세타에 따른 운동량 고유값 2파이 n 더하기 세타. 세타가 0에서 2파이로 가면 고유값이 한 칸씩 올라간다"><text x="12" y="20" class="t">(나) 고유값 2πn + θ</text><line x1="60" y1="245.0" x2="360" y2="245.0" class="s-grid"/><line x1="60" y1="175.0" x2="360" y2="175.0" class="s-grid"/><line x1="60" y1="105.0" x2="360" y2="105.0" class="s-grid"/><line x1="60" y1="35.0" x2="360" y2="35.0" class="s-grid"/><line x1="60" y1="252" x2="60" y2="30" class="s-line"/><line x1="60" y1="245.0" x2="360" y2="175.0" class="s-acc" style="stroke-width:2.5"/><text x="298" y="206.0" class="t-math acc" style="font-size:14px">n = −1</text><line x1="60" y1="175.0" x2="360" y2="105.0" class="s-acc" style="stroke-width:2.5"/><text x="298" y="136.0" class="t-math acc" style="font-size:14px">n = 0</text><line x1="60" y1="105.0" x2="360" y2="35.0" class="s-acc" style="stroke-width:2.5"/><text x="298" y="66.0" class="t-math acc" style="font-size:14px">n = 1</text><line x1="101.3" y1="252" x2="101.3" y2="30" class="s-acc2" stroke-dasharray="3 4" style="stroke-width:1.5"/><circle cx="101.3" cy="235.4" r="3.5" class="f-acc2"/><circle cx="101.3" cy="165.4" r="3.5" class="f-acc2"/><circle cx="101.3" cy="95.4" r="3.5" class="f-acc2"/><text x="52" y="250.0" class="t-math" text-anchor="end">−2π</text><text x="52" y="180.0" class="t-math" text-anchor="end">0</text><text x="52" y="110.0" class="t-math" text-anchor="end">2π</text><text x="52" y="40.0" class="t-math" text-anchor="end">4π</text><text x="60.0" y="266" class="t-math" text-anchor="middle">0</text><text x="210.0" y="266" class="t-math" text-anchor="middle">π</text><text x="360.0" y="266" class="t-math" text-anchor="middle">2π</text><text x="366" y="266" class="t-math"><tspan font-style="italic">θ</tspan></text></svg></div>
+      <figcaption><b>그림 10-3.</b> 구간 운동량의 확장의 가족. (가) 유니타리 사상의 위상 \(\beta\)에서 경계 조건의 위상 \(\theta\)로 가는 사상(식 <a class="ref" href="#eq-interval-twisted-bc"></a>). 점선 \(\theta = \beta\)에서 휘지만 단조이고 한 바퀴 돈다. (나) 고유값 \(2\pi n + \theta\). \(\theta\)를 \(2\pi\)만큼 돌리면 고유값이 저마다 한 칸씩 올라가 스펙트럼 전체는 제자리로 온다. 세로 점선은 \(\beta = \pi/2\)(\(\theta = 0.8658\))이다.</figcaption>
+    </figure>
+
+  </section>
+
+  <!-- ============================================================ 10.6 -->
+  <section id="s6">
+    <h2>반직선의 확장: 운동량과 로빈 조건</h2>
+    <p>구간에서는 두 끝의 경계값을 서로 묶을 수 있어서 운동량의 확장이 고리의 위상 \(\theta\)로 나타났다. 끝이 하나뿐인 반직선에서는 사정이 다르다. 벽에서 반사되면 운동량의 부호가 바뀌므로 운동량이 정해진 상태가 벽 앞에 머물 수 없고, 실제로 결손 지수가 \((1, 0)\)이 되어 자기수반 확장이 하나도 없다. 반면 운동 에너지 \(-d^2/dx^2\)은 결손 지수가 \((1, 1)\)이고, 확장의 매개변수는 벽에서의 접촉 상호작용을 나타내는 로빈 조건의 \(\alpha\)다. 『양자역학 (대학원)』 8장의 s파 지름 방정식이 이 반직선 문제다.</p>
+    <div class="box ex" id="ex-momentum-half-line"><div class="box-h">반직선의 운동량</div>
+      <p>\(L^2(0, \infty)\)에서 \(C_c^\infty(0, \infty)\) 위의 \(-i\,d/dx\)를 닫은 연산자 \(P_0\)을 생각한다. <a class="ref" href="#thm-momentum-interval-adjoint"></a>과 같은 논법으로 \(\mathcal D(P_0) = \{\psi \in H^1(0, \infty) : \psi(0) = 0\}\)이고 \(P_0^\dagger\)는 \(H^1(0, \infty)\) 위의 \(-i\,d/dx\)다. (가) 결손 지수를 구하라. (나) \(P_0\)이 자기수반 확장을 갖지 않음을 보여라. (다) 오른쪽 병진 \((T_a\psi)(x) = \psi(x - a)\)(\(x > a\)), \(0\)(\(x &lt; a\))이 노름을 보존하지만 유니타리가 아님을 보여라(\(a > 0\)).</p>
+      <p><b>풀이.</b> (가) \(K_+\)의 해 \(e^{-x}\)는 \(L^2(0, \infty)\)에 들고(\(\lVert e^{-x}\rVert^2 = \tfrac12\)), \(K_-\)의 해 \(e^{x}\)는 들지 않는다. 결손 지수는 \((1, 0)\)이다.</p>
+      <p>(나) \(n_+ \ne n_-\)이므로 <a class="ref" href="#thm-von-neumann-extensions"></a>의 1에서 자기수반 확장이 없다. 더 강하게, 대칭 확장도 없다. 증명의 생각에서 대칭 확장은 \(K_+\)의 부분 공간을 \(K_- = \{0\}\)으로 보내는 노름 보존 사상과 대응하는데, 그런 사상은 \(\{0\}\) 위의 것뿐이다. \(P_0\)은 더 넓힐 수 없는 대칭 연산자이면서 자기수반이 아니다.</p>
+      <p>(다) \(\lVert T_a\psi\rVert^2 = \int_a^\infty\lvert\psi(x - a)\rvert^2dx = \lVert\psi\rVert^2\)이다. 수반은 왼쪽 병진 \((T_a^\dagger\phi)(x) = \phi(x + a)\)이고, \(T_a^\dagger T_a = 1\)이지만 \(T_aT_a^\dagger\)는 \((0, a)\)에서 0인 함수 위로의 사영이다. \((0, a)\)에 지지 집합이 있는 함수는 \(T_a\)의 치역에 없으므로 \(T_a\)는 전사가 아니다. 형식적으로 \(T_a = e^{-iaP}\)이지만, 반직선에는 이것을 유니타리로 만드는 자기수반 운동량이 없다.</p>
+      <p><b>확인.</b> \(\pm i\) 대신 일반 \(z\)로 보면 \(\operatorname{Ker}(P_0^\dagger - z)\)는 \(e^{izx}\)로 생성되고, 이것은 \(\operatorname{Im}z > 0\)일 때만 \(L^2(0, \infty)\)에 든다. 위 반평면 전체에서 차원 1, 아래 반평면 전체에서 차원 0으로, 결손 지수가 반평면마다 일정하다는 사실과 맞는다. (다)는 <a class="ref" href="#ex-shift-operator"></a>의 \(S^\dagger S = 1 \ne SS^\dagger\)을 연속으로 옮긴 것이다.</p>
+      <p><b>어디에 쓰이나.</b> 3차원의 지름 운동량 \(p_r = -i(\partial_r + 1/r)\)은 \(u = rR\)로 바꾸면 반직선의 \(-i\,d/dr\)이므로 같은 이유로 자기수반이 아니고(Gieres의 4.1.1절), 『양자역학 (대학원)』 8장은 그 대신 지름 해밀토니안을 쓴다. 11장의 <a href="ch11.html#thm-stone">스톤 정리</a>가 (다)를 일반화한다: 유니타리 군의 생성자는 자기수반 연산자뿐이다.</p>
+    </div>
+
+    <div class="box ex" id="ex-laplacian-half-line-robin"><div class="box-h">반직선의 \(-d^2/dx^2\)과 로빈 조건</div>
+      <p>\(L^2(0, \infty)\)에서 \(C_c^\infty(0, \infty)\) 위의 \(-d^2/dx^2\)을 닫은 연산자 \(H_0\)을 생각한다. <a class="ref" href="#thm-momentum-interval-adjoint"></a>의 논법을 두 번 쓰면 \(\mathcal D(H_0) = \{\psi \in H^2(0, \infty) : \psi(0) = \psi'(0) = 0\}\)이고 \(H_0^\dagger\)는 \(H^2(0, \infty)\) 위의 \(-d^2/dx^2\)이다. (가) 결손 지수를 구하라. (나) 자기수반 확장이 모두 \(\psi'(0) = \alpha\psi(0)\)(\(\alpha \in \mathbb R\)) 꼴이거나 \(\psi(0) = 0\)임을 보이고, \(U = e^{i\beta}\)와 \(\alpha\)의 관계를 구하라. (다) 각 확장의 음의 고유값을 구하라.</p>
+      <p><b>풀이.</b> (가) \(-\phi'' = i\phi\)의 해는 \(e^{rx}\), \(r^2 = -i\)이고, 감쇠하는 근은 \(r = -(1 - i)/\sqrt2\)이다. \(-\phi'' = -i\phi\)에서는 \(r = -(1 + i)/\sqrt2\)이다. 따라서</p>
+      <div class="formula" id="eq-robin-deficiency-vectors">\[ \begin{aligned} \phi_\pm(x) &= e^{-(1 \mp i)x/\sqrt2} \\ \phi_- &= \phi_+^* \end{aligned} \]</div>
+      <p>가 결손 공간을 하나씩 생성하고 결손 지수는 \((1, 1)\)이다. \(-d^2/dx^2\)은 실수 연산자이므로 \(n_+ = n_-\)은 예상대로다.</p>
+      <p>(나) \(\phi, \psi \in H^2(0, \infty)\)에서 부분 적분을 두 번 하면(무한대의 항은 사라진다. <a href="../../math-phys/chapters/ch09.html#eq-second-derivative-boundary">학부 9장의 2계 미분의 경계 항</a>)</p>
+      <div class="formula" id="eq-laplacian-boundary-form">\[ \begin{aligned} &\langle\phi|H_0^\dagger\psi\rangle - \langle H_0^\dagger\phi|\psi\rangle \\ &\quad = \phi^*(0)\psi'(0) - \phi^{*\prime}(0)\psi(0) \end{aligned} \]</div>
+      <p>이다. \(\lVert\phi_+\rVert = \lVert\phi_-\rVert\)이므로 \(U\phi_+ = e^{i\beta}\phi_-\)이고, 확장의 정의역에 더해지는 함수 \(\chi = \phi_+ + e^{i\beta}\phi_-\)의 경계값은 \(\chi(0) = 1 + e^{i\beta}\), \(\chi'(0) = -\big[(1 - i) + (1 + i)e^{i\beta}\big]/\sqrt2\)이다. 분자와 분모에 \(e^{-i\beta/2}\)를 곱하면</p>
+      <div class="formula" id="eq-robin-alpha-beta">\[ \alpha = \frac{\chi'(0)}{\chi(0)} = \frac{\tan(\beta/2) - 1}{\sqrt2} \]</div>
+      <p>로 실수다. \(\mathcal D(H_0)\)의 함수는 \(\psi(0) = \psi'(0) = 0\)이므로, 확장 \(H_\alpha\)의 정의역은 <a class="ref" href="#calc-momentum-interval-extensions"></a>의 (3)과 같은 논법으로</p>
+      <div class="formula" id="eq-robin-bc">\[ \mathcal D(H_\alpha) = \{\psi \in H^2(0, \infty) : \psi'(0) = \alpha\psi(0)\} \]</div>
+      <p>이다. \(\beta = \pi\)이면 \(\chi(0) = 0\)이라 디리클레 조건 \(\psi(0) = 0\)(\(\alpha = \infty\)로 적는다)이 되고, \(\beta = \pi/2\)이면 노이만 조건 \(\alpha = 0\)이다. 식 <a class="ref" href="#eq-laplacian-boundary-form"></a>를 이 정의역에 쓰면 \((\alpha - \alpha^*)\phi^*(0)\psi(0)\)이므로, \(\alpha\)가 실수인 것이 대칭성과 같은 조건이다. 학부 9장의 로빈 조건, 학부 16장의 <a href="../../math-phys/chapters/ch16.html#def-self-adjoint-bc">자기수반 경계 조건</a>과 같은 결론이고, 이번에는 이것이 <b>전부</b>임을 안다.</p>
+      <p>(다) \(E = -\kappa^2\)(\(\kappa > 0\))에서 \(L^2\)에 드는 해는 \(e^{-\kappa x}\)뿐이고, 경계 조건은 \(-\kappa = \alpha\)이다. 따라서 \(\alpha &lt; 0\)일 때만 음의 고유값이 하나 있고</p>
+      <div class="formula" id="eq-robin-bound-energy">\[ \begin{aligned} E &= -\alpha^2 \\ \psi(x) &= \sqrt{2\lvert\alpha\rvert}\,e^{\alpha x} \end{aligned} \]</div>
+      <p>이다(\(\alpha &lt; 0\), 그림 10-4). \(\alpha \ge 0\)이거나 \(\alpha = \infty\)이면 음의 고유값이 없다. \(E \ge 0\)에는 \(L^2\)의 고유함수가 없고, 11장에서 보듯 \([0, \infty)\)는 연속 <a href="ch11.html#def-spectrum">스펙트럼</a>이다.</p>
+      <p><b>확인.</b> \(\alpha \to 0^-\)이면 \(E \to 0\)이고 폭 \(1/\lvert\alpha\rvert\)이 퍼져 속박 상태가 연속 스펙트럼으로 녹아든다. \(\alpha = \pm\infty\)는 같은 점 \(\beta = \pi\)(디리클레)이므로 가족은 원 하나다. 경계 조건을 만족하는 \(E = 0\)의 해 \(1 + \alpha x\)는 \(x = a = -1/\alpha\)에서 0이 되고(산란 길이), 식 <a class="ref" href="#eq-robin-bound-energy"></a>는 얕은 속박 상태의 관계 \(E = -1/a^2\)(\(\hbar^2/2m\)을 살리면 \(-\hbar^2/2ma^2\))이다. 보노 외의 6.2절은 \(\psi(0) = \lambda\psi'(0)\)(\(\lambda = 1/\alpha\))로 같은 결과를 얻는다.</p>
+      <p><b>어디에 쓰이나.</b> 『양자역학 (대학원)』 8장의 s파 지름 방정식에서 보통 쓰는 \(u(0) = 0\)은 이 가족의 \(\alpha = \infty\)이고, 다른 \(\alpha\)는 원점의 접촉 상호작용이다(테셸 정리 10.8). 13장의 <a href="ch13.html#ex-delta-potential-scattering">델타 퍼텐셜 산란</a>은 같은 확장을 실수축 위에서 본 것이다(<a class="ref" href="#prob-delta-interaction"></a>).</p>
+    </div>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 270" role="img" aria-label="로빈 매개변수 알파에 따른 바닥 에너지. 알파가 음수이면 속박 상태 에너지 마이너스 알파 제곱, 양수이면 속박 상태가 없고 0 위로 연속 스펙트럼"><text x="12" y="20" class="t">(가) 음의 고유값</text><rect x="50" y="45" width="310" height="40" class="f-acc2-soft" style="stroke:none"/><text x="205" y="70.0" class="t" text-anchor="middle">연속 스펙트럼 [0, ∞)</text><line x1="50" y1="85" x2="360" y2="85" class="s-line"/><line x1="50" y1="245" x2="360" y2="245" class="s-line"/><line x1="50" y1="245" x2="50" y2="40" class="s-line"/><path d="M50,245 L69.5,207.3 L88.2,175.9 L98.3,160.8 L107.6,148.1 L117,136.6 L127.1,125.4 L137.2,115.6 L146.6,107.7 L155.9,101 L166.1,95.1 L176.2,90.5 L185.5,87.5 L195.7,85.6 L205,85" class="s-acc" style="stroke-width:2.5"/><circle cx="127.5" cy="125" r="3.5" class="f-acc"/><text x="125" y="212" class="t-math acc"><tspan font-style="italic">E</tspan> = −<tspan font-style="italic">α</tspan><tspan baseline-shift="super" font-size="72%">2</tspan></text><text x="282" y="165" class="t-dim" text-anchor="middle">음의 고유값 없음</text><text x="50.0" y="262" class="t-math" text-anchor="middle">−2</text><text x="127.5" y="262" class="t-math" text-anchor="middle">−1</text><text x="205.0" y="262" class="t-math" text-anchor="middle">0</text><text x="282.5" y="262" class="t-math" text-anchor="middle">1</text><text x="360.0" y="262" class="t-math" text-anchor="middle">2</text><text x="44" y="90" class="t-math" text-anchor="end">0</text><text x="44" y="130" class="t-math" text-anchor="end">−1</text><text x="44" y="250" class="t-math" text-anchor="end">−4</text><text x="366" y="262" class="t-math"><tspan font-style="italic">α</tspan></text></svg><svg viewBox="0 0 380 270" role="img" aria-label="알파가 마이너스 0.5, 마이너스 1, 마이너스 2일 때 속박 상태 파동함수. 알파의 절댓값이 클수록 벽에 좁게 붙는다"><text x="12" y="20" class="t">(나) 속박 상태</text><line x1="50" y1="245" x2="366" y2="245" class="s-line"/><line x1="50" y1="245" x2="50" y2="40" class="s-line"/><path d="M50,149.8 L79.5,166.3 L110.6,180.6 L144,193.1 L179.7,203.8 L218.6,212.9 L261.3,220.6 L307.9,227 L360,232.1" class="s-line" style="stroke-width:2.2"/><text x="226" y="200" class="t-math dim" style="font-size:14px">α = −½</text><path d="M50,110.3 L60.9,127.9 L72.5,144.3 L85,159.2 L98.2,172.7 L111.4,184 L126.1,194.6 L141.7,203.7 L158.8,211.9 L176.6,218.7 L195.3,224.3 L216.3,229.2 L238.8,233.2 L263.7,236.4 L291.6,239 L323.5,241 L360,242.5" class="s-acc2" style="stroke-width:2.2"/><text x="100" y="140" class="t-math acc2" style="font-size:14px">α = −1</text><path d="M50,54.5 L57.8,89.1 L65.5,117.4 L74.1,142.7 L83.4,164.6 L93.5,183 L104.4,198.2 L110.6,205.1 L116.8,211 L123.8,216.6 L130.8,221.3 L144.8,228.5 L160.3,234 L178.2,238 L199.9,241 L224.8,242.9 L255.9,244.1 L360,244.9" class="s-acc" style="stroke-width:2.2"/><text x="60" y="52" class="t-math acc" style="font-size:14px">α = −2</text><text x="50.0" y="262" class="t-math" text-anchor="middle">0</text><text x="127.5" y="262" class="t-math" text-anchor="middle">1</text><text x="205.0" y="262" class="t-math" text-anchor="middle">2</text><text x="282.5" y="262" class="t-math" text-anchor="middle">3</text><text x="360.0" y="262" class="t-math" text-anchor="middle">4</text><text x="44" y="154.8" class="t-math" text-anchor="end">1</text><text x="44" y="59.5" class="t-math" text-anchor="end">2</text><text x="370" y="249" class="t-math"><tspan font-style="italic">x</tspan></text></svg></div>
+      <figcaption><b>그림 10-4.</b> 로빈 확장 \(H_\alpha\)의 스펙트럼. (가) \(\alpha &lt; 0\)이면 연속 스펙트럼 \([0, \infty)\) 아래에 속박 상태 \(E = -\alpha^2\)이 하나 있고(점은 \(\alpha = -1\)), \(\alpha \ge 0\)이면 없다. 디리클레 조건 \(\alpha = \pm\infty\)도 음의 고유값이 없다. (나) 규격화한 속박 상태 \(\sqrt{2\lvert\alpha\rvert}\,e^{\alpha x}\). \(\lvert\alpha\rvert\)이 클수록 벽에 좁고 깊게 붙는다.</figcaption>
+    </figure>
+
+    <div class="box code" id="code-self-adjoint-extensions" data-run="python" data-packages="numpy scipy" data-check="calc-momentum-interval-extensions eq-robin-bound-energy">
+      <div class="box-h">꼬인 경계 조건과 로빈 조건을 넣은 격자 연산자의 스펙트럼</div>
+      <p>10.5절의 <a class="ref" href="#calc-momentum-interval-extensions"></a>에서 구한 \(\theta(\beta)\)와 고유값을 결손 벡터의 경계값과 격자에서 다시 계산하고, 이 절의 로빈 조건을 함께 확인한다. 운동량은 중점 규칙 \(-i(\psi_{j+1} - \psi_j)/h = \lambda(\psi_{j+1} + \psi_j)/2\)에 꼬인 조건 \(\psi_N = e^{i\theta}\psi_0\)을 넣어 차분한다. 이 연산자는 꼬인 자리 옮김 \(T\)의 케일리 변환 \(-\tfrac{2i}{h}(T - 1)(T + 1)^{-1}\)이라 에르미트이고 고유값이 정확히 \(2N\tan\frac{2\pi n + \theta}{2N}\)이다. 반직선의 로빈 조건은 이차 형식 \(\sum_j\lvert\psi_{j+1} - \psi_j\rvert^2/h + \alpha\lvert\psi_0\rvert^2\)(10.7절)을 사다리꼴 무게로 나눈 3중 대각 행렬로 넣는다.</p>
+      <pre><code class="language-python">import numpy as np
+from scipy.linalg import eigvalsh_tridiagonal
+
+# 1) 손 계산 10.1: 결손 벡터의 합에서 경계값의 비 e^{iθ}
+def ratio(beta):            # ψ = e^{-x} + e^{iβ-1} e^{x} 의 ψ(1)/ψ(0)
+    u = np.exp(1j * beta - 1)
+    return (np.exp(-1) + u * np.e) / (1 + u)
+
+assert abs(ratio(0) - 1) &lt; 1e-12              # β = 0 → 주기 조건
+assert abs(ratio(np.pi) + 1) &lt; 1e-12          # β = π → 반주기 조건
+th = np.angle(ratio(np.pi / 2))
+assert abs(th - (np.pi/2 - 2*np.arctan(np.exp(-1)))) &lt; 1e-12
+b = np.linspace(0, 2 * np.pi, 2001)
+t = np.unwrap(np.angle(ratio(b)))
+assert np.allclose(abs(ratio(b)), 1)          # 크기는 1
+assert np.all(np.diff(t) &gt; 0)                 # θ(β)는 증가 함수
+assert abs(t[-1] - t[0] - 2 * np.pi) &lt; 1e-9   # 원을 한 번 돈다
+x = np.linspace(0, 1, 20001)
+nrm = lambda f: np.sqrt(np.trapezoid(abs(f)**2, x))
+assert abs(nrm(np.exp(x)) / nrm(np.exp(-x)) - np.e) &lt; 1e-6  # e
+print(f"theta(pi/2) = {th:.6f}")
+
+# 2) 넓히기: 꼬인 경계 조건을 넣은 격자의 운동량
+def momentum(N, theta):     # 중점 규칙, h = 1/N
+    T = np.roll(np.eye(N), 1, axis=1).astype(complex)  # Tψ_j = ψ_{j+1}
+    T[N - 1, 0] = np.exp(1j * theta)                # ψ_N = e^{iθ}ψ_0
+    I = np.eye(N)
+    return -2j * N * np.linalg.solve(T + I, T - I)  # 케일리 변환
+
+n = np.arange(-2, 3)
+k = 2 * np.pi * n + th                        # 손 계산의 고유값
+for N in [50, 200, 800]:
+    P = momentum(N, th)
+    assert np.allclose(P, P.conj().T)          # 에르미트 행렬이다
+    lam = np.linalg.eigvalsh(P)
+    near = np.array([lam[np.argmin(abs(lam - kk))] for kk in k])
+    assert np.allclose(near, 2*N*np.tan(k / (2*N)))   # 케일리 꼴
+    print(N, f"{np.max(abs(near - k)):.2e}")
+
+# 3) 넓히기: 반직선의 로빈 조건, 형식 Σ|ψ_{j+1}-ψ_j|²/h + α|ψ_0|²
+def robin_ground(alpha, L=15.0, N=6000):
+    h = L / N                                 # x_j = jh, ψ_N = 0
+    m = np.full(N, h); m[0] = h / 2           # 사다리꼴 무게
+    d = np.full(N, 2 / h); d[0] = 1 / h + alpha
+    e = -np.ones(N - 1) / h
+    s = 1 / np.sqrt(m)
+    w = eigvalsh_tridiagonal(d * s * s, e * s[:-1] * s[1:],
+                             select="i", select_range=(0, 0))
+    return w[0]
+
+for alpha in [-2.0, -1.0, -0.5, 0.0, 0.5]:
+    E0 = robin_ground(alpha)
+    if alpha &lt; 0:
+        assert abs(E0 + alpha**2) &lt; 1e-3      # 속박 상태 E = -α²
+    else:
+        assert E0 &gt; 0                          # 음의 고유값이 없다
+    print(f"{alpha:5.1f} {E0:10.6f}")</code></pre>
+      <pre class="code-out"><code>theta(pi/2) = 0.865769
+50 8.14e-02
+200 5.05e-03
+800 3.16e-04
+ -2.0  -3.999975
+ -1.0  -0.999998
+ -0.5  -0.250000
+  0.0   0.010966
+  0.5   0.034495</code></pre>
+      <p class="code-note">첫 줄은 <a class="ref" href="#calc-momentum-interval-extensions"></a>의 \(\theta(\pi/2) = 0.8658\)이고, 앞의 <code>assert</code>들이 \(\lvert\psi(1)/\psi(0)\rvert = 1\), \(\theta(0) = 0\), \(\theta(\pi) = \pi\), 단조 증가와 한 바퀴를 확인한다. 다음 세 줄은 격자 수 \(N\)과, \(n = -2, \ldots, 2\)에서 격자 고유값이 \(2\pi n + \theta\)에서 벗어난 최대 오차다. \(N\)이 4배가 되면 오차가 16분의 1이 되어 \(1/N^2\)로 수렴한다. 오차는 \(2N\tan\frac{k}{2N} = k + \frac{k^3}{12N^2} + \cdots\)의 둘째 항이고 \(n = 2\)(\(k = 13.43\)), \(N = 50\)에서 \(0.081\)이다. 마지막 다섯 줄은 \(\alpha\)와 가장 낮은 고유값이다. \(\alpha &lt; 0\)이면 \(-\alpha^2\)과 \(10^{-4}\) 안에서 맞고, \(\alpha = 0\)의 \(0.010966\)은 길이 15인 상자의 노이만·디리클레 바닥 에너지 \((\pi/30)^2\)이다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 10.7 -->
+  <section id="s7">
+    <h2>이차 형식과 반유계 연산자</h2>
+    <p><a class="ref" href="#ex-laplacian-half-line-robin"></a>에서 반직선의 \(-d^2/dx^2\)은 원 하나만큼의 확장을 가졌고, 물리학자는 그 가운데 디리클레 조건을 거의 생각 없이 고른다. 이 선택에 원리가 있는가. 또 변분법이 쓰는 것은 \(H\psi\)가 아니라 에너지 \(\langle\psi|H\psi\rangle = \int\lvert\psi'\rvert^2\)이고, 이것은 꺾인 점이 있는 시험 함수에서도 유한하다. 이 절은 에너지를 직접 다루는 이차 형식으로 연산자를 정의한다. 아래로 유계인 연산자에는 형식에서 나오는 표준적인 확장이 있고, 반직선에서 그것은 디리클레 조건이다. 이어서 아래 유계가 깨지는 역제곱 퍼텐셜을 보고, 수소 원자의 해밀토니안이 자기수반임을 카토-렐리히 정리로 보인다.</p>
+
+    <div class="box def" id="def-semibounded-operator"><div class="box-h">아래로 유계인 연산자</div>
+      <p>대칭 연산자 \(A\)가 어떤 실수 \(c\)에 대해 모든 \(\psi \in \mathcal D(A)\)에서 \(\langle\psi|A\psi\rangle \ge c\lVert\psi\rVert^2\)을 만족하면 <span class="term">아래로 유계</span> <span class="en">(semibounded, bounded below)</span>(반유계라고도 한다)라 하고 \(A \ge c\)로 쓴다. \(c = 0\)이면 <span class="term">양</span>이라 한다.</p>
+    </div>
+    <p>해밀토니안이 아래로 유계라는 것은 바닥 상태 에너지가 유한하다는 것, 곧 계가 안정하다는 것이다. 반직선의 \(H_0\)은 \(\langle\psi|H_0\psi\rangle = \int\lvert\psi'\rvert^2 \ge 0\)이므로 양이다. 그런데 그 확장 \(H_\alpha\)(\(\alpha &lt; 0\))는 음의 고유값 \(-\alpha^2\)을 가졌다. 확장을 고르면 아래 한계가 낮아질 수 있다. 아래 한계를 지키는 확장이 있는지가 이 절의 첫 질문이다.</p>
+
+    <h3 id="s7-forms">이차 형식</h3>
+    <div class="box def" id="def-quadratic-form"><div class="box-h">이차 형식과 형식 정의역</div>
+      <p>조밀한 부분 공간 \(Q\) 위의 함수 \(q(\phi, \psi)\)가 \(\phi\)에 켤레 선형, \(\psi\)에 선형이고 \(q(\phi, \psi) = q(\psi, \phi)^*\)이면 \(q\)를 <span class="term">이차 형식</span> <span class="en">(quadratic form)</span>이라 하고 \(Q\)를 <span class="term">형식 정의역</span> <span class="en">(form domain)</span>이라 한다. \(q(\psi) = q(\psi, \psi)\)로 줄여 쓴다. \(q(\psi) \ge c\lVert\psi\rVert^2\)이면 아래로 유계라 하고, 이때 <span class="term">형식 노름</span> \(\lVert\psi\rVert_q^2 = q(\psi) + (1 - c)\lVert\psi\rVert^2\)으로 \(Q\)가 완비하면 <span class="term">닫힌 형식</span>이라 한다.</p>
+    </div>
+    <p>아래로 유계인 대칭 연산자 \(A\)는 \(q_A(\phi, \psi) = \langle\phi|A\psi\rangle\)(\(Q = \mathcal D(A)\))로 형식을 준다. 이 형식은 대개 닫혀 있지 않지만 언제나 닫을 수 있다. 형식 노름으로 \(\mathcal D(A)\)를 메운 공간이 닫힘의 형식 정의역이다(<a class="ref" href="#ex-continuous-functions-incomplete"></a>의 메우기를 다른 노름으로 하는 것이다). 거꾸로, 아래로 유계인 닫힌 형식 \(q\)마다 자기수반 연산자가 하나씩 대응한다. 그 정의역은 "\(\phi \mapsto q(\phi, \psi)\)가 어떤 \(\eta\)로 \(\langle\phi|\eta\rangle\)이 되는 \(\psi \in Q\)"이고, 그 \(\eta\)가 \(A\psi\)이다(테셸 정리 2.13). 수반의 정의(<a class="ref" href="#def-adjoint-unbounded"></a>)와 같은 꼴이다.</p>
+    <div class="box thm" id="thm-friedrichs-extension"><div class="box-h">프리드리히스 확장 <span class="en">(Friedrichs extension)</span></div>
+      <p>대칭 연산자 \(A\)가 \(A \ge c\)이면, 형식 \(q_A\)의 닫힘에 대응하는 연산자 \(A_F\)는 \(A\)의 자기수반 확장이고 \(A_F \ge c\)이다. \(A\)의 자기수반 확장 가운데 정의역이 이 닫힌 형식의 정의역 안에 드는 것은 \(A_F\) 하나뿐이다. (테셸 정리 2.12)</p>
+    </div>
+    <p>이 정리는 결손 지수를 계산하지 않고도 쓸 수 있다. 아래로 유계인 대칭 연산자는 언제나 자기수반 확장을 가지고(그래서 결손 지수가 같다), 그 가운데 아래 한계를 지키는 표준적인 것이 있다는 것이다. 반직선에서 무엇이 나오는지 보자.</p>
+
+    <div class="box ex" id="ex-robin-forms"><div class="box-h">반직선의 형식: 디리클레 조건과 로빈 조건</div>
+      <p>(가) <a class="ref" href="#ex-laplacian-half-line-robin"></a>의 \(H_0\)의 프리드리히스 확장이 디리클레 조건 \(\psi(0) = 0\)임을 보여라. (나) 실수 \(\alpha\)에 대해 \(H^1(0, \infty)\) 위의 형식 \(q_\alpha(\psi) = \int_0^\infty\lvert\psi'\rvert^2dx + \alpha\lvert\psi(0)\rvert^2\)에 대응하는 연산자가 로빈 확장 \(H_\alpha\)임을 보여라. (다) \(\alpha &lt; 0\)일 때 \(q_\alpha(\psi) \ge -\alpha^2\lVert\psi\rVert^2\)이고 등호가 성립하는 \(\psi\)가 있음을 보여라.</p>
+      <p><b>풀이.</b> 먼저 \(\psi \in H^1(0, \infty)\)이면 \(\lvert\psi(x)\rvert \to 0\)(\(x \to \infty\))이므로</p>
+      <div class="formula" id="eq-boundary-value-bound">\[ \begin{aligned} \lvert\psi(0)\rvert^2 &= -\int_0^\infty\frac{d}{dx}\lvert\psi\rvert^2dx \le 2\lVert\psi\rVert\,\lVert\psi'\rVert \\ &\le \varepsilon\lVert\psi'\rVert^2 + \frac1\varepsilon\lVert\psi\rVert^2 \end{aligned} \]</div>
+      <p>이다(\(\varepsilon > 0\)은 아무것이나). 경계값은 형식 노름 \(\big(\lVert\psi'\rVert^2 + \lVert\psi\rVert^2\big)^{1/2}\)에 대해 연속이다.</p>
+      <p>(가) \(\psi \in C_c^\infty(0, \infty)\)에서 \(q_{H_0}(\psi) = \langle\psi|-\psi''\rangle = \int\lvert\psi'\rvert^2\)이다. 형식 노름으로 \(C_c^\infty(0, \infty)\)를 닫으면, 식 <a class="ref" href="#eq-boundary-value-bound"></a>에서 극한도 \(\psi(0) = 0\)을 지킨다. 닫힘의 형식 정의역은 \(H^1_0(0, \infty) = \{\psi \in H^1 : \psi(0) = 0\}\)이다. 반면 \(\psi'(0)\)은 형식 노름으로 제어되지 않으므로 아무 조건도 남지 않는다. 대응하는 연산자의 정의역은 \(H^1_0\) 안에 있으므로 \(\psi(0) = 0\)이고, \(\mathcal D(H_\alpha)\) 가운데 이것을 만족하는 것은 \(\alpha = \infty\)뿐이다. 프리드리히스 확장은 디리클레 조건이고 아래 한계 0을 지킨다.</p>
+      <p>(나) \(\phi \in H^1\), \(\psi \in H^2\)에서 부분 적분하면</p>
+      <div class="formula" id="eq-robin-form">\[ \begin{aligned} q_\alpha(\phi, \psi) &= \langle\phi|-\psi''\rangle \\ &\quad + \phi^*(0)\big(\alpha\psi(0) - \psi'(0)\big) \end{aligned} \]</div>
+      <p>이다. 이것이 모든 \(\phi \in H^1\)에서 \(\langle\phi|\eta\rangle\) 꼴이 되려면, \(\phi(0)\)이 마음대로이므로 둘째 항이 사라져야 하고, 따라서 \(\psi'(0) = \alpha\psi(0)\), \(\eta = -\psi''\)이다. 형식 정의역에는 아무 경계 조건도 걸지 않았는데 연산자에서는 로빈 조건이 저절로 나왔다. 이런 조건을 <span class="term">자연 경계 조건</span> <span class="en">(natural boundary condition)</span>이라 한다. 곧 \(H_\alpha\)는 형식 \(q_\alpha\)의 연산자에 포함되고, 둘 다 자기수반이므로(자기수반 연산자는 대칭 확장을 더 갖지 않는다) 같다. 식 <a class="ref" href="#eq-boundary-value-bound"></a>에서 \(q_\alpha + C\)의 노름은 \(H^1\)의 노름과 동등하므로 \(q_\alpha\)는 닫혀 있다.</p>
+      <p>(다) \(\alpha &lt; 0\)이면 식 <a class="ref" href="#eq-boundary-value-bound"></a>에 \(\varepsilon = 1/\lvert\alpha\rvert\)을 넣어 \(q_\alpha(\psi) \ge \lVert\psi'\rVert^2 - \lVert\psi'\rVert^2 - \alpha^2\lVert\psi\rVert^2 = -\alpha^2\lVert\psi\rVert^2\)이다. \(\psi = e^{\alpha x}\)이면 \(\lVert\psi\rVert^2 = \tfrac{1}{2\lvert\alpha\rvert}\), \(\lVert\psi'\rVert^2 = \tfrac{\lvert\alpha\rvert}{2}\), \(\lvert\psi(0)\rvert^2 = 1 = 2\lVert\psi\rVert\,\lVert\psi'\rVert\)이고 \(\lVert\psi'\rVert^2 = \alpha^2\lVert\psi\rVert^2\)이라 두 부등식이 모두 등호다.</p>
+      <p><b>확인.</b> 형식의 아래 한계 \(-\alpha^2\)이 식 <a class="ref" href="#eq-robin-bound-energy"></a>의 속박 에너지와 같고, 등호를 주는 함수가 그 고유함수다. 학부 16장의 <a href="../../math-phys/chapters/ch16.html#thm-rayleigh-min">레일리 몫의 최소 성질</a>과 같은 구조다. 가장 낮은 에너지는 형식을 노름으로 나눈 값의 하한이다. \(\alpha \ge 0\)이면 \(q_\alpha \ge 0\)이라 음의 고유값이 없다는 것도 맞는다.</p>
+      <p><b>어디에 쓰이나.</b> 디리클레 조건은 형식 정의역에 직접 걸어야 하고 노이만·로빈 조건은 형식에서 저절로 나오므로, 변분법의 시험 함수는 디리클레 조건만 지키면 되고 꺾인 점이 있어도 된다. 21장의 <a href="ch21.html#thm-heat-kernel-expansion">열핵 전개</a>는 경계가 없는 다양체만 다루지만, 경계가 있으면 디리클레 조건과 로빈 조건에서 열핵 계수가 서로 달라진다.</p>
+    </div>
+
+    <h3 id="s7-hardy">하디 부등식과 역제곱 퍼텐셜</h3>
+    <p>퍼텐셜이 원점에서 \(-g/x^2\)처럼 특이하면 운동 에너지와 퍼텐셜 에너지가 같은 차수로 겨룬다. \(\psi\)를 \(\psi_\lambda(x) = \lambda^{1/2}\psi(\lambda x)\)로 좁히면 \(\int\lvert\psi_\lambda'\rvert^2\)과 \(\int\lvert\psi_\lambda\rvert^2/x^2\)이 똑같이 \(\lambda^2\)배가 되기 때문이다. 어느 쪽이 이기는지는 다음 부등식의 상수가 정한다.</p>
+    <div class="box thm" id="thm-hardy-inequality"><div class="box-h">하디 부등식 <span class="en">(Hardy inequality)</span></div>
+      <p>모든 \(\psi \in C_c^\infty(0, \infty)\)에서</p>
+      <div class="formula" id="eq-hardy-inequality">\[ \int_0^\infty\lvert\psi'(x)\rvert^2dx \ge \frac14\int_0^\infty\frac{\lvert\psi(x)\rvert^2}{x^2}\,dx \]</div>
+      <p>이고, 상수 \(\tfrac14\)은 더 키울 수 없다.</p>
+    </div>
+    <p><b>증명.</b> \(\varphi = x^{-1/2}\psi\)로 두면 \(\varphi\)도 \(C_c^\infty(0, \infty)\)에 들고 \(\psi' = x^{1/2}\varphi' + \tfrac12x^{-1/2}\varphi\)이다. 제곱하면</p>
+    <div class="formula">\[ \lvert\psi'\rvert^2 = x\lvert\varphi'\rvert^2 + \operatorname{Re}(\varphi^*\varphi') + \frac{\lvert\varphi\rvert^2}{4x} \]</div>
+    <p>이다. 가운데 항은 \(\tfrac12(\lvert\varphi\rvert^2)'\)이므로 적분하면 0이다. 따라서 \(\int\lvert\psi'\rvert^2 = \int x\lvert\varphi'\rvert^2 + \tfrac14\int\lvert\varphi\rvert^2/x \ge \tfrac14\int\lvert\psi\rvert^2/x^2\)이다. 상수가 최선임을 보이려면 \(x^{1/2}\)에 가까운 함수를 넣는다. \(\psi = x^a\)(\(a > \tfrac12\))를 \([0, 1]\)에서 쓰고 \([1, 2]\)에서 매끄럽게 0으로 줄이면 \(\int_0^1\lvert\psi'\rvert^2 = \tfrac{a^2}{2a - 1}\), \(\int_0^1\lvert\psi\rvert^2/x^2 = \tfrac{1}{2a - 1}\)이고, \([1, 2]\)의 기여는 \(a\)에 대해 유계다. \(a \to \tfrac12\)에서 두 적분이 모두 발산하므로 비는 \(a^2 \to \tfrac14\)로 간다(\(x^a\)는 원점에서 매끄럽지 않지만 형식 노름으로 \(C_c^\infty\) 함수에 다가갈 수 있다). ∎</p>
+    <p>증명에서 등호에 가장 가까운 것은 \(\varphi\)가 상수, 곧 \(\psi = x^{1/2}\)이다. 이 함수는 \(-\psi'' - \tfrac{1}{4x^2}\psi = 0\)의 해이고, 그래서 \(g = \tfrac14\)이 문턱이 된다.</p>
+
+    <div class="box ex" id="ex-inverse-square-potential"><div class="box-h">역제곱 퍼텐셜 \(-d^2/dx^2 - g/x^2\)</div>
+      <p>\(L^2(0, \infty)\)에서 \(C_c^\infty(0, \infty)\) 위의 \(H_g = -d^2/dx^2 - g/x^2\)(\(g\)는 실수)을 생각한다. (가) \(g \le \tfrac14\)이면 \(H_g \ge 0\)이고, \(g > \tfrac14\)이면 아래로 유계가 아님을 보여라. (나) 결손 지수를 \(g\)에 따라 분류하라. (다) \(g > \tfrac14\)일 때 자기수반 확장의 경계 조건과 속박 상태를 구하고, 확장을 고르면 척도 대칭이 깨짐을 보여라.</p>
+      <p><b>풀이.</b> (가) <a class="ref" href="#thm-hardy-inequality"></a>에서 \(\langle\psi|H_g\psi\rangle = \int\lvert\psi'\rvert^2 - g\int\lvert\psi\rvert^2/x^2 \ge (\tfrac14 - g)\int\lvert\psi\rvert^2/x^2 \ge 0\)이다(\(g \le \tfrac14\)). \(g > \tfrac14\)이면 상수 \(\tfrac14\)이 최선이므로 \(\int\lvert\psi'\rvert^2 &lt; g\int\lvert\psi\rvert^2/x^2\)인 \(\psi\)가 있고, 그 \(\psi\)에서 \(\langle\psi|H_g\psi\rangle &lt; 0\)이다. <span class="term">척도 변환</span> \((U_\lambda\psi)(x) = \lambda^{1/2}\psi(\lambda x)\)는 유니타리이고 \(\langle U_\lambda\psi|H_gU_\lambda\psi\rangle = \lambda^2\langle\psi|H_g\psi\rangle\)이므로, \(\lambda \to \infty\)에서 기댓값이 \(-\infty\)로 간다.</p>
+      <p>(나) \(E = 0\)의 해는 \(x^{p}\)에서 \(p(p - 1) = -g\), 곧</p>
+      <div class="formula" id="eq-inverse-square-solutions">\[ \begin{aligned} \psi &= x^{1/2 \pm \nu} \\ \nu &= \sqrt{\tfrac14 - g} \end{aligned} \]</div>
+      <p>이다(\(g > \tfrac14\)이면 \(\nu = is\), \(s = \sqrt{g - \tfrac14}\), \(g = \tfrac14\)이면 \(x^{1/2}\)과 \(x^{1/2}\ln x\)). 2계 미분 연산자에서는 끝점마다 바일의 분류가 결손 지수를 정한다. 한 끝점 근처에서 어떤 \(z\)의 해가 모두 제곱 적분 가능하면 그 끝점을 <span class="term">극한원</span> <span class="en">(limit circle)</span>, 아니면 <span class="term">극한점</span> <span class="en">(limit point)</span>이라 한다. 한 \(z\)에서 극한원이면 모든 \(z\)에서 그렇다(바일의 양자택일, 테셸 정리 9.9). 결손 지수는 두 끝점이 모두 극한점이면 \((0, 0)\), 하나만 극한원이면 \((1, 1)\), 둘 다 극한원이면 \((2, 2)\)이다(테셸 정리 9.11의 증명). \(g/x^2\)이 무한대에서 사라지므로 무한대 근처의 해는 \(-\phi'' = \pm i\phi\)의 해처럼 행동하고, 하나가 지수적으로 커지므로 무한대는 극한점이다. 원점은 \(z = 0\)의 해(식 <a class="ref" href="#eq-inverse-square-solutions"></a>)로 판정한다. \(x^{1/2 - \nu}\)이 원점 근처에서 제곱 적분 가능한 조건은 \(1 - 2\operatorname{Re}\nu > -1\), 곧 \(\operatorname{Re}\nu &lt; 1\)이다. 따라서</p>
+      <ul>
+        <li>\(g \le -\tfrac34\)(\(\nu \ge 1\)): 원점이 극한점이다. 결손 지수 \((0, 0)\), 본질적 자기수반이다.</li>
+        <li>\(g > -\tfrac34\): 원점이 극한원이다. 결손 지수 \((1, 1)\), 한 매개변수 가족이다. \(g = 0\)이 <a class="ref" href="#ex-laplacian-half-line-robin"></a>이다.</li>
+      </ul>
+      <p>\(-\tfrac34 &lt; g \le \tfrac14\)에서는 (가)에서 \(H_g \ge 0\)이므로 프리드리히스 확장이 있고, 그것은 덜 특이한 \(x^{1/2 + \nu}\)를 고른다.</p>
+      <p>(다) \(g > \tfrac14\)이면 두 해 \(x^{1/2 \pm is} = x^{1/2}e^{\pm is\ln x}\)가 원점에서 무한히 진동한다. 실수 조합 \(x^{1/2}\sin(s\ln(x/L))\)은 식 <a class="ref" href="#eq-laplacian-boundary-form"></a>와 같은 꼴의 경계 형식 \(\lim_{x \to 0}(\phi^*\psi' - \phi^{*\prime}\psi)\)을 0으로 만들므로, 확장의 경계 조건은 길이 \(L > 0\)으로 \(x \to 0\)에서</p>
+      <div class="formula" id="eq-inverse-square-bc">\[ \psi(x) \approx C\,x^{1/2}\sin\big(s\ln(x/L)\big) \]</div>
+      <p>이다. \(L\)을 \(e^{\pi/s}L\)로 바꾸면 사인의 부호만 바뀌므로 같은 확장이고, 가족은 \(L \in [L_0, e^{\pi/s}L_0)\)의 원 하나다. \(E = -\kappa^2\)에서 무한대로 감쇠하는 해는 \(\sqrt x\,K_{is}(\kappa x)\)이다. \(K_{is}\)는 실수 \(x\)에서 실수이고(DLMF 10.45.2), 작은 \(x\)에서 \(K_{is}(x) \approx -\big(\tfrac{\pi}{s\sinh\pi s}\big)^{1/2}\sin\big(s\ln\tfrac x2 - \gamma_s\big)\), \(\gamma_s = \arg\Gamma(1 + is)\)이다(DLMF 10.45.7, 10.24.3). 두 사인의 위상이 \(\pi\)의 정수배만큼 다르면 경계 조건을 만족하므로 \(s\ln(\kappa L/2) - \gamma_s = n\pi\), 곧</p>
+      <div class="formula" id="eq-inverse-square-tower">\[ E_n = -\frac{4}{L^2}\exp\Big(\frac{2(\gamma_s + n\pi)}{s}\Big) \]</div>
+      <p>이다(\(n \in \mathbb Z\)). 모든 확장에 속박 상태가 무한히 많고, 이웃한 준위의 비는 \(e^{2\pi/s}\)이다. 준위는 아래로 끝없이 내려가고 위로는 0에 쌓인다.</p>
+      <p>척도 대칭을 보자. 형식적으로 \(U_\lambda^{-1}H_gU_\lambda = \lambda^2H_g\)이므로, 확장의 정의역이 모든 \(U_\lambda\)에 대해 보존된다면 고유값 \(E\)가 있을 때 \(\lambda^2E\)도 모든 \(\lambda > 0\)에서 고유값이다. 서로 다른 고유값의 고유벡터는 직교하므로 분해 가능한 공간에 셀 수 없이 많은 직교 벡터가 생긴다. 불가능하다. 모든 확장에 식 <a class="ref" href="#eq-inverse-square-tower"></a>의 고유값이 있으므로 <b>어떤 확장도 연속적인 척도 대칭을 지킬 수 없다.</b> 식 <a class="ref" href="#eq-inverse-square-bc"></a>이 보존하는 것은 \(\lambda = e^{m\pi/s}\)(\(m \in \mathbb Z\))뿐이다. 고전적으로는 척도 불변인 계에서 양자화가 길이 \(L\)을 강제로 들여오는 이 현상을 <span class="term">척도 이상</span> <span class="en">(scale anomaly)</span>이라 한다.</p>
+      <p><b>확인.</b> \(s = 3\)(\(g = 9.25\))이면 이웃한 준위의 비는 \(e^{2\pi/3} = 8.12\)이다. 원점 근처 \(x_0 = 0.01\)에 단단한 벽을 두고 수치로 대각화하면 준위가 \(-10479.1\), \(-1232.0\), \(-150.89\), \(-18.570\), \(-2.2866\), …이고, 비가 \(8.51\), \(8.16\), \(8.13\), \(8.12\), …로 \(e^{2\pi/3}\)에 다가간다(<a class="ref" href="#prob-code-inverse-square-tower"></a>). 벽은 \(L \approx x_0\)인 확장을 고른 것과 같다.</p>
+      <p><b>어디에 쓰이나.</b> 『양자역학 (대학원)』 8장의 지름 방정식에서 원심력 항 \(l(l + 1)/r^2\)은 \(g = -l(l + 1)\), \(\nu = l + \tfrac12\)이므로 \(l \ge 1\)은 본질적 자기수반이고 s파만 경계 조건 \(u(0) = 0\)을 골라야 한다(테셸 정리 10.8). 끌어당기는 \(1/r^2\) 퍼텐셜이 더해지면 그 지름 방정식에서 같은 문턱 \(\tfrac14\)이 나온다.</p>
+    </div>
+
+    <h3 id="s7-kato-rellich">섭동: 카토-렐리히 정리</h3>
+    <p>물리의 해밀토니안은 대부분 \(-\nabla^2 + V\) 꼴이고, \(-\nabla^2\)의 자기수반성은 푸리에 변환으로 안다(10.4절). 문제는 \(V\)를 더해도 자기수반이 남는가이다. \(V\)가 유계이면 쉽다. 쿨롱 퍼텐셜처럼 \(V\)가 비유계이지만 \(-\nabla^2\)보다 "약하면" 같은 결론이 성립한다.</p>
+    <div class="box thm" id="thm-kato-rellich"><div class="box-h">카토-렐리히 정리 <span class="en">(Kato–Rellich theorem)</span></div>
+      <p>\(A\)가 자기수반이고 \(B\)가 대칭이며 \(\mathcal D(A) \subset \mathcal D(B)\)이고, 상수 \(a &lt; 1\)과 \(b\)가 있어 모든 \(\psi \in \mathcal D(A)\)에서</p>
+      <div class="formula" id="eq-relative-bound">\[ \lVert B\psi\rVert \le a\lVert A\psi\rVert + b\lVert\psi\rVert \]</div>
+      <p>이면 \(A + B\)는 \(\mathcal D(A)\)에서 자기수반이다. \(A\)가 어떤 정의역에서 본질적 자기수반이면 \(A + B\)도 그 정의역에서 본질적 자기수반이고, \(A\)가 아래로 유계이면 \(A + B\)도 아래로 유계다. 식 <a class="ref" href="#eq-relative-bound"></a>를 만족하는 \(a\)의 하한을 \(A\)에 대한 \(B\)의 <span class="term">상대 한계</span> <span class="en">(relative bound)</span>라 한다.</p>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>\(A + B\)는 \(\mathcal D(A)\)에서 대칭이므로 <a class="ref" href="#thm-self-adjoint-criterion"></a>의 3을 \(\pm i\mu\)로 쓰면 된다. 식 <a class="ref" href="#eq-symmetric-lower-bound"></a>에서 \(\lVert(A \pm i\mu)\phi\rVert^2 = \lVert A\phi\rVert^2 + \mu^2\lVert\phi\rVert^2\)이므로 \(\phi = (A \pm i\mu)^{-1}\chi\)는 \(\lVert A\phi\rVert \le \lVert\chi\rVert\), \(\lVert\phi\rVert \le \lVert\chi\rVert/\mu\)를 만족한다. 따라서 \(\lVert B(A \pm i\mu)^{-1}\rVert \le a + b/\mu\)이고, \(\mu\)가 크면 1보다 작다. 그러면 \(1 + B(A \pm i\mu)^{-1}\)은 노이만 급수(13장의 <a href="ch13.html#eq-neumann-series">노이만 급수</a>)로 역을 가지므로 \(A + B \pm i\mu = \big(1 + B(A \pm i\mu)^{-1}\big)(A \pm i\mu)\)는 전사다. 출처: 테셸 정리 6.4.</p>
+      </details>
+    </div>
+
+    <div class="box ex" id="ex-hydrogen-kato-rellich"><div class="box-h">수소 원자의 해밀토니안은 자기수반이다</div>
+      <p>\(L^2(\mathbb R^3)\)에서 \(H = -\nabla^2 - Z/r\)(\(Z > 0\). 단위 \(\hbar = 2m = 1\))을 생각한다. (가) \(\psi \in H^2(\mathbb R^3)\)이면 모든 \(\gamma > 0\)에서 \(\lVert\psi\rVert_\infty \le \tfrac{1}{2\sqrt{2\pi}}\big(\gamma^{-1/2}\lVert\nabla^2\psi\rVert + \gamma^{3/2}\lVert\psi\rVert\big)\)임을 보여라. (나) \(V = -Z/r\)의 \(-\nabla^2\)에 대한 상대 한계가 0임을 보이고, \(H\)가 \(H^2(\mathbb R^3)\)에서 자기수반이며 아래로 유계임을 결론지어라.</p>
+      <p><b>풀이.</b> (가) 푸리에 변환의 관례(\(\psi(\mathbf x) = \int\tfrac{d^3k}{(2\pi)^3}\tilde\psi(\mathbf k)e^{i\mathbf k\cdot\mathbf x}\))에서 \(\lvert\psi(\mathbf x)\rvert \le (2\pi)^{-3}\int\lvert\tilde\psi\rvert\,d^3k\)이다. 코시-슈바르츠 부등식으로</p>
+      <div class="formula" id="eq-sobolev-sup-bound">\[ \begin{aligned} \int\lvert\tilde\psi\rvert\,d^3k &\le \Big(\int\frac{d^3k}{(k^2 + \gamma^2)^2}\Big)^{1/2} \\ &\quad \times \Big(\int(k^2 + \gamma^2)^2\lvert\tilde\psi\rvert^2d^3k\Big)^{1/2} \end{aligned} \]</div>
+      <p>이고, 첫 인수는 \(\big(4\pi\int_0^\infty\tfrac{k^2dk}{(k^2 + \gamma^2)^2}\big)^{1/2} = (\pi^2/\gamma)^{1/2}\)이다. 둘째 인수는 플랑슈렐 정리 \(\int\lvert f\rvert^2d^3x = \int\lvert\tilde f\rvert^2\tfrac{d^3k}{(2\pi)^3}\)에서 \((2\pi)^{3/2}\lVert(-\nabla^2 + \gamma^2)\psi\rVert \le (2\pi)^{3/2}\big(\lVert\nabla^2\psi\rVert + \gamma^2\lVert\psi\rVert\big)\)이다. 곱하면 \((2\pi)^{-3}\cdot\pi\gamma^{-1/2}\cdot(2\pi)^{3/2} = \tfrac{1}{2\sqrt{2\pi}}\gamma^{-1/2}\)이 앞에 붙는다.</p>
+      <p>(나) 반지름 \(R\)에서 \(V = V_1 + V_2\)로 나눈다. \(V_1 = V\)(\(r &lt; R\)), \(V_2 = V\)(\(r > R\))이다. \(\lVert V_1\rVert^2 = Z^2\int_{r &lt; R}\tfrac{d^3x}{r^2} = 4\pi Z^2R\)이므로 \(\lVert V_1\psi\rVert \le \lVert V_1\rVert\,\lVert\psi\rVert_\infty\)이고, \(\lVert V_2\psi\rVert \le \tfrac ZR\lVert\psi\rVert\)이다. (가)와 합치면</p>
+      <div class="formula" id="eq-coulomb-relative-bound">\[ \begin{aligned} \lVert V\psi\rVert &\le Z\sqrt{\frac{R}{2\gamma}}\,\lVert\nabla^2\psi\rVert \\ &\quad + \Big(Z\sqrt{\frac R2}\,\gamma^{3/2} + \frac ZR\Big)\lVert\psi\rVert \end{aligned} \]</div>
+      <p>이다. \(R\)을 고정하고 \(\gamma\)를 키우면 첫 계수는 얼마든지 작아진다. 상대 한계는 0이다. \(-\nabla^2\)은 \(H^2(\mathbb R^3)\)에서 자기수반이고 \(C_c^\infty(\mathbb R^3)\)에서 본질적 자기수반이며 양이므로(10.4절), <a class="ref" href="#thm-kato-rellich"></a>에서 \(H\)는 \(H^2(\mathbb R^3)\)에서 자기수반이고, \(C_c^\infty(\mathbb R^3)\)에서 본질적 자기수반이며, 아래로 유계다.</p>
+      <p><b>확인.</b> 바닥 상태 \(\psi_0 = e^{-Zr/2}\)는 \(-\nabla^2\psi_0 = (\tfrac{Z}{r} - \tfrac{Z^2}{4})\psi_0\)이므로 \(H\psi_0 = -\tfrac{Z^2}{4}\psi_0\)이다. 원점에서 뾰족하지만 원점 근처에서 \(\nabla^2\psi_0 \approx -Z/r\)이고 이것이 3차원에서 제곱 적분 가능하므로 \(\psi_0 \in H^2(\mathbb R^3) = \mathcal D(H)\)이다. 차원: \(Z\)는 길이의 역수, \(\gamma\)는 파수이므로 \(Z\sqrt{R/\gamma}\)는 차원이 없다.</p>
+      <p><b>어디에 쓰이나.</b> 『양자역학 (대학원)』 8장은 수소 원자의 해밀토니안이 자기수반이라는 것을 이 결과로 정당화하고, 11장의 <a href="ch11.html#thm-spectral-unbounded">스펙트럼 정리</a>로 속박 상태와 연속 스펙트럼을 나눈다. 형식으로 아래 한계를 직접 어림하는 것은 <a class="ref" href="#prob-hydrogen-lower-bound"></a>이다.</p>
+    </div>
+    <div class="callout deep"><strong>형식으로 하는 섭동: KLMN 정리</strong><p>양인 자기수반 연산자 \(A\)와 형식의 부등식 \(\lvert\langle\psi|V\psi\rangle\rvert \le a\langle\psi|A\psi\rangle + b\lVert\psi\rVert^2\)(\(a &lt; 1\))만 있어도 \(A + V\)를 형식의 합으로 자기수반 연산자로 정의할 수 있다(KLMN 정리, 테셸 6.5절). 1차원의 델타 퍼텐셜 \(\lambda\delta(x)\)는 \(L^2\)에 작용하는 연산자가 아니지만, 식 <a class="ref" href="#eq-boundary-value-bound"></a>이 상대 한계 0인 형식 부등식이라 이 방법으로 정의된다(<a class="ref" href="#prob-delta-interaction"></a>).</p></div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>힐베르트 공간은 완비한 내적 공간이다. 완비성과 평행사변형 법칙에서 사영 정리 \(\mathcal H = M \oplus M^\perp\)과 리스 표현 정리가 나오고, 분해 가능한 무한 차원 힐베르트 공간은 모두 \(\ell^2\)와 같다. 물리는 연산자와 그 정의역에 있다.</li>
+      <li>유계 연산자는 리스 정리로 수반을 가진다(\(\lVert A^\dagger\rVert = \lVert A\rVert\)). 헬링거-퇴플리츠 정리: 공간 전체에서 정의된 대칭 연산자는 유계다. 그래서 \(X\), \(P\), \(H\)는 정의역에서만 정의된다.</li>
+      <li>수반의 정의역은 \(\psi \mapsto \langle\phi|A\psi\rangle\)이 유계인 \(\phi\)의 모임이다. \(A \subset B\)이면 \(B^\dagger \subset A^\dagger\), \(\operatorname{Ker}A^\dagger = (\operatorname{Ran}A)^\perp\). 구간에서 \(C_c^\infty\) 위의 \(-i\,d/dx\)의 수반은 \(H^1(0, 1)\) 위의 \(-i\,d/dx\)이고, 닫힘은 \(\psi(0) = \psi(1) = 0\)인 \(P_0\)이다.</li>
+      <li>대칭은 \(A \subset A^\dagger\), 자기수반은 \(A = A^\dagger\)이다. 대칭 연산자는 \(\operatorname{Ran}(A \pm i) = \mathcal H\)일 때 자기수반이고, \(\operatorname{Ker}(A^\dagger \mp i) = \{0\}\)일 때 본질적 자기수반(확장이 하나뿐)이다. \(P_0\)은 대칭이지만 수반이 모든 복소수를 고유값으로 가진다. 실수축의 \(X\), \(P\), \(-\nabla^2\)은 매끄러운 함수 위에서 본질적 자기수반이다.</li>
+      <li>결손 지수 \(n_\pm = \dim\operatorname{Ker}(A^\dagger \mp i)\). 폰 노이만 정리: 자기수반 확장은 \(n_+ = n_-\)일 때만 있고 유니타리 사상 \(K_+ \to K_-\)와 일대일로 대응한다. 구간의 운동량은 \((1, 1)\)이고 확장은 \(\psi(1) = e^{i\theta}\psi(0)\), 고유값 \(2\pi n + \theta\), \(\theta = -q\Phi\)이다. 반직선의 운동량은 \((1, 0)\)이라 확장이 없다. 반직선의 \(-d^2/dx^2\)은 \((1, 1)\)이고 확장은 \(\psi'(0) = \alpha\psi(0)\), \(\alpha &lt; 0\)이면 속박 상태 \(E = -\alpha^2\)이 하나 있다.</li>
+      <li>아래로 유계인 연산자는 형식의 닫힘으로 프리드리히스 확장을 가진다. 반직선에서 그것은 디리클레 조건이고, 로빈 조건은 형식 \(\int\lvert\psi'\rvert^2 + \alpha\lvert\psi(0)\rvert^2\)의 자연 경계 조건이다. 하디 부등식 \(\int\lvert\psi'\rvert^2 \ge \tfrac14\int\lvert\psi\rvert^2/x^2\)의 상수가 역제곱 퍼텐셜의 문턱이다. \(-d^2/dx^2 - g/x^2\)은 \(g \le -\tfrac34\)에서 본질적 자기수반, \(g > -\tfrac34\)에서 \((1, 1)\), \(g > \tfrac14\)에서 아래로 유계가 아니고 준위의 비가 \(e^{2\pi/s}\)인 무한한 탑을 가진다(척도 이상).</li>
+      <li>카토-렐리히 정리: 상대 한계가 1보다 작은 대칭 섭동은 자기수반성과 아래 유계를 보존한다. 쿨롱 퍼텐셜은 \(-\nabla^2\)에 대한 상대 한계가 0이므로 수소 원자의 해밀토니안은 \(H^2(\mathbb R^3)\)에서 자기수반이다.</li>
+    </ol>
+    <div class="callout deep" data-later="qm-grad"><strong>다음에 쓰이는 곳: 『양자역학 (대학원)』</strong><p>1장은 관측 가능량을 자기수반 연산자로 정하고(대칭만으로 모자라는 이유가 <a class="ref" href="#ex-dirichlet-momentum-adjoint"></a>), 불확정성 관계의 정의역 가정을 <a class="ref" href="#ex-position-momentum-unbounded"></a>으로 밝힌다. 2장은 실수축의 위치와 운동량을 <a class="ref" href="#thm-multiplication-self-adjoint"></a>의 정의역 위에서 정의한다. 8장은 지름 방정식의 경계 조건(s파만 \(u(0) = 0\)을 골라야 한다는 것, <a class="ref" href="#ex-inverse-square-potential"></a>), 지름 운동량이 관측 가능량이 아니라는 것(<a class="ref" href="#ex-momentum-half-line"></a>), 수소 원자 해밀토니안의 자기수반성(<a class="ref" href="#ex-hydrogen-kato-rellich"></a>)을 이 장에서 가져간다.</p></div>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. 연속 함수의 공간 \(C[0, 1]\)에 \(L^2\) 노름을 준 것은?</p><div class="opts">
+        <button class="opt">힐베르트 공간</button>
+        <button class="opt">바나흐 공간이지만 힐베르트 공간은 아니다</button>
+        <button class="opt" data-correct>완비하지 않은 내적 공간</button>
+        <button class="opt">노름 공간이 아니다</button>
+      </div><div class="quiz-exp">내적이 있으므로 노름 공간이지만, <a class="ref" href="#ex-continuous-functions-incomplete"></a>의 코시 열이 계단 함수로 가므로 완비하지 않다. 완비화한 것이 \(L^2(0, 1)\)이다. 최대 노름을 주면 거꾸로 완비하지만 내적에서 오지 않는다.</div></div>
+      <div class="quiz-q"><p>2. 양 끝을 고정한 구간의 운동량 \(P_0\)에 대해 \(P_0^\dagger\)의 고유값은?</p><div class="opts">
+        <button class="opt">없다</button>
+        <button class="opt">\(2\pi n\) (\(n \in \mathbb Z\))</button>
+        <button class="opt">모든 실수</button>
+        <button class="opt" data-correct>모든 복소수</button>
+      </div><div class="quiz-exp">\(P_0^\dagger = P_{\max}\)는 경계 조건이 없으므로 \(e^{izx}\)가 모든 \(z \in \mathbb C\)에서 고유함수다(<a class="ref" href="#ex-dirichlet-momentum-adjoint"></a>). \(P_0\) 자신은 고유값이 없다. \(2\pi n\)은 주기 조건을 준 확장 \(P_{\theta = 0}\)의 고유값이다.</div></div>
+      <div class="quiz-q"><p>3. 반직선 \((0, \infty)\)의 운동량 \(-i\,d/dx\)(정의역 \(C_c^\infty\))에 대해 옳은 것은?</p><div class="opts">
+        <button class="opt">결손 지수 \((0, 0)\), 본질적 자기수반</button>
+        <button class="opt">결손 지수 \((1, 1)\), 한 매개변수 가족의 확장</button>
+        <button class="opt" data-correct>결손 지수 \((1, 0)\), 자기수반 확장이 없음</button>
+        <button class="opt">결손 지수 \((2, 2)\), \(U(2)\) 가족의 확장</button>
+      </div><div class="quiz-exp">\(e^{-x}\)만 \(L^2(0, \infty)\)에 들므로 \((1, 0)\)이고, \(n_+ \ne n_-\)이라 확장이 없다(<a class="ref" href="#ex-momentum-half-line"></a>). \((1, 1)\)은 유한 구간의 운동량이나 반직선의 \(-d^2/dx^2\)이다.</div></div>
+      <div class="quiz-q"><p>4. 반직선의 \(-d^2/dx^2\)에 로빈 조건 \(\psi'(0) = -2\psi(0)\)을 준 확장의 음의 고유값은?</p><div class="opts">
+        <button class="opt">\(-2\)</button>
+        <button class="opt" data-correct>\(-4\)</button>
+        <button class="opt">\(-\tfrac14\)</button>
+        <button class="opt">없다</button>
+      </div><div class="quiz-exp">\(e^{-\kappa x}\)가 조건을 만족하려면 \(-\kappa = \alpha = -2\)이므로 \(E = -\kappa^2 = -4\)이다(식 <a class="ref" href="#eq-robin-bound-energy"></a>). \(\alpha \ge 0\)이었다면 음의 고유값이 없다. 흔한 실수는 \(E = \alpha\)로 놓는 것이다. \(\alpha\)의 차원은 길이의 역수이고 \(E\)는 길이\(^{-2}\)다.</div></div>
+      <div class="quiz-q"><p>5. \(C_c^\infty(0, \infty)\) 위의 \(-d^2/dx^2 - g/x^2\)에서 \(g = 0.2\)이면?</p><div class="opts">
+        <button class="opt">아래로 유계가 아니다</button>
+        <button class="opt" data-correct>아래로 유계이고 확장이 한 매개변수 가족이며, 프리드리히스 확장이 있다</button>
+        <button class="opt">본질적 자기수반이다</button>
+        <button class="opt">자기수반 확장이 없다</button>
+      </div><div class="quiz-exp">\(g = 0.2 \le \tfrac14\)이므로 하디 부등식에서 양이고 프리드리히스 확장이 있다. \(g > -\tfrac34\)이므로 원점이 극한원이고 결손 지수는 \((1, 1)\)이다. 본질적 자기수반은 \(g \le -\tfrac34\)일 때뿐이다(<a class="ref" href="#ex-inverse-square-potential"></a>).</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-parallelogram-sup-norm" data-level="1"><p>(가) \(C[0, 1]\)의 최대 노름이 평행사변형 법칙(식 <a class="ref" href="#eq-parallelogram-law"></a>)을 깨는 두 함수를 찾아라. (나) \(\ell^1\)의 노름 \(\sum\lvert c_n\rvert\)도 그렇다는 것을 보여라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(f = 1\), \(g = x\)이면 \(\lVert f + g\rVert_\infty = 2\), \(\lVert f - g\rVert_\infty = 1\), \(\lVert f\rVert_\infty = \lVert g\rVert_\infty = 1\)이다. 왼쪽은 \(4 + 1 = 5\), 오른쪽은 \(2 + 2 = 4\)이다. (나) \(e_0 = (1, 0, \ldots)\), \(e_1 = (0, 1, 0, \ldots)\)이면 \(\lVert e_0 \pm e_1\rVert = 2\)이므로 왼쪽 \(8\), 오른쪽 \(4\)이다. 두 노름 모두 내적에서 오지 않는다. 그래서 사영 정리가 성립하지 않을 수 있고, 실제로 \(\ell^1\)에서는 가장 가까운 점이 하나로 정해지지 않는 예가 쉽게 만들어진다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-ccr-unbounded" data-level="2"><p>유계 연산자 \(A\), \(B\)가 \([A, B] = i\)를 만족할 수 없음을 보여라. (힌트: \([A, B^n] = inB^{n-1}\)을 귀납법으로 보이고 노름을 취한다.) 유한 차원에서는 대각합으로 바로 모순이 나오는데, 이 논법이 무한 차원에서 통하지 않는 이유도 설명하라. (→ 『양자역학 (대학원)』 2장)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\([A, B^n] = [A, B]B^{n-1} + B[A, B^{n-1}] = iB^{n-1} + B\cdot i(n - 1)B^{n-2} = inB^{n-1}\)이다. 어떤 \(m \ge 1\)에서 \(B^m = 0\)이면 \(0 = [A, B^m] = imB^{m-1}\)이라 \(B^{m-1} = 0\)이고, 되풀이하면 \(B^0 = 1 = 0\)이 되어 모순이다. 따라서 모든 \(n\)에서 \(B^{n-1} \ne 0\)이고</p>
+        <div class="formula">\[ \begin{aligned} n\lVert B^{n-1}\rVert &= \lVert AB^n - B^nA\rVert \\ &\le 2\lVert A\rVert\,\lVert B\rVert\,\lVert B^{n-1}\rVert \end{aligned} \]</div>
+        <p>에서 \(n \le 2\lVert A\rVert\,\lVert B\rVert\)가 모든 \(n\)에서 성립해야 한다. 모순이다. 유한 차원에서는 \(\operatorname{tr}[A, B] = 0 \ne \operatorname{tr}(i\cdot1)\)이지만, 무한 차원에서는 \(\operatorname{Tr}1\)이 정의되지 않고 \(\operatorname{Tr}(AB) = \operatorname{Tr}(BA)\)도 11장의 <a href="ch11.html#def-trace-class">대각합류 연산자</a>에서만 성립하므로 이 논법을 쓸 수 없다. 위 논법은 \(X\)와 \(P\) 가운데 적어도 하나가 유계가 아님을 보이고, 실제로는 둘 다 유계가 아니다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-boundary-ratio-adjoint" data-level="2"><p>\(L^2(0, 1)\)에서 복소수 \(\kappa \ne 0\)으로 \(P_\kappa = -i\,d/dx\), \(\mathcal D(P_\kappa) = \{\psi \in H^1(0, 1) : \psi(1) = \kappa\psi(0)\}\)으로 둔다. (가) \(P_\kappa^\dagger = P_{1/\kappa^*}\)임을 보이고, \(\lvert\kappa\rvert \ne 1\)이면 \(P_\kappa\)가 대칭이 아님을 보여라. (나) \(P_\kappa\)의 고유값이 \(2\pi n - i\ln\kappa\)(\(n \in \mathbb Z\))임을 보이고, \(\kappa \to 0\)에서 고유값이 모두 허수축 방향 무한대로 달아남을 확인하라. (다) \(\lvert\kappa\rvert = 1\)이면 \(P_\kappa\)가 자기수반임을 <a class="ref" href="#thm-self-adjoint-criterion"></a>의 3으로 직접 보여라. (라) \(\psi(1) = 0\)만 준 연산자(\(\kappa = 0\)에 해당)에서는 모든 \(z \in \mathbb C\)에서 \((P - z)\psi = f\)가 \(\psi(x) = -i\int_x^1e^{iz(x - t)}f(t)\,dt\)로 풀림을 보여라. \(A - z\)가 유계인 역을 갖지 않는 \(z\)의 모임을 스펙트럼이라 한다(11장). 이 연산자의 스펙트럼은 무엇인가? (→ 13장의 <a href="ch13.html#thm-volterra-convergence">볼테라 방정식의 수렴</a>)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(C_c^\infty \subset \mathcal D(P_\kappa)\)이므로 \(P_\kappa^\dagger \subset P_{\min}^\dagger = P_{\max}\)(<a class="ref" href="#thm-momentum-interval-adjoint"></a>)이고, \(\phi \in \mathcal D(P_\kappa^\dagger)\)는 \(H^1\)에 들며 \(P_\kappa^\dagger\phi = -i\phi'\)이다. \(\psi \in \mathcal D(P_\kappa)\)를 식 <a class="ref" href="#eq-momentum-boundary-form"></a>에 넣으면 경계 항은 \(-i\psi(0)\big(\kappa\phi^*(1) - \phi^*(0)\big)\)이고, \(\psi(0)\)은 마음대로이므로 \(\phi(1) = \phi(0)/\kappa^*\)이어야 한다. 거꾸로 이 조건이면 경계 항이 0이다. 따라서 \(P_\kappa^\dagger = P_{1/\kappa^*}\)이다. 대칭이려면 \(\mathcal D(P_\kappa) \subset \mathcal D(P_\kappa^\dagger)\)이어야 하고, \(\psi(0) \ne 0\)인 함수를 넣으면 \(\kappa = 1/\kappa^*\), 곧 \(\lvert\kappa\rvert = 1\)이다.</p>
+        <p>(나) \(e^{i\lambda x}\)가 조건을 만족하려면 \(e^{i\lambda} = \kappa\)이므로 \(\lambda = 2\pi n - i\ln\kappa = 2\pi n + \arg\kappa - i\ln\lvert\kappa\rvert\)이다. \(\lvert\kappa\rvert \ne 1\)이면 허수부 \(-\ln\lvert\kappa\rvert\)이 0이 아니어서 고유값이 모두 복소수이고, 이것은 (가)에서 대칭이 아니라는 것과 맞는다. \(\kappa \to 0\)이면 허수부가 \(+\infty\)로 가므로 고유값이 모두 위쪽 무한대로 달아난다.</p>
+        <p>(다) \(\kappa = e^{i\theta}\)이면 (가)에서 \(P_\kappa\)는 대칭이다. \((P_\kappa + i)\psi = f\), 곧 \(\psi' - \psi = if\)의 해 \(\psi = e^x\big(c + i\int_0^xe^{-t}f\,dt\big)\)는 경계 조건에서 \(c(e^{i\theta} - e) = ie\int_0^1e^{-t}f\,dt\)이고 \(e^{i\theta} \ne e\)이므로 풀린다. \((P_\kappa - i)\psi = f\)도 \(e^{i\theta} \ne e^{-1}\)이라 같은 방법으로 풀린다. 따라서 \(\operatorname{Ran}(P_\kappa \pm i) = L^2\)이고 \(P_\kappa\)는 자기수반이다. 이것이 <a class="ref" href="#calc-momentum-interval-extensions"></a>의 \(P_\theta\)다.</p>
+        <p>(라) \(\psi(1) = 0\)이고 \(\psi' = if + iz\psi\)이므로 \(-i\psi' = f + z\psi\)이다. 다른 해는 \(Ce^{izx}\)만큼 다르고 \(\psi(1) = 0\)에서 \(C = 0\)이다. 핵이 유계인 적분 연산자라 \((P - z)^{-1}\)은 유계이므로(식 <a class="ref" href="#eq-hilbert-schmidt-bound"></a>) 스펙트럼은 공집합이다. (나)에서 고유값이 모두 무한대로 사라진 극한이고, 이 역이 13장의 볼테라 적분 연산자다.</p>
+      </details>
+    </div>
+
+
+    <div class="prob" id="prob-interval-laplacian-extensions" data-level="2"><p>\(L^2(0, 1)\)에서 \(C_c^\infty(0, 1)\) 위의 \(-d^2/dx^2\)을 생각한다. (가) 결손 지수가 \((2, 2)\)임을 보여라. (나) 꼬인 주기 조건 \(\psi(1) = e^{i\theta}\psi(0)\), \(\psi'(1) = e^{i\theta}\psi'(0)\)이 자기수반 확장을 줌을 경계 형식으로 보이고, 그 고유값이 \((2\pi n + \theta)^2\)임을 보여라. (다) 디리클레 확장이 \(P_0^\dagger P_0\), 노이만 확장이 \(P_0P_0^\dagger\)임을 보여라(\(P_0\)은 <a class="ref" href="#thm-momentum-interval-adjoint"></a>). (→ 9장의 <a href="ch09.html#ex-aharonov-bohm-holonomy">아하로노프-봄 홀로노미</a>)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 유계 구간에서는 \(-\phi'' = \pm i\phi\)의 두 해가 모두 \(L^2(0, 1)\)에 들므로 \(n_\pm = 2\)이다. 확장은 \(U(2)\), 곧 실수 매개변수 4개로 매겨진다. (나) 경계 형식은 \(\big[\phi^*\psi' - \phi^{*\prime}\psi\big]_0^1\)의 부호를 바꾼 것이다(식 <a class="ref" href="#eq-laplacian-boundary-form"></a>의 두 끝 판). 두 함수가 모두 조건을 만족하면 \(x = 1\)의 항은 \(e^{-i\theta}e^{i\theta}\)이 곱해진 \(x = 0\)의 항과 같아 지워진다. 경계값 \((\psi(0), \psi'(0), \psi(1), \psi'(1))\) 가운데 두 개를 묶으므로 자기수반 확장이다. 고유함수 \(e^{ikx}\)는 두 조건이 모두 \(e^{ik} = e^{i\theta}\)이므로 \(k = 2\pi n + \theta\), 고유값 \(k^2 = (2\pi n + \theta)^2\)이고, 이것은 \(P_\theta^2\)의 고유값이다. 9장의 고리를 꿰는 플럭스 \(\Phi\)에서 \(\theta = -q\Phi\)이다. (다) \(\mathcal D(P_0^\dagger P_0) = \{\psi \in \mathcal D(P_0) : P_0\psi \in H^1\} = \{\psi \in H^2 : \psi(0) = \psi(1) = 0\}\)이고, \(\mathcal D(P_0P_0^\dagger) = \{\psi \in H^1 : -i\psi' \in \mathcal D(P_0)\} = \{\psi \in H^2 : \psi'(0) = \psi'(1) = 0\}\)이다. 학부 9장의 <a href="../../math-phys/chapters/ch09.html#eq-well-momentum">무한 우물의 운동량</a>에서 \(\langle\hat p^2\rangle = \lVert\hat p\psi_1\rVert^2\)로 계산한 것이 맞았던 것은 디리클레 해밀토니안이 \(P_0^\dagger P_0\)이기 때문이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-delta-interaction" data-level="2"><p>\(L^2(\mathbb R)\)에서 \(C_c^\infty(\mathbb R \setminus \{0\})\) 위의 \(-d^2/dx^2\)을 생각한다. (가) 결손 지수가 \((2, 2)\)임을 보여라. (나) 실수 \(\lambda\)에 대해 "\(\psi\)는 0에서 연속이고 \(\psi'(0^+) - \psi'(0^-) = \lambda\psi(0)\)"이 자기수반 경계 조건임을 보여라. 이 확장을 \(-d^2/dx^2 + \lambda\delta(x)\)라 쓴다. (다) \(\lambda &lt; 0\)일 때 속박 상태와 그 에너지를 구하라. (→ 13장의 <a href="ch13.html#ex-delta-potential-scattering">델타 퍼텐셜 산란</a>)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 원점을 빼면 두 반직선의 직합이고, 각각이 <a class="ref" href="#ex-laplacian-half-line-robin"></a>처럼 \((1, 1)\)을 준다. (나) 두 반직선의 부분 적분을 합하면 경계 형식은 \((\phi^*\psi' - \phi^{*\prime}\psi)(0^+) - (\phi^*\psi' - \phi^{*\prime}\psi)(0^-)\)이다. 연속성과 도약 조건을 넣으면 \(\phi^*(0)\lambda\psi(0) - \lambda^*\phi^*(0)\psi(0) = (\lambda - \lambda^*)\phi^*(0)\psi(0)\)이므로 \(\lambda\)가 실수이면 0이다. 조건 두 개가 경계값 네 개 가운데 두 개를 묶으므로 자기수반 확장이다. (다) \(\psi = e^{-\kappa\lvert x\rvert}\)이면 \(\psi'(0^+) - \psi'(0^-) = -2\kappa = \lambda\)이므로 \(\kappa = -\lambda/2\), 곧 \(\lambda &lt; 0\)일 때만</p>
+        <div class="formula">\[ \begin{aligned} E &= -\frac{\lambda^2}{4} \\ \psi(x) &= \sqrt{\tfrac{\lvert\lambda\rvert}{2}}\,e^{\lambda\lvert x\rvert/2} \end{aligned} \]</div>
+        <p>이다. 확인: 짝 함수는 \(\psi'(0^+) = \lambda\psi(0)/2\)이므로 반직선의 로빈 조건 \(\alpha = \lambda/2\)이고, 식 <a class="ref" href="#eq-robin-bound-energy"></a>가 \(E = -\lambda^2/4\)를 준다. 홀 함수는 \(\psi(0) = 0\)이라 델타를 느끼지 못한다. 형식으로는 \(\int\lvert\psi'\rvert^2 + \lambda\lvert\psi(0)\rvert^2\)이고 KLMN 정리(10.7절 끝의 심화)로 정의한 것과 같다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-hydrogen-lower-bound" data-level="2"><p>3차원 하디 부등식 \(\int\lvert\nabla\psi\rvert^2d^3x \ge \tfrac14\int\lvert\psi\rvert^2/r^2\,d^3x\)(\(\psi \in C_c^\infty(\mathbb R^3)\))을 쓴다. (가) 이 부등식을 1차원 하디 부등식에서 얻어라(힌트: 방향마다 \(u = r\psi\)로 두면 \(\int_0^\infty r^2\lvert\partial_r\psi\rvert^2dr = \int_0^\infty\lvert\partial_ru\rvert^2dr\)). (나) \(\tfrac1r \le \tfrac{\varepsilon}{r^2} + \tfrac{1}{4\varepsilon}\)을 써서 \(\langle\psi|(-\nabla^2 - Z/r)\psi\rangle \ge -Z^2\lVert\psi\rVert^2\)을 보이고, 실제 바닥 에너지 \(-Z^2/4\)와 비교하라. (→ 『양자역학 (대학원)』 8장)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\partial_r\psi = (u' - u/r)/r\)이므로 \(\int r^2\lvert\partial_r\psi\rvert^2dr = \int\lvert u'\rvert^2 - 2\operatorname{Re}\int\tfrac{u^*u'}{r} + \int\tfrac{\lvert u\rvert^2}{r^2}\)이다. 가운데 항은 \(\int\tfrac{(\lvert u\rvert^2)'}{r} = \int\tfrac{\lvert u\rvert^2}{r^2}\)(\(\lvert u\rvert^2/r \to 0\))이라 마지막 항과 지워진다. \(u(0) = 0\)이므로 1차원 하디 부등식(식 <a class="ref" href="#eq-hardy-inequality"></a>를 형식 정의역으로 넓힌 것)에서 \(\int\lvert u'\rvert^2 \ge \tfrac14\int\lvert u\rvert^2/r^2 = \tfrac14\int\lvert\psi\rvert^2dr\)이다. \(\lvert\nabla\psi\rvert^2 \ge \lvert\partial_r\psi\rvert^2\)이고 각도로 적분하면 된다.</p>
+        <p>(나) \(\varepsilon/r^2 + 1/(4\varepsilon) - 1/r = (\sqrt\varepsilon/r - 1/(2\sqrt\varepsilon))^2 \ge 0\)이므로 \(\langle\psi|H\psi\rangle \ge (1 - 4Z\varepsilon)\int\lvert\nabla\psi\rvert^2 - \tfrac{Z}{4\varepsilon}\lVert\psi\rVert^2\)(하디 부등식으로 \(Z\varepsilon\int\lvert\psi\rvert^2/r^2 \le 4Z\varepsilon\int\lvert\nabla\psi\rvert^2\))이다. \(\varepsilon = 1/(4Z)\)이면 \(\langle\psi|H\psi\rangle \ge -Z^2\lVert\psi\rVert^2\)으로, 실제 값 \(-Z^2/4\)(<a class="ref" href="#ex-hydrogen-kato-rellich"></a>의 확인)보다 4배 낮은 어림이다. 첫 부등식이 \(r = 2\varepsilon\)에서만 등호라 느슨하지만, 차원 분석이 정하는 \(Z^2\) 의존성은 맞는다.</p>
+      </details>
+    </div>
+
+
+    <div class="prob" id="prob-code-spectral-flow" data-level="2"><p>[코드] <a class="ref" href="#code-self-adjoint-extensions"></a>의 <code>momentum(N, θ)</code>로 \(\theta = 2\pi m/5\)(\(m = 0, \ldots, 5\))에서 \([-1, 13]\) 안의 고유값을 출력해 그림 10-3 (나)의 스펙트럼 흐름을 확인하고, \(\theta = 2\pi\)의 스펙트럼이 \(\theta = 0\)과 같음을 <code>assert</code>로 확인하라. \(\theta = \pi\)를 넣으면 무엇이 잘못되는가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>코드 상자의 <code>momentum</code>을 그대로 두고 아래를 쓴다. 격자 수를 홀수로 고른 이유는 마지막 문단에 있다.</p>
+        <pre><code class="language-python">import numpy as np
+
+def momentum(N, theta):     # 코드 10.1과 같다 (h = 1/N)
+    T = np.roll(np.eye(N), 1, axis=1).astype(complex)
+    T[N - 1, 0] = np.exp(1j * theta)                # ψ_N = e^{iθ}ψ_0
+    I = np.eye(N)
+    return -2j * N * np.linalg.solve(T + I, T - I)
+
+N = 401                     # 홀수: θ = π에서만 T + 1이 특이하다
+spec = []
+for m in range(6):                            # θ = 2πm/5
+    lam = np.linalg.eigvalsh(momentum(N, 2 * np.pi * m / 5))
+    low = np.sort(lam[(lam &gt; -1) &amp; (lam &lt; 13)])
+    spec.append(low)
+    print(f"m={m}:", " ".join(f"{v:7.3f}" for v in low))
+assert np.allclose(spec[0], spec[5])          # θ = 2π는 θ = 0과 같다</code></pre>
+        <pre class="code-out"><code>m=0:   0.000   6.283  12.567
+m=1:   1.257   7.540
+m=2:   2.513   8.797
+m=3:   3.770  10.054
+m=4:   5.027  11.310
+m=5:   0.000   6.283  12.567</code></pre>
+        <p>\(\theta\)가 \(2\pi/5\)씩 늘 때마다 고유값이 \(1.257\)씩 올라가고, \(m = 5\)에서 \(0\)에 있던 고유값이 \(2\pi\)에 닿아 스펙트럼 전체가 \(m = 0\)과 같아진다. 고유값 하나하나는 한 칸씩 옮겨 갔지만 집합은 제자리다. 케일리 꼴의 격자 고유값은 \(2N\tan\frac{2\pi n + \theta}{2N}\)이므로 \(\frac{2\pi n + \theta}{N} = \pi\)인 \(n\)이 있으면 무한대가 되어 \(T + 1\)이 특이해진다. \(N\)이 홀수이면 그런 \(\theta\)는 \(\pi\)뿐이고 짝수이면 \(0\)뿐이다. \(\theta = \pi\)에서는 \(T + 1\)이 수학적으로 특이하다. 그런데 부동소수점에서 \(e^{i\pi} = -1 + 1.2 \times 10^{-16}i\)라 <code>solve</code>는 오류를 내지 않고 원소가 \(10^{19}\) 크기인 행렬을 돌려주며(\(N = 401\)에서 최대 원소 \(1.3 \times 10^{19}\)), 그 고유값은 믿을 수 없다. <code>np.linalg.cond(T + I)</code>(이때 \(5 \times 10^{18}\))로 걸러야 한다. 정확히 특이해져 <code>LinAlgError</code>가 나는 것은 \(N\)이 짝수이고 \(\theta = 0\)일 때다. 어느 쪽이든 격자의 가장 큰 고유값이 무한대로 달아나는 것이고, 연속 극한의 스펙트럼과는 상관이 없다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-code-inverse-square-tower" data-level="3"><p>[코드] <a class="ref" href="#code-self-adjoint-extensions"></a>의 3중 대각 행렬 방법을 \(-d^2/dx^2 - g/x^2\)(\(s = 3\), \(g = 9.25\))으로 넓혀라. 원점 근처 \(x_0 = 0.01\)에 벽 \(\psi(x_0) = 0\)을 두고 \(L = 30\)까지 격자 간격 \(h = 2 \times 10^{-4}\)로 차분해 가장 낮은 고유값 여섯 개를 구하라. 이것을 \(K_{is}(\kappa x_0) = 0\)에서 얻은 \(-(y_n/x_0)^2\)(\(y_n\)은 \(K_{is}\)의 영점)과 비교하고, 이웃한 준위의 비가 \(e^{2\pi/s}\)로 다가감을 확인하라. (<a class="ref" href="#ex-inverse-square-potential"></a>)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>벽 바깥의 격자점에서 \(-\psi''\)을 3점 차분으로 쓰고 \(-g/x^2\)을 대각에 더한다. 검산은 mpmath의 \(K_{is}\)로 한다. 영점은 \(\sin(s\ln\tfrac y2 - \gamma_s) = 0\)에서 얻은 점근 위치의 양옆(비 \(e^{\pm\pi/2s}\))을 구간으로 이분법으로 찾는다.</p>
+        <pre><code class="language-python">import numpy as np, mpmath as mp
+from scipy.linalg import eigvalsh_tridiagonal
+
+s = 3.0; g = 0.25 + s**2                      # g &gt; 1/4
+x0, L, h = 0.01, 30.0, 2e-4                   # 벽 ψ(x0) = 0, ψ(L) = 0
+N = int(round((L - x0) / h))
+x = x0 + h * np.arange(1, N)                  # 안쪽 격자점
+d = 2 / h**2 - g / x**2
+e = -np.ones(N - 2) / h**2
+E = eigvalsh_tridiagonal(d, e, select="i", select_range=(0, 5))
+
+# 검산: √x K_{is}(κx)가 x0에서 0 → κ = y/x0, y는 K_{is}의 영점
+K = lambda y: mp.re(mp.besselk(1j * s, y))
+gam = float(mp.arg(mp.gamma(1 + 1j * s)))     # γ_s = arg Γ(1+is)
+ys = []
+for n in range(1, 7):       # 점근 꼴의 영점 둘레에서 이분법
+    y0 = 2 * np.exp((gam - n * np.pi) / s)
+    w = np.exp(np.pi / (2 * s))
+    ys.append(float(mp.findroot(K, (y0 / w, y0 * w), solver="bisect")))
+Eb = -(np.array(ys) / x0)**2
+for a, b in zip(E, Eb):
+    print(f"{a:12.4f} {b:12.4f}")
+r = E[:-1] / E[1:]
+print(" ".join(f"{v:.4f}" for v in r), f"{np.exp(2*np.pi/s):.4f}")
+assert abs(r[3] - np.exp(2 * np.pi / s)) &lt; 1e-2</code></pre>
+        <pre class="code-out"><code> -10479.1141  -10478.3269
+  -1231.9683   -1231.8105
+   -150.8940    -150.8729
+    -18.5696     -18.5669
+     -2.2866      -2.2862
+     -0.2816      -0.2815
+8.5060 8.1645 8.1259 8.1212 8.1206 8.1205</code></pre>
+        <p>왼쪽 열은 차분 행렬, 오른쪽 열은 베셀 함수의 영점에서 얻은 값이고 상대 오차 \(10^{-4}\) 수준으로 맞는다. 가장 얕은 준위만 \(L = 30\)의 상자 효과로 조금 어긋난다. 마지막 줄은 이웃한 준위의 비 다섯 개와 \(e^{2\pi/3} = 8.1205\)이다. 가장 깊은 준위는 벽 근처의 \(K_{is}\)가 아직 점근 꼴에 들지 않아 비가 \(8.51\)이고, 얕아질수록 \(e^{2\pi/s}\)에 붙는다. 벽의 위치 \(x_0\)을 \(e^{-\pi/s}\)배로 줄이면 \(-(y_n/x_0)^2\)이 \(-(y_{n-1}/x_0)^2\) 근처로 옮겨, 각 준위가 바로 아래 준위의 자리로 내려가고 맨 아래에 더 깊은 준위가 하나 새로 생긴다. 얕은 쪽에서 보면 스펙트럼이 거의 그대로다. 이것이 식 <a class="ref" href="#eq-inverse-square-bc"></a>의 \(L\)과 \(e^{\pi/s}L\)이 같은 확장이라는 것의 수치판이다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+</body>
+</html>

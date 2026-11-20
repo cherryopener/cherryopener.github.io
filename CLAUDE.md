@@ -10,6 +10,7 @@
 - [docs/DECISIONS.md](docs/DECISIONS.md): 저장소, 사진, 용량에 대해 정한 것
 - [docs/PLAN.md](docs/PLAN.md): 구축 순서와 현재 단계
 - [docs/SIM-PITFALLS.md](docs/SIM-PITFALLS.md): 실험 코드(`assets/sims/`)에서 실제로 저지른 실수와 고치는 법. 실험을 쓰거나 고치기 전에 읽습니다
+- **책을 이어 쓸 때**는 위 문서 대신 그 책의 `books/<책 id>/PROGRESS.md`부터 읽습니다(지금은 `math-phys-grad`). 그 파일에 현재 상태, 다음 할 일, 토큰 규칙이 있고 서브에이전트 지시문은 같은 폴더의 `AGENTS.md`에 있습니다. 큰 GUIDE.md는 메인 세션이 통째로 읽지 않고 서브에이전트가 읽습니다.
 
 ## 1. 기본 원칙
 

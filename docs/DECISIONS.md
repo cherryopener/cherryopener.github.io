@@ -168,6 +168,7 @@ git sparse-checkout set --no-cone '/*' '!/img/'
 | 계량 | 모든 대학원 책에서 \((-,+,+,+)\) | 학부 `math-phys` 22장, Carroll, Srednicki, 점근적 안전성 문헌과 같음. \(t \to -i\tau\)로 유클리드 \((+,+,+,+)\)가 바로 나옴. Peskin 식은 부호를 바꾸고 바꿨다고 적음 |
 | 단위 | `em-grad`는 처음부터 끝까지 SI. 마지막 장에서 헤비사이드-로런츠 자연 단위로 다시 씀. `qft`, `relativity`, `frg`, `asymptotic-safety`는 \(\hbar = c = 1\) | 학부 책과 이어지고, 양자장론 표기로 자연스럽게 넘어감 |
 | 푸리에 변환 | 학부 `math-phys` 15장과 같이 \(2\pi\)를 역변환 쪽 측도에 둠: \(\int d^4k/(2\pi)^4\) | 양자장론 관례와 같음 |
+| 감마 행렬 | \(\{\gamma^\mu, \gamma^\nu\} = -2\eta^{\mu\nu}\)(스레드니키). 유클리드는 \(\{\gamma_E^\mu, \gamma_E^\nu\} = 2\delta^{\mu\nu}\) | 2026-11-21 사용자 결정: 부호는 상관없고 서재의 책들과 맞추기만 하면 됨. `math-phys-grad` 5장에서 확정하고 `qft`가 그대로 씀. 사용자는 Peskin으로 배웠으므로 Peskin 식과의 차이를 처음 쓰는 곳에 적음 |
 | fRG 표기 | 조절 함수 \(R_k\), 흐름 시간 \(t = \ln(k/\Lambda)\), \(\partial_t \Gamma_k = \tfrac12 \mathrm{STr}[(\Gamma_k^{(2)} + R_k)^{-1}\partial_t R_k]\) | `math-phys-grad` 5부에서 먼저 확정하고 뒤 책은 링크로 씀 |
 
 ### 7-5. 계산 트랙 (손 계산 + 코드)

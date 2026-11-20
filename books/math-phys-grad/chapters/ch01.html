@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>01 군과 대칭 · 지식따개</title>
+<meta name="description" content="대칭 변환이 이루는 군을 부분군과 잉여류, 켤레류와 정규 부분군, 준동형과 몫군, 군의 작용으로 세우고, 대칭군 S_n과 분자의 점군에서 손 계산과 코드로 확인한다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys-grad" data-field="phys" data-chapter="ch01">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">01</span></div>
+    <h1 data-fill="chapter-title">군과 대칭</h1>
+    <p class="lead">대칭 변환은 언제나 군을 이루고, 물리에서 대칭이 주는 정보는 모두 그 군의 구조에서 나온다. 이 장은 학부 7장에서 정의만 하고 지나간 군을 원소가 유한 개인 경우부터 다시 세운다. 부분군과 잉여류로 원소를 세고, 켤레류와 정규 부분군으로 군을 나누고, 준동형과 군의 작용으로 군을 다른 대상과 잇는다. 여기서 만든 말과 셈을 2장의 표현론과 『양자역학 (대학원)』의 이산 대칭·동일 입자가 그대로 쓴다.</p>
+    <ul class="objectives">
+      <li>정삼각형과 정사각형의 대칭 변환군, 대칭군 \(S_n\)에서 곱셈표를 만들고 켤레류와 정규 부분군을 손과 코드로 구할 수 있다.</li>
+      <li>라그랑주 정리, 제1 동형 정리, 궤도-안정자 정리를 증명하고, 군과 부분군의 위수를 세는 데 쓸 수 있다.</li>
+      <li>준동형의 핵으로 몫군을 만들고, \(S_3/A_3 \cong \mathbb Z_2\), \(O(3)/SO(3) \cong \mathbb Z_2\) 같은 동형을 판정할 수 있다.</li>
+      <li>순환 꼴로 \(S_n\)의 켤레류를 분류하고, 순열의 부호가 잘 정의된 준동형임을 보여 보손과 페르미온의 대칭성과 이을 수 있다.</li>
+      <li>분자의 대칭 원소를 세어 점군을 정하고 쇤플리스 기호로 쓸 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b><a href="../../math-phys/chapters/ch07.html#def-group">학부 7장의 군</a>, <a href="../../math-phys/chapters/ch07.html#def-orthogonal-matrix">직교 행렬</a>, <a href="../../math-phys/chapters/ch07.html#eq-rotation-exponential">회전의 지수 꼴</a>, <a href="../../math-phys/chapters/ch08.html#def-unitary-matrix">학부 8장의 유니타리 행렬</a>. 파동함수와 해밀토니안은 쓰는 자리에서 한 줄로 다시 적는다. 이 책은 \(\hbar = c = 1\)로 쓰지만 이 장에는 \(\hbar\)가 나오지 않는다.</p>
+  </header>
+
+  <!-- ============================================================ 1.1 -->
+  <section id="s1">
+    <h2>대칭과 군</h2>
+    <p>학부 7장은 회전이 군을 이룬다는 것을 보이고, 항등원 근처의 무한소 회전, 곧 <a href="../../math-phys/chapters/ch07.html#def-generator">학부 7장의 생성자</a> \(L_x, L_y, L_z\)로 회전 전체를 다뤘다. 이 방법은 원소가 연속된 매개변수로 이어진 군에만 쓸 수 있다. 공간을 거울에 비추는 패리티, 동일 입자 두 개를 맞바꾸는 연산, 분자를 제자리에 겹치는 \(120^\circ\) 회전은 항등원에서 연속적으로 이어져 닿는 대칭이 아니다(\(120^\circ\)에 못 미치는 회전은 분자의 대칭이 아니다). 이런 대칭에는 생성자가 없다. 『양자역학 (대학원)』 7장의 이산 대칭과 15장의 동일 입자, 그리고 이 책 2장의 표현론은 모두 원소가 유한 개인 군을 다룬다. 이런 군에서는 생성자 대신 원소를 세고, 부분집합으로 나누고, 다른 군과 비교하는 도구가 필요하다. 이 장은 그 도구를 세운다.</p>
+
+    <h3 id="s1-axioms">군의 공리</h3>
+    <p>군의 정의는 학부 7장에서 가져온다. 이 책에서 한 번만 다시 적는다.</p>
+    <div class="box math" id="math-group-axioms"><div class="box-h">군의 공리</div>
+      <p>집합 \(G\)와 곱 \((g, h) \mapsto gh\)가 다음을 만족하면 \(G\)를 <span class="term">군</span> <span class="en">(group)</span>이라 한다(<a href="../../math-phys/chapters/ch07.html#def-group">학부 7장의 군</a>).</p>
+      <ol>
+        <li><b>닫힘</b>: \(g, h \in G\)이면 \(gh \in G\)이다.</li>
+        <li><b>결합 법칙</b>: \((gh)k = g(hk)\)이다.</li>
+        <li><b>항등원</b>: 모든 \(g\)에 대해 \(eg = ge = g\)인 \(e \in G\)가 있다.</li>
+        <li><b>역원</b>: 각 \(g\)에 대해 \(gg^{-1} = g^{-1}g = e\)인 \(g^{-1} \in G\)가 있다.</li>
+      </ol>
+      <p>모든 \(g, h\)에서 \(gh = hg\)이면 <span class="term">아벨 군</span> <span class="en">(abelian group)</span>이다. 원소의 수 \(\lvert G\rvert\)를 군의 <span class="term">위수</span> <span class="en">(order)</span>라 하고, 위수가 유한하면 <span class="term">유한군</span>이라 한다.</p>
+    </div>
+    <p>공리에서 바로 나오는 사실을 정리해 두자. 항등원은 하나뿐이다. \(e\)와 \(e'\)이 둘 다 항등원이면 \(e = ee' = e'\)이기 때문이다. 역원도 하나뿐이다. \(h\)와 \(h'\)이 둘 다 \(g\)의 역원이면 \(h = he = h(gh') = (hg)h' = eh' = h'\)이다. 곱의 역원은 순서가 뒤집힌다. \((gh)(h^{-1}g^{-1}) = g(hh^{-1})g^{-1} = e\)이므로 \((gh)^{-1} = h^{-1}g^{-1}\)이다. 마지막으로 <b>소거 법칙</b>: \(gh = gh'\)이면 왼쪽에 \(g^{-1}\)을 곱해 \(h = h'\)이다. 유한군을 다룰 때 가장 자주 쓰는 정리가 이 소거 법칙에서 나온다.</p>
+    <div class="box thm" id="thm-rearrangement"><div class="box-h">재배열 정리 <span class="en">(rearrangement theorem)</span></div>
+      <p>군 \(G\)의 원소 \(g\)를 하나 고정하면, 사상 \(h \mapsto gh\)와 \(h \mapsto hg\)는 각각 \(G\)에서 \(G\)로 가는 일대일 대응이다. 따라서 유한군의 곱셈표에서 각 행과 각 열에는 모든 원소가 정확히 한 번씩 나오고, \(G\) 위의 함수 \(f\)에 대해 다음이 성립한다.</p>
+      <div class="formula" id="eq-rearrangement-sum">\[ \sum_{h \in G} f(gh) = \sum_{h \in G} f(hg) = \sum_{h \in G} f(h) \]</div>
+      <details class="proof"><summary>증명</summary>
+        <p>\(gh = gh'\)이면 소거 법칙으로 \(h = h'\)이므로 \(h \mapsto gh\)는 단사다. 임의의 \(k \in G\)는 \(k = g(g^{-1}k)\)이므로 전사다. \(h \mapsto hg\)도 같다. 세 합은 같은 원소들을 순서만 바꿔 더한 것이다.</p>
+      </details>
+    </div>
+    <p>식 <a class="ref" href="#eq-rearrangement-sum"></a>은 2장에서 "군 전체에 대한 평균은 어느 원소를 곱해도 변하지 않는다"는 꼴로 거의 모든 증명에 들어간다.</p>
+
+    <h3 id="s1-triangle">정삼각형의 대칭</h3>
+    <p>평면 위의 도형 \(X\)에 대해, 평면의 거리를 보존하는 변환 가운데 \(X\)를 자기 자신으로 보내는 것을 \(X\)의 <span class="term">대칭 변환</span> <span class="en">(symmetry operation)</span>이라 한다. 대칭 변환 두 개를 차례로 하면 다시 대칭 변환이고, 아무것도 하지 않는 것도, 대칭 변환을 거꾸로 하는 것도 대칭 변환이다. 곱을 "차례로 하기", 곧 함수의 합성으로 두면 결합 법칙은 저절로 성립한다(\((f\circ g)\circ h\)와 \(f\circ(g\circ h)\)는 둘 다 \(x \mapsto f(g(h(x)))\)이다). 따라서 대칭 변환 전체는 군을 이룬다. 이것을 \(X\)의 <span class="term">대칭 변환군</span> <span class="en">(symmetry group)</span>이라 한다. 3차원 물체나 해밀토니안에 대해서도 같다. "무엇을 보존하는 변환인가"만 바뀐다.</p>
+    <p>정삼각형을 보자. 평면에 자리 1, 2, 3을 고정해 두고(그림 1-1 (가)), 삼각형의 꼭짓점이 이 세 자리에 놓여 있다고 하자. 자리는 공간에 박힌 이름표라서 변환을 해도 움직이지 않는다. 대칭 변환은 여섯 개다.</p>
+    <ul>
+      <li>\(e\): 아무것도 하지 않음.</li>
+      <li>\(r\): 중심 둘레로 시계 반대 방향 \(120^\circ\) 회전. \(r^2 = rr\)은 \(240^\circ\) 회전이다.</li>
+      <li>\(s_k\) (\(k = 1, 2, 3\)): 자리 \(k\)와 중심을 지나는 직선에 대한 반사.</li>
+    </ul>
+    <p>다른 대칭 변환은 없다. 대칭 변환은 꼭짓점을 꼭짓점으로 보내고 세 꼭짓점의 상으로 정해지는데, 자리 1의 꼭짓점이 갈 곳이 세 군데, 자리 2의 꼭짓점이 갈 곳이 두 군데이므로 많아야 \(3 \times 2 = 6\)개이기 때문이다.</p>
+    <p>각 변환이 자리를 어떻게 옮기는지 적어 두면 곱을 계산할 수 있다. "자리 \(i\)에 있던 것이 자리 \(j\)로 간다"를 \(i \to j\)로 쓰면 \(r\)은 \(1 \to 2 \to 3 \to 1\)이고, \(s_1\)은 1을 그대로 두고 \(2 \leftrightarrow 3\)이다. 곱 \(s_1r\)은 <b>\(r\)을 먼저</b> 하고 \(s_1\)을 나중에 하는 것이다(함수의 합성 \(s_1 \circ r\)과 같은 순서). 자리 1의 것은 \(r\)로 2에 갔다가 \(s_1\)로 3에 간다. 자리 2의 것은 3으로 갔다가 2로 돌아오고, 자리 3의 것은 1로 갔다가 1에 머문다. 결과는 2를 그대로 두고 \(1 \leftrightarrow 3\)이므로 \(s_1r = s_2\)이다. 순서를 바꾼 \(rs_1\)은 \(1 \to 1 \to 2\), \(2 \to 3 \to 1\), \(3 \to 2 \to 3\)이므로 \(rs_1 = s_3\)이다. \(s_1r \ne rs_1\)이므로 이 군은 아벨 군이 아니다.</p>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 290" role="img" aria-label="정삼각형과 자리 1, 2, 3, 세 거울선 s1, s2, s3, 시계 반대 방향 120도 회전 r"><defs><marker id="f0101-arr-a" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs><text x="12" y="20" class="t">(가) 정삼각형</text><polygon points="190,75 99.1,232.5 280.9,232.5" class="f-acc-soft" style="stroke-width:2"/><line x1="190" y1="51" x2="190" y2="262.5" class="s-acc2" stroke-dasharray="6 5"/><line x1="78.3" y1="244.5" x2="261.4" y2="138.8" class="s-acc2" stroke-dasharray="6 5"/><line x1="301.7" y1="244.5" x2="118.6" y2="138.7" class="s-acc2" stroke-dasharray="6 5"/><text x="190" y="42" class="t-math acc2" text-anchor="middle"><tspan font-style="italic">s</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan></text><text x="70" y="262" class="t-math acc2" text-anchor="end"><tspan font-style="italic">s</tspan><tspan baseline-shift="sub" font-size="72%">2</tspan></text><text x="310" y="262" class="t-math acc2" text-anchor="start"><tspan font-style="italic">s</tspan><tspan baseline-shift="sub" font-size="72%">3</tspan></text><path d="M221.9,168.4 A34,34 0 0 0 164,158.1" class="s-acc" style="stroke-width:2.2" marker-end="url(#f0101-arr-a)"/><text x="206" y="138" class="t-math acc"><tspan font-style="italic">r</tspan></text><circle cx="190" cy="180" r="2.5" class="f-dim"/><circle cx="190" cy="75" r="4" class="f-dim"/><circle cx="99.1" cy="232.5" r="4" class="f-dim"/><circle cx="280.9" cy="232.5" r="4" class="f-dim"/><text x="204" y="72" class="t-math">1</text><text x="99" y="257" class="t-math" text-anchor="middle">2</text><text x="281" y="257" class="t-math" text-anchor="middle">3</text></svg><svg viewBox="0 0 380 290" role="img" aria-label="정사각형과 자리 1, 2, 3, 4, 변의 중점을 지나는 거울선 m과 m′, 꼭짓점을 지나는 거울선 d와 d′, 90도 회전 r"><defs><marker id="f0101-arr-b" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs><text x="12" y="20" class="t">(나) 정사각형</text><polygon points="268,82 112,82 112,238 268,238" class="f-acc-soft" style="stroke-width:2"/><line x1="72" y1="160" x2="308" y2="160" class="s-acc2" stroke-dasharray="6 5"/><line x1="190" y1="44" x2="190" y2="276" class="s-acc2" stroke-dasharray="6 5"/><line x1="95" y1="255" x2="285" y2="65" class="s-acc2" stroke-dasharray="2 4"/><line x1="95" y1="65" x2="285" y2="255" class="s-acc2" stroke-dasharray="2 4"/><text x="314" y="165" class="t-math acc2"><tspan font-style="italic">m</tspan></text><text x="198" y="42" class="t-math acc2"><tspan font-style="italic">m</tspan><tspan style="font-family:var(--font)">′</tspan></text><text x="290" y="60" class="t-math acc2"><tspan font-style="italic">d</tspan></text><text x="90" y="60" class="t-math acc2" text-anchor="end"><tspan font-style="italic">d</tspan><tspan style="font-family:var(--font)">′</tspan></text><path d="M218.2,149.7 A30,30 0 0 0 179.7,131.8" class="s-acc" style="stroke-width:2.2" marker-end="url(#f0101-arr-b)"/><text x="212" y="124" class="t-math acc"><tspan font-style="italic">r</tspan></text><circle cx="190" cy="160" r="2.5" class="f-dim"/><circle cx="268" cy="82" r="4" class="f-dim"/><circle cx="112" cy="82" r="4" class="f-dim"/><circle cx="112" cy="238" r="4" class="f-dim"/><circle cx="268" cy="238" r="4" class="f-dim"/><text x="278" y="92" class="t-math">1</text><text x="102" y="92" class="t-math" text-anchor="end">2</text><text x="102" y="236" class="t-math" text-anchor="end">3</text><text x="278" y="236" class="t-math">4</text></svg></div>
+      <figcaption><b>그림 1-1.</b> 대칭 원소. 숫자는 공간에 고정된 자리의 이름이다. (가) 정삼각형: 회전 \(r\)(\(120^\circ\))과, 자리 \(k\)와 중심을 지나는 거울선 \(s_k\). (나) 정사각형: 회전 \(r\)(\(90^\circ\)), 변의 중점을 지나는 거울선 \(m\)(가로)과 \(m'\)(세로), 꼭짓점을 지나는 거울선 \(d\)(자리 1과 3)와 \(d'\)(자리 2와 4). 1.3절의 손 계산에서 두 종류의 거울선이 서로 다른 켤레류에 속함을 본다.</figcaption>
+    </figure>
+
+    <h3 id="s1-permutation">순열과 곱의 순서</h3>
+    <p>위의 계산은 삼각형의 기하를 쓰지 않았다. 자리 세 개를 서로 바꾸는 방법만 썼다. 이 관찰을 일반화한다.</p>
+    <div class="box def" id="def-symmetric-group"><div class="box-h">순열과 대칭군 \(S_n\)</div>
+      <p>집합 \(\{1, 2, \ldots, n\}\)에서 자기 자신으로 가는 일대일 대응을 <span class="term">순열</span> <span class="en">(permutation)</span>이라 한다. 순열 전체는 합성을 곱으로 하여 군을 이루고, 이 군을 <span class="term">대칭군</span> <span class="en">(symmetric group)</span> \(S_n\)이라 한다. 위수는 \(\lvert S_n\rvert = n!\)이다. 곱은 함수의 합성이다.</p>
+      <div class="formula" id="eq-permutation-product">\[ (\sigma\tau)(i) = \sigma\big(\tau(i)\big) \]</div>
+      <p>곧 \(\sigma\tau\)는 \(\tau\)를 먼저, \(\sigma\)를 나중에 적용한다. 서로 다른 \(a_1, \ldots, a_k\)를 \(a_1 \to a_2 \to \cdots \to a_k \to a_1\)로 보내고 나머지를 그대로 두는 순열을 길이 \(k\)인 <span class="term">순환</span> <span class="en">(cycle)</span>이라 하고 \((a_1\,a_2\,\cdots\,a_k)\)로 쓴다. 길이 2인 순환 \((a\,b)\)를 <span class="term">호환</span> <span class="en">(transposition)</span>이라 한다.</p>
+    </div>
+    <p>순환 표기에서 \((1\,2\,3)\), \((2\,3\,1)\), \((3\,1\,2)\)는 같은 순열이다. 어디서 읽기 시작해도 같은 고리이기 때문이다. 정삼각형의 대칭을 순열로 쓰면 \(r = (1\,2\,3)\), \(r^2 = (1\,3\,2)\), \(s_1 = (2\,3)\), \(s_2 = (1\,3)\), \(s_3 = (1\,2)\)이다. 여섯 개가 \(S_3\)의 원소 \(3! = 6\)개를 모두 채우므로, 정삼각형의 대칭 변환군과 \(S_3\)는 원소가 일대일로 짝지어지고 곱도 그대로 대응한다. 1.4절에서 이런 관계를 <span class="term">동형</span>이라 부르고 \(\cong\)로 쓴다.</p>
+    <div class="callout warn"><strong>곱의 순서는 교재마다 다르다</strong><p>이 책은 \(\sigma\tau\)를 "\(\tau\) 먼저"로 읽는다(식 <a class="ref" href="#eq-permutation-product"></a>). 예를 들어</p>
+      <div class="formula">\[ \begin{aligned} (1\,2\,3)(1\,2) &= (1\,3) \\ (1\,2)(1\,2\,3) &= (2\,3) \end{aligned} \]</div>
+      <p>이다. 첫 줄은 \(1 \to 2 \to 3\), \(2 \to 1 \to 2\), \(3 \to 3 \to 1\)로 읽은 것이다. 순열을 왼쪽부터 적용하는 교재(대수학 교재 일부, 그리고 SymPy의 <code>Permutation</code>)에서는 두 줄의 답이 뒤바뀌고, 곱셈표의 행과 열도 뒤바뀐다. 이 책의 곱셈표는 \(g_i\)행 \(g_j\)열의 칸에 \(g_ig_j\)를 적는다. 다른 책의 표나 프로그램의 출력을 가져올 때는 먼저 이 두 관례를 맞춘다.</p></div>
+
+    <h3 id="s1-dihedral">정다각형의 대칭 변환군 \(D_n\)</h3>
+    <p>정\(n\)각형의 대칭 변환군을 <span class="term">이면체군</span> <span class="en">(dihedral group)</span> \(D_n\)이라 한다. 원소는 \(2\pi/n\) 회전 \(r\)의 거듭제곱 \(n\)개(\(e = r^0, r, \ldots, r^{n-1}\))와 반사 \(n\)개로 모두 \(2n\)개다. 반사 하나를 \(s\)로 고르면 다른 반사는 \(rs, r^2s, \ldots, r^{n-1}s\)로 쓸 수 있다. \(r^ks\)는 방향을 뒤집는 대칭 변환이고, 중심을 고정하면서 방향을 뒤집는 평면 변환은 반사뿐이며, \(k\)가 다르면 \(r^ks\)도 다르기 때문이다(소거 법칙). 두 원소 \(r\)과 \(s\)는 다음 관계를 만족한다.</p>
+    <div class="formula" id="eq-dihedral-relations">\[ r^n = e, \quad s^2 = e, \quad srs^{-1} = r^{-1} \]</div>
+    <p>세 번째 관계는 이렇게 본다. \(srs^{-1}\)은 거울에 비춘 다음(\(s^{-1} = s\)), 시계 반대 방향으로 돌리고, 다시 거울에 비추는 것이다. 거울은 회전의 방향을 뒤집으므로 결과는 시계 방향 회전 \(r^{-1}\)이다. 정삼각형에서 확인하면 \(s_1rs_1 = s_2s_1\)이고, \(s_1\) 먼저 \(s_2\) 나중으로 따라가면 \(1 \to 1 \to 3\), \(3 \to 2 \to 2\), \(2 \to 3 \to 1\)이므로 \((1\,3\,2) = r^2 = r^{-1}\)이다. 식 <a class="ref" href="#eq-dihedral-relations"></a>의 세 관계만 있으면 \(D_n\)의 모든 곱을 계산할 수 있다. 1.3절의 손 계산에서 그렇게 한다.</p>
+    <p>유한군에서 원소 \(g\)를 거듭 곱하면 언젠가 \(e\)로 돌아온다. \(g, g^2, g^3, \ldots\) 가운데 같은 것이 나오고, \(g^i = g^j\)(\(i &lt; j\))이면 \(g^{j-i} = e\)이기 때문이다. \(g^m = e\)인 가장 작은 양의 정수 \(m\)을 \(g\)의 <span class="term">위수</span>라 한다. 군의 위수와 같은 말을 쓰는 이유는 1.2절에서 본다. \(D_n\)에서 \(r\)의 위수는 \(n\), 반사의 위수는 2다. 원소 하나의 거듭제곱으로 모든 원소가 나오는 군을 <span class="term">순환군</span> <span class="en">(cyclic group)</span>이라 하고, 위수가 \(n\)인 순환군을 \(\mathbb Z_n\)으로 쓴다. 정\(n\)각형의 회전만 모은 \(\{e, r, \ldots, r^{n-1}\}\)이 \(\mathbb Z_n\)이고, 패리티 \(P\)와 항등 연산이 이루는 \(\{1, P\}\)가 \(\mathbb Z_2\)다.</p>
+
+    <div class="box ex" id="ex-triangle-ring-symmetry"><div class="box-h">세 원자 고리의 해밀토니안과 교환하는 순열</div>
+      <p><a href="../../math-phys/chapters/ch08.html#ex-triangle-ring">학부 8장의 세 원자 고리</a>는 정삼각형의 꼭짓점에 원자가 하나씩 있고, 이웃 원자 사이의 결합이 모두 \(-t\)(\(t > 0\))인 강한 결합 모형이다.</p>
+      <div class="formula">\[ H = -t\begin{pmatrix} 0 & 1 & 1 \\ 1 & 0 & 1 \\ 1 & 1 & 0 \end{pmatrix} \]</div>
+      <p>원자 \(i\)에 있는 상태를 \(\lvert i\rangle\)로 쓰고, 순열 \(\sigma \in S_3\)마다 행렬 \(P(\sigma)\)를 \(P(\sigma)\lvert i\rangle = \lvert\sigma(i)\rangle\)로 정한다. (가) \(P(\sigma)P(\tau) = P(\sigma\tau)\)임을 보여라. (나) \(P(\sigma)HP(\sigma)^{-1} = H\)인 순열을 모두 구하고, 그런 순열이 언제나 군을 이룸을 보여라. (다) 학부 8장에서 구한 고유값 \(t\)가 두 번 겹치는(축퇴하는) 이유를 이 군으로 설명하라.</p>
+      <p><b>풀이.</b> (가) \(P(\sigma)P(\tau)\lvert i\rangle = P(\sigma)\lvert\tau(i)\rangle = \lvert\sigma(\tau(i))\rangle = P(\sigma\tau)\lvert i\rangle\)이다. 식 <a class="ref" href="#eq-permutation-product"></a>의 곱 순서가 행렬 곱의 순서와 맞는다.</p>
+      <div class="formula" id="eq-permutation-matrix">\[ \begin{gathered} P(\sigma)\lvert i\rangle = \lvert\sigma(i)\rangle \\ P(\sigma)P(\tau) = P(\sigma\tau) \end{gathered} \]</div>
+      <p>(나) \(P(\sigma)\)는 실수 직교 행렬이라 \(P(\sigma)^{-1} = P(\sigma)^{\mathsf T}\)이고 \(P(\sigma)^{-1}\lvert\sigma(j)\rangle = \lvert j\rangle\)이다. 따라서 \(\langle\sigma(i)\vert PHP^{-1}\vert\sigma(j)\rangle = \langle i\vert H\vert j\rangle\)이고, 조건 \(PHP^{-1} = H\)는 성분으로</p>
+      <div class="formula" id="eq-ring-symmetry-condition">\[ H_{\sigma(i)\sigma(j)} = H_{ij} \qquad (\text{모든 } i, j) \]</div>
+      <p>이다. 순열로 원자의 이름을 바꿔도 결합의 세기가 그대로라는 뜻이다. 정삼각형 고리는 대각선 밖 성분이 모두 \(-t\)이므로 여섯 순열이 모두 조건을 만족하고, 대칭 변환군은 \(S_3\) 전체다. 일반적으로 \(\sigma, \tau\)가 조건을 만족하면 \(H_{\sigma\tau(i)\,\sigma\tau(j)} = H_{\tau(i)\tau(j)} = H_{ij}\)이고, \(i, j\) 자리에 \(\sigma^{-1}(i), \sigma^{-1}(j)\)를 넣으면 \(H_{ij} = H_{\sigma^{-1}(i)\sigma^{-1}(j)}\)이다. 곧 해밀토니안과 교환하는 순열은 언제나 군을 이룬다.</p>
+      <p>(다) \(H\mathbf v = E\mathbf v\)이면 \(HP\mathbf v = PH\mathbf v = EP\mathbf v\)이므로 \(P(\sigma)\)는 \(H\)의 고유 공간을 그 자신으로 보낸다. \(H\)는 대칭 행렬이고 \((1, 1, 1)\)이 고유벡터이므로 수직인 평면 \(x + y + z = 0\)은 \(H\)에 불변이고, \(H\)의 나머지 고유벡터는 모두 이 평면에 있다. \(P(\sigma)\)도 \((1, 1, 1)\)을 고정하는 직교 행렬이라 이 평면을 보존한다. \(\omega = e^{2\pi i/3}\)으로 쓴 \(\mathbf f_1 = (1, \omega, \omega^2)/\sqrt3\)과 \(\mathbf f_2 = (1, \omega^2, \omega)/\sqrt3\)이 이 평면의 기저다. \(P(r)\)은 성분 \((1, \omega, \omega^2)\)을 한 칸씩 밀어 \((\omega^2, 1, \omega) = \omega^2(1, \omega, \omega^2)\)으로 만들고, \(P(s_1)\)은 둘째와 셋째 성분을 맞바꾼다. 따라서</p>
+      <div class="formula">\[ \begin{aligned} P(r)\mathbf f_1 &= \omega^2\mathbf f_1 \\ P(r)\mathbf f_2 &= \omega\,\mathbf f_2 \\ P(s_1)\mathbf f_1 &= \mathbf f_2 \\ P(s_1)\mathbf f_2 &= \mathbf f_1 \end{aligned} \]</div>
+      <p>이다. 이 평면 안에서 \(P(r)\)의 고유벡터는 \(\mathbf f_1\)이나 \(\mathbf f_2\)의 상수배뿐인데, \(P(s_1)\)이 둘을 맞바꾸므로 두 행렬의 공통 고유벡터가 평면 안에 없다. 평면 안의 고유 공간이 1차원이라면 그 직선의 벡터가 모든 \(P(\sigma)\)의 공통 고유벡터여야 하므로, 평면 안의 고유 공간은 평면 전체일 수밖에 없다. 곧 평면에 속한 고유값은 두 번 겹친다.</p>
+      <p><b>확인.</b> 학부 8장의 직접 계산과 같이 고유값은 \(-2t, t, t\)이다. 겹침의 원인은 \(P(r)\)과 \(P(s_1)\)이 교환하지 않는다는 것(\(rs_1 \ne s_1r\))이다. 대칭 변환군이 아벨 군이었다면 모든 \(P(\sigma)\)를 \(H\)와 함께 동시 대각화할 수 있어(<a href="../../math-phys/chapters/ch08.html#thm-simultaneous-diag">학부 8장의 동시 대각화</a>. 서로 교환하는 유니타리 행렬에도 같은 증명이 통한다) 이 논법이 성립하지 않는다.</p>
+      <p><b>어디에 쓰이나.</b> 교환하지 않는 대칭이 축퇴를 강제한다는 이 논법의 일반화가 2장의 <a href="ch02.html#thm-degeneracy-irrep">대칭 변환군의 기약 표현과 에너지 준위의 축퇴</a>다. 『양자역학 (대학원)』 7장에서 패리티(\(\mathbb Z_2\), 아벨 군)는 준위에 짝·홀 이름표만 붙이고, 축퇴는 반유니타리인 시간 반전에서 따로 나온다(크라머스 축퇴).</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 1.2 -->
+  <section id="s2">
+    <h2>부분군과 잉여류</h2>
+    <p><a class="ref" href="#ex-triangle-ring-symmetry"></a>의 고리에서 원자 2와 3 사이의 결합만 \(-t'\)(\(t' \ne t\))으로 바꾸면 식 <a class="ref" href="#eq-ring-symmetry-condition"></a>를 만족하는 순열은 \(e\)와 \(s_1 = (2\,3)\)뿐이다. 대칭이 여섯 개에서 두 개로 줄었고, 남은 두 개도 그 자체로 군이다. 대칭을 깨는 섭동은 언제나 원래 군 안의 더 작은 군을 남긴다. 그리고 "같은 모양으로 찌그러뜨리는 서로 다른 방법"의 수는 두 군의 크기의 비로 정해진다. 이 절에서 그 셈을 세운다.</p>
+    <div class="box def" id="def-subgroup"><div class="box-h">부분군</div>
+      <p>군 \(G\)의 부분집합 \(H\)가 \(G\)의 곱으로 그 자체 군을 이루면 \(H\)를 \(G\)의 <span class="term">부분군</span> <span class="en">(subgroup)</span>이라 하고 \(H \le G\)로 쓴다. 공집합이 아닌 부분집합 \(H\)가 부분군일 필요충분조건은 다음이다.</p>
+      <div class="formula" id="eq-subgroup-test">\[ g, h \in H \;\Longrightarrow\; gh^{-1} \in H \]</div>
+      <p>원소 \(g\)의 거듭제곱 전체 \(\langle g\rangle = \{g^k : k \in \mathbb Z\}\)는 부분군이고, 이것을 \(g\)가 생성하는 <span class="term">순환 부분군</span>이라 한다. 유한군에서 \(\lvert\langle g\rangle\rvert\)는 \(g\)의 위수와 같고, 공집합이 아니고 곱에 닫힌 부분집합은 이미 부분군이다. 원소 \(a, b, \ldots\)와 그 역원을 거듭 곱해 얻는 원소 전체 \(\langle a, b, \ldots\rangle\)는 이들을 품는 가장 작은 부분군이고, \(\langle a, b, \ldots\rangle = G\)이면 \(a, b, \ldots\)를 \(G\)의 <span class="term">생성원</span> <span class="en">(generators)</span>이라 한다. 예를 들어 \(D_n = \langle r, s\rangle\)이다. 학부 7장의 생성자(무한소 변환)와는 다른 말이다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>부분군이면 \(h^{-1} \in H\)이고 닫힘에서 \(gh^{-1} \in H\)이다. 거꾸로 조건이 성립한다고 하자. \(H\)의 원소 \(h\)를 하나 골라 \(g = h\)로 두면 \(e = hh^{-1} \in H\)이고, 다시 \(g = e\)로 두면 \(h^{-1} \in H\)이며, \(g(h^{-1})^{-1} = gh \in H\)이므로 닫혀 있다. 결합 법칙은 \(G\)에서 물려받는다. \(g\)의 위수가 \(m\)이면 \(g^k\)는 \(k\)를 \(m\)으로 나눈 나머지에만 기대므로 \(\langle g\rangle = \{e, g, \ldots, g^{m-1}\}\)이다. 이 \(m\)개는 모두 다르다. \(g^i = g^j\)(\(0 \le i &lt; j &lt; m\))이면 \(g^{j-i} = e\)가 되어 위수의 정의에 어긋나기 때문이다. 유한군에서 곱에 닫힌 \(H\)는, \(h \in H\)의 위수가 \(m\)이면 \(h^{-1} = h^{m-1} \in H\)이므로 위의 판정 조건을 만족한다.</p>
+      </details>
+    </div>
+    <p>\(S_3\)의 부분군을 모두 적으면 \(\{e\}\), \(\{e, s_1\}\), \(\{e, s_2\}\), \(\{e, s_3\}\), \(A_3 = \{e, r, r^2\}\), \(S_3\)의 여섯 개다. 반사 두 개를 포함하는 부분군은 그 곱인 회전 \(r\)이나 \(r^2\)도 포함하고, 회전 하나와 반사 하나를 포함하면 그 둘이 \(S_3\) 전체를 생성하기 때문이다. \(A_3\)은 1.6절에서 교대군이라는 이름을 얻는다. 부분군의 위수 1, 2, 3, 6이 모두 6의 약수라는 것은 우연이 아니다.</p>
+    <div class="box def" id="def-coset"><div class="box-h">잉여류와 지수</div>
+      <p>\(H \le G\)이고 \(g \in G\)일 때 집합 \(gH = \{gh : h \in H\}\)를 \(H\)의 <span class="term">왼쪽 잉여류</span> <span class="en">(left coset)</span>, \(Hg = \{hg : h \in H\}\)를 <span class="term">오른쪽 잉여류</span> <span class="en">(right coset)</span>라 한다. 서로 다른 왼쪽 잉여류의 수를 \(G\)에서 \(H\)의 <span class="term">지수</span> <span class="en">(index)</span>라 하고 \([G:H]\)로 쓴다. 왼쪽 잉여류 전체의 모임은 \(G/H\)로 쓴다.</p>
+    </div>
+    <p>잉여류는 \(H\)를 \(g\)만큼 옮긴 것이다. \(S_3\)에서 \(H = \{e, s_1\}\)이면 \(rH = \{r, rs_1\} = \{r, s_3\}\), \(r^2H = \{r^2, s_2\}\)이고, \(s_1H = H\), \(s_2H = \{s_2, s_2s_1\} = \{s_2, r^2\} = r^2H\), \(s_3H = \{s_3, r\} = rH\)이다. \(g\)를 어떻게 고르든 잉여류는 \(H, rH, r^2H\)의 셋 가운데 하나이고, 이 셋은 겹치지 않으며 크기가 모두 2다(그림 1-2). 이것이 일반적인 사실이라는 것이 다음 정리의 내용이다.</p>
+    <div class="box thm" id="thm-lagrange"><div class="box-h">라그랑주 정리 <span class="en">(Lagrange’s theorem)</span></div>
+      <p>유한군 \(G\)의 부분군 \(H\)에 대해 \(H\)의 왼쪽 잉여류들은 \(G\)를 겹치지 않는 같은 크기의 조각으로 나눈다. 따라서</p>
+      <div class="formula" id="eq-lagrange">\[ \lvert G\rvert = [G:H]\,\lvert H\rvert \]</div>
+      <p>이고, 부분군의 위수는 군의 위수의 약수다. 특히 원소의 위수는 \(\lvert G\rvert\)의 약수이고, 모든 \(g\)에서 \(g^{\lvert G\rvert} = e\)이다.</p>
+    </div>
+    <p><b>증명.</b> 세 단계로 나눈다.</p>
+    <p>(1) <i>모든 원소는 어떤 잉여류에 속한다.</i> \(g = ge \in gH\)이다.</p>
+    <p>(2) <i>두 잉여류는 같거나 겹치지 않는다.</i> 먼저 다음을 보이자.</p>
+    <div class="formula" id="eq-coset-equality">\[ g' \in gH \iff g^{-1}g' \in H \iff g'H = gH \]</div>
+    <p>첫째 동치는 \(g' = gh \iff g^{-1}g' = h\)이다. 둘째 동치를 보자. \(g^{-1}g' = h_0 \in H\)이면 \(g'h = g(h_0h)\)이고, \(H\)에 <a class="ref" href="#thm-rearrangement"></a>을 쓰면 \(h \mapsto h_0h\)가 \(H\)에서 \(H\)로 가는 일대일 대응이므로 \(g'H = gH\)이다. 거꾸로 \(g'H = gH\)이면 \(g' = g'e \in gH\)이다. 이제 \(gH\)와 \(g'H\)가 원소 \(k\)를 공유하면, 식 <a class="ref" href="#eq-coset-equality"></a>에서 \(kH = gH\)이고 \(kH = g'H\)이므로 \(gH = g'H\)이다.</p>
+    <p>(3) <i>모든 잉여류의 크기는 \(\lvert H\rvert\)이다.</i> \(h \mapsto gh\)는 \(H\)에서 \(gH\)로 가는 전사이고, 소거 법칙으로 단사다.</p>
+    <p>(1)과 (2)에서 \(G\)는 서로 다른 잉여류 \([G:H]\)개의 겹치지 않는 합집합이고, (3)에서 각각의 크기가 \(\lvert H\rvert\)이므로 식 <a class="ref" href="#eq-lagrange"></a>이 나온다. 원소 \(g\)의 위수는 부분군 \(\langle g\rangle\)의 위수이므로 \(\lvert G\rvert\)를 나눈다. 위수를 \(m\), \(\lvert G\rvert = mq\)라 하면 \(g^{\lvert G\rvert} = (g^m)^q = e\)이다. ∎</p>
+    <p>오른쪽 잉여류에 대해서도 같은 논법이 성립하고, 오른쪽 잉여류의 수도 \([G:H]\)이다. 하지만 왼쪽 잉여류와 오른쪽 잉여류가 같은 집합이라는 보장은 없다. \(S_3\)에서 \(rH = \{r, s_3\}\)인데 \(Hr = \{r, s_1r\} = \{r, s_2\}\)이다. 이 차이가 1.3절의 정규 부분군으로 이어진다.</p>
+    <p>라그랑주 정리는 강한 제약을 준다. 위수가 소수 \(p\)인 군은 부분군이 \(\{e\}\)와 자기 자신뿐이므로, \(e\)가 아닌 원소 하나가 군 전체를 생성한다. 곧 위수가 소수인 군은 순환군 \(\mathbb Z_p\)이다. 라그랑주 정리의 역은 성립하지 않는다. \(\lvert G\rvert\)의 약수 \(d\)마다 위수 \(d\)인 부분군이 있는 것은 아니어서, 위수 12인 \(A_4\)(1.6절)에는 위수 6인 부분군이 없다(<a class="ref" href="#prob-a4-no-order-six"></a>).</p>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 380 215" role="img" aria-label="S3의 원소 여섯 개를 두 줄 세 칸에 놓은 그림. 가로 줄은 A3의 잉여류, 점선 상자는 H의 왼쪽 잉여류 H, rH, r²H"><text x="12" y="20" class="t">왼쪽 잉여류 gH</text><rect x="56" y="44" width="270" height="52" rx="8" class="f-acc2-soft" style="stroke-width:1"/><rect x="56" y="110" width="270" height="52" rx="8" class="f-acc2-soft" style="stroke-width:1"/><text x="48" y="75" class="t-math acc2" text-anchor="end"><tspan font-style="italic">A</tspan><tspan baseline-shift="sub" font-size="72%">3</tspan></text><text x="48" y="141" class="t-math acc2" text-anchor="end"><tspan font-style="italic">s</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan><tspan font-style="italic">A</tspan><tspan baseline-shift="sub" font-size="72%">3</tspan></text><rect x="78" y="53" width="56" height="34" rx="6" class="f-elev"/><rect x="163" y="53" width="56" height="34" rx="6" class="f-elev"/><rect x="248" y="53" width="56" height="34" rx="6" class="f-elev"/><rect x="78" y="119" width="56" height="34" rx="6" class="f-elev"/><rect x="163" y="119" width="56" height="34" rx="6" class="f-elev"/><rect x="248" y="119" width="56" height="34" rx="6" class="f-elev"/><text x="106" y="75" class="t-math" text-anchor="middle"><tspan font-style="italic">e</tspan></text><text x="191" y="75" class="t-math" text-anchor="middle"><tspan font-style="italic">r</tspan></text><text x="276" y="75" class="t-math" text-anchor="middle"><tspan font-style="italic">r</tspan><tspan baseline-shift="super" font-size="72%">2</tspan></text><text x="106" y="141" class="t-math" text-anchor="middle"><tspan font-style="italic">s</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan></text><text x="191" y="141" class="t-math" text-anchor="middle"><tspan font-style="italic">s</tspan><tspan baseline-shift="sub" font-size="72%">3</tspan></text><text x="276" y="141" class="t-math" text-anchor="middle"><tspan font-style="italic">s</tspan><tspan baseline-shift="sub" font-size="72%">2</tspan></text><rect x="70" y="36" width="72" height="134" rx="10" class="s-acc" stroke-dasharray="5 4"/><rect x="155" y="36" width="72" height="134" rx="10" class="s-acc" stroke-dasharray="5 4"/><rect x="240" y="36" width="72" height="134" rx="10" class="s-acc" stroke-dasharray="5 4"/><text x="106" y="194" class="t-math acc" text-anchor="middle"><tspan font-style="italic">H</tspan></text><text x="191" y="194" class="t-math acc" text-anchor="middle"><tspan font-style="italic">rH</tspan></text><text x="276" y="194" class="t-math acc" text-anchor="middle"><tspan font-style="italic">r</tspan><tspan baseline-shift="super" font-size="72%">2</tspan><tspan font-style="italic">H</tspan></text></svg></div>
+      <figcaption><b>그림 1-2.</b> \(S_3\)를 잉여류로 나누기. 점선 상자는 \(H = \{e, s_1\}\)의 왼쪽 잉여류 \(H\), \(rH = \{r, s_3\}\), \(r^2H = \{r^2, s_2\}\)이고, 가로 띠는 \(A_3 = \{e, r, r^2\}\)의 잉여류(회전과 반사)다. 오른쪽 잉여류 \(Hr = \{r, s_2\}\), \(Hr^2 = \{r^2, s_3\}\)로 나누려면 아래 줄의 \(s_2\)와 \(s_3\)가 자리를 바꿔야 하므로 다른 분할이다. \(A_3\)의 잉여류는 왼쪽과 오른쪽이 같다.</figcaption>
+    </figure>
+
+    <div class="box ex" id="ex-triangle-distortions"><div class="box-h">정삼각형 고리를 찌그러뜨리는 서로 다른 방법</div>
+      <p><a class="ref" href="#ex-triangle-ring-symmetry"></a>의 고리에서 결합 하나의 세기만 \(-t'\)(\(t, t' > 0\), \(t' \ne t\))으로 바꾼다. 원자 \(k\)의 맞은편 결합을 바꾼 고리를 \(X_k\)라 하자. (가) \(X_1\)의 대칭 변환군 \(H_1\)과 에너지 준위를 구하라. (나) \(S_3\)의 원소 \(g\)가 \(X_1\)을 어느 고리로 보내는지 정리하고, 이것이 \(H_1\)의 왼쪽 잉여류와 일대일로 대응함을 보여라.</p>
+      <p><b>풀이.</b> (가) 식 <a class="ref" href="#eq-ring-symmetry-condition"></a>에서 \(\sigma\)는 결합 \(\{2, 3\}\)을 결합 \(\{2, 3\}\)으로 보내야 하므로 \(\sigma(1) = 1\)이고, \(H_1 = \{e, s_1\}\)이다. \(P(s_1)\)이 \(\lvert2\rangle\)와 \(\lvert3\rangle\)을 맞바꾸므로 반대칭 벡터 \((0, 1, -1)\)은 고유값 \(t'\)의 고유벡터이고, 대칭 벡터 \((a, b, b)\)에서는 \(2 \times 2\) 문제 \(-\begin{pmatrix} 0 & 2t \\ t & t' \end{pmatrix}\)의 특성 방정식 \(E^2 + t'E - 2t^2 = 0\)이 남는다. 따라서 준위는</p>
+      <div class="formula" id="eq-isosceles-levels">\[ E = t', \quad E_\pm = \frac{-t' \pm \sqrt{t'^2 + 8t^2}}{2} \]</div>
+      <p>이다. \(E_- &lt; 0 &lt; E_+\)이고, \(t' = E_+\)이려면 \(3t' = \sqrt{t'^2 + 8t^2}\), 곧 \(t' = t\)여야 한다. 따라서 \(t' \ne t\)이면 세 준위가 모두 다르다. 대칭이 \(\mathbb Z_2\)로 줄자 겹침이 풀렸다.</p>
+      <p>(나) \(g\)는 원자의 이름을 바꾸므로, \(X_1\)에서 바뀐 결합 \(\{2, 3\}\)을 결합 \(\{g(2), g(3)\}\)으로 옮긴다. 이 결합의 맞은편 원자는 \(g(1)\)이므로 \(gX_1 = X_{g(1)}\)이다. 그러면</p>
+      <ul>
+        <li>\(g(1) = 1\): \(g \in \{e, s_1\} = H_1\), \(X_1\)으로 간다.</li>
+        <li>\(g(1) = 2\): \(g \in \{r, s_3\} = rH_1\), \(X_2\)로 간다.</li>
+        <li>\(g(1) = 3\): \(g \in \{r^2, s_2\} = r^2H_1\), \(X_3\)으로 간다.</li>
+      </ul>
+      <p>이다. 같은 잉여류의 원소는 \(X_1\)을 같은 고리로 보내고, 다른 잉여류는 다른 고리로 보낸다. 곧 \(gH_1 \mapsto gX_1\)은 잉여류 세 개와 찌그러진 고리 세 개의 일대일 대응이다. \(X_2\)의 대칭 변환군은 \(rH_1r^{-1} = \{e, rs_1r^{-1}\} = \{e, s_2\}\)로, \(H_1\)을 \(r\)로 옮긴 것이다(\(rs_1r^{-1} = s_2\)는 <a class="ref" href="#calc-s3-table"></a>에서 계산한다).</p>
+      <p><b>확인.</b> \(6 = 3 \times 2\)로 식 <a class="ref" href="#eq-lagrange"></a>과 맞는다. 세 고리는 이름만 바꾼 것이므로 에너지 준위 <a class="ref" href="#eq-isosceles-levels"></a>가 모두 같다. \(t' \to t\)이면 \(E = t'\)과 \(E_+\)가 함께 \(t\)로 가고 \(E_- \to -2t\)이므로 <a class="ref" href="#ex-triangle-ring-symmetry"></a>의 \(-2t, t, t\)로 돌아온다.</p>
+      <p><b>어디에 쓰이나.</b> 대칭이 \(G\)에서 \(H\)로 줄면 서로 대칭으로 이어진 배치가 \([G:H]\)개 생긴다는 이 셈을 1.5절에서 궤도-안정자 정리로 일반화한다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 1.3 -->
+  <section id="s3">
+    <h2>켤레류와 정규 부분군</h2>
+    <p>2장에서는 군의 원소마다 행렬 \(D(g)\)를 붙이고(<a href="ch02.html#def-representation">표현</a>), 그 대각합 \(\chi(g) = \operatorname{tr}D(g)\)로 표현을 구별한다. 대각합은 닮음 변환에서 변하지 않으므로 \(\chi(kgk^{-1}) = \operatorname{tr}\big(D(k)D(g)D(k)^{-1}\big) = \chi(g)\)이다. 그래서 표현론에서는 원소 \(g\)와 \(kgk^{-1}\)을 구별할 필요가 없고, 군을 이런 원소끼리 묶은 덩어리로 나누어 다룬다. 2장의 <a href="ch02.html#thm-character-orthogonality">지표의 직교성</a>에서 보듯 덩어리의 수가 곧 기약 표현의 수다. 이 절은 그 덩어리를 정의하고, 덩어리로만 이루어진 부분군이 왜 특별한지 본다.</p>
+    <div class="box def" id="def-conjugacy-class"><div class="box-h">켤레류와 중심</div>
+      <p>군 \(G\)의 두 원소 \(g, h\)에 대해</p>
+      <div class="formula" id="eq-conjugation">\[ h = kgk^{-1} \]</div>
+      <p>인 \(k \in G\)가 있으면 \(h\)가 \(g\)에 <span class="term">켤레</span> <span class="en">(conjugate)</span>라 하고 \(h \sim g\)로 쓴다. \(g\)에 켤레인 원소 전체 \([g] = \{kgk^{-1} : k \in G\}\)를 \(g\)의 <span class="term">켤레류</span> <span class="en">(conjugacy class)</span>라 한다. 켤레류에 번호를 붙일 때는 \(C_1 = [e], C_2, \ldots\)로 쓰고 크기를 \(\lvert C_i\rvert\)로 쓴다. 모든 원소와 교환하는 원소 전체 \(Z(G) = \{z : \text{모든 } g\text{에서 } zg = gz\}\)를 \(G\)의 <span class="term">중심</span> <span class="en">(center)</span>이라 한다.</p>
+    </div>
+    <p>\(z \in Z(G)\)이면 \(kzk^{-1} = zkk^{-1} = z\)이므로 \([z] = \{z\}\)이고, 거꾸로 \([z] = \{z\}\)이면 모든 \(k\)에서 \(kz = zk\)이다. 곧 중심은 크기가 1인 켤레류들을 모은 것이다. 항등원은 언제나 중심에 있고, 아벨 군에서는 모든 켤레류의 크기가 1이다.</p>
+    <div class="box thm" id="thm-classes-partition"><div class="box-h">켤레류는 군을 나눈다</div>
+      <p>켤레 관계 \(\sim\)는 동치 관계다. 따라서 모든 원소는 정확히 한 켤레류에 속하고, 서로 다른 켤레류는 겹치지 않는다. 켤레류가 \(C_1, \ldots, C_k\)이면 \(G = C_1 \cup \cdots \cup C_k\)이고 \(\lvert G\rvert = \sum_i \lvert C_i\rvert\)이다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>반사성: \(g = ege^{-1}\). 대칭성: \(h = kgk^{-1}\)이면 \(g = k^{-1}hk = (k^{-1})h(k^{-1})^{-1}\). 추이성: \(h = kgk^{-1}\), \(f = lhl^{-1}\)이면 \(f = (lk)g(lk)^{-1}\). 동치류는 집합을 겹치지 않게 나눈다. 두 동치류가 원소 \(x\)를 공유하면, 추이성에 따라 두 동치류의 모든 원소가 \(x\)와 동치이므로 두 동치류는 같다.</p>
+      </details>
+    </div>
+    <p>켤레가 물리적으로 무엇인지는 회전에서 가장 잘 보인다. \(kgk^{-1}\)은 "\(k^{-1}\)로 되돌려 놓고, \(g\)를 하고, 다시 \(k\)로 옮기는 것", 곧 \(k\)로 옮겨 놓은 자리에서 본 \(g\)다.</p>
+    <div class="box ex" id="ex-rotation-conjugacy"><div class="box-h">회전군 \(SO(3)\)의 켤레류</div>
+      <p>단위 벡터 \(\hat{\mathbf n}\) 둘레로 각 \(\theta\)만큼 도는 회전을 학부 7장처럼 \(R(\hat{\mathbf n}, \theta) = e^{\theta\,\hat{\mathbf n}\cdot\mathbf L}\)로 쓴다(<a href="../../math-phys/chapters/ch07.html#eq-rotation-exponential">학부 7장의 회전의 지수 꼴</a>). 회전 \(S \in SO(3)\)에 대해 \(SR(\hat{\mathbf n}, \theta)S^{-1}\)을 구하고, \(SO(3)\)의 켤레류를 모두 구하라.</p>
+      <p><b>풀이.</b> 학부 7장의 <a href="../../math-phys/chapters/ch07.html#eq-generator-cross">\((\hat{\mathbf n}\cdot\mathbf L)\mathbf v = \hat{\mathbf n}\times\mathbf v\)</a>를 쓴다. 직교 행렬 \(S\)는 외적을 \((S\mathbf a)\times(S\mathbf b) = (\det S)\,S(\mathbf a\times\mathbf b)\)로 옮긴다. 양변과 \(S\mathbf c\)의 내적이 둘 다 \(\det[S\mathbf a, S\mathbf b, S\mathbf c] = \det S\,\det[\mathbf a, \mathbf b, \mathbf c]\)이기 때문이다(\(S\)는 내적을 보존한다). 회전이면 \(\det S = 1\)이므로 임의의 \(\mathbf v\)에 대해</p>
+      <div class="formula">\[ \begin{aligned} S(\hat{\mathbf n}\cdot\mathbf L)S^{-1}\mathbf v &= S\big(\hat{\mathbf n}\times S^{-1}\mathbf v\big) \\ &= (S\hat{\mathbf n})\times\mathbf v \\ &= \big((S\hat{\mathbf n})\cdot\mathbf L\big)\mathbf v \end{aligned} \]</div>
+      <p>이다. 행렬 지수의 급수에서 \(SA^mS^{-1} = (SAS^{-1})^m\)이므로 \(Se^AS^{-1} = e^{SAS^{-1}}\)이고, 결국 다음을 얻는다.</p>
+      <div class="formula" id="eq-rotation-conjugation">\[ S\,R(\hat{\mathbf n}, \theta)\,S^{-1} = R(S\hat{\mathbf n}, \theta) \]</div>
+      <p>회전을 회전으로 켤레 변환하면 각은 그대로이고 축만 \(S\)로 돌아간다. 축 \(\hat{\mathbf n}\)을 다른 단위 벡터 \(\hat{\mathbf n}'\)으로 보내는 회전은 언제나 있으므로(\(\hat{\mathbf n}\times\hat{\mathbf n}'\) 둘레로 돌리면 되고, \(\hat{\mathbf n}' = -\hat{\mathbf n}\)이면 \(\hat{\mathbf n}\)에 수직인 아무 축 둘레로 \(\pi\)만큼 돌린다), 각이 같은 회전은 축과 상관없이 모두 켤레다. 또 \(R(\hat{\mathbf n}, -\theta) = R(-\hat{\mathbf n}, \theta)\)이고 \(-\hat{\mathbf n}\)도 \(\hat{\mathbf n}\)에서 회전으로 닿으므로 \(\theta\)와 \(-\theta\)도 같은 켤레류다. 따라서 \(SO(3)\)의 켤레류는 각 \(\theta \in [0, \pi]\) 하나로 이름 붙는다. \(\theta = 0\)은 \(\{e\}\) 하나다.</p>
+      <p><b>확인.</b> 켤레류마다 같은 값을 주는 함수는 각만의 함수여야 한다. 학부 7장의 <a href="../../math-phys/chapters/ch07.html#eq-rotation-trace">\(\operatorname{tr}R = 1 + 2\cos\theta\)</a>가 바로 그렇다. 축이 들어 있지 않고 \(\theta \to -\theta\)에서도 같다.</p>
+      <p><b>어디에 쓰이나.</b> 3장의 <a href="ch03.html#eq-haar-measure-su2">\(SU(2)\)의 지표의 직교성</a>에서 지표 \(\chi_j(\theta)\)가 각 \(\theta\)만의 함수인 이유가 이것이다. 정육면체의 회전군처럼 유한한 회전군의 켤레류도 이 식으로 찾는다(<a class="ref" href="#ex-cube-rotations-s4"></a>).</p>
+    </div>
+
+    <h3 id="s3-normal">정규 부분군</h3>
+    <p>1.2절에서 \(H = \{e, s_1\}\)의 왼쪽 잉여류와 오른쪽 잉여류가 달랐다. \(gH = Hg\)는 \(gHg^{-1} = H\)와 같은 말인데, \(rs_1r^{-1} = s_2\)이므로 \(rHr^{-1} = \{e, s_2\} \ne H\)이다. 반면 \(A_3 = \{e, r, r^2\}\)은 어떤 원소로 켤레 변환해도 회전이 회전으로 가므로 \(gA_3g^{-1} = A_3\)이다.</p>
+    <div class="box def" id="def-normal-subgroup"><div class="box-h">정규 부분군</div>
+      <p>부분군 \(N \le G\)가 모든 \(g \in G\)에 대해</p>
+      <div class="formula" id="eq-normal-subgroup">\[ gNg^{-1} = N \]</div>
+      <p>을 만족하면 \(N\)을 <span class="term">정규 부분군</span> <span class="en">(normal subgroup)</span>이라 하고 \(N \trianglelefteq G\)로 쓴다. 다음 세 조건은 서로 동치다.</p>
+      <ol>
+        <li>모든 \(g\)에서 \(gNg^{-1} = N\). 모든 \(g\)에서 \(gNg^{-1} \subseteq N\)이기만 해도 된다.</li>
+        <li>모든 \(g\)에서 \(gN = Ng\). 곧 왼쪽 잉여류와 오른쪽 잉여류가 같다.</li>
+        <li>\(N\)은 켤레류 몇 개의 합집합이다.</li>
+      </ol>
+      <details class="proof"><summary>증명</summary>
+        <p>1의 둘째 문장: 모든 \(g\)에서 \(gNg^{-1} \subseteq N\)이면 \(g^{-1}\)에 대해서도 \(g^{-1}Ng \subseteq N\)이고, 왼쪽에 \(g\), 오른쪽에 \(g^{-1}\)을 곱하면 \(N \subseteq gNg^{-1}\)이므로 같다. 1 ⇔ 2: \(gNg^{-1} = N\)의 양변 오른쪽에 \(g\)를 곱하면 \(gN = Ng\)이고, 거꾸로도 같다. 1 ⇒ 3: \(n \in N\)이면 \([n] = \{gng^{-1}\} \subseteq N\)이므로 \(N = \bigcup_{n \in N}[n]\)이다. 3 ⇒ 1: \(N\)이 켤레류들의 합집합이면 \(n \in N\)의 켤레 \(gng^{-1}\)은 \(n\)과 같은 켤레류에 있으므로 \(N\)에 있다. 곧 \(gNg^{-1} \subseteq N\)이다.</p>
+      </details>
+    </div>
+    <p>계산에는 조건 3이 가장 쓸모 있다. 정규 부분군을 찾을 때 부분집합을 모두 뒤질 필요가 없고, \(\{e\}\)를 포함하는 켤레류의 합집합 가운데 곱에 닫힌 것만 보면 된다. 라그랑주 정리 때문에 그 크기는 \(\lvert G\rvert\)의 약수여야 한다. 지수가 2인 부분군은 언제나 정규 부분군이다. 왼쪽 잉여류가 \(N\)과 \(G \setminus N\) 둘뿐이고 오른쪽 잉여류도 \(N\)과 \(G \setminus N\) 둘뿐이므로, \(g \notin N\)이면 \(gN = G \setminus N = Ng\)이기 때문이다. 아벨 군의 모든 부분군과 중심 \(Z(G)\)도 정규 부분군이다.</p>
+
+    <div class="box calc" id="calc-s3-table"><div class="box-h">정삼각형의 대칭 변환군 \(D_3 \cong S_3\): 곱셈표, 켤레류, 잉여류</div>
+      <p>식 <a class="ref" href="#eq-dihedral-relations"></a>의 관계(\(n = 3\), \(s = s_1\))만으로 \(S_3\)의 곱셈표를 채운다. 그 표에서 켤레류(<a class="ref" href="#def-conjugacy-class"></a>), \(H = \{e, s_1\}\)과 \(A_3\)의 왼쪽·오른쪽 잉여류(<a class="ref" href="#def-coset"></a>), 정규 부분군(<a class="ref" href="#def-normal-subgroup"></a>)을 구한다.</p>
+      <p><b>계산.</b> (1) <i>곱셈 규칙.</i> \(srs^{-1} = r^{-1}\)의 오른쪽에 \(s\)를 곱하면 \(sr = r^{-1}s\)이고, 이것을 \(c\)번 쓰면 \(sr^c = r^{-c}s\)이다. 모든 원소를 \(r^as^b\)(\(a \in \{0, 1, 2\}\), \(b \in \{0, 1\}\)) 꼴로 쓰면</p>
+      <div class="formula" id="eq-s3-product-rule">\[ (r^as^b)(r^cs^d) = r^{\,a + (-1)^bc}\,s^{\,b + d} \]</div>
+      <p>이고, \(r\)의 거듭제곱 수는 3으로, \(s\)의 거듭제곱 수는 2로 나눈 나머지만 남긴다. 1.1절에서 \(s_1r = s_2\), \(rs_1 = s_3\)이었고 \(s_1r = r^{-1}s_1 = r^2s_1\)이므로, 반사 셋은 \(s_1 = s\), \(s_2 = r^2s\), \(s_3 = rs\)이다. 몇 칸을 계산해 보자.</p>
+      <div class="formula">\[ \begin{aligned} s_2s_3 &= (r^2s)(rs) = r^{2-1}s^2 = r \\ s_3s_2 &= (rs)(r^2s) = r^{1-2} = r^2 \\ rs_2 &= r(r^2s) = r^3s = s_1 \end{aligned} \]</div>
+      <p>나머지 칸도 같은 방법으로 채운다. \(g_i\)행 \(g_j\)열의 칸이 \(g_ig_j\)다.</p>
+      <div class="table-wrap"><table class="cayley">
+        <thead><tr><th></th><th>\(e\)</th><th>\(r\)</th><th>\(r^2\)</th><th>\(s_1\)</th><th>\(s_2\)</th><th>\(s_3\)</th></tr></thead>
+        <tbody>
+          <tr><th>\(e\)</th><td>\(e\)</td><td>\(r\)</td><td>\(r^2\)</td><td>\(s_1\)</td><td>\(s_2\)</td><td>\(s_3\)</td></tr>
+          <tr><th>\(r\)</th><td>\(r\)</td><td>\(r^2\)</td><td>\(e\)</td><td>\(s_3\)</td><td>\(s_1\)</td><td>\(s_2\)</td></tr>
+          <tr><th>\(r^2\)</th><td>\(r^2\)</td><td>\(e\)</td><td>\(r\)</td><td>\(s_2\)</td><td>\(s_3\)</td><td>\(s_1\)</td></tr>
+          <tr><th>\(s_1\)</th><td>\(s_1\)</td><td>\(s_2\)</td><td>\(s_3\)</td><td>\(e\)</td><td>\(r\)</td><td>\(r^2\)</td></tr>
+          <tr><th>\(s_2\)</th><td>\(s_2\)</td><td>\(s_3\)</td><td>\(s_1\)</td><td>\(r^2\)</td><td>\(e\)</td><td>\(r\)</td></tr>
+          <tr><th>\(s_3\)</th><td>\(s_3\)</td><td>\(s_1\)</td><td>\(s_2\)</td><td>\(r\)</td><td>\(r^2\)</td><td>\(e\)</td></tr>
+        </tbody>
+      </table></div>
+      <p>(2) <i>켤레류.</i> 회전끼리는 교환하므로 \(r\)을 회전으로 켤레 변환하면 그대로이고, 반사로 켤레 변환하면 \(sr s^{-1} = r^{-1} = r^2\)이다. 따라서 \([r] = \{r, r^2\}\)이다. 반사 \(s_1\)을 회전으로 켤레 변환하면 \(sr^c = r^{-c}s\)에서</p>
+      <div class="formula">\[ \begin{aligned} rs_1r^{-1} &= r\,(sr^2) = r\,r^{-2}s \\ &= r^2s = s_2 \\ r^2s_1r^{-2} &= r^2(sr) = r^2r^{-1}s \\ &= rs = s_3 \end{aligned} \]</div>
+      <p>이므로 \([s_1] = \{s_1, s_2, s_3\}\)이다. \([e] = \{e\}\)까지 켤레류는 셋이다.</p>
+      <p>(3) <i>잉여류.</i> 표의 \(r\)행과 \(r^2\)행에서 \(H\)의 왼쪽 잉여류는 \(H\), \(rH = \{r, s_3\}\), \(r^2H = \{r^2, s_2\}\)이다. \(s_1\)행에서 오른쪽 잉여류는 \(H\), \(Hr = \{r, s_1r\} = \{r, s_2\}\), \(Hr^2 = \{r^2, s_1r^2\} = \{r^2, s_3\}\)이다. \(rH \ne Hr\)이다. \(A_3\)의 잉여류는 \(A_3\)과 \(s_1A_3 = \{s_1, s_2, s_3\} = A_3s_1\)으로, 왼쪽과 오른쪽이 같다.</p>
+      <p>(4) <i>정규 부분군.</i> \(\{e\}\)를 포함하는 켤레류의 합집합은 \(\{e\}\)(크기 1), \(\{e, r, r^2\}\)(3), \(\{e, s_1, s_2, s_3\}\)(4), \(S_3\)(6)이다. 크기 4는 6의 약수가 아니므로 부분군이 아니다(실제로 \(s_1s_2 = r\)이 빠져 있다). 나머지 셋은 부분군이다.</p>
+      <p class="calc-result"><b>결과.</b> 곱셈표는 위의 표다. 켤레류는 \(\{e\}\), \(\{r, r^2\}\), \(\{s_1, s_2, s_3\}\)의 셋이고 크기는 1, 2, 3이다. \(H = \{e, s_1\}\)의 왼쪽 잉여류 \(\{e, s_1\}, \{r, s_3\}, \{r^2, s_2\}\)와 오른쪽 잉여류 \(\{e, s_1\}, \{r, s_2\}, \{r^2, s_3\}\)는 다르고, \(A_3\)의 잉여류는 왼쪽과 오른쪽이 같다. 정규 부분군은 \(\{e\}\), \(A_3\), \(S_3\)(위수 1, 3, 6)이다.</p>
+      <p><b>확인.</b> 표의 각 행과 각 열에 여섯 원소가 한 번씩 나온다(<a class="ref" href="#thm-rearrangement"></a>). 켤레류의 크기의 합은 \(1 + 2 + 3 = 6\)이고, 크기 1, 2, 3이 모두 6의 약수다(이유는 1.5절). 반사가 모두 한 켤레류인 것은 기하와 맞는다. 회전 \(r\)은 자리 1을 지나는 거울선을 자리 2를 지나는 거울선으로 돌려 놓으므로, \(r\)로 옮긴 자리에서 본 \(s_1\)은 \(s_2\)다.</p>
+    </div>
+
+    <div class="box calc" id="calc-d4-classes"><div class="box-h">정사각형의 대칭 변환군 \(D_4\)의 켤레류와 중심</div>
+      <p>정사각형의 자리를 그림 1-1 (나)처럼 두고, \(r = (1\,2\,3\,4)\)(\(90^\circ\) 회전)와 \(m = (1\,4)(2\,3)\)(가로 거울선에 대한 반사)으로 \(D_4\)를 쓴다. 식 <a class="ref" href="#eq-dihedral-relations"></a>(\(n = 4\), \(s = m\))만으로 켤레류와 중심을 구한다.</p>
+      <p><b>계산.</b> 원소는 회전 \(r^j\)와 반사 \(r^jm\)(\(j = 0, 1, 2, 3\))의 여덟 개다. 반사를 자리의 순열로 확인하면 \(rm = (2\,4) = d\), \(r^2m = (1\,2)(3\,4) = m'\), \(r^3m = (1\,3) = d'\)이다. 모든 원소는 \(r\)과 \(m\)의 곱이므로, \(r\)과 \(m\)에 의한 켤레 변환만 알면 켤레류가 정해진다. \(mr^j = r^{-j}m\)(<a class="ref" href="#calc-s3-table"></a>의 규칙)을 쓰면</p>
+      <div class="formula" id="eq-dihedral-conjugation">\[ \begin{aligned} m\,r^j\,m^{-1} &= r^{-j} \\ r\,(r^jm)\,r^{-1} &= r^{\,j+1}\,r\,m = r^{\,j+2}m \\ m\,(r^jm)\,m^{-1} &= m\,r^j = r^{-j}m \end{aligned} \]</div>
+      <p>이다. 둘째 줄에서 \(mr^{-1} = rm\)을 썼다. 회전을 회전으로 켤레 변환하면 그대로이므로 회전의 켤레류는 \(\{e\}\), \(\{r, r^{-1}\} = \{r, r^3\}\), \(\{r^2\}\)이다. 반사 \(r^jm\)의 켤레는 거듭제곱 수 \(j\)를 \(j + 2\)나 \(-j\)로 바꾼 것들이다. 이 두 조작은 \(j\)의 홀짝을 바꾸지 않으므로 반사의 켤레류는 \(j\)가 짝수인 \(\{m, r^2m\} = \{m, m'\}\)과 홀수인 \(\{rm, r^3m\} = \{d, d'\}\)의 둘이다. 크기가 1인 켤레류는 \(\{e\}\)와 \(\{r^2\}\)이므로 중심은 \(\{e, r^2\}\)이다. \(r^2\)은 \(180^\circ\) 회전, 곧 평면에서 \(-I\)이므로 모든 선형 변환과 교환한다.</p>
+      <p class="calc-result"><b>결과.</b> 켤레류는 \(\{e\}\), \(\{r^2\}\), \(\{r, r^3\}\), \(\{m, m'\}\), \(\{d, d'\}\)의 다섯 개이고 크기는 1, 1, 2, 2, 2다. 중심은 \(Z(D_4) = \{e, r^2\}\)이다.</p>
+      <p><b>확인.</b> \(1 + 1 + 2 + 2 + 2 = 8\)이다. 변의 중점을 지나는 거울선(\(m, m'\))과 꼭짓점을 지나는 거울선(\(d, d'\))이 다른 켤레류인 것은, 켤레 변환이 거울선을 대칭 변환으로 옮긴 거울선으로 보내는데 정사각형의 어떤 대칭 변환도 꼭짓점을 변의 중점으로 보내지 않기 때문이다. \(n\)이 홀수이면 \(j + 2\)를 거듭해 모든 나머지에 닿으므로 반사가 모두 한 켤레류이고, <a class="ref" href="#calc-s3-table"></a>의 \([s_1] = \{s_1, s_2, s_3\}\)과 맞는다(<a class="ref" href="#prob-dihedral-classes"></a>).</p>
+    </div>
+
+    <div class="box code" id="code-permutation-group" data-run="python" data-packages="sympy" data-check="calc-s3-table calc-d4-classes">
+      <div class="box-h">생성원에서 만든 순열군의 곱셈표, 켤레류, 정규 부분군</div>
+      <p><a class="ref" href="#calc-s3-table"></a>과 <a class="ref" href="#calc-d4-classes"></a>를 처음부터 다시 한다. 순열은 자리의 상을 늘어놓은 튜플로 쓰고(자리 1, 2, …를 0, 1, …로), 곱은 식 <a class="ref" href="#eq-permutation-product"></a>의 순서를 따른다. 생성원 두 개에서 곱을 거듭해 군 전체를 만들고, 켤레류와 정규 부분군을 정의대로 구한다. 정규 부분군은 <a class="ref" href="#def-normal-subgroup"></a>의 조건 3을 써서 켤레류의 합집합만 검사한다. 손 계산의 값을 <code>assert</code>로 확인한 뒤 1.6절의 교대군 \(A_4\)와 \(S_4\)로 넓힌다.</p>
+      <pre><code class="language-python">from itertools import combinations
+
+def mul(p, q):          # 곱 pq: q를 먼저, 그 다음 p (본문의 관례)
+    return tuple(p[i] for i in q)
+
+def inv(p):             # p가 i를 j로 보내면 역원은 j를 i로 보낸다
+    return tuple(sorted(range(len(p)), key=lambda i: p[i]))
+
+def closure(gens):
+    """생성원이 만드는 군: 새 원소가 더 나오지 않을 때까지 곱한다.
+    유한군이라 곱에 닫히기만 하면 역원도 들어 있다(부분군)."""
+    G = new = {tuple(range(len(gens[0])))}
+    while new:
+        new = {mul(g, s) for g in new for s in gens} - G
+        G = G | new
+    return sorted(G)    # 항등원이 맨 앞에 온다
+
+def classes(G):         # 켤레류 [g] = {k g k⁻¹ : k ∈ G}
+    out = []
+    for g in G:
+        if not any(g in c for c in out):
+            out.append({mul(mul(k, g), inv(k)) for k in G})
+    return out
+
+def normal_subgroups(G):    # {e}를 품고 곱에 닫힌 켤레류의 합집합
+    # 곱에 닫히면 부분군(유한군), 켤레류의 합집합이면 정규 부분군
+    rest = [c for c in classes(G) if G[0] not in c]
+    unions = [set(G[:1]).union(*cs) for k in range(len(rest) + 1)
+              for cs in combinations(rest, k)]
+    return [N for N in unions
+            if all(mul(a, b) in N for a in N for b in N)]
+
+# 1) 손 계산 1.1: S_3. 자리 1, 2, 3을 0, 1, 2로 쓴다
+S3 = {"e": (0, 1, 2), "r": (1, 2, 0), "r2": (2, 0, 1),
+      "s1": (0, 2, 1), "s2": (2, 1, 0), "s3": (1, 0, 2)}
+nm = {p: k for k, p in S3.items()}
+rows = [" ".join(nm[mul(S3[a], S3[b])] for b in S3) for a in S3]
+assert rows == ["e r r2 s1 s2 s3", "r r2 e s3 s1 s2",
+                "r2 e r s2 s3 s1", "s1 s2 s3 e r r2",
+                "s2 s3 s1 r2 e r", "s3 s1 s2 r r2 e"]
+G = closure([S3["r"], S3["s1"]])
+C = sorted(sorted(nm[g] for g in c) for c in classes(G))
+assert C == [["e"], ["r", "r2"], ["s1", "s2", "s3"]]
+H, A3 = [S3["e"], S3["s1"]], [S3["e"], S3["r"], S3["r2"]]
+left = lambda K: {frozenset(mul(g, k) for k in K) for g in G}
+right = lambda K: {frozenset(mul(k, g) for k in K) for g in G}
+assert left(H) != right(H)      # H의 왼쪽·오른쪽 잉여류가 다르다
+assert left(A3) == right(A3)    # A_3의 잉여류는 왼쪽과 오른쪽이 같다
+assert sorted(map(len, normal_subgroups(G))) == [1, 3, 6]
+
+# 2) 손 계산 1.2: D_4. r = (1 2 3 4), m = (1 4)(2 3)
+D4 = closure([(1, 2, 3, 0), (3, 2, 1, 0)])
+assert sorted(len(c) for c in classes(D4)) == [1, 1, 2, 2, 2]
+Z = [g for g in D4 if all(mul(g, h) == mul(h, g) for h in D4)]
+assert Z == [(0, 1, 2, 3), (2, 3, 0, 1)]          # 중심 {e, r²}
+
+# 3) 넓히기: 위수, 켤레류의 크기, 정규 부분군의 위수
+A4 = closure([(1, 2, 0, 3), (1, 0, 3, 2)])        # (1 2 3), (1 2)(3 4)
+S4 = closure([(1, 2, 3, 0), (1, 0, 2, 3)])        # (1 2 3 4), (1 2)
+for name, X in [("S3", G), ("D4", D4), ("A4", A4), ("S4", S4)]:
+    cs = sorted(len(c) for c in classes(X))
+    ns = sorted(len(N) for N in normal_subgroups(X))
+    print(name, len(X), cs, ns)
+
+# 검산: sympy의 완성품. sympy의 a*b는 a를 먼저 적용한다
+from sympy.combinatorics import Permutation, PermutationGroup
+a, b = Permutation([1, 2, 3, 0]), Permutation([1, 0, 2, 3])
+assert Permutation(list(mul(a.array_form, b.array_form))) == b * a
+print(sorted(map(len, PermutationGroup(a, b).conjugacy_classes())))</code></pre>
+      <pre class="code-out"><code>S3 6 [1, 2, 3] [1, 3, 6]
+D4 8 [1, 1, 2, 2, 2] [1, 2, 4, 4, 4, 8]
+A4 12 [1, 3, 4, 4] [1, 4, 12]
+S4 24 [1, 3, 6, 6, 8] [1, 4, 12, 24]
+[1, 3, 6, 6, 8]</code></pre>
+      <p class="code-note">출력의 각 줄은 군, 위수, 켤레류의 크기, 정규 부분군의 위수다. 첫 줄은 <a class="ref" href="#calc-s3-table"></a>의 켤레류 크기 1, 2, 3과 정규 부분군 \(\{e\}, A_3, S_3\)이고, 둘째 줄의 켤레류는 <a class="ref" href="#calc-d4-classes"></a>의 다섯 개다. \(D_4\)의 위수 4인 정규 부분군 셋은 \(\{e, r, r^2, r^3\}\), \(\{e, r^2, m, m'\}\), \(\{e, r^2, d, d'\}\)이다. \(A_4\)의 위수 4인 정규 부분군은 \(V_4 = \{e, (1\,2)(3\,4), (1\,3)(2\,4), (1\,4)(2\,3)\}\)이고, \(S_4\)에서는 \(V_4\)와 \(A_4\)가 정규 부분군이다. \(S_4\)의 켤레류 크기 1, 3, 6, 6, 8은 1.6절의 순환 꼴로 정해진다. 마지막 줄은 SymPy가 같은 \(S_4\)에서 센 값이다. 검산 부분의 <code>assert</code>는 SymPy의 <code>b * a</code>가 이 책의 \(ab\)와 같다는 것, 곧 SymPy가 왼쪽부터 적용한다는 것을 확인한다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 1.4 -->
+  <section id="s4">
+    <h2>준동형과 몫군</h2>
+    <p>정삼각형의 대칭 변환군과 \(S_3\)는 원소의 이름만 다르고 곱셈표가 같았다. 3장에서는 이보다 미묘한 관계를 만난다. <a href="../../math-phys/chapters/ch08.html#eq-pauli-matrices">학부 8장의 파울리 행렬</a>로 만든 \(2 \times 2\) 유니타리 행렬 \(U\)마다 3차원 회전 \(R(U)\)이 하나씩 정해지고 \(R(U_1U_2) = R(U_1)R(U_2)\)이지만, \(U\)와 \(-U\)가 같은 회전을 준다. 곱을 보존하되 원소 몇 개를 하나로 뭉개는 사상이다. 이 절은 그런 사상과, 뭉개고 남은 것이 이루는 군을 다룬다.</p>
+    <div class="box def" id="def-homomorphism"><div class="box-h">준동형과 핵</div>
+      <p>군 \(G\)에서 군 \(G'\)으로 가는 사상 \(\varphi\)가 모든 \(g, h \in G\)에서</p>
+      <div class="formula" id="eq-homomorphism">\[ \varphi(gh) = \varphi(g)\,\varphi(h) \]</div>
+      <p>를 만족하면 \(\varphi\)를 <span class="term">준동형</span> <span class="en">(homomorphism)</span>이라 한다. \(G'\)의 항등원 \(e'\)으로 가는 원소 전체 \(\ker\varphi = \{g : \varphi(g) = e'\}\)을 \(\varphi\)의 <span class="term">핵</span> <span class="en">(kernel)</span>, \(\operatorname{im}\varphi = \{\varphi(g) : g \in G\}\)를 <span class="term">상</span> <span class="en">(image)</span>이라 한다. 일대일 대응인 준동형을 <span class="term">동형 사상</span> <span class="en">(isomorphism)</span>이라 하고, 동형 사상이 있는 두 군은 <span class="term">동형</span>이라 하여 \(G \cong G'\)로 쓴다.</p>
+    </div>
+    <p>식 <a class="ref" href="#eq-homomorphism"></a>에서 몇 가지가 바로 나온다. \(\varphi(e) = \varphi(ee) = \varphi(e)\varphi(e)\)에 \(\varphi(e)^{-1}\)을 곱하면 \(\varphi(e) = e'\)이다. \(\varphi(g)\varphi(g^{-1}) = \varphi(e) = e'\)이므로 \(\varphi(g^{-1}) = \varphi(g)^{-1}\)이다. 핵에 대해서는 다음 두 가지가 중요하다.</p>
+    <p><b>핵은 정규 부분군이다.</b> \(k_1, k_2 \in \ker\varphi\)이면 \(\varphi(k_1k_2^{-1}) = \varphi(k_1)\varphi(k_2)^{-1} = e'\)이므로 \(\ker\varphi\)는 부분군이다(식 <a class="ref" href="#eq-subgroup-test"></a>). 또 \(k \in \ker\varphi\)이면 모든 \(g\)에서</p>
+    <div class="formula" id="eq-kernel-normal">\[ \varphi(gkg^{-1}) = \varphi(g)\,e'\,\varphi(g)^{-1} = e' \]</div>
+    <p>이므로 \(g(\ker\varphi)g^{-1} \subseteq \ker\varphi\)이고, <a class="ref" href="#def-normal-subgroup"></a>의 조건 1에 따라 정규 부분군이다. 같은 방법으로 \(\operatorname{im}\varphi\)는 \(G'\)의 부분군이다.</p>
+    <p><b>핵이 \(\{e\}\)이면 단사다.</b> \(\varphi(g) = \varphi(h)\)이면 \(\varphi(g^{-1}h) = e'\)이므로 \(g^{-1}h \in \ker\varphi\)이다. \(\ker\varphi = \{e\}\)이면 \(g = h\)이다. 거꾸로 단사이면 \(\varphi(e) = e'\)에서 핵은 \(\{e\}\)뿐이다.</p>
+    <p>물리에서 만나는 준동형을 몇 가지 들어 두자.</p>
+    <ul>
+      <li>\(\det : O(3) \to \{1, -1\}\). 핵은 \(SO(3)\)이다. 그래서 회전 전체는 \(O(3)\)의 정규 부분군이다.</li>
+      <li>\(\det : U(n) \to U(1)\). 핵은 행렬식이 1인 유니타리 행렬의 군 \(SU(n)\)이다(<a href="../../math-phys/chapters/ch08.html#def-unitary-matrix">학부 8장의 유니타리 행렬</a>, <a href="../../math-phys/chapters/ch07.html#thm-det-product">\(\det(AB) = \det A\,\det B\)</a>).</li>
+      <li>\(\theta \mapsto R(\theta)\): 실수의 덧셈군 \((\mathbb R, +)\)에서 평면 회전의 군 \(SO(2)\)로. \(R(\theta_1 + \theta_2) = R(\theta_1)R(\theta_2)\)이고 핵은 \(2\pi\mathbb Z = \{2\pi k : k \in \mathbb Z\}\)다.</li>
+      <li>\(k \mapsto (k \bmod n)\): \(\mathbb Z\)에서 \(\mathbb Z_n\)으로. 핵은 \(n\mathbb Z\)다.</li>
+      <li>\(D_n\)의 원소를 그 \(2 \times 2\) 직교 행렬의 행렬식으로 보내는 \(D_n \to \{\pm1\}\). 핵은 회전 \(\mathbb Z_n\)이다.</li>
+    </ul>
+
+    <h3 id="s4-quotient">몫군</h3>
+    <p>정규 부분군 \(N\)의 잉여류들 사이에 곱을 정의하고 싶다. 자연스러운 정의는 대표 원소끼리 곱하는 것이다.</p>
+    <div class="formula" id="eq-coset-product">\[ (gN)(hN) = (gh)N \]</div>
+    <p>문제는 이것이 대표 원소를 무엇으로 고르든 같은가다. \(gN = g'N\), \(hN = h'N\)이라 하자. 식 <a class="ref" href="#eq-coset-equality"></a>에서 \(g' = gn_1\), \(h' = hn_2\)인 \(n_1, n_2 \in N\)이 있다. 그러면</p>
+    <div class="formula" id="eq-coset-product-well-defined">\[ g'h' = gn_1hn_2 = gh\,\big(h^{-1}n_1h\big)\,n_2 \]</div>
+    <p>이다. \(N\)이 정규 부분군이면 \(h^{-1}n_1h \in N\)이므로 \(g'h' \in (gh)N\), 곧 \(g'h'N = ghN\)이다. 정규 부분군이 아니면 \(h^{-1}n_1h\)가 \(N\) 밖으로 나갈 수 있고, 그러면 곱이 대표 원소에 따라 달라진다(<a class="ref" href="#ex-s3-quotient"></a>에서 실제로 본다). 곱이 잘 정의되면 군의 공리는 \(G\)에서 물려받는다. 결합 법칙은 \(\big((gN)(hN)\big)(kN) = (gh)kN = g(hk)N\)에서, 항등원은 \(eN = N\), \(gN\)의 역원은 \(g^{-1}N\)이다.</p>
+    <div class="box def" id="def-quotient-group"><div class="box-h">몫군</div>
+      <p>\(N \trianglelefteq G\)일 때 \(N\)의 잉여류 전체 \(G/N\)은 식 <a class="ref" href="#eq-coset-product"></a>의 곱으로 군을 이룬다. 이 군을 \(G\)를 \(N\)으로 나눈 <span class="term">몫군</span> <span class="en">(quotient group)</span>이라 한다. 위수는 \(G\)가 유한하면 \(\lvert G/N\rvert = [G:N] = \lvert G\rvert/\lvert N\rvert\)이다. \(\pi(g) = gN\)으로 정한 사상 \(\pi : G \to G/N\)은 핵이 \(N\)인 전사 준동형이다.</p>
+    </div>
+    <p>몫군은 "\(N\)의 원소만큼의 차이를 보지 않기로 했을 때 남는 구조"다. 정규 부분군은 언제나 어떤 준동형(\(\pi\))의 핵이고, 앞에서 본 대로 준동형의 핵은 언제나 정규 부분군이다. 두 개념은 같은 것을 다른 쪽에서 본 것이다. 다음 정리가 이 관계를 완성한다.</p>
+    <div class="box thm" id="thm-first-isomorphism"><div class="box-h">제1 동형 정리 <span class="en">(first isomorphism theorem)</span></div>
+      <p>준동형 \(\varphi : G \to G'\)의 핵을 \(K = \ker\varphi\)라 하면</p>
+      <div class="formula" id="eq-first-isomorphism">\[ G/K \cong \operatorname{im}\varphi \]</div>
+      <p>이고, 동형 사상은 \(\psi(gK) = \varphi(g)\)로 주어진다. 특히 \(G\)가 유한하면 \(\lvert G\rvert = \lvert\ker\varphi\rvert\,\lvert\operatorname{im}\varphi\rvert\)이다.</p>
+    </div>
+    <p><b>증명.</b> 네 가지를 확인한다. (1) <i>잘 정의됨.</i> \(gK = g'K\)이면 \(g' = gk\)(\(k \in K\))이므로 \(\varphi(g') = \varphi(g)\varphi(k) = \varphi(g)\)이다. 곧 \(\psi\)의 값은 대표 원소에 기대지 않는다. (2) <i>준동형.</i> \(\psi\big((gK)(hK)\big) = \psi(ghK) = \varphi(gh) = \varphi(g)\varphi(h) = \psi(gK)\,\psi(hK)\)이다. (3) <i>단사.</i> \(\psi(gK) = e'\)이면 \(\varphi(g) = e'\), 곧 \(g \in K\)이므로 \(gK = K\)이다. \(\psi\)의 핵이 몫군의 항등원 \(K\) 하나뿐이므로 앞에서 본 대로 단사다. (4) <i>전사.</i> \(\operatorname{im}\varphi\)의 원소는 모두 \(\varphi(g) = \psi(gK)\) 꼴이다. 위수의 관계는 \(\lvert G/K\rvert = \lvert G\rvert/\lvert K\rvert\)에서 나온다. ∎</p>
+    <p>앞의 준동형들에 적용하면 \(O(3)/SO(3) \cong \mathbb Z_2\), \(U(n)/SU(n) \cong U(1)\), \(\mathbb R/2\pi\mathbb Z \cong SO(2)\), \(\mathbb Z/n\mathbb Z \cong \mathbb Z_n\), \(D_n/\mathbb Z_n \cong \mathbb Z_2\)를 얻는다(각 준동형이 전사이므로 상은 받는 군 전체다). 3장의 <a href="ch03.html#thm-su2-so3-double-cover">\(SU(2) \to SO(3)\) 이중 덮개</a>는 핵이 \(\{\pm 1\}\)인 전사 준동형이고, 이 정리에 따라 \(SU(2)/\{\pm1\} \cong SO(3)\)이다. 5장의 <a href="ch05.html#def-lorentz-group">로런츠 군</a>은 연속적으로 이어진 네 조각으로 나뉘는데, 항등원을 포함한 조각으로 나눈 몫군이 공간 반전과 시간 반전이 만드는 \(\mathbb Z_2 \times \mathbb Z_2\)다(직접곱은 이 절 끝에서 정의한다).</p>
+
+    <div class="box ex" id="ex-s3-quotient"><div class="box-h">\(S_3/A_3 \cong \mathbb Z_2\)와 몫군이 되지 않는 잉여류</div>
+      <p>(가) \(A_3\)의 잉여류로 몫군 \(S_3/A_3\)의 곱셈표를 만들고 \(\mathbb Z_2\)와 동형임을 보여라. 같은 결과를 제1 동형 정리로 얻어라. (나) \(H = \{e, s_1\}\)의 왼쪽 잉여류에 식 <a class="ref" href="#eq-coset-product"></a>의 곱을 쓰면 왜 실패하는지 구체적으로 보여라.</p>
+      <p><b>풀이.</b> (가) <a class="ref" href="#calc-s3-table"></a>에서 \(A_3\)의 잉여류는 회전 \(A_3 = \{e, r, r^2\}\)과 반사 \(s_1A_3 = \{s_1, s_2, s_3\}\)의 둘이다. 대표로 \(e\)와 \(s_1\)을 골라 곱하면 \(A_3A_3 = A_3\), \(A_3\,s_1A_3 = s_1A_3\), \(s_1A_3\,s_1A_3 = s_1^2A_3 = A_3\)이다. 회전 두 개의 곱은 회전, 회전과 반사의 곱은 반사, 반사 두 개의 곱은 회전이라는 뜻이다. 다른 대표를 골라도 결과가 같다. 예를 들어 \(s_2\)와 \(s_3\)을 대표로 쓰면 \(s_2s_3 = r \in A_3\)이다. 이 곱셈표는 \(\{1, -1\}\)의 곱셈표와 같으므로 \(S_3/A_3 \cong \mathbb Z_2\)이다.</p>
+      <p>제1 동형 정리로는, 대칭 변환을 그 \(2 \times 2\) 행렬의 행렬식으로 보내는 준동형 \(\varphi = \det : S_3 \to \{\pm1\}\)을 쓴다. 회전은 \(+1\), 반사는 \(-1\)이므로 \(\ker\varphi = A_3\), \(\operatorname{im}\varphi = \{\pm1\}\)이고, 식 <a class="ref" href="#eq-first-isomorphism"></a>에서 \(S_3/A_3 \cong \{\pm 1\}\)이다.</p>
+      <p>(나) 잉여류 \(rH = \{r, s_3\}\)과 \(r^2H = \{r^2, s_2\}\)의 곱을 대표 원소로 계산해 보자. 대표로 \(r\)과 \(r^2\)을 고르면 \(rr^2 = e\)이므로 결과는 \(H\)다. 대표로 \(s_3\)과 \(r^2\)을 고르면 식 <a class="ref" href="#eq-s3-product-rule"></a>에서 \(s_3r^2 = (rs)(r^2) = r^{1-2}s = r^2s = s_2\)이므로 결과는 \(s_2H = r^2H\)다. 같은 두 잉여류의 곱이 대표에 따라 \(H\)도 되고 \(r^2H\)도 되므로 곱이 정의되지 않는다. 식 <a class="ref" href="#eq-coset-product-well-defined"></a>로 보면 \(g = r\), \(g' = s_3 = rs_1\)이라 \(n_1 = s_1\)이고, \(h = r^2\)에 대해 \(h^{-1}n_1h = rs_1r^{-1} = s_2 \notin H\)이다.</p>
+      <p><b>확인.</b> 몫군의 위수는 \(\lvert S_3\rvert/\lvert A_3\rvert = 2\)로 맞는다. (가)의 \(\varphi\)를 꼭짓점 자리의 순열로 보면 회전(3-순환)에 \(+1\), 반사(호환)에 \(-1\)을 준다. 1.6절에서 정의하는 순열의 부호와 같다. (나)의 실패는 \(H\)가 정규 부분군이 아니라는 것(\(rHr^{-1} = \{e, s_2\}\))과 같은 사실이다.</p>
+      <p><b>어디에 쓰이나.</b> 같은 몫군 \(O(3)/SO(3) \cong \mathbb Z_2\)가 스칼라와, 반사에서 부호가 바뀌는(\(\det R\)를 곱해 변환하는) 유사 스칼라를 가른다. 『양자역학 (대학원)』 7장의 패리티가 이 구별을 쓴다.</p>
+    </div>
+
+    <h3 id="s4-product">직접곱</h3>
+    <p>큰 군이 작은 군 두 개를 "따로따로" 담고 있는 경우가 많다. 물 분자의 대칭(1.7절)이나 \(O(3)\)가 그렇다.</p>
+    <div class="box def" id="def-direct-product"><div class="box-h">직접곱</div>
+      <p>두 군 \(G_1, G_2\)의 순서쌍 전체에 성분끼리의 곱 \((g_1, g_2)(h_1, h_2) = (g_1h_1, g_2h_2)\)을 주면 군이 된다. 이것을 <span class="term">직접곱</span> <span class="en">(direct product)</span> \(G_1 \times G_2\)라 하고, 위수는 \(\lvert G_1\rvert\lvert G_2\rvert\)이다.</p>
+    </div>
+    <div class="box thm" id="thm-internal-direct-product"><div class="box-h">내부 직접곱</div>
+      <p>군 \(G\)의 두 정규 부분군 \(N, M\)이 \(N \cap M = \{e\}\)를 만족하고 \(G\)의 모든 원소를 \(nm\)(\(n \in N\), \(m \in M\))으로 쓸 수 있으면 \(G \cong N \times M\)이다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>\(n \in N\), \(m \in M\)이면 \(nmn^{-1}m^{-1} = (nmn^{-1})m^{-1} \in M\)이고 \(nmn^{-1}m^{-1} = n(mn^{-1}m^{-1}) \in N\)이므로 \(N \cap M = \{e\}\)에 속한다. 따라서 \(nm = mn\)이다. 사상 \(f(n, m) = nm\)은 \(f\big((n, m)(n', m')\big) = nn'mm' = nmn'm' = f(n, m)f(n', m')\)이므로 준동형이고, 가정에서 전사다. \(nm = e\)이면 \(n = m^{-1} \in N \cap M\)이므로 \(n = m = e\)이다. 핵이 자명하므로 단사다.</p>
+      </details>
+    </div>
+    <p>예를 들어 \(\mathbb Z_2 \times \mathbb Z_2\)는 \(e\)가 아닌 원소 셋의 위수가 모두 2인 아벨 군이다. 이 군을 <span class="term">클라인 4원군</span> <span class="en">(Klein four-group)</span>이라 하고 \(V_4\)로도 쓴다. 위수 4인 군은 \(\mathbb Z_4\)와 \(V_4\) 둘뿐이다. 위수 4인 원소가 없으면 라그랑주 정리에서 모든 원소가 \(g^2 = e\)를 만족하고, \(gh = (gh)^{-1} = h^{-1}g^{-1} = hg\)이며, \(e\)가 아닌 두 원소의 곱은 나머지 하나일 수밖에 없기 때문이다. 또 3차원에서 \(-I\)는 모든 행렬과 교환하므로 \(\{I, -I\}\)는 \(O(3)\)의 정규 부분군이고, \(\det(-I) = -1\)이라 \(O(3)\)의 원소는 회전 \(R\)이거나 \((-I)R\) 꼴이다. 따라서 \(O(3) \cong SO(3) \times \mathbb Z_2\)이다. 공간 반전 \(P = -I\)를 회전과 따로 다룰 수 있는 이유가 이것이다.</p>
+    <div class="callout deep"><strong>더 나눌 수 없는 군: 단순군</strong><p>\(\{e\}\)와 자기 자신 말고는 정규 부분군이 없는 군을 <span class="term">단순군</span> <span class="en">(simple group)</span>이라 하고, 자명하지 않은 몫군으로 더 쪼갤 수 없다. 위수가 소수인 \(\mathbb Z_p\)와 \(n \ge 5\)인 교대군 \(A_n\)(1.6절)이 단순군이며, 정이십면체의 회전군인 \(A_5\)는 <a class="ref" href="#prob-code-a5-simple"></a>에서 확인한다. 유한 단순군은 모두 분류되어 있지만(유한 단순군의 분류 정리) 이 서재는 이 정리를 쓰지 않는다.</p></div>
+  </section>
+
+  <!-- ============================================================ 1.5 -->
+  <section id="s5">
+    <h2>군의 작용</h2>
+    <p>같은 군이 여러 대상을 움직인다. \(S_3\)는 꼭짓점 자리를 바꾸고, <a class="ref" href="#ex-triangle-ring-symmetry"></a>에서는 \(\mathbb C^3\)의 벡터를, <a class="ref" href="#ex-triangle-distortions"></a>에서는 찌그러진 고리 세 개를 바꿨다. 양자역학에서 회전 \(R\)은 파동함수를 \(\psi(\mathbf r) \mapsto \psi(R^{-1}\mathbf r)\)로 바꾸고, 2장의 표현은 벡터 공간에 대한 선형인 작용이다. 이 절은 작용을 일반적으로 정의하고, 움직인 자취의 크기를 세는 정리를 증명한다. 이 정리 하나로 켤레류의 크기, 분자의 대칭 연산의 수, 정육면체의 회전의 수를 모두 센다.</p>
+    <div class="box def" id="def-group-action"><div class="box-h">군의 작용, 궤도, 안정자 군</div>
+      <p>군 \(G\)와 집합 \(X\)에 대해 사상 \(G \times X \to X\), \((g, x) \mapsto g\cdot x\)가</p>
+      <div class="formula" id="eq-action-axioms">\[ e\cdot x = x, \quad g\cdot(h\cdot x) = (gh)\cdot x \]</div>
+      <p>를 만족하면 이것을 \(G\)의 \(X\)에 대한 <span class="term">작용</span> <span class="en">(group action)</span>이라 한다. \(x\)가 갈 수 있는 곳 전체 \(G\cdot x = \{g\cdot x : g \in G\}\)를 \(x\)의 <span class="term">궤도</span> <span class="en">(orbit)</span>, \(x\)를 움직이지 않는 원소 전체 \(G_x = \{g : g\cdot x = x\}\)를 \(x\)의 <span class="term">안정자 군</span> <span class="en">(stabilizer)</span>이라 한다.</p>
+    </div>
+    <p>안정자 군은 부분군이다. \(g, h \in G_x\)이면 \(h\cdot x = x\)의 양변에 \(h^{-1}\)을 작용해 \(x = h^{-1}\cdot x\)이고, \((gh^{-1})\cdot x = g\cdot(h^{-1}\cdot x) = g\cdot x = x\)이기 때문이다. 궤도들은 \(X\)를 겹치지 않게 나눈다. "\(y = g\cdot x\)인 \(g\)가 있다"가 동치 관계이기 때문이고, 확인은 <a class="ref" href="#thm-classes-partition"></a>과 같다. 원소 \(g\)마다 정해지는 사상 \(x \mapsto g\cdot x\)는 \(X\)의 일대일 대응이고(역사상은 \(g^{-1}\)의 작용), 식 <a class="ref" href="#eq-action-axioms"></a>은 \(g\)를 이 일대일 대응으로 보내는 사상이 준동형이라는 말이다. 곧 작용은 \(G\)에서 \(X\)의 순열들의 군으로 가는 준동형과 같다. 그 핵이 \(\{e\}\)이면 작용이 <span class="term">충실하다</span> <span class="en">(faithful)</span>고 한다.</p>
+    <p>자주 쓰는 작용은 다음과 같다.</p>
+    <ul>
+      <li><b>왼쪽 곱</b>: \(G\)가 자기 자신에게 \(g\cdot h = gh\)로 작용한다. 궤도는 \(G\) 전체 하나이고, \(gh = h\)이면 \(g = e\)이므로 충실하다. 따라서 위수 \(n\)인 군은 언제나 \(S_n\)의 부분군과 동형이다(케일리 정리). 2장의 <a href="ch02.html#def-regular-representation">정칙 표현</a>은 이 작용을 행렬로 쓴 것이다.</li>
+      <li><b>켤레 작용</b>: \(g\cdot h = ghg^{-1}\). 작용의 조건은 \(g(hkh^{-1})g^{-1} = (gh)k(gh)^{-1}\)에서 확인된다. 궤도는 켤레류이고, \(h\)의 안정자 군은 \(h\)와 교환하는 원소 전체 \(C_G(h) = \{g : gh = hg\}\)이다. \(C_G(h)\)를 \(h\)의 <span class="term">중심화 군</span> <span class="en">(centralizer)</span>이라 한다.</li>
+      <li><b>잉여류 위의 작용</b>: \(g\cdot(kH) = (gk)H\). <a class="ref" href="#ex-triangle-distortions"></a>에서 찌그러진 고리 세 개에 대한 작용이 이것이었다.</li>
+    </ul>
+
+    <h3 id="s5-functions">함수 위의 작용</h3>
+    <p>\(G\)가 \(X\)에 작용하면 \(X\) 위의 함수에도 작용한다. 그런데 자연스러워 보이는 \(f(g\cdot x)\)는 작용이 아니다. 올바른 정의는 다음이다.</p>
+    <div class="formula" id="eq-function-action">\[ (g\cdot f)(x) = f\big(g^{-1}\cdot x\big) \]</div>
+    <p>확인해 보자.</p>
+    <div class="formula">\[ \begin{aligned} \big(g\cdot(h\cdot f)\big)(x) &= (h\cdot f)(g^{-1}\cdot x) \\ &= f\big(h^{-1}\cdot(g^{-1}\cdot x)\big) \\ &= f\big((gh)^{-1}\cdot x\big) \\ &= \big((gh)\cdot f\big)(x) \end{aligned} \]</div>
+    <p>셋째 줄에서 \(h^{-1}g^{-1} = (gh)^{-1}\)을 썼다. 역원이 없는 \((g \star f)(x) = f(g\cdot x)\)로 계산하면 \(g\star(h\star f) = (hg)\star f\)가 되어 곱의 순서가 뒤집힌다. 식 <a class="ref" href="#eq-function-action"></a>은 그림을 옮기는 것과 같다. 함수의 그래프를 \(g\)로 옮기면, 새 함수가 점 \(x\)에서 갖는 값은 옛 함수가 옮기기 전의 점 \(g^{-1}\cdot x\)에서 가졌던 값이다. 직선 위에서 \(a\)만큼 평행 이동하면 \(f(x) \mapsto f(x - a)\)이고, 그래프는 오른쪽으로 \(a\)만큼 간다.</p>
+
+    <h3 id="s5-orbit-stabilizer">궤도-안정자 정리</h3>
+    <p><a class="ref" href="#ex-triangle-distortions"></a>에서 찌그러진 고리 \(X_1\)의 궤도는 고리 세 개였고, 안정자 군은 \(H_1 = \{e, s_1\}\)이었으며, \(3 = 6/2\)였다. 이것이 일반적이다.</p>
+    <div class="box thm" id="thm-orbit-stabilizer"><div class="box-h">궤도-안정자 정리 <span class="en">(orbit-stabilizer theorem)</span></div>
+      <p>유한군 \(G\)가 집합 \(X\)에 작용할 때, 모든 \(x \in X\)에 대해 \(gG_x \mapsto g\cdot x\)는 \(G/G_x\)에서 \(G\cdot x\)로 가는 일대일 대응이다. 따라서</p>
+      <div class="formula" id="eq-orbit-stabilizer">\[ \lvert G\cdot x\rvert = [G : G_x] = \frac{\lvert G\rvert}{\lvert G_x\rvert} \]</div>
+      <p>이다. 같은 궤도에 있는 점의 안정자 군은 서로 켤레다: \(G_{g\cdot x} = g\,G_x\,g^{-1}\).</p>
+    </div>
+    <p><b>증명.</b> 사상 \(F(gG_x) = g\cdot x\)를 생각한다. 식 <a class="ref" href="#eq-coset-equality"></a>과 작용의 성질에서</p>
+    <div class="formula" id="eq-orbit-stabilizer-chain">\[ \begin{aligned} g\cdot x = g'\cdot x &\iff (g^{-1}g')\cdot x = x \\ &\iff g^{-1}g' \in G_x \\ &\iff gG_x = g'G_x \end{aligned} \]</div>
+    <p>이다. 첫 동치는 양변에 \(g^{-1}\)을 작용한 것이다. 아래에서 위로 읽으면 \(F\)가 잘 정의되고(같은 잉여류의 다른 대표는 같은 점을 준다), 위에서 아래로 읽으면 \(F\)가 단사다. 궤도의 모든 점은 어떤 \(g\cdot x\)이므로 전사다. 일대일 대응이므로 \(\lvert G\cdot x\rvert\)는 잉여류의 수 \([G:G_x]\)와 같고, <a class="ref" href="#thm-lagrange"></a>에서 \(\lvert G\rvert/\lvert G_x\rvert\)이다. 마지막 주장을 보자. \(k \in G_x\)이면 \((gkg^{-1})\cdot(g\cdot x) = g\cdot(k\cdot x) = g\cdot x\)이므로 \(gG_xg^{-1} \subseteq G_{g\cdot x}\)이다. \(g\)와 \(x\) 대신 \(g^{-1}\)과 \(g\cdot x\)로 같은 논법을 쓰면 반대 포함 관계가 나온다. ∎</p>
+    <p>켤레 작용에 적용하면 궤도는 켤레류, 안정자 군은 중심화 군이므로</p>
+    <div class="formula" id="eq-class-size">\[ \lvert[g]\rvert = \frac{\lvert G\rvert}{\lvert C_G(g)\rvert} \]</div>
+    <p>이다. 켤레류의 크기는 언제나 군의 위수의 약수다. 크기가 1인 켤레류(중심의 원소)와 나머지를 나누어 더하면 <span class="term">류 방정식</span> <span class="en">(class equation)</span>을 얻는다.</p>
+    <div class="formula" id="eq-class-equation">\[ \lvert G\rvert = \lvert Z(G)\rvert + \sum_{i} \frac{\lvert G\rvert}{\lvert C_G(g_i)\rvert} \]</div>
+    <p>여기서 합은 크기가 2 이상인 켤레류마다 대표 \(g_i\)를 하나씩 골라 더한다. \(S_3\)에서 \(r\)의 중심화 군은 \(A_3\)(위수 3)이라 \(\lvert[r]\rvert = 6/3 = 2\)이고, \(s_1\)의 중심화 군은 \(\{e, s_1\}\)이라 \(\lvert[s_1]\rvert = 6/2 = 3\)이다. 류 방정식은 \(6 = 1 + 2 + 3\)이다. \(D_4\)에서는 \(8 = 2 + 2 + 2 + 2\)이다. 류 방정식의 쓰임을 하나 보자. \(\lvert G\rvert = p^k\)(\(p\)는 소수, \(k \ge 1\))이면 크기가 2 이상인 켤레류의 크기는 \(p^k\)의 약수라 \(p\)의 배수이므로, 식 <a class="ref" href="#eq-class-equation"></a>에서 \(\lvert Z(G)\rvert\)도 \(p\)의 배수다. 곧 위수가 소수의 거듭제곱인 군은 중심이 자명하지 않다(\(D_4\)의 중심 \(\{e, r^2\}\)가 그 예다).</p>
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 310" role="img" aria-label="정육면체와 몸 대각선 네 개. 위쪽 끝 꼭짓점에 1, 2, 3, 4가 적혀 있고, z축 둘레 90도 회전이 이 번호를 차례로 옮긴다"><defs><marker id="f0103-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs><line x1="210" y1="26" x2="210" y2="300" class="s-faint" stroke-dasharray="6 5"/><text x="218" y="28" class="t-math"><tspan font-style="italic">z</tspan></text><path d="M188,45 A22,7 0 0 0 232,45" class="s-acc" style="stroke-width:2" marker-end="url(#f0103-arr)"/><line x1="166" y1="223" x2="98" y2="263" class="s-line" stroke-dasharray="4 4"/><line x1="166" y1="223" x2="322" y2="223" class="s-line" stroke-dasharray="4 4"/><line x1="166" y1="223" x2="166" y2="67" class="s-line" stroke-dasharray="4 4"/><path d="M98,107L254,107L322,67L166,67Z" class="s-line"/><path d="M98,107L98,263L254,263L254,107" class="s-line"/><path d="M254,263L322,223L322,67" class="s-line"/><line x1="322" y1="67" x2="98" y2="263" class="s-acc" style="stroke-width:2.4"/><line x1="166" y1="67" x2="254" y2="263" class="s-acc2" style="stroke-width:2.4"/><line x1="98" y1="107" x2="322" y2="223" class="s-line" style="stroke:var(--text);stroke-width:2"/><line x1="254" y1="107" x2="166" y2="223" class="s-line" style="stroke:var(--text-dim);stroke-width:2" stroke-dasharray="3 3"/><circle cx="322" cy="67" r="4" class="f-acc"/><circle cx="166" cy="67" r="4" class="f-acc2"/><circle cx="98" cy="107" r="4" class="f-dim"/><circle cx="254" cy="107" r="4" class="f-dim"/><text x="332" y="64" class="t-math acc">1</text><text x="156" y="60" class="t-math acc2" text-anchor="end">2</text><text x="88" y="104" class="t-math" text-anchor="end">3</text><text x="262" y="122" class="t-math dim">4</text></svg></div>
+      <figcaption><b>그림 1-3.</b> 정육면체의 몸 대각선 네 개. 번호는 각 대각선의 위쪽 끝 꼭짓점에 적었다. \(z\)축 둘레로 \(90^\circ\) 돌리면(위에서 볼 때 시계 반대 방향, 화살표) 위쪽 꼭짓점이 \(1 \to 2 \to 3 \to 4 \to 1\)로 옮겨 가므로 대각선은 4-순환 \((1\,2\,3\,4)\)로 바뀐다. 점선 모서리는 가려진 모서리다.</figcaption>
+    </figure>
+
+    <div class="box ex" id="ex-cube-rotations-s4"><div class="box-h">정육면체의 회전군과 \(S_4\)</div>
+      <p>정육면체를 자기 자신에게 겹치는 회전(\(\det = +1\)인 대칭 변환) 전체를 \(O\)라 한다. (가) \(O\)의 위수를 궤도-안정자 정리로 구하라. (나) \(O\)가 정육면체의 몸 대각선 네 개(그림 1-3)를 바꾸는 작용으로 \(O \cong S_4\)임을 보여라. (다) \(O\)의 켤레류를 회전축의 종류로 분류하고 \(S_4\)의 켤레류와 맞춰라.</p>
+      <p><b>풀이.</b> (가) \(O\)는 면 여섯 개에 작용한다. 면의 중심을 지나는 축 둘레의 \(90^\circ\) 회전들을 거듭하면 어느 면이든 다른 어느 면으로 보낼 수 있으므로 궤도는 여섯 면 전체다. 윗면을 고정하는 회전은 윗면과 아랫면의 중심을 지나는 축 둘레의 \(0^\circ, 90^\circ, 180^\circ, 270^\circ\) 회전 넷이다. 식 <a class="ref" href="#eq-orbit-stabilizer"></a>에서</p>
+      <div class="formula" id="eq-cube-order">\[ \lvert O\rvert = 6 \times 4 = 8 \times 3 = 12 \times 2 = 24 \]</div>
+      <p>이다. 둘째와 셋째 등식은 같은 셈을 꼭짓점 여덟 개(안정자는 몸 대각선 둘레의 \(0^\circ, 120^\circ, 240^\circ\) 회전)와 모서리 열두 개(안정자는 모서리 중점을 잇는 축 둘레의 \(0^\circ, 180^\circ\) 회전)로 한 것이다.</p>
+      <p>(나) 몸 대각선은 맞은편 꼭짓점 둘을 잇는 선분이고 네 개다. 회전은 대각선을 대각선으로 보내므로, 대각선에 1, 2, 3, 4의 번호를 붙이면 작용에서 준동형 \(\varphi : O \to S_4\)를 얻는다. 핵을 구하자. 대각선의 방향을 \(\mathbf d_1 = (1, 1, 1)\), \(\mathbf d_2 = (-1, 1, 1)\), \(\mathbf d_3 = (-1, -1, 1)\), \(\mathbf d_4 = (1, -1, 1)\)이라 하자. 네 대각선을 모두 제자리에 두는 회전 \(R\)은 \(R\mathbf d_k = \varepsilon_k\mathbf d_k\)(\(\varepsilon_k = \pm1\))를 만족한다. \(\mathbf d_1, \mathbf d_2, \mathbf d_3\)은 일차 독립이고 \(\mathbf d_4 = \mathbf d_1 - \mathbf d_2 + \mathbf d_3\)이므로 \(R\mathbf d_4 = \varepsilon_1\mathbf d_1 - \varepsilon_2\mathbf d_2 + \varepsilon_3\mathbf d_3\)이다. 이것이 \(\pm\mathbf d_4\)이려면 \(\varepsilon_1 = \varepsilon_2 = \varepsilon_3\)이어야 하므로 \(R = \pm I\)이고, 회전이므로 \(R = I\)이다. 핵이 자명하므로 \(\varphi\)는 단사이고, \(\lvert O\rvert = 24 = \lvert S_4\rvert\)이므로 전사다. 곧 \(O \cong S_4\)이다.</p>
+      <p>(다) 회전축은 세 종류다. 마주 보는 면의 중심을 잇는 축 셋, 몸 대각선 넷, 마주 보는 모서리의 중점을 잇는 축 여섯이다. 식 <a class="ref" href="#eq-rotation-conjugation"></a>에서 \(SRS^{-1}\)은 축을 \(S\)로 옮긴 같은 각의 회전이다. 같은 종류의 축은 \(O\)의 원소로 서로 옮길 수 있으므로(대각선 둘레 \(120^\circ\) 회전은 \(x, y, z\)축을 차례로 바꾼다), 각이 같고 축이 같은 종류인 회전은 \(O\) 안에서 켤레다. 또 \(x\)축 둘레 \(180^\circ\) 회전이 \(z\)축을 \(-z\)축으로 보내므로 \(z\)축 둘레 \(+90^\circ\)와 \(-90^\circ\)도 켤레다. 각 종류를 \(\varphi\)로 보내 순환의 길이를 읽는다(1.6절에서 이것을 순환 꼴이라 부른다). 그림 1-3의 \(z\)축 둘레 \(90^\circ\) 회전은 \((1\,2\,3\,4)\)이고, \(180^\circ\) 회전은 그 제곱 \((1\,3)(2\,4)\), 곧 서로 겹치지 않는 호환 둘의 곱이다.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>회전</th><th>개수</th><th>\(S_4\)의 원소</th></tr></thead>
+        <tbody>
+          <tr><td>항등</td><td>1</td><td>\(e\)</td></tr>
+          <tr><td>면 축 \(\pm90^\circ\)</td><td>6</td><td>길이 4인 순환</td></tr>
+          <tr><td>면 축 \(180^\circ\)</td><td>3</td><td>겹치지 않는 호환 둘의 곱</td></tr>
+          <tr><td>대각선 축 \(\pm120^\circ\)</td><td>8</td><td>길이 3인 순환</td></tr>
+          <tr><td>모서리 축 \(180^\circ\)</td><td>6</td><td>호환</td></tr>
+        </tbody>
+      </table></div>
+      <p><b>확인.</b> \(1 + 6 + 3 + 8 + 6 = 24\)이고, 켤레류의 크기 1, 6, 3, 8, 6은 <a class="ref" href="#code-permutation-group"></a>이 \(S_4\)에서 구한 값과 같다. 크기 6인 류가 둘이라 대응은 원소의 위수로 정한다. 동형 사상은 위수를 보존하고, \(S_4\)에서 위수 4인 것은 길이 4인 순환, 위수 3인 것은 길이 3인 순환뿐이며, 위수 2인 두 류는 크기(3과 6)로 갈린다. 같은 \(180^\circ\) 회전이라도 면 축과 모서리 축은 \(O\) 안에서 켤레가 아니다. \(SO(3)\)에서는 각이 같은 회전이 모두 켤레였지만(<a class="ref" href="#ex-rotation-conjugacy"></a>), \(O\)에는 면의 중심을 모서리의 중점으로 보내는 원소가 없다. 켤레류는 어느 군 안에서 보느냐에 따라 달라진다. 학부 7장의 <a href="../../math-phys/chapters/ch07.html#ex-cube-diagonal-rotation">대각선 둘레 \(120^\circ\) 회전</a>은 표의 넷째 줄에 속한다.</p>
+      <p><b>어디에 쓰이나.</b> 2장의 <a href="ch02.html#ex-crystal-field-d-orbitals">정육면체 대칭 결정장 속의 \(d\) 궤도</a>는 이 다섯 켤레류에서 회전군의 지표를 계산해 5중 축퇴가 어떻게 갈라지는지 정한다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 1.6 -->
+  <section id="s6">
+    <h2>대칭군과 순열의 부호</h2>
+    <p>동일 입자 \(n\)개의 이름표를 바꾸는 연산은 대칭군 \(S_n\)을 이룬다. 『양자역학 (대학원)』 15장은 동일 입자의 파동함수가 \(S_n\) 아래에서 어떻게 변해야 하는지에서 출발하고, 그 답에 순열의 부호가 들어 있다. 이 절은 \(S_n\)의 켤레류를 순환으로 분류하고, 학부 책이 증명 없이 쓴 순열의 부호가 잘 정의된 준동형임을 보인다.</p>
+
+    <h3 id="s6-cycles">순환 분해와 켤레류</h3>
+    <p>순열 \(\sigma \in S_n\)이 만드는 순환 부분군 \(\langle\sigma\rangle\)은 \(\{1, \ldots, n\}\)에 작용한다. 한 궤도를 \(a, \sigma(a), \sigma^2(a), \ldots\)로 따라가면 처음으로 되풀이되는 것은 \(a\) 자신이다(\(\sigma^i(a) = \sigma^j(a)\)이면 \(\sigma\)가 일대일이므로 \(\sigma^{j-i}(a) = a\)). 따라서 \(\sigma\)는 크기 \(k\)인 궤도 위에서 순환 \((a\,\sigma(a)\,\cdots\,\sigma^{k-1}(a))\)으로 움직이고, 궤도들은 겹치지 않는다. 곧 <b>모든 순열은 서로 겹치지 않는 순환들의 곱이고, 이 분해는 순환의 순서와 각 순환을 읽기 시작하는 자리를 빼면 하나뿐이다.</b> 겹치지 않는 순환은 서로 교환하므로 곱의 순서는 상관없다. 예를 들어 \(S_6\)의 순열 \(1 \to 3,\ 2 \to 5,\ 3 \to 6,\ 4 \to 4,\ 5 \to 2,\ 6 \to 1\)은 \((1\,3\,6)(2\,5)\)이다. 길이 1인 순환(움직이지 않는 자리)은 보통 적지 않는다.</p>
+    <p>순환들의 길이를 큰 것부터 늘어놓은 것을 \(\sigma\)의 <span class="term">순환 꼴</span> <span class="en">(cycle type)</span>이라 한다. 길이 1까지 적으면 길이의 합이 \(n\)이므로, 순환 꼴은 \(n\)을 자연수의 합으로 쓰는 방법, 곧 \(n\)의 <span class="term">분할</span> <span class="en">(partition)</span>이다. 위의 예는 \([3, 2, 1]\)이다. 4장에서 분할을 영 도표로 그린다.</p>
+    <div class="box thm" id="thm-sn-conjugacy"><div class="box-h">\(S_n\)의 켤레류는 순환 꼴로 정해진다</div>
+      <p>\(\tau \in S_n\)과 순환 \((a_1\,a_2\,\cdots\,a_k)\)에 대해</p>
+      <div class="formula" id="eq-cycle-conjugation">\[ \begin{aligned} &\tau\,(a_1\,a_2\,\cdots\,a_k)\,\tau^{-1} \\ &\quad= \big(\tau(a_1)\;\tau(a_2)\;\cdots\;\tau(a_k)\big) \end{aligned} \]</div>
+      <p>이다. 따라서 \(S_n\)의 두 순열은 순환 꼴이 같을 때, 그리고 그때만 켤레다. \(S_n\)의 켤레류의 수는 \(n\)의 분할의 수 \(p(n)\)이다.</p>
+    </div>
+    <p><b>증명.</b> \(\sigma = (a_1\,\cdots\,a_k)\)라 하자. 자리 \(\tau(a_i)\)에 \(\tau\sigma\tau^{-1}\)을 적용하면, \(\tau^{-1}\)이 먼저 \(a_i\)로 보내고, \(\sigma\)가 \(a_{i+1}\)로(\(i = k\)이면 \(a_1\)로), \(\tau\)가 \(\tau(a_{i+1})\)로 보낸다. 자리 \(b\)가 \(\tau(a_1), \ldots, \tau(a_k)\) 가운데 없으면 \(\tau^{-1}(b)\)가 \(a_i\) 가운데 없으므로 \(\sigma\)가 움직이지 않고, \(\tau\sigma\tau^{-1}(b) = b\)이다. 이것은 식 <a class="ref" href="#eq-cycle-conjugation"></a>의 오른쪽 순환과 정확히 같은 작용이다. 일반 순열 \(\sigma = c_1c_2\cdots c_m\)(겹치지 않는 순환)에서는 \(\tau\sigma\tau^{-1} = (\tau c_1\tau^{-1})(\tau c_2\tau^{-1})\cdots(\tau c_m\tau^{-1})\)이고, 각 순환이 같은 길이의 순환으로 가며 \(\tau\)가 일대일이므로 겹치지 않는 채로 남는다. 따라서 켤레인 순열은 순환 꼴이 같다. 거꾸로 \(\sigma\)와 \(\sigma'\)의 순환 꼴이 같으면, 두 순열의 순환 분해를 길이가 같은 것끼리 위아래로 맞추어 적고(길이 1인 순환까지), 위의 자리를 바로 아래의 자리로 보내는 순열을 \(\tau\)로 두면 식 <a class="ref" href="#eq-cycle-conjugation"></a>에서 \(\tau\sigma\tau^{-1} = \sigma'\)이다. 켤레류와 순환 꼴이 일대일로 대응하므로 켤레류의 수는 분할의 수다. ∎</p>
+    <p>예를 들어 \(\sigma = (1\,2)(3\,4\,5)\)와 \(\sigma' = (2\,5)(1\,3\,4)\)는 순환 꼴이 \([3, 2]\)로 같다. 길이가 같은 순환끼리 위아래로 맞추면</p>
+    <div class="formula">\[ \begin{array}{ccccc} 1 & 2 & 3 & 4 & 5 \\ \downarrow & \downarrow & \downarrow & \downarrow & \downarrow \\ 2 & 5 & 1 & 3 & 4 \end{array} \]</div>
+    <p>에서 \(\tau = (1\,2\,5\,4\,3)\)이고, \(\tau\sigma\tau^{-1} = (\tau(1)\,\tau(2))(\tau(3)\,\tau(4)\,\tau(5)) = (2\,5)(1\,3\,4) = \sigma'\)이다.</p>
+    <p>켤레류의 크기도 셀 수 있다. 식 <a class="ref" href="#eq-class-size"></a>에서 중심화 군의 크기만 알면 된다. 순환 꼴 \(\lambda\)에 길이 \(k\)인 순환이 \(m_k\)개 있다고 하자. \(\tau\sigma\tau^{-1} = \sigma\)이려면 식 <a class="ref" href="#eq-cycle-conjugation"></a>에서 \(\tau\)가 \(\sigma\)의 순환들을 같은 길이의 순환으로, 순환 안의 차례를 지키며 보내야 한다. 길이 \(k\)인 순환 \(m_k\)개를 서로 바꾸는 방법이 \(m_k!\)가지이고, 각 순환에서 읽기 시작하는 자리를 고르는 방법이 \(k\)가지씩이다. 따라서 \(\lvert C_{S_n}(\sigma)\rvert = \prod_k k^{m_k}m_k!\)이고</p>
+    <div class="formula" id="eq-sn-class-size">\[ \lvert C_\lambda\rvert = \frac{n!}{\prod_k k^{m_k}\,m_k!} \]</div>
+    <p>이다. \(S_4\)에서 \([2, 1, 1]\)은 \(24/(2 \cdot 2!) = 6\), \([2, 2]\)는 \(24/(2^2 \cdot 2!) = 3\), \([3, 1]\)은 \(24/3 = 8\), \([4]\)는 \(24/4 = 6\)으로, <a class="ref" href="#code-permutation-group"></a>의 출력과 같다(길이 1인 순환이 \(m_1\)개이면 분모에 \(m_1!\)이 들어간다).</p>
+
+    <h3 id="s6-sign">순열의 부호</h3>
+    <p><a href="../../math-phys/chapters/ch07.html#math-permutation-symbol">학부 7장의 \(n\)개 지수 레비치비타 기호</a>는 "두 개씩 맞바꾸기를 짝수 번 해서 얻으면 \(+1\), 홀수 번이면 \(-1\)"로 정해졌고, 학부 7장의 행렬식이 그것으로 쓰였다. 그런데 같은 순열을 맞바꾸기의 곱으로 쓰는 방법은 여러 가지다(\((1\,2\,3) = (1\,3)(1\,2) = (1\,2)(2\,3)\)이고, 같은 호환을 두 번 끼우면 네 개로도 쓴다). 맞바꾸기 횟수의 홀짝이 쓰는 방법에 따라 달라지지 않는다는 것은 증명이 필요하고, 다항식에 대한 작용으로 증명한다. 변수 \(n\)개의 다항식 \(f\)에 순열 \(\sigma\)가 다음처럼 작용한다고 하자.</p>
+    <div class="formula" id="eq-polynomial-action">\[ (\sigma\cdot f)(x_1, \ldots, x_n) = f\big(x_{\sigma(1)}, \ldots, x_{\sigma(n)}\big) \]</div>
+    <p>\(y_i = x_{\sigma(i)}\)로 두면 \(\big(\sigma\cdot(\tau\cdot f)\big)(x) = (\tau\cdot f)(y) = f(y_{\tau(1)}, \ldots, y_{\tau(n)}) = f(x_{\sigma(\tau(1))}, \ldots, x_{\sigma(\tau(n))}) = \big((\sigma\tau)\cdot f\big)(x)\)이므로 작용이다. 식 <a class="ref" href="#eq-function-action"></a>과 달리 역원이 없어 보이는 것은 점에 대한 작용 때문이다. \(\sigma\)가 점 \(x = (x_1, \ldots, x_n)\)의 \(i\)번 자리 값을 \(\sigma(i)\)번 자리로 옮기면(\((\sigma\cdot x)_{\sigma(i)} = x_i\)), \((\sigma^{-1}\cdot x)_i = x_{\sigma(i)}\)이므로 식 <a class="ref" href="#eq-polynomial-action"></a>는 \(f(\sigma^{-1}\cdot x)\)와 같다. 이제 차이의 곱</p>
+    <div class="formula" id="eq-vandermonde">\[ \Delta(x_1, \ldots, x_n) = \prod_{1 \le i &lt; j \le n}(x_i - x_j) \]</div>
+    <p>을 생각한다. \(\sigma\cdot\Delta = \prod_{i &lt; j}(x_{\sigma(i)} - x_{\sigma(j)})\)에서 각 인수는 \(\Delta\)의 인수 \(x_a - x_b\)(\(a &lt; b\)) 가운데 정확히 하나와 같거나 부호만 다르다. \(\{i, j\} \mapsto \{\sigma(i), \sigma(j)\}\)가 두 자리 쌍들의 일대일 대응이기 때문이다. 따라서 \(\sigma\cdot\Delta = \pm\Delta\)이다.</p>
+    <div class="box def" id="def-permutation-sign"><div class="box-h">순열의 부호와 교대군</div>
+      <p>순열 \(\sigma \in S_n\)의 <span class="term">부호</span> <span class="en">(sign)</span> \(\operatorname{sgn}\sigma \in \{1, -1\}\)를</p>
+      <div class="formula" id="eq-sign-definition">\[ \sigma\cdot\Delta = (\operatorname{sgn}\sigma)\,\Delta \]</div>
+      <p>로 정의한다. \(\operatorname{sgn}\sigma = 1\)이면 <span class="term">짝순열</span>, \(-1\)이면 <span class="term">홀순열</span>이라 한다. \(\operatorname{sgn} : S_n \to \{\pm1\}\)은 준동형이고, 그 핵인 짝순열 전체를 <span class="term">교대군</span> <span class="en">(alternating group)</span> \(A_n\)이라 한다. \(n \ge 2\)이면 \(A_n \trianglelefteq S_n\)이고 \(\lvert A_n\rvert = n!/2\)이다.</p>
+    </div>
+    <p>준동형임은 작용의 성질에서 나온다. \((\sigma\tau)\cdot\Delta = \sigma\cdot(\tau\cdot\Delta) = \sigma\cdot(\operatorname{sgn}\tau\,\Delta) = \operatorname{sgn}\tau\,\operatorname{sgn}\sigma\,\Delta\)이므로</p>
+    <div class="formula" id="eq-sign-homomorphism">\[ \operatorname{sgn}(\sigma\tau) = \operatorname{sgn}\sigma\,\operatorname{sgn}\tau \]</div>
+    <p>이다. 셋째 등호에서 \(\sigma\)의 작용이 상수배를 그대로 둔다는 것을 썼다. 핵 \(A_n\)은 정규 부분군이고, \(n \ge 2\)이면 \(\operatorname{sgn}(1\,2) = -1\)(아래)이라 상이 \(\{\pm1\}\) 전체이므로 제1 동형 정리에서 \(S_n/A_n \cong \mathbb Z_2\), \(\lvert A_n\rvert = n!/2\)이다. 이제 부호를 실제로 계산하자.</p>
+    <ul>
+      <li><b>호환의 부호는 \(-1\)이다.</b> \((1\,2)\cdot\Delta\)에서 인수 \(x_1 - x_2\)는 \(x_2 - x_1\)이 되어 부호가 바뀌고, 나머지 인수는 \(x_1 - x_j\)와 \(x_2 - x_j\)(\(j \ge 3\))가 서로 자리를 바꿀 뿐이다. 따라서 \(\operatorname{sgn}(1\,2) = -1\)이다. 모든 호환은 순환 꼴이 같아 \((1\,2)\)와 켤레이고(<a class="ref" href="#thm-sn-conjugacy"></a>), 부호는 \(\operatorname{sgn}(\tau\sigma\tau^{-1}) = \operatorname{sgn}\tau\,\operatorname{sgn}\sigma\,(\operatorname{sgn}\tau)^{-1} = \operatorname{sgn}\sigma\)라 켤레류마다 같은 값이므로 모든 호환의 부호가 \(-1\)이다.</li>
+      <li><b>순환은 호환의 곱이다.</b> 식 <a class="ref" href="#eq-permutation-product"></a>의 순서로 오른쪽부터 따라가면 다음이 확인된다.</li>
+    </ul>
+    <div class="formula" id="eq-cycle-transpositions">\[ (a_1\,a_2\,\cdots\,a_k) = (a_1\,a_k)(a_1\,a_{k-1})\cdots(a_1\,a_2) \]</div>
+    <p>따라서 길이 \(k\)인 순환의 부호는 \((-1)^{k-1}\)이다. 순환 분해에서 길이 1인 순환까지 센 순환의 수를 \(c(\sigma)\)라 하면 순환마다의 \(k - 1\)을 모두 더한 값이 \(n - c(\sigma)\)이므로</p>
+    <div class="formula" id="eq-sign-cycles">\[ \operatorname{sgn}\sigma = (-1)^{\,n - c(\sigma)} \]</div>
+    <p>이다. 모든 순열은 호환의 곱으로 쓰이고, 어떻게 쓰든 호환의 수의 홀짝은 \(\operatorname{sgn}\sigma\)로 정해진다. 학부 7장의 레비치비타 기호는 \(\varepsilon_{\sigma(1)\cdots\sigma(n)} = \operatorname{sgn}\sigma\)이고, <a href="../../math-phys/chapters/ch07.html#eq-det-epsilon">학부 7장의 행렬식</a>은 \(\det A = \sum_{\sigma \in S_n}\operatorname{sgn}\sigma\,A_{1\sigma(1)}\cdots A_{n\sigma(n)}\)이다. \(S_3\)에서 짝순열은 \(e\)와 3-순환 둘, 곧 \(A_3 = \{e, r, r^2\}\)이고, <a class="ref" href="#ex-s3-quotient"></a>의 \(\det\)이 바로 \(\operatorname{sgn}\)이었다. \(S_4\)에서 \(A_4\)는 항등원, 3-순환 8개, \([2, 2]\) 꼴 3개로 위수 12다.</p>
+
+    <div class="box ex" id="ex-permutation-sign-particles"><div class="box-h">동일 입자 \(n\)개의 순열과 부호</div>
+      <p>같은 종류의 입자 \(n\)개의 파동함수 \(\psi(x_1, \ldots, x_n)\)를 생각한다(\(x_i\)는 \(i\)번 입자의 위치와 스핀). 순열 \(\sigma\)마다 연산자를</p>
+      <div class="formula" id="eq-particle-permutation">\[ \begin{aligned} &(P_\sigma\psi)(x_1, \ldots, x_n) \\ &\quad= \psi\big(x_{\sigma(1)}, \ldots, x_{\sigma(n)}\big) \end{aligned} \]</div>
+      <p>로 정의한다. (가) \(P_\sigma P_\tau = P_{\sigma\tau}\)임을 보여라. (나) 입자 번호를 바꾼 상태가 원래 상태의 상수배라고 요구하자. 곧 모든 \(\sigma\)에서 \(P_\sigma\psi = \eta(\sigma)\psi\)이고 \(\psi \ne 0\)이다. 가능한 \(\eta\)를 모두 구하라. (다) 한 입자 상태 \(\phi_1, \ldots, \phi_n\)으로 \(\eta = \operatorname{sgn}\)인 상태를 만들어라.</p>
+      <p><b>풀이.</b> (가) 식 <a class="ref" href="#eq-particle-permutation"></a>는 식 <a class="ref" href="#eq-polynomial-action"></a>와 같은 꼴이므로 같은 계산으로 \(P_\sigma(P_\tau\psi) = P_{\sigma\tau}\psi\)이다. \(P_\sigma\)는 \(i\)번 자리의 입자를 \(\sigma(i)\)번 자리로 옮기는 작용을 식 <a class="ref" href="#eq-function-action"></a>처럼 함수로 옮긴 것이다.</p>
+      <p>(나) \(P_\sigma P_\tau\psi = \eta(\sigma)\eta(\tau)\psi\)이고 \(P_{\sigma\tau}\psi = \eta(\sigma\tau)\psi\)이므로 \(\eta(\sigma\tau) = \eta(\sigma)\eta(\tau)\)이다. 곧 \(\eta\)는 \(S_n\)에서 0이 아닌 복소수의 곱셈군으로 가는 준동형이다. 그런 준동형은 다음 세 단계로 정해진다.</p>
+      <ol>
+        <li>\((1\,2)^2 = e\)이므로 \(\eta((1\,2))^2 = \eta(e) = 1\), 곧 \(\eta((1\,2)) = \pm1\)이다.</li>
+        <li>값을 받는 군이 아벨 군이므로 \(\eta(\tau\sigma\tau^{-1}) = \eta(\tau)\eta(\sigma)\eta(\tau)^{-1} = \eta(\sigma)\)이다. 모든 호환은 \((1\,2)\)와 켤레이므로 모든 호환에서 \(\eta\)의 값이 같다.</li>
+        <li>모든 순열은 호환의 곱이므로(식 <a class="ref" href="#eq-cycle-transpositions"></a>) \(\eta\)는 호환에서의 값으로 정해진다.</li>
+      </ol>
+      <p>따라서 \(\eta((1\,2)) = 1\)이면 \(\eta\)는 항상 1이고, \(-1\)이면 \(\eta = \operatorname{sgn}\)이다. 가능한 것은 다음 둘뿐이다.</p>
+      <div class="formula" id="eq-boson-fermion">\[ P_\sigma\psi = \psi \quad\text{또는}\quad P_\sigma\psi = (\operatorname{sgn}\sigma)\,\psi \]<div class="where">모든 \(\sigma \in S_n\)에서 한쪽이 성립한다.</div></div>
+      <p>(다) \(\psi_A = \frac{1}{\sqrt{n!}}\sum_{\sigma}\operatorname{sgn}\sigma\;\phi_{\sigma(1)}(x_1)\cdots\phi_{\sigma(n)}(x_n)\)으로 두면, 위의 행렬식 공식에서</p>
+      <div class="formula" id="eq-slater-determinant">\[ \psi_A(x_1, \ldots, x_n) = \frac{1}{\sqrt{n!}}\det\big[\phi_i(x_j)\big] \]</div>
+      <p>이다(\(j\)행 \(i\)열의 성분이 \(\phi_i(x_j)\)). \(P_\tau\psi_A\)는 이 행렬의 행을 \(\tau\)로 바꾼 행렬의 행렬식이고, 행을 순열로 바꾸면 행렬식에 그 순열의 부호가 곱해지므로 \(P_\tau\psi_A = (\operatorname{sgn}\tau)\psi_A\)이다. 정규 직교인 \(\phi_i\)이면 앞의 \(1/\sqrt{n!}\)이 \(\psi_A\)를 규격화한다.</p>
+      <p><b>확인.</b> \(n = 2\)이면 두 경우는 \(\psi(x_2, x_1) = \pm\psi(x_1, x_2)\)이다. 페르미온의 경우 두 입자가 같은 상태에 있으면(\(\phi_1 = \phi_2\)) 행렬의 두 열이 같아 \(\psi_A = 0\)이다. 이것이 파울리 배타 원리다. \(\operatorname{sgn}(1\,2) = -1 \ne 1\)이라 두 경우는 \(n \ge 2\)에서 실제로 다르다.</p>
+      <p><b>어디에 쓰이나.</b> 식 <a class="ref" href="#eq-boson-fermion"></a>의 두 경우가 보손과 페르미온이고, 『양자역학 (대학원)』 15장이 이 요구를 대칭화 공준으로 세운다. \(n \ge 3\)에서 어느 쪽에도 속하지 않는 상태는 <a class="ref" href="#prob-identical-particle-counting"></a>과 4장에서 다룬다.</p>
+    </div>
+
+  </section>
+
+  <!-- ============================================================ 1.7 -->
+  <section id="s7">
+    <h2>점군</h2>
+    <p>2장은 점군의 지표로 결정장 속 \(d\) 궤도의 갈라짐과 분자의 진동 모드를 분류한다. 그러려면 먼저 분자의 대칭 연산을 빠짐없이 세어 군을 정해야 한다. 이 절은 회전과 반사로 된 유한군에 이름을 붙이는 법과, 이 장의 셈으로 분자의 군을 정하는 법을 본다.</p>
+    <p>분자의 대칭 변환은 무게 중심을 움직이지 않는다. 같은 원자를 같은 원자로 보내므로 질량의 분포가 그대로이기 때문이다. 무게 중심을 원점으로 두면 대칭 변환은 원점을 고정하고 거리를 보존하는 변환, 곧 \(O(3)\)의 원소다.</p>
+    <div class="box def" id="def-point-group"><div class="box-h">점군과 대칭 연산</div>
+      <p>\(O(3)\)의 유한 부분군을 <span class="term">점군</span> <span class="en">(point group)</span>이라 한다. 원자들이 한 직선 위에 있지 않은 분자의 대칭 변환 전체는 점군이다. 대칭 변환은 원자의 순열을 주는데, 원자를 하나도 옮기지 않는 직교 변환은 원자들이 펼치는 평면이나 공간을 점마다 고정하므로 항등이거나 그 평면에 대한 반사뿐이다. 따라서 대칭 변환의 수는 원자 순열의 수의 두 배를 넘지 않는다. 선형 분자의 \(C_{\infty v}\), \(D_{\infty h}\)는 무한군이고 3장에서 다룬다. 대칭 변환을 화학에서는 <span class="term">대칭 연산</span>이라 하고, 그 축이나 면을 <span class="term">대칭 원소</span>라 한다. 점군의 원소는 다음 다섯 종류다.</p>
+      <ul>
+        <li>\(E\): 항등.</li>
+        <li>\(C_n\): 축 둘레 \(2\pi/n\) 회전(\(n\)회 회전축). \(C_n^k\)는 \(2\pi k/n\) 회전이다. 가장 큰 \(n\)의 회전축을 <span class="term">주축</span>이라 한다.</li>
+        <li>\(\sigma\): 평면에 대한 반사. 주축을 품은 평면이면 \(\sigma_v\), 주축에 수직이면 \(\sigma_h\), 주축을 품고 주축에 수직인 \(C_2\) 축 둘 사이를 가르면 \(\sigma_d\)로 쓴다.</li>
+        <li>\(i\): 원점에 대한 반전 \(\mathbf r \mapsto -\mathbf r\). 행렬로는 \(-I\)이다.</li>
+        <li>회전 반사 \(S_n\): \(C_n\) 회전 뒤에 그 축에 수직인 평면에 대한 반사.</li>
+      </ul>
+      <p>점군은 <span class="term">쇤플리스 기호</span> <span class="en">(Schoenflies notation)</span>로 부른다.</p>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>기호</th><th>대칭 원소</th><th>위수</th><th>예</th></tr></thead>
+      <tbody>
+        <tr><td>\(C_n\)</td><td>\(C_n\) 축 하나</td><td>\(n\)</td><td>과산화수소 (\(C_2\))</td></tr>
+        <tr><td>\(C_{nv}\)</td><td>\(C_n\), \(\sigma_v\) \(n\)개</td><td>\(2n\)</td><td>물 (\(C_{2v}\)), 암모니아 (\(C_{3v}\))</td></tr>
+        <tr><td>\(D_n\)</td><td>\(C_n\), 수직인 \(C_2\) \(n\)개</td><td>\(2n\)</td><td>\([\mathrm{Co(en)_3}]^{3+}\) (\(D_3\))</td></tr>
+        <tr><td>\(D_{nh}\)</td><td>\(D_n\)의 원소, \(\sigma_h\)</td><td>\(4n\)</td><td>삼플루오린화 붕소 (\(D_{3h}\)), 벤젠 (\(D_{6h}\))</td></tr>
+        <tr><td>\(T_d\)</td><td>정사면체의 대칭 전체</td><td>24</td><td>메테인</td></tr>
+        <tr><td>\(O\)</td><td>정육면체의 회전</td><td>24</td><td><a class="ref" href="#ex-cube-rotations-s4"></a></td></tr>
+        <tr><td>\(O_h\)</td><td>정육면체의 대칭 전체</td><td>48</td><td>육플루오린화 황</td></tr>
+      </tbody>
+    </table></div>
+    <p>표에는 자주 만나는 것만 실었다. 표의 군들은 추상적인 군으로 보면 이미 만난 것들이다. 정삼각형의 대칭 변환군 \(D_3\)를 3차원에 놓는 방법은 둘이다. 평면 안의 반사를 반사선을 품고 그 평면에 수직인 거울면의 반사로 보면 \(C_{3v}\)이고, 반사선 둘레의 \(180^\circ\) 회전으로 보면 쇤플리스의 \(D_3\)이다. 두 점군은 모두 \(S_3\)와 동형이다. 마찬가지로 \(O \cong T_d \cong S_4\)이고(<a class="ref" href="#ex-cube-rotations-s4"></a>, <a class="ref" href="#prob-methane-td"></a>), 반전 \(i = -I\)가 모든 원소와 교환하므로 \(O_h = O \times \{E, i\} \cong S_4 \times \mathbb Z_2\)이다(<a class="ref" href="#def-direct-product"></a>).</p>
+    <div class="callout warn"><strong>같은 글자, 다른 군</strong><p>쇤플리스 기호의 회전 반사 \(S_n\)은 대칭군 \(S_n\)과 글자만 같다. 이 책에서 \(S_n\)은 대칭군이고, 회전 반사를 쓸 때는 "회전 반사 \(S_n\)"이라고 밝힌다. \(D_n\)도 두 뜻이 있다. 정\(n\)각형의 대칭 변환군 \(D_n\)과 쇤플리스의 \(D_n\)(회전만으로 된 점군)은 위수가 \(2n\)으로 같고 추상적인 군으로는 동형이지만, 3차원에서 하는 일이 다르다. 대수학 교재 가운데에는 위수 \(2n\)인 이면체군을 \(D_{2n}\)으로 쓰는 것이 있다. 이 책의 \(D_4\)는 위수 8이다. 결정학의 헤르만-모갱 기호(\(3m\), \(4/mmm\) 등)는 쓰지 않는다. 점군에서는 관례대로 항등을 \(E\), 거울 반사를 \(\sigma\), 회전을 \(C_n\), 반전을 \(i\)로 쓴다. 순열 \(\sigma\), 켤레류 \(C_i\), 중심화 군 \(C_G(g)\)와는 첨자로 구별한다. 점군 \(C_n\)은 \(\mathbb Z_n\)과 동형이다.</p></div>
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 290" role="img" aria-label="물 분자. 수소 두 개와 산소가 yz 평면에 있고, z축이 C2 축이며, xz 평면이 분자 평면에 수직으로 교차한다"><text x="12" y="20" class="t">(가) 물: <tspan font-style="italic">C</tspan><tspan baseline-shift="sub" font-size="72%">2v</tspan></text><rect x="62" y="54" width="256" height="176" class="f-acc-soft" fill-opacity="0.45" style="stroke-width:1.2"/><path d="M235,27L145,81L145,257L235,203Z" class="f-acc2-soft" fill-opacity="0.45" style="stroke-width:1.2"/><line x1="190" y1="30" x2="190" y2="268" class="s-line" style="stroke:var(--text);stroke-width:1.6" stroke-dasharray="7 5"/><text x="178" y="40" class="t-math" text-anchor="end"><tspan font-style="italic">C</tspan><tspan baseline-shift="sub" font-size="72%">2</tspan></text><line x1="190" y1="122" x2="264.6" y2="179.8" class="s-line" style="stroke:var(--text);stroke-width:3"/><line x1="190" y1="122" x2="115.4" y2="179.8" class="s-line" style="stroke:var(--text);stroke-width:3"/><circle cx="190" cy="122" r="15" class="f-acc"/><text x="190" y="127" text-anchor="middle" style="fill:var(--bg-elev);font:700 14px var(--font)">O</text><circle cx="264.6" cy="179.8" r="10" class="f-dim"/><text x="264.6" y="183.8" text-anchor="middle" style="fill:var(--bg-elev);font:700 11px var(--font)">H</text><circle cx="115.4" cy="179.8" r="10" class="f-dim"/><text x="115.4" y="183.8" text-anchor="middle" style="fill:var(--bg-elev);font:700 11px var(--font)">H</text><text x="70" y="72" class="t-math acc"><tspan font-style="italic">σ</tspan><tspan baseline-shift="sub" font-size="72%">v</tspan><tspan style="font-family:var(--font)">′</tspan>(<tspan font-style="italic">yz</tspan>)</text><text x="70" y="222" class="t acc" style="fill:var(--accent)">분자 평면</text><text x="242" y="40" class="t-math acc2"><tspan font-style="italic">σ</tspan><tspan baseline-shift="sub" font-size="72%">v</tspan>(<tspan font-style="italic">xz</tspan>)</text><line x1="32" y1="276" x2="58" y2="276" class="s-line"/><line x1="32" y1="276" x2="32" y2="250" class="s-line"/><line x1="32" y1="276" x2="18" y2="284" class="s-line"/><text x="62" y="280" class="t-dim"><tspan font-style="italic">y</tspan></text><text x="36" y="250" class="t-dim"><tspan font-style="italic">z</tspan></text><text x="10" y="284" class="t-dim" text-anchor="end"><tspan font-style="italic">x</tspan></text></svg><svg viewBox="0 0 380 290" role="img" aria-label="암모니아 분자를 C3 축 방향에서 내려다본 모습. 질소가 가운데, 수소 세 개가 120도 간격으로 있고, 각 수소와 축을 품는 거울면 세 개가 선으로 보인다"><defs><marker id="f0104-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs><text x="12" y="20" class="t">(나) 암모니아: <tspan font-style="italic">C</tspan><tspan baseline-shift="sub" font-size="72%">3v</tspan> (위에서 본 모습)</text><line x1="190" y1="50" x2="190" y2="232" class="s-acc2" stroke-dasharray="6 5"/><line x1="94.7" y1="215" x2="252.4" y2="124" class="s-acc2" stroke-dasharray="6 5"/><line x1="285.3" y1="215" x2="127.6" y2="124" class="s-acc2" stroke-dasharray="6 5"/><text x="190" y="42" class="t-math acc2" text-anchor="middle"><tspan font-style="italic">σ</tspan><tspan baseline-shift="sub" font-size="72%">v</tspan><tspan baseline-shift="super" font-size="72%">(1)</tspan></text><text x="88" y="236" class="t-math acc2" text-anchor="end"><tspan font-style="italic">σ</tspan><tspan baseline-shift="sub" font-size="72%">v</tspan><tspan baseline-shift="super" font-size="72%">(2)</tspan></text><text x="292" y="236" class="t-math acc2"><tspan font-style="italic">σ</tspan><tspan baseline-shift="sub" font-size="72%">v</tspan><tspan baseline-shift="super" font-size="72%">(3)</tspan></text><line x1="190" y1="160" x2="190" y2="72" class="s-line" style="stroke:var(--text);stroke-width:3"/><line x1="190" y1="160" x2="113.8" y2="204" class="s-line" style="stroke:var(--text);stroke-width:3"/><line x1="190" y1="160" x2="266.2" y2="204" class="s-line" style="stroke:var(--text);stroke-width:3"/><circle cx="190" cy="72" r="10" class="f-dim"/><circle cx="113.8" cy="204" r="10" class="f-dim"/><circle cx="266.2" cy="204" r="10" class="f-dim"/><text x="206" y="70" class="t-math">H<tspan baseline-shift="sub" font-size="72%">1</tspan></text><text x="100" y="196" class="t-math" text-anchor="end">H<tspan baseline-shift="sub" font-size="72%">2</tspan></text><text x="280" y="196" class="t-math">H<tspan baseline-shift="sub" font-size="72%">3</tspan></text><path d="M220.1,149.1 A32,32 0 0 0 165.5,139.4" class="s-acc" style="stroke-width:2.2" marker-end="url(#f0104-arr)"/><text x="222" y="120" class="t-math acc"><tspan font-style="italic">C</tspan><tspan baseline-shift="sub" font-size="72%">3</tspan></text><circle cx="190" cy="160" r="15" class="f-acc"/><text x="190" y="165" text-anchor="middle" style="fill:var(--bg-elev);font:700 14px var(--font)">N</text></svg></div>
+      <figcaption><b>그림 1-4.</b> 분자의 대칭 원소. (가) 물: \(C_2\) 축(\(z\)축), 분자 평면 \(\sigma_v'(yz)\), 그에 수직인 \(\sigma_v(xz)\). \(x\)축은 지면에서 비스듬히 앞으로 나온다. (나) 암모니아를 \(C_3\) 축 방향에서 내려다본 모습. 질소는 세 수소가 이루는 평면보다 앞쪽(보는 사람 쪽)에 있다. 거울면 \(\sigma_v^{(k)}\)는 \(C_3\) 축과 수소 \(\mathrm H_k\)를 품고 지면에 수직이라 선으로 보인다.</figcaption>
+    </figure>
+
+    <div class="box ex" id="ex-molecule-point-groups"><div class="box-h">물 분자와 암모니아 분자의 점군</div>
+      <p>물 분자 \(\mathrm{H_2O}\)(굽은 꼴, 결합각 약 \(104.5^\circ\))와 암모니아 분자 \(\mathrm{NH_3}\)(질소가 꼭대기에 있는 낮은 삼각뿔)의 대칭 연산을 모두 찾아 점군과 켤레류를 정하라. 궤도-안정자 정리로 위수를 확인하라.</p>
+      <p><b>풀이.</b> <i>물.</i> 그림 1-4 (가)처럼 두 수소를 \(yz\) 평면에 두고, \(z\)축이 H–O–H 각을 이등분하게 한다. 분광학에서 흔히 쓰는 대로 분자 평면을 \(yz\) 평면으로 둔 것이다. 대칭 원소는 \(z\)축의 \(C_2\), 분자 평면 \(\sigma_v'(yz)\), 그리고 \(z\)축을 품고 분자 평면에 수직인 \(\sigma_v(xz)\)이다. 행렬로 쓰면</p>
+      <div class="formula">\[ \begin{aligned} C_2 &= \operatorname{diag}(-1, -1, 1) \\ \sigma_v(xz) &= \operatorname{diag}(1, -1, 1) \\ \sigma_v'(yz) &= \operatorname{diag}(-1, 1, 1) \end{aligned} \]</div>
+      <p>이므로 셋 모두 제곱이 \(E\)이고, 대각 행렬이라 서로 교환하며, \(C_2\,\sigma_v(xz) = \sigma_v'(yz)\)이다. 따라서 \(C_{2v} = \{E, C_2, \sigma_v(xz), \sigma_v'(yz)\}\)는 위수 4이고 \(E\)가 아닌 원소의 위수가 모두 2인 아벨 군, 곧 \(C_{2v} \cong \mathbb Z_2 \times \mathbb Z_2\)이다. 아벨 군이므로 켤레류는 원소마다 하나씩 넷이다.</p>
+      <p>궤도-안정자 정리로 확인하자. 두 수소는 \(C_2\)로 서로 바뀌므로 궤도 크기가 2이고, 수소 하나를 제자리에 두는 연산은 \(E\)와 분자 평면 \(\sigma_v'(yz)\) 둘이므로 \(\lvert C_{2v}\rvert = 2 \times 2 = 4\)이다. 수소 두 개에 대한 작용 \(C_{2v} \to S_2\)는 핵이 \(\{E, \sigma_v'(yz)\}\)이라 충실하지 않다. 수소만 보아서는 분자 평면에 대한 반사를 항등과 구별할 수 없다.</p>
+      <p><i>암모니아.</i> 그림 1-4 (나)처럼 질소를 지나는 \(z\)축을 세 수소가 이루는 정삼각형의 중심에 수직으로 세운다. 대칭 원소는 \(z\)축의 \(C_3\)와, \(z\)축과 수소 하나씩을 품는 거울면 \(\sigma_v^{(1)}, \sigma_v^{(2)}, \sigma_v^{(3)}\)이다. 질소가 수소 평면 밖에 있으므로 \(\sigma_h\)나 수평인 \(C_2\) 축은 없다. 연산은 \(E, C_3, C_3^2, \sigma_v^{(1)}, \sigma_v^{(2)}, \sigma_v^{(3)}\)의 여섯이다. 수소 세 개의 궤도 크기는 3이고, \(\mathrm H_1\)을 제자리에 두는 연산은 \(E\)와 \(\sigma_v^{(1)}\)이므로 \(\lvert C_{3v}\rvert = 3 \times 2 = 6\)이다. 이번에는 수소 세 개에 대한 작용이 충실하다. 무게 중심이 수소 평면 밖에 있어 세 수소의 위치 벡터가 일차 독립이고, 이 셋을 모두 고정하는 선형 변환은 항등뿐이기 때문이다. 따라서 \(C_{3v} \to S_3\)는 단사이고, 위수가 같으므로 \(C_{3v} \cong S_3\)이다. \(C_3\)는 3-순환으로, \(\sigma_v^{(k)}\)는 \(\mathrm H_k\)를 고정하는 호환으로 간다. 켤레류는 \(S_3\)에서 옮겨 와 \(\{E\}\), \(\{C_3, C_3^2\}\), \(\{\sigma_v^{(1)}, \sigma_v^{(2)}, \sigma_v^{(3)}\}\)이다.</p>
+      <p><b>확인.</b> \(C_{3v}\)의 켤레류 크기의 합은 \(1 + 2 + 3 = 6\)이다. 식 <a class="ref" href="#eq-class-size"></a>로 보면 \(C_3\)의 중심화 군은 회전 \(\{E, C_3, C_3^2\}\)이라 \(6/3 = 2\)이고, \(\sigma_v^{(1)}\)의 중심화 군은 \(\{E, \sigma_v^{(1)}\}\)이라 \(6/2 = 3\)이다. 세 거울면이 한 켤레류인 것은 \(C_3\)가 거울면을 서로 돌려 놓기 때문이다. 물에서는 두 거울면 \(\sigma_v\)와 \(\sigma_v'\)를 서로 옮기는 연산이 없으므로(하나는 수소를 품고 다른 하나는 품지 않는다) 둘은 다른 켤레류다.</p>
+      <p><b>어디에 쓰이나.</b> 지표표의 열 머리는 켤레류를 "\(E,\ 2C_3,\ 3\sigma_v\)"처럼 크기와 대표로 적는다. 2장의 <a href="ch02.html#ex-triangle-normal-modes">정삼각형 분자의 진동 모드 분류</a>가 이 표기와 켤레류를 그대로 쓴다.</p>
+    </div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>대칭 변환은 합성으로 군을 이룬다. 재배열 정리 \(\sum_h f(gh) = \sum_h f(h)\)가 유한군의 계산에 가장 자주 쓰인다. 순열의 곱 \(\sigma\tau\)는 \(\tau\)를 먼저 적용하고, 곱셈표의 \(g_i\)행 \(g_j\)열은 \(g_ig_j\)다. 이면체군 \(D_n\)은 \(r^n = e\), \(s^2 = e\), \(srs^{-1} = r^{-1}\)로 정해지고 \(D_3 \cong S_3\)이다.</li>
+      <li>라그랑주 정리 \(\lvert G\rvert = [G:H]\,\lvert H\rvert\): 잉여류가 군을 같은 크기로 나누기 때문이다. 원소의 위수는 \(\lvert G\rvert\)를 나누고, 위수가 소수인 군은 \(\mathbb Z_p\)이다. 라그랑주 정리의 역은 성립하지 않는다(\(A_4\)에는 위수 6인 부분군이 없다).</li>
+      <li>켤레류는 군을 나누고, 중심은 크기 1인 켤레류의 모임이다. \(SR(\hat{\mathbf n}, \theta)S^{-1} = R(S\hat{\mathbf n}, \theta)\)이므로 \(SO(3)\)의 켤레류는 각 \(\theta \in [0, \pi]\)로 정해진다. 켤레류는 \(S_3\)에 셋, \(D_4\)와 \(S_4\)에 다섯이다.</li>
+      <li>정규 부분군: \(gNg^{-1} = N\) ⇔ \(gN = Ng\) ⇔ 켤레류의 합집합. 지수 2인 부분군, 중심, 준동형의 핵은 정규 부분군이다. \(S_3\)의 정규 부분군은 \(\{e\}, A_3, S_3\)이다.</li>
+      <li>몫군 \(G/N\)의 곱 \((gN)(hN) = ghN\)은 \(N\)이 정규 부분군일 때만 잘 정의된다. 제1 동형 정리 \(G/\ker\varphi \cong \operatorname{im}\varphi\)에서 \(S_3/A_3 \cong \mathbb Z_2\), \(O(3)/SO(3) \cong \mathbb Z_2\), \(U(n)/SU(n) \cong U(1)\), \(SU(2)/\{\pm1\} \cong SO(3)\)(3장)이 나온다. \(O(3) \cong SO(3) \times \mathbb Z_2\)이다.</li>
+      <li>작용은 \(e\cdot x = x\), \(g\cdot(h\cdot x) = (gh)\cdot x\)이고, 함수 위의 작용은 \((g\cdot f)(x) = f(g^{-1}\cdot x)\)이다. 궤도-안정자 정리 \(\lvert G\cdot x\rvert = \lvert G\rvert/\lvert G_x\rvert\)에서 \(\lvert[g]\rvert = \lvert G\rvert/\lvert C_G(g)\rvert\), \(\lvert O\rvert = 24\), \(O \cong S_4\)가 나온다.</li>
+      <li>\(S_n\)의 켤레류는 순환 꼴(\(n\)의 분할)로 정해지고 크기는 \(n!/\prod_kk^{m_k}m_k!\)이다. 부호 \(\operatorname{sgn}\sigma = (-1)^{n - c(\sigma)}\)는 \(\sigma\cdot\Delta = \operatorname{sgn}\sigma\,\Delta\)로 정의되는 준동형이고 핵이 \(A_n\)이다. \(S_n\)에서 0이 아닌 복소수로 가는 준동형은 1과 \(\operatorname{sgn}\)뿐이라, 동일 입자의 상태는 보손 아니면 페르미온이다.</li>
+      <li>점군은 \(O(3)\)의 유한 부분군이고 쇤플리스 기호로 쓴다. 물 \(C_{2v} \cong \mathbb Z_2 \times \mathbb Z_2\), 암모니아 \(C_{3v} \cong S_3\), \(O \cong T_d \cong S_4\), \(O_h \cong S_4 \times \mathbb Z_2\)이다.</li>
+    </ol>
+    <div class="callout deep" data-later="qm-grad"><strong>다음에 쓰이는 곳: 『양자역학 (대학원)』</strong><p>7장(이산 대칭)은 패리티의 군 \(\{1, P\} \cong \mathbb Z_2\)와 \(O(3) \cong SO(3) \times \mathbb Z_2\)에서 출발한다. 패리티는 아벨 군이라 준위에 짝·홀 이름표만 붙이고, 축퇴는 반유니타리인 시간 반전에서 따로 나온다(크라머스 축퇴). 15장(동일 입자)은 식 <a class="ref" href="#eq-particle-permutation"></a>의 \(P_\sigma\), 부호 \(\operatorname{sgn}\), 보손과 페르미온의 두 경우 <a class="ref" href="#eq-boson-fermion"></a>, 슬레이터 행렬식 <a class="ref" href="#eq-slater-determinant"></a>을 그대로 쓰고, 대칭화·반대칭화 사영 연산자(<a class="ref" href="#prob-identical-particle-counting"></a>)로 상태 공간을 나눈다.</p></div>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. 이 책의 곱 순서(\(\sigma\tau\)는 \(\tau\) 먼저)에서 \((1\,2)(1\,3)\)은?</p><div class="opts">
+        <button class="opt">\((1\,2\,3)\)</button>
+        <button class="opt" data-correct>\((1\,3\,2)\)</button>
+        <button class="opt">\((2\,3)\)</button>
+        <button class="opt">\(e\)</button>
+      </div><div class="quiz-exp">\((1\,3)\)을 먼저 적용한다. \(1 \to 3 \to 3\), \(3 \to 1 \to 2\), \(2 \to 2 \to 1\)이므로 \(1 \to 3 \to 2 \to 1\), 곧 \((1\,3\,2)\)이다. 왼쪽부터 적용하는 관례에서는 \((1\,2\,3)\)이 나온다.</div></div>
+      <div class="quiz-q"><p>2. 위수 12인 군의 원소 \(g\)가 \(g^4 \ne e\), \(g^6 \ne e\)를 만족한다. \(g\)의 위수는?</p><div class="opts">
+        <button class="opt">3</button>
+        <button class="opt">4</button>
+        <button class="opt">6</button>
+        <button class="opt" data-correct>12</button>
+      </div><div class="quiz-exp">라그랑주 정리에서 위수는 12의 약수 1, 2, 3, 4, 6, 12 가운데 하나다. \(g^4 \ne e\)이면 위수는 4의 약수(1, 2, 4)가 아니고, \(g^6 \ne e\)이면 6의 약수(1, 2, 3, 6)가 아니다. 남는 것은 12이고, 이 군은 \(g\)가 생성하는 순환군 \(\mathbb Z_{12}\)이다.</div></div>
+      <div class="quiz-q"><p>3. 다음 가운데 \(S_4\)의 정규 부분군이 <b>아닌</b> 것은?</p><div class="opts">
+        <button class="opt">\(A_4\)</button>
+        <button class="opt">\(V_4 = \{e, (1\,2)(3\,4), (1\,3)(2\,4), (1\,4)(2\,3)\}\)</button>
+        <button class="opt" data-correct>\(\{e, (1\,2)(3\,4)\}\)</button>
+        <button class="opt">\(\{e\}\)</button>
+      </div><div class="quiz-exp">\(\{e, (1\,2)(3\,4)\}\)은 부분군이지만 켤레류의 합집합이 아니다. \([2, 2]\) 꼴의 켤레류에는 원소가 셋 있고, 예를 들어 \((2\,3)\)으로 켤레 변환하면 \((1\,3)(2\,4)\)가 나온다. \(V_4\)는 그 켤레류 전체와 \(e\)의 합집합이라 정규 부분군이다.</div></div>
+      <div class="quiz-q"><p>4. \(S_6\)의 켤레류는 몇 개인가?</p><div class="opts">
+        <button class="opt">6</button>
+        <button class="opt" data-correct>11</button>
+        <button class="opt">15</button>
+        <button class="opt">720</button>
+      </div><div class="quiz-exp">켤레류는 순환 꼴, 곧 6의 분할과 일대일로 대응한다. 6, 5+1, 4+2, 4+1+1, 3+3, 3+2+1, 3+1+1+1, 2+2+2, 2+2+1+1, 2+1+1+1+1, 1+1+1+1+1+1의 11개다.</div></div>
+      <div class="quiz-q"><p>5. 정사면체를 자기 자신에게 겹치는 회전(\(\det = +1\))은 몇 개인가?</p><div class="opts">
+        <button class="opt">4</button>
+        <button class="opt">8</button>
+        <button class="opt" data-correct>12</button>
+        <button class="opt">24</button>
+      </div><div class="quiz-exp">회전은 면 네 개에 추이적으로 작용하고, 한 면을 고정하는 회전은 그 면의 중심과 맞은편 꼭짓점을 잇는 축 둘레의 \(0^\circ, 120^\circ, 240^\circ\) 셋이다. 궤도-안정자 정리로 \(4 \times 3 = 12\)이다. 이 군은 \(A_4\)와 동형이다. 반사까지 넣은 \(T_d\)는 24다.</div></div>
+      <div class="quiz-q"><p>6. 준동형 \(\det : U(2) \to U(1)\)에 제1 동형 정리를 쓴 결과로 옳은 것은?</p><div class="opts">
+        <button class="opt" data-correct>\(U(2)/SU(2) \cong U(1)\)</button>
+        <button class="opt">\(U(2)/U(1) \cong SU(2)\)</button>
+        <button class="opt">\(U(2) \cong SU(2) \times U(1)\)</button>
+        <button class="opt">\(SU(2)/\{\pm1\} \cong U(1)\)</button>
+      </div><div class="quiz-exp">핵은 행렬식이 1인 \(SU(2)\)이고, \(\det\)은 \(U(1)\) 전체로 가므로 \(U(2)/SU(2) \cong U(1)\)이다. 직접곱은 성립하지 않는다. \((A, z) \mapsto zA\)는 \(SU(2) \times U(1)\)에서 \(U(2)\)로 가는 전사 준동형이지만 핵이 \(\{(I, 1), (-I, -1)\}\)이어서, 제1 동형 정리가 주는 것은 \(U(2) \cong (SU(2) \times U(1))/\mathbb Z_2\)이다. 실제로 \(U(2)\)의 중심은 \(U(1)\)이고 \(SU(2) \times U(1)\)의 중심은 \(\mathbb Z_2 \times U(1)\)이라 두 군은 동형이 아니다.</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-s4-products" data-level="1"><p>\(\sigma = (1\,2\,3\,4)\), \(\tau = (1\,3\,2)\)일 때 \(\sigma\tau\), \(\tau\sigma\), \(\sigma^{-1}\)을 순환 표기로 구하고, 각각의 부호와 위수를 구하라. \(\sigma\tau\)와 \(\tau\sigma\)가 켤레임을 확인하고, 이것이 언제나 성립하는 이유를 설명하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(\sigma\tau\)는 \(\tau\)를 먼저 적용한다. \(1 \to 3 \to 4\), \(4 \to 4 \to 1\), \(2 \to 1 \to 2\), \(3 \to 2 \to 3\)이므로 \(\sigma\tau = (1\,4)\)이다. \(\tau\sigma\)는 \(\sigma\)를 먼저 적용한다. \(1 \to 2 \to 1\), \(2 \to 3 \to 2\), \(3 \to 4 \to 4\), \(4 \to 1 \to 3\)이므로 \(\tau\sigma = (3\,4)\)이다. \(\sigma^{-1}\)은 화살표를 거꾸로 따라가는 \((1\,4\,3\,2)\)이다.</p>
+        <p>식 <a class="ref" href="#eq-sign-cycles"></a>에서 \(\operatorname{sgn}\sigma = (-1)^{4-1} = -1\), \(\operatorname{sgn}\tau = (-1)^{4-2} = +1\)이다. 준동형이므로 \(\operatorname{sgn}(\sigma\tau) = \operatorname{sgn}(\tau\sigma) = -1\)이고, 실제로 둘 다 호환이다. \(\operatorname{sgn}\sigma^{-1} = -1\)이다. 위수는 \(\sigma\)와 \(\sigma^{-1}\)이 4, \(\sigma\tau\)와 \(\tau\sigma\)가 2다(순환의 위수는 길이다).</p>
+        <p>일반적으로 \(\sigma^{-1}(\sigma\tau)\sigma = \tau\sigma\)이므로 \(\sigma\tau\)와 \(\tau\sigma\)는 언제나 켤레다. 식 <a class="ref" href="#eq-cycle-conjugation"></a>로 확인하면 \(\sigma^{-1}(1\,4)\sigma = (\sigma^{-1}(1)\;\sigma^{-1}(4)) = (4\,3)\)이다. 따라서 \(\sigma\tau\)와 \(\tau\sigma\)는 순환 꼴이 같고 부호와 위수도 같다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-dihedral-classes" data-level="2"><p>이면체군 \(D_n\)(\(n \ge 3\))의 켤레류를 \(n\)이 홀수일 때와 짝수일 때로 나누어 모두 구하고, 켤레류의 수와 중심을 구하라. \(n = 3, 4\)에서 <a class="ref" href="#calc-s3-table"></a>, <a class="ref" href="#calc-d4-classes"></a>와 맞는지 확인하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>식 <a class="ref" href="#eq-dihedral-conjugation"></a>는 일반 \(n\)에서도 그대로 성립한다(\(n = 4\)를 쓴 곳이 없다). 회전 \(r^j\)의 켤레는 \(r^j\)와 \(r^{-j}\)뿐이고, 반사 \(r^jm\)의 켤레는 거듭제곱 수를 \(j + 2k\)나 \(-j + 2k\)로 바꾼 것들이다.</p>
+        <p><i>\(n\)이 홀수.</i> 회전은 \(\{e\}\)와 \(\{r^j, r^{-j}\}\)(\(j = 1, \ldots, \tfrac{n-1}{2}\))로 나뉜다. 2와 \(n\)이 서로소이므로 \(j + 2k\)(\(k = 0, \ldots, n - 1\))는 \(n\)으로 나눈 모든 나머지를 돈다. 따라서 반사 \(n\)개가 모두 한 켤레류다. 켤레류는 \(1 + \tfrac{n-1}{2} + 1 = \tfrac{n+3}{2}\)개이고, 중심은 \(\{e\}\)다.</p>
+        <p><i>\(n\)이 짝수.</i> 회전은 \(\{e\}\), \(\{r^{n/2}\}\)(\(r^{n/2} = r^{-n/2}\)), \(\{r^j, r^{-j}\}\)(\(j = 1, \ldots, \tfrac n2 - 1\))로 나뉜다. \(j + 2k\)와 \(-j + 2k\)는 \(j\)의 홀짝을 바꾸지 않으므로(\(n\)이 짝수라 나머지를 취해도 홀짝이 유지된다) 반사는 \(j\)가 짝수인 것 \(\tfrac n2\)개와 홀수인 것 \(\tfrac n2\)개의 두 켤레류로 나뉜다. 켤레류는 \(2 + (\tfrac n2 - 1) + 2 = \tfrac n2 + 3\)개이고, 중심은 \(\{e, r^{n/2}\}\)이다.</p>
+        <p>\(n = 3\)이면 \(\tfrac{3+3}{2} = 3\)개로 <a class="ref" href="#calc-s3-table"></a>과 같고, \(n = 4\)이면 \(\tfrac42 + 3 = 5\)개, 중심 \(\{e, r^2\}\)로 <a class="ref" href="#calc-d4-classes"></a>와 같다. <a class="ref" href="#code-permutation-group"></a>의 함수로 \(n = 3, \ldots, 10\)에서 확인하면 켤레류의 수가 3, 5, 4, 6, 5, 7, 6, 8로 공식과 같다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-a4-no-order-six" data-level="2"><p>위수 12인 \(A_4\)에 위수 6인 부분군이 없음을 보여라. (힌트: 그런 부분군 \(H\)가 있다면 지수가 2이므로 정규 부분군이고 \(A_4/H \cong \mathbb Z_2\)이다. 모든 \(g\)에서 \(g^2 \in H\)임을 보이고 3-순환의 수를 세어라.)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>위수 6인 \(H \le A_4\)가 있다고 하자. 지수가 \(12/6 = 2\)이므로 1.3절에서 본 대로 \(H \trianglelefteq A_4\)이고, 몫군 \(A_4/H\)는 위수 2인 군 \(\mathbb Z_2\)이다. \(\mathbb Z_2\)의 모든 원소는 제곱이 항등원이므로 모든 \(g \in A_4\)에서 \((gH)^2 = g^2H = H\), 곧 \(g^2 \in H\)이다.</p>
+        <p>3-순환 \(c\)는 위수가 3이므로 \(c = c^4 = (c^2)^2\)이다. \(c^2 \in A_4\)에 위의 결과를 쓰면 \(c = (c^2)^2 \in H\)이다. 그런데 \(A_4\)의 3-순환은 식 <a class="ref" href="#eq-sn-class-size"></a>에서 \(24/3 = 8\)개이고(모두 짝순열), 여기에 \(e\)를 더하면 \(H\)는 원소를 적어도 9개 가진다. 위수 6에 모순이다. 따라서 그런 부분군은 없다. 라그랑주 정리의 역은 성립하지 않는다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-burnside" data-level="2"><p>(가) 유한군 \(G\)가 유한 집합 \(X\)에 작용할 때 궤도의 수가 \(\dfrac{1}{\lvert G\rvert}\sum_{g \in G}\lvert X^g\rvert\)임을 보여라. \(X^g = \{x : g\cdot x = x\}\)이다(번사이드 보조정리). (힌트: \(g\cdot x = x\)인 쌍 \((g, x)\)를 두 방법으로 센다.) (나) 정사각형의 네 꼭짓점을 세 가지 색으로 칠하는 방법 가운데 \(D_4\)의 대칭 변환으로 겹치는 것을 같은 것으로 보면 몇 가지인가? (→ 2장)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(g\cdot x = x\)인 쌍의 수를 \(g\)마다 세면 \(\sum_g\lvert X^g\rvert\)이고, \(x\)마다 세면 \(\sum_x\lvert G_x\rvert\)이다. 궤도-안정자 정리의 식 <a class="ref" href="#eq-orbit-stabilizer"></a>에서 \(\lvert G_x\rvert = \lvert G\rvert/\lvert G\cdot x\rvert\)이므로</p>
+        <div class="formula">\[ \begin{aligned} \sum_{g}\lvert X^g\rvert &= \lvert G\rvert\sum_{x}\frac{1}{\lvert G\cdot x\rvert} \\ &= \lvert G\rvert\sum_{\mathcal O}\,\sum_{x \in \mathcal O}\frac{1}{\lvert\mathcal O\rvert} \\ &= \lvert G\rvert \times (\text{궤도의 수}) \end{aligned} \]</div>
+        <p>이다. 둘째 줄은 \(x\)에 대한 합을 궤도 \(\mathcal O\)별로 묶은 것이고, 한 궤도 안에서 \(1/\lvert\mathcal O\rvert\)을 \(\lvert\mathcal O\rvert\)번 더하면 1이다.</p>
+        <p>(나) 칠하는 방법은 \(3^4 = 81\)가지다. 대칭 변환 \(g\)가 칠을 바꾸지 않으려면 \(g\)의 각 순환 위에서 색이 같아야 하므로 \(\lvert X^g\rvert = 3^{c(g)}\)이다(\(c(g)\)는 꼭짓점의 순열로서의 순환의 수). \(e\): \(c = 4\), 81가지. \(r, r^3\)(4-순환): 3가지씩. \(r^2 = (1\,3)(2\,4)\): 9가지. \(m, m'\)(호환 두 개): 9가지씩. \(d = (2\,4)\), \(d' = (1\,3)\)(고정점 둘과 호환 하나): 27가지씩. 합은 \(81 + 6 + 9 + 18 + 54 = 168\)이고 궤도의 수는 \(168/8 = 21\)이다.</p>
+        <p>2장에서 \(\lvert X^g\rvert\)는 순열 표현의 지표 \(\chi(g)\)가 되고, 번사이드 보조정리는 <a href="ch02.html#eq-multiplicity-formula">중복도 공식</a>으로 순열 표현 안의 자명 표현의 중복도를 구한 것과 같다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-methane-td" data-level="2"><p>메테인 \(\mathrm{CH_4}\)의 네 수소는 정사면체의 꼭짓점에 있다. (가) 궤도-안정자 정리로 \(\lvert T_d\rvert = 24\)를 얻어라. (나) 네 수소에 대한 작용이 충실함을 보이고 \(T_d \cong S_4\)를 결론지어라. (다) \(T_d\)의 대칭 연산 \(E\), \(C_3\), \(C_2\), 회전 반사 \(S_4\), \(\sigma_d\)가 각각 몇 개이고 \(S_4\)의 어느 켤레류로 가는지 정하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) C–H 결합 하나를 축으로 하는 \(C_3\) 회전은 나머지 세 수소를 돌리므로, 이런 회전을 거듭하면 어느 수소든 다른 어느 수소로 보낼 수 있다. 궤도는 수소 네 개다. \(\mathrm H_1\)을 제자리에 두는 연산은 C–H₁ 축 둘레의 \(0^\circ, 120^\circ, 240^\circ\) 회전과, 이 축과 다른 수소 하나씩을 품는 거울면 세 개다. 곧 안정자 군은 \(C_{3v}\)이고 위수 6이다. 따라서 \(\lvert T_d\rvert = 4 \times 6 = 24\)이다.</p>
+        <p>(나) 네 수소를 모두 제자리에 두는 연산은 탄소(원점)에서 수소로 가는 벡터 넷을 고정한다. 이 가운데 셋은 일차 독립이므로 그 연산은 항등이다. 작용이 충실하므로 \(T_d \to S_4\)는 단사이고, 위수가 24로 같으므로 \(T_d \cong S_4\)이다.</p>
+        <p>(다) \(E\) 1개는 \(e\)로 간다. \(C_3\)는 C–H 축 넷마다 \(\pm120^\circ\)로 8개이고 3-순환으로 간다. \(C_2\)는 마주 보는 두 H–H 모서리의 중점을 잇는 축 셋 둘레의 \(180^\circ\) 회전 3개이고 \([2, 2]\) 꼴로 간다. 회전 반사 \(S_4\)는 같은 세 축마다 \(S_4\)와 \(S_4^3\)으로 6개이고 4-순환으로 간다. \(\sigma_d\)는 탄소와 수소 둘을 품는 거울면 6개이고, 나머지 두 수소를 맞바꾸므로 호환으로 간다. \(1 + 8 + 3 + 6 + 6 = 24\)이고 크기가 \(S_4\)의 켤레류와 맞는다. \(O\)에서 모서리 축 회전이던 호환이 \(T_d\)에서는 거울 반사로 실현된다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-identical-particle-counting" data-level="3"><p>한 입자 상태가 \(d\)개(정규 직교 기저 \(\lvert1\rangle, \ldots, \lvert d\rangle\))인 동일 입자 세 개의 상태 공간 \(V = (\mathbb C^d)^{\otimes 3}\)(차원 \(d^3\))을 생각한다. 기저 \(\lvert i_1i_2i_3\rangle\)에 \(P_\sigma\)는 \(k\)번 자리의 상태 \(i_k\)를 \(\sigma(k)\)번 자리로 옮기도록 작용한다. (가) \(\operatorname{tr}P_\sigma = d^{\,c(\sigma)}\)임을 보여라. (나) \(\mathcal S = \tfrac16\sum_\sigma P_\sigma\), \(\mathcal A = \tfrac16\sum_\sigma\operatorname{sgn}\sigma\,P_\sigma\)가 \(\mathcal S^2 = \mathcal S\), \(\mathcal A^2 = \mathcal A\)를 만족함을 보이고, 보손 상태의 수 \(\operatorname{tr}\mathcal S\)와 페르미온 상태의 수 \(\operatorname{tr}\mathcal A\)를 \(d\)로 구하라. (다) \(d = 2\)와 \(d = 3\)에서 \(d^3\)개 가운데 어느 쪽에도 속하지 않는 상태는 몇 개인가? (→ 『양자역학 (대학원)』 15장, 이 책 4장)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(P_\sigma\)는 기저 벡터를 기저 벡터로 보내므로 대각 성분 \(\langle i_1i_2i_3\vert P_\sigma\vert i_1i_2i_3\rangle\)은 상태가 바뀌지 않을 때 1, 바뀔 때 0이다. 바뀌지 않으려면 \(\sigma\)의 각 순환 위의 자리들에 같은 상태가 있어야 하므로, 순환마다 상태를 하나씩 고르는 \(d^{\,c(\sigma)}\)가지다.</p>
+        <p>(나) \(P_\tau P_\sigma = P_{\tau\sigma}\)와 재배열 정리의 식 <a class="ref" href="#eq-rearrangement-sum"></a>에서 \(P_\tau\mathcal S = \tfrac16\sum_\sigma P_{\tau\sigma} = \mathcal S\)이다. 따라서 \(\mathcal S^2 = \tfrac16\sum_\tau P_\tau\mathcal S = \mathcal S\)이다. 같은 방법으로 \(P_\tau\mathcal A = \tfrac16\sum_\sigma\operatorname{sgn}\sigma\,P_{\tau\sigma} = \operatorname{sgn}\tau\cdot\tfrac16\sum_\sigma\operatorname{sgn}(\tau\sigma)P_{\tau\sigma} = \operatorname{sgn}\tau\,\mathcal A\)이므로 \(\mathcal A^2 = \tfrac16\sum_\tau(\operatorname{sgn}\tau)^2\mathcal A = \mathcal A\)이다. \(\mathcal S^2 = \mathcal S\)인 행렬은 고유값이 0과 1뿐이고 대각화되므로 대각합이 상의 차원이다. \(S_3\)는 \(e\)(\(c = 3\)) 1개, 호환(\(c = 2\)) 3개, 3-순환(\(c = 1\)) 2개이므로</p>
+        <div class="formula">\[ \begin{aligned} \operatorname{tr}\mathcal S &= \tfrac16(d^3 + 3d^2 + 2d) \\ &= \tfrac16 d(d+1)(d+2) \\ \operatorname{tr}\mathcal A &= \tfrac16(d^3 - 3d^2 + 2d) \\ &= \tfrac16 d(d-1)(d-2) \end{aligned} \]</div>
+        <p>이다. 중복을 허락해 셋을 고르는 수와 중복 없이 고르는 수다.</p>
+        <p>(다) \(d = 2\)이면 \(8 - 4 - 0 = 4\)개, \(d = 3\)이면 \(27 - 10 - 1 = 16\)개가 남는다. 이 상태들은 모든 \(P_\sigma\)에 대해 동시에 자기 자신의 상수배가 되지는 않는다. 2장에서 보듯 \(S_3\)의 2차원 기약 표현에 속하는 "섞인 대칭"의 상태다. \(d = 3\)의 \(16 = 8 + 8\)은 4장의 <a href="ch04.html#ex-quark-model-multiplets">\(\mathbf 3 \otimes \mathbf 3 \otimes \mathbf 3 = \mathbf{10} \oplus \mathbf 8 \oplus \mathbf 8 \oplus \mathbf 1\)</a>의 두 팔중항과 같은 수다. 『양자역학 (대학원)』 15장은 대칭화 공준으로 이런 상태를 물리적 상태에서 뺀다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-code-cube-matrices" data-level="2"><p>[코드] <a class="ref" href="#code-permutation-group"></a>을 고쳐, 정육면체의 회전군 \(O\)를 \(z\)축 둘레 \(90^\circ\) 회전과 \(x\)축 둘레 \(90^\circ\) 회전의 두 \(3 \times 3\) 정수 행렬에서 생성하라. 위수와 켤레류의 크기를 구해 <a class="ref" href="#ex-cube-rotations-s4"></a>와 맞추고, 각 켤레류의 대각합 \(1 + 2\cos\theta\)에서 회전각을 읽어라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p><a class="ref" href="#code-permutation-group"></a>의 함수를 행렬용으로 고쳐 쓴 독립된 코드다. 순열 대신 행렬을 행의 튜플로 쓰고, 곱을 행렬 곱으로, 역원을 전치로, 항등원을 단위 행렬로 바꾼다. <code>classes</code>는 그대로다.</p>
+        <pre><code class="language-python">I = ((1, 0, 0), (0, 1, 0), (0, 0, 1))
+
+def mul(A, B):          # 3×3 정수 행렬의 곱 (행렬은 행의 튜플)
+    return tuple(tuple(sum(A[i][k] * B[k][j] for k in range(3))
+                       for j in range(3)) for i in range(3))
+
+def inv(A):             # 직교 행렬의 역행렬은 전치 행렬
+    return tuple(zip(*A))
+
+def closure(gens):
+    G = new = {I}
+    while new:
+        new = {mul(g, s) for g in new for s in gens} - G
+        G = G | new
+    return sorted(G)
+
+def classes(G):
+    out = []
+    for g in G:
+        if not any(g in c for c in out):
+            out.append({mul(mul(k, g), inv(k)) for k in G})
+    return out
+
+Rz = ((0, -1, 0), (1, 0, 0), (0, 0, 1))     # z축 둘레 90°
+Rx = ((1, 0, 0), (0, 0, -1), (0, 1, 0))     # x축 둘레 90°
+O = closure([Rz, Rx])
+tr = lambda A: A[0][0] + A[1][1] + A[2][2]  # 1 + 2cos θ
+print(len(O), sorted((len(c), tr(min(c))) for c in classes(O)))</code></pre>
+        <pre class="code-out"><code>24 [(1, 3), (3, -1), (6, -1), (6, 1), (8, 0)]</code></pre>
+        <p>대각합 3은 \(\theta = 0\)(항등), \(-1\)은 \(\theta = 180^\circ\), 1은 \(\theta = 90^\circ\), 0은 \(\theta = 120^\circ\)이다. \(180^\circ\)인 켤레류가 둘(크기 3과 6)인 것이 예제의 면 축과 모서리 축이다. <a class="ref" href="#code-permutation-group"></a>과 달리 <code>sorted(G)</code>의 맨 앞이 항등원이라는 보장이 없으므로, 정규 부분군을 구하려면 \(\{e\}\)를 \(I\)로 바꿔 써야 한다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-code-a5-simple" data-level="3"><p>[코드] <a class="ref" href="#code-permutation-group"></a>의 함수로 \(A_5 = \langle(1\,2\,3\,4\,5), (1\,2\,3)\rangle\)의 위수, 켤레류의 크기, 정규 부분군을 구하라. 출력에서 \(A_5\)가 단순군임을 읽고, 같은 결론을 켤레류의 크기만으로 손으로 얻어라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p><a class="ref" href="#code-permutation-group"></a>의 <code>mul</code>부터 <code>normal_subgroups</code>까지 다섯 함수를 그대로 두고, 그 아래를 다음으로 바꾼다.</p>
+        <pre><code class="language-python">A5 = closure([(1, 2, 3, 4, 0), (1, 2, 0, 3, 4)])  # (1 2 3 4 5), (1 2 3)
+print(len(A5), sorted(len(c) for c in classes(A5)))
+print(sorted(len(N) for N in normal_subgroups(A5)))</code></pre>
+        <pre class="code-out"><code>60 [1, 12, 12, 15, 20]
+[1, 60]</code></pre>
+        <p>정규 부분군이 \(\{e\}\)와 \(A_5\) 둘뿐이므로 \(A_5\)는 단순군이다. \(S_5\)에서 크기 24인 5-순환의 켤레류가 \(A_5\) 안에서는 크기 12인 둘로 갈라진 것에 주의하자. 5-순환의 중심화 군 \(\langle\sigma\rangle\)(위수 \(120/24 = 5\))가 모두 짝순열이라 \(A_5\) 안의 켤레류 크기가 \(60/5 = 12\)이기 때문이다.</p>
+        <p>손으로는 이렇게 본다. 정규 부분군은 \(\{e\}\)를 포함하는 켤레류의 합집합이고(<a class="ref" href="#def-normal-subgroup"></a>), 그 크기는 라그랑주 정리에 따라 60의 약수여야 한다. \(1\)에 \(\{12, 12, 15, 20\}\)의 부분합을 더한 값은 1, 13, 16, 21, 25, 28, 33, 36, 40, 45, 48, 60이고, 이 가운데 60의 약수는 1과 60뿐이다. 따라서 \(A_5\)는 자명하지 않은 정규 부분군을 갖지 않는다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+</body>
+</html>

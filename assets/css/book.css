@@ -138,6 +138,10 @@ tr.best td { background: var(--accent-soft); font-weight: 700; }
 td .note { margin-top: 3px; font-size: 13.5px; color: var(--text-dim); }
 /* 열이 많은 표: 줄바꿈 없이 가로 스크롤 */
 table.nowrap th, table.nowrap td { white-space: nowrap; padding: 9px 12px; font-size: 14px; }
+/* 군의 곱셈표 (math-phys-grad 1장~): g_i행 g_j열 = g_i g_j. 375px에서 7×7까지 넘치지 않는다 */
+table.cayley { width: auto; margin: 0 auto; font-size: 15px; }
+table.cayley th, table.cayley td { padding: 5px 9px; text-align: center; white-space: nowrap; }
+table.cayley tbody th { background: var(--surface); }
 pre .copy { position: absolute; top: 8px; right: 8px; font: 11px var(--mono); padding: 3px 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-elev); color: var(--text-dim); cursor: pointer; opacity: 0; transition: opacity .15s; }
 pre:hover .copy, pre .copy:focus { opacity: 1; }
 
@@ -191,6 +195,16 @@ pre:hover .copy, pre .copy:focus { opacity: 1; }
 .box.math .box-n { background: var(--bg-elev); color: var(--text-dim); border: 1px solid var(--border); }
 .box.post { border-left-width: 6px; background: color-mix(in srgb, var(--accent) 7%, var(--bg-elev)); }
 .box.post .box-n { background: var(--accent); color: var(--bg-elev); }
+/* 계산 트랙 (math-phys-grad GUIDE 4-2): 손 계산 상자와 코드 상자 */
+.box.calc { border-left-color: var(--warn); background: color-mix(in srgb, var(--warn) 5%, var(--bg-elev)); }
+.box.calc .box-n { background: color-mix(in srgb, var(--warn) 16%, transparent); color: color-mix(in srgb, var(--warn) 70%, var(--text)); }
+.box.calc .calc-result { margin: 12px 0; padding: 8px 12px; border-radius: 6px; background: color-mix(in srgb, var(--warn) 10%, transparent); }
+.box.code { border-left-color: var(--text-faint); background: var(--surface); }
+.box.code .box-n { background: var(--bg-elev); color: var(--text-dim); border: 1px solid var(--border); }
+.box.code pre { background: var(--bg); margin: 12px 0; }
+.box.code pre.code-out { border-style: dashed; padding-top: 26px; color: var(--text-dim); }
+.box.code pre.code-out::before { content: "출력"; position: absolute; top: 6px; left: 12px; font: 600 11px var(--mono); color: var(--text-faint); letter-spacing: .04em; }
+.box.code .code-note { font-size: 14.5px; color: var(--text-dim); }
 details.proof, details.sol { margin: 14px 0; padding: 0 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); }
 .box details.proof, .box details.sol { background: var(--bg); }
 details.proof > summary, details.sol > summary { cursor: pointer; padding: 9px 0; font-weight: 700; font-size: 15px; color: var(--text-dim); }

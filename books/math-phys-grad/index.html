@@ -4,9 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>수리물리학 (대학원) · 지식따개</title>
-<meta name="description" content="군과 표현론, 리 군과 리 대수, 다양체·미분 형식·접속·올다발, 힐베르트 공간의 연산자와 스펙트럼, 분포와 적분 방정식, 점근 해석과 안장점, 그리고 범함수 미적분·그라스만 적분·열핵 — 양자역학, 상대성이론, 양자장론, 함수적 RG가 공통으로 기대는 수학을 학부 『수리물리학』 위에 쌓습니다.">
+<meta name="description" content="군과 표현론, 리 군과 리 대수, 로런츠 군과 스피너, 다양체·미분 형식·접속·올다발, 힐베르트 공간의 연산자와 스펙트럼, 분포와 적분 방정식, 점근급수와 안장점, 그리고 범함수 미적분·그라스만 적분·열핵 — 양자역학, 상대성이론, 양자장론, 함수적 RG가 공통으로 기대는 수학을 학부 『수리물리학』 위에 쌓습니다. 장마다 가장 작은 경우를 손으로 끝까지 계산하고, 같은 계산을 Python으로 처음부터 다시 짭니다.">
 <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
 <script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
 <link rel="stylesheet" href="../../assets/css/base.css">
 <link rel="stylesheet" href="../../assets/css/book.css">
 <script defer src="../../data/site.js"></script>
@@ -21,20 +24,18 @@
 <script defer src="../../assets/js/book.js"></script>
 </head>
 <body data-root="../../" data-book="math-phys-grad" data-field="phys" data-page="book-home">
-<!-- 목차 공개(outline) 책의 홈. 이 파일은 가목차를 보여 주려고 만든 것이다(2026-11-18).
-     정식 기획(GUIDE.md) 때 다시 쓴다. 장 목록은 data/books.js가 기준이다. -->
 
 <section class="home-hero">
   <div class="inner">
     <div>
       <div class="eyebrow" data-fill="book-en">Advanced Mathematical Physics</div>
       <h1>대칭과 기하,<br><span class="grad">그리고 범함수</span></h1>
-      <p data-fill="book-desc">군과 표현론, 리 군과 리 대수, 다양체·미분 형식·접속·올다발, 힐베르트 공간의 연산자와 스펙트럼, 분포와 적분 방정식, 점근 해석과 안장점, 그리고 범함수 미적분·그라스만 적분·열핵 — 양자역학, 상대성이론, 양자장론, 함수적 RG가 공통으로 기대는 수학을 학부 『수리물리학』 위에 쌓습니다.</p>
+      <p data-fill="book-desc">군과 표현론, 리 군과 리 대수, 로런츠 군과 스피너, 다양체·미분 형식·접속·올다발, 힐베르트 공간의 연산자와 스펙트럼, 분포와 적분 방정식, 점근급수와 안장점, 그리고 범함수 미적분·그라스만 적분·열핵 — 양자역학, 상대성이론, 양자장론, 함수적 RG가 공통으로 기대는 수학을 학부 『수리물리학』 위에 쌓습니다. 장마다 가장 작은 경우를 손으로 끝까지 계산하고, 같은 계산을 Python으로 처음부터 다시 짭니다.</p>
       <div class="cta">
         <a class="btn primary big" href="#chapters">전체 목차 →</a>
         <a class="btn ghost big" href="#map">이 책의 지도</a>
       </div>
-      <div class="hero-badges"><span><b data-fill="part-count">5</b>부 <b data-fill="chapter-count">21</b>장</span><span>L4 고급</span><span data-fill="book-status">목차 공개</span></div>
+      <div class="hero-badges"><span><b data-fill="part-count">5</b>부 <b data-fill="chapter-count">21</b>장</span><span>L4 고급</span><span>이론 → 손 계산 → 코드</span><span data-fill="book-status">집필 중</span></div>
     </div>
     <div class="hero-stage series-map">
       <svg viewBox="0 0 540 400" role="img" aria-label="서재의 대학원 물리 경로: 학부 수리물리학에서 대학원 수리물리학, 양자역학과 전자기학, 양자장론과 상대성이론, 함수적 RG를 거쳐 점근적 안전성으로. 지금 책은 강조색 상자">
@@ -68,66 +69,298 @@
 
 <section class="home-section" id="map">
   <h2>이 책의 지도</h2>
-  <p class="sub">1부와 2부가 대칭과 기하의 언어를, 3부가 양자역학의 수학적 바탕을 세웁니다. 4부의 점근 해석은 경로적분의 준고전 근사로, 5부의 범함수 방법은 함수적 RG의 계산 도구로 바로 이어집니다. 전제: 학부 『수리물리학』 전체.</p>
+  <p class="sub">1부와 2부가 대칭과 기하의 언어를, 3부가 양자역학의 수학적 바탕을 세웁니다. 4부의 점근 해석은 경로적분의 준고전 근사로, 5부의 범함수 방법은 함수적 RG의 계산 도구로 바로 이어집니다. 전제: 학부 『수리물리학』 전체. 상자를 누르면 그 부의 첫 장으로 갑니다.</p>
   <figure class="diagram scroll">
-    <svg viewBox="0 0 1100 420" role="img" aria-label="이 책의 구성: 1부 군과 표현, 2부 미분기하와 게이지 구조, 3부 함수 해석과 스펙트럼, 4부 점근 해석과 특수 함수, 5부 범함수 방법의 순서로 읽는다">
+    <svg id="bookmap" viewBox="0 0 1100 420" style="min-width: 900px" role="img" aria-label="이 책의 구성: 1부 군과 표현, 2부 미분기하와 게이지 구조, 3부 함수 해석과 스펙트럼, 4부 점근 해석과 특수 함수, 5부 범함수 방법의 순서로 읽는다">
+      <style>
+        #bookmap .t-b { font-size: 17px; }
+        #bookmap .t-acc { font-size: 15px; }
+        #bookmap .t-dim { font-size: 14.5px; }
+      </style>
       <defs><marker id="bm-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs>
-      <a href="#ch01"><g transform="translate(20,20)">
+      <a href="chapters/ch01.html"><g transform="translate(20,20)">
         <rect width="220" height="150" rx="14" class="f-surface"/>
-        <text x="16" y="28" class="t-acc">1부 · 1–5장</text>
-        <text x="16" y="54" class="t-b">군과 표현</text>
+        <text x="16" y="26" class="t-acc">1부 · 1–5장</text>
+        <text x="16" y="52" class="t-b">군과 표현</text>
         <text x="16" y="82" class="t-dim">군과 표현론</text>
         <text x="16" y="102" class="t-dim">리 군과 리 대수</text>
         <text x="16" y="122" class="t-dim">SU(N)와 영 도표</text>
         <text x="16" y="142" class="t-dim">로런츠 군과 스피너</text>
       </g></a>
       <path d="M244 95 H294" class="s-acc" marker-end="url(#bm-arr)"/>
-      <a href="#ch06"><g transform="translate(300,20)">
+      <a href="chapters/ch06.html"><g transform="translate(300,20)">
         <rect width="220" height="150" rx="14" class="f-surface"/>
-        <text x="16" y="28" class="t-acc">2부 · 6–9장</text>
-        <text x="16" y="54" class="t-b">미분기하와 게이지 구조</text>
-        <text x="16" y="82" class="t-dim">다양체와 미분 형식</text>
-        <text x="16" y="102" class="t-dim">접속과 곡률</text>
-        <text x="16" y="122" class="t-dim">올다발과 게이지장</text>
+        <text x="16" y="26" class="t-acc">2부 · 6–9장</text>
+        <text x="16" y="52" class="t-b">미분기하와 게이지 구조</text>
+        <text x="16" y="82" class="t-dim">다양체와 텐서장</text>
+        <text x="16" y="102" class="t-dim">미분 형식과 호지 별</text>
+        <text x="16" y="122" class="t-dim">접속과 곡률</text>
+        <text x="16" y="142" class="t-dim">올다발과 게이지장</text>
       </g></a>
       <path d="M524 95 H574" class="s-acc" marker-end="url(#bm-arr)"/>
-      <a href="#ch10"><g transform="translate(580,20)">
+      <a href="chapters/ch10.html"><g transform="translate(580,20)">
         <rect width="220" height="150" rx="14" class="f-surface"/>
-        <text x="16" y="28" class="t-acc">3부 · 10–13장</text>
-        <text x="16" y="54" class="t-b">함수 해석과 스펙트럼</text>
+        <text x="16" y="26" class="t-acc">3부 · 10–13장</text>
+        <text x="16" y="52" class="t-b">함수 해석과 스펙트럼</text>
         <text x="16" y="82" class="t-dim">비유계 연산자</text>
         <text x="16" y="102" class="t-dim">스펙트럼 정리</text>
-        <text x="16" y="122" class="t-dim">분포 · 적분 방정식</text>
+        <text x="16" y="122" class="t-dim">분포와 그린 함수</text>
+        <text x="16" y="142" class="t-dim">적분 방정식</text>
       </g></a>
       <path d="M804 95 H854" class="s-acc" marker-end="url(#bm-arr)"/>
-      <a href="#ch14"><g transform="translate(860,20)">
+      <a href="chapters/ch14.html"><g transform="translate(860,20)">
         <rect width="220" height="150" rx="14" class="f-surface"/>
-        <text x="16" y="28" class="t-acc">4부 · 14–17장</text>
-        <text x="16" y="54" class="t-b">점근 해석과 특수 함수</text>
-        <text x="16" y="82" class="t-dim">점근 급수와 보렐 합</text>
+        <text x="16" y="26" class="t-acc">4부 · 14–17장</text>
+        <text x="16" y="52" class="t-b">점근 해석과 특수 함수</text>
+        <text x="16" y="82" class="t-dim">점근급수와 보렐 합</text>
         <text x="16" y="102" class="t-dim">안장점 · 정상 위상</text>
-        <text x="16" y="122" class="t-dim">WKB · 초기하 함수</text>
+        <text x="16" y="122" class="t-dim">WKB · 특이 섭동</text>
+        <text x="16" y="142" class="t-dim">초기하 함수</text>
       </g></a>
       <path d="M970 174 V244" class="s-acc" marker-end="url(#bm-arr)"/>
-      <a href="#ch18"><g transform="translate(860,250)">
+      <a href="chapters/ch18.html"><g transform="translate(860,250)">
         <rect width="220" height="150" rx="14" class="f-acc-soft" stroke-width="2"/>
-        <text x="16" y="28" class="t-acc">5부 · 18–21장</text>
-        <text x="16" y="54" class="t-b">범함수 방법</text>
+        <text x="16" y="26" class="t-acc">5부 · 18–21장</text>
+        <text x="16" y="52" class="t-b">범함수 방법</text>
         <text x="16" y="82" class="t-dim">범함수 미분과 Γ[φ]</text>
-        <text x="16" y="102" class="t-dim">det = exp Tr log</text>
+        <text x="16" y="102" class="t-dim">det = exp Tr ln</text>
         <text x="16" y="122" class="t-dim">그라스만 · 초대각합</text>
         <text x="16" y="142" class="t-dim">열핵과 Q-범함수</text>
       </g></a>
     </svg>
-    <figcaption><b>그림 0-1.</b> 다섯 부의 순서. 화살표는 읽는 순서이고, 강조색 상자(5부)는 『함수적 재규격화군』이 링크로 바로 쓰는 부입니다. 2부의 접속과 곡률은 『상대성이론』이, 3부의 스펙트럼 이론은 『양자역학 (대학원)』이, 1부의 로런츠 군과 스피너는 『양자장론』이 이어받습니다. 21장의 열핵은 8장의 곡률을 씁니다. 상자를 누르면 그 부의 첫 장 카드로 갑니다.</figcaption>
+    <figcaption><b>그림 0-1.</b> 다섯 부의 순서. 화살표는 읽는 순서이고, 강조색 상자(5부)는 『함수적 재규격화군』이 링크로 바로 쓰는 부입니다. 2부의 접속과 곡률은 『상대성이론』이, 3부의 스펙트럼 이론은 『양자역학 (대학원)』이, 1부의 로런츠 군과 스피너는 『양자장론』이 이어받습니다. 21장의 열핵은 8장의 곡률을 씁니다.</figcaption>
   </figure>
+  <div class="callout"><strong>목차를 이렇게 짠 이유</strong>
+    <p><b>군과 표현을 맨 앞에 둡니다.</b> 『양자역학 (대학원)』이 가장 먼저 필요로 하고, 2부의 올다발과 5부의 초대각합이 리 군의 말을 쓰기 때문입니다. 유한군은 표현론의 정리를 모두 증명할 수 있는 가장 작은 무대이기도 합니다.</p>
+    <p><b>학부가 "물리학자의 수준"으로 남긴 것을 제대로 세웁니다.</b> 학부 22장의 지수 계산은 2부에서 좌표에 매이지 않는 정의로, 학부 9장의 "에르미트 연산자"는 3부에서 정의역과 자기수반성으로 다시 쓰입니다.</p>
+    <p><b>5부가 끝 목표입니다.</b> 함수적 RG의 Wetterich 방정식에 나오는 \(\Gamma^{(2)}\), \(\operatorname{STr}\), 열핵 계수, 조절 함수의 표기를 이 책에서 확정해, 뒤 책이 수학을 다시 유도하지 않게 합니다. 4부는 그 계산이 쓰는 멜린 변환과 오일러-매클로린 공식, 그리고 발산하는 섭동 급수를 다루는 법을 맡습니다.</p>
+    <p><b>학부가 이미 한 것은 다시 쓰지 않고 링크합니다.</b> 변분법, 스투름-리우빌 이론, 기본적인 그린 함수, 복소해석은 학부 책의 몫이고, 이 책의 장 머리에서 링크로 가리킵니다.</p>
+  </div>
+</section>
+
+<section class="home-section" id="prereq">
+  <h2>이 책이 전제하는 것</h2>
+  <p class="sub">독자가 이 서재의 앞선 책 가운데 학부 『수리물리학』(22장)만 읽었다고 가정합니다. 아래 표에 없는 것은 이 책 안에서 새로 세우고, 표에 있는 개념을 처음 쓸 때는 학부 장의 그 정의나 정리에 링크를 겁니다. 학부 책의 번호는 바뀔 수 있어서 번호 없이 이름으로 가리킵니다.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>학부 장</th><th>가져오는 것</th><th>쓰는 장</th></tr></thead>
+    <tbody>
+      <tr><td><a href="../math-phys/chapters/ch01.html">01 급수와 근사</a></td><td>테일러 전개, \(O\) 기호, 이항 급수</td><td>전체, 14</td></tr>
+      <tr><td><a href="../math-phys/chapters/ch03.html">03 다변수 미적분 다시 보기</a></td><td>르장드르 변환, 가우스 적분, 라그랑주 승수, 변수 바꾸기</td><td>18, 19</td></tr>
+      <tr><td><a href="../math-phys/chapters/ch05.html">05 선적분, 면적분과 적분 정리</a></td><td>스토크스 정리와 발산 정리, 단순 연결, 보존장</td><td>7, 9</td></tr>
+      <tr><td><a href="../math-phys/chapters/ch06.html">06 곡선 좌표계와 디랙 델타</a></td><td>디랙 델타와 그 성질, \(\nabla^2(1/r)\), 척도 인자, 곡선 좌표의 라플라시안</td><td>7, 12, 18</td></tr>
+      <tr><td><a href="../math-phys/chapters/ch07.html">07 행렬과 선형 변환</a></td><td>군의 정의, 직교 행렬, 생성자와 회전 생성자, \(\mathfrak{so}(3)\) 교환 관계, 회전의 지수 꼴, 로런츠 변환 행렬</td><td>1, 3, 5</td></tr>
+      <tr><td><a href="../math-phys/chapters/ch08.html">08 고유값 문제</a></td><td>유한 차원 스펙트럼 정리, 에르미트·유니타리 행렬, 파울리 행렬, 스핀의 \(2\pi\) 회전, 행렬 지수, \(\det e^A = e^{\operatorname{tr}A}\)</td><td>2, 3, 11, 19</td></tr>
+      <tr><td><a href="../math-phys/chapters/ch09.html">09 벡터 공간과 함수 공간</a></td><td>내적(켤레 선형 관례), 디랙 표기, 완비성 관계, 사영 연산자, \(L^2\), 수반, 에르미트 연산자와 경계 항</td><td>2, 10, 11</td></tr>
+      <tr><td><a href="../math-phys/chapters/ch10.html">10 상미분방정식</a></td><td>라플라스 변환, 론스키안</td><td>16, 19, 21</td></tr>
+      <tr><td><a href="../math-phys/chapters/ch11.html">11 감마 함수와 특수 적분</a></td><td>가우스 적분과 모멘트, 감마·베타 함수, \(n\)차원 구, 점근적으로 같음, 라플라스 방법(1차), 스털링 공식, \(\operatorname{erfc}\)의 점근 꼴</td><td>14, 15, 16, 19, 21</td></tr>
+      <tr><td><a href="../math-phys/chapters/ch12.html">12 급수 풀이와 르장드르 함수</a></td><td>정칙 특이점과 프로베니우스 방법, 르장드르 다항식, 구면 조화 함수와 덧셈 정리</td><td>2, 3, 17, 21</td></tr>
+      <tr><td><a href="../math-phys/chapters/ch13.html">13 베셀 함수와 직교 다항식</a></td><td>베셀 함수와 그 점근 꼴, 에르미트 다항식, 연관 라게르 다항식, 수소 지름 방정식</td><td>12, 15, 17</td></tr>
+      <tr><td><a href="../math-phys/chapters/ch15.html">15 푸리에 변환</a></td><td>변환 쌍과 관례, \(\int e^{ikx}dk = 2\pi\delta\), 합성곱 정리, 플랑슈렐 정리, 3차원 변환, 푸아송 합 공식</td><td>12, 18, 19, 21</td></tr>
+      <tr><td><a href="../math-phys/chapters/ch16.html">16 스투름-리우빌 이론</a></td><td>자기수반 경계 조건, 실수 고유값과 직교성, 완비성, 레일리 몫</td><td>10, 11, 13</td></tr>
+      <tr><td><a href="../math-phys/chapters/ch18.html">18 해석 함수</a></td><td>해석 함수, 분지점과 분지 절단</td><td>14, 15, 17</td></tr>
+      <tr><td><a href="../math-phys/chapters/ch19.html">19 복소 적분과 유수 정리</a></td><td>코시 적분 공식, 유수 정리, 조르당 보조정리, 주값, 소호츠키-플레멜 공식, 경로 변형</td><td>11, 12, 14, 15, 17</td></tr>
+      <tr><td><a href="../math-phys/chapters/ch20.html">20 그린 함수</a></td><td>그린 함수와 경계값 문제, 고유함수 전개, 헬름홀츠 그린 함수와 \(i\varepsilon\), 열 핵, 지연 그린 함수, 크라머스-크로니히 관계</td><td>11, 12, 13, 21</td></tr>
+      <tr><td><a href="../math-phys/chapters/ch21.html">21 변분법</a></td><td>범함수와 범함수 미분, 오일러-라그랑주 방정식(장의 꼴 포함), 구 위의 측지선</td><td>8, 18</td></tr>
+      <tr><td><a href="../math-phys/chapters/ch22.html">22 텐서</a></td><td>반변·공변 성분, 계량 텐서, 크리스토펠 기호, 공변 발산, 민코프스키 계량과 4-벡터</td><td>5, 6, 7, 8</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout tip"><strong>표에 없는 선수 지식</strong><p>학부 2, 4, 14, 17장(복소수, 벡터 미분, 푸리에 급수, 변수 분리)은 바탕 지식으로만 씁니다. 양자역학, 전자기학, 일반물리는 학부에서 배웠다고 가정하지만 이 서재에는 그 책이 없으므로, 예제에 필요한 식(슈뢰딩거 방정식, 벡터 꼴 맥스웰 방정식 등)은 예제 안에서 한 줄로 다시 적습니다. 통계역학은 모른다고 가정해서, 분배 함수나 자유 에너지 같은 말을 설명 없이 쓰지 않습니다.</p></div>
 </section>
 
 <section class="home-section" id="chapters">
   <h2>전체 목차</h2>
-  <p class="sub">아직 본문이 없는 가목차입니다. 장 제목과 설명은 정식 기획(GUIDE.md)에서 바뀔 수 있습니다.</p>
+  <p class="sub">5부 21장입니다. 21장(열핵)만 L5이고 나머지는 L4입니다. 카드 아래 줄이 그 장에서 다루는 내용입니다. 아직 쓰지 않은 장은 "빈 슬롯"으로 표시되며, 절 목록이 카드에 적혀 있습니다.</p>
   <div class="ch-grid" data-chapter-grid></div>
 </section>
 
+<section class="home-section" id="how">
+  <h2>이 책을 읽는 법</h2>
+  <p class="sub">이 책은 이론서이고, 독자는 학부 『수리물리학』을 마친 물리학과 졸업생입니다. 도구를 쓰는 법은 알지만 왜 그렇게 되는지는 모르는 곳을 원리부터 다시 세웁니다. 대학원 책이라고 설명을 줄이지 않고, 수준이 올라간 만큼 중간 단계를 더 꼼꼼히 씁니다. 주제를 고르는 기준은 하나입니다. 뒤 책의 어느 장이 이것을 쓰는가.</p>
+  <div class="flow">
+    <div><b>동기</b>뒤 책의 계산에서, 또는 앞 도구의 한계에서 출발합니다. "무한 차원 연산자의 대각합은 언제 뜻이 있는가"처럼 어디에서 필요해지는지를 먼저 묻습니다.</div>
+    <div><b>정의와 정리</b>정리에는 조건을 빠짐없이 적습니다. 물리학자가 흔히 생략하는 조건이 실제로 깨지는 예는 흔한 실수 콜아웃으로 보입니다.</div>
+    <div><b>손 계산</b>행렬이면 2×2나 3×3, 군이면 \(S_3\), 다양체면 \(S^2\)처럼 가장 작은 경우를 끝까지 풉니다.</div>
+    <div><b>코드</b>같은 계산을 Python으로 처음부터 짭니다. 먼저 손 계산 값과 맞는지 <code>assert</code>로 확인한 뒤, 손으로는 못 하는 크기로 넓힙니다. 라이브러리 함수 하나로 답을 내지 않습니다.</div>
+    <div><b>확인과 쓰임</b>예제는 극한, 차원, 대칭, 알려진 특수한 경우 가운데 하나 이상으로 결과를 점검합니다. 대표 계산에는 뒤 책의 어느 장에서 쓰이는지를 적습니다.</div>
+    <div><b>연습문제</b>난이도 ★1–3의 문제를 풀어 본 뒤 접어 둔 풀이와 맞춰 봅니다. 본문의 코드를 고치거나 넓히는 [코드] 문제와, 뒤 책으로 이어지는 문제가 있습니다.</div>
+  </div>
+  <div class="callout tip"><strong>대표 계산</strong><p>장마다 뒤 책에서 실제로 쓰일 계산을 끝까지 합니다. 스핀-궤도 결합의 클렙시-고든 계수(3장), 디랙 단극의 체른 수(9장), 조화 진동자 요동 행렬식의 겔판트-야글롬 계산(19장), 구 위 라플라시안의 열핵 계수(21장)가 그 예입니다. 결과는 정수(표현의 차원, 체른 수), 닫힌 식, 숫자, 뒤 책이 그대로 인용할 식 가운데 하나로 끝납니다.</p></div>
+  <div class="callout"><strong>코드 상자</strong><p>코드는 NumPy, SymPy, SciPy, mpmath까지 씁니다. 아직 브라우저에서 실행하는 기능이 없으므로, 코드 상자는 실행하지 않고도 읽히도록 코드와 기대 출력을 함께 싣습니다.</p></div>
+
+  <h3>증명을 다루는 수준</h3>
+  <p>물리학자를 위한 책이지만 3부처럼 엄밀하지 않으면 틀린 결론이 나오는 주제가 있어서, 정리마다 다루는 수준을 셋으로 나눕니다. 장마다 어느 정리가 어느 수준인지 정해 두었고, 엄밀성을 줄인 곳은 숨기지 않고 심화 콜아웃으로 밝힙니다.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>수준</th><th>다루는 법</th><th>예</th></tr></thead>
+    <tbody>
+      <tr><td>A. 완전 증명</td><td>본문에 펼치거나 접어 둔 증명으로 쓰고, 중간 단계를 건너뛰지 않습니다.</td><td>라그랑주 정리, 슈어 보조정리, \(\mathrm d^2 = 0\), 비앙키 항등식, \(\Gamma^{(2)} = (W^{(2)})^{-1}\), \(\operatorname{sdet}\)의 곱셈성, 겔판트-야글롬 정리(1차원)</td></tr>
+      <tr><td>B. 진술 + 증명의 생각 + 출처</td><td>조건을 빠짐없이 적어 진술하고, 핵심 단계만 보인 뒤, 엄밀한 증명이 있는 곳(책, 장·절)을 적습니다.</td><td>비유계 연산자의 스펙트럼 정리, 스톤 정리, 일반 다양체의 스토크스 정리, 프레드홀름 대안, 열핵 전개의 존재</td></tr>
+      <tr><td>C. 진술 + 출처</td><td>진술만 쓰고 무엇에 쓰이는지 한 문장을 붙입니다.</td><td>페터-바일 정리, 단순 리 대수의 분류, 지표 정리, 핵 스펙트럼 정리</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout warn"><strong>교재마다 다른 관례</strong><p>생성자의 허수 단위, 곡률의 부호, 호지 별의 정의, 열핵 연산자의 부호처럼 문헌마다 다른 관례가 많습니다. 다른 책의 식을 옮길 때는 아래 표기 규칙부터 확인하세요. 다른 교재와 다른 기호를 처음 쓰는 장은 흔한 실수 콜아웃으로 차이를 밝힙니다.</p></div>
+</section>
+
+<section class="home-section" id="notation">
+  <h2>표기 규칙</h2>
+  <p class="sub">이 표기는 뒤 책들과의 약속입니다. 『양자역학 (대학원)』, 『상대성이론』, 『양자장론』, 『함수적 재규격화군』, 『점근적 안전성과 양자 중력』은 이 표를 그대로 가져가고, 다른 표기가 필요하면 그 책에서 차이를 밝힙니다. 여기에는 핵심 관례만 요약했고, 다른 교재와 다른 점은 작은 글씨로 덧붙였습니다. 번호는 식 (n.k), 정의·정리·예제 n.k, 손 계산 n.k, 코드 n.k, 문제 n.k이며 장마다 1부터 셉니다.</p>
+
+  <h3>학부 책에서 이어받는 것과 달라지는 것</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>기호</th><th>뜻</th></tr></thead>
+    <tbody>
+      <tr><td>\(\hbar = c = 1\)</td><td>기본 단위. 15·16장의 고전 극한과 WKB, 19장에서 고리 수를 세는 곳에서만 \(\hbar\)를 식에 남깁니다.<div class="note">전자기 예제는 맥스웰 방정식에 \(\varepsilon_0, \mu_0, 4\pi\)가 없는 헤비사이드-로런츠 단위입니다. SI 꼴은 『전자기학 (대학원)』에서 봅니다.</div></td></tr>
+      <tr><td>\(\eta_{\mu\nu} = \operatorname{diag}(-1,+1,+1,+1)\)</td><td>민코프스키 계량. 학부 22장과 같습니다. 유클리드 회전은 \(t = -i\tau\)이고 계량은 \((+,+,+,+)\), \(e^{iS}\)는 \(e^{-S}\)가 됩니다. 5부는 처음부터 유클리드 공간에서 씁니다.<div class="note">입자물리·양자장론 교재 다수는 \((+,-,-,-)\)입니다.</div></td></tr>
+      <tr><td>\(\langle u\vert v\rangle\)</td><td>왼쪽 자리에 켤레 선형, 오른쪽 자리에 선형입니다.<div class="note">수학 교재 다수는 반대입니다. 정리를 옮길 때 자리를 확인하세요.</div></td></tr>
+      <tr><td>\(\tilde f(k) = \displaystyle\int f(x)\,e^{-ikx}\,dx\)</td><td>\(f(x) = \displaystyle\int \frac{dk}{2\pi}\,\tilde f(k)\,e^{ikx}\). \(2\pi\)는 역변환의 측도에 붙입니다. \(d\)차원은 \(\int d^dk/(2\pi)^d\).</td></tr>
+      <tr><td>지수의 위와 아래</td><td>2부부터 구별합니다. 합 규약은 위 지수 하나와 아래 지수 하나가 짝을 이룰 때만 씁니다.<div class="note">1부의 리 대수 지수 \(a, b, c\)는 위아래 구별 없이 모두 아래에 씁니다. 콤팩트 군에서는 킬링 형식이 \(\delta_{ab}\)에 비례하기 때문입니다.</div></td></tr>
+      <tr><td>\(\mathrm d,\ dx\)</td><td>외미분과 기저 1-형식의 \(\mathrm d\)는 곧은 글씨, 적분의 측도 \(dx\), \(d^dx\)는 이탤릭 그대로입니다. 여미분은 \(\delta\)를 피해 \(\mathrm d^\dagger\)로 씁니다.</td></tr>
+      <tr><td>\(\approx,\ \sim,\ \cong\)</td><td>근사적으로 같음, 점근적으로 같음(14장에서 점근 전개로 넓힘), 동형. \(\simeq\)는 쓰지 않습니다. 작은 양은 \(\varepsilon\) (\(\epsilon\)을 쓰지 않음), 레비치비타 기호도 \(\varepsilon_{ijk}\)입니다.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>같은 글자의 여러 뜻</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>글자</th><th>뜻</th><th>구별하는 법</th></tr></thead>
+    <tbody>
+      <tr><td>\(\Gamma\)</td><td>감마 함수 \(\Gamma(z)\), 접속 계수 \(\Gamma^\rho{}_{\mu\nu}\), 유효 작용 \(\Gamma[\phi]\)와 \(\Gamma_k\)</td><td>인수와 지수의 모양</td></tr>
+      <tr><td>\(R\)</td><td>곡률 스칼라, 리만 텐서 \(R^\rho{}_{\sigma\mu\nu}\), 조절 함수 \(R_k\), 표현 \(R\)</td><td>조절 함수에는 항상 아래 첨자 \(k\)</td></tr>
+      <tr><td>\(\delta\)</td><td>크로네커 \(\delta_{ab}\), 디랙 \(\delta(x)\), 변분 \(\delta\phi\)</td><td>여미분은 \(\mathrm d^\dagger\)</td></tr>
+      <tr><td>\(\zeta\)</td><td>리만 제타 \(\zeta(s)\), 스펙트럼 제타 \(\zeta_\Delta(s)\), 빠르기</td><td>제타 함수에는 항상 인수를 붙임</td></tr>
+      <tr><td>\(t\)</td><td>시간, <b>흐름 시간</b> \(t = \ln(k/\Lambda)\)</td><td>열핵 매개변수는 \(s\), 유클리드 시간은 \(\tau\)</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>1부 · 군과 표현</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>대상</th><th>이 책의 관례</th></tr></thead>
+    <tbody>
+      <tr><td>순열의 곱 (1장)</td><td>\(\sigma\tau\)는 \(\tau\)를 먼저, 그 다음 \(\sigma\)를 적용합니다 (함수의 합성과 같은 순서). 곱셈표의 \(g_i\)행 \(g_j\)열은 \(g_ig_j\).<div class="note">왼쪽부터 적용하는 교재가 있고, 그러면 곱셈표의 행과 열이 뒤바뀝니다.</div></td></tr>
+      <tr><td>생성자 (3장)</td><td>에르미트 생성자 \(T_a\), \([T_a, T_b] = i f_{abc}T_c\), 군의 원소는 \(e^{i\alpha_aT_a}\)입니다.<div class="note">수학 교재는 반에르미트 \(X_a = -iT_a\)를 써서 \([X_a, X_b] = f_{abc}X_c\), 원소는 \(e^{\alpha_aX_a}\)입니다. 학부 7장의 \(L_i\)가 이 꼴입니다.</div></td></tr>
+      <tr><td>규격화 (3·4장)</td><td>기본 표현에서 \(\operatorname{tr}(T_aT_b) = \tfrac12\delta_{ab}\). \(SU(2)\)는 \(T_a = \sigma_a/2\), \(SU(3)\)는 \(T_a = \lambda_a/2\). \(f_{abc}\)는 실수이고 완전 반대칭입니다.<div class="note">\(\delta_{ab}\)나 \(2\delta_{ab}\)로 두는 교재가 있고, 그러면 구조 상수와 카시미르 값이 달라집니다.</div></td></tr>
+      <tr><td>회전 (3장)</td><td>능동 회전 \(U(\hat{\mathbf n}, \theta) = e^{-i\theta\,\hat{\mathbf n}\cdot\mathbf J}\), \([J_i, J_j] = i\varepsilon_{ijk}J_k\).</td></tr>
+      <tr><td>카시미르, 딘킨 지수 (3·4장)</td><td>\(T_aT_a = C_2(R)\,\mathbf 1\), \(\operatorname{tr}_R(T_aT_b) = T(R)\,\delta_{ab}\). \(SU(N)\)에서 \(T(F) = \tfrac12\), \(C_2(F) = \dfrac{N^2-1}{2N}\), \(C_2(A) = T(A) = N\).</td></tr>
+      <tr><td>클렙시-고든 계수 (3장)</td><td>\(\langle j_1m_1; j_2m_2\vert j\,m\rangle\). 콘던-쇼틀리 관례로 실수이고 \(\langle j_1 j_1; j_2\,(j-j_1)\vert j\,j\rangle > 0\)입니다.</td></tr>
+      <tr><td>로런츠 생성자 (5장)</td><td>\(\Lambda^{\mathsf T}\eta\Lambda = \eta\). 회전은 \(e^{-i\boldsymbol\theta\cdot\mathbf J}\), 부스트는 \(e^{+i\boldsymbol\zeta\cdot\mathbf K}\). \([J_i, K_j] = i\varepsilon_{ijk}K_k\), \([K_i, K_j] = -i\varepsilon_{ijk}J_k\).<div class="note">스레드니키와 같습니다. 5장이 \(4\times4\) 행렬로 확인합니다.</div></td></tr>
+      <tr><td>바일 스피너 (5장)</td><td>왼손 바일 스피너는 \((\tfrac12, 0)\), 오른손은 \((0, \tfrac12)\). \(\sigma^\mu = (\mathbf 1, \boldsymbol\sigma)\), \(\bar\sigma^\mu = (\mathbf 1, -\boldsymbol\sigma)\).<div class="note">왼손·오른손의 배정이 반대인 교재가 있습니다.</div></td></tr>
+      <tr><td>감마 행렬 (5장)</td><td>\(\{\gamma^\mu, \gamma^\nu\} = -2\eta^{\mu\nu}\) (스레드니키, 『양자장론』의 뼈대와 맞춤). 유클리드 감마 행렬은 \(\{\gamma_E^\mu, \gamma_E^\nu\} = 2\delta^{\mu\nu}\)이고 모두 에르미트입니다.<div class="note">바인베르크와 중력 문헌 다수는 \(\{\gamma^\mu, \gamma^\nu\} = +2\eta^{\mu\nu}\)입니다. 페스킨은 계량이 \((+,-,-,-)\)라 \(+2\eta^{\mu\nu}\)로 씁니다. 식을 옮길 때는 계량과 함께 부호를 바꿉니다.</div></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>2부 · 미분기하와 게이지 구조</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>대상</th><th>이 책의 관례</th></tr></thead>
+    <tbody>
+      <tr><td>벡터와 쌍대 벡터 (6장)</td><td>\(V = V^\mu\partial_\mu\), \(\omega = \omega_\mu\,\mathrm dx^\mu\), 짝짓기 \(\omega(V) = \omega_\mu V^\mu\). 좌표 지수는 그리스 문자, 정규직교 틀 지수는 라틴 \(a, b, c\).<div class="note">학부 22장의 \(\mathbf e_i\), \(\mathbf e^i\)가 \(\partial_\mu\), \(\mathrm dx^\mu\)가 됩니다.</div></td></tr>
+      <tr><td>대칭화, 교대화 (6장)</td><td>\(T_{(\mu\nu)} = \tfrac12(T_{\mu\nu} + T_{\nu\mu})\), \(T_{[\mu\nu]} = \tfrac12(T_{\mu\nu} - T_{\nu\mu})\). 지수가 \(p\)개면 \(1/p!\).</td></tr>
+      <tr><td>쐐기곱 (7장)</td><td>\(\mathrm dx\wedge\mathrm dy = \mathrm dx\otimes\mathrm dy - \mathrm dy\otimes\mathrm dx\).<div class="note">\(\tfrac12\)이 붙는 규격화를 쓰는 교재가 있습니다.</div></td></tr>
+      <tr><td>레비치비타 텐서 (7장)</td><td>\(\varepsilon_{\mu_1\cdots\mu_n} = \sqrt{\lvert g\rvert}\,\tilde\varepsilon_{\mu_1\cdots\mu_n}\). 로런츠 부호에서 \(\tilde\varepsilon_{01\cdots(n-1)} = +1\), 그래서 민코프스키에서 \(\varepsilon^{0123} = -1\).<div class="note">\(\varepsilon^{0123} = +1\)로 정하는 교재가 있습니다.</div></td></tr>
+      <tr><td>호지 별 (7장)</td><td>\((\star\omega)_{\mu_1\cdots\mu_{n-p}} = \dfrac{1}{p!}\,\varepsilon^{\nu_1\cdots\nu_p}{}_{\mu_1\cdots\mu_{n-p}}\,\omega_{\nu_1\cdots\nu_p}\).<div class="note">캐럴과 같습니다. 확인: 3차원 유클리드에서 \(\star\,\mathrm dx = \mathrm dy\wedge\mathrm dz\).</div></td></tr>
+      <tr><td>맥스웰 방정식 (7장)</td><td>\(F = \mathrm dA\), \(A_\mu = (-\phi, \mathbf A)\), \(F_{i0} = E_i\). \(\mathrm dF = 0\), \(\mathrm d\star F = \star J\). 성분으로는 \(\partial_\mu F^{\nu\mu} = J^\nu\).</td></tr>
+      <tr><td>공변 미분 (8장)</td><td>\(\nabla_\mu V^\nu = \partial_\mu V^\nu + \Gamma^\nu{}_{\mu\lambda}V^\lambda\). <b>아래 첫 지수가 미분 방향</b>입니다.<div class="note">학부 22장은 둘째 지수가 미분 방향입니다. 레비치비타 접속은 대칭이라 값이 같고, 비틀림이 있을 때만 차이가 납니다.</div></td></tr>
+      <tr><td>리만 텐서 (8장)</td><td>\(R^\rho{}_{\sigma\mu\nu} = \partial_\mu\Gamma^\rho{}_{\nu\sigma} - \partial_\nu\Gamma^\rho{}_{\mu\sigma} + \Gamma^\rho{}_{\mu\lambda}\Gamma^\lambda{}_{\nu\sigma} - \Gamma^\rho{}_{\nu\lambda}\Gamma^\lambda{}_{\mu\sigma}\). 리치 \(R_{\mu\nu} = R^\lambda{}_{\mu\lambda\nu}\). 반지름 \(r_0\)인 \(S^n\)에서 \(R = n(n-1)/r_0^2\).<div class="note">캐럴, MTW와 같습니다. 다른 교재의 식을 옮길 때는 단위 구 \(S^2\)에서 \(R = +2\)가 나오는지로 확인하세요.</div></td></tr>
+      <tr><td>사다리꼴, 스핀 접속 (8장)</td><td>\(g_{\mu\nu} = \eta_{ab}\,e^a{}_\mu e^b{}_\nu\) (유클리드는 \(\delta_{ab}\)). \(T^a = \mathrm de^a + \omega^a{}_b\wedge e^b\), \(R^a{}_b = \mathrm d\omega^a{}_b + \omega^a{}_c\wedge\omega^c{}_b\).</td></tr>
+      <tr><td>게이지장 (9장)</td><td>\(D_\mu = \partial_\mu - iA_\mu\), \(A_\mu = A_\mu^aT_a\) (에르미트). \(F_{\mu\nu} = \partial_\mu A_\nu - \partial_\nu A_\mu - i[A_\mu, A_\nu]\), \([D_\mu, D_\nu] = -iF_{\mu\nu}\). 게이지 변환은 \(\psi \to U\psi\), \(A \to UAU^{-1} + iU\,\mathrm dU^{-1}\).<div class="note">스레드니키, 페스킨-슈뢰더와 같은 부호입니다. 수학 교재는 반에르미트 \(\mathcal A = -iA\)로 \(D = \mathrm d + \mathcal A\)를 씁니다. 9장에서 표로 비교합니다.</div></td></tr>
+      <tr><td>체른 수 (9장)</td><td>\(U(1)\)에서 \(c_1 = \dfrac{1}{2\pi}\displaystyle\int_{S^2}F \in \mathbb Z\).</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>3·4부 · 함수 해석, 점근 해석, 특수 함수</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>대상</th><th>이 책의 관례</th></tr></thead>
+    <tbody>
+      <tr><td>연산자 (10장)</td><td>대문자 이탤릭 \(A, H\)로 쓰고 모자를 씌우지 않습니다 (양자역학 예제의 \(\hat x, \hat p\)만 예외). 정의역 \(\mathcal D(A)\), 수반 \(A^\dagger\), 확장 \(A \subset B\). 이 책의 \(A^*\)는 복소켤레입니다.<div class="note">수학 교재는 수반을 \(A^*\)로 씁니다.</div></td></tr>
+      <tr><td>대칭과 자기수반 (10장)</td><td>대칭: \(A \subset A^\dagger\). 자기수반: \(A = A^\dagger\) (정의역까지 같음). 학부 9장의 "에르미트 연산자"는 여기서 말하는 대칭 연산자입니다.<div class="note">물리 교재의 "에르미트"는 둘을 구별하지 않습니다.</div></td></tr>
+      <tr><td>분해능 (11장)</td><td>\(R_A(z) = (A - z)^{-1}\). 물리의 그린 연산자는 \(G(z) = (z - H)^{-1} = -R_H(z)\)이며 둘을 섞지 않습니다.</td></tr>
+      <tr><td>대각합 (11장)</td><td>무한 차원 연산자의 대각합은 \(\operatorname{Tr}\) (대문자), 유한 행렬(내부 지수)은 \(\operatorname{tr}\). 5부에서 \(\operatorname{Tr}\)은 함수 공간과 내부 지수를 모두 더합니다.</td></tr>
+      <tr><td>분포 (12장)</td><td>시험 함수 \(\varphi\)에 작용한 값은 \(\langle T, \varphi\rangle\) (쉼표, 켤레 없음). 내적 \(\langle u\vert v\rangle\)와 구별합니다.</td></tr>
+      <tr><td>적분 방정식 (13장)</td><td>제2종 프레드홀름 \(\varphi(x) = f(x) + \lambda\displaystyle\int_a^b K(x, y)\,\varphi(y)\,dy\). 프레드홀름 행렬식 \(D(\lambda) = \det(1 - \lambda K)\).</td></tr>
+      <tr><td>점근 전개 (14장)</td><td>\(f(x) \sim \displaystyle\sum_{n=0}^\infty a_nx^n\) (\(x \to 0^+\)). 방향을 항상 적습니다. 큰 매개변수 \(\lambda\), 작은 매개변수 \(\varepsilon\), 결합 상수 \(g\).</td></tr>
+      <tr><td>베르누이 수 (14장)</td><td>\(\dfrac{x}{e^x - 1} = \displaystyle\sum_{n=0}^\infty B_n\dfrac{x^n}{n!}\), \(B_1 = -\tfrac12\).<div class="note">\(B_1 = +\tfrac12\)인 관례도 있습니다. SymPy는 버전에 따라 <code>bernoulli(1)</code>의 부호가 다르므로 코드에서 확인합니다.</div></td></tr>
+      <tr><td>보렐 합, 멜린 변환 (14장)</td><td>\(\mathcal B(t) = \displaystyle\sum_n\dfrac{a_n}{n!}t^n\), 보렐 합 \(\displaystyle\int_0^\infty e^{-t}\,\mathcal B(tg)\,dt\). \(\mathcal M[f](s) = \displaystyle\int_0^\infty x^{s-1}f(x)\,dx\).</td></tr>
+      <tr><td>초기하 함수 (17장)</td><td>\({}_2F_1(a, b; c; z)\), 포흐하머 기호 \((a)_n = \Gamma(a+n)/\Gamma(a)\). 합류형은 쿰머 \(M(a, b, z)\)와 트리코미 \(U(a, b, z)\).<div class="note">DLMF의 표기입니다.</div></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>5부 · 범함수 방법과 열핵 (유클리드)</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>대상</th><th>이 책의 관례</th></tr></thead>
+    <tbody>
+      <tr><td>적분의 줄임 (18장)</td><td>\(\int_x \equiv \int d^dx\), \(\int_p \equiv \int\dfrac{d^dp}{(2\pi)^d}\), \(J\cdot\phi \equiv \int_xJ(x)\,\phi(x)\).</td></tr>
+      <tr><td>요동 변수와 고전장 (18장)</td><td>적분 변수는 \(\varphi\), 그 기댓값은 \(\phi = \langle\varphi\rangle_J\).<div class="note">\(\chi\)와 \(\phi\), \(\phi\)와 \(\varphi\) 등 문헌마다 다릅니다.</div></td></tr>
+      <tr><td>생성 범함수, 유효 작용 (18장)</td><td>\(Z[J] = \displaystyle\int\mathcal D\varphi\;e^{-S[\varphi] + J\cdot\varphi}\), \(W[J] = \ln Z[J]\), \(\phi = \dfrac{\delta W}{\delta J}\), \(\Gamma[\phi] = \sup_J\big(J\cdot\phi - W[J]\big)\).<div class="note">민코프스키 부호에서는 \(Z = e^{iW}\)입니다(『양자장론』). \(W\)의 부호를 반대로 정해 \(\Gamma = W + J\cdot\phi\)로 쓰는 교재도 있습니다.</div></td></tr>
+      <tr><td>꼭짓점 함수 (18장)</td><td>\(\Gamma^{(n)}(x_1, \ldots, x_n) = \dfrac{\delta^n\Gamma}{\delta\phi(x_1)\cdots\delta\phi(x_n)}\). 역관계 \(\displaystyle\int_y\Gamma^{(2)}(x, y)\,W^{(2)}(y, z) = \delta^d(x - z)\), 줄여서 \(\Gamma^{(2)} = (W^{(2)})^{-1}\).</td></tr>
+      <tr><td>행렬식, 1루프 (19장)</td><td>\(\operatorname{Tr}K = \displaystyle\int_x\operatorname{tr}K(x, x)\), \(\ln\det A = \operatorname{Tr}\ln A\). 식에는 \(\ln\)을 쓰고, 글에서 "Tr log"라고 부르는 것과 같습니다. \(\Gamma[\phi] = S[\phi] + \tfrac12\operatorname{Tr}\ln S^{(2)}[\phi] + \cdots\). 제타 함수 정규화는 \(\det A \equiv e^{-\zeta_A'(0)}\).</td></tr>
+      <tr><td>그라스만 수, 베레진 적분 (20장)</td><td>\(\theta_i\theta_j = -\theta_j\theta_i\). 미분은 왼쪽 미분이 기본입니다. \(\displaystyle\int d\theta\,1 = 0\), \(\displaystyle\int d\theta\,\theta = 1\). 여러 변수는 안쪽부터 적분해서 \(\displaystyle\int d\theta_1d\theta_2\,\theta_2\theta_1 = 1\).<div class="note">측도의 순서를 반대로 쓰는 교재가 있고, 그러면 부호가 \((-1)^{n(n-1)/2}\)만큼 다릅니다.</div></td></tr>
+      <tr><td>초대각합, 초행렬식 (20장)</td><td>\(\operatorname{str}M = \operatorname{tr}A - \operatorname{tr}D\), \(\operatorname{sdet}M = \dfrac{\det(A - BD^{-1}C)}{\det D}\), \(\ln\operatorname{sdet}M = \operatorname{str}\ln M\). 범함수 판은 \(\operatorname{STr}\)입니다.</td></tr>
+      <tr><td>라플라스형 연산자 (21장)</td><td>\(\Delta = -D^2 + E\). \(D_\mu\)는 레비치비타 접속과 다발의 접속을 모두 담고, \(E\)는 행렬값 함수입니다. 다발의 곡률은 \(\Omega_{\mu\nu} = [D_\mu, D_\nu]\).<div class="note">바실레비치는 \(D = -(g^{\mu\nu}\nabla_\mu\nabla_\nu + E)\)라서 <b>\(E\)의 부호가 반대</b>입니다.</div></td></tr>
+      <tr><td>열핵과 전개 (21장)</td><td>\(K(s; x, y) = \langle x\vert e^{-s\Delta}\vert y\rangle\). 매개변수는 \(s\)입니다. \(\operatorname{Tr}e^{-s\Delta} \sim \dfrac{1}{(4\pi s)^{d/2}}\displaystyle\sum_{n=0}^\infty s^nA_n\), \(a_0 = \mathbf 1\), \(a_1 = \dfrac R6\mathbf 1 - E\).<div class="note">바실레비치는 열핵 매개변수를 \(t\)로 씁니다. 이 서재에서 \(t\)는 흐름 시간입니다.</div></td></tr>
+      <tr><td>Q-범함수 (21장)</td><td>\(\operatorname{Tr}W(\Delta) \sim \dfrac{1}{(4\pi)^{d/2}}\displaystyle\sum_{n=0}^\infty Q_{d/2-n}[W]\,A_n\). \(m > 0\)이면 \(Q_m[W] = \dfrac{1}{\Gamma(m)}\displaystyle\int_0^\infty dz\,z^{m-1}W(z)\).</td></tr>
+      <tr><td>조절 함수, 흐름 시간 (21장)</td><td>\(R_k(z) = k^2\,r(z/k^2)\), \(P_k(z) = z + R_k(z)\). 흐름 시간 \(t = \ln(k/\Lambda)\), \(\partial_t = k\,\partial_k\).<div class="note">\(t = \ln(\Lambda/k)\)로 부호를 반대로 쓰는 문헌이 있습니다.</div></td></tr>
+      <tr><td>Wetterich 방정식의 꼴</td><td>\(\partial_t\Gamma_k = \tfrac12\operatorname{STr}\Big[\big(\Gamma_k^{(2)} + R_k\big)^{-1}\partial_tR_k\Big]\).<div class="note">유도는 『함수적 재규격화군』 11장의 몫입니다. 이 책은 18장에서 0차원의 정확한 항등식을, 21장에서 오른쪽을 계산하는 도구를 맡습니다.</div></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout warn"><strong>다른 문헌과 열핵 계수를 맞출 때</strong><p>바실레비치(<a href="https://arxiv.org/abs/hep-th/0306138">arXiv:hep-th/0306138</a>)와는 세 가지가 다릅니다. 연산자의 \(E\)가 \(E_V = -E\)로 부호가 반대이고, 열핵 매개변수가 \(t\)이며, 리만 텐서의 부호가 반대입니다(리치 텐서와 \(R\)은 같아서 단위 \(S^2\)에서 \(R = 2\)). 곡률의 2차 불변량은 리만 텐서의 부호와 무관하므로 \(a_2\)까지는 \(E\)의 부호만 바꾸면 됩니다. 코델로-페르카치-라메데(<a href="https://arxiv.org/abs/0805.2909">arXiv:0805.2909</a>)는 이 책과 같은 \(\Delta = -\nabla^2 + E\)를 쓰고, 그들의 \(B_{2n}\)이 이 책의 \(A_n\)입니다. 변환표는 21장에 있습니다.</p></div>
+
+  <div class="callout"><strong>단위와 용어</strong><p>\(\hbar = c = 1\)을 기본으로 쓰고, 장의 머리에서 한 번 밝힙니다. 용어는 한국물리학회와 대한수학회 용어를 따르고, 처음 나올 때 영어를 함께 적습니다.</p></div>
+</section>
+
+<section class="home-section" id="after">
+  <h2>이 책 다음에</h2>
+  <p class="sub">서재의 대학원 물리 책들은 수학 도구를 다시 유도하지 않고 이 책의 정의, 정리, 식에 링크를 겁니다. 그래서 이 책의 식 번호와 <code>id</code>는 뒤 책과의 약속이고, 장을 올린 뒤에는 함부로 바꾸지 않습니다. 아래 장 번호는 뒤 책들의 가목차 기준이며 정식 기획에서 바뀔 수 있습니다.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>뒤 책</th><th>가져가는 것</th><th>이 책의 장</th></tr></thead>
+    <tbody>
+      <tr><td><a href="../qm-grad/index.html">양자역학 (대학원)</a></td><td>군과 표현론, 리 군, \(\mathfrak{su}(2)\)의 표현과 클렙시-고든 분해, 정의역과 자기수반성, 스펙트럼 정리와 스톤 정리, 분포와 리프만-슈윙거 방정식, 점근 전개·안장점·WKB, 초기하 함수, 0+1차원의 범함수 방법</td><td>1–3, 5, 9–19장</td></tr>
+      <tr><td><a href="../em-grad/index.html">전자기학 (대학원)</a></td><td>벡터와 텐서의 좌표 없는 정의, 미분 형식으로 쓴 맥스웰 방정식, 분포로서의 그린 함수</td><td>6, 7, 12장</td></tr>
+      <tr><td><a href="../relativity/index.html">상대성이론</a></td><td>로런츠 군과 스피너, 다양체와 리 미분, 미분 형식과 호지 별, 공변 미분과 리만 텐서, 최대 대칭 공간</td><td>5–8장</td></tr>
+      <tr><td><a href="../qft/index.html">양자장론</a></td><td>표현론, 로런츠 군과 스피너와 감마 행렬, 게이지장의 기하, 스펙트럼 정리와 분포, 점근급수와 안장점, 범함수·가우스·그라스만 적분, 열핵</td><td>2–5, 7, 9, 11–15, 18–21장</td></tr>
+      <tr><td><a href="../frg/index.html">함수적 재규격화군</a></td><td>5부 전체: \(\Gamma^{(2)}\), \(\operatorname{Tr}\ln\), \(\operatorname{STr}\), 열핵 계수와 Q-범함수, 조절 함수의 표기. 그리고 \(SU(N)\), 스피너, 게이지장, 점근급수</td><td>3, 5, 9, 14, 18–21장</td></tr>
+      <tr><td><a href="../asymptotic-safety/index.html">점근적 안전성과 양자 중력</a></td><td>색 인자, 리 미분(미분동형사상의 무한소 꼴), 접속과 곡률, 스핀 접속, 게이지장, 5부 전체</td><td>4, 6, 8, 9, 18–21장</td></tr>
+      <tr><td><a href="../black-holes/index.html">블랙홀</a> (선택)</td><td>접속과 곡률, WKB 연결 공식, 초기하 함수, 열핵</td><td>8, 16, 17, 21장</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout deep"><strong>학부 책이 남긴 숙제를 받습니다</strong><p>학부 『수리물리학』은 범위 밖 주제를 "대학원 책에서"라며 심화 콜아웃에 남겼습니다. 발산하는 급수(14장), 미분 형식과 일반화된 스토크스 정리(7장), 리 대수와 스핀(3장), 에르미트와 자기수반의 차이(10장), 평면파가 \(L^2\)의 원소가 아니라는 사실(12장), 복소평면의 안장점 방법(15장), 초기하 함수(17장), 굽은 공간의 측지선과 곡률(8장), 스피너(5장)를 이 책이 받습니다.</p></div>
+</section>
+
+<section class="home-section" id="refs">
+  <h2>참고 교재</h2>
+  <p class="sub">스톤과 골드바트의 『Mathematics for Physics』를 뼈대로 삼고, 부마다 보조 교재를 씁니다. 교재의 순서와 주제만 참고하고, 문장, 예제, 연습문제, 그림은 모두 새로 씁니다. 판과 연도는 2026-11-21에 웹에서 확인했습니다.</p>
+
+  <h3>뼈대와 보조 교재</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>교재</th><th>이 책에서의 역할</th></tr></thead>
+    <tbody>
+      <tr><td>M. Stone, P. Goldbart, <i>Mathematics for Physics: A Guided Tour for Graduate Students</i> (Cambridge University Press, 2009)</td><td>뼈대. 물리학과 대학원 1년 차를 위한 책으로, 증명보다 개념과 예를 앞세우고 물리 예가 양자역학과 장론 쪽입니다. 군과 표현을 맨 앞에 둔 것, 학부가 다룬 주제를 다시 쓰지 않고 링크한 것, 4부(점근 해석)와 5부(범함수 방법)를 더한 것이 다른 점입니다.</td></tr>
+      <tr><td>H. Georgi, <i>Lie Algebras in Particle Physics</i>, 2nd ed. (Westview/Perseus, 1999)</td><td>1부의 3·4장. 주제 순서와 생성자 규격화.</td></tr>
+      <tr><td>B. C. Hall, <i>Lie Groups, Lie Algebras, and Representations</i>, 2nd ed. (Springer GTM 222, 2015)</td><td>3장의 정리 진술(행렬 리 군, 지수 사상, 덮개).</td></tr>
+      <tr><td>M. Srednicki, <i>Quantum Field Theory</i> (Cambridge University Press, 2007)</td><td>5장의 로런츠 대수와 스피너 관례. 『양자장론』의 뼈대와 맞춥니다.</td></tr>
+      <tr><td>M. Nakahara, <i>Geometry, Topology and Physics</i>, 2nd ed. (Institute of Physics Publishing, 2003)</td><td>2부의 주제 순서, 접속과 올다발.</td></tr>
+      <tr><td>S. M. Carroll, <i>Spacetime and Geometry</i> (Addison-Wesley, 2004; Cambridge University Press, 2019)</td><td>2부의 곡률 부호와 호지 별 관례. 『상대성이론』의 뼈대와 맞춥니다. 강의록 판은 <a href="https://arxiv.org/abs/gr-qc/9712019">arXiv:gr-qc/9712019</a>.</td></tr>
+      <tr><td>M. Reed, B. Simon, <i>Methods of Modern Mathematical Physics</i> I (rev. ed., Academic Press, 1980), II (1975)</td><td>3부의 정리 진술.</td></tr>
+      <tr><td>G. Teschl, <i>Mathematical Methods in Quantum Mechanics</i>, 2nd ed. (AMS GSM 157, 2014)</td><td>3부의 정리 진술과 증명. 저자 누리집에 PDF가 공개되어 있습니다.</td></tr>
+      <tr><td>B. C. Hall, <i>Quantum Theory for Mathematicians</i> (Springer GTM 267, 2013)</td><td>스펙트럼 정리와 스톤-폰 노이만 정리의 설명.</td></tr>
+      <tr><td>C. M. Bender, S. A. Orszag, <i>Advanced Mathematical Methods for Scientists and Engineers</i> (McGraw-Hill, 1978; Springer, 1999)</td><td>4부(14–16장)의 주제 순서.</td></tr>
+      <tr><td>J. Zinn-Justin, <i>Path Integrals in Quantum Mechanics</i> (Oxford University Press, 2005)</td><td>5부(18–20장)의 가우스 적분과 그라스만 적분의 주제 순서.</td></tr>
+      <tr><td>P. B. Gilkey, <i>Invariance Theory, the Heat Equation, and the Atiyah-Singer Index Theorem</i>, 2nd ed. (CRC Press, 1995)</td><td>21장. 열핵 전개의 엄밀한 증명이 있는 곳.</td></tr>
+      <tr><td>S. Hassani, <i>Mathematical Physics: A Modern Introduction to Its Foundations</i>, 2nd ed. (Springer, 2013)</td><td>검산. 다른 각도의 설명과 결과 대조.</td></tr>
+      <tr><td><a href="https://dlmf.nist.gov/">NIST Digital Library of Mathematical Functions</a></td><td>검산. 특수 함수의 정의, 연결 공식, 점근 꼴.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>무료로 읽을 수 있는 논문</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>논문</th><th>쓰는 곳</th></tr></thead>
+    <tbody>
+      <tr><td>G. Bonneau, J. Faraut, G. Valent, <i>Self-adjoint extensions of operators and the teaching of quantum mechanics</i>, Am. J. Phys. 69 (2001) 322 — <a href="https://arxiv.org/abs/quant-ph/0103153">arXiv:quant-ph/0103153</a></td><td>10장. 자기수반 확장과 결손 지수의 예.</td></tr>
+      <tr><td>F. Gieres, <i>Mathematical surprises and Dirac's formalism in quantum mechanics</i>, Rep. Prog. Phys. 63 (2000) 1893 — <a href="https://arxiv.org/abs/quant-ph/9907069">arXiv:quant-ph/9907069</a></td><td>10–12장. 디랙 형식의 수학적 함정, 리그드 힐베르트 공간.</td></tr>
+      <tr><td>G. V. Dunne, <i>Functional determinants in quantum field theory</i>, J. Phys. A 41 (2008) 304006 — <a href="https://arxiv.org/abs/0711.1178">arXiv:0711.1178</a></td><td>19장. 겔판트-야글롬 정리와 제타 함수 정규화.</td></tr>
+      <tr><td>K. Kirsten, A. J. McKane, <i>Functional determinants by contour integration methods</i>, Annals Phys. 308 (2003) 502 — <a href="https://arxiv.org/abs/math-ph/0305010">arXiv:math-ph/0305010</a></td><td>19장. 겔판트-야글롬의 경로 적분 유도.</td></tr>
+      <tr><td>D. V. Vassilevich, <i>Heat kernel expansion: user's manual</i>, Phys. Rep. 388 (2003) 279 — <a href="https://arxiv.org/abs/hep-th/0306138">arXiv:hep-th/0306138</a></td><td>21장. 열핵 계수. 이 책과의 부호 변환표가 21장에 있습니다.</td></tr>
+      <tr><td>A. Codello, R. Percacci, C. Rahmede, Annals Phys. 324 (2009) 414 — <a href="https://arxiv.org/abs/0805.2909">arXiv:0805.2909</a></td><td>21장. Q-범함수와 구 위의 열핵 계수. 『점근적 안전성과 양자 중력』과 같은 표기.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout"><strong>이 책을 쓰는 원칙</strong><p>위 교재의 문장, 예제, 연습문제, 그림을 옮기지 않고 새로 씁니다. 증명을 줄인 곳(수준 B와 C)의 출처는 직접 확인한 것만 적고, 확인하지 못한 장·절 번호는 적지 않습니다. 르베그 적분과 측도론의 구성, 통계역학과 임계 현상, 호모토피 군과 특성류의 일반론은 다루지 않거나 이름만 적습니다.</p></div>
+</section>
 </body>
 </html>

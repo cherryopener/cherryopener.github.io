@@ -107,7 +107,7 @@
   /* ------------------------------------------------------------ 코드 복사 */
   function copyButtons(root) {
     root.querySelectorAll("pre").forEach((pre) => {
-      if (pre.querySelector(".copy")) return;
+      if (pre.querySelector(".copy") || pre.classList.contains("code-out")) return;   // 기대 출력에는 복사 버튼을 달지 않는다
       const b = document.createElement("button");
       b.className = "copy"; b.type = "button"; b.textContent = "복사";
       b.addEventListener("click", () => {

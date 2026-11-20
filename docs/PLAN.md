@@ -4,7 +4,8 @@
 
 - 작성: 2026-11-05
 - 현재 단계: **4단계** — 『수리물리학』 22장 초안 완성(2026-11-06, 모두 "작성 중"). 2·3단계 일부(난이도 배지 표시, 앨범)는 아직입니다.
-- 물리 대학원 경로를 정했습니다(2026-11-18). 학부 전자기학·양자역학은 취소했고, 끝 목표는 fRG와 점근적 안전성, 그리고 석사 논문급 논문 한 편입니다. 책 9권은 "목차 공개" 상태로 책 홈·지도·가목차만 올렸고(참고서와 전제 장은 `data/books.js`의 `plan` 필드), 방향과 관례는 [DECISIONS.md](DECISIONS.md) 7절에 있습니다. 다음은 `math-phys-grad`의 정식 기획(GUIDE.md)입니다.
+- 물리 대학원 경로를 정했습니다(2026-11-18). 학부 전자기학·양자역학은 취소했고, 끝 목표는 fRG와 점근적 안전성, 그리고 석사 논문급 논문 한 편입니다. 책 9권은 "목차 공개" 상태로 책 홈·지도·가목차만 올렸고(참고서와 전제 장은 `data/books.js`의 `plan` 필드), 방향과 관례는 [DECISIONS.md](DECISIONS.md) 7절에 있습니다.
+- `math-phys-grad` 정식 기획 완료(2026-11-21): [GUIDE.md](../books/math-phys-grad/GUIDE.md), 5부 21장(21장만 L5), 장 파일 21개, 책 status `"writing"`. 엔진에 손 계산 상자(`box calc`)와 코드 상자(`box code`)를 더했습니다. 1장(기준 장)과 묶음 1(02·06·10·14)까지 초안 완료(2026-11-21, 모두 "작성 중"). 다음은 묶음 2(03·07·11·15)이고, 진행 상황은 `books/math-phys-grad/PROGRESS.md`에 있습니다.
 - 『아빠의 독일어 A1』(`german-a1`, L1) 20장 초안 완성(2026-11-08, 모두 "작성 중"). 외국어 부품(`assets/js/lang.js`, 발음 듣기·대화·단어 표), 책 홈, 원어민 확인 목록(`books/german-a1/NATIVE-CHECK.md`, 148항목)을 함께 만들었습니다.
 
 각 단계는 끝나면 체크하고, 위의 "현재 단계"를 고칩니다.
@@ -127,7 +128,12 @@ window.ALBUMS = [
 
 읽는 순서대로 기획하고 씁니다. 근거는 [DECISIONS.md](DECISIONS.md) 7절입니다.
 
-- [ ] `math-phys-grad` (L4): 기획 fable/high → 1장 단독 → 사용자 확인 → 병렬 집필(최대 2개) → 검토 fable/high(증명 중심 장은 fable/xhigh)
+- [ ] `math-phys-grad` (L4): 기획 fable/high → 1장 단독 → 사용자 확인 → 병렬 집필(opus/xhigh 최대 4개, 21장은 L5라 fable/high) → 검토 fable/high(증명 중심 장과 21장은 fable/xhigh, 검토자는 동시 2개). 배정과 묶음은 GUIDE 10절
+  - [x] 기획: GUIDE.md, 목차, 참고서 판 확인 (2026-11-21)
+  - [x] 엔진: 손 계산·코드 상자(`book.js` KIND, `book.css`, 템플릿 주석). 브라우저 실행기(Pyodide)는 5부 전에
+  - [x] 1장(기준 장) → 사용자 확인 (2026-11-21)
+  - [x] 감마 행렬 부호 관례 확정: \(-2\eta^{\mu\nu}\) (2026-11-21, DECISIONS 7-4)
+  - [ ] 묶음 1~5. 장별 진행은 [books/math-phys-grad/PROGRESS.md](../books/math-phys-grad/PROGRESS.md)
 - [ ] `qm-grad`, `em-grad` (L4): 같은 절차. 두 책은 병렬로 진행해도 됩니다
 - [ ] `relativity` (L4)
 - [ ] `qft` (L4)

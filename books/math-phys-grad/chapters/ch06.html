@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>06 다양체와 텐서장 · 지식따개</title>
+<meta name="description" content="다양체를 좌표 조각으로 정의하고 접벡터·쌍대 벡터·텐서장·계량을 좌표 없이 세운 뒤, 밂과 당김, 벡터장의 흐름과 리 괄호, 리 미분과 킬링 벡터로 계량의 대칭과 무한소 미분동형사상 δg = L_ξ g를 다룬다.">
+<link rel="icon" href="../../../assets/favicon.svg" type="image/svg+xml">
+<script>try { var t = localStorage.getItem("ls-theme"); } catch (e) {} document.documentElement.dataset.theme = t || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../../../assets/css/base.css">
+<link rel="stylesheet" href="../../../assets/css/book.css">
+<script defer src="../../../data/site.js"></script>
+<script defer src="../../../data/books.js"></script>
+<script defer src="../../../assets/js/viz.js"></script>
+<script defer src="../../../assets/js/core.js"></script>
+<script defer src="../../../assets/js/lab.js"></script>
+<script defer src="../../../assets/sims/dl.js"></script>
+<script defer src="../../../assets/sims/ts.js"></script>
+<script defer src="../../../assets/sims/phys.js"></script>
+<script defer src="../../../assets/sims/math.js"></script>
+<script defer src="../../../assets/js/widgets.js"></script>
+<script defer src="../../../assets/js/book.js"></script>
+</head>
+<body data-root="../../../" data-book="math-phys-grad" data-field="phys" data-chapter="ch06">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter <span data-fill="chapter-num">06</span></div>
+    <h1 data-fill="chapter-title">다양체와 텐서장</h1>
+    <p class="lead">학부 22장은 지수의 위아래와 계량을 \(\mathbb R^3\) 안의 기저 벡터로 다뤘다. 이 장은 같은 대상을 바깥 공간 없이, 좌표에 매이지 않는 정의로 다시 세운다. 다양체를 좌표 조각을 이어 붙인 공간으로 정의하고, 접벡터를 곡선의 속도이자 방향 미분으로, 쌍대 벡터를 벡터를 먹고 숫자를 내는 선형 함수로 정한 뒤, 사상과 흐름으로 다양체 사이를 오간다. 끝의 두 절은 리 미분으로 계량의 대칭(킬링 벡터)과 무한소 미분동형사상 \(\delta g = \mathcal L_\xi g\)를 적는다. 2부의 나머지 장과 『상대성이론』, 『점근적 안전성과 양자 중력』이 이 말을 그대로 쓴다.</p>
+    <ul class="objectives">
+      <li>좌표 조각과 전이 함수로 다양체를 정의하고, 구를 두 입체 사영 조각으로 덮어 전이 함수가 매끄러움을 확인할 수 있다.</li>
+      <li>접벡터를 곡선의 속도와 방향 미분으로 정의하고, 좌표 기저 \(\partial_\mu\)와 쌍대 기저 \(\mathrm dx^\mu\)에서 벡터·쌍대 벡터·텐서 성분의 변환 법칙을 유도할 수 있다.</li>
+      <li>밂과 당김으로 유도 계량을 계산하고(구의 입체 사영 계량), 계량의 부호수를 판정할 수 있다.</li>
+      <li>리 괄호를 성분으로 계산하고, 그것으로 좌표 기저와 좌표 기저가 아닌 틀을 구별할 수 있다.</li>
+      <li>킬링 방정식 \(\mathcal L_\xi g = 0\)을 풀어 \(S^2\)의 킬링 벡터 셋과 그 대수를 손과 코드로 구하고, 무한소 좌표 변환에서 \(\delta g = \mathcal L_\xi g\)를 유도할 수 있다.</li>
+    </ul>
+    <p class="prereq"><b>선수 지식</b><a href="../../math-phys/chapters/ch22.html#def-contravariant-covariant">학부 22장의 반변·공변 성분</a>, <a href="../../math-phys/chapters/ch22.html#def-dual-basis">쌍대 기저</a>, <a href="../../math-phys/chapters/ch22.html#eq-tensor-transformation">텐서의 변환 법칙</a>, <a href="../../math-phys/chapters/ch22.html#def-metric-tensor">계량 텐서</a>, <a href="../../math-phys/chapters/ch06.html#def-scale-factors">학부 6장의 척도 인자</a>, <a href="../../math-phys/chapters/ch07.html#def-generator">학부 7장의 생성자</a>, <a href="ch01.html#eq-function-action">1장의 함수 위의 작용</a>. 이 책 안에서 꼭 먼저 읽어야 할 장은 없다. 이 책은 \(\hbar = c = 1\)로 쓰고, 이 장에서는 민코프스키 계량과 평면파의 예에만 이 단위가 들어간다.</p>
+  </header>
+
+  <!-- ============================================================ 6.1 -->
+  <section id="s1">
+    <h2>다양체와 좌표 조각</h2>
+    <p>학부 22장은 곡선 좌표의 기저를 위치 벡터의 미분 \(\mathbf e_i = \partial\mathbf r/\partial u^i\)로 만들고, 쌍대 기저와 계량을 \(\mathbb R^3\)의 내적 \(\mathbf e_i\cdot\mathbf e_j\)로 정했다. 이 방법은 다루는 공간이 더 큰 유클리드 공간 안에 들어 있을 때만 쓸 수 있다. 일반상대성이론의 시공간에는 그것을 품는 바깥 공간이 없고, 설령 품는 공간을 하나 찾더라도 물리는 그 선택과 무관해야 한다. 바깥 공간을 버리면 남는 것은 "점마다 그 근처에 좌표를 깔 수 있다"는 사실 하나다. 이 절은 그것만으로 공간을 정의한다. 이 정의만으로도 미적분을 할 수 있다는 것을 6.2절부터 차례로 보인다.</p>
+
+    <div class="box def" id="def-manifold"><div class="box-h">다양체, 좌표 조각, 매끄러운 사상</div>
+      <p>집합 \(M\)과 사상들의 모음 \(\{(U_i, x_i)\}\)이 다음을 만족한다고 하자.</p>
+      <ol>
+        <li>\(U_i \subset M\)들의 합집합이 \(M\)이다.</li>
+        <li>각 \(x_i : U_i \to \mathbb R^n\)은 단사이고, 상 \(x_i(U_i)\)는 \(\mathbb R^n\)의 열린 집합이다.</li>
+        <li>\(U_i \cap U_j\)가 비어 있지 않으면 \(x_i(U_i\cap U_j)\)와 \(x_j(U_i\cap U_j)\)는 열린 집합이고, <span class="term">전이 함수</span> <span class="en">(transition function)</span> \(x_j\circ x_i^{-1} : x_i(U_i\cap U_j) \to x_j(U_i\cap U_j)\)는 매끄럽다. 곧 모든 차수의 편도함수가 있고 연속이다.</li>
+      </ol>
+      <p>\((U_i, x_i)\)를 <span class="term">좌표 조각</span> <span class="en">(chart)</span>, 모음 전체를 <span class="term">좌표 조각 모음</span> <span class="en">(atlas)</span>이라 하고, 이 구조를 갖춘 \(M\)을 \(n\)차원 <span class="term">다양체</span> <span class="en">(manifold)</span>라 한다. \(x_i(p) = (x^1(p), \ldots, x^n(p))\)를 점 \(p\)의 좌표라 한다.</p>
+      <p>다양체 \(M\)에서 다양체 \(N\)으로 가는 사상 \(\varphi\)는, \(M\)의 좌표 조각 \((U, x)\)와 \(N\)의 좌표 조각 \((V, y)\)로 적은 \(y\circ\varphi\circ x^{-1}\)이 정의되는 곳마다 매끄러우면 <span class="term">매끄러운 사상</span> <span class="en">(smooth map)</span>이라 한다. \(N = \mathbb R\)이면 매끄러운 함수다. 매끄러운 일대일 대응이고 역사상도 매끄러우면 <span class="term">미분동형사상</span> <span class="en">(diffeomorphism)</span>이라 한다.</p>
+    </div>
+    <p>조건 3이 정의의 핵심이다. 함수 \(f : M \to \mathbb R\)가 조각 \(x_i\)로 적어 매끄러우면, 다른 조각 \(x_j\)로 적은 것도 매끄럽다.</p>
+    <div class="formula" id="eq-chart-change-function">\[ f\circ x_j^{-1} = \big(f\circ x_i^{-1}\big)\circ\big(x_i\circ x_j^{-1}\big) \]</div>
+    <p>이 식의 오른쪽은 매끄러운 함수 둘의 합성이기 때문이다. 그래서 "매끄럽다"는 말은 조각을 고르는 방법과 무관하다. 미분은 조각 하나 안에서 보통의 편미분으로 하고, 조각을 바꿀 때는 전이 함수에 연쇄 법칙만 쓴다. 이 장에 나오는 변환 법칙은 모두 이 한 문장에서 나온다.</p>
+    <div class="callout tip"><strong>좌표 조각 모음은 지도책이다</strong><p>지구 전체를 종이 한 장에 찢거나 겹치지 않고 펼 수는 없다. 그래서 지도책은 여러 쪽으로 나뉘고, 이웃한 쪽은 가장자리가 겹친다. 쪽 하나가 좌표 조각이고, 겹친 곳에서 "이 쪽의 이 점이 저 쪽의 어느 점인가"를 알려 주는 규칙이 전이 함수다. 다양체의 성질은 어느 쪽에서 읽어도 같은 것만 뜻이 있다.</p></div>
+    <p>물리에서 만나는 다양체 몇 가지를 보자. \(\mathbb R^n\)과 그 열린 부분집합은 조각 하나로 덮인다(평평한 시공간도 다양체로서는 \(\mathbb R^4\)이고, 거리는 6.4절의 계량으로 따로 준다). 원 \(S^1\)은 각 \(\theta \in (0, 2\pi)\)가 한 점을 빠뜨리므로 \((-\pi, \pi)\) 조각이 하나 더 필요하다. 진자의 배위 공간이 \(S^1\), 이중 진자의 것이 원환면 \(T^2 = S^1\times S^1\)이다. 구 \(S^2\)의 극좌표 \((\theta, \phi) \in (0, \pi)\times(0, 2\pi)\)는 두 극과 \(\phi = 0\)인 반원을 빠뜨린다. 회전군 \(SO(3)\)은 3차원 다양체다(3장).</p>
+    
+    <p>방위각은 \(\phi\)로, 사상은 \(\varphi\)로 쓴다. 두 글자는 이 장 끝까지 다른 뜻이다.</p>
+
+    <div class="box ex" id="ex-sphere-stereographic-charts"><div class="box-h">입체 사영으로 구를 두 조각으로 덮기</div>
+      <p>단위 구 \(S^2 = \{(x, y, z) \in \mathbb R^3 : x^2 + y^2 + z^2 = 1\}\)를 생각한다. 북극을 \(N = (0, 0, 1)\), 남극을 \(S = (0, 0, -1)\)이라 하자. (가) \(U_N = S^2 \setminus \{N\}\)의 점 \(P\)에 대해, \(N\)과 \(P\)를 잇는 직선이 평면 \(z = 0\)과 만나는 점의 좌표를 \((u, v)\)라 하자. \((u, v)\)를 \((x, y, z)\)로 적고, 이 사상이 \(U_N\)에서 \(\mathbb R^2\) 전체로 가는 일대일 대응임을 보여라. (나) 남극에서 같은 방법으로 \(U_S = S^2 \setminus \{S\}\)의 좌표 \((u', v')\)를 정할 때 전이 함수를 구하고 매끄러운지 확인하라. (다) 극각 \(\theta\)로 \(\rho = \sqrt{u^2 + v^2}\)와 \(\rho' = \sqrt{u'^2 + v'^2}\)를 적어라.</p>
+      <p><b>풀이.</b> (가) 직선 위의 점은 \(N + \lambda(P - N)\)이고, \(z\)성분 \(1 + \lambda(z - 1)\)이 0이 되는 \(\lambda = 1/(1 - z)\)에서 평면과 만난다. 따라서 \((u, v) = (x, y)/(1 - z)\)이다. 거꾸로 \((u, v)\)가 주어지면 \(x = u(1 - z)\), \(y = v(1 - z)\)를 \(x^2 + y^2 + z^2 = 1\)에 넣어 \(\rho^2(1 - z)^2 = 1 - z^2 = (1 - z)(1 + z)\)를 얻는다. \(z \ne 1\)이므로 \(\rho^2(1 - z) = 1 + z\)이고, \(z = (\rho^2 - 1)/(\rho^2 + 1)\), \(1 - z = 2/(1 + \rho^2)\)이다.</p>
+      <div class="formula" id="eq-stereographic-inverse">\[ (x, y, z) = \frac{\big(2u,\ 2v,\ u^2 + v^2 - 1\big)}{1 + u^2 + v^2} \]</div>
+      <p>모든 \((u, v) \in \mathbb R^2\)에 대해 이 점은 구 위에 있고 \(z &lt; 1\)이며, 풀이가 하나뿐이었으므로 사상은 일대일 대응이다. 상 \(\mathbb R^2\)는 열린 집합이다.</p>
+      <p>(나) 남극에서 사영하면 같은 계산으로 \((u', v') = (x, y)/(1 + z)\)이다. 두 조각이 겹치는 곳은 \(U_N \cap U_S = S^2 \setminus \{N, S\}\)이고, 북쪽 좌표로는 원점을 뺀 평면 \(\rho > 0\)이다. 식 <a class="ref" href="#eq-stereographic-inverse"></a>에서 \(1 + z = 2\rho^2/(1 + \rho^2)\)이므로</p>
+      <div class="formula" id="eq-stereographic-transition">\[ \begin{aligned} (u', v') &= \frac{(2u, 2v)}{1 + \rho^2}\cdot\frac{1 + \rho^2}{2\rho^2} \\ &= \frac{(u, v)}{u^2 + v^2} \end{aligned} \]</div>
+      <p>이다. 분모가 0이 아닌 곳에서 이 함수는 유리 함수라 매끄럽고, 같은 꼴의 식이 역함수다(\(\rho' = 1/\rho\)이므로 두 번 하면 제자리다). 전이 함수는 단위 원에 대한 반전이다.</p>
+      <p>(다) \(\sqrt{x^2 + y^2} = \sin\theta\), \(z = \cos\theta\)이므로</p>
+      <div class="formula" id="eq-stereographic-radius">\[ \begin{gathered} \rho = \frac{\sin\theta}{1 - \cos\theta} = \cot\frac\theta2 \\ \rho' = \frac{\sin\theta}{1 + \cos\theta} = \tan\frac\theta2 \end{gathered} \]</div>
+      <p>이다. 방위각은 그대로여서 \(u + iv = \cot(\theta/2)\,e^{i\phi}\)로 쓸 수도 있다.</p>
+      <p><b>확인.</b> 적도 \(\theta = \pi/2\)에서 \(\rho = \rho' = 1\)이고, 반전(식 <a class="ref" href="#eq-stereographic-transition"></a>)은 단위 원을 제자리에 둔다. \(\theta \to 0\)(북극)이면 \(\rho \to \infty\)로 북쪽 조각에서 사라지고 \(\rho' \to 0\)으로 남쪽 조각의 원점에 온다. \(\rho\rho' = \cot(\theta/2)\tan(\theta/2) = 1\)이 식 <a class="ref" href="#eq-stereographic-transition"></a>과 맞는다. 조각이 둘 필요하다는 것도 확인해 두자. 구는 조각 하나로 덮을 수 없다. 그런 조각이 있다면 콤팩트한 구 전체가 \(\mathbb R^2\)의 열린 집합과 연속으로 일대일 대응하는데, 연속 사상의 상은 콤팩트해서 닫혀 있다. \(\mathbb R^2\)에서 공집합이 아니면서 열리고 닫힌 부분집합은 \(\mathbb R^2\) 전체뿐이고, 그것은 콤팩트하지 않다.</p>
+      <p><b>어디에 쓰이나.</b> 구를 덮는 조각이 둘 이상이라는 이 사실이 9장 디랙 단극의 출발점이다. 북반구와 남반구의 게이지 퍼텐셜이 겹친 곳의 전이 함수에서 <a href="ch09.html#thm-dirac-quantization">9장의 디랙의 양자화 조건</a>이 나온다.</p>
+    </div>
+
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 270" role="img" aria-label="단위 구의 단면. 북극 N에서 점 P를 지나는 직선이 적도 평면과 만나는 점 u, 남극 S에서 P를 지나는 직선이 만나는 점 u′. u와 u′의 곱은 1이다"><defs><marker id="f0601-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker></defs><text x="12" y="20" class="t">(가) 두 입체 사영</text><line x1="18" y1="140" x2="368" y2="140" class="s-line"/><text x="366" y="132" class="t-dim" text-anchor="end">적도 평면</text><circle cx="150" cy="140" r="80" class="f-acc-soft" style="stroke-width:2"/><line x1="150" y1="60" x2="273.4" y2="146.4" class="s-acc" style="stroke-width:2"/><line x1="150" y1="220" x2="236.5" y2="96.5" class="s-acc2" style="stroke-width:2" stroke-dasharray="6 4"/><circle cx="150" cy="60" r="4" class="f-dim"/><circle cx="150" cy="220" r="4" class="f-dim"/><circle cx="225.2" cy="112.6" r="4" class="f-dim"/><circle cx="264.3" cy="140" r="4" class="f-acc"/><circle cx="206" cy="140" r="4" class="f-acc2"/><circle cx="150" cy="140" r="2.5" class="f-dim"/><text x="140" y="52" class="t-math" text-anchor="end"><tspan font-style="italic">N</tspan></text><text x="140" y="236" class="t-math" text-anchor="end"><tspan font-style="italic">S</tspan></text><text x="233.2" y="106.6" class="t-math"><tspan font-style="italic">P</tspan></text><text x="264.3" y="162" class="t-math acc" text-anchor="middle"><tspan font-style="italic">u</tspan></text><text x="206" y="162" class="t-math acc2" text-anchor="middle"><tspan font-style="italic">u</tspan><tspan style="font-family:var(--font)">′</tspan></text><line x1="150" y1="140" x2="225.2" y2="112.6" class="s-line" style="stroke-width:1.2"/><line x1="150" y1="140" x2="150" y2="60" class="s-line" style="stroke-width:1.2"/><path d="M150,114 A26,26 0 0 1 174.4,131.1" class="s-line"/><text x="171.8" y="113.9" class="t-math" text-anchor="middle"><tspan font-style="italic">θ</tspan></text><text x="190.0" y="260" class="t-math" text-anchor="middle"><tspan font-style="italic">u</tspan> = cot(<tspan font-style="italic">θ</tspan>/2),  <tspan font-style="italic">u</tspan><tspan style="font-family:var(--font)">′</tspan> = tan(<tspan font-style="italic">θ</tspan>/2)</text></svg><svg viewBox="0 0 380 270" role="img" aria-label="북쪽 조각의 좌표 평면. 위도선은 원점이 중심인 원, 경도선은 반직선이고, 적도는 단위 원이다. 점 A와 전이 함수가 보내는 점 A′이 같은 반직선 위에 있다"><text x="12" y="20" class="t">(나) 북쪽 조각의 좌표 평면</text><line x1="190" y1="135" x2="378" y2="135" class="s-grid"/><line x1="190" y1="135" x2="375.3" y2="28" class="s-grid"/><line x1="190" y1="135" x2="251.8" y2="28" class="s-grid"/><line x1="190" y1="135" x2="190" y2="28" class="s-grid"/><line x1="190" y1="135" x2="128.2" y2="28" class="s-grid"/><line x1="190" y1="135" x2="4.7" y2="28" class="s-grid"/><line x1="190" y1="135" x2="2" y2="135" class="s-grid"/><line x1="190" y1="135" x2="2" y2="243.5" class="s-grid"/><line x1="190" y1="135" x2="113.2" y2="268" class="s-grid"/><line x1="190" y1="135" x2="190" y2="268" class="s-grid"/><line x1="190" y1="135" x2="266.8" y2="268" class="s-grid"/><line x1="190" y1="135" x2="378" y2="243.5" class="s-grid"/><circle cx="190" cy="135" r="16.6" class="s-line" style="stroke-width:1.2" stroke-dasharray="4 4"/><circle cx="190" cy="135" r="35.8" class="s-line" style="stroke-width:1.2" stroke-dasharray="4 4"/><circle cx="190" cy="135" r="107.4" class="s-line" style="stroke-width:1.2" stroke-dasharray="4 4"/><circle cx="190" cy="135" r="62" class="s-acc" style="stroke-width:2.2"/><circle cx="190" cy="135" r="3" class="f-dim"/><text x="234.6" y="82.4" class="t-acc">적도</text><circle cx="91.7" cy="180.9" r="4.5" class="f-acc"/><circle cx="157.9" cy="150" r="4.5" class="f-acc2"/><text x="85.7" y="200.9" class="t-math acc" text-anchor="middle"><tspan font-style="italic">A</tspan></text><text x="159.9" y="172" class="t-math acc2" text-anchor="middle"><tspan font-style="italic">A</tspan><tspan style="font-family:var(--font)">′</tspan></text><rect x="252" y="242" width="120" height="20" class="f-elev" style="stroke:none"/><text x="368" y="257" class="t-dim" text-anchor="end">북극은 무한히 먼 곳</text></svg></div>
+      <figcaption><b>그림 6-1.</b> (가) 단위 구의 단면. 북극 \(N\)에서 점 \(P\)를 지나는 직선(실선)이 적도 평면과 만나는 점이 북쪽 조각의 좌표 \(u\)이고, 남극 \(S\)에서 \(P\)를 지나는 직선(점선)이 만나는 점이 남쪽 조각의 좌표 \(u'\)이다. 그림은 \(\theta = 70^\circ\)이고 \(uu' = 1\)이다. (나) 북쪽 조각의 좌표 평면. 원점이 남극이고, 경도선은 원점에서 나가는 반직선, 위도선 \(\theta = 60^\circ, 120^\circ, 150^\circ\)(점선)는 반지름 \(\cot(\theta/2)\)인 원이다. 적도는 단위 원(강조색)이어서 남반구는 그 안, 북반구는 그 밖에 놓인다. 북쪽 좌표가 \(A\)인 점의 남쪽 좌표는 같은 반직선 위에서 원점까지의 거리가 역수인 \(A'\)이다(식 <a class="ref" href="#eq-stereographic-transition"></a>).</figcaption>
+    </figure>
+
+    <div class="callout deep"><strong>위상의 조건과 단위 분할</strong><p>수학 교재는 <a class="ref" href="#def-manifold"></a>에 두 조건을 더 붙인다. 서로 다른 두 점을 겹치지 않는 열린 집합으로 떼어 놓을 수 있고(하우스도르프), 셀 수 있는 열린 집합들로 위상이 만들어진다(제2 가산). 그러면 <span class="term">단위 분할</span> <span class="en">(partition of unity)</span>이 있다. 곧 열린 덮개 \(\{U_i\}\)마다, \(U_i\) 밖에서 0이고 합이 1인 매끄러운 함수 \(\psi_i \ge 0\)들을 고를 수 있다. 7장은 이것으로 조각마다 한 적분을 이어 붙인다. 이 책은 진술만 쓴다. J. M. Lee, <i>Introduction to Smooth Manifolds</i>, 2nd ed.(Springer GTM 218, 2013)의 1장에 다양체의 정의가, 2장에 단위 분할의 존재 증명이 있다. 물리에서 만나는 다양체는 모두 두 조건을 만족한다.</p></div>
+  </section>
+
+  <!-- ============================================================ 6.2 -->
+  <section id="s2">
+    <h2>접벡터와 접공간</h2>
+    <p>구 위의 점 \(p\)에서 구에 접하는 벡터는 \(\mathbb R^3\) 안의 화살표로 그릴 수 있다. 바깥 공간이 없으면 이 그림을 쓸 수 없다. 그러면 다양체의 한 점에서 "벡터"는 무엇인가? 물리에는 바깥 공간 없이도 뜻이 있는 답이 둘 있다. 하나는 <b>곡선의 속도</b>다. 입자가 지나가는 길이 있으면 좌표가 시간에 따라 얼마나 빨리 변하는지를 말할 수 있다. 다른 하나는 <b>방향 미분</b>이다. 온도 같은 함수가 있으면 그 방향으로 갈 때 함수가 얼마나 빨리 변하는지를 말할 수 있다. 이 절은 두 답이 같은 대상을 정의한다는 것을 보이고, 그 대상의 성분이 학부 22장의 반변 성분임을 확인한다.</p>
+
+    <div class="box def" id="def-tangent-vector"><div class="box-h">접벡터와 접공간</div>
+      <p>점 \(p \in M\)을 지나는 매끄러운 곡선 \(\gamma : (-\varepsilon, \varepsilon) \to M\), \(\gamma(0) = p\)를 생각하자. \(p\) 근처의 좌표 조각에서 두 곡선의 좌표 \(x^\mu(\gamma(t))\)가 \(t = 0\)에서 같은 도함수를 가지면 두 곡선을 같은 것으로 본다. 이 동치류를 \(p\)에서의 <span class="term">접벡터</span> <span class="en">(tangent vector)</span>, 곧 곡선의 속도 \(\dot\gamma(0)\)이라 한다. 동치 관계는 조각에 무관하다. 다른 조각에서는 도함수에 전이 함수의 야코비 행렬이 곱해질 뿐이기 때문이다.</p>
+      <p>같은 대상을 함수에 작용하는 연산으로 정의할 수도 있다. \(p\) 근처에서 정의된 매끄러운 함수 \(f\)에 실수 \(V(f)\)를 주는 사상 \(V\)가 다음을 만족하면 \(p\)에서의 <span class="term">방향 미분</span> <span class="en">(directional derivative; 수학 교재의 derivation)</span>이라 한다.</p>
+      <div class="formula" id="eq-derivation">\[ \begin{gathered} V(af + bh) = aV(f) + bV(h) \\ V(fh) = f(p)\,V(h) + h(p)\,V(f) \end{gathered} \]<div class="where">\(a, b\)는 실수, \(f, h\)는 함수다. 둘째 줄이 라이프니츠 규칙이다.</div></div>
+      <p>곡선 \(\gamma\)는 방향 미분 \(\dot\gamma(f) = \dfrac{d}{dt}f(\gamma(t))\Big|_{t=0}\)을 정한다. \(p\)에서의 접벡터 전체를 <span class="term">접공간</span> <span class="en">(tangent space)</span> \(T_pM\)이라 한다.</p>
+    </div>
+    <p>두 정의가 같다는 것이 이 절의 중심 정리다. 좌표 조각 \((U, x)\)에서 함수 \(f\)를 좌표로 적은 \(f\circ x^{-1}\)의 편미분을 \(\partial_\mu f\)로 쓰고, \(p\)에서 그 값을 주는 방향 미분을 \(\partial_\mu|_p\)로 쓴다.</p>
+    <div class="box thm" id="thm-tangent-space-basis"><div class="box-h">접공간의 좌표 기저</div>
+      <p>\(n\)차원 다양체의 점 \(p\)와 그 근처의 좌표 조각 \((U, x)\)에 대해 다음이 성립한다.</p>
+      <p>(가) 곡선 \(\gamma\)가 정하는 방향 미분은 \(\dot\gamma = \dot x^\mu(0)\,\partial_\mu|_p\)이다. 여기서 \(x^\mu(t) = x^\mu(\gamma(t))\)이다.</p>
+      <p>(나) \(p\)에서의 방향 미분 \(V\)는 모두 다음 꼴이다.</p>
+      <div class="formula" id="eq-tangent-vector-components">\[ \begin{gathered} V = V^\mu\,\partial_\mu|_p \\ V^\mu = V(x^\mu) \end{gathered} \]</div>
+      <p>(다) 따라서 두 정의는 같은 \(n\)차원 벡터 공간 \(T_pM\)을 주고, \(\partial_1|_p, \ldots, \partial_n|_p\)가 그 기저다. 이것을 <span class="term">좌표 기저</span> <span class="en">(coordinate basis)</span>라 한다.</p>
+    </div>
+    <p><b>증명.</b> (1) 연쇄 법칙으로 \(\dfrac{d}{dt}f(\gamma(t)) = \partial_\mu f\,\dfrac{dx^\mu}{dt}\)이다. \(t = 0\)에서 이것이 (가)다.</p>
+    <p>(2) 상수 함수 1에 라이프니츠 규칙을 쓰면 \(V(1) = V(1\cdot1) = 2V(1)\)이므로 \(V(1) = 0\)이고, 선형성으로 모든 상수 \(c\)에 \(V(c) = 0\)이다. 이제 좌표로 \(p\)를 \(x_0\)에 두고, \(x_0\)을 중심으로 하는 공 위에서 \(f\)를 적분으로 쓴다.</p>
+    <div class="formula" id="eq-hadamard-lemma">\[ \begin{aligned} f(x) - f(x_0) &= \int_0^1\frac{d}{ds}f\big(x_0 + s(x - x_0)\big)\,ds \\ &= (x^\mu - x_0^\mu)\,h_\mu(x) \end{aligned} \]<div class="where">\(h_\mu(x) = \int_0^1\partial_\mu f\big(x_0 + s(x - x_0)\big)\,ds\)는 매끄럽고, \(h_\mu(x_0) = \partial_\mu f(x_0)\)이다.</div></div>
+    <p>양변에 \(V\)를 쓰고 라이프니츠 규칙을 적용하면 \(V(f) = V(x^\mu)\,h_\mu(x_0) + (x^\mu - x_0^\mu)\big|_{x_0}V(h_\mu) = V(x^\mu)\,\partial_\mu f(x_0)\)이다. 둘째 항은 \(x_0\)에서 값이 0인 인수 때문에 사라진다. 이것이 (나)다.</p>
+    <p>(3) 거꾸로 수 \(V^\mu\)가 주어지면 곡선 \(x^\mu(t) = x_0^\mu + tV^\mu\)의 속도는 (가)에 따라 \(V^\mu\partial_\mu|_p\)이다. 따라서 모든 방향 미분은 어떤 곡선의 속도다. 두 곡선이 같은 방향 미분을 주면 \(f = x^\mu\)에 작용시켜 \(\dot x^\mu(0)\)이 같고, 이것이 <a class="ref" href="#def-tangent-vector"></a>의 동치 관계다. 끝으로 \(\partial_\mu|_p\)들은 일차 독립이다. \(a^\mu\partial_\mu|_p = 0\)이면 \(x^\nu\)에 작용시켜 \(a^\mu\,\partial_\mu x^\nu = a^\nu = 0\)이기 때문이다. ∎</p>
+    
+
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 420 310" role="img" aria-label="구 위의 점 p를 지나는 곡선 γ와 그 속도 벡터, p에서의 접평면, 좌표 기저 벡터 ∂θ와 ∂φ"><defs><marker id="f0602-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker><marker id="f0602-arrd" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-dim"/></marker></defs><circle cx="190" cy="165" r="120" class="f-surface" style="stroke-width:1.5"/><path d="M139.3,205.7 153.9,207.9 169.2,209.3 184.8,209.9 200.5,209.8 216,208.9 231,207.2 245.4,204.9 258.8,201.8 271.1,198.1 281.9,193.9 291.2,189.2 298.8,184 304.4,178.5 308.2,172.8 309.9,167 309.5,161.1" class="s-grid"/><path d="M70.5,168.9 72.8,174.7 77.2,180.4 83.6,185.8 91.7,190.8 101.5,195.4 112.9,199.4 125.5,202.9 139.3,205.7" class="s-grid"/><path d="M190,53.7 183.4,60 176.9,68.1 170.6,77.8 164.6,89 159.1,101.5 154.1,115.1 149.8,129.6 146.1,144.7 143.1,160.1 141,175.6 139.7,190.9 139.3,205.7 139.7,219.9 141,233.1 143.1,245.2 146.1,255.9 149.8,265.1 154.1,272.5 159.1,278.1 164.6,281.7 170.6,283.4" class="s-grid"/><path d="M190,53.7 204.2,57.2 218.1,62.4 231.6,69.5 244.4,78.1 256.2,88.3 266.9,99.8 276.3,112.3 284.2,125.8 290.5,140 295.1,154.6 297.8,169.3 298.8,184 297.8,198.4 295.1,212.1 290.5,225.1 284.2,237.1 276.3,247.8 266.9,257.1 256.2,264.8" class="s-grid"/><polygon points="289.1,201 161.6,213.8 143.5,84.7 271,71.9" class="f-acc-soft" style="stroke-width:1.5;fill-opacity:0.55"/><path d="M159.6,239.6 162.1,235.9 164.7,232 167.4,228 170,223.8 172.8,219.5 175.6,215 178.4,210.5 181.2,205.8 184.1,201 186.9,196.2 189.8,191.2 192.7,186.2 195.6,181.2 198.4,176.1 201.3,171 204.1,165.9 206.9,160.8 209.6,155.7 212.3,150.6 215,145.5 217.6,140.5 220.1,135.5 222.5,130.7 224.9,125.9 227.2,121.2 229.4,116.6 231.5,112.1 233.5,107.7 235.4,103.5 237.2,99.4 238.9,95.5 240.4,91.7 241.9,88.1 243.2,84.7 244.4,81.5 245.5,78.5 246.4,75.7 247.2,73.1 247.9,70.7" class="s-acc2" style="stroke-width:2.6"/><line x1="216.3" y1="142.9" x2="223.3" y2="192.2" class="s-line" style="stroke-width:2" marker-end="url(#f0602-arrd)"/><text x="225.2" y="211" class="t-math dim" text-anchor="middle">∂<tspan baseline-shift="sub" font-size="72%"><tspan font-style="italic">θ</tspan></tspan></text><line x1="216.3" y1="142.9" x2="257.6" y2="138.7" class="s-line" style="stroke-width:2" marker-end="url(#f0602-arrd)"/><text x="271.6" y="142.3" class="t-math dim" text-anchor="middle">∂<tspan baseline-shift="sub" font-size="72%"><tspan font-style="italic">φ</tspan></tspan></text><line x1="216.3" y1="142.9" x2="249.2" y2="79.1" class="s-acc" style="stroke-width:3" marker-end="url(#f0602-arr)"/><circle cx="216.3" cy="142.9" r="4" class="f-dim"/><text x="206.3" y="160.9" class="t-math" text-anchor="end"><tspan font-style="italic">p</tspan></text><text x="156.9" y="235.8" class="t-math acc2" text-anchor="end"><tspan font-style="italic">γ</tspan></text><text x="293.1" y="217" class="t-math"><tspan font-style="italic">T</tspan><tspan baseline-shift="sub" font-size="72%"><tspan font-style="italic">p</tspan></tspan><tspan font-style="italic">M</tspan></text></svg></div>
+      <figcaption><b>그림 6-2.</b> 구 위의 점 \(p\)를 지나는 곡선 \(\gamma\)와 그 속도 \(\dot\gamma(0)\)(강조색 화살표), 그리고 접공간 \(T_pM\)(분홍 평행사변형). 회색 화살표는 극좌표 조각의 좌표 기저 \(\partial_\theta\), \(\partial_\phi\)이다. 그림은 구를 \(\mathbb R^3\)에 그렸지만 <a class="ref" href="#def-tangent-vector"></a>는 바깥 공간을 쓰지 않는다. 속도는 "좌표가 얼마나 빨리 변하는가" \(\dot x^\mu(0)\)만으로 정해진다.</figcaption>
+    </figure>
+
+    <h3 id="s2-transformation">성분의 변환 법칙</h3>
+    <p>다른 좌표 조각 \(x'\)을 쓰면 기저가 \(\partial'_\mu = \partial/\partial x'^\mu\)로 바뀐다. 함수 \(f\)에 연쇄 법칙을 쓰면 \(\partial f/\partial x^\nu = (\partial x'^\mu/\partial x^\nu)\,\partial f/\partial x'^\mu\)이므로</p>
+    <div class="formula" id="eq-coordinate-basis-change">\[ \begin{gathered} \partial_\nu = \frac{\partial x'^\mu}{\partial x^\nu}\,\partial'_\mu \\ \partial'_\mu = \frac{\partial x^\nu}{\partial x'^\mu}\,\partial_\nu \end{gathered} \]</div>
+    <p>이다. \(V = V^\nu\partial_\nu = V^\nu(\partial x'^\mu/\partial x^\nu)\,\partial'_\mu\)이므로 성분은</p>
+    <div class="formula" id="eq-vector-field-transformation">\[ V'^\mu = \frac{\partial x'^\mu}{\partial x^\nu}\,V^\nu \]</div>
+    <p>로 바뀐다. <a href="../../math-phys/chapters/ch22.html#eq-contravariant-covariant-law">학부 22장의 반변 성분의 변환 법칙</a>과 같은 식이다. 학부 22장은 이 식을 위치 벡터 \(\mathbf r\)의 미분에서 얻었고, 여기서는 함수의 연쇄 법칙에서 얻었다. 바깥 공간이 필요 없다. 기저와 성분이 서로 역행렬로 바뀌는 것도 같다. 그래야 \(V\) 자체가 조각에 무관하다.</p>
+    <p>점마다 접벡터를 하나씩 매끄럽게 주는 것을 <span class="term">벡터장</span> <span class="en">(vector field)</span>이라 한다. 성분으로는 \(V = V^\mu(x)\,\partial_\mu\)이고 성분 함수 \(V^\mu(x)\)가 매끄럽다. 벡터장은 함수 \(f\)에 작용해 새 함수 \(Vf = V^\mu\partial_\mu f\)를 만드는 1차 미분 연산자다. 이 사실을 6.6절에서 리 괄호를 정의할 때 쓴다.</p>
+
+    <div class="box ex" id="ex-polar-coordinate-basis"><div class="box-h">평면의 극좌표 기저와 회전 벡터장</div>
+      <p>평면의 극좌표 \(x = r\cos\theta\), \(y = r\sin\theta\)(\(r > 0\))를 생각한다. (가) 좌표 기저 \(\partial_r\), \(\partial_\theta\)를 \(\partial_x\), \(\partial_y\)로 적어라. (나) 벡터장 \(\partial_x\)의 극좌표 성분을 구하라. (다) 원점 둘레의 회전을 만드는 벡터장 \(x\,\partial_y - y\,\partial_x\)를 극좌표로 적어라.</p>
+      <p><b>풀이.</b> (가) 식 <a class="ref" href="#eq-coordinate-basis-change"></a>의 둘째 식에서 \(x'\)을 \((r, \theta)\), \(x\)를 \((x, y)\)로 읽는다.</p>
+      <div class="formula" id="eq-polar-basis">\[ \begin{aligned} \partial_r &= \cos\theta\,\partial_x + \sin\theta\,\partial_y \\ \partial_\theta &= -r\sin\theta\,\partial_x + r\cos\theta\,\partial_y \end{aligned} \]</div>
+      <p>성분은 야코비 행렬 \(\partial(x, y)/\partial(r, \theta)\)의 열이다. <a href="../../math-phys/chapters/ch22.html#def-contravariant-covariant">학부 22장의 좌표 기저</a> \(\mathbf e_i = \partial\mathbf r/\partial u^i\)와 성분이 같다. 다른 것은 해석뿐이다. 학부 22장의 \(\mathbf e_i\)는 \(\mathbb R^2\)의 화살표이고, 여기의 \(\partial_r\)은 함수를 미분하는 연산이다.</p>
+      <p>(나) 식 <a class="ref" href="#eq-vector-field-transformation"></a>에 \(V = \partial_x\), 곧 \((V^x, V^y) = (1, 0)\)을 넣는다. \(r = \sqrt{x^2 + y^2}\), \(\theta = \operatorname{atan2}(y, x)\)에서 \(\partial r/\partial x = x/r = \cos\theta\), \(\partial\theta/\partial x = -y/r^2 = -\sin\theta/r\)이므로</p>
+      <div class="formula" id="eq-polar-dx">\[ \partial_x = \cos\theta\,\partial_r - \frac{\sin\theta}{r}\,\partial_\theta \]</div>
+      <p>이다. (다) 식 <a class="ref" href="#eq-polar-basis"></a>의 둘째 줄에서 \(r\sin\theta = y\), \(r\cos\theta = x\)이므로 \(x\,\partial_y - y\,\partial_x = \partial_\theta\)이다.</p>
+      <p><b>확인.</b> 식 <a class="ref" href="#eq-polar-dx"></a>을 함수 \(x = r\cos\theta\)에 작용시키면 \(\cos\theta\cdot\cos\theta - \dfrac{\sin\theta}{r}\cdot(-r\sin\theta) = 1\)이고, \(y = r\sin\theta\)에 작용시키면 \(\cos\theta\sin\theta - \sin\theta\cos\theta = 0\)이다. \(\partial_x x = 1\), \(\partial_x y = 0\)과 맞는다. 또 \(\partial_\theta\)를 화살표로 보면 길이가 \(r\)이다. <a href="../../math-phys/chapters/ch06.html#def-scale-factors">학부 6장의 척도 인자</a> \(h_\theta = r\)이 이것이고, 단위 벡터 \(\hat{\mathbf e}_\theta\)에 해당하는 벡터장은 \(\partial_\theta/r\)이다. 좌표 기저는 단위 벡터가 아니다.</p>
+      <p><b>어디에 쓰이나.</b> \(-i\partial_\theta\)가 양자역학의 각운동량 \(L_z\)이다(\(\hbar = 1\)). 회전을 만드는 이런 벡터장이 6.7절에서 킬링 벡터로 다시 나온다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 6.3 -->
+  <section id="s3">
+    <h2>쌍대 벡터와 기울기 df</h2>
+    <p>학부 22장은 기울기 \(\partial_if\)가 공변 벡터라고 했다. 그런데 기울기를 화살표로 그리려면 "등위면에 수직인 방향"이 있어야 하고, 수직은 내적, 곧 계량이 있어야 정해진다. 계량 없이도 정해지는 것은 무엇인가? 접벡터 \(V\)를 하나 주면 \(f\)가 그 방향으로 얼마나 빨리 변하는지, 곧 \(V(f)\)는 계량 없이 정해진다. 이 수는 \(V\)에 대해 선형이다. 그래서 기울기의 정체는 화살표가 아니라 "벡터를 먹고 숫자를 내는 선형 함수"다. 운동량 \(p_\mu = \partial_\mu S\), 평면파의 파수 \(k_\mu = \partial_\mu\Phi\), 전기장 \(E_i = -\partial_i\phi\)(여기서 \(\phi\)는 전기 퍼텐셜)처럼 무엇의 기울기로 나오는 물리량이 모두 이런 대상이다.</p>
+
+    <div class="box def" id="def-cotangent-vector"><div class="box-h">쌍대 벡터와 함수의 미분</div>
+      <p>접공간 \(T_pM\)에서 \(\mathbb R\)로 가는 선형 함수 \(\omega\)를 \(p\)에서의 <span class="term">쌍대 벡터</span> <span class="en">(dual vector)</span> 또는 <span class="term">1-형식</span> <span class="en">(one-form)</span>이라 하고, 그 전체를 <span class="term">쌍대 공간</span> \(T_p^*M\)이라 한다. 매끄러운 함수 \(f\)의 <span class="term">미분</span> \(\mathrm df\)는 다음으로 정하는 쌍대 벡터다.</p>
+      <div class="formula" id="eq-differential-df">\[ \begin{gathered} \mathrm df(V) = V(f) \\ \mathrm df = \partial_\mu f\;\mathrm dx^\mu \end{gathered} \]</div>
+      <p>좌표 함수 \(x^\mu\)의 미분 \(\mathrm dx^\mu\)는 \(\mathrm dx^\mu(\partial_\nu) = \partial_\nu x^\mu\)이므로 좌표 기저의 <span class="term">쌍대 기저</span>다.</p>
+      <div class="formula" id="eq-dual-basis-dx">\[ \mathrm dx^\mu(\partial_\nu) = \delta^\mu{}_\nu \]</div>
+      <p>점마다 쌍대 벡터를 하나씩 매끄럽게 주는 것을 쌍대 벡터장이라 한다.</p>
+    </div>
+    <p>식 <a class="ref" href="#eq-differential-df"></a>의 둘째 식은 첫째 식에서 나온다. 쌍대 벡터 \(\omega\)를 \(\omega_\mu = \omega(\partial_\mu)\)로 두면 \(\omega = \omega_\mu\,\mathrm dx^\mu\)이고(두 쪽을 \(\partial_\nu\)에 작용시키면 같다), \(\mathrm df(\partial_\mu) = \partial_\mu f\)이기 때문이다. 쌍대 벡터가 벡터에 작용한 값은 성분의 축약이다.</p>
+    <div class="formula" id="eq-covector-pairing">\[ \begin{aligned} \omega(V) &= \omega_\mu\,\mathrm dx^\mu\big(V^\nu\partial_\nu\big) \\ &= \omega_\mu V^\nu\,\delta^\mu{}_\nu = \omega_\mu V^\mu \end{aligned} \]</div>
+    <p>좌표를 바꾸면 \(\omega'_\mu = \omega(\partial'_\mu)\)에 식 <a class="ref" href="#eq-coordinate-basis-change"></a>을 넣어</p>
+    <div class="formula" id="eq-covector-transformation">\[ \begin{gathered} \omega'_\mu = \frac{\partial x^\nu}{\partial x'^\mu}\,\omega_\nu \\ \mathrm dx'^\mu = \frac{\partial x'^\mu}{\partial x^\nu}\,\mathrm dx^\nu \end{gathered} \]</div>
+    <p>을 얻는다. 둘째 식은 \(f = x'^\mu\)에 식 <a class="ref" href="#eq-differential-df"></a>를 쓴 것이다. 쌍대 벡터의 성분은 학부 22장의 공변 성분처럼 바뀌고, 기저 \(\mathrm dx^\mu\)는 벡터의 성분처럼 바뀐다. 두 행렬 \(\partial x^\nu/\partial x'^\mu\)와 \(\partial x'^\mu/\partial x^\nu\)는 서로 역행렬이므로 축약 \(\omega_\mu V^\mu\)는 좌표에 무관하다. 정의에서 이미 \(\omega(V)\)는 좌표 없이 정한 수였으니 당연한 일이다.</p>
+
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 270" role="img" aria-label="쌍대 벡터를 나란한 등위선 묶음으로 그린 그림. 화살표 V가 등위선 세 개를 건너고 ω(V) ≈ 3.3"><defs><marker id="f0603-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs><text x="12" y="20" class="t">(가) 화살표와 등위선 묶음</text><line x1="54.5" y1="245" x2="10" y2="122.7" class="s-line" style="stroke-width:1.2"/><line x1="109.8" y1="245" x2="31.6" y2="30" class="s-acc2" style="stroke-width:1.8"/><line x1="165.2" y1="245" x2="86.9" y2="30" class="s-acc2" style="stroke-width:1.8"/><line x1="220.5" y1="245" x2="142.3" y2="30" class="s-acc2" style="stroke-width:1.8"/><line x1="275.8" y1="245" x2="197.6" y2="30" class="s-acc2" style="stroke-width:1.8"/><line x1="331.2" y1="245" x2="252.9" y2="30" class="s-line" style="stroke-width:1.2"/><line x1="370" y1="199.6" x2="308.3" y2="30" class="s-line" style="stroke-width:1.2"/><line x1="370" y1="47.6" x2="363.6" y2="30" class="s-line" style="stroke-width:1.2"/><text x="69.3" y="122.7" class="t-dim">0</text><text x="118.2" y="104.9" class="t-dim">1</text><text x="167.1" y="87.1" class="t-dim">2</text><text x="215.9" y="69.3" class="t-dim">3</text><text x="264.8" y="51.6" class="t-dim">4</text><line x1="92" y1="196" x2="232.7" y2="80.9" class="s-acc" style="stroke-width:3" marker-end="url(#f0603-arr)"/><circle cx="92" cy="196" r="4" class="f-dim"/><text x="238.7" y="74.9" class="t-math acc"><tspan font-style="italic">V</tspan></text><text x="366" y="260" class="t-math" text-anchor="end"><tspan font-style="italic">ω</tspan>(<tspan font-style="italic">V</tspan>) ≈ 3.3</text></svg><svg viewBox="0 0 380 270" role="img" aria-label="함수 f의 휜 등위선(실선)과 점 p에서 그 1차 근사인 df의 곧은 등위선(점선)"><text x="12" y="20" class="t">(나) 휜 등위선과 그 1차 근사 d<tspan font-style="italic">f</tspan></text><path d="M188.9,250 188.3,237 186.6,224.1 183.8,211.5 179.9,199.1 174.9,187.1 168.9,175.6 161.9,164.6 154,154.3 145.3,144.7 135.7,136 125.4,128.1 114.4,121.1 102.9,115.1 90.9,110.1 78.5,106.2 65.9,103.4 53,101.7 40,101.1" class="s-line" style="stroke-width:1.3"/><line x1="59.7" y1="30" x2="241.3" y2="260" class="s-acc2" style="stroke-width:1.6" stroke-dasharray="6 4"/><path d="M206,250 205.4,235.5 203.5,221.2 200.4,207 196,193.2 190.5,179.8 183.8,167 176,154.8 167.2,143.3 157.4,132.6 146.7,122.8 135.2,114 123,106.2 110.2,99.5 96.8,94 83,89.6 68.8,86.5 54.5,84.6 40,84" class="s-line" style="stroke-width:1.3"/><line x1="78.7" y1="30" x2="260.3" y2="260" class="s-acc2" style="stroke-width:1.6" stroke-dasharray="6 4"/><path d="M221.6,250 220.9,234.2 218.8,218.5 215.4,203 210.6,187.9 204.5,173.3 197.2,159.2 188.7,145.9 179.1,133.3 168.4,121.6 156.7,110.9 144.1,101.3 130.8,92.8 116.7,85.5 102.1,79.4 87,74.6 71.5,71.2 55.8,69.1 40,68.4" class="s-line" style="stroke-width:2"/><line x1="97.6" y1="30" x2="279.2" y2="260" class="s-acc2" style="stroke-width:1.6" stroke-dasharray="6 4"/><path d="M235.9,250 235.1,232.9 232.9,216 229.2,199.3 224.1,183 217.5,167.2 209.6,152.1 200.4,137.7 190,124.1 178.5,111.5 165.9,100 152.3,89.6 137.9,80.4 122.8,72.5 107,65.9 90.7,60.8 74,57.1 57.1,54.9 40,54.1" class="s-line" style="stroke-width:1.3"/><line x1="116.6" y1="30" x2="298.2" y2="260" class="s-acc2" style="stroke-width:1.6" stroke-dasharray="6 4"/><path d="M249.2,250 248.4,231.8 246,213.7 242.1,195.9 236.6,178.5 229.6,161.6 221.2,145.4 211.4,130 200.3,115.5 187.9,102.1 174.5,89.7 160,78.6 144.6,68.8 128.4,60.4 111.5,53.4 94.1,47.9 76.3,44 58.2,41.6 40,40.8" class="s-line" style="stroke-width:1.3"/><line x1="135.5" y1="30" x2="317.1" y2="260" class="s-acc2" style="stroke-width:1.6" stroke-dasharray="6 4"/><circle cx="182.5" cy="137.5" r="4.5" class="f-acc"/><text x="192.5" y="155.5" class="t-math acc"><tspan font-style="italic">p</tspan></text></svg></div>
+      <figcaption><b>그림 6-3.</b> (가) 쌍대 벡터 \(\omega\)를 나란한 등위선 묶음으로 그린다. 선에는 \(\omega\)의 값 0, 1, 2, …가 붙어 있고, 화살표 \(V\)가 건너는 선의 수가 \(\omega(V)\)이다(선 사이는 눈금으로 읽는다). 선이 촘촘할수록 \(\omega\)가 크다. (나) 함수 \(f = x^2 + y^2\)의 휜 등위선(실선, 간격 일정)과, 점 \(p\)에서 그것을 1차 근사한 \(\mathrm df_p\)의 곧은 등위선(점선). \(p\) 바로 근처에서 두 묶음이 겹친다. \(\mathrm df_p\)는 \(p\)에서 \(f\)를 가장 잘 근사하는 선형 함수다.</figcaption>
+    </figure>
+    <p>그림 6-3 (가)에는 "수직"도 "길이"도 없다. 화살표가 선을 몇 개 건너는지 세기만 하면 된다. 좌표를 늘이면 화살표의 성분은 커지고 묶음의 성분은 작아져서 건너는 수는 그대로다. 『상대성이론』 1장이 이 그림을 단위 바꾸기와 비스듬한 축으로 연습한다.</p>
+    <div class="callout warn"><strong>학부 22장의 \(\mathbf e^i\)와 이 장의 \(\mathrm dx^\mu\)</strong><p>학부 22장의 쌍대 기저 \(\mathbf e^i\)는 \(\mathbf e^i\cdot\mathbf e_j = \delta^i{}_j\)인 \(\mathbb R^3\)의 <b>화살표</b>였고, 이 장의 \(\mathrm dx^\mu\)는 화살표를 먹는 함수다. 성분은 같다. 화살표 \(\mathbf e^i\)를 함수 \(\mathbf A \mapsto \mathbf e^i\cdot\mathbf A\)로 읽으면 \(\mathrm du^i\)인데, 이렇게 읽는 데 \(\mathbb R^3\)의 내적이 쓰였다. 계량이 다르거나 없으면 이 읽기는 통하지 않고, 계량이 있을 때 둘을 잇는 법은 6.4절의 지수 내리기다. \(\mathbf e_i\)와 \(\partial_\mu\)의 대응은 6.5절의 밂으로 적는다.</p></div>
+
+    <div class="box ex" id="ex-galilean-doppler-covector"><div class="box-h">평면파의 위상과 갈릴레이 부스트</div>
+      <p>1+1차원 시공간의 좌표를 \((x^0, x^1) = (t, x)\)로 두고, 평면파의 위상 \(\Phi = kx - \omega t\)를 생각한다(이 예제에서 \(\omega\)는 각진동수다. 쌍대 벡터는 \(\mathrm d\Phi\)로 쓴다). (가) \(\mathrm d\Phi\)의 성분을 구하라. (나) 갈릴레이 부스트 \(t' = t\), \(x' = x - vt\)에서 \(\mathrm d\Phi\)의 새 성분을 식 <a class="ref" href="#eq-covector-transformation"></a>로 구하고, \(\Phi\)를 새 좌표로 직접 적은 것과 비교하라. (다) 속도 \(u\)로 움직이는 관측자의 세계선의 접벡터 \(U = \partial_t + u\,\partial_x\)의 새 성분을 구하고, \(\mathrm d\Phi(U)\)가 두 좌표에서 같음을 확인하라. 이 값의 뜻은 무엇인가?</p>
+      <p><b>풀이.</b> (가) \(\mathrm d\Phi = -\omega\,\mathrm dt + k\,\mathrm dx\)이므로 \((\Phi_t, \Phi_x) = (-\omega, k)\)이다.</p>
+      <p>(나) 옛 좌표를 새 좌표로 쓰면 \(t = t'\), \(x = x' + vt'\)이고 \(\partial t/\partial t' = 1\), \(\partial x/\partial t' = v\), \(\partial t/\partial x' = 0\), \(\partial x/\partial x' = 1\)이다. 식 <a class="ref" href="#eq-covector-transformation"></a>에서 \(\Phi'_{t'} = \Phi_t + v\,\Phi_x\), \(\Phi'_{x'} = \Phi_x\)이므로</p>
+      <div class="formula" id="eq-galilean-doppler">\[ \begin{gathered} \omega' = \omega - kv \\ k' = k \end{gathered} \]</div>
+      <p>이다. 직접 쓰면 \(\Phi = k(x' + vt') - \omega t' = kx' - (\omega - kv)\,t'\)이어서 같다.</p>
+      <p>(다) 식 <a class="ref" href="#eq-vector-field-transformation"></a>에는 반대쪽 야코비 행렬 \(\partial t'/\partial t = 1\), \(\partial t'/\partial x = 0\), \(\partial x'/\partial t = -v\), \(\partial x'/\partial x = 1\)이 들어간다. \(U'^{t'} = 1\), \(U'^{x'} = u - v\)이다. 짝짓기는</p>
+      <div class="formula">\[ \begin{aligned} \mathrm d\Phi(U) &= -\omega + ku \\ \mathrm d\Phi'(U') &= -(\omega - kv) + k(u - v) = -\omega + ku \end{aligned} \]</div>
+      <p>로 같다. \(\mathrm d\Phi(U) = \dfrac{d\Phi}{dt}\)는 관측자의 세계선을 따라 위상이 변하는 빠르기이므로, 관측자가 보는 진동수는 \(\omega - ku\)이다(매질이 정지한 계에서 움직이는 관측자의 도플러 효과).</p>
+      <p><b>확인.</b> \(u = \omega/k\)(위상 속도)이면 \(\mathrm d\Phi(U) = 0\)이다. 마루를 타고 가는 관측자에게는 위상이 변하지 않는다. \(u = v\)이면 관측자는 새 좌표에서 정지해 있고(\(U' = \partial_{t'}\)), 그가 보는 진동수 \(\omega - kv\)가 식 <a class="ref" href="#eq-galilean-doppler"></a>의 \(\omega'\)이다. 이 계산에는 계량이 한 번도 나오지 않았다. 실제로 모든 갈릴레이 부스트에서 변하지 않는 대칭 쌍선형 형식은 \(a\,\mathrm dt\otimes\mathrm dt\) 꼴뿐이어서 갈릴레이 시공간에는 비퇴화 계량이 없다. 성분이 \(G_{tt} = a\), \(G_{tx} = b\), \(G_{xx} = c\)인 형식을 (나)의 야코비 행렬로 바꾸면(6.4절의 변환 법칙) \(G'_{t't'} = a + 2bv + cv^2\), \(G'_{t'x'} = b + cv\)이고, 이것이 모든 \(v\)에서 \(a\), \(b\)와 같으려면 \(b = c = 0\)이어야 하기 때문이다. 그런데도 쌍대 벡터와 벡터의 짝짓기는 잘 정의된다.</p>
+      <p><b>어디에 쓰이나.</b> \(\hbar = 1\)에서 평면파 \(e^{i(kx - \omega t)}\)의 \(k_\mu = \partial_\mu\Phi = (-\omega, k)\)가 바로 운동량의 쌍대 벡터 \(p_\mu = (-E, p)\)이다. 『상대성이론』 1장이 4-운동량을 이렇게 아래 지수로 읽는다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 6.4 -->
+  <section id="s4">
+    <h2>텐서장과 계량</h2>
+    <p>물리량 가운데에는 벡터도 쌍대 벡터도 아닌 것이 많다. <a href="../../math-phys/chapters/ch22.html#def-stress-tensor">학부 22장의 응력 텐서</a>는 면의 방향과 힘의 방향, 두 벡터를 먹고 숫자를 내고, 전자기 장 세기 \(F_{\mu\nu}\)도 그렇다. 계량은 그 가운데 특별한 하나로, 두 벡터의 내적을 정한다. 이 절은 벡터와 쌍대 벡터를 재료로 모든 텐서를 같은 방식으로 정의한다. 그러면 학부 22장의 변환 법칙 \(T'_{ij} = R_{ik}R_{jl}T_{kl}\)이 좌표 조각을 바꾸는 법칙으로 저절로 넓어진다.</p>
+
+    <div class="box def" id="def-tensor-field"><div class="box-h">\((r, s)\)형 텐서와 텐서장</div>
+      <p>\(p\)에서의 쌍대 벡터 \(r\)개 \(\omega^1, \ldots, \omega^r \in T_p^*M\)과 벡터 \(s\)개 \(V_1, \ldots, V_s \in T_pM\)을 먹고 실수 \(T(\omega^1, \ldots, \omega^r, V_1, \ldots, V_s)\)를 내며 각 자리에 대해 선형인 사상을 \(p\)에서의 <span class="term">\((r, s)\)형 텐서</span>라 한다. 성분은 기저를 넣은 값 \(T^{\mu_1\cdots\mu_r}{}_{\nu_1\cdots\nu_s} = T(\mathrm dx^{\mu_1}, \ldots, \mathrm dx^{\mu_r}, \partial_{\nu_1}, \ldots, \partial_{\nu_s})\)이다. 두 텐서의 <span class="term">텐서곱</span> \(S\otimes T\)는 두 값을 곱한 것이고, 이것으로 \(T\)를 기저로 펼친다.</p>
+      <div class="formula" id="eq-tensor-basis-expansion">\[ \begin{aligned} T &= T^{\mu_1\cdots\mu_r}{}_{\nu_1\cdots\nu_s}\;\partial_{\mu_1}\otimes\cdots\otimes\partial_{\mu_r} \\ &\quad\otimes\mathrm dx^{\nu_1}\otimes\cdots\otimes\mathrm dx^{\nu_s} \end{aligned} \]</div>
+      <p>점마다 텐서를 하나씩 매끄럽게 주는 것이 <span class="term">텐서장</span> <span class="en">(tensor field)</span>이다. 함수는 \((0, 0)\)형, 벡터장은 \((1, 0)\)형, 쌍대 벡터장은 \((0, 1)\)형이다. 위 지수 하나와 아래 지수 하나를 같게 놓고 더하는 <span class="term">축약</span>은 \((r, s)\)형에서 \((r-1, s-1)\)형을 만든다. 예를 들어 \((1, 1)\)형의 축약 \(T^\mu{}_\mu\)는 함수다.</p>
+    </div>
+    <p>좌표를 바꾸면 성분은 각 자리에 식 <a class="ref" href="#eq-coordinate-basis-change"></a>과 <a class="ref" href="#eq-covector-transformation"></a>를 넣어 바뀐다. 위 지수마다 \(\partial x'/\partial x\)가, 아래 지수마다 \(\partial x/\partial x'\)이 하나씩 붙는다.</p>
+    <div class="formula" id="eq-tensor-field-transformation">\[ \begin{aligned} &T'^{\mu_1\cdots\mu_r}{}_{\nu_1\cdots\nu_s} \\ &\;= \frac{\partial x'^{\mu_1}}{\partial x^{\alpha_1}}\cdots\frac{\partial x'^{\mu_r}}{\partial x^{\alpha_r}} \\ &\;\quad\times\frac{\partial x^{\beta_1}}{\partial x'^{\nu_1}}\cdots\frac{\partial x^{\beta_s}}{\partial x'^{\nu_s}}\;T^{\alpha_1\cdots\alpha_r}{}_{\beta_1\cdots\beta_s} \end{aligned} \]</div>
+    <p>유도는 한 줄이다. \(T'^{\mu\cdots}{}_{\nu\cdots} = T(\mathrm dx'^\mu, \ldots, \partial'_\nu, \ldots)\)에 \(\mathrm dx'^\mu = (\partial x'^\mu/\partial x^\alpha)\,\mathrm dx^\alpha\)와 \(\partial'_\nu = (\partial x^\beta/\partial x'^\nu)\,\partial_\beta\)를 넣고 각 자리의 선형성으로 계수를 꺼내면 된다. 정규직교 축 사이의 회전에서는 \(\partial x'^i/\partial x^j = \partial x^j/\partial x'^i = R_{ij}\)라서 위아래 구별이 사라지고 <a href="../../math-phys/chapters/ch22.html#eq-tensor-transformation">학부 22장의 변환 법칙</a>이 된다. 축약이 좌표에 무관한 것도 같은 이유다. 축약하는 두 자리에서 \(\partial x'/\partial x\)와 \(\partial x/\partial x'\)이 만나 \(\delta\)가 된다.</p>
+    <p>텐서의 지수 몇 개에 대해 대칭인 부분과 반대칭인 부분을 떼어 내는 기호를 정해 둔다.</p>
+    <div class="formula" id="eq-symmetrization">\[ \begin{aligned} T_{(\mu\nu)} &= \tfrac12\big(T_{\mu\nu} + T_{\nu\mu}\big) \\ T_{[\mu\nu]} &= \tfrac12\big(T_{\mu\nu} - T_{\nu\mu}\big) \end{aligned} \]</div>
+    <p>지수가 \(p\)개이면 \(p!\)개의 순열에 대해 더하고 \(1/p!\)로 나눈다. 반대칭화에서는 각 항에 <a href="ch01.html#def-permutation-sign">1장의 순열의 부호</a>를 곱한다. 예를 들어 \(T_{[\mu\nu\rho]} = \tfrac16(T_{\mu\nu\rho} - T_{\nu\mu\rho} + T_{\nu\rho\mu} - \cdots)\)이다.</p>
+    <div class="callout warn"><strong>대칭화의 인수 \(1/p!\)</strong><p>이 책은 대칭화와 반대칭화에 \(1/p!\)을 붙인다. 그래서 이미 대칭인 텐서에서는 \(T_{(\mu\nu)} = T_{\mu\nu}\)이고, 괄호는 "대칭인 부분만 남기는 사영"이다. 인수 없이 \(T_{(\mu\nu)} = T_{\mu\nu} + T_{\nu\mu}\)로 쓰는 교재도 있다. 그 관례로 쓴 식을 옮기면 \(p!\)만큼 어긋나고, 7장의 쐐기곱과 외미분의 인수가 달라진다. 이 책의 관례는 캐럴과 같다.</p></div>
+
+    <h3 id="s4-metric">계량</h3>
+    <div class="box def" id="def-metric-field"><div class="box-h">계량과 부호수</div>
+      <p>다음을 점마다 만족하는 \((0, 2)\)형 텐서장 \(g\)를 <span class="term">계량</span> <span class="en">(metric)</span>이라 한다.</p>
+      <ol>
+        <li>대칭: \(g(V, W) = g(W, V)\).</li>
+        <li>비퇴화: 모든 \(W\)에 대해 \(g(V, W) = 0\)이면 \(V = 0\)이다.</li>
+      </ol>
+      <p>성분으로 \(g = g_{\mu\nu}\,\mathrm dx^\mu\otimes\mathrm dx^\nu\)이고 \(g_{\mu\nu}\)는 대칭이고 가역인 행렬이다. 역행렬 \(g^{\mu\nu}\)(\(g^{\mu\lambda}g_{\lambda\nu} = \delta^\mu{}_\nu\))는 \((2, 0)\)형 텐서장이다. \(g \equiv \det g_{\mu\nu}\)로 쓴다. \(g(V, V) &lt; 0\)인 벡터들로만 이루어진 부분 공간(0은 빼고) 가운데 가장 큰 것의 차원 \(s\)를 <span class="term">부호수</span> <span class="en">(signature)</span>라 한다. \(s = 0\)이면 <span class="term">리만 계량</span>, \(s = 1\)이면 <span class="term">로런츠 계량</span>이다. \(s\)는 \(g_{\mu\nu}\)의 음의 고유값의 수와 같고, 연결된 \(M\)에서는 점에 따라 변하지 않는다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>부호수는 부분 공간으로 정의했으므로 기저나 좌표를 고르는 법과 무관하다. 한 점에서 대칭 행렬 \(g_{\mu\nu}\)를 직교 대각화해 고유값이 \(\lambda_a\)인 고유벡터 \(e_a\)를 고르면 \(g(e_a, e_b) = \lambda_a\delta_{ab}\)이다. 비퇴화이므로 \(\lambda_a \ne 0\)이다. 음의 고유값의 수를 \(q\)라 하자. (1) 음의 고유벡터들이 펼치는 \(W_-\)에서 \(V = \sum c_ae_a \ne 0\)이면 \(g(V, V) = \sum\lambda_ac_a^2 &lt; 0\)이므로 \(s \ge q\)이다. (2) \(g(V, V) &lt; 0\)인 벡터로만 된 부분 공간 \(W\)의 차원이 \(q\)보다 크면, 양의 고유벡터들이 펼치는 \(W_+\)(차원 \(n - q\))와 \(W\)의 차원의 합이 \(n\)보다 커서 둘은 0이 아닌 벡터 \(V\)를 공유한다. 그런데 \(V \in W_+\)이면 \(g(V, V) > 0\)이므로 모순이다. 따라서 \(s = q\)이다. (3) 고유값은 점에 따라 연속으로 변하고 0을 지나지 않으므로 음의 고유값의 수는 연결된 \(M\)에서 일정하다. ∎</p>
+      </details>
+    </div>
+    <p>물리에서는 계량을 선 요소로 적는다.</p>
+    <div class="formula" id="eq-line-element-field">\[ ds^2 = g_{\mu\nu}\,dx^\mu\,dx^\nu \]</div>
+    <p>식 <a class="ref" href="#eq-line-element-field"></a>은 텐서 \(g = g_{\mu\nu}\,\mathrm dx^\mu\otimes\mathrm dx^\nu\)를 적는 전통적인 꼴이다. 이웃한 두 점 사이의 거리의 제곱으로 읽어도 되고(<a href="../../math-phys/chapters/ch22.html#eq-metric-line-element">학부 22장의 선 요소</a>), 벡터 \(V\)를 넣으면 \(g(V, V)\)가 나오는 이차식으로 읽어도 된다. 이 책도 구체적인 계량은 \(ds^2 = dr^2 + r^2d\theta^2\)처럼 이 꼴로 적는다. 부피 요소는 \(\sqrt{\lvert g\rvert}\,d^nx\)이다. 식 <a class="ref" href="#eq-tensor-field-transformation"></a>에서 \(g'_{\mu\nu}\)는 \(g_{\alpha\beta}\)의 양쪽에 야코비 행렬 \(J^\alpha{}_\mu = \partial x^\alpha/\partial x'^\mu\)를 곱한 \(J^{\mathsf T}gJ\)이므로 \(\det g' = (\det J)^2\det g\)이고, \(\sqrt{\lvert g'\rvert}\,d^nx' = \sqrt{\lvert g\rvert}\,\lvert\det J\rvert\,d^nx' = \sqrt{\lvert g\rvert}\,d^nx\)이다. 행렬식의 인수가 적분 변수 바꾸기의 야코비안과 상쇄된다. 로런츠 계량에서는 \(g &lt; 0\)이라서 절댓값을 쓴다.</p>
+    <p>계량이 있으면 벡터와 쌍대 벡터를 오갈 수 있다. 벡터 \(V\)에 쌍대 벡터 \(g(V, \cdot\,)\)를 짝지으면, 성분으로는 지수를 내리고 올리는 것이 된다.</p>
+    <div class="formula" id="eq-index-lowering-field">\[ \begin{gathered} V_\mu = g_{\mu\nu}V^\nu \\ \omega^\mu = g^{\mu\nu}\omega_\nu \end{gathered} \]</div>
+    <p>계량이 비퇴화라는 조건이 이 대응이 일대일이라는 뜻이다. 특히 함수의 <span class="term">기울기 벡터</span>는 \(\operatorname{grad}f = g^{\mu\nu}\partial_\nu f\,\partial_\mu\)로, 계량이 있어야 정의된다. 계량이 없어도 정의되는 \(\mathrm df\)와 구별하자.</p>
+    <p>로런츠 계량의 예로 1+1차원 민코프스키 공간 \(ds^2 = -dt^2 + dx^2\)(<a href="../../math-phys/chapters/ch22.html#def-minkowski-metric">학부 22장의 민코프스키 계량</a>, \(c = 1\))을 빛원뿔 좌표 \(x^\pm = t \pm x\)로 쓰면 \(ds^2 = -dx^+dx^-\)이다. 선 요소의 \(dx^+dx^-\)는 대칭 곱이라 \(g_{++} = g_{--} = 0\), \(g_{+-} = g_{-+} = -\tfrac12\)이다. 대각 성분은 모두 0이지만 고유값이 \(\pm\tfrac12\)이어서 \(s = 1\)이다. 부호수는 고유값의 부호로 센다. \((+,-,-,-)\) 교재에서는 같은 시공간의 \(s\)가 \(n - 1\)이다.</p>
+
+    <div class="box ex" id="ex-gradient-vector-polar"><div class="box-h">극좌표에서 기울기의 세 가지 성분</div>
+      <p>평면의 유클리드 계량 \(ds^2 = dx^2 + dy^2\)을 생각한다. (가) 극좌표의 계량 성분을 식 <a class="ref" href="#eq-tensor-field-transformation"></a>로 구하라. (나) 함수 \(f(r, \theta)\)에 대해 \(\mathrm df\)의 성분과 기울기 벡터 \(\operatorname{grad}f\)의 성분을 구하라. (다) 학부 6장의 단위 벡터에 해당하는 벡터장 \(E_1 = \partial_r\), \(E_2 = \partial_\theta/r\)(6.6절의 정규직교 틀)에 대한 \(\operatorname{grad}f\)의 성분을 학부 6장의 기울기와 비교하라. (라) \(f = x = r\cos\theta\)로 결과를 확인하라.</p>
+      <p><b>풀이.</b> (가) 옛 성분 \(g_{xx} = g_{yy} = 1\), \(g_{xy} = 0\)에 야코비 행렬 \(\partial(x, y)/\partial(r, \theta)\)를 양쪽에서 곱한다. \(g_{rr} = (\partial_rx)^2 + (\partial_ry)^2 = \cos^2\theta + \sin^2\theta = 1\), \(g_{r\theta} = \partial_rx\,\partial_\theta x + \partial_ry\,\partial_\theta y = -r\cos\theta\sin\theta + r\sin\theta\cos\theta = 0\), \(g_{\theta\theta} = r^2\)이다. 곧 \(ds^2 = dr^2 + r^2d\theta^2\), \(g^{rr} = 1\), \(g^{\theta\theta} = 1/r^2\)이다.</p>
+      <p>(나) 식 <a class="ref" href="#eq-differential-df"></a>에서 \(\mathrm df = \partial_rf\,\mathrm dr + \partial_\theta f\,\mathrm d\theta\)이고, 식 <a class="ref" href="#eq-index-lowering-field"></a>로 지수를 올리면</p>
+      <div class="formula" id="eq-polar-gradient-vector">\[ \operatorname{grad}f = \partial_rf\;\partial_r + \frac{1}{r^2}\,\partial_\theta f\;\partial_\theta \]</div>
+      <p>이다. (다) \(\partial_\theta = r\,E_2\)이므로 \(\operatorname{grad}f = \partial_rf\,E_1 + \dfrac1r\partial_\theta f\,E_2\)이다. <a href="../../math-phys/chapters/ch06.html#eq-grad-curvilinear">학부 6장의 곡선 좌표 기울기</a>에 척도 인자 \(h_r = 1\), \(h_\theta = r\)을 넣은 것과 같다.</p>
+      <p>결국 "\(\theta\) 방향의 기울기"라고 부를 만한 것이 셋 있다: 쌍대 벡터의 성분 \(\partial_\theta f\), 벡터의 좌표 성분 \(\partial_\theta f/r^2\), 정규직교 틀 \(E_2\)에 대한 성분 \(\partial_\theta f/r\)이다. 세 수는 \(r\)의 거듭제곱만큼 다르고, 어느 것이 맞는지는 무엇을 기저로 썼느냐에 달렸다.</p>
+      <p><b>확인.</b> (라) \(f = r\cos\theta\)이면 \(\mathrm df = \cos\theta\,\mathrm dr - r\sin\theta\,\mathrm d\theta\)이고 식 <a class="ref" href="#eq-polar-gradient-vector"></a>는 \(\cos\theta\,\partial_r - \dfrac{\sin\theta}{r}\,\partial_\theta\)이다. 이것은 식 <a class="ref" href="#eq-polar-dx"></a>의 \(\partial_x\)다. 데카르트 좌표에서는 \(g^{\mu\nu} = \delta^{\mu\nu}\)이라 \(\operatorname{grad}x = \partial_x\)이므로 맞는다. 또 \(\mathrm df(\operatorname{grad}f) = (\partial_rf)^2 + (\partial_\theta f)^2/r^2\)은 학부 6장의 \(\lvert\nabla f\rvert^2\)와 같다.</p>
+      <p><b>어디에 쓰이나.</b> 같은 "성분"이 세 가지로 읽힌다는 것이 지수 계산에서 가장 흔한 실수의 뿌리이고, 『상대성이론』 1장이 이것을 실전 규칙으로 정리한다. (다)의 틀 성분은 8장의 <a href="ch08.html#def-vielbein">사다리꼴</a> 성분의 가장 간단한 예다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 6.5 -->
+  <section id="s5">
+    <h2>사상의 밂과 당김</h2>
+    <p>구의 계량 \(d\theta^2 + \sin^2\theta\,d\phi^2\)은 어디서 오는가? 구를 \(\mathbb R^3\)에 넣는 사상이 \(\mathbb R^3\)의 거리를 구로 "당겨 온" 것이다. 회전 같은 대칭 변환도, 좌표 변환도 모두 다양체 사이의 사상이다. 사상이 있으면 한쪽의 벡터를 다른 쪽으로 밀어 보낼 수 있다. 쌍대 벡터와 계량은 거꾸로, 도착하는 쪽에서 출발하는 쪽으로 당겨 온다. 이 절의 요점은 두 방향이 왜 반대인가이다. 벡터는 곡선이고 곡선은 사상을 따라 앞으로 보내지지만, 쌍대 벡터는 함수(의 미분)이고 함수는 사상과 합성해 뒤로 보내지기 때문이다.</p>
+
+    <div class="box def" id="def-pullback-pushforward"><div class="box-h">밂과 당김</div>
+      <p>매끄러운 사상 \(\varphi : M \to N\)과 점 \(p \in M\)을 생각한다. \(M\)의 좌표를 \(x^\mu\), \(N\)의 좌표를 \(y^\alpha\)로 쓴다.</p>
+      <p>벡터 \(V \in T_pM\)의 <span class="term">밂</span> <span class="en">(pushforward)</span> \(\varphi_*V \in T_{\varphi(p)}N\)은 \(N\) 위의 함수 \(f\)에 대해 \((\varphi_*V)(f) = V(f\circ\varphi)\)로 정한다. 쌍대 벡터 \(\omega \in T^*_{\varphi(p)}N\)의 <span class="term">당김</span> <span class="en">(pullback)</span> \(\varphi^*\omega \in T^*_pM\)은 \((\varphi^*\omega)(V) = \omega(\varphi_*V)\)로 정한다. \((0, s)\)형 텐서도 같은 방법으로 당긴다. 함수의 당김은 합성 \(\varphi^*f = f\circ\varphi\)이다.</p>
+      <div class="formula" id="eq-pushforward-pullback-components">\[ \begin{aligned} (\varphi_*V)^\alpha &= \frac{\partial y^\alpha}{\partial x^\mu}\,V^\mu \\ (\varphi^*\omega)_\mu &= \frac{\partial y^\alpha}{\partial x^\mu}\,\omega_\alpha \\ (\varphi^*T)_{\mu\nu} &= \frac{\partial y^\alpha}{\partial x^\mu}\frac{\partial y^\beta}{\partial x^\nu}\,T_{\alpha\beta} \end{aligned} \]<div class="where">\(\partial y^\alpha/\partial x^\mu\)은 좌표로 적은 \(\varphi\)의 야코비 행렬(\(\dim N\times\dim M\))이고, \(\omega_\alpha\), \(T_{\alpha\beta}\)는 \(\varphi(p)\)에서의 값이다.</div></div>
+      <p>\(\varphi\)가 미분동형사상이면 벡터도 당길 수 있다: \(\varphi^*V = (\varphi^{-1})_*V\). 그때는 모든 텐서를 당길 수 있다. 계량 \(g\)를 보존하는(\(\varphi^*g = g\)) 미분동형사상을 <span class="term">등거리 사상</span> <span class="en">(isometry)</span>이라 한다.</p>
+    </div>
+    <p>성분 식은 정의에서 바로 나온다. \(V(f\circ\varphi) = V^\mu\,\partial_\mu(f\circ\varphi) = V^\mu\,(\partial y^\alpha/\partial x^\mu)\,\partial_\alpha f\)이므로 첫째 줄이 나오고, \(\omega(\varphi_*V) = \omega_\alpha(\partial y^\alpha/\partial x^\mu)V^\mu\)에서 둘째 줄이 나온다. 같은 야코비 행렬이 벡터에는 왼쪽에서(\(J\,V\)), 쌍대 벡터에는 오른쪽에서(\(\omega\,J\)) 곱해진다.</p>
+    <p>방향이 정해진 이유는 함수에 있다. \(N\) 위의 함수 \(f\)는 \(f\circ\varphi\)로 언제나 \(M\) 위의 함수가 되지만, 거꾸로 보내는 일반적인 방법은 없다. 쌍대 벡터는 함수의 미분처럼 뒤로 간다. 한 점의 벡터는 앞으로 밀 수 있지만 <b>벡터장</b>을 밀려면 \(\varphi\)가 미분동형사상이어야 한다(적어도 일대일이어야 한다). 두 점의 벡터가 한 점으로 밀려 서로 다를 수 있기 때문이다(<a class="ref" href="#prob-pushforward-not-field"></a>). \((0, s)\)형 텐서장은 어떤 매끄러운 사상으로도 당길 수 있다.</p>
+    <div class="box thm" id="thm-pullback-properties"><div class="box-h">밂과 당김의 성질</div>
+      <p>매끄러운 사상 \(\varphi : M \to N\), \(\psi : N \to P\)와 \(N\) 위의 함수 \(f\)에 대해 다음이 성립한다.</p>
+      <p>(가) \((\psi\circ\varphi)_* = \psi_*\circ\varphi_*\), \((\psi\circ\varphi)^* = \varphi^*\circ\psi^*\).</p>
+      <p>(나) \(\varphi^*(\mathrm df) = \mathrm d(\varphi^*f)\). 곧 당김은 미분과 순서를 바꿀 수 있다.</p>
+      <p>(다) \(\varphi^*(S\otimes T) = \varphi^*S\otimes\varphi^*T\)이고, 당김은 대칭인 텐서를 대칭인 텐서로 보낸다.</p>
+      <p>(라) \(\varphi\)가 미분동형사상이면 \((0, 2)\)형 텐서장 \(g\)와 벡터장 \(Y\), \(Z\)에 대해 \((\varphi^*g)(\varphi^*Y, \varphi^*Z) = \varphi^*\big(g(Y, Z)\big)\)이다. 곧 당김은 텐서에 벡터를 넣는 것과 순서를 바꿀 수 있다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>(가) \(P\) 위의 함수 \(h\)에 대해 \(((\psi\circ\varphi)_*V)(h) = V(h\circ\psi\circ\varphi) = (\varphi_*V)(h\circ\psi) = (\psi_*\varphi_*V)(h)\)이다. 당김은 \(((\psi\circ\varphi)^*\omega)(V) = \omega(\psi_*\varphi_*V) = (\psi^*\omega)(\varphi_*V) = (\varphi^*\psi^*\omega)(V)\)이다. 성분으로는 야코비 행렬의 연쇄 법칙이다.</p>
+        <p>(나) \((\varphi^*\mathrm df)(V) = \mathrm df(\varphi_*V) = (\varphi_*V)(f) = V(f\circ\varphi) = \mathrm d(f\circ\varphi)(V)\)이다.</p>
+        <p>(다) \((\varphi^*(S\otimes T))(V_1, \ldots) = S(\varphi_*V_1, \ldots)\,T(\ldots) = (\varphi^*S\otimes\varphi^*T)(V_1, \ldots)\)이고, 대칭성은 \(\varphi_*\)를 각 자리에 똑같이 쓰므로 보존된다.</p>
+        <p>(라) \(\varphi^*Y = (\varphi^{-1})_*Y\)이므로 점 \(p\)에서 \(\varphi_*(\varphi^*Y)_p = Y_{\varphi(p)}\)이다(\(\varphi_*(\varphi^{-1})_* = (\varphi\circ\varphi^{-1})_* = \mathrm{id}\), (가)). 따라서 \((\varphi^*g)_p(\varphi^*Y, \varphi^*Z) = g_{\varphi(p)}(Y_{\varphi(p)}, Z_{\varphi(p)}) = \big(g(Y, Z)\big)(\varphi(p))\)이고, 이것이 함수 \(g(Y, Z)\)의 당김의 \(p\)에서의 값이다.</p>
+      </details>
+    </div>
+    <p>좌표 변환도 당김이다. 같은 점을 두 조각 \(x\), \(x'\)으로 적을 때, 전이 함수 \(x\circ x'^{-1}\)은 \(x'\) 좌표의 영역에서 \(x\) 좌표의 영역으로 가는 사상이다. 식 <a class="ref" href="#eq-pushforward-pullback-components"></a>의 셋째 줄에서 \(y\)를 \(x\)로, \(x\)를 \(x'\)으로 읽으면 \(g'_{\mu\nu} = (\partial x^\alpha/\partial x'^\mu)(\partial x^\beta/\partial x'^\nu)\,g_{\alpha\beta}\), 곧 식 <a class="ref" href="#eq-tensor-field-transformation"></a>이다. 변환 법칙은 전이 함수로 당기는 것이다.</p>
+
+    <div class="box ex" id="ex-induced-metric-sphere"><div class="box-h">\(\mathbb R^3\) 안의 구에 유도된 계량</div>
+      <p>반지름 \(r_0\)인 구 \(S^2\)를 \(\mathbb R^3\)에 넣는 사상 \(\iota\)를 극좌표로 \(\iota(\theta, \phi) = r_0(\sin\theta\cos\phi,\ \sin\theta\sin\phi,\ \cos\theta)\)로 쓴다. (가) \(\iota_*\partial_\theta\)와 \(\iota_*\partial_\phi\)를 \(\mathbb R^3\)의 벡터로 구하라. (나) 유클리드 계량 \(\delta = dx^2 + dy^2 + dz^2\)의 당김 \(\iota^*\delta\)를 구하라. (다) 넓이와 적도의 길이를 구하라.</p>
+      <p><b>풀이.</b> (가) 식 <a class="ref" href="#eq-pushforward-pullback-components"></a>의 첫째 줄에서 \(\iota_*\partial_\theta\)의 성분은 야코비 행렬의 첫째 열 \(\partial\iota/\partial\theta = r_0(\cos\theta\cos\phi, \cos\theta\sin\phi, -\sin\theta)\)이고, \(\iota_*\partial_\phi = \partial\iota/\partial\phi = r_0(-\sin\theta\sin\phi, \sin\theta\cos\phi, 0)\)이다. <a href="../../math-phys/chapters/ch22.html#def-contravariant-covariant">학부 22장의 좌표 기저</a> \(\mathbf e_i = \partial\mathbf r/\partial u^i\)가 바로 이 밂이다.</p>
+      <p>(나) 셋째 줄에 \(T_{\alpha\beta} = \delta_{\alpha\beta}\)를 넣으면 \((\iota^*\delta)_{\mu\nu}\)는 두 밂의 내적 \(\iota_*\partial_\mu\cdot\iota_*\partial_\nu\)이다. \(\lvert\partial\iota/\partial\theta\rvert^2 = r_0^2\), \(\lvert\partial\iota/\partial\phi\rvert^2 = r_0^2\sin^2\theta\)이고 두 벡터의 내적은 \(r_0^2(-\cos\theta\sin\theta\cos\phi\sin\phi + \cos\theta\sin\theta\sin\phi\cos\phi) = 0\)이므로</p>
+      <div class="formula" id="eq-sphere-metric">\[ ds^2 = r_0^2\big(d\theta^2 + \sin^2\theta\,d\phi^2\big) \]</div>
+      <p>이다. (다) \(\sqrt g = r_0^2\sin\theta\)이므로 넓이는 \(\displaystyle\int_0^{2\pi}\!\!\int_0^\pi r_0^2\sin\theta\,d\theta\,d\phi = 4\pi r_0^2\)이다. 적도 \(\theta = \pi/2\)를 따라 \(\phi\)가 \(0\)에서 \(2\pi\)까지 가면 길이는 \(\displaystyle\int_0^{2\pi}\sqrt{g_{\phi\phi}}\,d\phi = 2\pi r_0\)이다.</p>
+      <p><b>확인.</b> 넓이와 둘레가 잘 알려진 값과 같다. \(\theta\)가 작은 곳에서는 \(\sin\theta \approx \theta\)이고 \(\varrho = r_0\theta\)로 두면 \(ds^2 \approx d\varrho^2 + \varrho^2d\phi^2\)이다. 북극 근처의 구는 평면의 극좌표 계량과 같아 보인다. 식 <a class="ref" href="#eq-sphere-metric"></a>에서 \(\theta = 0, \pi\)이면 \(g_{\phi\phi} = 0\)이 되는데, 이것은 극좌표 조각이 극을 덮지 못하기 때문이지 구가 특별해서가 아니다.</p>
+      <p><b>어디에 쓰이나.</b> 8장은 이 계량에서 곡률 스칼라 \(R = 2/r_0^2\)을 계산한다(<a href="ch08.html#def-ricci-scalar">8장의 리치 텐서와 곡률 스칼라</a>). 같은 방법으로 \(\mathbb R^5\) 안의 \(S^4\)에 유도된 계량을 얻고, 21장은 그 위에서 <a href="ch21.html#eq-heat-trace-s4">열 대각합</a>을 계산한다.</p>
+    </div>
+
+    <div class="box calc" id="calc-stereographic-sphere-metric"><div class="box-h">입체 사영 좌표로 쓴 단위 구: 계량, 전이 함수, 넓이</div>
+      <p><a class="ref" href="#ex-sphere-stereographic-charts"></a>의 북쪽 조각의 역사상(식 <a class="ref" href="#eq-stereographic-inverse"></a>)을 \(\mathbb R^2\)에서 \(\mathbb R^3\)으로 가는 사상 \(F\)로 보고, 유클리드 계량을 식 <a class="ref" href="#eq-pushforward-pullback-components"></a>으로 당긴다. 그 다음 남쪽 조각의 계량을 전이 함수(식 <a class="ref" href="#eq-stereographic-transition"></a>)로 당겨 같은 텐서인지 확인하고(<a class="ref" href="#thm-pullback-properties"></a>), 넓이를 구한다.</p>
+      <p><b>계산.</b> (1) <i>밂.</i> \(D = 1 + u^2 + v^2\)로 두고 식 <a class="ref" href="#eq-stereographic-inverse"></a>를 미분한다. 예를 들어 \(\partial_u(2u/D) = (2D - 4u^2)/D^2\), \(\partial_u\big((u^2 + v^2 - 1)/D\big) = \big(2uD - 2u(u^2 + v^2 - 1)\big)/D^2 = 4u/D^2\)이다.</p>
+      <div class="formula">\[ \begin{aligned} F_*\partial_u &= \tfrac{2}{D^2}\big(1 + v^2 - u^2,\ -2uv,\ 2u\big) \\ F_*\partial_v &= \tfrac{2}{D^2}\big(-2uv,\ 1 + u^2 - v^2,\ 2v\big) \end{aligned} \]</div>
+      <p>(2) <i>당김.</i> \(g_{uu} = \lvert F_*\partial_u\rvert^2\)의 괄호 안 제곱합을 정리한다.</p>
+      <div class="formula">\[ \begin{aligned} &(1 + v^2 - u^2)^2 + 4u^2v^2 + 4u^2 \\ &= (1 + v^2)^2 - 2u^2(1 + v^2) \\ &\quad + u^4 + 4u^2v^2 + 4u^2 \\ &= (1 + v^2)^2 + 2u^2(1 + v^2) + u^4 \\ &= D^2 \end{aligned} \]</div>
+      <p>따라서 \(g_{uu} = 4D^2/D^4 = 4/D^2\)이고, \(u\)와 \(v\)를 바꾼 같은 계산으로 \(g_{vv} = 4/D^2\)이다. 엇갈린 성분은 \(\tfrac{4}{D^4}\big[-2uv(1 + v^2 - u^2) - 2uv(1 + u^2 - v^2) + 4uv\big] = \tfrac{4}{D^4}(-4uv + 4uv) = 0\)이다.</p>
+      <div class="formula" id="eq-stereographic-metric">\[ ds^2 = \frac{4\,(du^2 + dv^2)}{(1 + u^2 + v^2)^2} \]</div>
+      <p>(3) <i>남쪽 조각.</i> 남쪽 조각의 역사상은 식 <a class="ref" href="#eq-stereographic-inverse"></a>에서 \(z\)의 부호만 바꾼 것이고, \(z \to -z\)는 \(\mathbb R^3\)의 등거리 사상이므로 남쪽 계량도 같은 꼴 \(4(du'^2 + dv'^2)/(1 + \rho'^2)^2\)이다.</p>
+      <p>(4) <i>변환 법칙.</i> 전이 함수 \(u' = u/\rho^2\), \(v' = v/\rho^2\)의 야코비 행렬은</p>
+      <div class="formula" id="eq-inversion-jacobian">\[ \begin{aligned} J &= \frac{\partial(u', v')}{\partial(u, v)} \\ &= \frac{1}{\rho^4}\begin{pmatrix} v^2 - u^2 & -2uv \\ -2uv & u^2 - v^2 \end{pmatrix} \end{aligned} \]</div>
+      <p>이다. 두 열은 서로 수직이고(\(-2uv(v^2 - u^2) - 2uv(u^2 - v^2) = 0\)), 각 열의 길이의 제곱은 \(\big((u^2 - v^2)^2 + 4u^2v^2\big)/\rho^8 = \rho^4/\rho^8\)이므로 \(J^{\mathsf T}J = \rho^{-4}\,\mathbf 1\)이다. \(\det J = -\big((u^2 - v^2)^2 + 4u^2v^2\big)/\rho^8 = -1/\rho^4\)이다. 식 <a class="ref" href="#eq-pushforward-pullback-components"></a>의 셋째 줄로 남쪽 계량을 당기면, \(1 + \rho'^2 = 1 + \rho^{-2} = (1 + \rho^2)/\rho^2\)이므로</p>
+      <div class="formula">\[ \begin{aligned} \frac{4}{(1 + \rho'^2)^2}\,J^{\mathsf T}J &= \frac{4\rho^4}{(1 + \rho^2)^2}\cdot\frac{1}{\rho^4}\,\mathbf 1 \\ &= \frac{4}{(1 + \rho^2)^2}\,\mathbf 1 \end{aligned} \]</div>
+      <p>이 되어 북쪽 계량(식 <a class="ref" href="#eq-stereographic-metric"></a>)과 같다. 두 조각은 같은 텐서를 적고 있다.</p>
+      <p>(5) <i>넓이.</i> \(\sqrt g = 4/D^2\)이고 평면의 극좌표 \((\rho, \phi)\)로 적분하면 \(\displaystyle\int_0^{2\pi}\!\!\int_0^\infty\frac{4\rho\,d\rho\,d\phi}{(1 + \rho^2)^2} = 2\pi\Big[-\frac{2}{1 + \rho^2}\Big]_0^\infty = 4\pi\)이다. 북쪽 조각은 북극 한 점만 빼고 구를 덮으므로 이것이 구의 넓이다.</p>
+      <p class="calc-result"><b>결과.</b> 북쪽 조각의 계량은 \(g_{uu} = g_{vv} = 4/(1 + u^2 + v^2)^2\), \(g_{uv} = 0\)이다. 전이 함수의 야코비 행렬은 \(\det J = -1/\rho^4\), \(J^{\mathsf T}J = \rho^{-4}\mathbf 1\)이고, 남쪽 계량을 전이 함수로 당기면 북쪽 계량과 같다. 넓이는 \(4\pi\)이다.</p>
+      <p><b>확인.</b> 적도 \(\rho = 1\)에서 인수가 \(4/2^2 = 1\)이라, 단위 원의 둘레 \(2\pi\)가 그대로 적도의 길이다. 또 \(\rho = \cot(\theta/2)\)(식 <a class="ref" href="#eq-stereographic-radius"></a>)로 바꾸면 \(d\rho = -d\theta/(2\sin^2(\theta/2))\)와 \(1 + \rho^2 = 1/\sin^2(\theta/2)\)에서 \(4\,d\rho^2/(1 + \rho^2)^2 = d\theta^2\)이고, \(\sin\theta = 2\rho/(1 + \rho^2)\)에서 \(4\rho^2d\phi^2/(1 + \rho^2)^2 = \sin^2\theta\,d\phi^2\)이다. 식 <a class="ref" href="#eq-stereographic-metric"></a>를 극좌표 \(du^2 + dv^2 = d\rho^2 + \rho^2d\phi^2\)로 쓴 것이 <a class="ref" href="#ex-induced-metric-sphere"></a>의 \(r_0 = 1\)인 경우와 같다. \(\det J &lt; 0\)은 전이 함수가 방향을 뒤집는다는 뜻이다. 7장에서 <a href="ch07.html#def-volume-form">방향과 부피 형식</a>을 정할 때 이것을 다룬다.</p>
+    </div>
+
+    <div class="box code" id="code-pullback-metric" data-run="python" data-packages="sympy" data-check="calc-stereographic-sphere-metric">
+      <div class="box-h">사상으로 당긴 계량: 입체 사영, 구, 쌍곡면, 빛원뿔</div>
+      <p><a class="ref" href="#calc-stereographic-sphere-metric"></a>을 처음부터 다시 한다. 야코비 행렬을 <code>sympy.diff</code>로 직접 만들고, 식 <a class="ref" href="#eq-pushforward-pullback-components"></a>의 셋째 줄 \(J^{\mathsf T}\,G(F(q))\,J\)로 당긴다. 손 계산의 계량, 전이 함수의 행렬식, 변환 법칙, 넓이를 <code>assert</code>로 확인한 뒤, 같은 함수로 각도 좌표의 \(S^2\)와 \(S^3\)을 구한다. 마지막으로 바깥 공간을 민코프스키 공간 \(ds^2 = -dt^2 + dx^2 + dy^2\)로 바꿔 쌍곡면 \(t^2 - x^2 - y^2 = 1\)과 빛원뿔 \(t^2 = x^2 + y^2\)에 유도된 것을 본다.</p>
+      <pre><code class="language-python">import sympy as sp
+
+def jacobian(F, q):            # J[k, m] = dF^k/dq^m (직접 미분)
+    return sp.Matrix(len(F), len(q),
+                     lambda k, m: sp.diff(F[k], q[m]))
+
+def pullback(G, y, F, q):
+    """(F^*G)_mn = (dF^k/dq^m)(dF^l/dq^n) G_kl(F(q))
+    G는 바깥 좌표 y의 함수, F는 q에서 y로 가는 사상"""
+    J = jacobian(F, q)
+    GF = G.subs(dict(zip(y, F)), simultaneous=True)
+    return (J.T * GF * J).applyfunc(sp.simplify)
+
+def same(A, B):                # 두 행렬이 식으로 같은가
+    return (A - B).applyfunc(sp.simplify).is_zero_matrix
+
+# 1) 손 계산 6.1: 입체 사영 좌표 (u, v)로 쓴 단위 구의 계량
+u, v, up, vp = sp.symbols("u v up vp", real=True)
+X = sp.symbols("x y z", real=True)
+rho2 = u**2 + v**2
+F_N = [2*u/(1 + rho2), 2*v/(1 + rho2), (rho2 - 1)/(1 + rho2)]
+g_N = pullback(sp.eye(3), X, F_N, [u, v])
+assert same(g_N, sp.eye(2) * 4 / (1 + rho2)**2)
+# 전이 함수 (u', v') = (u, v)/ρ²와 남쪽 조각의 계량
+T = [u / rho2, v / rho2]
+J = jacobian(T, [u, v])
+assert sp.simplify(J.det() + 1 / rho2**2) == 0
+assert same(J.T * J, sp.eye(2) / rho2**2)          # J^T J = ρ⁻⁴ 1
+g_S = sp.eye(2) * 4 / (1 + up**2 + vp**2)**2
+assert same(pullback(g_S, [up, vp], T, [u, v]), g_N)  # 변환 법칙
+r = sp.symbols("r", positive=True)
+area = sp.integrate(4 / (1 + r**2)**2 * 2*sp.pi*r, (r, 0, sp.oo))
+assert area == 4 * sp.pi
+print("S2(u,v)", sp.factor(g_N[0, 0]), g_N[0, 1], area)
+
+# 2) 넓히기: 각도 좌표의 S^2, S^3 (바깥은 유클리드 공간)
+th, ph, chi = sp.symbols("theta phi chi", positive=True)
+S2 = [sp.sin(th)*sp.cos(ph), sp.sin(th)*sp.sin(ph), sp.cos(th)]
+S3 = [sp.sin(chi)*c for c in S2] + [sp.cos(chi)]
+W = sp.symbols("w0:4", real=True)
+for name, F, q in [("S2", S2, [th, ph]), ("S3", S3, [chi, th, ph])]:
+    g = pullback(sp.eye(len(F)), W[:len(F)], F, q)
+    assert g.is_diagonal()
+    print(name, list(g.diagonal()))
+
+# 3) 넓히기: 민코프스키 공간 (-,+,+) 안의 쌍곡면과 빛원뿔
+eta = sp.diag(-1, 1, 1)
+H2 = [sp.cosh(chi), sp.sinh(chi)*sp.cos(ph), sp.sinh(chi)*sp.sin(ph)]
+cone = [r, r*sp.cos(ph), r*sp.sin(ph)]
+for name, F, q in [("H2", H2, [chi, ph]), ("cone", cone, [r, ph])]:
+    g = pullback(eta, X, F, q)
+    assert g.is_diagonal()
+    print(name, list(g.diagonal()), "det =", sp.simplify(g.det()))</code></pre>
+      <pre class="code-out"><code>S2(u,v) 4/(u**2 + v**2 + 1)**2 0 4*pi
+S2 [1, sin(theta)**2]
+S3 [1, sin(chi)**2, sin(chi)**2*sin(theta)**2]
+H2 [1, sinh(chi)**2] det = sinh(chi)**2
+cone [0, r**2] det = 0</code></pre>
+      <p class="code-note">첫 줄은 <a class="ref" href="#calc-stereographic-sphere-metric"></a>의 결과(\(g_{uu} = 4/(1 + u^2 + v^2)^2\), \(g_{uv} = 0\), 넓이 \(4\pi\))다. 둘째 줄은 <a class="ref" href="#ex-induced-metric-sphere"></a>의 \(r_0 = 1\)인 경우, 셋째 줄은 \(S^3\)의 계량 \(d\chi^2 + \sin^2\chi\,(d\theta^2 + \sin^2\theta\,d\phi^2)\)이다. 넷째 줄: 바깥은 로런츠 계량인데 쌍곡면에 유도된 \(d\chi^2 + \sinh^2\chi\,d\phi^2\)은 리만 계량이다. 쌍곡면의 접벡터가 모두 공간꼴이기 때문이다. 이것이 쌍곡 평면이고 <a class="ref" href="#code-lie-derivative"></a>가 다른 좌표로 다시 쓴다. 다섯째 줄: 빛원뿔의 모선 방향 \(\partial_r\)은 길이가 0이라 당긴 텐서의 행렬식이 0이고 계량이 아니다. 당김은 언제나 정의되지만 결과가 계량인지는 따로 확인해야 한다.</p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 6.6 -->
+  <section id="s6">
+    <h2>벡터장의 흐름과 리 괄호</h2>
+    <p>학부 7장은 회전을 생성자 \(L_z\)와 지수 \(e^{\theta L_z}\)로 적었다(<a href="../../math-phys/chapters/ch07.html#eq-rotation-exponential">학부 7장의 회전의 지수 꼴</a>). 다양체 위에서 이 그림에 해당하는 것이 벡터장과 그 흐름이다. 벡터장의 화살표를 따라 모든 점을 동시에 흘려 보내면, 다양체를 자기 자신으로 보내는 미분동형사상들이 매개변수 하나로 이어진 묶음이 나온다. 두 벡터장의 흐름을 번갈아 따라갔을 때 처음 자리로 돌아오는지를 재는 양이 리 괄호다. 리 괄호는 6.7절의 리 미분과 킬링 벡터에 바로 쓰이고, 3장의 <a href="ch03.html#def-lie-algebra">리 대수</a>와 8장에서 좌표 기저가 아닌 틀로 <a href="ch08.html#def-riemann-tensor">리만 텐서</a>를 계산하는 곳에 다시 나온다.</p>
+
+    <div class="box def" id="def-integral-curve-flow"><div class="box-h">적분 곡선과 흐름</div>
+      <p>벡터장 \(X\)에 대해 \(\dot\gamma(t) = X_{\gamma(t)}\)를 만족하는 곡선 \(\gamma\)를 \(X\)의 <span class="term">적분 곡선</span> <span class="en">(integral curve)</span>이라 한다. 성분으로는 상미분방정식</p>
+      <div class="formula" id="eq-integral-curve">\[ \frac{dx^\mu}{dt} = X^\mu\big(x(t)\big) \]</div>
+      <p>이다. \(p\)에서 출발하는 적분 곡선을 \(\gamma_p\)라 할 때 \(\varphi_t(p) = \gamma_p(t)\)로 정한 사상들 \(\varphi_t\)를 \(X\)의 <span class="term">흐름</span> <span class="en">(flow)</span>이라 한다.</p>
+    </div>
+    <div class="box thm" id="thm-flow"><div class="box-h">흐름의 존재와 군 성질</div>
+      <p>매끄러운 벡터장 \(X\)에 대해 다음이 성립한다.</p>
+      <p>(가) 각 점 \(p\)를 지나는 적분 곡선이 \(t = 0\)을 품는 열린 구간에서 있고, 유일하다.</p>
+      <p>(나) 흐름 \(\varphi_t(p)\)는 \((t, p)\)에 대해 매끄럽고, 정의되는 곳에서 다음을 만족한다.</p>
+      <div class="formula" id="eq-flow-group">\[ \begin{gathered} \varphi_0 = \mathrm{id} \\ \varphi_s\circ\varphi_t = \varphi_{s+t} \end{gathered} \]</div>
+      <p>(다) \(M\)이 콤팩트이면(또는 \(X\)가 어떤 콤팩트 집합 밖에서 0이면) 흐름은 모든 \(t\)에서 정의되고, 각 \(\varphi_t\)는 역사상이 \(\varphi_{-t}\)인 미분동형사상이다.</p>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>(가)는 좌표 조각 안에서 상미분방정식 <a class="ref" href="#eq-integral-curve"></a>의 해의 존재와 유일성(피카르-린델뢰프 정리)이고, 조각이 겹치는 곳에서는 유일성 때문에 해가 이어진다. (나)의 군 성질도 유일성에서 나온다. \(t \mapsto \varphi_{s+t}(p)\)와 \(t \mapsto \varphi_t(\varphi_s(p))\)는 둘 다 \(t = 0\)에서 \(\varphi_s(p)\)를 지나는 적분 곡선이기 때문이다. 초기값에 대한 매끄러운 의존성은 상미분방정식 이론의 더 깊은 결과다. (다)는 콤팩트성에서 모든 점에 공통인 존재 시간 \(\varepsilon > 0\)을 고른 뒤 군 성질로 시간을 늘려 얻는다. 엄밀한 증명은 Lee, <i>Introduction to Smooth Manifolds</i>, 2nd ed.의 9장(적분 곡선과 흐름)과 부록 D(상미분방정식의 존재, 유일성, 매끄러움)에 있다.</p>
+      </details>
+    </div>
+    <p>콤팩트 조건이 없으면 흐름이 유한한 시간에 끝날 수 있다. \(\mathbb R\) 위의 \(X = x^2\partial_x\)는 \(dx/dt = x^2\)의 해 \(x(t) = x_0/(1 - tx_0)\)를 주고, \(x_0 > 0\)이면 \(t = 1/x_0\)에서 무한대로 달아난다. 가장 중요한 예는 선형 벡터장이다. 상수 행렬 \(A\)로 \(X_A = A^\mu{}_\nu\,x^\nu\,\partial_\mu\)를 두면 식 <a class="ref" href="#eq-integral-curve"></a>은 \(\dot x = Ax\)이고 흐름은</p>
+    <div class="formula" id="eq-linear-flow">\[ \varphi_t(x) = e^{tA}x \]</div>
+    <p>이다. 학부 7장의 회전 \(R(\hat{\mathbf z}, \theta) = e^{\theta L_z}\)는 벡터장 \(X_{L_z} = x\,\partial_y - y\,\partial_x = \partial_\theta\)(<a class="ref" href="#ex-polar-coordinate-basis"></a>)의 흐름이고, 식 <a class="ref" href="#eq-flow-group"></a>은 \(e^{sA}e^{tA} = e^{(s+t)A}\)이다.</p>
+
+    <h3 id="s6-bracket">리 괄호</h3>
+    <div class="box def" id="def-lie-bracket"><div class="box-h">리 괄호</div>
+      <p>두 벡터장 \(X\), \(Y\)의 <span class="term">리 괄호</span> <span class="en">(Lie bracket)</span> \([X, Y]\)는 함수 \(f\)에 다음과 같이 작용하는 연산이다.</p>
+      <div class="formula" id="eq-lie-bracket-def">\[ [X, Y]f = X(Yf) - Y(Xf) \]</div>
+    </div>
+    <div class="box thm" id="thm-lie-bracket"><div class="box-h">리 괄호는 벡터장이다</div>
+      <p>\([X, Y]\)는 벡터장이고 성분은 다음과 같다.</p>
+      <div class="formula" id="eq-lie-bracket-components">\[ [X, Y]^\mu = X^\nu\partial_\nu Y^\mu - Y^\nu\partial_\nu X^\mu \]</div>
+      <p>또 (가) \([X, Y] = -[Y, X]\), (나) 야코비 항등식 \([X, [Y, Z]] + [Y, [Z, X]] + [Z, [X, Y]] = 0\), (다) 함수 \(f\)에 대해 \([X, fY] = (Xf)\,Y + f\,[X, Y]\), (라) 좌표 기저는 \([\partial_\mu, \partial_\nu] = 0\)이다.</p>
+    </div>
+    <p><b>증명.</b> (1) 좌표 조각에서 계산한다.</p>
+    <div class="formula" id="eq-lie-bracket-proof">\[ \begin{aligned} X(Yf) &= X^\nu\partial_\nu\big(Y^\mu\partial_\mu f\big) \\ &= X^\nu(\partial_\nu Y^\mu)\,\partial_\mu f + X^\nu Y^\mu\,\partial_\nu\partial_\mu f \end{aligned} \]</div>
+    <p>\(Y(Xf)\)는 \(X\)와 \(Y\)를 바꾼 것이다. 빼면 2차 미분 항 \(X^\nu Y^\mu\partial_\nu\partial_\mu f - Y^\nu X^\mu\partial_\nu\partial_\mu f\)는 편미분의 순서를 바꿀 수 있으므로 0이고, 1차 미분 항 \((X^\nu\partial_\nu Y^\mu - Y^\nu\partial_\nu X^\mu)\,\partial_\mu f\)만 남는다. 1차 미분 연산자는 접벡터(의 장)이므로(<a class="ref" href="#thm-tangent-space-basis"></a>) \([X, Y]\)는 벡터장이고 성분은 식 <a class="ref" href="#eq-lie-bracket-components"></a>이다. 식 <a class="ref" href="#eq-lie-bracket-def"></a>의 정의가 좌표를 쓰지 않았으므로 성분은 저절로 벡터의 변환 법칙을 따른다.</p>
+    <p>(2) (가)는 정의에서 바로 나온다. (나)는 연산자로 펼치면 \(XYZ - XZY - YZX + ZYX\)와 그 순환들의 합이고, 12개 항이 둘씩 지워진다. (다)는 \([X, fY]h = X(fYh) - fY(Xh) = (Xf)(Yh) + fX(Yh) - fY(Xh)\)이다. (라)는 \(\partial_\mu\)의 성분이 상수라 식 <a class="ref" href="#eq-lie-bracket-components"></a>이 0이다. ∎</p>
+    <p>한 항 \(X^\nu\partial_\nu Y^\mu\)만으로는 벡터가 아니다. 좌표를 바꾸면 변환 행렬까지 미분해 2차 미분 항이 생기는데, 두 항의 차에서 지워진다. 학부 22장은 \(\partial_jA^i\)가 텐서가 아니어서 <a href="../../math-phys/chapters/ch22.html#def-christoffel">크리스토펠 기호</a>를 들였지만, 리 괄호는 반대칭으로 그 문제를 피한다. 계량도 접속도 필요 없다.</p>
+    <p>리 괄호의 기하적인 뜻은 흐름으로 본다. \(X\)의 흐름 \(\varphi^X_t\)를 따라 \(t\)만큼, \(Y\)의 흐름을 따라 \(s\)만큼, 다시 \(X\)로 \(-t\), \(Y\)로 \(-s\)만큼 가서 도착한 점을 \(q = \varphi^Y_{-s}\circ\varphi^X_{-t}\circ\varphi^Y_s\circ\varphi^X_t(p)\)라 하자. 함수를 흐름과 합성하면 \(\dfrac{d}{dt}(f\circ\varphi^X_t) = (Xf)\circ\varphi^X_t\)이므로 테일러 전개로 \(f\circ\varphi^X_t = f + t\,Xf + \tfrac{t^2}{2}X^2f + \cdots\)이고, 이것을 \(e^{tX}f\)로 줄여 쓴다. 합성의 맨 바깥 사상부터 차례로 적용하면 \(f(q) = \big(e^{tX}e^{sY}e^{-tX}e^{-sY}f\big)(p)\)이다. 연산자를 2차까지 펼치면 \(a = tX\), \(b = sY\)로 두어</p>
+    <div class="formula">\[ \begin{aligned} &\big(1 + a + b + \tfrac{a^2}{2} + \tfrac{b^2}{2} + ab\big) \\ &\times\big(1 - a - b + \tfrac{a^2}{2} + \tfrac{b^2}{2} + ab\big) \\ &= 1 + ab - ba + \cdots \end{aligned} \]</div>
+    <p>이다. 왼쪽 두 괄호가 각각 \(e^ae^b\)와 \(e^{-a}e^{-b}\)의 2차까지다. 곧</p>
+    <div class="formula" id="eq-flow-commutator">\[ f(q) = f(p) + ts\,\big([X, Y]f\big)(p) + O(3) \]</div>
+    <p>이다. \(O(3)\)은 \(t, s\)에 대해 3차 이상인 항이다. \(f = x^\mu\)를 넣으면 \(q^\mu - p^\mu \approx ts\,[X, Y]^\mu\)이다. 리 괄호는 흐름으로 그린 작은 사각형이 닫히지 않는 정도다(그림 6-4).</p>
+
+    <p>극좌표의 단위 벡터처럼 좌표에서 오지 않은 기저도 쓴다. 점마다 접공간의 기저를 이루는 벡터장 \(n\)개를 <span class="term">틀</span> <span class="en">(frame)</span>, 그 쌍대 기저를 이루는 쌍대 벡터장들을 <span class="term">쌍대 틀</span>이라 한다. 계량에 대해 정규직교이면 <span class="term">정규직교 틀</span>이다. 틀 지수는 라틴 \(a, b, c\)로 써서 좌표 지수 \(\mu, \nu\)와 구별한다: 틀 \(E_a\), 쌍대 틀 \(e^a\), \(e^a(E_b) = \delta^a{}_b\). 좌표 기저 \(\partial_\mu\)와 \(\mathrm dx^\mu\)는 틀의 특수한 경우다. 평면의 극좌표에서는</p>
+    <div class="formula" id="eq-polar-orthonormal-frame">\[ \begin{gathered} (E_1, E_2) = \big(\partial_r,\ \tfrac1r\,\partial_\theta\big) \\ (e^1, e^2) = \big(\mathrm dr,\ r\,\mathrm d\theta\big) \end{gathered} \]</div>
+    <p>가 정규직교 틀과 그 쌍대 틀이다(\(g(E_2, E_2) = r^2/r^2 = 1\)). 학부 6장의 단위 벡터 \(\hat{\mathbf e}_r\), \(\hat{\mathbf e}_\theta\)를 벡터장으로 읽은 것이 \(E_1\), \(E_2\)이다.</p>
+
+    <figure class="diagram">
+      <div class="fig-row"><svg viewBox="0 0 380 280" role="img" aria-label="좌표 기저 ∂r, ∂θ의 흐름을 차례로 따라가면 처음 점으로 돌아온다"><defs><marker id="f0604-arr-a" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs><text x="12" y="20" class="t">(가) ∂<tspan baseline-shift="sub" font-size="72%" font-style="italic">r</tspan>, ∂<tspan baseline-shift="sub" font-size="72%" font-style="italic">θ</tspan>: 닫힌다</text><line x1="40" y1="250" x2="370" y2="250" class="s-faint"/><circle cx="40" cy="250" r="3" class="f-dim"/><text x="36" y="266" class="t-math dim" text-anchor="middle">O</text><line x1="168.4" y1="208.3" x2="245.4" y2="183.3" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0604-arr-a)"/><path d="M245.4,183.3 243.3,177.1 241.1,171.1 238.6,165.1 236,159.1 233.1,153.3 230.2,147.6 227,141.9 223.7,136.3 220.2,130.9 216.5,125.5 212.7,120.3 208.7,115.2 204.6,110.2 200.4,105.3 195.9,100.5" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0604-arr-a)"/><line x1="195.9" y1="100.5" x2="137.5" y2="156.6" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0604-arr-a)"/><path d="M137.5,156.6 140.2,159.6 142.9,162.6 145.5,165.7 147.9,168.9 150.3,172.2 152.6,175.5 154.8,179 156.9,182.4 158.8,186 160.7,189.6 162.5,193.2 164.1,196.9 165.7,200.7 167.1,204.5 168.4,208.3" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0604-arr-a)"/><circle cx="168.4" cy="208.3" r="4.5" class="f-dim"/><text x="176.4" y="224.3" class="t-math"><tspan font-style="italic">p</tspan></text></svg><svg viewBox="0 0 380 280" role="img" aria-label="정규직교 틀 E1, E2의 흐름을 차례로 따라가면 처음 점에서 θ 방향으로 어긋난 점에 닿는다"><defs><marker id="f0604-arr-b" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs><text x="12" y="20" class="t">(나) <tspan font-style="italic">E</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan>, <tspan font-style="italic">E</tspan><tspan baseline-shift="sub" font-size="72%">2</tspan>: 어긋난다</text><line x1="40" y1="250" x2="370" y2="250" class="s-faint"/><circle cx="40" cy="250" r="3" class="f-dim"/><text x="36" y="266" class="t-math dim" text-anchor="middle">O</text><line x1="168.4" y1="208.3" x2="245.4" y2="183.3" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0604-arr-b)"/><path d="M245.4,183.3 243.1,176.4 240.5,169.7 237.7,163.1 234.7,156.5 231.5,150.1 228.1,143.8 224.4,137.6 220.6,131.5 216.5,125.5 212.3,119.7 207.8,114 203.2,108.5 198.4,103.2 193.4,98 188.3,92.9" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0604-arr-b)"/><line x1="188.3" y1="92.9" x2="132.7" y2="151.8" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0604-arr-b)"/><path d="M132.7,151.8 137.8,156.9 142.6,162.3 147.1,167.9 151.4,173.7 155.3,179.7 158.8,186 162.1,192.4 165,199 167.5,205.7 169.7,212.6 171.5,219.6 173,226.6 174,233.7 174.7,240.9 175,248.1" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0604-arr-b)"/><circle cx="168.4" cy="208.3" r="4.5" class="f-dim"/><text x="176.4" y="224.3" class="t-math"><tspan font-style="italic">p</tspan></text><circle cx="175" cy="248.1" r="4.5" class="f-acc2"/><text x="179" y="268.1" class="t-math acc2"><tspan font-style="italic">q</tspan></text><path d="M168.4,208.3 169,210.3 169.6,212.4 170.2,214.4 170.8,216.5 171.3,218.5 171.8,220.6 172.2,222.7 172.6,224.8 173,226.9 173.4,229 173.7,231.1 174,233.2 174.2,235.3 174.4,237.4 174.6,239.6 174.7,241.7 174.9,243.8 174.9,246 175,248.1" class="s-acc2" style="stroke-width:3" stroke-dasharray="2 3"/><text x="366" y="270" class="t-math" text-anchor="end"><tspan font-style="italic">q</tspan> − <tspan font-style="italic">p</tspan> ≈ <tspan font-style="italic">t</tspan><tspan font-style="italic">s</tspan> [<tspan font-style="italic">E</tspan><tspan baseline-shift="sub" font-size="72%">1</tspan>, <tspan font-style="italic">E</tspan><tspan baseline-shift="sub" font-size="72%">2</tspan>]</text></svg></div>
+      <figcaption><b>그림 6-4.</b> 평면의 극좌표에서 두 틀의 흐름을 번갈아 따라간 길. 출발점 \(p\)는 \(r_0 = 1\), 사각형은 \(t = 0.6\), 원호는 (가)에서 각 \(0.45\), (나)에서 길이 \(s = 0.8\)이다. (가) 좌표 기저 \(\partial_r\)(바깥으로 \(t\)), \(\partial_\theta\)(각을 일정하게 늘림)의 흐름은 처음 점으로 돌아온다. \([\partial_r, \partial_\theta] = 0\)이다. (나) 정규직교 틀 \(E_1 = \partial_r\), \(E_2 = \partial_\theta/r\)의 흐름에서는 원호의 길이가 같아서, 바깥 원호(반지름 \(1.6\))가 안쪽 원호보다 작은 각을 돈다. 도착점 \(q\)는 \(p\)에서 \(\theta\) 방향으로 \(s/1.6 - s = -0.3\)만큼 어긋나고, 작은 \(t, s\)에서 이 어긋남이 \(ts\,[E_1, E_2]\)이다.</figcaption>
+    </figure>
+
+    <div class="box ex" id="ex-polar-noncoordinate-basis"><div class="box-h">극좌표의 단위 벡터와 좌표 기저</div>
+      <p>평면의 극좌표에서 정규직교 틀 \(E_1 = \partial_r\), \(E_2 = \partial_\theta/r\)와 쌍대 틀 \(e^1 = \mathrm dr\), \(e^2 = r\,\mathrm d\theta\)(식 <a class="ref" href="#eq-polar-orthonormal-frame"></a>)를 생각한다. (가) \([\partial_r, \partial_\theta]\)와 \([E_1, E_2]\)를 구하라. (나) \(E_1\), \(E_2\)가 어떤 좌표 조각의 좌표 기저도 될 수 없음을 보여라. (다) \(e^1\), \(e^2\) 가운데 어느 것이 어떤 함수의 미분인가?</p>
+      <p><b>풀이.</b> (가) <a class="ref" href="#thm-lie-bracket"></a>의 (라)에서 \([\partial_r, \partial_\theta] = 0\)이다. \(E_1\)의 성분은 \((1, 0)\), \(E_2\)의 성분은 \((0, 1/r)\)이므로 식 <a class="ref" href="#eq-lie-bracket-components"></a>에서 \(r\)성분은 0, \(\theta\)성분은 \(\partial_r(1/r) - 0 = -1/r^2\)이다.</p>
+      <div class="formula" id="eq-polar-frame-bracket">\[ [E_1, E_2] = -\frac{1}{r^2}\,\partial_\theta = -\frac1r\,E_2 \]</div>
+      <p>(나) 어떤 좌표 \((y^1, y^2)\)에서 \(\partial/\partial y^1 = E_1\), \(\partial/\partial y^2 = E_2\)라면 (라)에 따라 리 괄호가 0이어야 하는데, 식 <a class="ref" href="#eq-polar-frame-bracket"></a>는 0이 아니다.</p>
+      <p>(다) \(e^1 = \mathrm dr\)은 함수 \(r\)의 미분이다. \(e^2 = r\,\mathrm d\theta = \mathrm df\)인 \(f\)가 있다면 식 <a class="ref" href="#eq-differential-df"></a>에서 \(\partial_rf = 0\), \(\partial_\theta f = r\)이어야 하는데, 그러면 \(\partial_r\partial_\theta f = 1\)이고 \(\partial_\theta\partial_rf = 0\)이라 편미분의 순서를 바꿀 수 없다. 따라서 \(e^2\)는 어떤 함수의 미분도 아니다.</p>
+      <p><b>확인.</b> 그림 6-4 (나)의 길에서 도착점의 각은 \(\theta_0 + s/(r_0 + t) - s/r_0 = \theta_0 - ts/r_0^2 + O(3)\)이다. 식 <a class="ref" href="#eq-flow-commutator"></a>에 \(f = \theta\)를 넣은 \(ts\,[E_1, E_2]\theta = ts\cdot(-1/r_0^2)\)과 같다. (나)와 (다)는 같은 사실의 두 얼굴이다. 틀 \(E_a\)가 좌표 기저이면 쌍대 틀 \(e^a\)는 좌표 함수의 미분이어야 하기 때문이다. 7장은 (다)를 \(\mathrm d(r\,\mathrm d\theta) = \mathrm dr\wedge\mathrm d\theta \ne 0\)으로 다시 읽는다(<a href="ch07.html#def-exterior-derivative">7장의 외미분</a>).</p>
+      <p><b>어디에 쓰이나.</b> 학부 22장의 좌표 기저 \(\mathbf e_i\)와 학부 6장의 단위 벡터 \(\hat{\mathbf e}_i\)는 여기서 갈린다. 8장의 사다리꼴은 일반적으로 좌표 기저가 아닌 정규직교 틀이고, 그 리 괄호(쌍대 틀의 외미분)가 <a href="ch08.html#def-spin-connection">8장의 스핀 접속</a>을 정한다.</p>
+    </div>
+
+    <p>리 괄호가 0인 벡터장들은 언제 좌표 기저가 되는가? 답이 다음 정리다.</p>
+    <div class="box thm" id="thm-frobenius-integrability"><div class="box-h">교환하는 틀과 프로베니우스 정리</div>
+      <p>(가) 열린 집합에서 점마다 일차 독립인 벡터장 \(X_1, \ldots, X_k\)(\(k \le n\))가 모든 \(i, j\)에 대해 \([X_i, X_j] = 0\)을 만족하면, 각 점 근처에 \(X_i = \partial/\partial y^i\)(\(i = 1, \ldots, k\))인 좌표 \((y^1, \ldots, y^n)\)이 있다. 역도 성립한다.</p>
+      <p>(나) (<span class="term">프로베니우스 정리</span>) 점마다 일차 독립인 \(X_1, \ldots, X_k\)가 펼치는 \(k\)차원 부분 공간들에 대해, 각 점을 지나며 모든 접공간이 그 부분 공간인 \(k\)차원 곡면(부분 다양체)이 있을 필요충분조건은 \([X_i, X_j] = c_{ij}{}^l\,X_l\)(\(c_{ij}{}^l\)은 함수), 곧 리 괄호가 다시 그 부분 공간 안에 있는 것이다.</p>
+      <details class="proof"><summary>증명의 생각</summary>
+        <p>(가)의 역은 <a class="ref" href="#thm-lie-bracket"></a>의 (라)다. 정방향은 흐름으로 좌표를 만든다. \(X_i\)들에 가로놓인 \((n - k)\)차원 곡면 위의 점을 \(\varphi^{X_1}_{y^1}\circ\cdots\circ\varphi^{X_k}_{y^k}\)로 흘려 보내고 \((y^1, \ldots, y^k)\)와 그 곡면 위의 좌표를 붙인다. 리 괄호가 0이면 흐름들이 교환하므로(식 <a class="ref" href="#eq-flow-commutator"></a>의 사각형이 유한한 \(t, s\)에서도 닫힌다) \(\partial/\partial y^i = X_i\)이다. (나)의 필요성은 부분 다양체에 접하는 벡터장의 리 괄호가 다시 접한다는 것이고, 충분성은 교환하는 기저를 골라 (가)로 돌아간다. 엄밀한 증명은 Lee, <i>Introduction to Smooth Manifolds</i>, 2nd ed.의 9장(교환하는 벡터장)과 19장(프로베니우스 정리)에 있다.</p>
+      </details>
+    </div>
+    <div class="callout tip"><strong>옆으로는 못 가는데 옆으로 간다</strong><p>제자리에서 돌 수 있는 바퀴 둘 달린 로봇(전동 휠체어, 로봇 청소기)을 생각하자. 상태는 위치 \((x, y)\)와 향한 각 \(\alpha\)이다. 할 수 있는 일은 앞으로 가기 \(D = \cos\alpha\,\partial_x + \sin\alpha\,\partial_y\)와 제자리 돌기 \(R = \partial_\alpha\)뿐이다. 그런데 \([R, D] = -\sin\alpha\,\partial_x + \cos\alpha\,\partial_y\)는 향한 방향에 수직인 옆걸음이다. \(D\)와 \(R\)이 펼치는 2차원 부분 공간은 리 괄호에 닫혀 있지 않아서, (나)에 따라 로봇이 갇히는 2차원 곡면은 없다. 돌고, 가고, 거꾸로 돌고, 물러서기를 되풀이하면 \(ts\,[R, D]\)만큼씩 옆으로 간다. 좁은 곳에 평행 주차를 할 때 하는 일이다.</p></div>
+  </section>
+
+  <!-- ============================================================ 6.7 -->
+  <section id="s7">
+    <h2>리 미분과 킬링 벡터</h2>
+    <p>계량의 대칭이란 무엇인가? 구를 돌려도 구 위의 거리는 그대로다. 이것을 "회전의 흐름 \(\varphi_t\)로 당긴 계량이 원래 계량과 같다"로 적고 \(t\)로 미분하면, 계량의 리 미분이 0이라는 방정식이 된다. 대칭이 아닌 흐름에 대해서는 같은 리 미분이 "좌표를 무한소만큼 바꿨을 때 계량의 성분이 얼마나 변하는가"를 준다. 앞의 것이 이 절의 킬링 벡터이고, 뒤의 것이 6.8절의 게이지 변환 \(\delta g = \mathcal L_\xi g\)이다.</p>
+
+    <div class="box def" id="def-lie-derivative"><div class="box-h">리 미분</div>
+      <p>벡터장 \(X\)의 흐름 \(\varphi_t\)와 텐서장 \(T\)에 대해 \(T\)의 \(X\)에 대한 <span class="term">리 미분</span> <span class="en">(Lie derivative)</span>을 다음으로 정한다.</p>
+      <div class="formula" id="eq-lie-derivative-def">\[ \begin{aligned} \mathcal L_XT &= \frac{d}{dt}\,\varphi_t^*T\,\Big|_{t=0} \\ &= \lim_{t\to0}\frac{\varphi_t^*T - T}{t} \end{aligned} \]</div>
+      <p>함수와 \((0, s)\)형 텐서의 당김은 <a class="ref" href="#def-pullback-pushforward"></a>이고, 벡터는 \(\varphi_t^*Y = (\varphi_{-t})_*Y\)이다. \(\varphi_t\)는 작은 \(t\)에서 늘 정의되므로(<a class="ref" href="#thm-flow"></a>) 콤팩트 조건은 필요 없다.</p>
+    </div>
+    <p>정의는 "흐름을 따라 끌고 온 값과 제자리의 값의 차"다. 두 텐서를 같은 점에서 비교하므로 차가 다시 텐서다. 성분 식을 유도하자. 흐름은 \(\varphi_t^\mu(x) = x^\mu + tX^\mu(x) + O(t^2)\)이고, 그 야코비 행렬은 \(\partial\varphi_t^\nu/\partial x^\mu = \delta^\nu{}_\mu + t\,\partial_\mu X^\nu + O(t^2)\)이다. \(\varphi_{-t}\)는 \(t\)의 부호만 바꾼 것이다.</p>
+    <p>(1) <i>함수.</i> \(\varphi_t^*f = f(x + tX) = f + t\,X^\lambda\partial_\lambda f + O(t^2)\)이므로 \(\mathcal L_Xf = Xf\)이다.</p>
+    <p>(2) <i>쌍대 벡터.</i> 식 <a class="ref" href="#eq-pushforward-pullback-components"></a>에서 \((\varphi_t^*\omega)_\mu(x) = (\partial\varphi_t^\nu/\partial x^\mu)\,\omega_\nu(\varphi_t(x)) = (\delta^\nu{}_\mu + t\,\partial_\mu X^\nu)(\omega_\nu + tX^\lambda\partial_\lambda\omega_\nu) + O(t^2)\)이다. \(t\)의 1차 항이 리 미분이다.</p>
+    <p>(3) <i>벡터.</i> \((\varphi_t^*Y)^\mu(x) = \big(\partial\varphi_{-t}^\mu/\partial x^\nu\big)\big|_{\varphi_t(x)}\,Y^\nu(\varphi_t(x)) = (\delta^\mu{}_\nu - t\,\partial_\nu X^\mu)(Y^\nu + tX^\lambda\partial_\lambda Y^\nu) + O(t^2)\)이다.</p>
+    <p>(4) <i>\((0, 2)\)형 텐서.</i> 아래 지수마다 (2)와 같은 야코비 행렬이 하나씩 붙는다.</p>
+    <p>정리하면 다음과 같다.</p>
+    <div class="formula" id="eq-lie-derivative-components">\[ \begin{aligned} \mathcal L_Xf &= X^\lambda\partial_\lambda f \\ (\mathcal L_XY)^\mu &= X^\lambda\partial_\lambda Y^\mu - Y^\lambda\partial_\lambda X^\mu \\ &= [X, Y]^\mu \\ (\mathcal L_X\omega)_\mu &= X^\lambda\partial_\lambda\omega_\mu + \omega_\lambda\,\partial_\mu X^\lambda \end{aligned} \]</div>
+    <div class="formula" id="eq-lie-derivative-metric">\[ \begin{aligned} (\mathcal L_Xg)_{\mu\nu} &= X^\lambda\partial_\lambda g_{\mu\nu} \\ &\quad + g_{\lambda\nu}\,\partial_\mu X^\lambda + g_{\mu\lambda}\,\partial_\nu X^\lambda \end{aligned} \]</div>
+    <p>규칙은 하나다. 성분을 흐름을 따라 옮기는 항 \(X^\lambda\partial_\lambda T\)에, 아래 지수마다 \(+T_{\cdots\lambda\cdots}\,\partial_\mu X^\lambda\), 위 지수마다 \(-T^{\cdots\lambda\cdots}\,\partial_\lambda X^\mu\)를 더한다. 벡터의 리 미분은 리 괄호다. 당김은 텐서곱을 보존하고 텐서에 벡터를 넣는 것과 순서를 바꿀 수 있으므로(<a class="ref" href="#thm-pullback-properties"></a>의 (다)와 (라)) 리 미분은 라이프니츠 규칙을 따르고 축약과 교환한다. 특히 \(g(Y, Z)\)에 쓰면 \(X\big(g(Y, Z)\big) = (\mathcal L_Xg)(Y, Z) + g([X, Y], Z) + g(Y, [X, Z])\)이므로, 흐름 없이도 리 미분을 적을 수 있다.</p>
+    <div class="formula" id="eq-lie-derivative-metric-free">\[ \begin{aligned} (\mathcal L_Xg)(Y, Z) &= X\big(g(Y, Z)\big) \\ &\quad - g\big([X, Y], Z\big) - g\big(Y, [X, Z]\big) \end{aligned} \]</div>
+    <p>미분 형식의 리 미분은 7장에서 외미분과 내부곱으로 다시 쓴다(<a href="ch07.html#eq-cartan-magic-formula">7장의 카르탄 공식</a>).</p>
+
+    <div class="box def" id="def-killing-vector"><div class="box-h">킬링 벡터</div>
+      <p>\(\mathcal L_\xi g = 0\)을 만족하는 벡터장 \(\xi\)를 계량 \(g\)의 <span class="term">킬링 벡터</span> <span class="en">(Killing vector)</span>라 한다. 성분으로는 식 <a class="ref" href="#eq-lie-derivative-metric"></a>이 0이라는 <span class="term">킬링 방정식</span>이다.</p>
+      <div class="formula" id="eq-killing-equation">\[ \begin{aligned} &\xi^\lambda\partial_\lambda g_{\mu\nu} + g_{\lambda\nu}\,\partial_\mu\xi^\lambda \\ &\quad + g_{\mu\lambda}\,\partial_\nu\xi^\lambda = 0 \end{aligned} \]</div>
+      <p>\(\xi\)가 킬링 벡터인 것은 그 흐름 \(\varphi_t\)가 (정의되는 곳에서) 모두 등거리 사상(\(\varphi_t^*g = g\))인 것과 동치다. \(g_{\mu\nu}\)가 상수인 좌표(평평한 공간의 데카르트 좌표, 민코프스키 공간의 관성 좌표)에서는 \(\xi_\mu = g_{\mu\nu}\xi^\nu\)으로 \(\partial_\mu\xi_\nu + \partial_\nu\xi_\mu = 0\)이다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>등거리 사상이면 \(\varphi_t^*g = g\)를 \(t = 0\)에서 미분해 \(\mathcal L_\xi g = 0\)이다. 거꾸로 식 <a class="ref" href="#eq-flow-group"></a>에서 \(\varphi_{t+h}^* = \varphi_t^*\varphi_h^*\)이므로(<a class="ref" href="#thm-pullback-properties"></a>의 (가)) \(\dfrac{d}{dt}\varphi_t^*g = \varphi_t^*\Big(\dfrac{d}{dh}\varphi_h^*g\Big|_{h=0}\Big) = \varphi_t^*(\mathcal L_\xi g) = 0\)이다. 곧 \(\varphi_t^*g\)는 \(t\)에 무관하고 \(t = 0\)의 값 \(g\)와 같다.</p>
+      </details>
+    </div>
+    <p>이 장에서 킬링 방정식은 편미분으로 쓴 꼴(식 <a class="ref" href="#eq-killing-equation"></a>)까지 다룬다. 8장의 <a href="ch08.html#eq-covariant-derivative-components">공변 미분</a>을 쓰면 같은 식이 \(\nabla_\mu\xi_\nu + \nabla_\nu\xi_\mu = 0\)으로 짧아진다.</p>
+    <div class="box thm" id="thm-killing-algebra"><div class="box-h">킬링 벡터는 리 대수를 이룬다</div>
+      <p>벡터장 \(X\), \(Y\)와 \((0, 2)\)형 텐서장 \(h\)에 대해 \(\mathcal L_{[X, Y]}h = \mathcal L_X\mathcal L_Yh - \mathcal L_Y\mathcal L_Xh\)이다. 따라서 \(\xi\)와 \(\eta\)가 킬링 벡터이면 \([\xi, \eta]\)도 킬링 벡터이고, 킬링 벡터 전체는 리 괄호에 대해 닫힌 벡터 공간, 곧 리 대수다.</p>
+      <details class="proof"><summary>증명</summary>
+        <p>식 <a class="ref" href="#eq-lie-derivative-metric-free"></a>는 \(g\) 대신 아무 \((0, 2)\)형 텐서장 \(h\)에도 성립한다. 이것을 두 번 쓰면</p>
+        <div class="formula">\[ \begin{aligned} &(\mathcal L_X\mathcal L_Yh)(U, V) \\ &= XY\,h(U, V) \\ &\quad - X\,h([Y, U], V) \\ &\quad - X\,h(U, [Y, V]) \\ &\quad - Y\,h([X, U], V) \\ &\quad - Y\,h(U, [X, V]) \\ &\quad + h([X, U], [Y, V]) \\ &\quad + h([Y, U], [X, V]) \\ &\quad + h([Y, [X, U]], V) \\ &\quad + h(U, [Y, [X, V]]) \end{aligned} \]</div>
+        <p>이다. \(X\)와 \(Y\)를 바꾼 것을 빼면, \(XY\,h(U, V)\) 다음의 여섯 항은 \(X\)와 \(Y\)를 바꿔도 모두 합해 그대로라 지워지고 다음이 남는다.</p>
+        <div class="formula">\[ \begin{aligned} &[X, Y]\,h(U, V) \\ &\quad + h\big([Y, [X, U]] - [X, [Y, U]],\ V\big) \\ &\quad + h\big(U,\ [Y, [X, V]] - [X, [Y, V]]\big) \end{aligned} \]</div>
+        <p>야코비 항등식(<a class="ref" href="#thm-lie-bracket"></a>의 (나))에서 \([X, [Y, U]] - [Y, [X, U]] = [[X, Y], U]\)이므로 이것은 \([X, Y]\,h(U, V) - h([[X, Y], U], V) - h(U, [[X, Y], V]) = (\mathcal L_{[X, Y]}h)(U, V)\)이다. \(h = g\)이고 \(\mathcal L_\xi g = \mathcal L_\eta g = 0\)이면 \(\mathcal L_{[\xi, \eta]}g = 0\)이다.</p>
+      </details>
+    </div>
+
+    <div class="box calc" id="calc-s2-killing-vectors"><div class="box-h">단위 구 \(S^2\)의 킬링 벡터: 킬링 방정식의 풀이와 리 괄호</div>
+      <p>단위 구의 계량 \(ds^2 = d\theta^2 + \sin^2\theta\,d\phi^2\)(<a class="ref" href="#ex-induced-metric-sphere"></a>, \(r_0 = 1\))에서 킬링 방정식 <a class="ref" href="#eq-killing-equation"></a>을 극좌표 조각 \(0 &lt; \theta &lt; \pi\), \(0 &lt; \phi &lt; 2\pi\) 위에서 모두 풀고, 해들의 리 괄호를 식 <a class="ref" href="#eq-lie-bracket-components"></a>로 구한다.</p>
+      <p><b>계산.</b> (1) <i>킬링 방정식.</i> \(\xi = a\,\partial_\theta + b\,\partial_\phi\)로 두면 \(g_{\theta\theta} = 1\), \(g_{\phi\phi} = \sin^2\theta\), \(g_{\theta\phi} = 0\)이고 \(g\)는 \(\theta\)에만 의존한다. 식 <a class="ref" href="#eq-killing-equation"></a>의 세 성분은</p>
+      <div class="formula" id="eq-s2-killing-system">\[ \begin{aligned} \theta\theta:&\ \ 2\,\partial_\theta a = 0 \\ \theta\phi:&\ \ \partial_\phi a + \sin^2\theta\,\partial_\theta b = 0 \\ \phi\phi:&\ \ 2\sin\theta\cos\theta\,a \\ &\ \ + 2\sin^2\theta\,\partial_\phi b = 0 \end{aligned} \]</div>
+      <p>이다. \(\phi\phi\) 성분의 첫 항은 \(\xi^\theta\partial_\theta g_{\phi\phi}\)이다.</p>
+      <p>(2) <i>풀이.</i> 첫 식에서 \(a = a(\phi)\)이다. \(a = A'(\phi)\)인 \(A\)를 하나 고르면 셋째 식 \(\partial_\phi b = -\cot\theta\,a\)에서 \(b = -\cot\theta\,A(\phi) + B(\theta)\)이다. 이것을 둘째 식에 넣으면 \(\partial_\theta b = A/\sin^2\theta + B'(\theta)\)이므로</p>
+      <div class="formula">\[ A''(\phi) + A(\phi) = -\sin^2\theta\,B'(\theta) \]</div>
+      <p>이다. 왼쪽은 \(\phi\)만의, 오른쪽은 \(\theta\)만의 함수이므로 둘 다 상수 \(-c\)이다(조각의 영역은 연결된 직사각형이다). 따라서 \(B = -c\cot\theta + k\)이고 \(A = \alpha\cos\phi + \beta\sin\phi - c\)이다. \(a = A' = -\alpha\sin\phi + \beta\cos\phi\), \(b = -\cot\theta\,(\alpha\cos\phi + \beta\sin\phi - c) - c\cot\theta + k = -\cot\theta\,(\alpha\cos\phi + \beta\sin\phi) + k\)이다. 상수 \(c\)는 지워진다. 해는 \(\xi = \alpha\,\xi_x + \beta\,\xi_y + k\,\xi_z\)이다.</p>
+      <div class="formula" id="eq-s2-killing-vectors">\[ \begin{aligned} \xi_x &= -\sin\phi\,\partial_\theta - \cot\theta\cos\phi\,\partial_\phi \\ \xi_y &= \cos\phi\,\partial_\theta - \cot\theta\sin\phi\,\partial_\phi \\ \xi_z &= \partial_\phi \end{aligned} \]</div>
+      <p>(3) <i>리 괄호.</i> \(\xi_z = \partial_\phi\)는 성분이 상수이므로 \([\xi_z, Y]^\mu = \partial_\phi Y^\mu\)이다. \([\xi_z, \xi_x] = -\cos\phi\,\partial_\theta + \cot\theta\sin\phi\,\partial_\phi = -\xi_y\)이고 \([\xi_y, \xi_z] = -\partial_\phi\xi_y = \sin\phi\,\partial_\theta + \cot\theta\cos\phi\,\partial_\phi = -\xi_x\)이다. \([\xi_x, \xi_y]\)의 \(\theta\)성분은 \(\xi_x^\phi\partial_\phi\xi_y^\theta - \xi_y^\phi\partial_\phi\xi_x^\theta = (-\cot\theta\cos\phi)(-\sin\phi) - (-\cot\theta\sin\phi)(-\cos\phi) = 0\)이다. \(\phi\)성분은 \(\partial_\theta\cot\theta = -1/\sin^2\theta\)를 써서</p>
+      <div class="formula">\[ \begin{aligned} &\xi_x^\theta\partial_\theta\xi_y^\phi + \xi_x^\phi\partial_\phi\xi_y^\phi \\ &\quad - \xi_y^\theta\partial_\theta\xi_x^\phi - \xi_y^\phi\partial_\phi\xi_x^\phi \\ &= -\frac{\sin^2\phi}{\sin^2\theta} + \cot^2\theta\cos^2\phi \\ &\quad - \frac{\cos^2\phi}{\sin^2\theta} + \cot^2\theta\sin^2\phi \\ &= \cot^2\theta - \frac{1}{\sin^2\theta} = -1 \end{aligned} \]</div>
+      <p>이므로 \([\xi_x, \xi_y] = -\partial_\phi = -\xi_z\)이다.</p>
+      <div class="formula" id="eq-s2-killing-algebra">\[ \begin{gathered} [\xi_x, \xi_y] = -\xi_z \\ [\xi_y, \xi_z] = -\xi_x \\ [\xi_z, \xi_x] = -\xi_y \end{gathered} \]</div>
+      <p class="calc-result"><b>결과.</b> 단위 구의 킬링 벡터는 식 <a class="ref" href="#eq-s2-killing-vectors"></a>의 \(\xi_x\), \(\xi_y\), \(\xi_z\)의 일차 결합이 전부이고(3차원), 리 괄호는 \([\xi_x, \xi_y] = -\xi_z\), \([\xi_y, \xi_z] = -\xi_x\), \([\xi_z, \xi_x] = -\xi_y\)이다. 킬링이 아닌 벡터장의 예로 \(\sin\theta\,\partial_\theta\)는 \((\mathcal L g)_{\theta\theta} = 2\cos\theta \ne 0\)이다.</p>
+      <p><b>확인.</b> 식 <a class="ref" href="#eq-s2-killing-vectors"></a>를 <a class="ref" href="#ex-induced-metric-sphere"></a>의 \(\iota\)로 \(\mathbb R^3\)에 밀면 \(\iota_*\xi_z = \partial\iota/\partial\phi = (-y, x, 0)\)이고, \(\iota_*\xi_x\)의 \(z\)성분은 \(-\sin\phi\cdot(-\sin\theta) = y\), \(x\)성분은 \(-\sin\phi\cos\theta\cos\phi + \cot\theta\cos\phi\sin\theta\sin\phi = 0\)이다. 곧 \(\iota_*\xi_i\)는 <a href="../../math-phys/chapters/ch07.html#eq-rotation-generators">학부 7장의 회전 생성자</a>로 만든 \(\mathbb R^3\)의 회전 벡터장 \(L_i\mathbf r\)이고, \(\xi_i\)의 흐름은 \(i\)축 둘레의 회전이다. 킬링 벡터의 수 3은 2차원에서 가능한 최대 \(n(n+1)/2\)이다(8장의 <a href="ch08.html#eq-maximally-symmetric">최대 대칭 공간</a>). \(\cot\theta\)가 극에서 발산하는 것은 극좌표 조각 탓이다. \(\mathbb R^3\)의 \(L_i\mathbf r\)은 구 전체에서 매끄럽다.</p>
+    </div>
+
+    <div class="box code" id="code-lie-derivative" data-run="python" data-packages="sympy" data-check="calc-s2-killing-vectors">
+      <div class="box-h">리 괄호와 계량의 리 미분: 구, 민코프스키 평면, 쌍곡 평면</div>
+      <p><a class="ref" href="#calc-s2-killing-vectors"></a>를 성분 식에서 직접 다시 한다. 리 괄호(식 <a class="ref" href="#eq-lie-bracket-components"></a>)와 계량의 리 미분(식 <a class="ref" href="#eq-lie-derivative-metric"></a>)을 <code>sympy.diff</code>로 짜고, 구의 세 킬링 벡터와 그 리 괄호를 <code>assert</code>로 확인한다. 그 다음 1+1차원 민코프스키 공간의 부스트와 쌍곡 평면(위 반평면)으로 넓힌다. 마지막 부분은 손 계산의 확인을 코드로 한다. 구를 \(\mathbb R^3\)에 넣는 사상의 야코비 행렬로 \(\xi_i\)를 밀어 회전 벡터장 \(L_i\mathbf r\)과 비교한다.</p>
+      <pre><code class="language-python">import sympy as sp
+
+def bracket(X, Y, q):          # 식 (6.31)
+    n = range(len(q))
+    return [sp.simplify(sum(X[k]*sp.diff(Y[m], q[k])
+                            - Y[k]*sp.diff(X[m], q[k]) for k in n))
+            for m in n]
+
+def lie_metric(xi, g, q):      # (L_xi g)_mn, 식 (6.38)
+    d = range(len(q))
+    return sp.Matrix(len(q), len(q), lambda m, n: sp.simplify(sum(
+        xi[l]*sp.diff(g[m, n], q[l]) + g[l, n]*sp.diff(xi[l], q[m])
+        + g[m, l]*sp.diff(xi[l], q[n]) for l in d)))
+
+def is_killing(xi, g, q):
+    return lie_metric(xi, g, q).is_zero_matrix
+
+def same(A, B):
+    return all(sp.simplify(x - y) == 0 for x, y in zip(A, B))
+
+# 1) 손 계산 6.2: 단위 구 ds² = dθ² + sin²θ dφ²
+th, ph = sp.symbols("theta phi", positive=True)
+q, g = [th, ph], sp.diag(1, sp.sin(th)**2)
+xi_x = [-sp.sin(ph), -sp.cot(th)*sp.cos(ph)]
+xi_y = [sp.cos(ph), -sp.cot(th)*sp.sin(ph)]
+xi_z = [0, 1]
+assert all(is_killing(X, g, q) for X in (xi_x, xi_y, xi_z))
+assert not is_killing([sp.sin(th), 0], g, q)    # 킬링이 아닌 예
+neg = lambda X: [-c for c in X]
+assert same(bracket(xi_x, xi_y, q), neg(xi_z))  # [ξx, ξy] = -ξz
+assert same(bracket(xi_y, xi_z, q), neg(xi_x))  # [ξy, ξz] = -ξx
+assert same(bracket(xi_z, xi_x, q), neg(xi_y))  # [ξz, ξx] = -ξy
+print("S2", bracket(xi_x, xi_y, q))
+
+# 2) 넓히기: 1+1차원 민코프스키 ds² = -dt² + dx²
+t, x = sp.symbols("t x", real=True)
+eta = sp.diag(-1, 1)
+Pt, Px, K = [1, 0], [0, 1], [x, t]      # ∂t, ∂x, 부스트 x∂t + t∂x
+print("R11", [is_killing(V, eta, [t, x]) for V in (Pt, Px, K)],
+      bracket(K, Pt, [t, x]), bracket(K, Px, [t, x]))
+
+# 3) 넓히기: 쌍곡 평면(위 반평면) ds² = (dx² + dy²)/y²
+x = sp.Symbol("x", real=True)
+y = sp.Symbol("y", positive=True)
+h = sp.diag(1/y**2, 1/y**2)
+P, D, C = [1, 0], [x, y], [x**2 - y**2, 2*x*y]
+print("H2", [is_killing(V, h, [x, y]) for V in (P, D, C)])
+print("H2", bracket(P, D, [x, y]), bracket(P, C, [x, y]),
+      bracket(D, C, [x, y]))
+
+# 검산: 구를 R^3에 넣는 사상으로 밀면 회전 벡터장 L_i r (학부 7장)
+r = sp.Matrix([sp.sin(th)*sp.cos(ph), sp.sin(th)*sp.sin(ph),
+               sp.cos(th)])
+J = r.jacobian(q)                      # 밂의 행렬, 식 (6.23)
+Lx = sp.Matrix([[0, 0, 0], [0, 0, -1], [0, 1, 0]])
+Ly = sp.Matrix([[0, 0, 1], [0, 0, 0], [-1, 0, 0]])
+Lz = sp.Matrix([[0, -1, 0], [1, 0, 0], [0, 0, 0]])
+for X, L in [(xi_x, Lx), (xi_y, Ly), (xi_z, Lz)]:
+    assert same(J * sp.Matrix(X), L * r)</code></pre>
+      <pre class="code-out"><code>S2 [0, -1]
+R11 [True, True, True] [0, -1] [-1, 0]
+H2 [True, True, True]
+H2 [1, 0] [2*x, 2*y] [x**2 - y**2, 2*x*y]</code></pre>
+      <p class="code-note">첫 줄은 \([\xi_x, \xi_y] = -\xi_z\)의 성분 \((0, -1)\)이고, 세 리 괄호는 모두 <code>assert</code>로 <a class="ref" href="#calc-s2-killing-vectors"></a>와 맞췄다. 둘째 줄: 민코프스키 평면에서 \(\partial_t\), \(\partial_x\), 부스트 \(K = x\,\partial_t + t\,\partial_x\)가 킬링 벡터이고 \([K, \partial_t] = -\partial_x\), \([K, \partial_x] = -\partial_t\)이다. 부스트가 두 평행 이동을 섞는 1+1차원 푸앵카레 대수다. 셋째와 넷째 줄: 쌍곡 평면에서 \(P = \partial_x\), \(D = x\,\partial_x + y\,\partial_y\), \(C = (x^2 - y^2)\,\partial_x + 2xy\,\partial_y\)가 킬링 벡터이고 \([P, D] = P\), \([P, C] = 2D\), \([D, C] = C\)이다. \(h = 2D\), \(e = C\), \(f = -P\)로 두면 \([h, e] = 2e\), \([h, f] = -2f\), \([e, f] = h\), 곧 \(\mathfrak{sl}(2, \mathbb R)\)이다. 구와 쌍곡 평면은 킬링 벡터가 최대 개수 3인 최대 대칭 공간이다.</p>
+    </div>
+
+    <div class="callout warn"><strong>생성자와 벡터장의 부호</strong><p>식 <a class="ref" href="#eq-s2-killing-algebra"></a>의 \([\xi_x, \xi_y] = -\xi_z\)는 <a href="../../math-phys/chapters/ch07.html#eq-so3-commutator">학부 7장의 교환 관계</a> \([L_x, L_y] = L_z\)와 부호가 반대다. 계산이 틀린 것이 아니다. 상수 행렬 \(A\)로 만든 선형 벡터장 \(X_A = (Ax)^\mu\partial_\mu\)에 식 <a class="ref" href="#eq-lie-bracket-components"></a>을 쓰면 \([X_A, X_B]^\mu = (BAx)^\mu - (ABx)^\mu\), 곧 \([X_A, X_B] = -X_{[A, B]}\)이기 때문이다. 이유는 <a href="ch01.html#eq-function-action">1장의 함수 위의 작용</a> \((g\cdot f)(x) = f(g^{-1}x)\)에 있다. \(g = e^{tA}\)로 두고 \(t\)로 미분하면 \(-X_Af\)가 나오므로, 함수 위에서 \(A\)를 나타내는 연산자는 \(-X_A\)이고 이쪽이 교환 관계를 보존한다. 그래서 \(-\xi_i\)가 \(L_i\)와 같은 관계를 만족하고, \(J_i = -i\,\xi_i\)로 두면 \([J_i, J_j] = i\varepsilon_{ijk}J_k\)이다. \(J_z = -i\partial_\phi\)는 양자역학의 궤도 각운동량이다(\(\hbar = 1\)). 실제로 회전 \(R = e^{\theta A}\)를 파동함수에 \((U\psi)(x) = \psi(R^{-1}x)\)로 작용시키면 \(\psi(e^{-\theta A}x) = (e^{-\theta X_A}\psi)(x)\)이다. \(A = \hat{\mathbf n}\cdot\mathbf L\)이면 \(X_A = \hat{\mathbf n}\cdot\boldsymbol\xi\)이므로 \(U = e^{-\theta\,\hat{\mathbf n}\cdot\boldsymbol\xi} = e^{-i\theta\,\hat{\mathbf n}\cdot\mathbf J}\)이고, 3장의 \(U(\hat{\mathbf n}, \theta) = e^{-i\theta\,\hat{\mathbf n}\cdot\mathbf J}\)와 맞는다. 교재에 따라 킬링 벡터를 \(-\xi_i\)로 정의해 이 부호를 없애기도 한다. 결과를 옮길 때 리 괄호의 부호를 먼저 맞춘다.</p></div>
+
+    <figure class="diagram">
+      <div class="fig-narrow"><svg viewBox="0 0 380 290" role="img" aria-label="단위 구 위에서 킬링 벡터장 ξx의 흐름선. x축을 둘레로 도는 원이고 흐름은 구를 회전시킨다"><defs><marker id="f0605-arr-x" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="f-acc"/></marker></defs><text x="12" y="20" class="t"><tspan font-style="italic">ξ</tspan><tspan baseline-shift="sub" font-size="72%" font-style="italic">x</tspan>의 흐름</text><circle cx="190" cy="160" r="108" class="f-surface" style="stroke-width:1.5"/><line x1="136" y1="188.9" x2="118.7" y2="198.2" class="s-line"/><text x="113" y="206.2" class="t-math dim" text-anchor="middle"><tspan font-style="italic">x</tspan></text><line x1="283.5" y1="176.7" x2="313.5" y2="182" class="s-line"/><text x="323.3" y="188.8" class="t-math dim" text-anchor="middle"><tspan font-style="italic">y</tspan></text><line x1="190" y1="57.3" x2="190" y2="24.4" class="s-line"/><text x="190" y="18.6" class="t-math dim" text-anchor="middle"><tspan font-style="italic">z</tspan></text><path d="M297.2,156 296.6,145.2 294.7,134.3 291.5,123.5 287.2,113.1 281.8,103.2 275.3,94 268,85.6 259.8,78.2 251,71.9 241.8,66.7 232.2,62.9 222.4,60.5 212.6,59.4 203,59.8 193.8,61.6 185,64.8 176.8,69.3 169.5,75.1 163,82 157.6,90 153.3,98.9 150.1,108.5 148.2,118.7 147.6,129.3 148.2,140.1 150.1,151 153.3,161.8 157.6,172.2 163,182.1 169.5,191.3 176.8,199.7 185,207.1 193.8,213.5 203,218.6 212.6,222.4 222.4,224.8 232.2,225.9 241.8,225.5 251,223.7 259.8,220.5 268,216 275.3,210.2 281.8,203.3 287.2,195.3 291.5,186.4 294.7,176.8 296.6,166.6 297.2,156" class="s-line" style="stroke-width:1" stroke-dasharray="3 4"/><line x1="290" y1="118.2" x2="280.3" y2="100" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0605-arr-x)"/><path d="M283.5,176.7 282.7,163.1 280.3,149.5 276.4,136.1 271,123.1 264.2,110.7 256.1,99.2 246.9,88.7 236.8,79.4 225.8,71.5 214.2,65.1 202.2,60.3 190,57.3 177.8,56 165.8,56.5 154.2,58.7 143.2,62.7 133.1,68.4" class="s-acc" style="stroke-width:1.8"/><path d="M133.1,68.4 123.9,75.6 115.8,84.2 109,94.2 103.6,105.3 99.7,117.3 97.3,130 96.5,143.3 97.3,156.9 99.7,170.5 103.6,183.9 109,196.9 115.8,209.3 123.9,220.8 133.1,231.3 143.2,240.6 154.2,248.5 165.8,254.9 177.8,259.7 190,262.7 202.2,264 214.2,263.5 225.8,261.3 236.8,257.3 246.9,251.6" class="s-line" style="stroke-width:1" stroke-dasharray="3 4"/><path d="M246.9,251.6 256.1,244.4 264.2,235.8 271,225.8 276.4,214.7 280.3,202.7 282.7,190 283.5,176.7" class="s-acc" style="stroke-width:1.8"/><line x1="274.6" y1="129.5" x2="262.3" y2="106.6" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0605-arr-x)"/><path d="M232.4,190.7 231.8,179.9 229.9,169 226.7,158.2 222.4,147.8 217,137.9 210.5,128.7 203.2,120.3 195,112.9 186.2,106.5 177,101.4 167.4,97.6 157.6,95.2 147.8,94.1 138.2,94.5 129,96.3 120.2,99.5 112,104 104.7,109.8 98.2,116.7 92.8,124.7 88.5,133.6 85.3,143.2 83.4,153.4 82.8,164 83.4,174.8 85.3,185.7 88.5,196.5 92.8,206.9 98.2,216.8 104.7,226 112,234.4 120.2,241.8 129,248.1 138.2,253.3 147.8,257.1 157.6,259.5 167.4,260.6 177,260.2 186.2,258.4 195,255.2 203.2,250.7 210.5,244.9 217,238 222.4,230 226.7,221.1 229.9,211.5 231.8,201.3 232.4,190.7" class="s-acc" style="stroke-width:1.8"/><line x1="225.2" y1="152.9" x2="215.5" y2="134.6" class="s-acc" style="stroke-width:2.4" marker-end="url(#f0605-arr-x)"/><circle cx="136" cy="188.9" r="4" class="f-acc2"/><text x="368" y="280" class="t-dim" text-anchor="end">고정점은 x축 위의 두 점</text></svg></div>
+      <figcaption><b>그림 6-5.</b> 단위 구 위에서 킬링 벡터장 \(\xi_x\)의 흐름선(강조색, 앞쪽은 실선, 뒤쪽은 점선). 흐름선은 \(x\)축 둘레를 도는 원이고 흐름은 \(x\)축 둘레의 회전이다. 흐름이 고정하는 두 점 \((\pm1, 0, 0)\)(파란 점은 앞쪽 것)에서 \(\xi_x = 0\)이다. 두 점은 극이 아니어서 식 <a class="ref" href="#eq-s2-killing-vectors"></a>의 성분이 유한하고, \(\theta = \pi/2\), \(\phi = 0, \pi\)에서 0이 된다(\(\phi = 0\)은 \(\phi\)의 범위를 \((-\pi, \pi)\)로 잡은 조각에서 읽는다). \(\xi_z = \partial_\phi\)의 흐름선은 위도선이다. 흐름선을 따라 옮겨도 거리가 변하지 않는 것이 킬링 방정식의 뜻이다.</figcaption>
+    </figure>
+
+    <div class="callout deep" data-later="relativity"><strong>킬링 벡터와 보존량</strong><p>킬링 벡터 \(\xi\)가 있으면 측지선을 따라 움직이는 입자의 \(\xi_\mu\,dx^\mu/d\tau\)가 보존된다. 시간 평행 이동 \(\partial_t\)에서 에너지가, 회전 \(\partial_\phi\)에서 각운동량이 나온다. 이것을 증명하려면 측지선 방정식(8장의 <a href="ch08.html#eq-geodesic-equation">측지선 방정식</a>)이 필요하고, 물리는 『상대성이론』 4장의 몫이다. 슈바르츠실트 시공간의 행성 궤도는 이 두 보존량과 4-속도의 규격화만으로 푼다.</p></div>
+  </section>
+
+  <!-- ============================================================ 6.8 -->
+  <section id="s8">
+    <h2>무한소 미분동형사상과 게이지 변환</h2>
+    <p>일반상대성이론은 좌표를 어떻게 골라도 같은 물리를 준다. 그런데 좌표를 무한소만큼 바꾸면 계량의 성분 함수는 바뀐다. 『상대성이론』 12장과 14장, 『점근적 안전성과 양자 중력』 7장의 계량 섭동 계산은 \(h_{\mu\nu}\)의 변화 가운데 이런 "물리가 아닌 변화"를 가려내야 하고, 그 변화가 6.7절의 리 미분이다. 이 절은 그것을 좌표 변환에서 직접 유도하고 부호 관례를 정한다.</p>
+    <div class="box ex" id="ex-infinitesimal-diffeomorphism"><div class="box-h">무한소 좌표 변환에서 계량의 변화</div>
+      <p>계량 \(g_{\mu\nu}(x)\)가 주어진 다양체에서 좌표를 \(x'^\mu = x^\mu - \varepsilon\,\xi^\mu(x)\)로 바꾼다. (가) 새 좌표의 성분 \(g'_{\mu\nu}(x')\)을 \(\varepsilon\)의 1차까지 구하고, 같은 좌표값 \(y\)에서 비교한 차 \(\delta g_{\mu\nu}(y) \equiv g'_{\mu\nu}(y) - g_{\mu\nu}(y)\)가 \(\varepsilon\,(\mathcal L_\xi g)_{\mu\nu}(y)\)임을 보여라. (나) 평평한 배경 \(g_{\mu\nu} = \eta_{\mu\nu}\)에서 \(\delta g_{\mu\nu}\)를 \(\xi_\mu = \eta_{\mu\nu}\xi^\nu\)로 적어라. (다) 평면의 극좌표 \(ds^2 = dr^2 + r^2d\theta^2\)에서 \(r' = r - \varepsilon\), \(\theta' = \theta\)로 바꾼 정확한 계량과 비교하라.</p>
+      <p><b>풀이.</b> (가) 거꾸로 쓰면 \(x^\mu = x'^\mu + \varepsilon\,\xi^\mu(x) = x'^\mu + \varepsilon\,\xi^\mu(x') + O(\varepsilon^2)\)이므로 \(\partial x^\rho/\partial x'^\mu = \delta^\rho{}_\mu + \varepsilon\,\partial_\mu\xi^\rho + O(\varepsilon^2)\)이다. 변환 법칙(식 <a class="ref" href="#eq-tensor-field-transformation"></a>)에서</p>
+      <div class="formula">\[ \begin{aligned} g'_{\mu\nu}(x') &= \frac{\partial x^\rho}{\partial x'^\mu}\frac{\partial x^\sigma}{\partial x'^\nu}\,g_{\rho\sigma}(x) \\ &= g_{\mu\nu}(x) \\ &\quad + \varepsilon\big(g_{\rho\nu}\,\partial_\mu\xi^\rho + g_{\mu\sigma}\,\partial_\nu\xi^\sigma\big) \\ &\quad + O(\varepsilon^2) \end{aligned} \]</div>
+      <p>이다. 오른쪽의 \(g_{\mu\nu}(x)\)는 옛 좌표의 점 \(x = x' + \varepsilon\xi\)에서의 값이므로 \(g_{\mu\nu}(x) = g_{\mu\nu}(x') + \varepsilon\,\xi^\lambda\partial_\lambda g_{\mu\nu}(x') + O(\varepsilon^2)\)이다. \(x'\)을 같은 좌표값 \(y\)로 놓으면</p>
+      <div class="formula" id="eq-delta-g-lie">\[ \begin{aligned} \delta g_{\mu\nu} &= \varepsilon\big(\xi^\lambda\partial_\lambda g_{\mu\nu} + g_{\lambda\nu}\,\partial_\mu\xi^\lambda \\ &\quad\quad + g_{\mu\lambda}\,\partial_\nu\xi^\lambda\big) \\ &= \varepsilon\,(\mathcal L_\xi g)_{\mu\nu} \end{aligned} \]</div>
+      <p>이다. 식 <a class="ref" href="#eq-lie-derivative-metric"></a>과 항마다 같다. 첫 항은 성분을 다른 점에서 읽어서, 나머지 두 항은 기저가 바뀌어서 생긴다.</p>
+      <p>(나) \(\eta_{\mu\nu}\)는 상수이므로 첫 항이 없고 \(\delta g_{\mu\nu} = \varepsilon\,(\partial_\mu\xi_\nu + \partial_\nu\xi_\mu)\)이다.</p>
+      <p>(다) \(\xi = \partial_r\)이다. 정확히는 \(r = r' + \varepsilon\)이므로 \(ds^2 = dr'^2 + (r' + \varepsilon)^2d\theta'^2\)이고 \(g'_{\theta\theta}(y) = (y + \varepsilon)^2\)이다. 따라서 \(\delta g_{\theta\theta} = 2\varepsilon r + \varepsilon^2\), \(\delta g_{rr} = \delta g_{r\theta} = 0\)이다. 식 <a class="ref" href="#eq-lie-derivative-metric"></a>로는 \(\partial_\mu\xi^\lambda = 0\)이라 첫 항만 남아 \((\mathcal L_{\partial_r}g)_{\theta\theta} = \partial_r(r^2) = 2r\)이고 나머지는 0이다. \(\varepsilon\)의 1차에서 같다.</p>
+      <p><b>확인.</b> \(\xi\)가 킬링 벡터이면 \(\delta g = 0\)이다. 예를 들어 극좌표에서 \(\theta' = \theta - \varepsilon\)(\(\xi = \partial_\theta\))로 바꾸면 \(ds^2 = dr'^2 + r'^2d\theta'^2\)으로 성분 함수가 그대로다. (다)의 \(\partial_r\)은 원점에서 바깥으로 미는 흐름이라 원의 둘레를 늘리므로 등거리가 아니고, \(g_{\theta\theta}\)가 바뀐다.</p>
+      <p><b>어디에 쓰이나.</b> 『상대성이론』 12장은 평평한 배경 위의 섭동 \(h_{\mu\nu}\)을 (나)만큼 바꿔도 같은 물리라는 것을 게이지 자유도로 쓰고, 14장은 임의 배경 \(\bar g\) 위에서 \(h_{\mu\nu}\)의 한 부분을 \(\mathcal L_\xi\bar g\)로 떼어 내는 York 분해를 한다. 『점근적 안전성과 양자 중력』 7장의 게이지 고정 항과 유령 항은 이 변환을 고정하는 데서 나온다.</p>
+    </div>
+    <div class="callout warn"><strong>\(x \to x - \xi\)인가 \(x \to x + \xi\)인가</strong><p>이 책과 뒤 책들은 \(x'^\mu = x^\mu - \varepsilon\,\xi^\mu\)일 때 \(\delta g = +\varepsilon\,\mathcal L_\xi g\)가 되는 부호를 쓴다. 같은 계산을 \(x'^\mu = x^\mu + \varepsilon\,\xi^\mu\)로 하면 \(\delta g = -\varepsilon\,\mathcal L_\xi g\)이다. 좌표를 바꾸지 않고 점을 흐름 \(\varphi_\varepsilon\)으로 옮기는 능동적인 관점에서는 <a class="ref" href="#def-lie-derivative"></a> 그대로 \(\varphi_\varepsilon^*g - g = \varepsilon\,\mathcal L_\xi g + O(\varepsilon^2)\)이다. 문헌의 게이지 변환 \(h_{\mu\nu} \to h_{\mu\nu} \pm (\partial_\mu\xi_\nu + \partial_\nu\xi_\mu)\)는 부호가 어느 쪽이든 같은 자유도를 적은 것이지만, 식을 섞어 쓸 때는 부호를 맞춘다.</p></div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>다양체는 좌표 조각을 매끄러운 전이 함수로 이어 붙인 공간이다. 미분은 조각 안에서 하고, 조각을 바꿀 때는 연쇄 법칙만 쓴다. 구의 두 입체 사영 조각의 전이 함수는 반전 \((u', v') = (u, v)/(u^2 + v^2)\)이다.</li>
+      <li>접벡터는 곡선의 속도이자 방향 미분이다: \(V = V^\mu\partial_\mu\), \(V^\mu = V(x^\mu)\), \(V'^\mu = (\partial x'^\mu/\partial x^\nu)\,V^\nu\). 학부 22장의 \(\mathbf e_i\)는 바깥 공간으로 민 \(\partial_\mu\)이다.</li>
+      <li>쌍대 벡터는 \(T_pM\) 위의 선형 함수다: \(\mathrm dx^\mu(\partial_\nu) = \delta^\mu{}_\nu\), \(\mathrm df = \partial_\mu f\,\mathrm dx^\mu\), \(\mathrm df(V) = Vf\), \(\omega'_\mu = (\partial x^\nu/\partial x'^\mu)\,\omega_\nu\). 짝짓기 \(\omega_\mu V^\mu\)에는 계량이 필요 없다.</li>
+      <li>\((r, s)\)형 텐서는 위 지수마다 \(\partial x'/\partial x\), 아래 지수마다 \(\partial x/\partial x'\)으로 바뀐다. 대칭화에는 \(1/p!\)을 붙인다. 계량은 대칭이고 비퇴화인 \((0, 2)\)형 텐서장이고, 부호수 \(s\)는 음의 고유값의 수다. \(\mathrm df\)와 \(\operatorname{grad}f = g^{\mu\nu}\partial_\nu f\,\partial_\mu\)는 다르다.</li>
+      <li>밂은 앞으로 \((\varphi_*V)^\alpha = (\partial y^\alpha/\partial x^\mu)V^\mu\), 당김은 뒤로 \((\varphi^*T)_{\mu\nu} = (\partial y^\alpha/\partial x^\mu)(\partial y^\beta/\partial x^\nu)T_{\alpha\beta}\) 간다. 좌표 변환은 전이 함수로의 당김이다. 구의 유도 계량은 \(r_0^2(d\theta^2 + \sin^2\theta\,d\phi^2)\), 입체 사영으로 \(4(du^2 + dv^2)/(1 + u^2 + v^2)^2\)이다.</li>
+      <li>흐름은 \(\varphi_s\circ\varphi_t = \varphi_{s+t}\)를 만족한다. 리 괄호 \([X, Y]^\mu = X^\nu\partial_\nu Y^\mu - Y^\nu\partial_\nu X^\mu\)는 흐름의 작은 사각형이 \(ts\,[X, Y]\)만큼 닫히지 않는 정도다. 교환하는 틀만 좌표 기저이고, 극좌표의 정규직교 틀은 \([E_1, E_2] = -E_2/r\)이다.</li>
+      <li>리 미분 \(\mathcal L_XT = \tfrac{d}{dt}\varphi_t^*T|_0\)에서 \(\mathcal L_XY = [X, Y]\), \((\mathcal L_Xg)_{\mu\nu} = X^\lambda\partial_\lambda g_{\mu\nu} + g_{\lambda\nu}\partial_\mu X^\lambda + g_{\mu\lambda}\partial_\nu X^\lambda\)이다. 킬링 벡터(\(\mathcal L_\xi g = 0\))는 리 대수를 이룬다.</li>
+      <li>단위 구의 킬링 벡터는 셋이고 \([\xi_x, \xi_y] = -\xi_z\)(순환), \(J_i = -i\xi_i\)는 \([J_i, J_j] = i\varepsilon_{ijk}J_k\)를 만족한다. \(x^\mu \to x^\mu - \varepsilon\xi^\mu\)에서 \(\delta g_{\mu\nu} = \varepsilon\,(\mathcal L_\xi g)_{\mu\nu}\), 평평한 배경에서는 \(\varepsilon(\partial_\mu\xi_\nu + \partial_\nu\xi_\mu)\)이다.</li>
+    </ol>
+    <div class="callout deep" data-later="relativity"><strong>다음에 쓰이는 곳: 『상대성이론』</strong><p>1장은 이 장의 벡터와 쌍대 벡터를 그림과 실전 규칙으로 연습하고(식 <a class="ref" href="#eq-vector-field-transformation"></a>, <a class="ref" href="#eq-covector-transformation"></a>), 2장은 민코프스키 공간의 텐서에 변환 법칙(식 <a class="ref" href="#eq-tensor-field-transformation"></a>)을 쓴다. 4장은 킬링 벡터(<a class="ref" href="#def-killing-vector"></a>)에서 측지선을 따라 보존되는 에너지와 각운동량을 얻는다. 12장은 평평한 배경의 게이지 자유도 \(\delta h_{\mu\nu} = \partial_\mu\xi_\nu + \partial_\nu\xi_\mu\)를, 14장은 York 분해의 \(\mathcal L_\xi\bar g\) 부분을 식 <a class="ref" href="#eq-delta-g-lie"></a>로 쓴다.</p></div>
+    <div class="callout deep" data-later="asymptotic-safety"><strong>다음에 쓰이는 곳: 『점근적 안전성과 양자 중력』</strong><p>7장의 평균 유효 작용은 배경 계량 \(\bar g\) 위의 요동 \(h_{\mu\nu}\)에 대해 미분동형사상 \(\delta h_{\mu\nu} = (\mathcal L_\xi\bar g)_{\mu\nu} + \cdots\)를 게이지 대칭으로 다룬다. 게이지 고정 항과 유령 항이 이 변환에서 나오고, 계산은 이 장의 식 <a class="ref" href="#eq-lie-derivative-metric"></a>에서 출발한다. 배경의 킬링 벡터는 이 변환이 \(\bar g\)를 바꾸지 않는 방향이다.</p></div>
+    <div class="callout deep" data-later="em-grad"><strong>다음에 쓰이는 곳: 『전자기학 (대학원)』</strong><p>12장은 4-퍼텐셜 \(A_\mu\)를 쌍대 벡터로, 장 세기 \(F_{\mu\nu}\)를 반대칭 \((0, 2)\)형 텐서로 다루고, 로런츠 변환에서 이들의 성분을 식 <a class="ref" href="#eq-tensor-field-transformation"></a>로 바꾼다. 형식으로 쓴 맥스웰 방정식은 7장을 거친다.</p></div>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <p class="quiz-score"></p>
+    <div class="quiz">
+      <div class="quiz-q"><p>1. 단위 구의 입체 사영(<a class="ref" href="#ex-sphere-stereographic-charts"></a>)에서 북쪽 좌표가 \((u, v) = (2, 0)\)인 점의 남쪽 좌표는?</p><div class="opts">
+        <button class="opt" data-correct>\((\tfrac12, 0)\)</button>
+        <button class="opt">\((-2, 0)\)</button>
+        <button class="opt">\((2, 0)\)</button>
+        <button class="opt">\((0, \tfrac12)\)</button>
+      </div><div class="quiz-exp">전이 함수 \((u', v') = (u, v)/(u^2 + v^2)\)에서 \((2, 0)/4 = (\tfrac12, 0)\)이다. 방위각은 그대로이고 원점까지의 거리만 역수가 된다. \(\rho = 2 = \cot(\theta/2)\)이므로 \(\theta = 2\arctan\tfrac12 \approx 53.1^\circ\)인 북반구의 점이고, 남쪽 조각에서는 단위 원 안에 온다.</div></div>
+      <div class="quiz-q"><p>2. 1차원에서 좌표를 \(x' = 2x\)로 바꾼다. 벡터 \(V = V^x\partial_x\)와 쌍대 벡터 \(\omega = \omega_x\,\mathrm dx\)의 새 성분은?</p><div class="opts">
+        <button class="opt">\(V'^x = 2V^x\), \(\omega'_x = 2\omega_x\)</button>
+        <button class="opt" data-correct>\(V'^x = 2V^x\), \(\omega'_x = \omega_x/2\)</button>
+        <button class="opt">\(V'^x = V^x/2\), \(\omega'_x = 2\omega_x\)</button>
+        <button class="opt">\(V'^x = V^x/2\), \(\omega'_x = \omega_x/2\)</button>
+      </div><div class="quiz-exp">식 <a class="ref" href="#eq-vector-field-transformation"></a>에서 \(\partial x'/\partial x = 2\), 식 <a class="ref" href="#eq-covector-transformation"></a>에서 \(\partial x/\partial x' = \tfrac12\)이다. 짝짓기 \(\omega_xV^x\)는 그대로다. 미터를 센티미터로 바꾸면 변위를 나타내는 수는 100배가 되고, 기울기(미터당 변화)를 나타내는 수는 100분의 1이 되는 것과 같다.</div></div>
+      <div class="quiz-q"><p>3. 2차원 계량 \(ds^2 = 2\,dx\,dy\), 곧 \(g_{xx} = g_{yy} = 0\), \(g_{xy} = g_{yx} = 1\)의 부호수 \(s\)는?</p><div class="opts">
+        <button class="opt">0 (리만 계량)</button>
+        <button class="opt" data-correct>1 (로런츠 계량)</button>
+        <button class="opt">2</button>
+        <button class="opt">대각 성분이 0이라 계량이 아니다</button>
+      </div><div class="quiz-exp">행렬 \(\begin{pmatrix} 0 & 1 \\ 1 & 0\end{pmatrix}\)의 고유값은 \(\pm1\)이고 행렬식이 \(-1 \ne 0\)이라 비퇴화다. 음의 고유값이 하나이므로 \(s = 1\)이다. \(x = (T + X)/\sqrt2\), \(y = (T - X)/\sqrt2\)로 바꾸면 \(ds^2 = dT^2 - dX^2\)이다. 부호수는 대각 성분이 아니라 고유값의 부호로 센다.</div></div>
+      <div class="quiz-q"><p>4. 매끄러운 사상 \(\varphi : M \to N\)이 일대일이 아닐 수도 있다. 다음 가운데 언제나 정의되는 것은?</p><div class="opts">
+        <button class="opt" data-correct>\(N\)의 계량을 당긴 \(M\) 위의 \((0, 2)\)형 텐서장 \(\varphi^*g\)</button>
+        <button class="opt">\(M\)의 벡터장을 민 \(N\) 위의 벡터장 \(\varphi_*V\)</button>
+        <button class="opt">\(N\)의 벡터장을 당긴 \(M\) 위의 벡터장</button>
+        <button class="opt">\(M\)의 계량을 민 \(N\) 위의 계량</button>
+      </div><div class="quiz-exp">\((0, s)\)형 텐서장은 \((\varphi^*T)(V, W) = T(\varphi_*V, \varphi_*W)\)로 점마다 정의되므로 언제나 당길 수 있다(<a class="ref" href="#def-pullback-pushforward"></a>). 다만 결과가 퇴화할 수 있어 계량이라는 보장은 없다(<a class="ref" href="#code-pullback-metric"></a>의 빛원뿔). 벡터장을 밀면 두 점의 벡터가 한 점에 겹칠 수 있고(<a class="ref" href="#prob-pushforward-not-field"></a>), 벡터를 당기거나 계량을 밀려면 역사상이 있어야 한다.</div></div>
+      <div class="quiz-q"><p>5. 평면의 극좌표에서 \([\partial_r, \tfrac1r\partial_\theta]\)는?</p><div class="opts">
+        <button class="opt">0</button>
+        <button class="opt" data-correct>\(-\tfrac{1}{r^2}\,\partial_\theta\)</button>
+        <button class="opt">\(\tfrac{1}{r^2}\,\partial_\theta\)</button>
+        <button class="opt">\(-\tfrac1r\,\partial_r\)</button>
+      </div><div class="quiz-exp">식 <a class="ref" href="#eq-lie-bracket-components"></a>에서 \(\theta\)성분은 \(\partial_r(1/r) = -1/r^2\)이고 \(r\)성분은 0이다(<a class="ref" href="#ex-polar-noncoordinate-basis"></a>). 0이 아니므로 정규직교 틀 \(E_1 = \partial_r\), \(E_2 = \partial_\theta/r\)(학부 6장의 단위 벡터를 벡터장으로 읽은 것)은 어떤 좌표의 좌표 기저도 아니다. \([X, fY] = (Xf)Y + f[X, Y]\)로 \(f = 1/r\)을 넣어도 바로 나온다.</div></div>
+      <div class="quiz-q"><p>6. 좌표를 \(x'^\mu = x^\mu - \varepsilon\,\xi^\mu(x)\)로 바꿀 때, 같은 좌표값에서 비교한 계량 성분의 변화 \(\delta g_{\mu\nu}\)는 \(\varepsilon\)의 1차에서 무엇인가?</p><div class="opts">
+        <button class="opt" data-correct>\(\varepsilon\,(\mathcal L_\xi g)_{\mu\nu}\)</button>
+        <button class="opt">\(-\varepsilon\,(\mathcal L_\xi g)_{\mu\nu}\)</button>
+        <button class="opt">\(\varepsilon\,(\partial_\mu\xi_\nu - \partial_\nu\xi_\mu)\)</button>
+        <button class="opt">언제나 0이다. 계량은 텐서이기 때문이다</button>
+      </div><div class="quiz-exp">식 <a class="ref" href="#eq-delta-g-lie"></a>다. 텐서 \(g\) 자체는 그대로지만 성분 함수 \(g_{\mu\nu}(\cdot)\)은 바뀐다. 마지막 보기는 흔한 혼동이다. 성분이 바뀌지 않는 것은 \(\xi\)가 킬링 벡터일 때뿐이다. 부호를 반대로 \(x'^\mu = x^\mu + \varepsilon\xi^\mu\)로 쓰면 둘째 보기가 된다. 셋째 보기는 반대칭이라 대칭 텐서의 변화일 수 없다.</div></div>
+    </div>
+  </section>
+
+  <section class="exercises" id="exercises">
+    <h2>연습문제</h2>
+
+    <div class="prob" id="prob-spherical-coordinate-basis" data-level="1"><p>\(\mathbb R^3\)의 구면 좌표 \((r, \theta, \phi)\)에서 (가) 유클리드 계량의 성분을 구하라. (나) 벡터장 \(\partial_z\)와 쌍대 벡터 \(\mathrm dz\)의 구면 좌표 성분을 구하고 \(\mathrm dz(\partial_z) = 1\)을 확인하라. (다) 기울기 벡터 \(\operatorname{grad}z\)를 구면 좌표에서 계산해 \(\partial_z\)와 같음을 보여라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \((x, y, z) = r(\sin\theta\cos\phi, \sin\theta\sin\phi, \cos\theta)\)의 야코비 행렬의 열 \(\partial_r\), \(\partial_\theta\), \(\partial_\phi\)는 서로 수직이고 길이의 제곱이 \(1\), \(r^2\), \(r^2\sin^2\theta\)이다(식 <a class="ref" href="#eq-pushforward-pullback-components"></a>). 따라서 \(ds^2 = dr^2 + r^2d\theta^2 + r^2\sin^2\theta\,d\phi^2\)이다.</p>
+        <p>(나) \(\partial r/\partial z = z/r = \cos\theta\), \(\partial\phi/\partial z = 0\)이고, \(\cos\theta = z/r\)을 \(z\)로 미분하면 \(-\sin\theta\,\partial\theta/\partial z = 1/r - z^2/r^3 = \sin^2\theta/r\)이므로 \(\partial\theta/\partial z = -\sin\theta/r\)이다. 식 <a class="ref" href="#eq-vector-field-transformation"></a>에서 \(\partial_z = \cos\theta\,\partial_r - \dfrac{\sin\theta}{r}\,\partial_\theta\)이다. \(\mathrm dz = \mathrm d(r\cos\theta) = \cos\theta\,\mathrm dr - r\sin\theta\,\mathrm d\theta\)이고 \(\mathrm dz(\partial_z) = \cos^2\theta + \sin^2\theta = 1\)이다.</p>
+        <p>(다) \(\operatorname{grad}z = \cos\theta\,\partial_r + \dfrac{1}{r^2}(-r\sin\theta)\,\partial_\theta = \partial_z\)이다. 데카르트 좌표의 \(\operatorname{grad}z = \partial_z\)와 맞는다. <a class="ref" href="#ex-gradient-vector-polar"></a>의 3차원판이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-heisenberg-loop" data-level="1"><p>평면의 벡터장 \(X = \partial_x\), \(Y = x\,\partial_y\)를 생각한다. (가) 두 흐름 \(\varphi^X_t\), \(\varphi^Y_s\)를 구하라. (나) 점 \(p = (x_0, y_0)\)에서 \(X\)로 \(t\), \(Y\)로 \(s\), \(X\)로 \(-t\), \(Y\)로 \(-s\)만큼 간 점 \(q\)를 정확히 구하라. (다) \([X, Y]\)를 구해 식 <a class="ref" href="#eq-flow-commutator"></a>과 비교하라. 이 경우에는 \(O(3)\) 항이 없는데, 그 이유는 무엇인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(X\)의 적분 곡선은 \(\dot x = 1\), \(\dot y = 0\)이므로 \(\varphi^X_t(x, y) = (x + t, y)\)이다. \(Y\)는 \(\dot x = 0\), \(\dot y = x\)이므로 \(x\)가 그대로이고 \(\varphi^Y_s(x, y) = (x, y + sx)\)이다.</p>
+        <p>(나) \((x_0, y_0) \to (x_0 + t, y_0) \to (x_0 + t, y_0 + s(x_0 + t)) \to (x_0, y_0 + s(x_0 + t)) \to (x_0, y_0 + s(x_0 + t) - sx_0)\)이므로 \(q = (x_0, y_0 + ts)\)이다.</p>
+        <p>(다) 식 <a class="ref" href="#eq-lie-bracket-components"></a>에서 \([X, Y]^y = X^\nu\partial_\nu(x) - 0 = 1\), \([X, Y]^x = 0\)이므로 \([X, Y] = \partial_y\)이다. \(q - p = ts\,\partial_y\)로 식 <a class="ref" href="#eq-flow-commutator"></a>과 같고, 고차 항이 없다. \(Z = [X, Y] = \partial_y\)는 \([X, Z] = [Y, Z] = 0\)이어서 \(X\), \(Y\) 모두와 교환한다. 그러면 \(e^{tX}e^{sY}e^{-tX} = e^{s(Y + tZ)}\)이고, \(Z\)가 \(Y\)와 교환하므로 \(e^{s(Y + tZ)}e^{-sY} = e^{tsZ}\)로 전개가 정확히 끝난다. \(e^{tsZ}\)는 \(\partial_y\)의 흐름으로 \(ts\)만큼 가는 것이다. \([X, Y] = Z\)이고 \(Z\)가 중심에 있는 이 대수는 양자역학의 \([\hat x, \hat p] = i\)와 같은 꼴(하이젠베르크 대수)이다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-pushforward-not-field" data-level="2"><p>사상 \(\varphi : \mathbb R^2 \to \mathbb R\), \(\varphi(x, y) = x^2 + y^2\)과 \(\mathbb R\)의 좌표 \(s\)를 생각한다. (가) \(\varphi_*\partial_x\)를 세 점 \((1, 0)\), \((-1, 0)\), \((0, 1)\)에서 구하고, \(\varphi_*\partial_x\)가 \(\mathbb R\) 위의 벡터장으로 정의되지 않음을 보여라. (나) \(\varphi^*(\mathrm ds)\)를 구하고 <a class="ref" href="#thm-pullback-properties"></a>의 (나)를 확인하라. (다) \(\varphi^*(\mathrm ds\otimes\mathrm ds)\)의 성분과 행렬식을 구하라. 이것이 계량이 아닌 이유와, 이 텐서가 0을 주는 방향의 뜻을 말하라.</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 식 <a class="ref" href="#eq-pushforward-pullback-components"></a>에서 \((\varphi_*\partial_x)^s = \partial s/\partial x = 2x\)이다. 세 점에서 각각 \(2\,\partial_s\), \(-2\,\partial_s\), \(0\)이다. 세 점은 모두 \(s = 1\)로 가므로, \(s = 1\)에서 \(\varphi_*\partial_x\)의 값을 하나로 정할 수 없다.</p>
+        <p>(나) \(\varphi^*(\mathrm ds) = 2x\,\mathrm dx + 2y\,\mathrm dy = \mathrm d(x^2 + y^2) = \mathrm d(\varphi^*s)\)이다. 이것은 \(\mathbb R^2\)의 모든 점에서 문제없이 정의된다.</p>
+        <p>(다) 성분은 \(\begin{pmatrix} 4x^2 & 4xy \\ 4xy & 4y^2\end{pmatrix}\)이고 행렬식은 \(16x^2y^2 - 16x^2y^2 = 0\)이다. 퇴화하므로 계량이 아니다. 0을 주는 방향은 \((-y, x)\), 곧 회전 벡터장 \(\partial_\theta = x\,\partial_y - y\,\partial_x\)이다. 원을 따라 움직이면 \(s = x^2 + y^2\)이 변하지 않으므로, 당긴 "길이"가 0이다. 당김은 언제나 정의되지만, 결과가 계량이 되려면 \(\varphi_*\)가 점마다 단사여야 한다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-killing-euclidean-plane" data-level="2"><p>평면 \(ds^2 = dx^2 + dy^2\)의 킬링 벡터를 킬링 방정식으로 모두 구하고, 그 리 괄호를 계산하라. 킬링 벡터의 공간은 몇 차원인가?</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>데카르트 좌표에서 계량이 상수이므로 킬링 방정식은 \(\partial_\mu\xi_\nu + \partial_\nu\xi_\mu = 0\)이다(<a class="ref" href="#def-killing-vector"></a>). 성분으로 \(\partial_x\xi_x = 0\), \(\partial_y\xi_y = 0\), \(\partial_x\xi_y + \partial_y\xi_x = 0\)이다. 앞의 둘에서 \(\xi_x = F(y)\), \(\xi_y = G(x)\)이고, 셋째에서 \(F'(y) = -G'(x)\)이다. 양변이 다른 변수의 함수이므로 상수이고, 그것을 \(-\omega\)라 하면 \(F = a - \omega y\), \(G = b + \omega x\)이다.</p>
+        <div class="formula">\[ \begin{gathered} \xi = a\,\partial_x + b\,\partial_y + \omega\,R \\ R = x\,\partial_y - y\,\partial_x \end{gathered} \]</div>
+        <p>3차원이다. 리 괄호는 \([\partial_x, \partial_y] = 0\), \([R, \partial_x] = -\partial_xR^\mu\,\partial_\mu = -\partial_y\), \([R, \partial_y] = -\partial_yR^\mu\,\partial_\mu = \partial_x\)이다. 회전이 두 평행 이동을 서로 섞는다. 평면의 유클리드 군 \(E(2)\)의 리 대수이고, 차원 3은 \(n(n+1)/2\)(\(n = 2\))이다. 구(<a class="ref" href="#calc-s2-killing-vectors"></a>)와 쌍곡 평면(<a class="ref" href="#code-lie-derivative"></a>)도 3개였다. 세 공간은 곡률이 양, 0, 음인 2차원 최대 대칭 공간이다(8장).</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-casimir-laplacian" data-level="2"><p>단위 구의 킬링 벡터(식 <a class="ref" href="#eq-s2-killing-vectors"></a>)를 함수에 작용하는 미분 연산자로 본다. (가) \(\xi_x^2 + \xi_y^2 = \partial_\theta^2 + \cot\theta\,\partial_\theta + \cot^2\theta\,\partial_\phi^2\)임을 보여라. (나) \(\xi_x^2 + \xi_y^2 + \xi_z^2\)이 <a href="../../math-phys/chapters/ch22.html#eq-laplacian-metric">학부 22장의 계량으로 쓴 라플라시안</a> \(\nabla^2_{S^2}\)과 같음을 보이고, \(J_i = -i\xi_i\)에 대해 \(J^2 = J_x^2 + J_y^2 + J_z^2 = -\nabla^2_{S^2}\)임을 결론지어라. (다) \(\cos\theta\)에 작용시켜 \(J^2\)의 고유값이 \(l(l + 1)\)(\(l = 1\))임을 확인하라. (→ 3장, 21장)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\xi_xf = -\sin\phi\,f_\theta - \cot\theta\cos\phi\,f_\phi\)에 \(\xi_x\)를 한 번 더 쓰면(아래 첨자는 편미분)</p>
+        <div class="formula">\[ \begin{aligned} \xi_x^2f &= \sin^2\phi\,f_{\theta\theta} + \cot\theta\cos^2\phi\,f_\theta \\ &\quad + 2\cot\theta\sin\phi\cos\phi\,f_{\theta\phi} \\ &\quad + \cot^2\theta\cos^2\phi\,f_{\phi\phi} \\ &\quad - \sin\phi\cos\phi\Big(\tfrac{1}{\sin^2\theta} + \cot^2\theta\Big)f_\phi \end{aligned} \]</div>
+        <p>이다. \(\xi_y\)는 \(\xi_x\)에서 \(\phi\)를 \(\phi - \pi/2\)로 바꾼 것이므로(\(-\sin(\phi - \pi/2) = \cos\phi\), \(-\cos(\phi - \pi/2) = -\sin\phi\)), \(\xi_y^2f\)는 위 식에서 \(\sin\phi \to -\cos\phi\), \(\cos\phi \to \sin\phi\)로 바꾼 것이다. 더하면 \(f_{\theta\phi}\)와 \(f_\phi\)의 항은 부호가 반대라 지워지고, 나머지는 \(\sin^2\phi + \cos^2\phi = 1\)로 묶여 주어진 식이 된다.</p>
+        <p>(나) \(\xi_z^2 = \partial_\phi^2\)를 더하면 \(\cot^2\theta + 1 = 1/\sin^2\theta\)이므로 \(\partial_\theta^2 + \cot\theta\,\partial_\theta + \dfrac{1}{\sin^2\theta}\partial_\phi^2\)이다. 학부 22장의 식에 \(\sqrt g = \sin\theta\), \(g^{\theta\theta} = 1\), \(g^{\phi\phi} = 1/\sin^2\theta\)를 넣은 \(\dfrac{1}{\sin\theta}\partial_\theta(\sin\theta\,\partial_\theta) + \dfrac{1}{\sin^2\theta}\partial_\phi^2\)과 같다. \(J_i^2 = (-i)^2\xi_i^2 = -\xi_i^2\)이므로 \(J^2 = -\nabla^2_{S^2}\)이다.</p>
+        <p>(다) \(\nabla^2_{S^2}\cos\theta = \dfrac{1}{\sin\theta}\partial_\theta(-\sin^2\theta) = -2\cos\theta\)이므로 \(J^2\cos\theta = 2\cos\theta = 1\cdot2\cos\theta\)이다. \(\cos\theta \propto Y_1^0\)이고 <a href="../../math-phys/chapters/ch12.html#eq-ylm-eigen">학부 12장의 구면 조화 함수의 고유값 식</a>과 맞는다. 킬링 벡터의 제곱합이 라플라시안이 된다는 것은, 3장의 <a href="ch03.html#def-casimir-operator">카시미르 연산자</a>가 구 위에서 라플라시안으로 나타난다는 뜻이다. 21장은 이것으로 <a href="ch21.html#eq-sphere-laplacian-spectrum">구 위 라플라시안의 고유값과 중복도</a>를 읽는다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-conformal-killing-york" data-level="2"><p>(가) 일반적인 계량에서 \(\mathcal L_\xi g\)의 대각합이 \(g^{\mu\nu}(\mathcal L_\xi g)_{\mu\nu} = \dfrac{2}{\sqrt{\lvert g\rvert}}\,\partial_\mu\big(\sqrt{\lvert g\rvert}\,\xi^\mu\big)\)임을 보여라. (힌트: \(g^{\mu\nu}\partial_\lambda g_{\mu\nu} = \partial_\lambda\ln\lvert g\rvert\).) (나) 단위 구에서 \(\xi = -\sin\theta\,\partial_\theta\)에 대해 \(\mathcal L_\xi g = -2\cos\theta\,g\)임을 보이고 (가)와 맞춰라. (다) 배경 \(\bar g\) 위의 섭동에서 사상 \(\xi \mapsto \mathcal L_\xi\bar g\)가 0으로 보내는 \(\xi\)는 무엇이고, 단위 구에서 그런 \(\xi\)의 공간은 몇 차원인가? (나)의 \(\xi\)가 만드는 섭동은 어떤 꼴인가? (→ 『상대성이론』 14장)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) 식 <a class="ref" href="#eq-lie-derivative-metric"></a>에 \(g^{\mu\nu}\)를 곱하면 \(\xi^\lambda g^{\mu\nu}\partial_\lambda g_{\mu\nu} + \delta^\mu{}_\lambda\partial_\mu\xi^\lambda + \delta^\nu{}_\lambda\partial_\nu\xi^\lambda = \xi^\lambda\partial_\lambda\ln\lvert g\rvert + 2\,\partial_\lambda\xi^\lambda\)이다. \(\partial_\lambda\sqrt{\lvert g\rvert} = \tfrac12\sqrt{\lvert g\rvert}\,\partial_\lambda\ln\lvert g\rvert\)이므로 이것은 \(\dfrac{2}{\sqrt{\lvert g\rvert}}\partial_\lambda(\sqrt{\lvert g\rvert}\,\xi^\lambda)\)이다. <a href="../../math-phys/chapters/ch22.html#thm-covariant-divergence">학부 22장의 공변 발산</a>의 두 배다. 힌트의 식은 \(\delta\ln\det g = \operatorname{tr}(g^{-1}\delta g)\)이다(대각화한 행렬에서 \(\ln\det = \sum\ln\lambda_a\)).</p>
+        <p>(나) \(\xi^\theta = -\sin\theta\), \(\xi^\phi = 0\)이다. \((\mathcal L_\xi g)_{\theta\theta} = 2\,\partial_\theta\xi^\theta = -2\cos\theta\), \((\mathcal L_\xi g)_{\phi\phi} = \xi^\theta\,\partial_\theta\sin^2\theta = -2\sin^2\theta\cos\theta\), \((\mathcal L_\xi g)_{\theta\phi} = g_{\theta\theta}\partial_\phi\xi^\theta + g_{\phi\phi}\partial_\theta\xi^\phi = 0\)이므로 \(\mathcal L_\xi g = -2\cos\theta\,g\)이다. 대각합은 \(-2\cos\theta\cdot2 = -4\cos\theta\)이고, (가)로는 \(\dfrac{2}{\sin\theta}\partial_\theta(-\sin^2\theta) = -4\cos\theta\)이다. 이 \(\xi\)는 \(\operatorname{grad}(\cos\theta)\)이고, 흐름이 거리를 점마다 다른 배율로 늘이되 각은 보존한다(공형 킬링 벡터).</p>
+        <p>(다) \(\mathcal L_\xi\bar g = 0\)인 \(\xi\), 곧 \(\bar g\)의 킬링 벡터다. 단위 구에서는 3차원이다(<a class="ref" href="#calc-s2-killing-vectors"></a>). 이런 \(\xi\)는 섭동을 만들지 않으므로, \(h_{\mu\nu}\)를 \(\mathcal L_\xi\bar g\) 부분과 나머지로 나누는 York 분해에서 \(\xi\)를 셀 때 빼야 한다. (나)의 \(\xi\)는 \(\bar g\)에 비례하는, 곧 대각합 부분만 있는 섭동을 만든다. 그래서 공형 킬링 벡터는 \(\mathcal L_\xi\bar g\) 부분과 대각합 부분에 두 번 세어지지 않게 다뤄야 한다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-de-donder-gauge" data-level="3"><p>민코프스키 배경 위의 섭동 \(h_{\mu\nu}\)(작은 대칭 텐서)에 게이지 변환 \(h_{\mu\nu} \to h_{\mu\nu} + \partial_\mu\xi_\nu + \partial_\nu\xi_\mu\)를 한다(<a class="ref" href="#ex-infinitesimal-diffeomorphism"></a>의 (나)에서 \(\varepsilon\)을 \(\xi\)에 넣은 것). 지수는 \(\eta_{\mu\nu}\)로 올리고 내린다. (가) 대각합 \(h = \eta^{\mu\nu}h_{\mu\nu}\)의 변화를 구하라. (나) 대각합을 뒤집은 \(\bar h_{\mu\nu} = h_{\mu\nu} - \tfrac12\eta_{\mu\nu}h\)에 대해 \(\partial^\mu\bar h_{\mu\nu}\)의 변화가 \(\Box\xi_\nu\)임을 보여라. 여기서 \(\Box = \partial^\mu\partial_\mu = -\partial_t^2 + \nabla^2\)이다. (다) 이것으로 \(\partial^\mu\bar h_{\mu\nu} = 0\)인 게이지를 고를 수 있음을 설명하고, 그 뒤에도 남는 \(\xi\)를 말하라. (→ 『상대성이론』 12장)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>(가) \(\delta h = \eta^{\mu\nu}(\partial_\mu\xi_\nu + \partial_\nu\xi_\mu) = 2\,\partial_\mu\xi^\mu\)이다.</p>
+        <p>(나) \(\delta\bar h_{\mu\nu} = \partial_\mu\xi_\nu + \partial_\nu\xi_\mu - \eta_{\mu\nu}\,\partial_\lambda\xi^\lambda\)이다. \(\partial^\mu\)을 쓰면 \(\partial^\mu\partial_\mu\xi_\nu + \partial_\nu\partial^\mu\xi_\mu - \partial_\nu\partial_\lambda\xi^\lambda = \Box\xi_\nu\)이다. 둘째와 셋째 항이 지워지는 것이 대각합을 뒤집은 이유다.</p>
+        <p>(다) 주어진 \(h\)에서 \(\Box\xi_\nu = -\partial^\mu\bar h_{\mu\nu}\)을 풀면 새 \(\bar h\)는 \(\partial^\mu\bar h_{\mu\nu} = 0\)을 만족한다. 이것은 원천이 있는 파동 방정식이라 예를 들어 <a href="../../math-phys/chapters/ch20.html#eq-green-wave-retarded">학부 20장의 지연 그린 함수</a>로 풀린다. 그 뒤에도 \(\Box\xi_\nu = 0\)인 \(\xi\)로 변환하면 조건이 그대로 유지되므로 이만큼의 자유가 남는다. 『상대성이론』 12장은 이 남은 자유로 대각합과 시간 성분을 지워 TT 게이지(횡단이고 대각합이 0)에 간다.</p>
+      </details>
+    </div>
+
+    <div class="prob" id="prob-code-s3-so4" data-level="3"><p>[코드] <a class="ref" href="#code-lie-derivative"></a>를 넓혀 3차원 구 \(S^3 \subset \mathbb R^4\)의 킬링 벡터를 구하라. \(S^3\)을 \[ \begin{aligned} (x^1, x^2) &= (\sin\chi\sin\theta\cos\phi,\ \sin\chi\sin\theta\sin\phi), \\ (x^3, x^4) &= (\sin\chi\cos\theta,\ \cos\chi) \end{aligned} \] 로 매개하고 계량을 당긴다. \(\mathbb R^4\)의 여섯 회전 평면마다 회전 벡터장 \(V = E\mathbf r\)(\(E\)는 반대칭 행렬)을 만들고, \(V = J\xi\)(\(J\)는 매개 사상의 야코비 행렬)를 \(\xi\)에 대해 풀어 구 위의 벡터장으로 바꾼다. (가) 여섯 장이 모두 킬링 벡터임을 확인하라. (나) 공간 회전 \(M_k\)와 넷째 축을 섞는 회전 \(N_k\)로 \(A_k = \tfrac12(M_k + N_k)\), \(B_k = \tfrac12(M_k - N_k)\)를 만들어, \([A_i, B_j] = 0\)이고 \(A\)와 \(B\)가 각각 \(S^2\)의 킬링 벡터와 같은 교환 관계를 만족함을 확인하라. (→ 3장)</p>
+      <details class="sol"><summary>풀이</summary>
+        <p>\(V\)가 구에 접하므로 \(V = J\xi\)이고, 양변에 \(J^{\mathsf T}\)를 곱하면 \(J^{\mathsf T}V = J^{\mathsf T}J\,\xi = g\,\xi\)이다(\(g = J^{\mathsf T}J\)는 당긴 계량). 따라서 \(\xi = g^{-1}J^{\mathsf T}V\)이다. <a class="ref" href="#code-lie-derivative"></a>의 <code>import</code>와 함수 네 개(<code>bracket</code>, <code>lie_metric</code>, <code>is_killing</code>, <code>same</code>)를 그대로 두고 그 아래를 다음으로 바꾼다.</p>
+        <pre><code class="language-python"># --- 코드 6.2의 import와 함수 네 개 다음에 둔다
+chi, th, ph = sp.symbols("chi theta phi", positive=True)
+q = [chi, th, ph]
+r = sp.Matrix([sp.sin(chi)*sp.sin(th)*sp.cos(ph),
+               sp.sin(chi)*sp.sin(th)*sp.sin(ph),
+               sp.sin(chi)*sp.cos(th), sp.cos(chi)])
+J = r.jacobian(q)
+g = (J.T * J).applyfunc(sp.simplify)       # S^3의 계량 (당김)
+
+def field(i, j):       # e_i를 e_j 쪽으로 돌리는 회전의 벡터장
+    E = sp.zeros(4)
+    E[j, i], E[i, j] = 1, -1
+    V = E * r                              # R^4의 벡터장 (구에 접함)
+    return list((g.inv() * J.T * V).applyfunc(sp.simplify))
+
+M = [field(1, 2), field(2, 0), field(0, 1)]   # 공간 회전
+N = [field(0, 3), field(1, 3), field(2, 3)]   # 넷째 축과 섞는 회전
+assert all(is_killing(X, g, q) for X in M + N)
+print(M[2], N[2])
+add = lambda X, Y, s: [(x + s*y)/2 for x, y in zip(X, Y)]
+A = [add(M[k], N[k], 1) for k in range(3)]
+B = [add(M[k], N[k], -1) for k in range(3)]
+print(all(same(bracket(A[i], B[j], q), [0, 0, 0])
+          for i in range(3) for j in range(3)))
+print(same(bracket(A[0], A[1], q), [-c for c in A[2]]),
+      same(bracket(B[0], B[1], q), [-c for c in B[2]]))</code></pre>
+        <pre class="code-out"><code>[0, 0, 1] [-cos(theta), sin(theta)/tan(chi), 0]
+True
+True True</code></pre>
+        <p>첫 줄은 \(M_z = \partial_\phi\)와 \(N_z = -\cos\theta\,\partial_\chi + \sin\theta\cot\chi\,\partial_\theta\)이다. (가)는 <code>assert</code>로 확인했다. 둘째 줄은 \(A\)와 \(B\)가 모두 교환한다는 것이고, 셋째 줄은 \([A_x, A_y] = -A_z\), \([B_x, B_y] = -B_z\)이다. \(S^2\)의 \([\xi_x, \xi_y] = -\xi_z\)와 같은 부호다(벡터장의 부호, "생성자와 벡터장의 부호" 콜아웃). 곧 \(S^3\)의 킬링 벡터는 6차원이고(\(n(n+1)/2 = 6\)), 그 대수는 서로 교환하는 \(\mathfrak{so}(3)\) 두 벌의 직합이다. 3장에서 보는 \(\mathfrak{so}(4) \cong \mathfrak{su}(2)\oplus\mathfrak{su}(2)\)를 킬링 벡터로 확인한 것이다. 수소 원자의 숨은 대칭이 이 분해를 쓴다.</p>
+      </details>
+    </div>
+  </section>
+</main>
+</body>
+</html>
